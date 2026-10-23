@@ -1,0 +1,12 @@
+<Project>
+
+  <!-- The README of a project is the readme of its package.
+       Lives in .targets: the SDK adds README.md to None only after .props are read, so Remove + Include works whether or not the glob already added it. -->
+  <PropertyGroup Condition="Exists('$(MSBuildProjectDirectory)/README.md')">
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup Condition="Exists('$(MSBuildProjectDirectory)/README.md')">
+    <None Remove="README.md" />
+    <None Include="README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+</Project>

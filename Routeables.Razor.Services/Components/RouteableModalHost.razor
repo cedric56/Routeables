@@ -1,0 +1,48 @@
+@namespace Routeables.Razor.Services
+@using Routeables.Razor
+@implements IDisposable
+@inject RouteableModalService Service
+
+@{
+    var modals = Service.Items;
+}
+@for (var i = 0; i < modals.Count; i++)
+{
+    var modal = modals[i];
+    var titleId = $"rt-modal-title-{i}";
+    <div @key="modal" class="rt-backdrop" style="z-index: @(2000 + i)">
+        <div class="rt-modal"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="@(string.IsNullOrWhiteSpace(modal.Title) ? null : titleId)"
+             tabindex="-1"
+             @ref="modal.Element">
+            @if (!string.IsNullOrWhiteSpace(modal.Title))
+            {
+                <h2 id="@titleId" class="rt-title">@modal.Title</h2>
+            }
+            <div class="rt-body">
+                @modal.Content
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized() => Service.Changed += OnChanged;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Move the focus into a newly shown modal so the keyboard acts on it and not on the page underneath.
+        var top = Service.Items.LastOrDefault();
+        if (top is { Focused: false })
+        {
+            top.Focused = true;
+            await top.Element.FocusAsync();
+        }
+    }
+
+    private void OnChanged() => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Service.Changed -= OnChanged;
+}

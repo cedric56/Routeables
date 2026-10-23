@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:routeables="using:Routeables.Avalonia"
+        x:Class="RouteablesApp.Views.MainWindow"
+        Icon="/Assets/icon.ico"
+        Title="RouteablesApp"
+        Width="800" Height="450">
+    <DockPanel>
+        <!-- The menu: one entry per RouteableEntry of MainViewModel. -->
+        <routeables:RouteableListBox DockPanel.Dock="Left" Width="200" />
+        <!-- The page the router shows. -->
+        <ContentControl Content="{Binding CurrentView}" />
+    </DockPanel>
+</Window>

@@ -1,0 +1,35 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@code {
+    private IJSObjectReference? module;
+
+    /// <summary>
+    /// Once the page is up, the images of the lists load in the background (see <see cref="XAminals.Models.AnimalImages"/>): the
+    /// browser keeps them, and an img finds them there. It does nothing while the page is rendered on the server (no browser yet).
+    /// </summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        try
+        {
+            module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/XAnimals.Razor/preload.js");
+            _ = module.InvokeVoidAsync("preload", XAminals.Models.AnimalImages.Thumbnails);
+        }
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException)
+        {
+            // Preloading is a convenience: the page loads its images itself.
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (module is null)
+            return;
+
+        try { await module.DisposeAsync(); }
+        catch (JSDisconnectedException) { }
+    }
+}

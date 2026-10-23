@@ -1,0 +1,217 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Avalonia.ITopLevelStateManager
+  commentId: T:Routeables.Avalonia.ITopLevelStateManager
+  id: ITopLevelStateManager
+  parent: Routeables.Avalonia
+  children:
+  - Routeables.Avalonia.ITopLevelStateManager.ActiveChanged
+  - Routeables.Avalonia.ITopLevelStateManager.GetActive
+  - Routeables.Avalonia.ITopLevelStateManager.OnActivated(Avalonia.Controls.TopLevel)
+  langs:
+  - csharp
+  - vb
+  name: ITopLevelStateManager
+  nameWithType: ITopLevelStateManager
+  fullName: Routeables.Avalonia.ITopLevelStateManager
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Avalonia/TopLevelStateManager.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ITopLevelStateManager
+    path: ../Routeables.Avalonia/TopLevelStateManager.cs
+    startLine: 9
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  summary: Manager object that manages top-level states on Windows.
+  example: []
+  syntax:
+    content: public interface ITopLevelStateManager
+    content.vb: Public Interface ITopLevelStateManager
+- uid: Routeables.Avalonia.ITopLevelStateManager.ActiveChanged
+  commentId: E:Routeables.Avalonia.ITopLevelStateManager.ActiveChanged
+  id: ActiveChanged
+  parent: Routeables.Avalonia.ITopLevelStateManager
+  langs:
+  - csharp
+  - vb
+  name: ActiveChanged
+  nameWithType: ITopLevelStateManager.ActiveChanged
+  fullName: Routeables.Avalonia.ITopLevelStateManager.ActiveChanged
+  type: Event
+  source:
+    remote:
+      path: Routeables.Avalonia/TopLevelStateManager.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ActiveChanged
+    path: ../Routeables.Avalonia/TopLevelStateManager.cs
+    startLine: 14
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  summary: Occurs when the application's active top-level changed.
+  example: []
+  syntax:
+    content: event EventHandler ActiveChanged
+    return:
+      type: System.EventHandler
+    content.vb: Event ActiveChanged As EventHandler
+- uid: Routeables.Avalonia.ITopLevelStateManager.GetActive
+  commentId: M:Routeables.Avalonia.ITopLevelStateManager.GetActive
+  id: GetActive
+  parent: Routeables.Avalonia.ITopLevelStateManager
+  langs:
+  - csharp
+  - vb
+  name: GetActive()
+  nameWithType: ITopLevelStateManager.GetActive()
+  fullName: Routeables.Avalonia.ITopLevelStateManager.GetActive()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Avalonia/TopLevelStateManager.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetActive
+    path: ../Routeables.Avalonia/TopLevelStateManager.cs
+    startLine: 20
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  summary: Gets the application's currently active top-level.
+  example: []
+  syntax:
+    content: TopLevel? GetActive()
+    return:
+      type: Avalonia.Controls.TopLevel
+      description: The application's currently active <xref href="Avalonia.Controls.TopLevel" data-throw-if-not-resolved="false"></xref> object.
+    content.vb: Function GetActive() As TopLevel
+  overload: Routeables.Avalonia.ITopLevelStateManager.GetActive*
+- uid: Routeables.Avalonia.ITopLevelStateManager.OnActivated(Avalonia.Controls.TopLevel)
+  commentId: M:Routeables.Avalonia.ITopLevelStateManager.OnActivated(Avalonia.Controls.TopLevel)
+  id: OnActivated(Avalonia.Controls.TopLevel)
+  parent: Routeables.Avalonia.ITopLevelStateManager
+  langs:
+  - csharp
+  - vb
+  name: OnActivated(TopLevel)
+  nameWithType: ITopLevelStateManager.OnActivated(TopLevel)
+  fullName: Routeables.Avalonia.ITopLevelStateManager.OnActivated(Avalonia.Controls.TopLevel)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Avalonia/TopLevelStateManager.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: OnActivated
+    path: ../Routeables.Avalonia/TopLevelStateManager.cs
+    startLine: 26
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  summary: Sets the new active top-level that can be retrieved with <xref href="Routeables.Avalonia.ITopLevelStateManager.GetActive" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: void OnActivated(TopLevel topLevel)
+    parameters:
+    - id: topLevel
+      type: Avalonia.Controls.TopLevel
+      description: The <xref href="Avalonia.Controls.TopLevel" data-throw-if-not-resolved="false"></xref> object that is activated.
+    content.vb: Sub OnActivated(topLevel As TopLevel)
+  overload: Routeables.Avalonia.ITopLevelStateManager.OnActivated*
+references:
+- uid: Routeables.Avalonia
+  commentId: N:Routeables.Avalonia
+  name: Routeables.Avalonia
+  nameWithType: Routeables.Avalonia
+  fullName: Routeables.Avalonia
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Avalonia
+    name: Avalonia
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Avalonia
+    name: Avalonia
+- uid: System.EventHandler
+  commentId: T:System.EventHandler
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler
+  name: EventHandler
+  nameWithType: EventHandler
+  fullName: System.EventHandler
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Avalonia.Controls.TopLevel
+  commentId: T:Avalonia.Controls.TopLevel
+  parent: Avalonia.Controls
+  isExternal: true
+  name: TopLevel
+  nameWithType: TopLevel
+  fullName: Avalonia.Controls.TopLevel
+- uid: Routeables.Avalonia.ITopLevelStateManager.GetActive*
+  commentId: Overload:Routeables.Avalonia.ITopLevelStateManager.GetActive
+  href: Routeables.Avalonia.ITopLevelStateManager.html#Routeables_Avalonia_ITopLevelStateManager_GetActive
+  name: GetActive
+  nameWithType: ITopLevelStateManager.GetActive
+  fullName: Routeables.Avalonia.ITopLevelStateManager.GetActive
+- uid: Avalonia.Controls
+  commentId: N:Avalonia.Controls
+  isExternal: true
+  name: Avalonia.Controls
+  nameWithType: Avalonia.Controls
+  fullName: Avalonia.Controls
+  spec.csharp:
+  - uid: Avalonia
+    name: Avalonia
+    isExternal: true
+  - name: .
+  - uid: Avalonia.Controls
+    name: Controls
+    isExternal: true
+  spec.vb:
+  - uid: Avalonia
+    name: Avalonia
+    isExternal: true
+  - name: .
+  - uid: Avalonia.Controls
+    name: Controls
+    isExternal: true
+- uid: Routeables.Avalonia.ITopLevelStateManager.GetActive
+  commentId: M:Routeables.Avalonia.ITopLevelStateManager.GetActive
+  href: Routeables.Avalonia.ITopLevelStateManager.html#Routeables_Avalonia_ITopLevelStateManager_GetActive
+  name: GetActive()
+  nameWithType: ITopLevelStateManager.GetActive()
+  fullName: Routeables.Avalonia.ITopLevelStateManager.GetActive()
+  spec.csharp:
+  - uid: Routeables.Avalonia.ITopLevelStateManager.GetActive
+    name: GetActive
+    href: Routeables.Avalonia.ITopLevelStateManager.html#Routeables_Avalonia_ITopLevelStateManager_GetActive
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Avalonia.ITopLevelStateManager.GetActive
+    name: GetActive
+    href: Routeables.Avalonia.ITopLevelStateManager.html#Routeables_Avalonia_ITopLevelStateManager_GetActive
+  - name: (
+  - name: )
+- uid: Routeables.Avalonia.ITopLevelStateManager.OnActivated*
+  commentId: Overload:Routeables.Avalonia.ITopLevelStateManager.OnActivated
+  href: Routeables.Avalonia.ITopLevelStateManager.html#Routeables_Avalonia_ITopLevelStateManager_OnActivated_Avalonia_Controls_TopLevel_
+  name: OnActivated
+  nameWithType: ITopLevelStateManager.OnActivated
+  fullName: Routeables.Avalonia.ITopLevelStateManager.OnActivated

@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "cedric56",
+  "classifications": [
+    "Mobile",
+    "MAUI",
+    "Routeables"
+  ],
+  "identity": "Routeables.Maui",
+  "name": "Routeables .NET MAUI app",
+  "description": "A .NET MAUI application with Routeables: a menu, a page that navigates, a page with a route parameter, and the dialog services.",
+  "shortName": "routeables-maui",
+  "sourceName": "RouteablesApp",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "symbols": {
+    "RepoPath": {
+      "type": "parameter",
+      "datatype": "text",
+      "defaultValue": "",
+      "replaces": "ROUTEABLES_REPO",
+      "description": "Path to a clone of the Routeables repository. Leave empty to use the NuGet packages once they are published; set it (for example ../Routeables) to reference the projects of the clone."
+    }
+  }
+}

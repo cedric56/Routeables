@@ -1,0 +1,94 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.IRouteableArgsFactory
+  commentId: T:Routeables.Abstraction.IRouteableArgsFactory
+  id: IRouteableArgsFactory
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.IRouteableArgsFactory.New
+  langs:
+  - csharp
+  - vb
+  name: IRouteableArgsFactory
+  nameWithType: IRouteableArgsFactory
+  fullName: Routeables.Abstraction.IRouteableArgsFactory
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableArgs.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IRouteableArgsFactory
+    path: ../Routeables.Abstraction/Interfaces/IRouteableArgs.cs
+    startLine: 3
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: 'Creates the arguments of a navigation: register one to replace how <xref href="Routeables.Abstraction.IRouteableArgs" data-throw-if-not-resolved="false"></xref> are built.'
+  example: []
+  syntax:
+    content: public interface IRouteableArgsFactory
+    content.vb: Public Interface IRouteableArgsFactory
+  derivedClasses:
+  - Routeables.Routing.RouteableArgs
+- uid: Routeables.Abstraction.IRouteableArgsFactory.New
+  commentId: M:Routeables.Abstraction.IRouteableArgsFactory.New
+  id: New
+  parent: Routeables.Abstraction.IRouteableArgsFactory
+  langs:
+  - csharp
+  - vb
+  name: New()
+  nameWithType: IRouteableArgsFactory.New()
+  fullName: Routeables.Abstraction.IRouteableArgsFactory.New()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableArgs.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: New
+    path: ../Routeables.Abstraction/Interfaces/IRouteableArgs.cs
+    startLine: 6
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: A new, empty set of arguments.
+  example: []
+  syntax:
+    content: IRouteableArgs New()
+    return:
+      type: Routeables.Abstraction.IRouteableArgs
+    content.vb: Function [New]() As IRouteableArgs
+  overload: Routeables.Abstraction.IRouteableArgsFactory.New*
+references:
+- uid: Routeables.Abstraction.IRouteableArgs
+  commentId: T:Routeables.Abstraction.IRouteableArgs
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableArgs.html
+  name: IRouteableArgs
+  nameWithType: IRouteableArgs
+  fullName: Routeables.Abstraction.IRouteableArgs
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.IRouteableArgsFactory.New*
+  commentId: Overload:Routeables.Abstraction.IRouteableArgsFactory.New
+  href: Routeables.Abstraction.IRouteableArgsFactory.html#Routeables_Abstraction_IRouteableArgsFactory_New
+  name: New
+  nameWithType: IRouteableArgsFactory.New
+  fullName: Routeables.Abstraction.IRouteableArgsFactory.New

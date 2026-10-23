@@ -1,0 +1,1805 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Razor.RouteableFor`2
+  commentId: T:Routeables.Razor.RouteableFor`2
+  id: RouteableFor`2
+  parent: Routeables.Razor
+  children:
+  - Routeables.Razor.RouteableFor`2.CanNavigateAsync(System.Threading.CancellationToken)
+  - Routeables.Razor.RouteableFor`2.Dispose
+  - Routeables.Razor.RouteableFor`2.InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  - Routeables.Razor.RouteableFor`2.IsLocked
+  - Routeables.Razor.RouteableFor`2.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  - Routeables.Razor.RouteableFor`2.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  - Routeables.Razor.RouteableFor`2.OnParametersSet
+  - Routeables.Razor.RouteableFor`2.OnSubscribe
+  - Routeables.Razor.RouteableFor`2.OnUnsubscribe
+  - Routeables.Razor.RouteableFor`2.OpenComponent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  - Routeables.Razor.RouteableFor`2.ViewModel
+  langs:
+  - csharp
+  - vb
+  name: RouteableFor<TView, TViewModel>
+  nameWithType: RouteableFor<TView, TViewModel>
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>
+  type: Class
+  source:
+    remote:
+      path: Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RouteableFor
+    path: ../Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+    startLine: 15
+  assemblies:
+  - Routeables.Razor
+  namespace: Routeables.Razor
+  summary: >-
+    A generic Razor component base class that pairs a specific Blazor component view (<code class="typeparamref">TView</code>) 
+
+    with a view model (<code class="typeparamref">TViewModel</code>), implementing navigation lifecycle interfaces, 
+
+    property change subscriptions, and dynamic rendering.
+  example: []
+  syntax:
+    content: 'public class RouteableFor<TView, TViewModel> : RouteableFor, IComponent, IHandleEvent, IHandleAfterRender, IRouteableFor, IRouteable, IInitializeAsync, IDisposable where TView : ComponentBase where TViewModel : class'
+    typeParameters:
+    - id: TView
+      description: The Blazor component type representing the view.
+    - id: TViewModel
+      description: The view model type implementing.
+    content.vb: Public Class RouteableFor(Of TView As ComponentBase, TViewModel As Class) Inherits RouteableFor Implements IComponent, IHandleEvent, IHandleAfterRender, IRouteableFor, IRouteable, IInitializeAsync, IDisposable
+  inheritance:
+  - System.Object
+  - Microsoft.AspNetCore.Components.ComponentBase
+  - Routeables.Razor.RouteableFor
+  derivedClasses:
+  - Routeables.Razor.RouteableCenteredFor`2
+  - Routeables.Razor.RouteableModalFor`3
+  implements:
+  - Microsoft.AspNetCore.Components.IComponent
+  - Microsoft.AspNetCore.Components.IHandleEvent
+  - Microsoft.AspNetCore.Components.IHandleAfterRender
+  - Routeables.Abstraction.IRouteableFor
+  - Routeables.Abstraction.IRouteable
+  - Routeables.Abstraction.IInitializeAsync
+  - System.IDisposable
+  inheritedMembers:
+  - Routeables.Razor.RouteableFor.DictionaryParameters
+  - Routeables.Razor.RouteableFor.Context
+  - Routeables.Razor.RouteableFor.Class
+  - Routeables.Razor.RouteableFor.Render
+  - Microsoft.AspNetCore.Components.ComponentBase.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  - Microsoft.AspNetCore.Components.ComponentBase.OnInitialized
+  - Microsoft.AspNetCore.Components.ComponentBase.OnInitializedAsync
+  - Microsoft.AspNetCore.Components.ComponentBase.OnParametersSetAsync
+  - Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged
+  - Microsoft.AspNetCore.Components.ComponentBase.ShouldRender
+  - Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)
+  - Microsoft.AspNetCore.Components.ComponentBase.OnAfterRenderAsync(System.Boolean)
+  - Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Action)
+  - Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Func{System.Threading.Tasks.Task})
+  - Microsoft.AspNetCore.Components.ComponentBase.DispatchExceptionAsync(System.Exception)
+  - Microsoft.AspNetCore.Components.ComponentBase.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)
+  - Microsoft.AspNetCore.Components.ComponentBase.RendererInfo
+  - Microsoft.AspNetCore.Components.ComponentBase.Assets
+  - Microsoft.AspNetCore.Components.ComponentBase.AssignedRenderMode
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+  nameWithType.vb: RouteableFor(Of TView, TViewModel)
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel)
+  name.vb: RouteableFor(Of TView, TViewModel)
+- uid: Routeables.Razor.RouteableFor`2.IsLocked
+  commentId: P:Routeables.Razor.RouteableFor`2.IsLocked
+  id: IsLocked
+  parent: Routeables.Razor.RouteableFor`2
+  langs:
+  - csharp
+  - vb
+  name: IsLocked
+  nameWithType: RouteableFor<TView, TViewModel>.IsLocked
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.IsLocked
+  type: Property
+  source:
+    remote:
+      path: Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IsLocked
+    path: ../Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+    startLine: 26
+  assemblies:
+  - Routeables.Razor
+  namespace: Routeables.Razor
+  summary: Gets a value indicating whether all nested routeable elements are currently locked.
+  example: []
+  syntax:
+    content: public bool IsLocked { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public ReadOnly Property IsLocked As Boolean
+  overload: Routeables.Razor.RouteableFor`2.IsLocked*
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).IsLocked
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).IsLocked
+- uid: Routeables.Razor.RouteableFor`2.ViewModel
+  commentId: P:Routeables.Razor.RouteableFor`2.ViewModel
+  id: ViewModel
+  parent: Routeables.Razor.RouteableFor`2
+  langs:
+  - csharp
+  - vb
+  name: ViewModel
+  nameWithType: RouteableFor<TView, TViewModel>.ViewModel
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.ViewModel
+  type: Property
+  source:
+    remote:
+      path: Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ViewModel
+    path: ../Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+    startLine: 37
+  assemblies:
+  - Routeables.Razor
+  namespace: Routeables.Razor
+  summary: Gets the strongly typed view model instance cast from the base <xref href="Routeables.Razor.RouteableFor.Context" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public TViewModel ViewModel { get; }
+    parameters: []
+    return:
+      type: '{TViewModel}'
+    content.vb: Public ReadOnly Property ViewModel As TViewModel
+  overload: Routeables.Razor.RouteableFor`2.ViewModel*
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).ViewModel
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).ViewModel
+- uid: Routeables.Razor.RouteableFor`2.CanNavigateAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Razor.RouteableFor`2.CanNavigateAsync(System.Threading.CancellationToken)
+  id: CanNavigateAsync(System.Threading.CancellationToken)
+  parent: Routeables.Razor.RouteableFor`2
+  langs:
+  - csharp
+  - vb
+  name: CanNavigateAsync(CancellationToken)
+  nameWithType: RouteableFor<TView, TViewModel>.CanNavigateAsync(CancellationToken)
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.CanNavigateAsync(System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: CanNavigateAsync
+    path: ../Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+    startLine: 44
+  assemblies:
+  - Routeables.Razor
+  namespace: Routeables.Razor
+  summary: Determines whether navigation away from this view is currently permitted.
+  example: []
+  syntax:
+    content: public virtual Task<bool> CanNavigateAsync(CancellationToken ct = default)
+    parameters:
+    - id: ct
+      type: System.Threading.CancellationToken
+      description: A token to observe for cancellation.
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+      description: A task that completes with a boolean value indicating whether navigation can proceed.
+    content.vb: Public Overridable Function CanNavigateAsync(ct As CancellationToken = Nothing) As Task(Of Boolean)
+  overload: Routeables.Razor.RouteableFor`2.CanNavigateAsync*
+  implements:
+  - Routeables.Abstraction.IRouteable.CanNavigateAsync(System.Threading.CancellationToken)
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).CanNavigateAsync(CancellationToken)
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).CanNavigateAsync(System.Threading.CancellationToken)
+- uid: Routeables.Razor.RouteableFor`2.InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Razor.RouteableFor`2.InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  id: InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Razor.RouteableFor`2
+  langs:
+  - csharp
+  - vb
+  name: InitializeAsync(IRouteableArgs, CancellationToken)
+  nameWithType: RouteableFor<TView, TViewModel>.InitializeAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.InitializeAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: InitializeAsync
+    path: ../Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+    startLine: 54
+  assemblies:
+  - Routeables.Razor
+  namespace: Routeables.Razor
+  summary: Initializes the view model or view asynchronously with navigation arguments.
+  example: []
+  syntax:
+    content: public virtual Task InitializeAsync(IRouteableArgs args, CancellationToken ct = default)
+    parameters:
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+      description: The navigation arguments.
+    - id: ct
+      type: System.Threading.CancellationToken
+      description: A token to observe for cancellation.
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Overridable Function InitializeAsync(args As IRouteableArgs, ct As CancellationToken = Nothing) As Task
+  overload: Routeables.Razor.RouteableFor`2.InitializeAsync*
+  implements:
+  - Routeables.Abstraction.IInitializeAsync.InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).InitializeAsync(IRouteableArgs, CancellationToken)
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).InitializeAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+- uid: Routeables.Razor.RouteableFor`2.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Razor.RouteableFor`2.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  id: OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Razor.RouteableFor`2
+  langs:
+  - csharp
+  - vb
+  name: OnNavigatingFromAsync(IRouteableArgs, CancellationToken)
+  nameWithType: RouteableFor<TView, TViewModel>.OnNavigatingFromAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: OnNavigatingFromAsync
+    path: ../Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+    startLine: 64
+  assemblies:
+  - Routeables.Razor
+  namespace: Routeables.Razor
+  summary: Called asynchronously when navigation is leaving this view.
+  example: []
+  syntax:
+    content: public virtual Task OnNavigatingFromAsync(IRouteableArgs args, CancellationToken ct = default)
+    parameters:
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+      description: The navigation arguments.
+    - id: ct
+      type: System.Threading.CancellationToken
+      description: A token to observe for cancellation.
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Overridable Function OnNavigatingFromAsync(args As IRouteableArgs, ct As CancellationToken = Nothing) As Task
+  overload: Routeables.Razor.RouteableFor`2.OnNavigatingFromAsync*
+  implements:
+  - Routeables.Abstraction.IRouteable.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).OnNavigatingFromAsync(IRouteableArgs, CancellationToken)
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+- uid: Routeables.Razor.RouteableFor`2.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Razor.RouteableFor`2.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  id: OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Razor.RouteableFor`2
+  langs:
+  - csharp
+  - vb
+  name: OnNavigatingToAsync(IRouteableArgs, CancellationToken)
+  nameWithType: RouteableFor<TView, TViewModel>.OnNavigatingToAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: OnNavigatingToAsync
+    path: ../Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+    startLine: 74
+  assemblies:
+  - Routeables.Razor
+  namespace: Routeables.Razor
+  summary: Called asynchronously when navigation is entering this view.
+  example: []
+  syntax:
+    content: public virtual Task OnNavigatingToAsync(IRouteableArgs args, CancellationToken ct = default)
+    parameters:
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+      description: The navigation arguments.
+    - id: ct
+      type: System.Threading.CancellationToken
+      description: A token to observe for cancellation.
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Overridable Function OnNavigatingToAsync(args As IRouteableArgs, ct As CancellationToken = Nothing) As Task
+  overload: Routeables.Razor.RouteableFor`2.OnNavigatingToAsync*
+  implements:
+  - Routeables.Abstraction.IRouteable.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).OnNavigatingToAsync(IRouteableArgs, CancellationToken)
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+- uid: Routeables.Razor.RouteableFor`2.OnParametersSet
+  commentId: M:Routeables.Razor.RouteableFor`2.OnParametersSet
+  id: OnParametersSet
+  parent: Routeables.Razor.RouteableFor`2
+  langs:
+  - csharp
+  - vb
+  name: OnParametersSet()
+  nameWithType: RouteableFor<TView, TViewModel>.OnParametersSet()
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.OnParametersSet()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: OnParametersSet
+    path: ../Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+    startLine: 84
+  assemblies:
+  - Routeables.Razor
+  namespace: Routeables.Razor
+  summary: Manages view model subscriptions and lifecycle checks when parameters are updated.
+  example: []
+  syntax:
+    content: protected override void OnParametersSet()
+    content.vb: Protected Overrides Sub OnParametersSet()
+  overridden: Microsoft.AspNetCore.Components.ComponentBase.OnParametersSet
+  overload: Routeables.Razor.RouteableFor`2.OnParametersSet*
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).OnParametersSet()
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).OnParametersSet()
+- uid: Routeables.Razor.RouteableFor`2.OnSubscribe
+  commentId: M:Routeables.Razor.RouteableFor`2.OnSubscribe
+  id: OnSubscribe
+  parent: Routeables.Razor.RouteableFor`2
+  langs:
+  - csharp
+  - vb
+  name: OnSubscribe()
+  nameWithType: RouteableFor<TView, TViewModel>.OnSubscribe()
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.OnSubscribe()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: OnSubscribe
+    path: ../Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+    startLine: 131
+  assemblies:
+  - Routeables.Razor
+  namespace: Routeables.Razor
+  summary: Extension hook called when a new view model subscription is successfully established.
+  example: []
+  syntax:
+    content: protected virtual void OnSubscribe()
+    content.vb: Protected Overridable Sub OnSubscribe()
+  overload: Routeables.Razor.RouteableFor`2.OnSubscribe*
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).OnSubscribe()
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).OnSubscribe()
+- uid: Routeables.Razor.RouteableFor`2.OnUnsubscribe
+  commentId: M:Routeables.Razor.RouteableFor`2.OnUnsubscribe
+  id: OnUnsubscribe
+  parent: Routeables.Razor.RouteableFor`2
+  langs:
+  - csharp
+  - vb
+  name: OnUnsubscribe()
+  nameWithType: RouteableFor<TView, TViewModel>.OnUnsubscribe()
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.OnUnsubscribe()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: OnUnsubscribe
+    path: ../Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+    startLine: 138
+  assemblies:
+  - Routeables.Razor
+  namespace: Routeables.Razor
+  summary: Extension hook called when an existing view model subscription is torn down.
+  example: []
+  syntax:
+    content: protected virtual void OnUnsubscribe()
+    content.vb: Protected Overridable Sub OnUnsubscribe()
+  overload: Routeables.Razor.RouteableFor`2.OnUnsubscribe*
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).OnUnsubscribe()
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).OnUnsubscribe()
+- uid: Routeables.Razor.RouteableFor`2.Dispose
+  commentId: M:Routeables.Razor.RouteableFor`2.Dispose
+  id: Dispose
+  parent: Routeables.Razor.RouteableFor`2
+  langs:
+  - csharp
+  - vb
+  name: Dispose()
+  nameWithType: RouteableFor<TView, TViewModel>.Dispose()
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.Dispose()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Dispose
+    path: ../Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+    startLine: 145
+  assemblies:
+  - Routeables.Razor
+  namespace: Routeables.Razor
+  summary: Disposes the component by tearing down any active event subscriptions.
+  example: []
+  syntax:
+    content: public void Dispose()
+    content.vb: Public Sub Dispose()
+  overload: Routeables.Razor.RouteableFor`2.Dispose*
+  implements:
+  - System.IDisposable.Dispose
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).Dispose()
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).Dispose()
+- uid: Routeables.Razor.RouteableFor`2.OpenComponent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  commentId: M:Routeables.Razor.RouteableFor`2.OpenComponent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  id: OpenComponent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  parent: Routeables.Razor.RouteableFor`2
+  langs:
+  - csharp
+  - vb
+  name: OpenComponent(RenderTreeBuilder)
+  nameWithType: RouteableFor<TView, TViewModel>.OpenComponent(RenderTreeBuilder)
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.OpenComponent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: OpenComponent
+    path: ../Routeables.Razor/Bases/RouteableFor{TViewModel}.cs
+    startLine: 147
+  assemblies:
+  - Routeables.Razor
+  namespace: Routeables.Razor
+  summary: Opens and defines the component type within the render tree builder. Must be overridden by derived classes.
+  example: []
+  syntax:
+    content: protected override void OpenComponent(RenderTreeBuilder builder)
+    parameters:
+    - id: builder
+      type: Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder
+      description: The <xref href="Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder" data-throw-if-not-resolved="false"></xref> used to build the component.
+    content.vb: Protected Overrides Sub OpenComponent(builder As RenderTreeBuilder)
+  overridden: Routeables.Razor.RouteableFor.OpenComponent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  overload: Routeables.Razor.RouteableFor`2.OpenComponent*
+  exceptions:
+  - type: System.NotImplementedException
+    commentId: T:System.NotImplementedException
+    description: Thrown if not overridden in a derived class.
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).OpenComponent(RenderTreeBuilder)
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).OpenComponent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+references:
+- uid: Routeables.Razor
+  commentId: N:Routeables.Razor
+  name: Routeables.Razor
+  nameWithType: Routeables.Razor
+  fullName: Routeables.Razor
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Razor
+    name: Razor
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Razor
+    name: Razor
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Microsoft.AspNetCore.Components.ComponentBase
+  commentId: T:Microsoft.AspNetCore.Components.ComponentBase
+  parent: Microsoft.AspNetCore.Components
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase
+  name: ComponentBase
+  nameWithType: ComponentBase
+  fullName: Microsoft.AspNetCore.Components.ComponentBase
+- uid: Routeables.Razor.RouteableFor
+  commentId: T:Routeables.Razor.RouteableFor
+  parent: Routeables.Razor
+  href: Routeables.Razor.RouteableFor.html
+  name: RouteableFor
+  nameWithType: RouteableFor
+  fullName: Routeables.Razor.RouteableFor
+- uid: Microsoft.AspNetCore.Components.IComponent
+  commentId: T:Microsoft.AspNetCore.Components.IComponent
+  parent: Microsoft.AspNetCore.Components
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.icomponent
+  name: IComponent
+  nameWithType: IComponent
+  fullName: Microsoft.AspNetCore.Components.IComponent
+- uid: Microsoft.AspNetCore.Components.IHandleEvent
+  commentId: T:Microsoft.AspNetCore.Components.IHandleEvent
+  parent: Microsoft.AspNetCore.Components
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.ihandleevent
+  name: IHandleEvent
+  nameWithType: IHandleEvent
+  fullName: Microsoft.AspNetCore.Components.IHandleEvent
+- uid: Microsoft.AspNetCore.Components.IHandleAfterRender
+  commentId: T:Microsoft.AspNetCore.Components.IHandleAfterRender
+  parent: Microsoft.AspNetCore.Components
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.ihandleafterrender
+  name: IHandleAfterRender
+  nameWithType: IHandleAfterRender
+  fullName: Microsoft.AspNetCore.Components.IHandleAfterRender
+- uid: Routeables.Abstraction.IRouteableFor
+  commentId: T:Routeables.Abstraction.IRouteableFor
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableFor.html
+  name: IRouteableFor
+  nameWithType: IRouteableFor
+  fullName: Routeables.Abstraction.IRouteableFor
+- uid: Routeables.Abstraction.IRouteable
+  commentId: T:Routeables.Abstraction.IRouteable
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteable.html
+  name: IRouteable
+  nameWithType: IRouteable
+  fullName: Routeables.Abstraction.IRouteable
+- uid: Routeables.Abstraction.IInitializeAsync
+  commentId: T:Routeables.Abstraction.IInitializeAsync
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IInitializeAsync.html
+  name: IInitializeAsync
+  nameWithType: IInitializeAsync
+  fullName: Routeables.Abstraction.IInitializeAsync
+- uid: System.IDisposable
+  commentId: T:System.IDisposable
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.idisposable
+  name: IDisposable
+  nameWithType: IDisposable
+  fullName: System.IDisposable
+- uid: Routeables.Razor.RouteableFor.DictionaryParameters
+  commentId: P:Routeables.Razor.RouteableFor.DictionaryParameters
+  parent: Routeables.Razor.RouteableFor
+  href: Routeables.Razor.RouteableFor.html#Routeables_Razor_RouteableFor_DictionaryParameters
+  name: DictionaryParameters
+  nameWithType: RouteableFor.DictionaryParameters
+  fullName: Routeables.Razor.RouteableFor.DictionaryParameters
+- uid: Routeables.Razor.RouteableFor.Context
+  commentId: P:Routeables.Razor.RouteableFor.Context
+  parent: Routeables.Razor.RouteableFor
+  href: Routeables.Razor.RouteableFor.html#Routeables_Razor_RouteableFor_Context
+  name: Context
+  nameWithType: RouteableFor.Context
+  fullName: Routeables.Razor.RouteableFor.Context
+- uid: Routeables.Razor.RouteableFor.Class
+  commentId: P:Routeables.Razor.RouteableFor.Class
+  parent: Routeables.Razor.RouteableFor
+  href: Routeables.Razor.RouteableFor.html#Routeables_Razor_RouteableFor_Class
+  name: Class
+  nameWithType: RouteableFor.Class
+  fullName: Routeables.Razor.RouteableFor.Class
+- uid: Routeables.Razor.RouteableFor.Render
+  commentId: M:Routeables.Razor.RouteableFor.Render
+  parent: Routeables.Razor.RouteableFor
+  href: Routeables.Razor.RouteableFor.html#Routeables_Razor_RouteableFor_Render
+  name: Render()
+  nameWithType: RouteableFor.Render()
+  fullName: Routeables.Razor.RouteableFor.Render()
+  spec.csharp:
+  - uid: Routeables.Razor.RouteableFor.Render
+    name: Render
+    href: Routeables.Razor.RouteableFor.html#Routeables_Razor_RouteableFor_Render
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Razor.RouteableFor.Render
+    name: Render
+    href: Routeables.Razor.RouteableFor.html#Routeables_Razor_RouteableFor_Render
+  - name: (
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.buildrendertree
+  name: BuildRenderTree(RenderTreeBuilder)
+  nameWithType: ComponentBase.BuildRenderTree(RenderTreeBuilder)
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+    name: BuildRenderTree
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.buildrendertree
+  - name: (
+  - uid: Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder
+    name: RenderTreeBuilder
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.rendering.rendertreebuilder
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+    name: BuildRenderTree
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.buildrendertree
+  - name: (
+  - uid: Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder
+    name: RenderTreeBuilder
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.rendering.rendertreebuilder
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.OnInitialized
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.OnInitialized
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.oninitialized
+  name: OnInitialized()
+  nameWithType: ComponentBase.OnInitialized()
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.OnInitialized()
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.OnInitialized
+    name: OnInitialized
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.oninitialized
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.OnInitialized
+    name: OnInitialized
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.oninitialized
+  - name: (
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.OnInitializedAsync
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.OnInitializedAsync
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.oninitializedasync
+  name: OnInitializedAsync()
+  nameWithType: ComponentBase.OnInitializedAsync()
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.OnInitializedAsync()
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.OnInitializedAsync
+    name: OnInitializedAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.oninitializedasync
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.OnInitializedAsync
+    name: OnInitializedAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.oninitializedasync
+  - name: (
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.OnParametersSetAsync
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.OnParametersSetAsync
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onparameterssetasync
+  name: OnParametersSetAsync()
+  nameWithType: ComponentBase.OnParametersSetAsync()
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.OnParametersSetAsync()
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.OnParametersSetAsync
+    name: OnParametersSetAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onparameterssetasync
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.OnParametersSetAsync
+    name: OnParametersSetAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onparameterssetasync
+  - name: (
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.statehaschanged
+  name: StateHasChanged()
+  nameWithType: ComponentBase.StateHasChanged()
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged()
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged
+    name: StateHasChanged
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.statehaschanged
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged
+    name: StateHasChanged
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.statehaschanged
+  - name: (
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.ShouldRender
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.ShouldRender
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.shouldrender
+  name: ShouldRender()
+  nameWithType: ComponentBase.ShouldRender()
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.ShouldRender()
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.ShouldRender
+    name: ShouldRender
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.shouldrender
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.ShouldRender
+    name: ShouldRender
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.shouldrender
+  - name: (
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onafterrender
+  name: OnAfterRender(bool)
+  nameWithType: ComponentBase.OnAfterRender(bool)
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(bool)
+  nameWithType.vb: ComponentBase.OnAfterRender(Boolean)
+  fullName.vb: Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(Boolean)
+  name.vb: OnAfterRender(Boolean)
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)
+    name: OnAfterRender
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onafterrender
+  - name: (
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)
+    name: OnAfterRender
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onafterrender
+  - name: (
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.OnAfterRenderAsync(System.Boolean)
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.OnAfterRenderAsync(System.Boolean)
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onafterrenderasync
+  name: OnAfterRenderAsync(bool)
+  nameWithType: ComponentBase.OnAfterRenderAsync(bool)
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.OnAfterRenderAsync(bool)
+  nameWithType.vb: ComponentBase.OnAfterRenderAsync(Boolean)
+  fullName.vb: Microsoft.AspNetCore.Components.ComponentBase.OnAfterRenderAsync(Boolean)
+  name.vb: OnAfterRenderAsync(Boolean)
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.OnAfterRenderAsync(System.Boolean)
+    name: OnAfterRenderAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onafterrenderasync
+  - name: (
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.OnAfterRenderAsync(System.Boolean)
+    name: OnAfterRenderAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onafterrenderasync
+  - name: (
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Action)
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Action)
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.invokeasync#microsoft-aspnetcore-components-componentbase-invokeasync(system-action)
+  name: InvokeAsync(Action)
+  nameWithType: ComponentBase.InvokeAsync(Action)
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Action)
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Action)
+    name: InvokeAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.invokeasync#microsoft-aspnetcore-components-componentbase-invokeasync(system-action)
+  - name: (
+  - uid: System.Action
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Action)
+    name: InvokeAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.invokeasync#microsoft-aspnetcore-components-componentbase-invokeasync(system-action)
+  - name: (
+  - uid: System.Action
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Func{System.Threading.Tasks.Task})
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Func{System.Threading.Tasks.Task})
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.invokeasync#microsoft-aspnetcore-components-componentbase-invokeasync(system-func((system-threading-tasks-task)))
+  name: InvokeAsync(Func<Task>)
+  nameWithType: ComponentBase.InvokeAsync(Func<Task>)
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Func<System.Threading.Tasks.Task>)
+  nameWithType.vb: ComponentBase.InvokeAsync(Func(Of Task))
+  fullName.vb: Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Func(Of System.Threading.Tasks.Task))
+  name.vb: InvokeAsync(Func(Of Task))
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Func{System.Threading.Tasks.Task})
+    name: InvokeAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.invokeasync#microsoft-aspnetcore-components-componentbase-invokeasync(system-func((system-threading-tasks-task)))
+  - name: (
+  - uid: System.Func`1
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-1
+  - name: <
+  - uid: System.Threading.Tasks.Task
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  - name: '>'
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.InvokeAsync(System.Func{System.Threading.Tasks.Task})
+    name: InvokeAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.invokeasync#microsoft-aspnetcore-components-componentbase-invokeasync(system-func((system-threading-tasks-task)))
+  - name: (
+  - uid: System.Func`1
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Threading.Tasks.Task
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  - name: )
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.DispatchExceptionAsync(System.Exception)
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.DispatchExceptionAsync(System.Exception)
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.dispatchexceptionasync
+  name: DispatchExceptionAsync(Exception)
+  nameWithType: ComponentBase.DispatchExceptionAsync(Exception)
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.DispatchExceptionAsync(System.Exception)
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.DispatchExceptionAsync(System.Exception)
+    name: DispatchExceptionAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.dispatchexceptionasync
+  - name: (
+  - uid: System.Exception
+    name: Exception
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.exception
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.DispatchExceptionAsync(System.Exception)
+    name: DispatchExceptionAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.dispatchexceptionasync
+  - name: (
+  - uid: System.Exception
+    name: Exception
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.exception
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.setparametersasync
+  name: SetParametersAsync(ParameterView)
+  nameWithType: ComponentBase.SetParametersAsync(ParameterView)
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)
+    name: SetParametersAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.setparametersasync
+  - name: (
+  - uid: Microsoft.AspNetCore.Components.ParameterView
+    name: ParameterView
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.parameterview
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)
+    name: SetParametersAsync
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.setparametersasync
+  - name: (
+  - uid: Microsoft.AspNetCore.Components.ParameterView
+    name: ParameterView
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.parameterview
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.RendererInfo
+  commentId: P:Microsoft.AspNetCore.Components.ComponentBase.RendererInfo
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.rendererinfo
+  name: RendererInfo
+  nameWithType: ComponentBase.RendererInfo
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.RendererInfo
+- uid: Microsoft.AspNetCore.Components.ComponentBase.Assets
+  commentId: P:Microsoft.AspNetCore.Components.ComponentBase.Assets
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.assets
+  name: Assets
+  nameWithType: ComponentBase.Assets
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.Assets
+- uid: Microsoft.AspNetCore.Components.ComponentBase.AssignedRenderMode
+  commentId: P:Microsoft.AspNetCore.Components.ComponentBase.AssignedRenderMode
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.assignedrendermode
+  name: AssignedRenderMode
+  nameWithType: ComponentBase.AssignedRenderMode
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.AssignedRenderMode
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Microsoft.AspNetCore.Components
+  commentId: N:Microsoft.AspNetCore.Components
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.AspNetCore.Components
+  nameWithType: Microsoft.AspNetCore.Components
+  fullName: Microsoft.AspNetCore.Components
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Components
+    name: Components
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Components
+    name: Components
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Razor.RouteableFor`2.IsLocked*
+  commentId: Overload:Routeables.Razor.RouteableFor`2.IsLocked
+  href: Routeables.Razor.RouteableFor-2.html#Routeables_Razor_RouteableFor_2_IsLocked
+  name: IsLocked
+  nameWithType: RouteableFor<TView, TViewModel>.IsLocked
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.IsLocked
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).IsLocked
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).IsLocked
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: Routeables.Razor.RouteableFor`2.ViewModel*
+  commentId: Overload:Routeables.Razor.RouteableFor`2.ViewModel
+  href: Routeables.Razor.RouteableFor-2.html#Routeables_Razor_RouteableFor_2_ViewModel
+  name: ViewModel
+  nameWithType: RouteableFor<TView, TViewModel>.ViewModel
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.ViewModel
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).ViewModel
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).ViewModel
+- uid: '{TViewModel}'
+  commentId: '!:TViewModel'
+  definition: TViewModel
+  name: TViewModel
+  nameWithType: TViewModel
+  fullName: TViewModel
+- uid: TViewModel
+  name: TViewModel
+  nameWithType: TViewModel
+  fullName: TViewModel
+- uid: Routeables.Razor.RouteableFor`2.CanNavigateAsync*
+  commentId: Overload:Routeables.Razor.RouteableFor`2.CanNavigateAsync
+  href: Routeables.Razor.RouteableFor-2.html#Routeables_Razor_RouteableFor_2_CanNavigateAsync_System_Threading_CancellationToken_
+  name: CanNavigateAsync
+  nameWithType: RouteableFor<TView, TViewModel>.CanNavigateAsync
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.CanNavigateAsync
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).CanNavigateAsync
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).CanNavigateAsync
+- uid: Routeables.Abstraction.IRouteable.CanNavigateAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouteable.CanNavigateAsync(System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouteable
+  isExternal: true
+  href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_CanNavigateAsync_System_Threading_CancellationToken_
+  name: CanNavigateAsync(CancellationToken)
+  nameWithType: IRouteable.CanNavigateAsync(CancellationToken)
+  fullName: Routeables.Abstraction.IRouteable.CanNavigateAsync(System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteable.CanNavigateAsync(System.Threading.CancellationToken)
+    name: CanNavigateAsync
+    href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_CanNavigateAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteable.CanNavigateAsync(System.Threading.CancellationToken)
+    name: CanNavigateAsync
+    href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_CanNavigateAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: System.Threading.CancellationToken
+  commentId: T:System.Threading.CancellationToken
+  parent: System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: CancellationToken
+  nameWithType: CancellationToken
+  fullName: System.Threading.CancellationToken
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: System.Threading
+  commentId: N:System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading
+  nameWithType: System.Threading
+  fullName: System.Threading
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: Routeables.Razor.RouteableFor`2.InitializeAsync*
+  commentId: Overload:Routeables.Razor.RouteableFor`2.InitializeAsync
+  href: Routeables.Razor.RouteableFor-2.html#Routeables_Razor_RouteableFor_2_InitializeAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: InitializeAsync
+  nameWithType: RouteableFor<TView, TViewModel>.InitializeAsync
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.InitializeAsync
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).InitializeAsync
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).InitializeAsync
+- uid: Routeables.Abstraction.IInitializeAsync.InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IInitializeAsync.InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IInitializeAsync
+  isExternal: true
+  href: Routeables.Abstraction.IInitializeAsync.html#Routeables_Abstraction_IInitializeAsync_InitializeAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: InitializeAsync(IRouteableArgs, CancellationToken)
+  nameWithType: IInitializeAsync.InitializeAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Abstraction.IInitializeAsync.InitializeAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IInitializeAsync.InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: InitializeAsync
+    href: Routeables.Abstraction.IInitializeAsync.html#Routeables_Abstraction_IInitializeAsync_InitializeAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IInitializeAsync.InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: InitializeAsync
+    href: Routeables.Abstraction.IInitializeAsync.html#Routeables_Abstraction_IInitializeAsync_InitializeAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Abstraction.IRouteableArgs
+  commentId: T:Routeables.Abstraction.IRouteableArgs
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableArgs.html
+  name: IRouteableArgs
+  nameWithType: IRouteableArgs
+  fullName: Routeables.Abstraction.IRouteableArgs
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: Routeables.Razor.RouteableFor`2.OnNavigatingFromAsync*
+  commentId: Overload:Routeables.Razor.RouteableFor`2.OnNavigatingFromAsync
+  href: Routeables.Razor.RouteableFor-2.html#Routeables_Razor_RouteableFor_2_OnNavigatingFromAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: OnNavigatingFromAsync
+  nameWithType: RouteableFor<TView, TViewModel>.OnNavigatingFromAsync
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.OnNavigatingFromAsync
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).OnNavigatingFromAsync
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).OnNavigatingFromAsync
+- uid: Routeables.Abstraction.IRouteable.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouteable.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouteable
+  isExternal: true
+  href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_OnNavigatingFromAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: OnNavigatingFromAsync(IRouteableArgs, CancellationToken)
+  nameWithType: IRouteable.OnNavigatingFromAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Abstraction.IRouteable.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteable.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: OnNavigatingFromAsync
+    href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_OnNavigatingFromAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteable.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: OnNavigatingFromAsync
+    href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_OnNavigatingFromAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Razor.RouteableFor`2.OnNavigatingToAsync*
+  commentId: Overload:Routeables.Razor.RouteableFor`2.OnNavigatingToAsync
+  href: Routeables.Razor.RouteableFor-2.html#Routeables_Razor_RouteableFor_2_OnNavigatingToAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: OnNavigatingToAsync
+  nameWithType: RouteableFor<TView, TViewModel>.OnNavigatingToAsync
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.OnNavigatingToAsync
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).OnNavigatingToAsync
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).OnNavigatingToAsync
+- uid: Routeables.Abstraction.IRouteable.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouteable.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouteable
+  isExternal: true
+  href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_OnNavigatingToAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: OnNavigatingToAsync(IRouteableArgs, CancellationToken)
+  nameWithType: IRouteable.OnNavigatingToAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Abstraction.IRouteable.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteable.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: OnNavigatingToAsync
+    href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_OnNavigatingToAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteable.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: OnNavigatingToAsync
+    href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_OnNavigatingToAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Microsoft.AspNetCore.Components.ComponentBase.OnParametersSet
+  commentId: M:Microsoft.AspNetCore.Components.ComponentBase.OnParametersSet
+  parent: Microsoft.AspNetCore.Components.ComponentBase
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onparametersset
+  name: OnParametersSet()
+  nameWithType: ComponentBase.OnParametersSet()
+  fullName: Microsoft.AspNetCore.Components.ComponentBase.OnParametersSet()
+  spec.csharp:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.OnParametersSet
+    name: OnParametersSet
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onparametersset
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Microsoft.AspNetCore.Components.ComponentBase.OnParametersSet
+    name: OnParametersSet
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onparametersset
+  - name: (
+  - name: )
+- uid: Routeables.Razor.RouteableFor`2.OnParametersSet*
+  commentId: Overload:Routeables.Razor.RouteableFor`2.OnParametersSet
+  href: Routeables.Razor.RouteableFor-2.html#Routeables_Razor_RouteableFor_2_OnParametersSet
+  name: OnParametersSet
+  nameWithType: RouteableFor<TView, TViewModel>.OnParametersSet
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.OnParametersSet
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).OnParametersSet
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).OnParametersSet
+- uid: Routeables.Razor.RouteableFor`2.OnSubscribe*
+  commentId: Overload:Routeables.Razor.RouteableFor`2.OnSubscribe
+  href: Routeables.Razor.RouteableFor-2.html#Routeables_Razor_RouteableFor_2_OnSubscribe
+  name: OnSubscribe
+  nameWithType: RouteableFor<TView, TViewModel>.OnSubscribe
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.OnSubscribe
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).OnSubscribe
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).OnSubscribe
+- uid: Routeables.Razor.RouteableFor`2.OnUnsubscribe*
+  commentId: Overload:Routeables.Razor.RouteableFor`2.OnUnsubscribe
+  href: Routeables.Razor.RouteableFor-2.html#Routeables_Razor_RouteableFor_2_OnUnsubscribe
+  name: OnUnsubscribe
+  nameWithType: RouteableFor<TView, TViewModel>.OnUnsubscribe
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.OnUnsubscribe
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).OnUnsubscribe
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).OnUnsubscribe
+- uid: Routeables.Razor.RouteableFor`2.Dispose*
+  commentId: Overload:Routeables.Razor.RouteableFor`2.Dispose
+  href: Routeables.Razor.RouteableFor-2.html#Routeables_Razor_RouteableFor_2_Dispose
+  name: Dispose
+  nameWithType: RouteableFor<TView, TViewModel>.Dispose
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.Dispose
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).Dispose
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).Dispose
+- uid: System.IDisposable.Dispose
+  commentId: M:System.IDisposable.Dispose
+  parent: System.IDisposable
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.idisposable.dispose
+  name: Dispose()
+  nameWithType: IDisposable.Dispose()
+  fullName: System.IDisposable.Dispose()
+  spec.csharp:
+  - uid: System.IDisposable.Dispose
+    name: Dispose
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.idisposable.dispose
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.IDisposable.Dispose
+    name: Dispose
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.idisposable.dispose
+  - name: (
+  - name: )
+- uid: Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder
+  commentId: T:Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder
+  parent: Microsoft.AspNetCore.Components.Rendering
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.rendering.rendertreebuilder
+  name: RenderTreeBuilder
+  nameWithType: RenderTreeBuilder
+  fullName: Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder
+- uid: System.NotImplementedException
+  commentId: T:System.NotImplementedException
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.notimplementedexception
+  name: NotImplementedException
+  nameWithType: NotImplementedException
+  fullName: System.NotImplementedException
+- uid: Routeables.Razor.RouteableFor.OpenComponent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  commentId: M:Routeables.Razor.RouteableFor.OpenComponent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  parent: Routeables.Razor.RouteableFor
+  isExternal: true
+  href: Routeables.Razor.RouteableFor.html#Routeables_Razor_RouteableFor_OpenComponent_Microsoft_AspNetCore_Components_Rendering_RenderTreeBuilder_
+  name: OpenComponent(RenderTreeBuilder)
+  nameWithType: RouteableFor.OpenComponent(RenderTreeBuilder)
+  fullName: Routeables.Razor.RouteableFor.OpenComponent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  spec.csharp:
+  - uid: Routeables.Razor.RouteableFor.OpenComponent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+    name: OpenComponent
+    href: Routeables.Razor.RouteableFor.html#Routeables_Razor_RouteableFor_OpenComponent_Microsoft_AspNetCore_Components_Rendering_RenderTreeBuilder_
+  - name: (
+  - uid: Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder
+    name: RenderTreeBuilder
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.rendering.rendertreebuilder
+  - name: )
+  spec.vb:
+  - uid: Routeables.Razor.RouteableFor.OpenComponent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+    name: OpenComponent
+    href: Routeables.Razor.RouteableFor.html#Routeables_Razor_RouteableFor_OpenComponent_Microsoft_AspNetCore_Components_Rendering_RenderTreeBuilder_
+  - name: (
+  - uid: Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder
+    name: RenderTreeBuilder
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.rendering.rendertreebuilder
+  - name: )
+- uid: Routeables.Razor.RouteableFor`2.OpenComponent*
+  commentId: Overload:Routeables.Razor.RouteableFor`2.OpenComponent
+  href: Routeables.Razor.RouteableFor-2.html#Routeables_Razor_RouteableFor_2_OpenComponent_Microsoft_AspNetCore_Components_Rendering_RenderTreeBuilder_
+  name: OpenComponent
+  nameWithType: RouteableFor<TView, TViewModel>.OpenComponent
+  fullName: Routeables.Razor.RouteableFor<TView, TViewModel>.OpenComponent
+  nameWithType.vb: RouteableFor(Of TView, TViewModel).OpenComponent
+  fullName.vb: Routeables.Razor.RouteableFor(Of TView, TViewModel).OpenComponent
+- uid: Microsoft.AspNetCore.Components.Rendering
+  commentId: N:Microsoft.AspNetCore.Components.Rendering
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.AspNetCore.Components.Rendering
+  nameWithType: Microsoft.AspNetCore.Components.Rendering
+  fullName: Microsoft.AspNetCore.Components.Rendering
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Components
+    name: Components
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components
+  - name: .
+  - uid: Microsoft.AspNetCore.Components.Rendering
+    name: Rendering
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.rendering
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.AspNetCore
+    name: AspNetCore
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore
+  - name: .
+  - uid: Microsoft.AspNetCore.Components
+    name: Components
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components
+  - name: .
+  - uid: Microsoft.AspNetCore.Components.Rendering
+    name: Rendering
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.rendering

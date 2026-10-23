@@ -1,0 +1,8 @@
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="using:Routeables.Uno"
+    xmlns:local="using:XAnimals.Uno.Views"
+    x:Class="XAnimals.Uno.Views.DogsView">
+    <local:AnimalList NoResultsText="No dogs found." />
+</routeables:RouteableFor>

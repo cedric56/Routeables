@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!--
+    On the CI build (-p:CiBuild=true) these warnings fail the build: use of an obsolete API, a cached route with parameters
+    (ROUT201), and the trimming / AOT analyzers the libraries opt in to with IsAotCompatible. Locally they stay warnings.
+  -->
+  <PropertyGroup Condition="'$(CiBuild)' == 'true'">
+    <WarningsAsErrors>$(WarningsAsErrors);CS0618;ROUT201;IL2026;IL2067;IL2070;IL2072;IL2075;IL2087;IL2091;IL3050</WarningsAsErrors>
+  </PropertyGroup>
+</Project>

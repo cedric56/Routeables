@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:XAnimals.ViewModels"
+             x:Class="XAnimals.Avalonia.LockView"
+             x:DataType="vm:LockViewModel"
+             Background="{DynamicResource AnPaper}">
+
+    <ScrollViewer>
+        <StackPanel Margin="20,32,20,40" Spacing="6" MaxWidth="640">
+            <TextBlock Text="Lock the menu" FontSize="28" FontWeight="SemiBold"
+                       FontFamily="{DynamicResource AnDisplayFont}" Foreground="{DynamicResource AnInk}" />
+            <TextBlock Text="The page publishes a lock message; the menu entries are disabled until it publishes the unlock one."
+                       TextWrapping="Wrap" Foreground="{DynamicResource AnMuted}" />
+
+            <TextBlock Text="Menu" Margin="0,14,0,0" FontWeight="SemiBold" Foreground="{DynamicResource AnMuted}" />
+            <WrapPanel>
+                <Button Margin="0,0,8,8" Content="Lock" Classes="an" Command="{Binding LockCommand}" IsEnabled="{Binding CanLock}" />
+                <Button Margin="0,0,8,8" Content="Unlock" Classes="an" Command="{Binding UnlockCommand}" IsEnabled="{Binding CanUnlock}" />
+                <Button Margin="0,0,8,8" Content="Lock for 5 seconds" Classes="an" Command="{Binding LockForCommand}" IsEnabled="{Binding CanLock}" />
+            </WrapPanel>
+
+            <TextBlock Text="{Binding Status}" TextWrapping="Wrap" Foreground="{DynamicResource AnInk}" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

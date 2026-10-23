@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <IsAotCompatible>true</IsAotCompatible>
+    <Version>1.0.0-preview.1</Version>
+    <!-- Trim / AOT findings are reported but do not stop the build until the first CI run has shown what the UI packages raise. -->
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);IL2026;IL2067;IL2070;IL2072;IL2075;IL2087;IL2091;IL3050</WarningsNotAsErrors>
+    <Description>FluentAvalonia dialogs for Routeables: message boxes, content dialogs and task dialogs drawn with FluentAvalonia.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAvaloniaUI" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Routeables.Avalonia.Services\Routeables.Avalonia.Services.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IsAotCompatible>true</IsAotCompatible>
+    <Version>1.0.0-preview.1</Version>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <PackageId>Routeables.Core</PackageId>
+    <Description>Routing-aware view-model bases and runtime information for Routeables.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Test" />
+    <InternalsVisibleTo Include="Routeables.Razor" />
+    <InternalsVisibleTo Include="Routeables.Maui" />
+    <InternalsVisibleTo Include="Routeables.Avalonia" />
+    <InternalsVisibleTo Include="Routeables.Uno" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build\**" Pack="true" PackagePath="buildTransitive/" />
+    <!--<Compile Remove="Community\**" />-->
+    <TfmSpecificPackageFile Include="Community\**">
+      <PackagePath>lib/$(TargetFramework)/Community/%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+    </TfmSpecificPackageFile>
+    <Compile Remove="ReactiveUI\**" />
+    <TfmSpecificPackageFile Include="ReactiveUI\**">
+      <PackagePath>lib/$(TargetFramework)/ReactiveUI/%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+    </TfmSpecificPackageFile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Routing\Routeables.Routing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Bases\" />
+  </ItemGroup>
+
+</Project>

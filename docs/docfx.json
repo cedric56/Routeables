@@ -1,0 +1,52 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "..",
+          "files": [
+            "Routeables.Abstraction/*.csproj",
+            "Routeables.Services/*.csproj",
+            "Routeables.Locking/*.csproj",
+            "Routeables.Regions/*.csproj",
+            "Routeables.Segments/*.csproj",
+            "Routeables.Routing/*.csproj",
+            "Routeables.Core/*.csproj",
+            "Routeables.Razor/*.csproj",
+            "Routeables.Maui/*.csproj",
+            "Routeables.Avalonia/*.csproj"
+          ]
+        }
+      ],
+      "dest": "api",
+      "filter": "filterConfig.yml",
+      "properties": {
+        "TargetFramework": "net10.0",
+        "CiBuild": "true"
+      }
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [ "**/*.{md,yml}" ],
+        "exclude": [ "_site/**", "**/bin/**", "**/obj/**" ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [ "**/images/**" ]
+      }
+    ],
+    "output": "_site",
+    "globalMetadata": {
+      "_appTitle": "Routeables",
+      "_appFooter": "Routeables, MIT License",
+      "_enableSearch": true,
+      "_gitContribute": {
+        "repo": "https://github.com/cedric56/Routeables",
+        "branch": "master"
+      }
+    }
+  }
+}

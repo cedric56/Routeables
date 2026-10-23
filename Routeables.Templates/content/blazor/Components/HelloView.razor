@@ -1,0 +1,10 @@
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using RouteablesApp.ViewModels
+@inherits RouteableFor<HelloView, HelloViewModel>
+
+<PageTitle>Hello</PageTitle>
+
+<h1>@ViewModel.Greeting</h1>
+<p>The name comes from the route <code>/hello/{name}</code>.</p>
+<button @onclick="ViewModel.BackAsync">Back</button>

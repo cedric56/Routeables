@@ -1,0 +1,215 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.RouteableKind
+  commentId: T:Routeables.Abstraction.RouteableKind
+  id: RouteableKind
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.RouteableKind.Back
+  - Routeables.Abstraction.RouteableKind.Forward
+  - Routeables.Abstraction.RouteableKind.MoveTo
+  - Routeables.Abstraction.RouteableKind.Pop
+  - Routeables.Abstraction.RouteableKind.Push
+  - Routeables.Abstraction.RouteableKind.Root
+  langs:
+  - csharp
+  - vb
+  name: RouteableKind
+  nameWithType: RouteableKind
+  fullName: Routeables.Abstraction.RouteableKind
+  type: Enum
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKind.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RouteableKind
+    path: ../Routeables.Abstraction/Routing/RouteableKind.cs
+    startLine: 2
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: public enum RouteableKind
+    content.vb: Public Enum RouteableKind
+- uid: Routeables.Abstraction.RouteableKind.Push
+  commentId: F:Routeables.Abstraction.RouteableKind.Push
+  id: Push
+  parent: Routeables.Abstraction.RouteableKind
+  langs:
+  - csharp
+  - vb
+  name: Push
+  nameWithType: RouteableKind.Push
+  fullName: Routeables.Abstraction.RouteableKind.Push
+  type: Field
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKind.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Push
+    path: ../Routeables.Abstraction/Routing/RouteableKind.cs
+    startLine: 2
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: Push = 0
+    return:
+      type: Routeables.Abstraction.RouteableKind
+- uid: Routeables.Abstraction.RouteableKind.Back
+  commentId: F:Routeables.Abstraction.RouteableKind.Back
+  id: Back
+  parent: Routeables.Abstraction.RouteableKind
+  langs:
+  - csharp
+  - vb
+  name: Back
+  nameWithType: RouteableKind.Back
+  fullName: Routeables.Abstraction.RouteableKind.Back
+  type: Field
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKind.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Back
+    path: ../Routeables.Abstraction/Routing/RouteableKind.cs
+    startLine: 2
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: Back = 1
+    return:
+      type: Routeables.Abstraction.RouteableKind
+- uid: Routeables.Abstraction.RouteableKind.Forward
+  commentId: F:Routeables.Abstraction.RouteableKind.Forward
+  id: Forward
+  parent: Routeables.Abstraction.RouteableKind
+  langs:
+  - csharp
+  - vb
+  name: Forward
+  nameWithType: RouteableKind.Forward
+  fullName: Routeables.Abstraction.RouteableKind.Forward
+  type: Field
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKind.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Forward
+    path: ../Routeables.Abstraction/Routing/RouteableKind.cs
+    startLine: 2
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: Forward = 2
+    return:
+      type: Routeables.Abstraction.RouteableKind
+- uid: Routeables.Abstraction.RouteableKind.Pop
+  commentId: F:Routeables.Abstraction.RouteableKind.Pop
+  id: Pop
+  parent: Routeables.Abstraction.RouteableKind
+  langs:
+  - csharp
+  - vb
+  name: Pop
+  nameWithType: RouteableKind.Pop
+  fullName: Routeables.Abstraction.RouteableKind.Pop
+  type: Field
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKind.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Pop
+    path: ../Routeables.Abstraction/Routing/RouteableKind.cs
+    startLine: 2
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: Pop = 3
+    return:
+      type: Routeables.Abstraction.RouteableKind
+- uid: Routeables.Abstraction.RouteableKind.Root
+  commentId: F:Routeables.Abstraction.RouteableKind.Root
+  id: Root
+  parent: Routeables.Abstraction.RouteableKind
+  langs:
+  - csharp
+  - vb
+  name: Root
+  nameWithType: RouteableKind.Root
+  fullName: Routeables.Abstraction.RouteableKind.Root
+  type: Field
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKind.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Root
+    path: ../Routeables.Abstraction/Routing/RouteableKind.cs
+    startLine: 2
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: Root = 4
+    return:
+      type: Routeables.Abstraction.RouteableKind
+- uid: Routeables.Abstraction.RouteableKind.MoveTo
+  commentId: F:Routeables.Abstraction.RouteableKind.MoveTo
+  id: MoveTo
+  parent: Routeables.Abstraction.RouteableKind
+  langs:
+  - csharp
+  - vb
+  name: MoveTo
+  nameWithType: RouteableKind.MoveTo
+  fullName: Routeables.Abstraction.RouteableKind.MoveTo
+  type: Field
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKind.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: MoveTo
+    path: ../Routeables.Abstraction/Routing/RouteableKind.cs
+    startLine: 2
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: MoveTo = 5
+    return:
+      type: Routeables.Abstraction.RouteableKind
+references:
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.RouteableKind
+  commentId: T:Routeables.Abstraction.RouteableKind
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.RouteableKind.html
+  name: RouteableKind
+  nameWithType: RouteableKind
+  fullName: Routeables.Abstraction.RouteableKind

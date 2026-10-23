@@ -1,0 +1,43 @@
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@attribute [RouteableView(typeof(RegionsViewModel), route: "regions")]
+@inherits RouteableFor<RegionsView, RegionsViewModel>
+
+<PageTitle>Regions</PageTitle>
+
+@* An application of its own: four zones, four routers. Each zone is a RouteableRegion that receives whatever the router of its
+   region displays, and every page in it navigates its own region: nothing here assigns a view to a zone. *@
+<div class="rg-app @(ViewModel.IsLeftCollapsed ? "left-collapsed" : null)">
+    <header class="rg-header"><RouteableRegion Region="@ShellController.Header" /></header>
+    <aside class="rg-left">
+        <button type="button" class="rg-collapse" @onclick="ViewModel.ToggleLeft"
+                title="@(ViewModel.IsLeftCollapsed ? "Show the panel" : "Reduce the panel")"
+                aria-label="@(ViewModel.IsLeftCollapsed ? "Show the panel" : "Reduce the panel")"
+                aria-expanded="@(!ViewModel.IsLeftCollapsed)">@(ViewModel.IsLeftCollapsed ? "»" : "«")</button>
+        <div class="rg-left-region"><RouteableRegion Region="@ShellController.LeftPanel" /></div>
+        @* One navigation made of segments: the logo in the content, the author in the footer, the copyright in the left panel. *@
+        <button type="button" class="rg-credits" @onclick="ViewModel.ToggleCreditsAsync">@ViewModel.CreditsText</button>
+    </aside>
+    <main class="rg-content"><RouteableRegion Region="@ShellController.Content" /></main>
+    <footer class="rg-footer"><RouteableRegion Region="@ShellController.Footer" /></footer>
+</div>
+
+@code {
+    protected override void OnSubscribe()
+    {
+        ViewModel.PropertyChanged += OnViewModelChanged;
+        base.OnSubscribe();
+    }
+
+    private async void OnViewModelChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnUnsubscribe()
+    {
+        ViewModel.PropertyChanged -= OnViewModelChanged;
+        base.OnUnsubscribe();
+    }
+}

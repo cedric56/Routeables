@@ -1,0 +1,53 @@
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@implements IDisposable
+
+@* The list of an animal kind, or its detail view once the router has navigated to it. *@
+@if (ViewModel.CurrentView is RouteableFor routeable)
+{
+    @routeable.Render()
+}
+else
+{
+    <div class="animals-page">
+        <input class="search-box"
+               type="search"
+               placeholder="Enter search term"
+               @bind="ViewModel.SearchText"
+               @bind:event="oninput" />
+
+        @if (!ViewModel.FilteredAnimals.Any())
+        {
+            <p class="no-results">@NoResultsText</p>
+        }
+
+        <div class="animal-list">
+            @foreach (var animal in ViewModel.FilteredAnimals)
+            {
+                <div class="animal-item @(animal == ViewModel.SelectedAnimal ? "selected" : null)" role="button" tabindex="0"
+                     @onclick="async () => await ViewModel.OnSelectedAnimalAsync(animal)">
+                    <img src="@animal.ThumbnailUrl" onerror="if(this.dataset.retried){this.onerror=null;this.src='_content/XAnimals.Razor/placeholder.svg'}else{this.dataset.retried=1;this.src='@animal.ImageUrl'}" alt="@animal.Name" width="56" height="68" loading="lazy" />
+                    <div class="animal-text">
+                        <span class="animal-name">@animal.Name</span>
+                        <span class="animal-location">@animal.Location</span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code
+{
+    [Parameter, EditorRequired]
+    public AnimalsViewModel ViewModel { get; set; } = default!;
+
+    [Parameter]
+    public string NoResultsText { get; set; } = "No animals found.";
+
+    protected override void OnInitialized() => ViewModel.CurrentViewChanged += OnCurrentViewChanged;
+
+    private async void OnCurrentViewChanged(object? sender, object? view) => await InvokeAsync(StateHasChanged);
+
+    public void Dispose() => ViewModel.CurrentViewChanged -= OnCurrentViewChanged;
+}

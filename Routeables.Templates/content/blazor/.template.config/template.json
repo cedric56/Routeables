@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "cedric56",
+  "classifications": [
+    "Web",
+    "Blazor",
+    "Routeables"
+  ],
+  "identity": "Routeables.Blazor",
+  "name": "Routeables Blazor Server app",
+  "description": "A Blazor Server application with Routeables: a menu, a page that navigates, a page with a route parameter, and the dialog services.",
+  "shortName": "routeables-blazor",
+  "sourceName": "RouteablesApp",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "symbols": {
+    "RepoPath": {
+      "type": "parameter",
+      "datatype": "text",
+      "defaultValue": "",
+      "replaces": "ROUTEABLES_REPO",
+      "description": "Path to a clone of the Routeables repository. Leave empty to use the NuGet packages once they are published; set it (for example ../Routeables) to reference the projects of the clone."
+    }
+  }
+}

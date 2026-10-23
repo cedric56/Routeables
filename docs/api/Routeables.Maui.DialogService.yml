@@ -1,0 +1,1315 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Maui.DialogService
+  commentId: T:Routeables.Maui.DialogService
+  id: DialogService
+  parent: Routeables.Maui
+  children:
+  - Routeables.Maui.DialogService.#ctor(System.IServiceProvider,Routeables.Maui.IDialogWindowContext)
+  - Routeables.Maui.DialogService.DisplayThreeButtons``1(System.String,System.Object,System.String,System.String,System.String,``0,``0,``0)
+  - Routeables.Maui.DialogService.ShowErrorAsync(System.Exception,System.String)
+  - Routeables.Maui.DialogService.ShowOkAbortAsync(System.String,System.String)
+  - Routeables.Maui.DialogService.ShowOkAsync(System.String,System.String)
+  - Routeables.Maui.DialogService.ShowOkCancelAsync(System.String,System.String)
+  - Routeables.Maui.DialogService.ShowYesNoAbortAsync(System.String,System.String)
+  - Routeables.Maui.DialogService.ShowYesNoAsync(System.String,System.String)
+  - Routeables.Maui.DialogService.ShowYesNoCancelAsync(System.String,System.String)
+  langs:
+  - csharp
+  - vb
+  name: DialogService
+  nameWithType: DialogService
+  fullName: Routeables.Maui.DialogService
+  type: Class
+  source:
+    remote:
+      path: Routeables.Maui/Services/DialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: DialogService
+    path: ../Routeables.Maui/Services/DialogService.cs
+    startLine: 4
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  syntax:
+    content: 'public class DialogService : IRouteableDialogService'
+    content.vb: Public Class DialogService Implements IRouteableDialogService
+  inheritance:
+  - System.Object
+  implements:
+  - Routeables.Abstraction.IRouteableDialogService
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: Routeables.Maui.DialogService.#ctor(System.IServiceProvider,Routeables.Maui.IDialogWindowContext)
+  commentId: M:Routeables.Maui.DialogService.#ctor(System.IServiceProvider,Routeables.Maui.IDialogWindowContext)
+  id: '#ctor(System.IServiceProvider,Routeables.Maui.IDialogWindowContext)'
+  parent: Routeables.Maui.DialogService
+  langs:
+  - csharp
+  - vb
+  name: DialogService(IServiceProvider, IDialogWindowContext)
+  nameWithType: DialogService.DialogService(IServiceProvider, IDialogWindowContext)
+  fullName: Routeables.Maui.DialogService.DialogService(System.IServiceProvider, Routeables.Maui.IDialogWindowContext)
+  type: Constructor
+  source:
+    remote:
+      path: Routeables.Maui/Services/DialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: .ctor
+    path: ../Routeables.Maui/Services/DialogService.cs
+    startLine: 4
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  syntax:
+    content: public DialogService(IServiceProvider provider, IDialogWindowContext windowContext)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+    - id: windowContext
+      type: Routeables.Maui.IDialogWindowContext
+    content.vb: Public Sub New(provider As IServiceProvider, windowContext As IDialogWindowContext)
+  overload: Routeables.Maui.DialogService.#ctor*
+  nameWithType.vb: DialogService.New(IServiceProvider, IDialogWindowContext)
+  fullName.vb: Routeables.Maui.DialogService.New(System.IServiceProvider, Routeables.Maui.IDialogWindowContext)
+  name.vb: New(IServiceProvider, IDialogWindowContext)
+- uid: Routeables.Maui.DialogService.ShowErrorAsync(System.Exception,System.String)
+  commentId: M:Routeables.Maui.DialogService.ShowErrorAsync(System.Exception,System.String)
+  id: ShowErrorAsync(System.Exception,System.String)
+  parent: Routeables.Maui.DialogService
+  langs:
+  - csharp
+  - vb
+  name: ShowErrorAsync(Exception, string)
+  nameWithType: DialogService.ShowErrorAsync(Exception, string)
+  fullName: Routeables.Maui.DialogService.ShowErrorAsync(System.Exception, string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Maui/Services/DialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: ShowErrorAsync
+    path: ../Routeables.Maui/Services/DialogService.cs
+    startLine: 12
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  summary: Displays an alert showing the specified exception's message.
+  example: []
+  syntax:
+    content: public Task ShowErrorAsync(Exception ex, string title = "Error")
+    parameters:
+    - id: ex
+      type: System.Exception
+      description: The exception whose message should be displayed.
+    - id: title
+      type: System.String
+      description: The dialog title. Defaults to "Error".
+    return:
+      type: System.Threading.Tasks.Task
+      description: A task representing the asynchronous display operation.
+    content.vb: Public Function ShowErrorAsync(ex As Exception, title As String = "Error") As Task
+  overload: Routeables.Maui.DialogService.ShowErrorAsync*
+  implements:
+  - Routeables.Abstraction.IRouteableDialogService.ShowErrorAsync(System.Exception,System.String)
+  nameWithType.vb: DialogService.ShowErrorAsync(Exception, String)
+  fullName.vb: Routeables.Maui.DialogService.ShowErrorAsync(System.Exception, String)
+  name.vb: ShowErrorAsync(Exception, String)
+- uid: Routeables.Maui.DialogService.ShowOkAsync(System.String,System.String)
+  commentId: M:Routeables.Maui.DialogService.ShowOkAsync(System.String,System.String)
+  id: ShowOkAsync(System.String,System.String)
+  parent: Routeables.Maui.DialogService
+  langs:
+  - csharp
+  - vb
+  name: ShowOkAsync(string, string)
+  nameWithType: DialogService.ShowOkAsync(string, string)
+  fullName: Routeables.Maui.DialogService.ShowOkAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Maui/Services/DialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: ShowOkAsync
+    path: ../Routeables.Maui/Services/DialogService.cs
+    startLine: 22
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  summary: Displays an alert with a single "Ok" button.
+  example: []
+  syntax:
+    content: public Task ShowOkAsync(string message, string title = "Title")
+    parameters:
+    - id: message
+      type: System.String
+      description: The message to display.
+    - id: title
+      type: System.String
+      description: The dialog title. Defaults to "Title".
+    return:
+      type: System.Threading.Tasks.Task
+      description: A task representing the asynchronous display operation.
+    content.vb: Public Function ShowOkAsync(message As String, title As String = "Title") As Task
+  overload: Routeables.Maui.DialogService.ShowOkAsync*
+  implements:
+  - Routeables.Abstraction.IRouteableDialogService.ShowOkAsync(System.String,System.String)
+  nameWithType.vb: DialogService.ShowOkAsync(String, String)
+  fullName.vb: Routeables.Maui.DialogService.ShowOkAsync(String, String)
+  name.vb: ShowOkAsync(String, String)
+- uid: Routeables.Maui.DialogService.ShowYesNoAsync(System.String,System.String)
+  commentId: M:Routeables.Maui.DialogService.ShowYesNoAsync(System.String,System.String)
+  id: ShowYesNoAsync(System.String,System.String)
+  parent: Routeables.Maui.DialogService
+  langs:
+  - csharp
+  - vb
+  name: ShowYesNoAsync(string, string)
+  nameWithType: DialogService.ShowYesNoAsync(string, string)
+  fullName: Routeables.Maui.DialogService.ShowYesNoAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Maui/Services/DialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: ShowYesNoAsync
+    path: ../Routeables.Maui/Services/DialogService.cs
+    startLine: 32
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  summary: Displays an alert with "Yes" and "No" buttons.
+  example: []
+  syntax:
+    content: public Task<bool> ShowYesNoAsync(string message, string title = "Title")
+    parameters:
+    - id: message
+      type: System.String
+      description: The message to display.
+    - id: title
+      type: System.String
+      description: The dialog title. Defaults to "Title".
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the user selected "Yes"; otherwise <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.
+    content.vb: Public Function ShowYesNoAsync(message As String, title As String = "Title") As Task(Of Boolean)
+  overload: Routeables.Maui.DialogService.ShowYesNoAsync*
+  implements:
+  - Routeables.Abstraction.IRouteableDialogService.ShowYesNoAsync(System.String,System.String)
+  nameWithType.vb: DialogService.ShowYesNoAsync(String, String)
+  fullName.vb: Routeables.Maui.DialogService.ShowYesNoAsync(String, String)
+  name.vb: ShowYesNoAsync(String, String)
+- uid: Routeables.Maui.DialogService.ShowOkCancelAsync(System.String,System.String)
+  commentId: M:Routeables.Maui.DialogService.ShowOkCancelAsync(System.String,System.String)
+  id: ShowOkCancelAsync(System.String,System.String)
+  parent: Routeables.Maui.DialogService
+  langs:
+  - csharp
+  - vb
+  name: ShowOkCancelAsync(string, string)
+  nameWithType: DialogService.ShowOkCancelAsync(string, string)
+  fullName: Routeables.Maui.DialogService.ShowOkCancelAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Maui/Services/DialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: ShowOkCancelAsync
+    path: ../Routeables.Maui/Services/DialogService.cs
+    startLine: 42
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  summary: Displays an alert with "Ok" and "Cancel" buttons.
+  example: []
+  syntax:
+    content: public Task<bool> ShowOkCancelAsync(string message, string title = "Title")
+    parameters:
+    - id: message
+      type: System.String
+      description: The message to display.
+    - id: title
+      type: System.String
+      description: The dialog title. Defaults to "Title".
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the user selected "Ok"; otherwise <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.
+    content.vb: Public Function ShowOkCancelAsync(message As String, title As String = "Title") As Task(Of Boolean)
+  overload: Routeables.Maui.DialogService.ShowOkCancelAsync*
+  implements:
+  - Routeables.Abstraction.IRouteableDialogService.ShowOkCancelAsync(System.String,System.String)
+  nameWithType.vb: DialogService.ShowOkCancelAsync(String, String)
+  fullName.vb: Routeables.Maui.DialogService.ShowOkCancelAsync(String, String)
+  name.vb: ShowOkCancelAsync(String, String)
+- uid: Routeables.Maui.DialogService.ShowOkAbortAsync(System.String,System.String)
+  commentId: M:Routeables.Maui.DialogService.ShowOkAbortAsync(System.String,System.String)
+  id: ShowOkAbortAsync(System.String,System.String)
+  parent: Routeables.Maui.DialogService
+  langs:
+  - csharp
+  - vb
+  name: ShowOkAbortAsync(string, string)
+  nameWithType: DialogService.ShowOkAbortAsync(string, string)
+  fullName: Routeables.Maui.DialogService.ShowOkAbortAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Maui/Services/DialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: ShowOkAbortAsync
+    path: ../Routeables.Maui/Services/DialogService.cs
+    startLine: 52
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  summary: Displays an alert with "Ok" and "Abort" buttons.
+  example: []
+  syntax:
+    content: public Task<bool> ShowOkAbortAsync(string message, string title = "Title")
+    parameters:
+    - id: message
+      type: System.String
+      description: The message to display.
+    - id: title
+      type: System.String
+      description: The dialog title. Defaults to "Title".
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the user selected "Ok"; otherwise <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.
+    content.vb: Public Function ShowOkAbortAsync(message As String, title As String = "Title") As Task(Of Boolean)
+  overload: Routeables.Maui.DialogService.ShowOkAbortAsync*
+  implements:
+  - Routeables.Abstraction.IRouteableDialogService.ShowOkAbortAsync(System.String,System.String)
+  nameWithType.vb: DialogService.ShowOkAbortAsync(String, String)
+  fullName.vb: Routeables.Maui.DialogService.ShowOkAbortAsync(String, String)
+  name.vb: ShowOkAbortAsync(String, String)
+- uid: Routeables.Maui.DialogService.ShowYesNoCancelAsync(System.String,System.String)
+  commentId: M:Routeables.Maui.DialogService.ShowYesNoCancelAsync(System.String,System.String)
+  id: ShowYesNoCancelAsync(System.String,System.String)
+  parent: Routeables.Maui.DialogService
+  langs:
+  - csharp
+  - vb
+  name: ShowYesNoCancelAsync(string, string)
+  nameWithType: DialogService.ShowYesNoCancelAsync(string, string)
+  fullName: Routeables.Maui.DialogService.ShowYesNoCancelAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Maui/Services/DialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: ShowYesNoCancelAsync
+    path: ../Routeables.Maui/Services/DialogService.cs
+    startLine: 62
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  summary: Displays an alert with "Yes", "No", and "Cancel" buttons.
+  example: []
+  syntax:
+    content: public Task<int> ShowYesNoCancelAsync(string message, string title = "Title")
+    parameters:
+    - id: message
+      type: System.String
+      description: The message to display.
+    - id: title
+      type: System.String
+      description: The dialog title. Defaults to "Title".
+    return:
+      type: System.Threading.Tasks.Task{System.Int32}
+      description: 0 if "Yes" was selected, 1 if "No" was selected, or 2 if "Cancel" was selected.
+    content.vb: Public Function ShowYesNoCancelAsync(message As String, title As String = "Title") As Task(Of Integer)
+  overload: Routeables.Maui.DialogService.ShowYesNoCancelAsync*
+  implements:
+  - Routeables.Abstraction.IRouteableDialogService.ShowYesNoCancelAsync(System.String,System.String)
+  nameWithType.vb: DialogService.ShowYesNoCancelAsync(String, String)
+  fullName.vb: Routeables.Maui.DialogService.ShowYesNoCancelAsync(String, String)
+  name.vb: ShowYesNoCancelAsync(String, String)
+- uid: Routeables.Maui.DialogService.ShowYesNoAbortAsync(System.String,System.String)
+  commentId: M:Routeables.Maui.DialogService.ShowYesNoAbortAsync(System.String,System.String)
+  id: ShowYesNoAbortAsync(System.String,System.String)
+  parent: Routeables.Maui.DialogService
+  langs:
+  - csharp
+  - vb
+  name: ShowYesNoAbortAsync(string, string)
+  nameWithType: DialogService.ShowYesNoAbortAsync(string, string)
+  fullName: Routeables.Maui.DialogService.ShowYesNoAbortAsync(string, string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Maui/Services/DialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: ShowYesNoAbortAsync
+    path: ../Routeables.Maui/Services/DialogService.cs
+    startLine: 71
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  summary: Displays an alert with "Yes", "No", and "Abort" buttons.
+  example: []
+  syntax:
+    content: public Task<int> ShowYesNoAbortAsync(string message, string title = "Title")
+    parameters:
+    - id: message
+      type: System.String
+      description: The message to display.
+    - id: title
+      type: System.String
+      description: The dialog title. Defaults to "Title".
+    return:
+      type: System.Threading.Tasks.Task{System.Int32}
+      description: 0 if "Yes" was selected, 1 if "No" was selected, or 2 if "Abort" was selected.
+    content.vb: Public Function ShowYesNoAbortAsync(message As String, title As String = "Title") As Task(Of Integer)
+  overload: Routeables.Maui.DialogService.ShowYesNoAbortAsync*
+  implements:
+  - Routeables.Abstraction.IRouteableDialogService.ShowYesNoAbortAsync(System.String,System.String)
+  nameWithType.vb: DialogService.ShowYesNoAbortAsync(String, String)
+  fullName.vb: Routeables.Maui.DialogService.ShowYesNoAbortAsync(String, String)
+  name.vb: ShowYesNoAbortAsync(String, String)
+- uid: Routeables.Maui.DialogService.DisplayThreeButtons``1(System.String,System.Object,System.String,System.String,System.String,``0,``0,``0)
+  commentId: M:Routeables.Maui.DialogService.DisplayThreeButtons``1(System.String,System.Object,System.String,System.String,System.String,``0,``0,``0)
+  id: DisplayThreeButtons``1(System.String,System.Object,System.String,System.String,System.String,``0,``0,``0)
+  parent: Routeables.Maui.DialogService
+  langs:
+  - csharp
+  - vb
+  name: DisplayThreeButtons<T>(string?, object?, string?, string?, string?, T, T, T)
+  nameWithType: DialogService.DisplayThreeButtons<T>(string?, object?, string?, string?, string?, T, T, T)
+  fullName: Routeables.Maui.DialogService.DisplayThreeButtons<T>(string?, object?, string?, string?, string?, T, T, T)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Maui/Services/DialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: DisplayThreeButtons
+    path: ../Routeables.Maui/Services/DialogService.cs
+    startLine: 91
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  summary: >-
+    Displays a platform-native dialog with up to three buttons, using the appropriate native API
+
+    for the current platform (Android alert dialog, WinUI content dialog, or an iOS/Mac Catalyst
+
+    alert controller or form-sheet view controller), and awaits the user's selection.
+  example: []
+  syntax:
+    content: public Task<T?> DisplayThreeButtons<T>(string? title, object? content, string? primaryButtonText, string? secondaryButtonText, string? closeButtonText, T primaryResult, T secondaryResult, T closeResult)
+    parameters:
+    - id: title
+      type: System.String
+      description: The dialog title.
+    - id: content
+      type: System.Object
+      description: 'The dialog content: a message string, or a view/element to embed.'
+    - id: primaryButtonText
+      type: System.String
+      description: The primary button's text, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to omit it.
+    - id: secondaryButtonText
+      type: System.String
+      description: The secondary button's text, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to omit it.
+    - id: closeButtonText
+      type: System.String
+      description: The close button's text, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to omit it.
+    - id: primaryResult
+      type: '{T}'
+      description: The result returned if the primary button is selected.
+    - id: secondaryResult
+      type: '{T}'
+      description: The result returned if the secondary button is selected.
+    - id: closeResult
+      type: '{T}'
+      description: The result returned if the close button is selected.
+    typeParameters:
+    - id: T
+      description: The result type associated with each button.
+    return:
+      type: System.Threading.Tasks.Task{{T}}
+      description: The result associated with the button the user selected.
+    content.vb: Public Function DisplayThreeButtons(Of T)(title As String, content As Object, primaryButtonText As String, secondaryButtonText As String, closeButtonText As String, primaryResult As T, secondaryResult As T, closeResult As T) As Task(Of T)
+  overload: Routeables.Maui.DialogService.DisplayThreeButtons*
+  exceptions:
+  - type: System.NotImplementedException
+    commentId: T:System.NotImplementedException
+    description: Thrown on platforms without a supported native dialog implementation, or for unsupported content types.
+  nameWithType.vb: DialogService.DisplayThreeButtons(Of T)(String, Object, String, String, String, T, T, T)
+  fullName.vb: Routeables.Maui.DialogService.DisplayThreeButtons(Of T)(String, Object, String, String, String, T, T, T)
+  name.vb: DisplayThreeButtons(Of T)(String, Object, String, String, String, T, T, T)
+references:
+- uid: Routeables.Maui
+  commentId: N:Routeables.Maui
+  name: Routeables.Maui
+  nameWithType: Routeables.Maui
+  fullName: Routeables.Maui
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Maui
+    name: Maui
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Maui
+    name: Maui
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Routeables.Abstraction.IRouteableDialogService
+  commentId: T:Routeables.Abstraction.IRouteableDialogService
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableDialogService.html
+  name: IRouteableDialogService
+  nameWithType: IRouteableDialogService
+  fullName: Routeables.Abstraction.IRouteableDialogService
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Maui.DialogService.#ctor*
+  commentId: Overload:Routeables.Maui.DialogService.#ctor
+  href: Routeables.Maui.DialogService.html#Routeables_Maui_DialogService__ctor_System_IServiceProvider_Routeables_Maui_IDialogWindowContext_
+  name: DialogService
+  nameWithType: DialogService.DialogService
+  fullName: Routeables.Maui.DialogService.DialogService
+  nameWithType.vb: DialogService.New
+  fullName.vb: Routeables.Maui.DialogService.New
+  name.vb: New
+- uid: System.IServiceProvider
+  commentId: T:System.IServiceProvider
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  name: IServiceProvider
+  nameWithType: IServiceProvider
+  fullName: System.IServiceProvider
+- uid: Routeables.Maui.IDialogWindowContext
+  commentId: T:Routeables.Maui.IDialogWindowContext
+  parent: Routeables.Maui
+  href: Routeables.Maui.IDialogWindowContext.html
+  name: IDialogWindowContext
+  nameWithType: IDialogWindowContext
+  fullName: Routeables.Maui.IDialogWindowContext
+- uid: Routeables.Maui.DialogService.ShowErrorAsync*
+  commentId: Overload:Routeables.Maui.DialogService.ShowErrorAsync
+  href: Routeables.Maui.DialogService.html#Routeables_Maui_DialogService_ShowErrorAsync_System_Exception_System_String_
+  name: ShowErrorAsync
+  nameWithType: DialogService.ShowErrorAsync
+  fullName: Routeables.Maui.DialogService.ShowErrorAsync
+- uid: Routeables.Abstraction.IRouteableDialogService.ShowErrorAsync(System.Exception,System.String)
+  commentId: M:Routeables.Abstraction.IRouteableDialogService.ShowErrorAsync(System.Exception,System.String)
+  parent: Routeables.Abstraction.IRouteableDialogService
+  isExternal: true
+  href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowErrorAsync_System_Exception_System_String_
+  name: ShowErrorAsync(Exception, string)
+  nameWithType: IRouteableDialogService.ShowErrorAsync(Exception, string)
+  fullName: Routeables.Abstraction.IRouteableDialogService.ShowErrorAsync(System.Exception, string)
+  nameWithType.vb: IRouteableDialogService.ShowErrorAsync(Exception, String)
+  fullName.vb: Routeables.Abstraction.IRouteableDialogService.ShowErrorAsync(System.Exception, String)
+  name.vb: ShowErrorAsync(Exception, String)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowErrorAsync(System.Exception,System.String)
+    name: ShowErrorAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowErrorAsync_System_Exception_System_String_
+  - name: (
+  - uid: System.Exception
+    name: Exception
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.exception
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowErrorAsync(System.Exception,System.String)
+    name: ShowErrorAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowErrorAsync_System_Exception_System_String_
+  - name: (
+  - uid: System.Exception
+    name: Exception
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.exception
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Exception
+  commentId: T:System.Exception
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.exception
+  name: Exception
+  nameWithType: Exception
+  fullName: System.Exception
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: Routeables.Maui.DialogService.ShowOkAsync*
+  commentId: Overload:Routeables.Maui.DialogService.ShowOkAsync
+  href: Routeables.Maui.DialogService.html#Routeables_Maui_DialogService_ShowOkAsync_System_String_System_String_
+  name: ShowOkAsync
+  nameWithType: DialogService.ShowOkAsync
+  fullName: Routeables.Maui.DialogService.ShowOkAsync
+- uid: Routeables.Abstraction.IRouteableDialogService.ShowOkAsync(System.String,System.String)
+  commentId: M:Routeables.Abstraction.IRouteableDialogService.ShowOkAsync(System.String,System.String)
+  parent: Routeables.Abstraction.IRouteableDialogService
+  isExternal: true
+  href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowOkAsync_System_String_System_String_
+  name: ShowOkAsync(string, string)
+  nameWithType: IRouteableDialogService.ShowOkAsync(string, string)
+  fullName: Routeables.Abstraction.IRouteableDialogService.ShowOkAsync(string, string)
+  nameWithType.vb: IRouteableDialogService.ShowOkAsync(String, String)
+  fullName.vb: Routeables.Abstraction.IRouteableDialogService.ShowOkAsync(String, String)
+  name.vb: ShowOkAsync(String, String)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowOkAsync(System.String,System.String)
+    name: ShowOkAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowOkAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowOkAsync(System.String,System.String)
+    name: ShowOkAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowOkAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: Routeables.Maui.DialogService.ShowYesNoAsync*
+  commentId: Overload:Routeables.Maui.DialogService.ShowYesNoAsync
+  href: Routeables.Maui.DialogService.html#Routeables_Maui_DialogService_ShowYesNoAsync_System_String_System_String_
+  name: ShowYesNoAsync
+  nameWithType: DialogService.ShowYesNoAsync
+  fullName: Routeables.Maui.DialogService.ShowYesNoAsync
+- uid: Routeables.Abstraction.IRouteableDialogService.ShowYesNoAsync(System.String,System.String)
+  commentId: M:Routeables.Abstraction.IRouteableDialogService.ShowYesNoAsync(System.String,System.String)
+  parent: Routeables.Abstraction.IRouteableDialogService
+  isExternal: true
+  href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowYesNoAsync_System_String_System_String_
+  name: ShowYesNoAsync(string, string)
+  nameWithType: IRouteableDialogService.ShowYesNoAsync(string, string)
+  fullName: Routeables.Abstraction.IRouteableDialogService.ShowYesNoAsync(string, string)
+  nameWithType.vb: IRouteableDialogService.ShowYesNoAsync(String, String)
+  fullName.vb: Routeables.Abstraction.IRouteableDialogService.ShowYesNoAsync(String, String)
+  name.vb: ShowYesNoAsync(String, String)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowYesNoAsync(System.String,System.String)
+    name: ShowYesNoAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowYesNoAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowYesNoAsync(System.String,System.String)
+    name: ShowYesNoAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowYesNoAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Maui.DialogService.ShowOkCancelAsync*
+  commentId: Overload:Routeables.Maui.DialogService.ShowOkCancelAsync
+  href: Routeables.Maui.DialogService.html#Routeables_Maui_DialogService_ShowOkCancelAsync_System_String_System_String_
+  name: ShowOkCancelAsync
+  nameWithType: DialogService.ShowOkCancelAsync
+  fullName: Routeables.Maui.DialogService.ShowOkCancelAsync
+- uid: Routeables.Abstraction.IRouteableDialogService.ShowOkCancelAsync(System.String,System.String)
+  commentId: M:Routeables.Abstraction.IRouteableDialogService.ShowOkCancelAsync(System.String,System.String)
+  parent: Routeables.Abstraction.IRouteableDialogService
+  isExternal: true
+  href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowOkCancelAsync_System_String_System_String_
+  name: ShowOkCancelAsync(string, string)
+  nameWithType: IRouteableDialogService.ShowOkCancelAsync(string, string)
+  fullName: Routeables.Abstraction.IRouteableDialogService.ShowOkCancelAsync(string, string)
+  nameWithType.vb: IRouteableDialogService.ShowOkCancelAsync(String, String)
+  fullName.vb: Routeables.Abstraction.IRouteableDialogService.ShowOkCancelAsync(String, String)
+  name.vb: ShowOkCancelAsync(String, String)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowOkCancelAsync(System.String,System.String)
+    name: ShowOkCancelAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowOkCancelAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowOkCancelAsync(System.String,System.String)
+    name: ShowOkCancelAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowOkCancelAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: Routeables.Maui.DialogService.ShowOkAbortAsync*
+  commentId: Overload:Routeables.Maui.DialogService.ShowOkAbortAsync
+  href: Routeables.Maui.DialogService.html#Routeables_Maui_DialogService_ShowOkAbortAsync_System_String_System_String_
+  name: ShowOkAbortAsync
+  nameWithType: DialogService.ShowOkAbortAsync
+  fullName: Routeables.Maui.DialogService.ShowOkAbortAsync
+- uid: Routeables.Abstraction.IRouteableDialogService.ShowOkAbortAsync(System.String,System.String)
+  commentId: M:Routeables.Abstraction.IRouteableDialogService.ShowOkAbortAsync(System.String,System.String)
+  parent: Routeables.Abstraction.IRouteableDialogService
+  isExternal: true
+  href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowOkAbortAsync_System_String_System_String_
+  name: ShowOkAbortAsync(string, string)
+  nameWithType: IRouteableDialogService.ShowOkAbortAsync(string, string)
+  fullName: Routeables.Abstraction.IRouteableDialogService.ShowOkAbortAsync(string, string)
+  nameWithType.vb: IRouteableDialogService.ShowOkAbortAsync(String, String)
+  fullName.vb: Routeables.Abstraction.IRouteableDialogService.ShowOkAbortAsync(String, String)
+  name.vb: ShowOkAbortAsync(String, String)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowOkAbortAsync(System.String,System.String)
+    name: ShowOkAbortAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowOkAbortAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowOkAbortAsync(System.String,System.String)
+    name: ShowOkAbortAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowOkAbortAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: Routeables.Maui.DialogService.ShowYesNoCancelAsync*
+  commentId: Overload:Routeables.Maui.DialogService.ShowYesNoCancelAsync
+  href: Routeables.Maui.DialogService.html#Routeables_Maui_DialogService_ShowYesNoCancelAsync_System_String_System_String_
+  name: ShowYesNoCancelAsync
+  nameWithType: DialogService.ShowYesNoCancelAsync
+  fullName: Routeables.Maui.DialogService.ShowYesNoCancelAsync
+- uid: Routeables.Abstraction.IRouteableDialogService.ShowYesNoCancelAsync(System.String,System.String)
+  commentId: M:Routeables.Abstraction.IRouteableDialogService.ShowYesNoCancelAsync(System.String,System.String)
+  parent: Routeables.Abstraction.IRouteableDialogService
+  isExternal: true
+  href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowYesNoCancelAsync_System_String_System_String_
+  name: ShowYesNoCancelAsync(string, string)
+  nameWithType: IRouteableDialogService.ShowYesNoCancelAsync(string, string)
+  fullName: Routeables.Abstraction.IRouteableDialogService.ShowYesNoCancelAsync(string, string)
+  nameWithType.vb: IRouteableDialogService.ShowYesNoCancelAsync(String, String)
+  fullName.vb: Routeables.Abstraction.IRouteableDialogService.ShowYesNoCancelAsync(String, String)
+  name.vb: ShowYesNoCancelAsync(String, String)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowYesNoCancelAsync(System.String,System.String)
+    name: ShowYesNoCancelAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowYesNoCancelAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowYesNoCancelAsync(System.String,System.String)
+    name: ShowYesNoCancelAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowYesNoCancelAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.Tasks.Task{System.Int32}
+  commentId: T:System.Threading.Tasks.Task{System.Int32}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<int>
+  nameWithType: Task<int>
+  fullName: System.Threading.Tasks.Task<int>
+  nameWithType.vb: Task(Of Integer)
+  fullName.vb: System.Threading.Tasks.Task(Of Integer)
+  name.vb: Task(Of Integer)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: Routeables.Maui.DialogService.ShowYesNoAbortAsync*
+  commentId: Overload:Routeables.Maui.DialogService.ShowYesNoAbortAsync
+  href: Routeables.Maui.DialogService.html#Routeables_Maui_DialogService_ShowYesNoAbortAsync_System_String_System_String_
+  name: ShowYesNoAbortAsync
+  nameWithType: DialogService.ShowYesNoAbortAsync
+  fullName: Routeables.Maui.DialogService.ShowYesNoAbortAsync
+- uid: Routeables.Abstraction.IRouteableDialogService.ShowYesNoAbortAsync(System.String,System.String)
+  commentId: M:Routeables.Abstraction.IRouteableDialogService.ShowYesNoAbortAsync(System.String,System.String)
+  parent: Routeables.Abstraction.IRouteableDialogService
+  isExternal: true
+  href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowYesNoAbortAsync_System_String_System_String_
+  name: ShowYesNoAbortAsync(string, string)
+  nameWithType: IRouteableDialogService.ShowYesNoAbortAsync(string, string)
+  fullName: Routeables.Abstraction.IRouteableDialogService.ShowYesNoAbortAsync(string, string)
+  nameWithType.vb: IRouteableDialogService.ShowYesNoAbortAsync(String, String)
+  fullName.vb: Routeables.Abstraction.IRouteableDialogService.ShowYesNoAbortAsync(String, String)
+  name.vb: ShowYesNoAbortAsync(String, String)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowYesNoAbortAsync(System.String,System.String)
+    name: ShowYesNoAbortAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowYesNoAbortAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableDialogService.ShowYesNoAbortAsync(System.String,System.String)
+    name: ShowYesNoAbortAsync
+    href: Routeables.Abstraction.IRouteableDialogService.html#Routeables_Abstraction_IRouteableDialogService_ShowYesNoAbortAsync_System_String_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.NotImplementedException
+  commentId: T:System.NotImplementedException
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.notimplementedexception
+  name: NotImplementedException
+  nameWithType: NotImplementedException
+  fullName: System.NotImplementedException
+- uid: Routeables.Maui.DialogService.DisplayThreeButtons*
+  commentId: Overload:Routeables.Maui.DialogService.DisplayThreeButtons
+  href: Routeables.Maui.DialogService.html#Routeables_Maui_DialogService_DisplayThreeButtons__1_System_String_System_Object_System_String_System_String_System_String___0___0___0_
+  name: DisplayThreeButtons
+  nameWithType: DialogService.DisplayThreeButtons
+  fullName: Routeables.Maui.DialogService.DisplayThreeButtons
+- uid: '{T}'
+  commentId: '!:T'
+  definition: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: System.Threading.Tasks.Task{{T}}
+  commentId: T:System.Threading.Tasks.Task{``0}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<T>
+  nameWithType: Task<T>
+  fullName: System.Threading.Tasks.Task<T>
+  nameWithType.vb: Task(Of T)
+  fullName.vb: System.Threading.Tasks.Task(Of T)
+  name.vb: Task(Of T)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: T
+  name: T
+  nameWithType: T
+  fullName: T

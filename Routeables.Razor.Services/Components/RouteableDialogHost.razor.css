@@ -1,0 +1,56 @@
+.rt-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.rt-dialog {
+    box-sizing: border-box;
+    min-width: min(320px, 90vw);
+    max-width: min(560px, 90vw);
+    max-height: 90vh;
+    overflow: auto;
+    padding: 20px 24px;
+    border-radius: 8px;
+    background: var(--rt-dialog-background, Canvas);
+    color: var(--rt-dialog-color, CanvasText);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    outline: none;
+}
+
+.rt-title {
+    margin: 0 0 12px;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.rt-message {
+    margin: 0 0 20px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.rt-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.rt-button {
+    padding: 6px 16px;
+    border: 1px solid var(--rt-dialog-accent, #594ae2);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--rt-dialog-accent, #594ae2);
+    font: inherit;
+    cursor: pointer;
+}
+
+.rt-button.rt-primary {
+    background: var(--rt-dialog-accent, #594ae2);
+    color: #fff;
+}

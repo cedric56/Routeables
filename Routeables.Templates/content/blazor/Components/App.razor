@@ -1,0 +1,24 @@
+@using Microsoft.AspNetCore.Components.Web
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <link rel="stylesheet" href="@Assets["RouteablesApp.styles.css"]" />
+    <link href="_content/Routeables.Razor/theme.css" rel="stylesheet" />
+    <ImportMap @rendermode="_mode" />
+    <HeadOutlet @rendermode="_mode" />
+</head>
+
+<body>
+    <Routes @rendermode="_mode" />
+    <script src="_framework/blazor.web.js"></script>
+</body>
+
+</html>
+@code {
+    private static readonly IComponentRenderMode _mode =
+        new InteractiveServerRenderMode(prerender: false);
+}

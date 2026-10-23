@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+  </PropertyGroup>
+
+  <ItemGroup>
+<!--#if (RepoPath != "") -->
+    <ProjectReference Include="ROUTEABLES_REPO/Routeables.Razor/Routeables.Razor.csproj" />
+    <ProjectReference Include="ROUTEABLES_REPO/Routeables.Razor.Services/Routeables.Razor.Services.csproj" />
+    <ProjectReference Include="ROUTEABLES_REPO/Routeables.Generated/Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+<!--#else -->
+    <PackageReference Include="Routeables.Razor" Version="1.0.0-preview.1" />
+    <PackageReference Include="Routeables.Razor.Services" Version="1.0.0-preview.1" />
+    <PackageReference Include="Routeables.Generated" Version="1.0.0-preview.1" PrivateAssets="all" />
+<!--#endif -->
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,8 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Xaminals.ViewModels"
+             xmlns:local="using:XAnimals.Avalonia"
+             x:Class="XAnimals.Avalonia.MonkeysDetailView"
+             x:DataType="vm:MonkeyDetailViewModel">
+    <local:AnimalDetail />
+</UserControl>

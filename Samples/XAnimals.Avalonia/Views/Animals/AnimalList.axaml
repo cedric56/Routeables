@@ -1,0 +1,63 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:XAnimals.ViewModels;assembly=XAnimals.ViewModels"
+             xmlns:models="using:XAminals.Models"
+             xmlns:viewmodels="using:XAnimals.ViewModels"
+             xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             x:Class="XAnimals.Avalonia.AnimalList"
+             x:DataType="vm:AnimalsViewModel"
+             Background="{DynamicResource AnPaper}">
+
+    <Grid>
+        <!-- The detail view, once the router has navigated to it: it fades in over 220 ms. -->
+        <TransitioningContentControl Content="{Binding CurrentView}"
+                                     IsVisible="{Binding CurrentView, Converter={x:Static ObjectConverters.IsNotNull}}">
+            <TransitioningContentControl.PageTransition>
+                <CrossFade Duration="0:0:0.22" />
+            </TransitioningContentControl.PageTransition>
+        </TransitioningContentControl>
+
+        <!-- The list, while no detail is shown. -->
+        <DockPanel Margin="20,24,20,16"
+                   IsVisible="{Binding CurrentView, Converter={x:Static ObjectConverters.IsNull}}">
+
+            <TextBox Classes="an"
+                     DockPanel.Dock="Top"
+                     Margin="0,0,0,16"
+                     PlaceholderText="Enter search term"
+                     Text="{Binding SearchText, Mode=TwoWay}" />
+
+            <TextBlock x:Name="noResults"
+                       DockPanel.Dock="Top"
+                       Margin="4,8"
+                       Foreground="{DynamicResource AnMuted}"
+                       IsVisible="{Binding !FilteredAnimals.Count}" />
+
+            <ListBox x:Name="lb"
+                     Classes="an"
+                     Background="Transparent"
+                     ItemsSource="{Binding FilteredAnimals}"
+                     SelectedItem="{Binding SelectedAnimal}"
+                     SelectionChanged="ListBox_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="models:Animal">
+                        <Grid ColumnDefinitions="56,*" ColumnSpacing="16">
+                            <Border Classes="arch" Width="56" Height="68" CornerRadius="28,28,10,10">
+                                <Image Stretch="UniformToFill"
+                                       ail:ImageLoader.Source="{Binding ThumbnailUrl}" />
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                <TextBlock Text="{Binding Name}"
+                                           FontFamily="{DynamicResource AnDisplayFont}"
+                                           FontSize="20" />
+                                <TextBlock Text="{Binding Location}"
+                                           Opacity="0.7"
+                                           FontSize="14" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+    </Grid>
+</UserControl>

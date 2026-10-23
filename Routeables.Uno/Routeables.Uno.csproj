@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- A view of the application that derives from a type of this library needs a Java peer (Android) and a registration (iOS) for that type:
+         they are generated only for a build that references the platform, so the library is built for each head and not only for net10.0.
+         The CI has none of these workloads: CiBuild keeps net10.0. -->
+    <TargetFrameworks>net10.0;net10.0-android;net10.0-ios</TargetFrameworks>
+    <TargetFrameworks Condition="'$(CiBuild)' == 'true'">net10.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Not turned on yet: this project could not be built where it was written. Switch it on, with IsAotCompatible, once the CI is green. -->
+    <IsAotCompatible>true</IsAotCompatible>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Routeables.Uno</PackageId>
+    <Version>1.0.0-preview.1</Version>
+    <Description>Routeables for Uno Platform: view-model-first routing, routed views and regions.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Test" />
+    <InternalsVisibleTo Include="Routeables.Uno.Services" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The net10.0 assembly of Uno.WinUI is the reference one: a library built on it runs on every head (Skia, WebAssembly, mobile). -->
+    <PackageReference Include="Uno.WinUI" Version="6.7.135" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Regions\Routeables.Regions.csproj" />
+    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" />
+    <ProjectReference Include="..\Routeables.Services\Routeables.Services.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Disables Avalonia's XAML compilation / build tasks for the test project if not strictly needed -->
+    <EnableAvaloniaXamlCompilation>false</EnableAvaloniaXamlCompilation>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="10.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageReference Include="NSubstitute" Version="6.2.0" />
+    <PackageReference Include="xunit.v3" Version="4.0.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Locking\Routeables.Locking.csproj" />
+    <ProjectReference Include="..\Routeables.Regions\Routeables.Regions.csproj" />
+    <ProjectReference Include="..\Routeables.Segments\Routeables.Segments.csproj" />
+    <ProjectReference Include="..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
+    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" />
+    <ProjectReference Include="..\Routeables.Generated\Routeables.Generated.csproj" />
+    <ProjectReference Include="..\Routeables.Routing\Routeables.Routing.csproj" />
+    <ProjectReference Include="..\Routeables.Services\Routeables.Services.csproj" />
+    <ProjectReference Include="..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
+    <ProjectReference Include="..\Routeables.Avalonia.Services\Routeables.Avalonia.Services.csproj" />
+    <ProjectReference Include="..\Routeables.Maui\Routeables.Maui.csproj" />
+    <ProjectReference Include="..\Routeables.Maui.Services\Routeables.Maui.Services.csproj" />
+    <ProjectReference Include="..\Routeables.Razor\Routeables.Razor.csproj" />
+    <ProjectReference Include="..\Routeables.Razor.Services\Routeables.Razor.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

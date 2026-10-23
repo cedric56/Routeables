@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:routeables="using:Routeables.Avalonia"
+             xmlns:vm="using:XAnimals.ViewModels"
+             x:Class="XAnimals.Avalonia.RegionsView"
+             x:DataType="vm:RegionsViewModel"
+             Background="{DynamicResource AnPaper}">
+
+    <!-- An application of its own: four zones, four routers. Each zone only has a name, and receives whatever the router of that
+         region displays. Every page in it navigates its own region: nothing here assigns a view to a zone. -->
+
+    <Grid x:Name="Layout" RowDefinitions="Auto,*,Auto" ColumnDefinitions="230,*">
+        <routeables:RouteableRegion Grid.ColumnSpan="2" Region="shell-header" HorizontalContentAlignment="Stretch" />
+        <Border Grid.Row="1" Background="{DynamicResource AnLichen}" Opacity="0.95">
+            <DockPanel>
+                <Button x:Name="CollapseButton" DockPanel.Dock="Top" Classes="credits" Margin="6" Padding="10,2" HorizontalAlignment="Right"
+                        Content="«" Click="OnCollapseClick" ToolTip.Tip="Reduce the panel"
+                        AutomationProperties.Name="Reduce the panel" />
+                <!-- One navigation made of segments: the logo in the content, the author in the footer, the copyright in the left panel. -->
+                <Button x:Name="CreditsButton" DockPanel.Dock="Bottom" Classes="credits" Margin="10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Content="{Binding CreditsText}" Command="{Binding CreditsCommand}" />
+                <ScrollViewer x:Name="LeftScroll">
+                    <routeables:RouteableRegion Region="shell-left" HorizontalContentAlignment="Stretch" />
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+        <routeables:RouteableRegion Grid.Row="1" Grid.Column="1" Region="shell-content"
+                                    HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <routeables:RouteableRegion.PageTransition>
+                <CrossFade Duration="0:0:0.18" />
+            </routeables:RouteableRegion.PageTransition>
+        </routeables:RouteableRegion>
+        <routeables:RouteableRegion Grid.Row="2" Grid.ColumnSpan="2" Region="shell-footer" HorizontalContentAlignment="Stretch" />
+    </Grid>
+</UserControl>

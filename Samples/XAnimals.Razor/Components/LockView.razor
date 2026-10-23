@@ -1,0 +1,48 @@
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@attribute [RouteableView(typeof(LockViewModel), route: "lock")]
+@inherits RouteableFor<LockView, LockViewModel>
+
+<PageTitle>Lock</PageTitle>
+
+<div class="about-page">
+    <div>
+        <h1>
+            <span class="app-name">Lock the menu</span>
+        </h1>
+        <p>
+            The page publishes a lock message; the menu entries are disabled until it publishes the unlock one.
+        </p>
+    </div>
+
+    <section class="about-group">
+        <h2>Menu</h2>
+        <div class="actions">
+            <button @onclick="ViewModel.LockAsync" disabled="@(!ViewModel.CanLock)">Lock</button>
+            <button @onclick="ViewModel.UnlockAsync" disabled="@(!ViewModel.CanUnlock)">Unlock</button>
+            <button @onclick="ViewModel.LockForAsync" disabled="@(!ViewModel.CanLock)">Lock for @LockViewModel.Seconds seconds</button>
+        </div>
+    </section>
+
+    <p class="about-result" role="status">@ViewModel.Status</p>
+</div>
+
+@code {
+    protected override void OnSubscribe()
+    {
+        ViewModel.PropertyChanged += OnViewModelChanged;
+        base.OnSubscribe();
+    }
+
+    private async void OnViewModelChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnUnsubscribe()
+    {
+        ViewModel.PropertyChanged -= OnViewModelChanged;
+        base.OnUnsubscribe();
+    }
+}

@@ -1,0 +1,519 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Avalonia.IMessageBoxService
+  commentId: T:Routeables.Avalonia.IMessageBoxService
+  id: IMessageBoxService
+  parent: Routeables.Avalonia
+  children:
+  - Routeables.Avalonia.IMessageBoxService.IsDisplayable(Avalonia.Controls.TopLevel)
+  - Routeables.Avalonia.IMessageBoxService.ShowAsync(Routeables.Abstraction.RouteableContentDialog,Avalonia.Controls.TopLevel)
+  - Routeables.Avalonia.IMessageBoxService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Avalonia.Controls.TopLevel,Routeables.Abstraction.RouteableTaskDialogResult[])
+  - Routeables.Avalonia.IMessageBoxService.ShowMessageBoxAsync(System.String,System.String,System.String,Avalonia.Controls.TopLevel)
+  langs:
+  - csharp
+  - vb
+  name: IMessageBoxService
+  nameWithType: IMessageBoxService
+  fullName: Routeables.Avalonia.IMessageBoxService
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Avalonia/IMessageBoxService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IMessageBoxService
+    path: ../Routeables.Avalonia/IMessageBoxService.cs
+    startLine: 10
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  summary: >-
+    Where the dialogs of the Avalonia host are drawn. <code>DefaultMessageBoxService</code> draws them itself; a Reshape (such as
+
+    <code>ReshapeMessageBoxService</code> for FluentAvalonia) replaces it to draw them with a UI library. Pass yours to
+
+    <code>RouteableBuilder.CreateRouteableApp(messageBoxService: ...)</code>.
+  example: []
+  syntax:
+    content: public interface IMessageBoxService
+    content.vb: Public Interface IMessageBoxService
+  derivedClasses:
+  - Routeables.Avalonia.DefaultMessageBoxService
+- uid: Routeables.Avalonia.IMessageBoxService.ShowMessageBoxAsync(System.String,System.String,System.String,Avalonia.Controls.TopLevel)
+  commentId: M:Routeables.Avalonia.IMessageBoxService.ShowMessageBoxAsync(System.String,System.String,System.String,Avalonia.Controls.TopLevel)
+  id: ShowMessageBoxAsync(System.String,System.String,System.String,Avalonia.Controls.TopLevel)
+  parent: Routeables.Avalonia.IMessageBoxService
+  langs:
+  - csharp
+  - vb
+  name: ShowMessageBoxAsync(string, string, string, TopLevel?)
+  nameWithType: IMessageBoxService.ShowMessageBoxAsync(string, string, string, TopLevel?)
+  fullName: Routeables.Avalonia.IMessageBoxService.ShowMessageBoxAsync(string, string, string, Avalonia.Controls.TopLevel?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Avalonia/IMessageBoxService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ShowMessageBoxAsync
+    path: ../Routeables.Avalonia/IMessageBoxService.cs
+    startLine: 18
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  summary: Shows a message with buttons and waits for the user to choose one.
+  example: []
+  syntax:
+    content: Task<string?> ShowMessageBoxAsync(string title, string message, string buttons, TopLevel? topLevel = null)
+    parameters:
+    - id: title
+      type: System.String
+      description: The title of the dialog.
+    - id: message
+      type: System.String
+      description: The text of the dialog.
+    - id: buttons
+      type: System.String
+      description: The labels of the buttons, written together in PascalCase (<code>"YesNo"</code> gives Yes and No); Ok when empty.
+    - id: topLevel
+      type: Avalonia.Controls.TopLevel
+      description: The window that owns the dialog, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> for the active one.
+    return:
+      type: System.Threading.Tasks.Task{System.String}
+      description: The label of the button that was chosen, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when the dialog was dismissed.
+    content.vb: Function ShowMessageBoxAsync(title As String, message As String, buttons As String, topLevel As TopLevel = Nothing) As Task(Of String)
+  overload: Routeables.Avalonia.IMessageBoxService.ShowMessageBoxAsync*
+  nameWithType.vb: IMessageBoxService.ShowMessageBoxAsync(String, String, String, TopLevel)
+  fullName.vb: Routeables.Avalonia.IMessageBoxService.ShowMessageBoxAsync(String, String, String, Avalonia.Controls.TopLevel)
+  name.vb: ShowMessageBoxAsync(String, String, String, TopLevel)
+- uid: Routeables.Avalonia.IMessageBoxService.ShowAsync(Routeables.Abstraction.RouteableContentDialog,Avalonia.Controls.TopLevel)
+  commentId: M:Routeables.Avalonia.IMessageBoxService.ShowAsync(Routeables.Abstraction.RouteableContentDialog,Avalonia.Controls.TopLevel)
+  id: ShowAsync(Routeables.Abstraction.RouteableContentDialog,Avalonia.Controls.TopLevel)
+  parent: Routeables.Avalonia.IMessageBoxService
+  langs:
+  - csharp
+  - vb
+  name: ShowAsync(RouteableContentDialog, TopLevel?)
+  nameWithType: IMessageBoxService.ShowAsync(RouteableContentDialog, TopLevel?)
+  fullName: Routeables.Avalonia.IMessageBoxService.ShowAsync(Routeables.Abstraction.RouteableContentDialog, Avalonia.Controls.TopLevel?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Avalonia/IMessageBoxService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ShowAsync
+    path: ../Routeables.Avalonia/IMessageBoxService.cs
+    startLine: 26
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  summary: Shows a content dialog (a title, a content and up to three buttons) and waits for it to close.
+  example: []
+  syntax:
+    content: Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params, TopLevel? topLevel = null)
+    parameters:
+    - id: params
+      type: Routeables.Abstraction.RouteableContentDialog
+      description: What the dialog shows and how its buttons behave.
+    - id: topLevel
+      type: Avalonia.Controls.TopLevel
+      description: The window that owns the dialog, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> for the active one.
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableContentDialogResult}
+      description: The button that closed the dialog.
+    content.vb: Function ShowAsync(params As RouteableContentDialog, topLevel As TopLevel = Nothing) As Task(Of RouteableContentDialogResult)
+  overload: Routeables.Avalonia.IMessageBoxService.ShowAsync*
+  nameWithType.vb: IMessageBoxService.ShowAsync(RouteableContentDialog, TopLevel)
+  fullName.vb: Routeables.Avalonia.IMessageBoxService.ShowAsync(Routeables.Abstraction.RouteableContentDialog, Avalonia.Controls.TopLevel)
+  name.vb: ShowAsync(RouteableContentDialog, TopLevel)
+- uid: Routeables.Avalonia.IMessageBoxService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Avalonia.Controls.TopLevel,Routeables.Abstraction.RouteableTaskDialogResult[])
+  commentId: M:Routeables.Avalonia.IMessageBoxService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Avalonia.Controls.TopLevel,Routeables.Abstraction.RouteableTaskDialogResult[])
+  id: ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Avalonia.Controls.TopLevel,Routeables.Abstraction.RouteableTaskDialogResult[])
+  parent: Routeables.Avalonia.IMessageBoxService
+  langs:
+  - csharp
+  - vb
+  name: ShowAsync(RouteableTaskDialog, TopLevel?, params RouteableTaskDialogResult[])
+  nameWithType: IMessageBoxService.ShowAsync(RouteableTaskDialog, TopLevel?, params RouteableTaskDialogResult[])
+  fullName: Routeables.Avalonia.IMessageBoxService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog, Avalonia.Controls.TopLevel?, params Routeables.Abstraction.RouteableTaskDialogResult[])
+  type: Method
+  source:
+    remote:
+      path: Routeables.Avalonia/IMessageBoxService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ShowAsync
+    path: ../Routeables.Avalonia/IMessageBoxService.cs
+    startLine: 33
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  summary: Shows a task dialog (a message with commands and optional details) and waits for it to close.
+  example: []
+  syntax:
+    content: Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, TopLevel? topLevel = null, params RouteableTaskDialogResult[] results)
+    parameters:
+    - id: params
+      type: Routeables.Abstraction.RouteableTaskDialog
+      description: What the dialog shows.
+    - id: topLevel
+      type: Avalonia.Controls.TopLevel
+      description: The window that owns the dialog, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> for the active one.
+    - id: results
+      type: Routeables.Abstraction.RouteableTaskDialogResult[]
+      description: 'The results the dialog may return: they decide which buttons it shows.'
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableTaskDialogResult}
+      description: The result that closed the dialog.
+    content.vb: Function ShowAsync(params As RouteableTaskDialog, topLevel As TopLevel = Nothing, ParamArray results As RouteableTaskDialogResult()) As Task(Of RouteableTaskDialogResult)
+  overload: Routeables.Avalonia.IMessageBoxService.ShowAsync*
+  nameWithType.vb: IMessageBoxService.ShowAsync(RouteableTaskDialog, TopLevel, ParamArray RouteableTaskDialogResult())
+  fullName.vb: Routeables.Avalonia.IMessageBoxService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog, Avalonia.Controls.TopLevel, ParamArray Routeables.Abstraction.RouteableTaskDialogResult())
+  name.vb: ShowAsync(RouteableTaskDialog, TopLevel, ParamArray RouteableTaskDialogResult())
+- uid: Routeables.Avalonia.IMessageBoxService.IsDisplayable(Avalonia.Controls.TopLevel)
+  commentId: M:Routeables.Avalonia.IMessageBoxService.IsDisplayable(Avalonia.Controls.TopLevel)
+  id: IsDisplayable(Avalonia.Controls.TopLevel)
+  parent: Routeables.Avalonia.IMessageBoxService
+  langs:
+  - csharp
+  - vb
+  name: IsDisplayable(TopLevel)
+  nameWithType: IMessageBoxService.IsDisplayable(TopLevel)
+  fullName: Routeables.Avalonia.IMessageBoxService.IsDisplayable(Avalonia.Controls.TopLevel)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Avalonia/IMessageBoxService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IsDisplayable
+    path: ../Routeables.Avalonia/IMessageBoxService.cs
+    startLine: 37
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  summary: Whether this service can show a dialog on <code class="paramref">topLevel</code>; when not, the host tries another window.
+  example: []
+  syntax:
+    content: bool IsDisplayable(TopLevel topLevel)
+    parameters:
+    - id: topLevel
+      type: Avalonia.Controls.TopLevel
+      description: The window to test.
+    return:
+      type: System.Boolean
+    content.vb: Function IsDisplayable(topLevel As TopLevel) As Boolean
+  overload: Routeables.Avalonia.IMessageBoxService.IsDisplayable*
+references:
+- uid: Routeables.Avalonia
+  commentId: N:Routeables.Avalonia
+  name: Routeables.Avalonia
+  nameWithType: Routeables.Avalonia
+  fullName: Routeables.Avalonia
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Avalonia
+    name: Avalonia
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Avalonia
+    name: Avalonia
+- uid: Routeables.Avalonia.IMessageBoxService.ShowMessageBoxAsync*
+  commentId: Overload:Routeables.Avalonia.IMessageBoxService.ShowMessageBoxAsync
+  href: Routeables.Avalonia.IMessageBoxService.html#Routeables_Avalonia_IMessageBoxService_ShowMessageBoxAsync_System_String_System_String_System_String_Avalonia_Controls_TopLevel_
+  name: ShowMessageBoxAsync
+  nameWithType: IMessageBoxService.ShowMessageBoxAsync
+  fullName: Routeables.Avalonia.IMessageBoxService.ShowMessageBoxAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: Avalonia.Controls.TopLevel
+  commentId: T:Avalonia.Controls.TopLevel
+  parent: Avalonia.Controls
+  isExternal: true
+  name: TopLevel
+  nameWithType: TopLevel
+  fullName: Avalonia.Controls.TopLevel
+- uid: System.Threading.Tasks.Task{System.String}
+  commentId: T:System.Threading.Tasks.Task{System.String}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<string>
+  nameWithType: Task<string>
+  fullName: System.Threading.Tasks.Task<string>
+  nameWithType.vb: Task(Of String)
+  fullName.vb: System.Threading.Tasks.Task(Of String)
+  name.vb: Task(Of String)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Avalonia.Controls
+  commentId: N:Avalonia.Controls
+  isExternal: true
+  name: Avalonia.Controls
+  nameWithType: Avalonia.Controls
+  fullName: Avalonia.Controls
+  spec.csharp:
+  - uid: Avalonia
+    name: Avalonia
+    isExternal: true
+  - name: .
+  - uid: Avalonia.Controls
+    name: Controls
+    isExternal: true
+  spec.vb:
+  - uid: Avalonia
+    name: Avalonia
+    isExternal: true
+  - name: .
+  - uid: Avalonia.Controls
+    name: Controls
+    isExternal: true
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: Routeables.Avalonia.IMessageBoxService.ShowAsync*
+  commentId: Overload:Routeables.Avalonia.IMessageBoxService.ShowAsync
+  href: Routeables.Avalonia.IMessageBoxService.html#Routeables_Avalonia_IMessageBoxService_ShowAsync_Routeables_Abstraction_RouteableContentDialog_Avalonia_Controls_TopLevel_
+  name: ShowAsync
+  nameWithType: IMessageBoxService.ShowAsync
+  fullName: Routeables.Avalonia.IMessageBoxService.ShowAsync
+- uid: Routeables.Abstraction.RouteableContentDialog
+  commentId: T:Routeables.Abstraction.RouteableContentDialog
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.RouteableContentDialog.html
+  name: RouteableContentDialog
+  nameWithType: RouteableContentDialog
+  fullName: Routeables.Abstraction.RouteableContentDialog
+- uid: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableContentDialogResult}
+  commentId: T:System.Threading.Tasks.Task{Routeables.Abstraction.RouteableContentDialogResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<RouteableContentDialogResult>
+  nameWithType: Task<RouteableContentDialogResult>
+  fullName: System.Threading.Tasks.Task<Routeables.Abstraction.RouteableContentDialogResult>
+  nameWithType.vb: Task(Of RouteableContentDialogResult)
+  fullName.vb: System.Threading.Tasks.Task(Of Routeables.Abstraction.RouteableContentDialogResult)
+  name.vb: Task(Of RouteableContentDialogResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: Routeables.Abstraction.RouteableContentDialogResult
+    name: RouteableContentDialogResult
+    href: Routeables.Abstraction.RouteableContentDialogResult.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.RouteableContentDialogResult
+    name: RouteableContentDialogResult
+    href: Routeables.Abstraction.RouteableContentDialogResult.html
+  - name: )
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.RouteableTaskDialog
+  commentId: T:Routeables.Abstraction.RouteableTaskDialog
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.RouteableTaskDialog.html
+  name: RouteableTaskDialog
+  nameWithType: RouteableTaskDialog
+  fullName: Routeables.Abstraction.RouteableTaskDialog
+- uid: Routeables.Abstraction.RouteableTaskDialogResult[]
+  isExternal: true
+  href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  name: RouteableTaskDialogResult[]
+  nameWithType: RouteableTaskDialogResult[]
+  fullName: Routeables.Abstraction.RouteableTaskDialogResult[]
+  nameWithType.vb: RouteableTaskDialogResult()
+  fullName.vb: Routeables.Abstraction.RouteableTaskDialogResult()
+  name.vb: RouteableTaskDialogResult()
+  spec.csharp:
+  - uid: Routeables.Abstraction.RouteableTaskDialogResult
+    name: RouteableTaskDialogResult
+    href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  - name: '['
+  - name: ']'
+  spec.vb:
+  - uid: Routeables.Abstraction.RouteableTaskDialogResult
+    name: RouteableTaskDialogResult
+    href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  - name: (
+  - name: )
+- uid: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableTaskDialogResult}
+  commentId: T:System.Threading.Tasks.Task{Routeables.Abstraction.RouteableTaskDialogResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<RouteableTaskDialogResult>
+  nameWithType: Task<RouteableTaskDialogResult>
+  fullName: System.Threading.Tasks.Task<Routeables.Abstraction.RouteableTaskDialogResult>
+  nameWithType.vb: Task(Of RouteableTaskDialogResult)
+  fullName.vb: System.Threading.Tasks.Task(Of Routeables.Abstraction.RouteableTaskDialogResult)
+  name.vb: Task(Of RouteableTaskDialogResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: Routeables.Abstraction.RouteableTaskDialogResult
+    name: RouteableTaskDialogResult
+    href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.RouteableTaskDialogResult
+    name: RouteableTaskDialogResult
+    href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  - name: )
+- uid: Routeables.Avalonia.IMessageBoxService.IsDisplayable*
+  commentId: Overload:Routeables.Avalonia.IMessageBoxService.IsDisplayable
+  href: Routeables.Avalonia.IMessageBoxService.html#Routeables_Avalonia_IMessageBoxService_IsDisplayable_Avalonia_Controls_TopLevel_
+  name: IsDisplayable
+  nameWithType: IMessageBoxService.IsDisplayable
+  fullName: Routeables.Avalonia.IMessageBoxService.IsDisplayable
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean

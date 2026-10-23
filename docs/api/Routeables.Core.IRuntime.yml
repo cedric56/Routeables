@@ -1,0 +1,152 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Core.IRuntime
+  commentId: T:Routeables.Core.IRuntime
+  id: IRuntime
+  parent: Routeables.Core
+  children:
+  - Routeables.Core.IRuntime.Current
+  langs:
+  - csharp
+  - vb
+  name: IRuntime
+  nameWithType: IRuntime
+  fullName: Routeables.Core.IRuntime
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Core/Environments/Runtime.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IRuntime
+    path: ../Routeables.Core/Environments/Runtime.cs
+    startLine: 5
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Provides access to information about the current application runtime or host framework environment.
+  example: []
+  syntax:
+    content: public interface IRuntime
+    content.vb: Public Interface IRuntime
+  extensionMethods:
+  - Routeables.Core.IRuntime.Routeables.Core.Extensions.IsRazorRuntime
+- uid: Routeables.Core.IRuntime.Current
+  commentId: P:Routeables.Core.IRuntime.Current
+  id: Current
+  parent: Routeables.Core.IRuntime
+  langs:
+  - csharp
+  - vb
+  name: Current
+  nameWithType: IRuntime.Current
+  fullName: Routeables.Core.IRuntime.Current
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Runtime.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Current
+    path: ../Routeables.Core/Environments/Runtime.cs
+    startLine: 10
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets the current application runtime or host framework environment.
+  example: []
+  syntax:
+    content: Runtime Current { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Runtime
+    content.vb: ReadOnly Property Current As Runtime
+  overload: Routeables.Core.IRuntime.Current*
+references:
+- uid: Routeables.Core
+  commentId: N:Routeables.Core
+  name: Routeables.Core
+  nameWithType: Routeables.Core
+  fullName: Routeables.Core
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+- uid: Routeables.Core.IRuntime.Routeables.Core.Extensions.IsRazorRuntime
+  commentId: M:Routeables.Core.Extensions.IsRazorRuntime(Routeables.Core.IRuntime)
+  parent: Routeables.Core.Extensions
+  definition: Routeables.Core.Extensions.IsRazorRuntime(Routeables.Core.IRuntime)
+  href: Routeables.Core.Extensions.html#Routeables_Core_Extensions_IsRazorRuntime_Routeables_Core_IRuntime_
+  name: IsRazorRuntime(IRuntime)
+  nameWithType: Extensions.IsRazorRuntime(IRuntime)
+  fullName: Routeables.Core.Extensions.IsRazorRuntime(Routeables.Core.IRuntime)
+  spec.csharp:
+  - uid: Routeables.Core.Extensions.IsRazorRuntime(Routeables.Core.IRuntime)
+    name: IsRazorRuntime
+    href: Routeables.Core.Extensions.html#Routeables_Core_Extensions_IsRazorRuntime_Routeables_Core_IRuntime_
+  - name: (
+  - uid: Routeables.Core.IRuntime
+    name: IRuntime
+    href: Routeables.Core.IRuntime.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.Extensions.IsRazorRuntime(Routeables.Core.IRuntime)
+    name: IsRazorRuntime
+    href: Routeables.Core.Extensions.html#Routeables_Core_Extensions_IsRazorRuntime_Routeables_Core_IRuntime_
+  - name: (
+  - uid: Routeables.Core.IRuntime
+    name: IRuntime
+    href: Routeables.Core.IRuntime.html
+  - name: )
+- uid: Routeables.Core.Extensions.IsRazorRuntime(Routeables.Core.IRuntime)
+  commentId: M:Routeables.Core.Extensions.IsRazorRuntime(Routeables.Core.IRuntime)
+  href: Routeables.Core.Extensions.html#Routeables_Core_Extensions_IsRazorRuntime_Routeables_Core_IRuntime_
+  name: IsRazorRuntime(IRuntime)
+  nameWithType: Extensions.IsRazorRuntime(IRuntime)
+  fullName: Routeables.Core.Extensions.IsRazorRuntime(Routeables.Core.IRuntime)
+  spec.csharp:
+  - uid: Routeables.Core.Extensions.IsRazorRuntime(Routeables.Core.IRuntime)
+    name: IsRazorRuntime
+    href: Routeables.Core.Extensions.html#Routeables_Core_Extensions_IsRazorRuntime_Routeables_Core_IRuntime_
+  - name: (
+  - uid: Routeables.Core.IRuntime
+    name: IRuntime
+    href: Routeables.Core.IRuntime.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.Extensions.IsRazorRuntime(Routeables.Core.IRuntime)
+    name: IsRazorRuntime
+    href: Routeables.Core.Extensions.html#Routeables_Core_Extensions_IsRazorRuntime_Routeables_Core_IRuntime_
+  - name: (
+  - uid: Routeables.Core.IRuntime
+    name: IRuntime
+    href: Routeables.Core.IRuntime.html
+  - name: )
+- uid: Routeables.Core.Extensions
+  commentId: T:Routeables.Core.Extensions
+  parent: Routeables.Core
+  href: Routeables.Core.Extensions.html
+  name: Extensions
+  nameWithType: Extensions
+  fullName: Routeables.Core.Extensions
+- uid: Routeables.Core.IRuntime.Current*
+  commentId: Overload:Routeables.Core.IRuntime.Current
+  href: Routeables.Core.IRuntime.html#Routeables_Core_IRuntime_Current
+  name: Current
+  nameWithType: IRuntime.Current
+  fullName: Routeables.Core.IRuntime.Current
+- uid: Routeables.Core.Runtime
+  commentId: T:Routeables.Core.Runtime
+  parent: Routeables.Core
+  href: Routeables.Core.Runtime.html
+  name: Runtime
+  nameWithType: Runtime
+  fullName: Routeables.Core.Runtime

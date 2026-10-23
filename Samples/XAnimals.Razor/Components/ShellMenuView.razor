@@ -1,0 +1,39 @@
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@attribute [RouteableView(typeof(ShellMenuViewModel), route: "shell-menu")]
+@inherits RouteableFor<ShellMenuView, ShellMenuViewModel>
+
+<nav class="rg-menu">
+    <div class="rg-menu-moves">
+        <button @onclick="() => ViewModel.BackCommand.Execute(null)" disabled="@(!ViewModel.CanGoBack)">◀ Back</button>
+        <button @onclick="() => ViewModel.ForwardCommand.Execute(null)" disabled="@(!ViewModel.CanGoForward)">Forward ▶</button>
+    </div>
+    @foreach (var item in ViewModel.Items)
+    {
+        <button type="button" class="rg-menu-item @(item.IsCurrent ? "current" : "")" aria-current="@(item.IsCurrent ? "page" : null)"
+                @onclick="() => item.Select.Execute(null)">
+            <span class="rg-menu-glyph">@item.Glyph</span>
+            <span>@item.Name</span>
+        </button>
+    }
+</nav>
+
+@code {
+    protected override void OnSubscribe()
+    {
+        ViewModel.PropertyChanged += OnViewModelChanged;
+        base.OnSubscribe();
+    }
+
+    private async void OnViewModelChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnUnsubscribe()
+    {
+        ViewModel.PropertyChanged -= OnViewModelChanged;
+        base.OnUnsubscribe();
+    }
+}

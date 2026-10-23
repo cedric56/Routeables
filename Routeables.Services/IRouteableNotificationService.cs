@@ -1,0 +1,86 @@
+﻿namespace Routeables.Services;
+
+/// <summary>
+/// The severity/intent of a notification, typically used by the platform
+/// adapter to pick an icon and accent color (e.g. red for
+/// <see cref="Error"/>, green for <see cref="Success"/>).
+/// </summary>
+public enum RouteableNotificationType
+{
+    /// <summary>A neutral, informational notification.</summary>
+    Information,
+
+    /// <summary>A notification indicating an operation completed successfully.</summary>
+    Success,
+
+    /// <summary>A notification highlighting something that needs attention but isn't an error.</summary>
+    Warning,
+
+    /// <summary>A notification indicating an operation failed or something went wrong.</summary>
+    Error
+}
+
+/// <summary>
+/// Where an in-app (toast-style) notification should be anchored on screen.
+/// Not all platform adapters may support every position — check the
+/// concrete implementation for which positions are honored.
+/// </summary>
+public enum RouteableNotificationPosition
+{
+    /// <summary>Anchored to the top-left corner.</summary>
+    TopLeft,
+
+    /// <summary>Anchored to the top-right corner.</summary>
+    TopRight,
+
+    /// <summary>Anchored to the bottom-left corner.</summary>
+    BottomLeft,
+
+    /// <summary>Anchored to the bottom-right corner.</summary>
+    BottomRight,
+
+    /// <summary>Anchored to the top, horizontally centered.</summary>
+    TopCenter,
+
+    /// <summary>Anchored to the bottom, horizontally centered.</summary>
+    BottomCenter
+}
+
+/// <summary>
+/// Displays lightweight, non-modal notifications (toasts/banners) in a
+/// platform-agnostic way, so ViewModels can surface transient feedback
+/// without knowing whether the app is running on Avalonia, MAUI, or Blazor.
+/// </summary>
+public interface IRouteableNotificationService
+{
+    /// <summary>
+    /// Shows a notification.
+    /// </summary>
+    /// <param name="title">The notification's title/heading.</param>
+    /// <param name="message">The notification's body text.</param>
+    /// <param name="type">
+    /// The severity/intent of the notification, used to pick an icon and
+    /// accent color. Defaults to <see cref="RouteableNotificationType.Information"/>.
+    /// </param>
+    /// <param name="expiration">
+    /// How long the notification stays visible before auto-dismissing.
+    /// If <see langword="null"/>, <see cref="RouteableNotificationDefaults.Expiration"/> (five seconds) is used, on every host.
+    /// <see cref="RouteableNotificationDefaults.Never"/> keeps it until the user closes or taps it.
+    /// </param>
+    /// <param name="onClick">
+    /// Invoked if the user taps/clicks the notification itself (not a
+    /// specific button — this interface has no action-button parameters).
+    /// </param>
+    /// <param name="onClose">
+    /// Invoked when the notification is dismissed, whether by the user,
+    /// by <paramref name="expiration"/> elapsing, or programmatically by
+    /// the platform adapter.
+    /// </param>
+    void Show(
+        string title,
+        string message,
+        RouteableNotificationType type = RouteableNotificationType.Information,
+        TimeSpan? expiration = null,
+        Action? onClick = null,
+        Action? onClose = null);
+}

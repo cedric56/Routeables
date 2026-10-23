@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAotCompatible>true</IsAotCompatible>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Routeables.Razor</PackageId>
+    <Version>1.0.0-preview.1</Version>
+    <Description>Routeables for Blazor: view-model-first routing, routed components and regions.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Test" />
+    <InternalsVisibleTo Include="Routeables.Routing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="10.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Regions\Routeables.Regions.csproj" />
+    <ProjectReference Include="..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
+    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" />
+    <ProjectReference Include="..\Routeables.Services\Routeables.Services.csproj" />
+  </ItemGroup>
+
+</Project>

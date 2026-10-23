@@ -1,0 +1,246 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.IInitializeAsync`1
+  commentId: T:Routeables.Abstraction.IInitializeAsync`1
+  id: IInitializeAsync`1
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.IInitializeAsync`1.InitializeAsync(`0,System.Threading.CancellationToken)
+  langs:
+  - csharp
+  - vb
+  name: IInitializeAsync<TData>
+  nameWithType: IInitializeAsync<TData>
+  fullName: Routeables.Abstraction.IInitializeAsync<TData>
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IInitializeAsync.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IInitializeAsync
+    path: ../Routeables.Abstraction/Interfaces/IInitializeAsync.cs
+    startLine: 25
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Typed counterpart of <xref href="Routeables.Abstraction.IInitializeAsync" data-throw-if-not-resolved="false"></xref>: receives the strongly typed data passed by
+
+    <code>GoToRouteAsync&lt;TViewModel, TData&gt;</code>. The generic call only compiles when the target view model
+
+    implements <code>IInitializeAsync&lt;TData&gt;</code>, so the data type is checked at compile time.
+  remarks: >-
+    Called after <xref href="Routeables.Abstraction.IInitializeAsync.InitializeAsync(Routeables.Abstraction.IRouteableArgs%2cSystem.Threading.CancellationToken)" data-throw-if-not-resolved="false"></xref>. The interface is contravariant, so a view model
+
+    implementing <code>IInitializeAsync&lt;object&gt;</code> accepts any data type.
+  example: []
+  syntax:
+    content: public interface IInitializeAsync<in TData>
+    typeParameters:
+    - id: TData
+      description: The type of the data supplied when navigating.
+    content.vb: Public Interface IInitializeAsync(Of In TData)
+  nameWithType.vb: IInitializeAsync(Of TData)
+  fullName.vb: Routeables.Abstraction.IInitializeAsync(Of TData)
+  name.vb: IInitializeAsync(Of TData)
+- uid: Routeables.Abstraction.IInitializeAsync`1.InitializeAsync(`0,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IInitializeAsync`1.InitializeAsync(`0,System.Threading.CancellationToken)
+  id: InitializeAsync(`0,System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IInitializeAsync`1
+  langs:
+  - csharp
+  - vb
+  name: InitializeAsync(TData, CancellationToken)
+  nameWithType: IInitializeAsync<TData>.InitializeAsync(TData, CancellationToken)
+  fullName: Routeables.Abstraction.IInitializeAsync<TData>.InitializeAsync(TData, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IInitializeAsync.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: InitializeAsync
+    path: ../Routeables.Abstraction/Interfaces/IInitializeAsync.cs
+    startLine: 32
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Initializes the view model (or view) with the data supplied by the navigation call.
+  example: []
+  syntax:
+    content: Task InitializeAsync(TData data, CancellationToken ct = default)
+    parameters:
+    - id: data
+      type: '{TData}'
+      description: The data passed to <code>GoToRouteAsync&lt;TViewModel, TData&gt;</code>.
+    - id: ct
+      type: System.Threading.CancellationToken
+      description: A token to observe for cancellation.
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function InitializeAsync(data As TData, ct As CancellationToken = Nothing) As Task
+  overload: Routeables.Abstraction.IInitializeAsync`1.InitializeAsync*
+  nameWithType.vb: IInitializeAsync(Of TData).InitializeAsync(TData, CancellationToken)
+  fullName.vb: Routeables.Abstraction.IInitializeAsync(Of TData).InitializeAsync(TData, System.Threading.CancellationToken)
+references:
+- uid: Routeables.Abstraction.IInitializeAsync
+  commentId: T:Routeables.Abstraction.IInitializeAsync
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IInitializeAsync.html
+  name: IInitializeAsync
+  nameWithType: IInitializeAsync
+  fullName: Routeables.Abstraction.IInitializeAsync
+- uid: Routeables.Abstraction.IInitializeAsync.InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IInitializeAsync.InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IInitializeAsync
+  isExternal: true
+  href: Routeables.Abstraction.IInitializeAsync.html#Routeables_Abstraction_IInitializeAsync_InitializeAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: InitializeAsync(IRouteableArgs, CancellationToken)
+  nameWithType: IInitializeAsync.InitializeAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Abstraction.IInitializeAsync.InitializeAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IInitializeAsync.InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: InitializeAsync
+    href: Routeables.Abstraction.IInitializeAsync.html#Routeables_Abstraction_IInitializeAsync_InitializeAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IInitializeAsync.InitializeAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: InitializeAsync
+    href: Routeables.Abstraction.IInitializeAsync.html#Routeables_Abstraction_IInitializeAsync_InitializeAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.IInitializeAsync`1.InitializeAsync*
+  commentId: Overload:Routeables.Abstraction.IInitializeAsync`1.InitializeAsync
+  href: Routeables.Abstraction.IInitializeAsync-1.html#Routeables_Abstraction_IInitializeAsync_1_InitializeAsync__0_System_Threading_CancellationToken_
+  name: InitializeAsync
+  nameWithType: IInitializeAsync<TData>.InitializeAsync
+  fullName: Routeables.Abstraction.IInitializeAsync<TData>.InitializeAsync
+  nameWithType.vb: IInitializeAsync(Of TData).InitializeAsync
+  fullName.vb: Routeables.Abstraction.IInitializeAsync(Of TData).InitializeAsync
+- uid: '{TData}'
+  commentId: '!:TData'
+  definition: TData
+  name: TData
+  nameWithType: TData
+  fullName: TData
+- uid: System.Threading.CancellationToken
+  commentId: T:System.Threading.CancellationToken
+  parent: System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: CancellationToken
+  nameWithType: CancellationToken
+  fullName: System.Threading.CancellationToken
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: TData
+  name: TData
+  nameWithType: TData
+  fullName: TData
+- uid: System.Threading
+  commentId: N:System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading
+  nameWithType: System.Threading
+  fullName: System.Threading
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks

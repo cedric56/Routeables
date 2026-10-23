@@ -1,0 +1,519 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Avalonia.ModalButton
+  commentId: T:Routeables.Avalonia.ModalButton
+  id: ModalButton
+  parent: Routeables.Avalonia
+  children:
+  - Routeables.Avalonia.ModalButton.Command
+  - Routeables.Avalonia.ModalButton.IsCancel
+  - Routeables.Avalonia.ModalButton.IsDefault
+  - Routeables.Avalonia.ModalButton.Name
+  langs:
+  - csharp
+  - vb
+  name: ModalButton
+  nameWithType: ModalButton
+  fullName: Routeables.Avalonia.ModalButton
+  type: Class
+  source:
+    remote:
+      path: Routeables.Avalonia/Modal/ModalParameters.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ModalButton
+    path: ../Routeables.Avalonia/Modal/ModalParameters.cs
+    startLine: 11
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  summary: >-
+    A message-box button definition that also carries the <xref href="System.Windows.Input.ICommand" data-throw-if-not-resolved="false"></xref> to execute when
+
+    the button is pressed, sourced from a view model's <xref href="Routeables.Abstraction.ICloseableViewModel%601.Commands" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public class ModalButton
+    content.vb: Public Class ModalButton
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: Routeables.Avalonia.ModalButton.Command
+  commentId: P:Routeables.Avalonia.ModalButton.Command
+  id: Command
+  parent: Routeables.Avalonia.ModalButton
+  langs:
+  - csharp
+  - vb
+  name: Command
+  nameWithType: ModalButton.Command
+  fullName: Routeables.Avalonia.ModalButton.Command
+  type: Property
+  source:
+    remote:
+      path: Routeables.Avalonia/Modal/ModalParameters.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Command
+    path: ../Routeables.Avalonia/Modal/ModalParameters.cs
+    startLine: 16
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  summary: Gets or sets the command executed when this button is pressed.
+  example: []
+  syntax:
+    content: public ICommand? Command { get; set; }
+    parameters: []
+    return:
+      type: System.Windows.Input.ICommand
+    content.vb: Public Property Command As ICommand
+  overload: Routeables.Avalonia.ModalButton.Command*
+- uid: Routeables.Avalonia.ModalButton.Name
+  commentId: P:Routeables.Avalonia.ModalButton.Name
+  id: Name
+  parent: Routeables.Avalonia.ModalButton
+  langs:
+  - csharp
+  - vb
+  name: Name
+  nameWithType: ModalButton.Name
+  fullName: Routeables.Avalonia.ModalButton.Name
+  type: Property
+  source:
+    remote:
+      path: Routeables.Avalonia/Modal/ModalParameters.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Name
+    path: ../Routeables.Avalonia/Modal/ModalParameters.cs
+    startLine: 18
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  syntax:
+    content: public string Name { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Name As String
+  overload: Routeables.Avalonia.ModalButton.Name*
+- uid: Routeables.Avalonia.ModalButton.IsDefault
+  commentId: P:Routeables.Avalonia.ModalButton.IsDefault
+  id: IsDefault
+  parent: Routeables.Avalonia.ModalButton
+  langs:
+  - csharp
+  - vb
+  name: IsDefault
+  nameWithType: ModalButton.IsDefault
+  fullName: Routeables.Avalonia.ModalButton.IsDefault
+  type: Property
+  source:
+    remote:
+      path: Routeables.Avalonia/Modal/ModalParameters.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IsDefault
+    path: ../Routeables.Avalonia/Modal/ModalParameters.cs
+    startLine: 20
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  syntax:
+    content: public bool IsDefault { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsDefault As Boolean
+  overload: Routeables.Avalonia.ModalButton.IsDefault*
+- uid: Routeables.Avalonia.ModalButton.IsCancel
+  commentId: P:Routeables.Avalonia.ModalButton.IsCancel
+  id: IsCancel
+  parent: Routeables.Avalonia.ModalButton
+  langs:
+  - csharp
+  - vb
+  name: IsCancel
+  nameWithType: ModalButton.IsCancel
+  fullName: Routeables.Avalonia.ModalButton.IsCancel
+  type: Property
+  source:
+    remote:
+      path: Routeables.Avalonia/Modal/ModalParameters.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IsCancel
+    path: ../Routeables.Avalonia/Modal/ModalParameters.cs
+    startLine: 22
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  syntax:
+    content: public bool IsCancel { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property IsCancel As Boolean
+  overload: Routeables.Avalonia.ModalButton.IsCancel*
+references:
+- uid: System.Windows.Input.ICommand
+  commentId: T:System.Windows.Input.ICommand
+  parent: System.Windows.Input
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.windows.input.icommand
+  name: ICommand
+  nameWithType: ICommand
+  fullName: System.Windows.Input.ICommand
+- uid: Routeables.Abstraction.ICloseableViewModel`1.Commands
+  commentId: P:Routeables.Abstraction.ICloseableViewModel`1.Commands
+  href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_Commands
+  name: Commands
+  nameWithType: ICloseableViewModel<TResult>.Commands
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>.Commands
+  nameWithType.vb: ICloseableViewModel(Of TResult).Commands
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult).Commands
+- uid: Routeables.Avalonia
+  commentId: N:Routeables.Avalonia
+  name: Routeables.Avalonia
+  nameWithType: Routeables.Avalonia
+  fullName: Routeables.Avalonia
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Avalonia
+    name: Avalonia
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Avalonia
+    name: Avalonia
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System.Windows.Input
+  commentId: N:System.Windows.Input
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Windows.Input
+  nameWithType: System.Windows.Input
+  fullName: System.Windows.Input
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Windows
+    name: Windows
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.windows
+  - name: .
+  - uid: System.Windows.Input
+    name: Input
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.windows.input
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Windows
+    name: Windows
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.windows
+  - name: .
+  - uid: System.Windows.Input
+    name: Input
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.windows.input
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Avalonia.ModalButton.Command*
+  commentId: Overload:Routeables.Avalonia.ModalButton.Command
+  href: Routeables.Avalonia.ModalButton.html#Routeables_Avalonia_ModalButton_Command
+  name: Command
+  nameWithType: ModalButton.Command
+  fullName: Routeables.Avalonia.ModalButton.Command
+- uid: Routeables.Avalonia.ModalButton.Name*
+  commentId: Overload:Routeables.Avalonia.ModalButton.Name
+  href: Routeables.Avalonia.ModalButton.html#Routeables_Avalonia_ModalButton_Name
+  name: Name
+  nameWithType: ModalButton.Name
+  fullName: Routeables.Avalonia.ModalButton.Name
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: Routeables.Avalonia.ModalButton.IsDefault*
+  commentId: Overload:Routeables.Avalonia.ModalButton.IsDefault
+  href: Routeables.Avalonia.ModalButton.html#Routeables_Avalonia_ModalButton_IsDefault
+  name: IsDefault
+  nameWithType: ModalButton.IsDefault
+  fullName: Routeables.Avalonia.ModalButton.IsDefault
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: Routeables.Avalonia.ModalButton.IsCancel*
+  commentId: Overload:Routeables.Avalonia.ModalButton.IsCancel
+  href: Routeables.Avalonia.ModalButton.html#Routeables_Avalonia_ModalButton_IsCancel
+  name: IsCancel
+  nameWithType: ModalButton.IsCancel
+  fullName: Routeables.Avalonia.ModalButton.IsCancel

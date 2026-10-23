@@ -1,0 +1,789 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.RouteableKeys
+  commentId: T:Routeables.Abstraction.RouteableKeys
+  id: RouteableKeys
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.RouteableKeys.#ctor(System.Object,System.Type)
+  - Routeables.Abstraction.RouteableKeys.For(System.Object,System.Type)
+  - Routeables.Abstraction.RouteableKeys.GetKeys(System.Type,System.String)
+  - Routeables.Abstraction.RouteableKeys.GetRoute(System.Type,System.String)
+  - Routeables.Abstraction.RouteableKeys.GetTemplate(System.Type,System.String)
+  - Routeables.Abstraction.RouteableKeys.ToString
+  - Routeables.Abstraction.RouteableKeys.Type
+  - Routeables.Abstraction.RouteableKeys.key
+  langs:
+  - csharp
+  - vb
+  name: RouteableKeys
+  nameWithType: RouteableKeys
+  fullName: Routeables.Abstraction.RouteableKeys
+  type: Struct
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKeys.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RouteableKeys
+    path: ../Routeables.Abstraction/Routing/RouteableKeys.cs
+    startLine: 8
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Represents a composite key used to uniquely identify routable views and view models within the container 
+
+    based on a route identifier and an optional associated type.
+  example: []
+  syntax:
+    content: 'public readonly record struct RouteableKeys : IEquatable<RouteableKeys>'
+    content.vb: Public Structure RouteableKeys Implements IEquatable(Of RouteableKeys)
+  implements:
+  - System.IEquatable{Routeables.Abstraction.RouteableKeys}
+  inheritedMembers:
+  - System.ValueType.Equals(System.Object)
+  - System.ValueType.GetHashCode
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetType
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+- uid: Routeables.Abstraction.RouteableKeys.#ctor(System.Object,System.Type)
+  commentId: M:Routeables.Abstraction.RouteableKeys.#ctor(System.Object,System.Type)
+  id: '#ctor(System.Object,System.Type)'
+  parent: Routeables.Abstraction.RouteableKeys
+  langs:
+  - csharp
+  - vb
+  name: RouteableKeys(object, Type?)
+  nameWithType: RouteableKeys.RouteableKeys(object, Type?)
+  fullName: Routeables.Abstraction.RouteableKeys.RouteableKeys(object, System.Type?)
+  type: Constructor
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKeys.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: .ctor
+    path: ../Routeables.Abstraction/Routing/RouteableKeys.cs
+    startLine: 8
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Represents a composite key used to uniquely identify routable views and view models within the container 
+
+    based on a route identifier and an optional associated type.
+  example: []
+  syntax:
+    content: public RouteableKeys(object key, Type? Type)
+    parameters:
+    - id: key
+      type: System.Object
+      description: The base key object or string identifier.
+    - id: Type
+      type: System.Type
+      description: The optional type associated with the key.
+    content.vb: Public Sub New(key As Object, Type As Type)
+  overload: Routeables.Abstraction.RouteableKeys.#ctor*
+  nameWithType.vb: RouteableKeys.New(Object, Type)
+  fullName.vb: Routeables.Abstraction.RouteableKeys.New(Object, System.Type)
+  name.vb: New(Object, Type)
+- uid: Routeables.Abstraction.RouteableKeys.key
+  commentId: P:Routeables.Abstraction.RouteableKeys.key
+  id: key
+  parent: Routeables.Abstraction.RouteableKeys
+  langs:
+  - csharp
+  - vb
+  name: key
+  nameWithType: RouteableKeys.key
+  fullName: Routeables.Abstraction.RouteableKeys.key
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKeys.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: key
+    path: ../Routeables.Abstraction/Routing/RouteableKeys.cs
+    startLine: 8
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The base key object or string identifier.
+  example: []
+  syntax:
+    content: public object key { get; init; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: Public Property key As Object
+  overload: Routeables.Abstraction.RouteableKeys.key*
+- uid: Routeables.Abstraction.RouteableKeys.Type
+  commentId: P:Routeables.Abstraction.RouteableKeys.Type
+  id: Type
+  parent: Routeables.Abstraction.RouteableKeys
+  langs:
+  - csharp
+  - vb
+  name: Type
+  nameWithType: RouteableKeys.Type
+  fullName: Routeables.Abstraction.RouteableKeys.Type
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKeys.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Type
+    path: ../Routeables.Abstraction/Routing/RouteableKeys.cs
+    startLine: 8
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The optional type associated with the key.
+  example: []
+  syntax:
+    content: public Type? Type { get; init; }
+    parameters: []
+    return:
+      type: System.Type
+    content.vb: Public Property Type As Type
+  overload: Routeables.Abstraction.RouteableKeys.Type*
+- uid: Routeables.Abstraction.RouteableKeys.For(System.Object,System.Type)
+  commentId: M:Routeables.Abstraction.RouteableKeys.For(System.Object,System.Type)
+  id: For(System.Object,System.Type)
+  parent: Routeables.Abstraction.RouteableKeys
+  langs:
+  - csharp
+  - vb
+  name: For(object, Type?)
+  nameWithType: RouteableKeys.For(object, Type?)
+  fullName: Routeables.Abstraction.RouteableKeys.For(object, System.Type?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKeys.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: For
+    path: ../Routeables.Abstraction/Routing/RouteableKeys.cs
+    startLine: 16
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Creates a new instance of <xref href="Routeables.Abstraction.RouteableKeys" data-throw-if-not-resolved="false"></xref> with the specified base key and optional type.
+  example: []
+  syntax:
+    content: public static RouteableKeys For(object key, Type? type = null)
+    parameters:
+    - id: key
+      type: System.Object
+      description: The base key object.
+    - id: type
+      type: System.Type
+      description: The optional associated type.
+    return:
+      type: Routeables.Abstraction.RouteableKeys
+      description: A new <xref href="Routeables.Abstraction.RouteableKeys" data-throw-if-not-resolved="false"></xref> instance.
+    content.vb: Public Shared Function [For](key As Object, type As Type = Nothing) As RouteableKeys
+  overload: Routeables.Abstraction.RouteableKeys.For*
+  nameWithType.vb: RouteableKeys.For(Object, Type)
+  fullName.vb: Routeables.Abstraction.RouteableKeys.For(Object, System.Type)
+  name.vb: For(Object, Type)
+- uid: Routeables.Abstraction.RouteableKeys.ToString
+  commentId: M:Routeables.Abstraction.RouteableKeys.ToString
+  id: ToString
+  parent: Routeables.Abstraction.RouteableKeys
+  langs:
+  - csharp
+  - vb
+  name: ToString()
+  nameWithType: RouteableKeys.ToString()
+  fullName: Routeables.Abstraction.RouteableKeys.ToString()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKeys.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ToString
+    path: ../Routeables.Abstraction/Routing/RouteableKeys.cs
+    startLine: 23
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Returns a string representation of the composite key, including the type name if present.
+  example: []
+  syntax:
+    content: public override string ToString()
+    return:
+      type: System.String
+      description: A formatted string representation of the key.
+    content.vb: Public Overrides Function ToString() As String
+  overridden: System.ValueType.ToString
+  overload: Routeables.Abstraction.RouteableKeys.ToString*
+- uid: Routeables.Abstraction.RouteableKeys.GetKeys(System.Type,System.String)
+  commentId: M:Routeables.Abstraction.RouteableKeys.GetKeys(System.Type,System.String)
+  id: GetKeys(System.Type,System.String)
+  parent: Routeables.Abstraction.RouteableKeys
+  langs:
+  - csharp
+  - vb
+  name: GetKeys(Type, string?)
+  nameWithType: RouteableKeys.GetKeys(Type, string?)
+  fullName: Routeables.Abstraction.RouteableKeys.GetKeys(System.Type, string?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKeys.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetKeys
+    path: ../Routeables.Abstraction/Routing/RouteableKeys.cs
+    startLine: 35
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Computes the registration key pair (view key and view model key) for a given view model type and optional route.
+  example: []
+  syntax:
+    content: public static (string viewKey, string viewModelKey) GetKeys(Type type, string? route = null)
+    parameters:
+    - id: type
+      type: System.Type
+      description: The view model type.
+    - id: route
+      type: System.String
+      description: Optional explicit route override.
+    return:
+      type: System.ValueTuple{System.String,System.String}
+      description: A tuple containing the resolved view key and view model key.
+    content.vb: Public Shared Function GetKeys(type As Type, route As String = Nothing) As (viewKey As String, viewModelKey As String)
+  overload: Routeables.Abstraction.RouteableKeys.GetKeys*
+  nameWithType.vb: RouteableKeys.GetKeys(Type, String)
+  fullName.vb: Routeables.Abstraction.RouteableKeys.GetKeys(System.Type, String)
+  name.vb: GetKeys(Type, String)
+- uid: Routeables.Abstraction.RouteableKeys.GetRoute(System.Type,System.String)
+  commentId: M:Routeables.Abstraction.RouteableKeys.GetRoute(System.Type,System.String)
+  id: GetRoute(System.Type,System.String)
+  parent: Routeables.Abstraction.RouteableKeys
+  langs:
+  - csharp
+  - vb
+  name: GetRoute(Type, string?)
+  nameWithType: RouteableKeys.GetRoute(Type, string?)
+  fullName: Routeables.Abstraction.RouteableKeys.GetRoute(System.Type, string?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKeys.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetRoute
+    path: ../Routeables.Abstraction/Routing/RouteableKeys.cs
+    startLine: 40
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: public static string GetRoute(Type type, string? route = null)
+    parameters:
+    - id: type
+      type: System.Type
+    - id: route
+      type: System.String
+    return:
+      type: System.String
+    content.vb: Public Shared Function GetRoute(type As Type, route As String = Nothing) As String
+  overload: Routeables.Abstraction.RouteableKeys.GetRoute*
+  nameWithType.vb: RouteableKeys.GetRoute(Type, String)
+  fullName.vb: Routeables.Abstraction.RouteableKeys.GetRoute(System.Type, String)
+  name.vb: GetRoute(Type, String)
+- uid: Routeables.Abstraction.RouteableKeys.GetTemplate(System.Type,System.String)
+  commentId: M:Routeables.Abstraction.RouteableKeys.GetTemplate(System.Type,System.String)
+  id: GetTemplate(System.Type,System.String)
+  parent: Routeables.Abstraction.RouteableKeys
+  langs:
+  - csharp
+  - vb
+  name: GetTemplate(Type, string?)
+  nameWithType: RouteableKeys.GetTemplate(Type, string?)
+  fullName: Routeables.Abstraction.RouteableKeys.GetTemplate(System.Type, string?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableKeys.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetTemplate
+    path: ../Routeables.Abstraction/Routing/RouteableKeys.cs
+    startLine: 48
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: 'The template of a view: its route (a view registered without a template is matched by its route).'
+  example: []
+  syntax:
+    content: public static string GetTemplate(Type type, string? route = null)
+    parameters:
+    - id: type
+      type: System.Type
+    - id: route
+      type: System.String
+    return:
+      type: System.String
+    content.vb: Public Shared Function GetTemplate(type As Type, route As String = Nothing) As String
+  overload: Routeables.Abstraction.RouteableKeys.GetTemplate*
+  nameWithType.vb: RouteableKeys.GetTemplate(Type, String)
+  fullName.vb: Routeables.Abstraction.RouteableKeys.GetTemplate(System.Type, String)
+  name.vb: GetTemplate(Type, String)
+references:
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: System.IEquatable{Routeables.Abstraction.RouteableKeys}
+  commentId: T:System.IEquatable{Routeables.Abstraction.RouteableKeys}
+  parent: System
+  definition: System.IEquatable`1
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<RouteableKeys>
+  nameWithType: IEquatable<RouteableKeys>
+  fullName: System.IEquatable<Routeables.Abstraction.RouteableKeys>
+  nameWithType.vb: IEquatable(Of RouteableKeys)
+  fullName.vb: System.IEquatable(Of Routeables.Abstraction.RouteableKeys)
+  name.vb: IEquatable(Of RouteableKeys)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - uid: Routeables.Abstraction.RouteableKeys
+    name: RouteableKeys
+    href: Routeables.Abstraction.RouteableKeys.html
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.RouteableKeys
+    name: RouteableKeys
+    href: Routeables.Abstraction.RouteableKeys.html
+  - name: )
+- uid: System.ValueType.Equals(System.Object)
+  commentId: M:System.ValueType.Equals(System.Object)
+  parent: System.ValueType
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.valuetype.equals
+  name: Equals(object)
+  nameWithType: ValueType.Equals(object)
+  fullName: System.ValueType.Equals(object)
+  nameWithType.vb: ValueType.Equals(Object)
+  fullName.vb: System.ValueType.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.ValueType.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.equals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.ValueType.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.equals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.ValueType.GetHashCode
+  commentId: M:System.ValueType.GetHashCode
+  parent: System.ValueType
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode
+  name: GetHashCode()
+  nameWithType: ValueType.GetHashCode()
+  fullName: System.ValueType.GetHashCode()
+  spec.csharp:
+  - uid: System.ValueType.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.ValueType.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.IEquatable`1
+  commentId: T:System.IEquatable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<T>
+  nameWithType: IEquatable<T>
+  fullName: System.IEquatable<T>
+  nameWithType.vb: IEquatable(Of T)
+  fullName.vb: System.IEquatable(Of T)
+  name.vb: IEquatable(Of T)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.ValueType
+  commentId: T:System.ValueType
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.valuetype
+  name: ValueType
+  nameWithType: ValueType
+  fullName: System.ValueType
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Routeables.Abstraction.RouteableKeys.#ctor*
+  commentId: Overload:Routeables.Abstraction.RouteableKeys.#ctor
+  href: Routeables.Abstraction.RouteableKeys.html#Routeables_Abstraction_RouteableKeys__ctor_System_Object_System_Type_
+  name: RouteableKeys
+  nameWithType: RouteableKeys.RouteableKeys
+  fullName: Routeables.Abstraction.RouteableKeys.RouteableKeys
+  nameWithType.vb: RouteableKeys.New
+  fullName.vb: Routeables.Abstraction.RouteableKeys.New
+  name.vb: New
+- uid: System.Type
+  commentId: T:System.Type
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.type
+  name: Type
+  nameWithType: Type
+  fullName: System.Type
+- uid: Routeables.Abstraction.RouteableKeys.key*
+  commentId: Overload:Routeables.Abstraction.RouteableKeys.key
+  href: Routeables.Abstraction.RouteableKeys.html#Routeables_Abstraction_RouteableKeys_key
+  name: key
+  nameWithType: RouteableKeys.key
+  fullName: Routeables.Abstraction.RouteableKeys.key
+- uid: Routeables.Abstraction.RouteableKeys.Type*
+  commentId: Overload:Routeables.Abstraction.RouteableKeys.Type
+  href: Routeables.Abstraction.RouteableKeys.html#Routeables_Abstraction_RouteableKeys_Type
+  name: Type
+  nameWithType: RouteableKeys.Type
+  fullName: Routeables.Abstraction.RouteableKeys.Type
+- uid: Routeables.Abstraction.RouteableKeys
+  commentId: T:Routeables.Abstraction.RouteableKeys
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.RouteableKeys.html
+  name: RouteableKeys
+  nameWithType: RouteableKeys
+  fullName: Routeables.Abstraction.RouteableKeys
+- uid: Routeables.Abstraction.RouteableKeys.For*
+  commentId: Overload:Routeables.Abstraction.RouteableKeys.For
+  href: Routeables.Abstraction.RouteableKeys.html#Routeables_Abstraction_RouteableKeys_For_System_Object_System_Type_
+  name: For
+  nameWithType: RouteableKeys.For
+  fullName: Routeables.Abstraction.RouteableKeys.For
+- uid: System.ValueType.ToString
+  commentId: M:System.ValueType.ToString
+  parent: System.ValueType
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.valuetype.tostring
+  name: ToString()
+  nameWithType: ValueType.ToString()
+  fullName: System.ValueType.ToString()
+  spec.csharp:
+  - uid: System.ValueType.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.ValueType.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.tostring
+  - name: (
+  - name: )
+- uid: Routeables.Abstraction.RouteableKeys.ToString*
+  commentId: Overload:Routeables.Abstraction.RouteableKeys.ToString
+  href: Routeables.Abstraction.RouteableKeys.html#Routeables_Abstraction_RouteableKeys_ToString
+  name: ToString
+  nameWithType: RouteableKeys.ToString
+  fullName: Routeables.Abstraction.RouteableKeys.ToString
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: Routeables.Abstraction.RouteableKeys.GetKeys*
+  commentId: Overload:Routeables.Abstraction.RouteableKeys.GetKeys
+  href: Routeables.Abstraction.RouteableKeys.html#Routeables_Abstraction_RouteableKeys_GetKeys_System_Type_System_String_
+  name: GetKeys
+  nameWithType: RouteableKeys.GetKeys
+  fullName: Routeables.Abstraction.RouteableKeys.GetKeys
+- uid: System.ValueTuple{System.String,System.String}
+  commentId: T:System.ValueTuple{System.String,System.String}
+  parent: System
+  definition: System.ValueTuple`2
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: (string viewKey, string viewModelKey)
+  nameWithType: (string viewKey, string viewModelKey)
+  fullName: (string viewKey, string viewModelKey)
+  nameWithType.vb: (viewKey As String, viewModelKey As String)
+  fullName.vb: (viewKey As String, viewModelKey As String)
+  name.vb: (viewKey As String, viewModelKey As String)
+  spec.csharp:
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: " "
+  - uid: System.ValueTuple{System.String,System.String}.viewKey
+    name: viewKey
+    href: https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,system.string-.viewkey
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: " "
+  - uid: System.ValueTuple{System.String,System.String}.viewModelKey
+    name: viewModelKey
+    href: https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,system.string-.viewmodelkey
+  - name: )
+  spec.vb:
+  - name: (
+  - uid: System.ValueTuple{System.String,System.String}.viewKey
+    name: viewKey
+    href: https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,system.string-.viewkey
+  - name: " "
+  - name: As
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.ValueTuple{System.String,System.String}.viewModelKey
+    name: viewModelKey
+    href: https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,system.string-.viewmodelkey
+  - name: " "
+  - name: As
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.ValueTuple`2
+  commentId: T:System.ValueTuple`2
+  name: (T1, T2)
+  nameWithType: (T1, T2)
+  fullName: (T1, T2)
+  spec.csharp:
+  - name: (
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: )
+  spec.vb:
+  - name: (
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: )
+- uid: Routeables.Abstraction.RouteableKeys.GetRoute*
+  commentId: Overload:Routeables.Abstraction.RouteableKeys.GetRoute
+  href: Routeables.Abstraction.RouteableKeys.html#Routeables_Abstraction_RouteableKeys_GetRoute_System_Type_System_String_
+  name: GetRoute
+  nameWithType: RouteableKeys.GetRoute
+  fullName: Routeables.Abstraction.RouteableKeys.GetRoute
+- uid: Routeables.Abstraction.RouteableKeys.GetTemplate*
+  commentId: Overload:Routeables.Abstraction.RouteableKeys.GetTemplate
+  href: Routeables.Abstraction.RouteableKeys.html#Routeables_Abstraction_RouteableKeys_GetTemplate_System_Type_System_String_
+  name: GetTemplate
+  nameWithType: RouteableKeys.GetTemplate
+  fullName: Routeables.Abstraction.RouteableKeys.GetTemplate

@@ -1,0 +1,19 @@
+<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="XAnimals.Uno.Views.AnimalDetail">
+
+    <ScrollViewer>
+        <StackPanel Margin="20,28,20,40" Spacing="6" MaxWidth="640" HorizontalAlignment="Center">
+            <Border Width="260" Height="330" CornerRadius="130,130,14,14" Background="{StaticResource PlainCardBrush}">
+                <Image Stretch="UniformToFill" Source="{Binding Animal.PhotoUrl, Converter={StaticResource AnimalImage}}" />
+            </Border>
+            <StackPanel Spacing="6" Margin="0,14,0,0">
+                <TextBlock Text="{Binding Animal.Name}" FontSize="36" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Animal.Location}" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Animal.Details}" Margin="0,12,0,18" LineHeight="24" TextWrapping="Wrap" />
+                <Button Content="Back" HorizontalAlignment="Center" Click="OnBack" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

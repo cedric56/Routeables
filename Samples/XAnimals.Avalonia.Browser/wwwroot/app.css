@@ -1,0 +1,82 @@
+﻿/* HTML styles for the splash screen: the Routeables mark, a thin bar while the runtime loads. */
+.avalonia-splash {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: #FFFFFF;
+    color: #1F2328;
+    font-family: 'Inter', system-ui, sans-serif;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .avalonia-splash {
+        background: #14112B;
+        color: #F0F6FC;
+    }
+}
+
+.splash-card {
+    display: grid;
+    justify-items: center;
+    gap: .35rem;
+}
+
+.splash-mark {
+    width: 6.5rem;
+    height: 6.5rem;
+    margin-bottom: .6rem;
+}
+
+.splash-title {
+    margin: 0;
+    font-family: 'Lora Display', Georgia, serif;
+    font-weight: 500;
+    font-size: 2rem;
+    letter-spacing: .01em;
+}
+
+.splash-sub {
+    margin: 0;
+    font-size: .9rem;
+    opacity: .7;
+}
+
+/* The bar slides while the application loads; without motion it stays still, half drawn. */
+.splash-bar {
+    position: relative;
+    overflow: hidden;
+    width: 8rem;
+    height: 3px;
+    margin-top: 1.1rem;
+    border-radius: 3px;
+    background: rgba(74, 34, 200, .20);
+}
+
+.splash-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 40%;
+    border-radius: 3px;
+    background: #7C5CFF;
+    animation: splash-slide 1.2s ease-in-out infinite;
+}
+
+@keyframes splash-slide {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(250%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .splash-bar::after { animation: none; transform: translateX(75%); }
+}
+
+.avalonia-splash.splash-close {
+    transition: opacity 200ms, display 200ms;
+    display: none;
+    opacity: 0;
+}

@@ -1,0 +1,10 @@
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using RouteablesApp.ViewModels
+@inherits RouteableFor<HomeView, HomeViewModel>
+
+<PageTitle>Home</PageTitle>
+
+<h1>Home</h1>
+<p>This page is shown by <code>HomeViewModel</code>. Its route, <code>/home</code>, is declared on the view model.</p>
+<button @onclick="ViewModel.SayHelloAsync">Say hello</button>

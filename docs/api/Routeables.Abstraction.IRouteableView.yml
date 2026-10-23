@@ -1,0 +1,749 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.IRouteableView
+  commentId: T:Routeables.Abstraction.IRouteableView
+  id: IRouteableView
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.IRouteableView.Arguments
+  - Routeables.Abstraction.IRouteableView.Description
+  - Routeables.Abstraction.IRouteableView.DisplayName
+  - Routeables.Abstraction.IRouteableView.HasDescription
+  - Routeables.Abstraction.IRouteableView.Icon
+  - Routeables.Abstraction.IRouteableView.Icons
+  - Routeables.Abstraction.IRouteableView.IsLock
+  - Routeables.Abstraction.IRouteableView.Path
+  - Routeables.Abstraction.IRouteableView.Region
+  - Routeables.Abstraction.IRouteableView.Route
+  - Routeables.Abstraction.IRouteableView.Source
+  - Routeables.Abstraction.IRouteableView.Template
+  - Routeables.Abstraction.IRouteableView.View
+  - Routeables.Abstraction.IRouteableView.ViewModel
+  langs:
+  - csharp
+  - vb
+  name: IRouteableView
+  nameWithType: IRouteableView
+  fullName: Routeables.Abstraction.IRouteableView
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IRouteableView
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 6
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    An entry of the menu, and a destination of the router: a name, a route, the view and view model it shows, and an icon. The main
+
+    view model (<xref href="Routeables.Abstraction.IMainRouteables" data-throw-if-not-resolved="false"></xref>) lists them; <code>RoutableView&lt;TViewModel&gt;</code> is the usual implementation.
+  example: []
+  syntax:
+    content: public interface IRouteableView
+    content.vb: Public Interface IRouteableView
+  derivedClasses:
+  - Routeables.Routing.RoutableView`1
+  - Routeables.Routing.RouteableView
+- uid: Routeables.Abstraction.IRouteableView.IsLock
+  commentId: P:Routeables.Abstraction.IRouteableView.IsLock
+  id: IsLock
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: IsLock
+  nameWithType: IRouteableView.IsLock
+  fullName: Routeables.Abstraction.IRouteableView.IsLock
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IsLock
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 9
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Whether the menu refuses to select this entry (see <xref href="Routeables.Abstraction.IMainRouteables.Lock" data-throw-if-not-resolved="false"></xref>).
+  example: []
+  syntax:
+    content: bool IsLock { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Property IsLock As Boolean
+  overload: Routeables.Abstraction.IRouteableView.IsLock*
+- uid: Routeables.Abstraction.IRouteableView.ViewModel
+  commentId: P:Routeables.Abstraction.IRouteableView.ViewModel
+  id: ViewModel
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: ViewModel
+  nameWithType: IRouteableView.ViewModel
+  fullName: Routeables.Abstraction.IRouteableView.ViewModel
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ViewModel
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 12
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The view model instance of the entry, when one has been assigned explicitly; <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> lets the router build it.
+  example: []
+  syntax:
+    content: object? ViewModel { get; set; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: Property ViewModel As Object
+  overload: Routeables.Abstraction.IRouteableView.ViewModel*
+- uid: Routeables.Abstraction.IRouteableView.View
+  commentId: P:Routeables.Abstraction.IRouteableView.View
+  id: View
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: View
+  nameWithType: IRouteableView.View
+  fullName: Routeables.Abstraction.IRouteableView.View
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: View
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 15
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The view instance of the entry, when one has been assigned or created; <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> before.
+  example: []
+  syntax:
+    content: object? View { get; set; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: Property View As Object
+  overload: Routeables.Abstraction.IRouteableView.View*
+- uid: Routeables.Abstraction.IRouteableView.Route
+  commentId: P:Routeables.Abstraction.IRouteableView.Route
+  id: Route
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: Route
+  nameWithType: IRouteableView.Route
+  fullName: Routeables.Abstraction.IRouteableView.Route
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Route
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 20
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The address of the entry (<code>/cats</code>), as it is given to the router.
+  example: []
+  syntax:
+    content: string Route { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: ReadOnly Property Route As String
+  overload: Routeables.Abstraction.IRouteableView.Route*
+- uid: Routeables.Abstraction.IRouteableView.Template
+  commentId: P:Routeables.Abstraction.IRouteableView.Template
+  id: Template
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: Template
+  nameWithType: IRouteableView.Template
+  fullName: Routeables.Abstraction.IRouteableView.Template
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Template
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 23
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The template of the route (<code>/cats/{name}</code>), which names the parameters the address carries.
+  example: []
+  syntax:
+    content: string Template { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: ReadOnly Property Template As String
+  overload: Routeables.Abstraction.IRouteableView.Template*
+- uid: Routeables.Abstraction.IRouteableView.Arguments
+  commentId: P:Routeables.Abstraction.IRouteableView.Arguments
+  id: Arguments
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: Arguments
+  nameWithType: IRouteableView.Arguments
+  fullName: Routeables.Abstraction.IRouteableView.Arguments
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Arguments
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 26
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The arguments the navigation to this entry is made with.
+  example: []
+  syntax:
+    content: IRouteableArgs Arguments { get; set; }
+    parameters: []
+    return:
+      type: Routeables.Abstraction.IRouteableArgs
+    content.vb: Property Arguments As IRouteableArgs
+  overload: Routeables.Abstraction.IRouteableView.Arguments*
+- uid: Routeables.Abstraction.IRouteableView.DisplayName
+  commentId: P:Routeables.Abstraction.IRouteableView.DisplayName
+  id: DisplayName
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: DisplayName
+  nameWithType: IRouteableView.DisplayName
+  fullName: Routeables.Abstraction.IRouteableView.DisplayName
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: DisplayName
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 29
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The name the menu shows for this entry.
+  example: []
+  syntax:
+    content: string DisplayName { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: ReadOnly Property DisplayName As String
+  overload: Routeables.Abstraction.IRouteableView.DisplayName*
+- uid: Routeables.Abstraction.IRouteableView.Region
+  commentId: P:Routeables.Abstraction.IRouteableView.Region
+  id: Region
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: Region
+  nameWithType: IRouteableView.Region
+  fullName: Routeables.Abstraction.IRouteableView.Region
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Region
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 36
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    The region this entry is shown in: the name given to <code>AddRegion</code>, which is also the name a <code>RouteableRegion</code>
+
+    of a view is given. <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> is the default router (the main area). See
+
+    <xref href="Routeables.Abstraction.Extensions.RouterFor(System.IServiceProvider%2cRouteables.Abstraction.IRouteableView)" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: string? Region { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: ReadOnly Property Region As String
+  overload: Routeables.Abstraction.IRouteableView.Region*
+- uid: Routeables.Abstraction.IRouteableView.Description
+  commentId: P:Routeables.Abstraction.IRouteableView.Description
+  id: Description
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: Description
+  nameWithType: IRouteableView.Description
+  fullName: Routeables.Abstraction.IRouteableView.Description
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Description
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 39
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: A short sentence shown under the name (optional).
+  example: []
+  syntax:
+    content: string? Description { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: ReadOnly Property Description As String
+  overload: Routeables.Abstraction.IRouteableView.Description*
+- uid: Routeables.Abstraction.IRouteableView.HasDescription
+  commentId: P:Routeables.Abstraction.IRouteableView.HasDescription
+  id: HasDescription
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: HasDescription
+  nameWithType: IRouteableView.HasDescription
+  fullName: Routeables.Abstraction.IRouteableView.HasDescription
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: HasDescription
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 42
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Whether <xref href="Routeables.Abstraction.IRouteableView.Description" data-throw-if-not-resolved="false"></xref> has text (bindable, for the menus).
+  example: []
+  syntax:
+    content: bool HasDescription { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: ReadOnly Property HasDescription As Boolean
+  overload: Routeables.Abstraction.IRouteableView.HasDescription*
+- uid: Routeables.Abstraction.IRouteableView.Path
+  commentId: P:Routeables.Abstraction.IRouteableView.Path
+  id: Path
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: Path
+  nameWithType: IRouteableView.Path
+  fullName: Routeables.Abstraction.IRouteableView.Path
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Path
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 45
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The key of the icon of this entry, given to the resolvers (see <xref href="Routeables.Abstraction.IIconResolver" data-throw-if-not-resolved="false"></xref>); <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> for none.
+  example: []
+  syntax:
+    content: string? Path { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: ReadOnly Property Path As String
+  overload: Routeables.Abstraction.IRouteableView.Path*
+- uid: Routeables.Abstraction.IRouteableView.Icons
+  commentId: P:Routeables.Abstraction.IRouteableView.Icons
+  id: Icons
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: Icons
+  nameWithType: IRouteableView.Icons
+  fullName: Routeables.Abstraction.IRouteableView.Icons
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Icons
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 51
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    The resolvers that turn <xref href="Routeables.Abstraction.IRouteableView.Path" data-throw-if-not-resolved="false"></xref> into <xref href="Routeables.Abstraction.IRouteableView.Icon" data-throw-if-not-resolved="false"></xref> and <xref href="Routeables.Abstraction.IRouteableView.Source" data-throw-if-not-resolved="false"></xref>; <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>
+
+    uses the process-wide <xref href="Routeables.Abstraction.IconResolver.Default" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: IIconResolver? Icons { get; }
+    parameters: []
+    return:
+      type: Routeables.Abstraction.IIconResolver
+    content.vb: ReadOnly Property Icons As IIconResolver
+  overload: Routeables.Abstraction.IRouteableView.Icons*
+- uid: Routeables.Abstraction.IRouteableView.Icon
+  commentId: P:Routeables.Abstraction.IRouteableView.Icon
+  id: Icon
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: Icon
+  nameWithType: IRouteableView.Icon
+  fullName: Routeables.Abstraction.IRouteableView.Icon
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Icon
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 54
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The icon of this entry as a control, from <xref href="Routeables.Abstraction.IRouteableView.Path" data-throw-if-not-resolved="false"></xref>; <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when there is no key or no resolver knows it.
+  example: []
+  syntax:
+    content: object? Icon { get; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: ReadOnly Property Icon As Object
+  overload: Routeables.Abstraction.IRouteableView.Icon*
+- uid: Routeables.Abstraction.IRouteableView.Source
+  commentId: P:Routeables.Abstraction.IRouteableView.Source
+  id: Source
+  parent: Routeables.Abstraction.IRouteableView
+  langs:
+  - csharp
+  - vb
+  name: Source
+  nameWithType: IRouteableView.Source
+  fullName: Routeables.Abstraction.IRouteableView.Source
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableView.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Source
+    path: ../Routeables.Abstraction/Interfaces/IRouteableView.cs
+    startLine: 64
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The icon of this entry as an image source, from <xref href="Routeables.Abstraction.IRouteableView.Path" data-throw-if-not-resolved="false"></xref>; <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when there is no key or no resolver knows it.
+  example: []
+  syntax:
+    content: object? Source { get; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: ReadOnly Property Source As Object
+  overload: Routeables.Abstraction.IRouteableView.Source*
+references:
+- uid: Routeables.Abstraction.IMainRouteables
+  commentId: T:Routeables.Abstraction.IMainRouteables
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IMainRouteables.html
+  name: IMainRouteables
+  nameWithType: IMainRouteables
+  fullName: Routeables.Abstraction.IMainRouteables
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.IMainRouteables.Lock
+  commentId: M:Routeables.Abstraction.IMainRouteables.Lock
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Lock
+  name: Lock()
+  nameWithType: IMainRouteables.Lock()
+  fullName: Routeables.Abstraction.IMainRouteables.Lock()
+  spec.csharp:
+  - uid: Routeables.Abstraction.IMainRouteables.Lock
+    name: Lock
+    href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Lock
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IMainRouteables.Lock
+    name: Lock
+    href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Lock
+  - name: (
+  - name: )
+- uid: Routeables.Abstraction.IRouteableView.IsLock*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.IsLock
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_IsLock
+  name: IsLock
+  nameWithType: IRouteableView.IsLock
+  fullName: Routeables.Abstraction.IRouteableView.IsLock
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction.IRouteableView.ViewModel*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.ViewModel
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_ViewModel
+  name: ViewModel
+  nameWithType: IRouteableView.ViewModel
+  fullName: Routeables.Abstraction.IRouteableView.ViewModel
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Routeables.Abstraction.IRouteableView.View*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.View
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_View
+  name: View
+  nameWithType: IRouteableView.View
+  fullName: Routeables.Abstraction.IRouteableView.View
+- uid: Routeables.Abstraction.IRouteableView.Route*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.Route
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Route
+  name: Route
+  nameWithType: IRouteableView.Route
+  fullName: Routeables.Abstraction.IRouteableView.Route
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: Routeables.Abstraction.IRouteableView.Template*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.Template
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Template
+  name: Template
+  nameWithType: IRouteableView.Template
+  fullName: Routeables.Abstraction.IRouteableView.Template
+- uid: Routeables.Abstraction.IRouteableView.Arguments*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.Arguments
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Arguments
+  name: Arguments
+  nameWithType: IRouteableView.Arguments
+  fullName: Routeables.Abstraction.IRouteableView.Arguments
+- uid: Routeables.Abstraction.IRouteableArgs
+  commentId: T:Routeables.Abstraction.IRouteableArgs
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableArgs.html
+  name: IRouteableArgs
+  nameWithType: IRouteableArgs
+  fullName: Routeables.Abstraction.IRouteableArgs
+- uid: Routeables.Abstraction.IRouteableView.DisplayName*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.DisplayName
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_DisplayName
+  name: DisplayName
+  nameWithType: IRouteableView.DisplayName
+  fullName: Routeables.Abstraction.IRouteableView.DisplayName
+- uid: Routeables.Abstraction.Extensions.RouterFor(System.IServiceProvider,Routeables.Abstraction.IRouteableView)
+  commentId: M:Routeables.Abstraction.Extensions.RouterFor(System.IServiceProvider,Routeables.Abstraction.IRouteableView)
+  isExternal: true
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_RouterFor_System_IServiceProvider_Routeables_Abstraction_IRouteableView_
+  name: RouterFor(IServiceProvider, IRouteableView)
+  nameWithType: Extensions.RouterFor(IServiceProvider, IRouteableView)
+  fullName: Routeables.Abstraction.Extensions.RouterFor(System.IServiceProvider, Routeables.Abstraction.IRouteableView)
+  spec.csharp:
+  - uid: Routeables.Abstraction.Extensions.RouterFor(System.IServiceProvider,Routeables.Abstraction.IRouteableView)
+    name: RouterFor
+    href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_RouterFor_System_IServiceProvider_Routeables_Abstraction_IRouteableView_
+  - name: (
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.Extensions.RouterFor(System.IServiceProvider,Routeables.Abstraction.IRouteableView)
+    name: RouterFor
+    href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_RouterFor_System_IServiceProvider_Routeables_Abstraction_IRouteableView_
+  - name: (
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+- uid: Routeables.Abstraction.IRouteableView.Region*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.Region
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Region
+  name: Region
+  nameWithType: IRouteableView.Region
+  fullName: Routeables.Abstraction.IRouteableView.Region
+- uid: Routeables.Abstraction.IRouteableView.Description*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.Description
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Description
+  name: Description
+  nameWithType: IRouteableView.Description
+  fullName: Routeables.Abstraction.IRouteableView.Description
+- uid: Routeables.Abstraction.IRouteableView.Description
+  commentId: P:Routeables.Abstraction.IRouteableView.Description
+  parent: Routeables.Abstraction.IRouteableView
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Description
+  name: Description
+  nameWithType: IRouteableView.Description
+  fullName: Routeables.Abstraction.IRouteableView.Description
+- uid: Routeables.Abstraction.IRouteableView.HasDescription*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.HasDescription
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_HasDescription
+  name: HasDescription
+  nameWithType: IRouteableView.HasDescription
+  fullName: Routeables.Abstraction.IRouteableView.HasDescription
+- uid: Routeables.Abstraction.IRouteableView
+  commentId: T:Routeables.Abstraction.IRouteableView
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableView.html
+  name: IRouteableView
+  nameWithType: IRouteableView
+  fullName: Routeables.Abstraction.IRouteableView
+- uid: Routeables.Abstraction.IIconResolver
+  commentId: T:Routeables.Abstraction.IIconResolver
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IIconResolver.html
+  name: IIconResolver
+  nameWithType: IIconResolver
+  fullName: Routeables.Abstraction.IIconResolver
+- uid: Routeables.Abstraction.IRouteableView.Path*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.Path
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Path
+  name: Path
+  nameWithType: IRouteableView.Path
+  fullName: Routeables.Abstraction.IRouteableView.Path
+- uid: Routeables.Abstraction.IRouteableView.Path
+  commentId: P:Routeables.Abstraction.IRouteableView.Path
+  parent: Routeables.Abstraction.IRouteableView
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Path
+  name: Path
+  nameWithType: IRouteableView.Path
+  fullName: Routeables.Abstraction.IRouteableView.Path
+- uid: Routeables.Abstraction.IRouteableView.Icon
+  commentId: P:Routeables.Abstraction.IRouteableView.Icon
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Icon
+  name: Icon
+  nameWithType: IRouteableView.Icon
+  fullName: Routeables.Abstraction.IRouteableView.Icon
+- uid: Routeables.Abstraction.IRouteableView.Source
+  commentId: P:Routeables.Abstraction.IRouteableView.Source
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Source
+  name: Source
+  nameWithType: IRouteableView.Source
+  fullName: Routeables.Abstraction.IRouteableView.Source
+- uid: Routeables.Abstraction.IconResolver.Default
+  commentId: P:Routeables.Abstraction.IconResolver.Default
+  href: Routeables.Abstraction.IconResolver.html#Routeables_Abstraction_IconResolver_Default
+  name: Default
+  nameWithType: IconResolver.Default
+  fullName: Routeables.Abstraction.IconResolver.Default
+- uid: Routeables.Abstraction.IRouteableView.Icons*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.Icons
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Icons
+  name: Icons
+  nameWithType: IRouteableView.Icons
+  fullName: Routeables.Abstraction.IRouteableView.Icons
+- uid: Routeables.Abstraction.IRouteableView.Icon*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.Icon
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Icon
+  name: Icon
+  nameWithType: IRouteableView.Icon
+  fullName: Routeables.Abstraction.IRouteableView.Icon
+- uid: Routeables.Abstraction.IRouteableView.Source*
+  commentId: Overload:Routeables.Abstraction.IRouteableView.Source
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Source
+  name: Source
+  nameWithType: IRouteableView.Source
+  fullName: Routeables.Abstraction.IRouteableView.Source

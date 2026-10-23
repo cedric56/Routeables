@@ -1,0 +1,9 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:XAnimals.ViewModels;assembly=XAnimals.ViewModels"
+            xmlns:models="using:XAminals.Models"
+            xmlns:local="using:XAnimals.Avalonia"
+             x:Class="XAnimals.Avalonia.MonkeysView"
+             x:DataType="vm:MonkeysViewModel">
+     <local:AnimalList NoResultsText="No monkeys found." />
+</UserControl>

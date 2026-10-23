@@ -1,0 +1,473 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.IEntityCache`1
+  commentId: T:Routeables.Abstraction.IEntityCache`1
+  id: IEntityCache`1
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.IEntityCache`1.Entities
+  - Routeables.Abstraction.IEntityCache`1.EntitiesChanged
+  - Routeables.Abstraction.IEntityCache`1.Find(System.Int64)
+  - Routeables.Abstraction.IEntityCache`1.LoadEntities
+  - Routeables.Abstraction.IEntityCache`1.Track(`0)
+  langs:
+  - csharp
+  - vb
+  name: IEntityCache<T>
+  nameWithType: IEntityCache<T>
+  fullName: Routeables.Abstraction.IEntityCache<T>
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Abstraction/DAL/IEntityCache.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IEntityCache
+    path: ../Routeables.Abstraction/DAL/IEntityCache.cs
+    startLine: 2
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: public interface IEntityCache<T>
+    typeParameters:
+    - id: T
+    content.vb: Public Interface IEntityCache(Of T)
+  nameWithType.vb: IEntityCache(Of T)
+  fullName.vb: Routeables.Abstraction.IEntityCache(Of T)
+  name.vb: IEntityCache(Of T)
+- uid: Routeables.Abstraction.IEntityCache`1.LoadEntities
+  commentId: M:Routeables.Abstraction.IEntityCache`1.LoadEntities
+  id: LoadEntities
+  parent: Routeables.Abstraction.IEntityCache`1
+  langs:
+  - csharp
+  - vb
+  name: LoadEntities()
+  nameWithType: IEntityCache<T>.LoadEntities()
+  fullName: Routeables.Abstraction.IEntityCache<T>.LoadEntities()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/DAL/IEntityCache.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: LoadEntities
+    path: ../Routeables.Abstraction/DAL/IEntityCache.cs
+    startLine: 4
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: Task LoadEntities()
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function LoadEntities() As Task
+  overload: Routeables.Abstraction.IEntityCache`1.LoadEntities*
+  nameWithType.vb: IEntityCache(Of T).LoadEntities()
+  fullName.vb: Routeables.Abstraction.IEntityCache(Of T).LoadEntities()
+- uid: Routeables.Abstraction.IEntityCache`1.EntitiesChanged
+  commentId: E:Routeables.Abstraction.IEntityCache`1.EntitiesChanged
+  id: EntitiesChanged
+  parent: Routeables.Abstraction.IEntityCache`1
+  langs:
+  - csharp
+  - vb
+  name: EntitiesChanged
+  nameWithType: IEntityCache<T>.EntitiesChanged
+  fullName: Routeables.Abstraction.IEntityCache<T>.EntitiesChanged
+  type: Event
+  source:
+    remote:
+      path: Routeables.Abstraction/DAL/IEntityCache.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: EntitiesChanged
+    path: ../Routeables.Abstraction/DAL/IEntityCache.cs
+    startLine: 5
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: event EventHandler<EventArgs>? EntitiesChanged
+    return:
+      type: System.EventHandler{System.EventArgs}
+    content.vb: Event EntitiesChanged As EventHandler(Of EventArgs)
+  nameWithType.vb: IEntityCache(Of T).EntitiesChanged
+  fullName.vb: Routeables.Abstraction.IEntityCache(Of T).EntitiesChanged
+- uid: Routeables.Abstraction.IEntityCache`1.Entities
+  commentId: P:Routeables.Abstraction.IEntityCache`1.Entities
+  id: Entities
+  parent: Routeables.Abstraction.IEntityCache`1
+  langs:
+  - csharp
+  - vb
+  name: Entities
+  nameWithType: IEntityCache<T>.Entities
+  fullName: Routeables.Abstraction.IEntityCache<T>.Entities
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/DAL/IEntityCache.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Entities
+    path: ../Routeables.Abstraction/DAL/IEntityCache.cs
+    startLine: 6
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: IEnumerable<T> Entities { get; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.IEnumerable{{T}}
+    content.vb: ReadOnly Property Entities As IEnumerable(Of T)
+  overload: Routeables.Abstraction.IEntityCache`1.Entities*
+  nameWithType.vb: IEntityCache(Of T).Entities
+  fullName.vb: Routeables.Abstraction.IEntityCache(Of T).Entities
+- uid: Routeables.Abstraction.IEntityCache`1.Find(System.Int64)
+  commentId: M:Routeables.Abstraction.IEntityCache`1.Find(System.Int64)
+  id: Find(System.Int64)
+  parent: Routeables.Abstraction.IEntityCache`1
+  langs:
+  - csharp
+  - vb
+  name: Find(long)
+  nameWithType: IEntityCache<T>.Find(long)
+  fullName: Routeables.Abstraction.IEntityCache<T>.Find(long)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/DAL/IEntityCache.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Find
+    path: ../Routeables.Abstraction/DAL/IEntityCache.cs
+    startLine: 7
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: T? Find(long id)
+    parameters:
+    - id: id
+      type: System.Int64
+    return:
+      type: '{T}'
+    content.vb: Function Find(id As Long) As T
+  overload: Routeables.Abstraction.IEntityCache`1.Find*
+  nameWithType.vb: IEntityCache(Of T).Find(Long)
+  fullName.vb: Routeables.Abstraction.IEntityCache(Of T).Find(Long)
+  name.vb: Find(Long)
+- uid: Routeables.Abstraction.IEntityCache`1.Track(`0)
+  commentId: M:Routeables.Abstraction.IEntityCache`1.Track(`0)
+  id: Track(`0)
+  parent: Routeables.Abstraction.IEntityCache`1
+  langs:
+  - csharp
+  - vb
+  name: Track(T)
+  nameWithType: IEntityCache<T>.Track(T)
+  fullName: Routeables.Abstraction.IEntityCache<T>.Track(T)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/DAL/IEntityCache.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Track
+    path: ../Routeables.Abstraction/DAL/IEntityCache.cs
+    startLine: 8
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: void Track(T entity)
+    parameters:
+    - id: entity
+      type: '{T}'
+    content.vb: Sub Track(entity As T)
+  overload: Routeables.Abstraction.IEntityCache`1.Track*
+  nameWithType.vb: IEntityCache(Of T).Track(T)
+  fullName.vb: Routeables.Abstraction.IEntityCache(Of T).Track(T)
+references:
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.IEntityCache`1.LoadEntities*
+  commentId: Overload:Routeables.Abstraction.IEntityCache`1.LoadEntities
+  href: Routeables.Abstraction.IEntityCache-1.html#Routeables_Abstraction_IEntityCache_1_LoadEntities
+  name: LoadEntities
+  nameWithType: IEntityCache<T>.LoadEntities
+  fullName: Routeables.Abstraction.IEntityCache<T>.LoadEntities
+  nameWithType.vb: IEntityCache(Of T).LoadEntities
+  fullName.vb: Routeables.Abstraction.IEntityCache(Of T).LoadEntities
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: System.EventHandler{System.EventArgs}
+  commentId: T:System.EventHandler{System.EventArgs}
+  parent: System
+  definition: System.EventHandler`1
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<EventArgs>
+  nameWithType: EventHandler<EventArgs>
+  fullName: System.EventHandler<System.EventArgs>
+  nameWithType.vb: EventHandler(Of EventArgs)
+  fullName.vb: System.EventHandler(Of System.EventArgs)
+  name.vb: EventHandler(Of EventArgs)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - uid: System.EventArgs
+    name: EventArgs
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventargs
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.EventArgs
+    name: EventArgs
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventargs
+  - name: )
+- uid: System.EventHandler`1
+  commentId: T:System.EventHandler`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<TEventArgs>
+  nameWithType: EventHandler<TEventArgs>
+  fullName: System.EventHandler<TEventArgs>
+  nameWithType.vb: EventHandler(Of TEventArgs)
+  fullName.vb: System.EventHandler(Of TEventArgs)
+  name.vb: EventHandler(Of TEventArgs)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - name: TEventArgs
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TEventArgs
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction.IEntityCache`1.Entities*
+  commentId: Overload:Routeables.Abstraction.IEntityCache`1.Entities
+  href: Routeables.Abstraction.IEntityCache-1.html#Routeables_Abstraction_IEntityCache_1_Entities
+  name: Entities
+  nameWithType: IEntityCache<T>.Entities
+  fullName: Routeables.Abstraction.IEntityCache<T>.Entities
+  nameWithType.vb: IEntityCache(Of T).Entities
+  fullName.vb: Routeables.Abstraction.IEntityCache(Of T).Entities
+- uid: System.Collections.Generic.IEnumerable{{T}}
+  commentId: T:System.Collections.Generic.IEnumerable{`0}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IEnumerable`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<T>
+  nameWithType: IEnumerable<T>
+  fullName: System.Collections.Generic.IEnumerable<T>
+  nameWithType.vb: IEnumerable(Of T)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of T)
+  name.vb: IEnumerable(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic.IEnumerable`1
+  commentId: T:System.Collections.Generic.IEnumerable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<T>
+  nameWithType: IEnumerable<T>
+  fullName: System.Collections.Generic.IEnumerable<T>
+  nameWithType.vb: IEnumerable(Of T)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of T)
+  name.vb: IEnumerable(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: Routeables.Abstraction.IEntityCache`1.Find*
+  commentId: Overload:Routeables.Abstraction.IEntityCache`1.Find
+  href: Routeables.Abstraction.IEntityCache-1.html#Routeables_Abstraction_IEntityCache_1_Find_System_Int64_
+  name: Find
+  nameWithType: IEntityCache<T>.Find
+  fullName: Routeables.Abstraction.IEntityCache<T>.Find
+  nameWithType.vb: IEntityCache(Of T).Find
+  fullName.vb: Routeables.Abstraction.IEntityCache(Of T).Find
+- uid: System.Int64
+  commentId: T:System.Int64
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int64
+  name: long
+  nameWithType: long
+  fullName: long
+  nameWithType.vb: Long
+  fullName.vb: Long
+  name.vb: Long
+- uid: '{T}'
+  commentId: '!:T'
+  definition: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: Routeables.Abstraction.IEntityCache`1.Track*
+  commentId: Overload:Routeables.Abstraction.IEntityCache`1.Track
+  href: Routeables.Abstraction.IEntityCache-1.html#Routeables_Abstraction_IEntityCache_1_Track__0_
+  name: Track
+  nameWithType: IEntityCache<T>.Track
+  fullName: Routeables.Abstraction.IEntityCache<T>.Track
+  nameWithType.vb: IEntityCache(Of T).Track
+  fullName.vb: Routeables.Abstraction.IEntityCache(Of T).Track

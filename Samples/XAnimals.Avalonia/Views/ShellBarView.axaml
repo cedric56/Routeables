@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:XAnimals.ViewModels"
+             x:Class="XAnimals.Avalonia.ShellBarView"
+             x:DataType="vm:ShellBarViewModel">
+
+    <!-- One view for the header and the footer: the strong one is the header. -->
+    <Border Classes="bar" Classes.strong="{Binding IsStrong}" Padding="14,8">
+    <StackPanel Orientation="Horizontal" Spacing="12">
+        <TextBlock Text="{Binding Glyph}" FontSize="28" VerticalAlignment="Center" />
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="{Binding Title}" TextWrapping="Wrap" FontSize="17" FontWeight="SemiBold" FontFamily="{DynamicResource AnDisplayFont}" />
+            <TextBlock Text="{Binding Detail}" TextWrapping="Wrap" FontSize="12" Opacity="0.85" />
+        </StackPanel>
+    </StackPanel>
+    </Border>
+</UserControl>

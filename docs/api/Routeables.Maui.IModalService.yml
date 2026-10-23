@@ -1,0 +1,268 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Maui.IModalService
+  commentId: T:Routeables.Maui.IModalService
+  id: IModalService
+  parent: Routeables.Maui
+  children:
+  - Routeables.Maui.IModalService.ShowModalAsync``2(``0,System.Func{Microsoft.Maui.Controls.View})
+  langs:
+  - csharp
+  - vb
+  name: IModalService
+  nameWithType: IModalService
+  fullName: Routeables.Maui.IModalService
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Maui/Interfaces/IModalService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: IModalService
+    path: ../Routeables.Maui/Interfaces/IModalService.cs
+    startLine: 4
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  syntax:
+    content: public interface IModalService
+    content.vb: Public Interface IModalService
+  derivedClasses:
+  - Routeables.Maui.ModalService
+- uid: Routeables.Maui.IModalService.ShowModalAsync``2(``0,System.Func{Microsoft.Maui.Controls.View})
+  commentId: M:Routeables.Maui.IModalService.ShowModalAsync``2(``0,System.Func{Microsoft.Maui.Controls.View})
+  id: ShowModalAsync``2(``0,System.Func{Microsoft.Maui.Controls.View})
+  parent: Routeables.Maui.IModalService
+  langs:
+  - csharp
+  - vb
+  name: ShowModalAsync<TViewModel, TResult>(TViewModel, Func<View>)
+  nameWithType: IModalService.ShowModalAsync<TViewModel, TResult>(TViewModel, Func<View>)
+  fullName: Routeables.Maui.IModalService.ShowModalAsync<TViewModel, TResult>(TViewModel, System.Func<Microsoft.Maui.Controls.View>)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Maui/Interfaces/IModalService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: ShowModalAsync
+    path: ../Routeables.Maui/Interfaces/IModalService.cs
+    startLine: 6
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  syntax:
+    content: 'Task<TResult?> ShowModalAsync<TViewModel, TResult>(TViewModel viewModel, Func<View> viewFactory) where TViewModel : ICloseableViewModel<TResult>'
+    parameters:
+    - id: viewModel
+      type: '{TViewModel}'
+    - id: viewFactory
+      type: System.Func{Microsoft.Maui.Controls.View}
+    typeParameters:
+    - id: TViewModel
+    - id: TResult
+    return:
+      type: System.Threading.Tasks.Task{{TResult}}
+    content.vb: Function ShowModalAsync(Of TViewModel As ICloseableViewModel(Of TResult), TResult)(viewModel As TViewModel, viewFactory As Func(Of View)) As Task(Of TResult)
+  overload: Routeables.Maui.IModalService.ShowModalAsync*
+  nameWithType.vb: IModalService.ShowModalAsync(Of TViewModel, TResult)(TViewModel, Func(Of View))
+  fullName.vb: Routeables.Maui.IModalService.ShowModalAsync(Of TViewModel, TResult)(TViewModel, System.Func(Of Microsoft.Maui.Controls.View))
+  name.vb: ShowModalAsync(Of TViewModel, TResult)(TViewModel, Func(Of View))
+references:
+- uid: Routeables.Maui
+  commentId: N:Routeables.Maui
+  name: Routeables.Maui
+  nameWithType: Routeables.Maui
+  fullName: Routeables.Maui
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Maui
+    name: Maui
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Maui
+    name: Maui
+- uid: Routeables.Maui.IModalService.ShowModalAsync*
+  commentId: Overload:Routeables.Maui.IModalService.ShowModalAsync
+  href: Routeables.Maui.IModalService.html#Routeables_Maui_IModalService_ShowModalAsync__2___0_System_Func_Microsoft_Maui_Controls_View__
+  name: ShowModalAsync
+  nameWithType: IModalService.ShowModalAsync
+  fullName: Routeables.Maui.IModalService.ShowModalAsync
+- uid: '{TViewModel}'
+  commentId: '!:TViewModel'
+  definition: TViewModel
+  name: TViewModel
+  nameWithType: TViewModel
+  fullName: TViewModel
+- uid: System.Func{Microsoft.Maui.Controls.View}
+  commentId: T:System.Func{Microsoft.Maui.Controls.View}
+  parent: System
+  definition: System.Func`1
+  href: https://learn.microsoft.com/dotnet/api/system.func-1
+  name: Func<View>
+  nameWithType: Func<View>
+  fullName: System.Func<Microsoft.Maui.Controls.View>
+  nameWithType.vb: Func(Of View)
+  fullName.vb: System.Func(Of Microsoft.Maui.Controls.View)
+  name.vb: Func(Of View)
+  spec.csharp:
+  - uid: System.Func`1
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-1
+  - name: <
+  - uid: Microsoft.Maui.Controls.View
+    name: View
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.view
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`1
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Microsoft.Maui.Controls.View
+    name: View
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.view
+  - name: )
+- uid: System.Threading.Tasks.Task{{TResult}}
+  commentId: T:System.Threading.Tasks.Task{``1}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: TViewModel
+  name: TViewModel
+  nameWithType: TViewModel
+  fullName: TViewModel
+- uid: System.Func`1
+  commentId: T:System.Func`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.func-1
+  name: Func<TResult>
+  nameWithType: Func<TResult>
+  fullName: System.Func<TResult>
+  nameWithType.vb: Func(Of TResult)
+  fullName.vb: System.Func(Of TResult)
+  name.vb: Func(Of TResult)
+  spec.csharp:
+  - uid: System.Func`1
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`1
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks

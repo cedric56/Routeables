@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAotCompatible>true</IsAotCompatible>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Routeables.Segments</PackageId>
+    <Version>1.0.0-preview.1</Version>
+    <Description>Routing by segments for Routeables (Orders?id=5/Detail).</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Test" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
+    <ProjectReference Include="..\Routeables.Routing\Routeables.Routing.csproj" />
+  </ItemGroup>
+</Project>

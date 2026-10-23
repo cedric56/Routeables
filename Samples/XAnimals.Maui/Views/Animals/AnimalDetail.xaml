@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:XAnimals.Maui"
+    xmlns:vm="clr-namespace:XAnimals.ViewModels;assembly=XAnimals.ViewModels"
+    x:Class="XAnimals.Maui.Views.AnimalDetail"
+    x:DataType="vm:AnimalDetailViewModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource Paper}, Dark={StaticResource OffBlack}}">
+
+    <ContentView.Resources>
+        <app:WebImageConverter x:Key="WebImage" />
+    </ContentView.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,28,20,40" Spacing="6" MaximumWidthRequest="640" HorizontalOptions="Center">
+            <!-- The arch rises, then the text settles (AnimalDetail.xaml.cs). -->
+            <Border x:Name="hero" WidthRequest="260" HeightRequest="330" StrokeThickness="0" HorizontalOptions="Center"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource ArchFill}, Dark={StaticResource ArchFillDark}}">
+                <Border.StrokeShape><RoundRectangle CornerRadius="130,130,14,14" /></Border.StrokeShape>
+                <Image Source="{Binding Animal.PhotoUrl, Converter={StaticResource WebImage}}" Aspect="AspectFill" />
+            </Border>
+            <VerticalStackLayout x:Name="text" Spacing="6" Margin="0,14,0,0">
+                <Label Text="{Binding Animal.Name}" FontFamily="LoraDisplay" FontSize="36" HorizontalOptions="Center" />
+                <Label Text="{Binding Animal.Location}" FontFamily="InterSemibold" HorizontalOptions="Center"
+                       TextColor="{AppThemeBinding Light={StaticResource SaffronText}, Dark={StaticResource Tertiary}}" />
+                <Label Text="{Binding Animal.Details}" LineBreakMode="WordWrap" LineHeight="1.5" Margin="0,12,0,18" />
+                <Button Text="Back" HorizontalOptions="Center" Clicked="OnBackClicked" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>

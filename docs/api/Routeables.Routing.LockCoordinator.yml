@@ -1,0 +1,586 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Routing.LockCoordinator
+  commentId: T:Routeables.Routing.LockCoordinator
+  id: LockCoordinator
+  parent: Routeables.Routing
+  children:
+  - Routeables.Routing.LockCoordinator.#ctor(System.IServiceProvider,Routeables.Abstraction.IRouteableBrokerService,Routeables.Abstraction.IMainRouteables)
+  - Routeables.Routing.LockCoordinator.Dispose
+  - Routeables.Routing.LockCoordinator.Subscribe
+  - Routeables.Routing.LockCoordinator.Unsubscribe
+  langs:
+  - csharp
+  - vb
+  name: LockCoordinator
+  nameWithType: LockCoordinator
+  fullName: Routeables.Routing.LockCoordinator
+  type: Class
+  source:
+    remote:
+      path: Routeables.Routing/LockCoordinator.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: LockCoordinator
+    path: ../Routeables.Routing/LockCoordinator.cs
+    startLine: 10
+  assemblies:
+  - Routeables.Routing
+  namespace: Routeables.Routing
+  summary: >-
+    Coordinates lock states across routable components based on incoming broker messages.
+
+    It listens with its own subscription: disposing it (or calling <xref href="Routeables.Routing.LockCoordinator.Unsubscribe" data-throw-if-not-resolved="false"></xref>) stops this coordinator only,
+
+    not the others that listen to the same broker.
+  example: []
+  syntax:
+    content: 'public sealed class LockCoordinator : ILockCoordinator, IDisposable'
+    content.vb: Public NotInheritable Class LockCoordinator Implements ILockCoordinator, IDisposable
+  inheritance:
+  - System.Object
+  implements:
+  - Routeables.Abstraction.ILockCoordinator
+  - System.IDisposable
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: Routeables.Routing.LockCoordinator.#ctor(System.IServiceProvider,Routeables.Abstraction.IRouteableBrokerService,Routeables.Abstraction.IMainRouteables)
+  commentId: M:Routeables.Routing.LockCoordinator.#ctor(System.IServiceProvider,Routeables.Abstraction.IRouteableBrokerService,Routeables.Abstraction.IMainRouteables)
+  id: '#ctor(System.IServiceProvider,Routeables.Abstraction.IRouteableBrokerService,Routeables.Abstraction.IMainRouteables)'
+  parent: Routeables.Routing.LockCoordinator
+  langs:
+  - csharp
+  - vb
+  name: LockCoordinator(IServiceProvider, IRouteableBrokerService, IMainRouteables)
+  nameWithType: LockCoordinator.LockCoordinator(IServiceProvider, IRouteableBrokerService, IMainRouteables)
+  fullName: Routeables.Routing.LockCoordinator.LockCoordinator(System.IServiceProvider, Routeables.Abstraction.IRouteableBrokerService, Routeables.Abstraction.IMainRouteables)
+  type: Constructor
+  source:
+    remote:
+      path: Routeables.Routing/LockCoordinator.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: .ctor
+    path: ../Routeables.Routing/LockCoordinator.cs
+    startLine: 28
+  assemblies:
+  - Routeables.Routing
+  namespace: Routeables.Routing
+  summary: Initializes a new instance of the <xref href="Routeables.Routing.LockCoordinator" data-throw-if-not-resolved="false"></xref> class.
+  example: []
+  syntax:
+    content: public LockCoordinator(IServiceProvider provider, IRouteableBrokerService broker, IMainRouteables manager)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+      description: >-
+        The service provider used to resolve the other <xref href="Routeables.Abstraction.IMainRouteables" data-throw-if-not-resolved="false"></xref> instances. It is only used when a message
+
+        is addressed to all of them, never while the coordinator is created: resolving them here would build the main
+
+        view model that is creating this coordinator again.
+    - id: broker
+      type: Routeables.Abstraction.IRouteableBrokerService
+      description: The broker service used for subscribing to lock change messages.
+    - id: manager
+      type: Routeables.Abstraction.IMainRouteables
+      description: The primary routable manager instance.
+    content.vb: Public Sub New(provider As IServiceProvider, broker As IRouteableBrokerService, manager As IMainRouteables)
+  overload: Routeables.Routing.LockCoordinator.#ctor*
+  nameWithType.vb: LockCoordinator.New(IServiceProvider, IRouteableBrokerService, IMainRouteables)
+  fullName.vb: Routeables.Routing.LockCoordinator.New(System.IServiceProvider, Routeables.Abstraction.IRouteableBrokerService, Routeables.Abstraction.IMainRouteables)
+  name.vb: New(IServiceProvider, IRouteableBrokerService, IMainRouteables)
+- uid: Routeables.Routing.LockCoordinator.Subscribe
+  commentId: M:Routeables.Routing.LockCoordinator.Subscribe
+  id: Subscribe
+  parent: Routeables.Routing.LockCoordinator
+  langs:
+  - csharp
+  - vb
+  name: Subscribe()
+  nameWithType: LockCoordinator.Subscribe()
+  fullName: Routeables.Routing.LockCoordinator.Subscribe()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Routing/LockCoordinator.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Subscribe
+    path: ../Routeables.Routing/LockCoordinator.cs
+    startLine: 39
+  assemblies:
+  - Routeables.Routing
+  namespace: Routeables.Routing
+  summary: >-
+    Subscribes to the "LockChanged" message topic to handle lock or unlock updates dynamically.
+
+    Calling it again while subscribed does nothing.
+  example: []
+  syntax:
+    content: public void Subscribe()
+    content.vb: Public Sub Subscribe()
+  overload: Routeables.Routing.LockCoordinator.Subscribe*
+  implements:
+  - Routeables.Abstraction.ILockCoordinator.Subscribe
+- uid: Routeables.Routing.LockCoordinator.Dispose
+  commentId: M:Routeables.Routing.LockCoordinator.Dispose
+  id: Dispose
+  parent: Routeables.Routing.LockCoordinator
+  langs:
+  - csharp
+  - vb
+  name: Dispose()
+  nameWithType: LockCoordinator.Dispose()
+  fullName: Routeables.Routing.LockCoordinator.Dispose()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Routing/LockCoordinator.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Dispose
+    path: ../Routeables.Routing/LockCoordinator.cs
+    startLine: 84
+  assemblies:
+  - Routeables.Routing
+  namespace: Routeables.Routing
+  summary: Performs tasks associated with freeing, releasing, or resetting unmanaged resources.
+  example: []
+  syntax:
+    content: public void Dispose()
+    content.vb: Public Sub Dispose()
+  overload: Routeables.Routing.LockCoordinator.Dispose*
+  implements:
+  - System.IDisposable.Dispose
+- uid: Routeables.Routing.LockCoordinator.Unsubscribe
+  commentId: M:Routeables.Routing.LockCoordinator.Unsubscribe
+  id: Unsubscribe
+  parent: Routeables.Routing.LockCoordinator
+  langs:
+  - csharp
+  - vb
+  name: Unsubscribe()
+  nameWithType: LockCoordinator.Unsubscribe()
+  fullName: Routeables.Routing.LockCoordinator.Unsubscribe()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Routing/LockCoordinator.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Unsubscribe
+    path: ../Routeables.Routing/LockCoordinator.cs
+    startLine: 89
+  assemblies:
+  - Routeables.Routing
+  namespace: Routeables.Routing
+  summary: Stops listening to the "LockChanged" message topic.
+  example: []
+  syntax:
+    content: public void Unsubscribe()
+    content.vb: Public Sub Unsubscribe()
+  overload: Routeables.Routing.LockCoordinator.Unsubscribe*
+  implements:
+  - Routeables.Abstraction.ILockCoordinator.Unsubscribe
+references:
+- uid: Routeables.Routing.LockCoordinator.Unsubscribe
+  commentId: M:Routeables.Routing.LockCoordinator.Unsubscribe
+  href: Routeables.Routing.LockCoordinator.html#Routeables_Routing_LockCoordinator_Unsubscribe
+  name: Unsubscribe()
+  nameWithType: LockCoordinator.Unsubscribe()
+  fullName: Routeables.Routing.LockCoordinator.Unsubscribe()
+  spec.csharp:
+  - uid: Routeables.Routing.LockCoordinator.Unsubscribe
+    name: Unsubscribe
+    href: Routeables.Routing.LockCoordinator.html#Routeables_Routing_LockCoordinator_Unsubscribe
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Routing.LockCoordinator.Unsubscribe
+    name: Unsubscribe
+    href: Routeables.Routing.LockCoordinator.html#Routeables_Routing_LockCoordinator_Unsubscribe
+  - name: (
+  - name: )
+- uid: Routeables.Routing
+  commentId: N:Routeables.Routing
+  name: Routeables.Routing
+  nameWithType: Routeables.Routing
+  fullName: Routeables.Routing
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Routing
+    name: Routing
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Routing
+    name: Routing
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Routeables.Abstraction.ILockCoordinator
+  commentId: T:Routeables.Abstraction.ILockCoordinator
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.ILockCoordinator.html
+  name: ILockCoordinator
+  nameWithType: ILockCoordinator
+  fullName: Routeables.Abstraction.ILockCoordinator
+- uid: System.IDisposable
+  commentId: T:System.IDisposable
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.idisposable
+  name: IDisposable
+  nameWithType: IDisposable
+  fullName: System.IDisposable
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Routing.LockCoordinator
+  commentId: T:Routeables.Routing.LockCoordinator
+  href: Routeables.Routing.LockCoordinator.html
+  name: LockCoordinator
+  nameWithType: LockCoordinator
+  fullName: Routeables.Routing.LockCoordinator
+- uid: Routeables.Abstraction.IMainRouteables
+  commentId: T:Routeables.Abstraction.IMainRouteables
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IMainRouteables.html
+  name: IMainRouteables
+  nameWithType: IMainRouteables
+  fullName: Routeables.Abstraction.IMainRouteables
+- uid: Routeables.Routing.LockCoordinator.#ctor*
+  commentId: Overload:Routeables.Routing.LockCoordinator.#ctor
+  href: Routeables.Routing.LockCoordinator.html#Routeables_Routing_LockCoordinator__ctor_System_IServiceProvider_Routeables_Abstraction_IRouteableBrokerService_Routeables_Abstraction_IMainRouteables_
+  name: LockCoordinator
+  nameWithType: LockCoordinator.LockCoordinator
+  fullName: Routeables.Routing.LockCoordinator.LockCoordinator
+  nameWithType.vb: LockCoordinator.New
+  fullName.vb: Routeables.Routing.LockCoordinator.New
+  name.vb: New
+- uid: System.IServiceProvider
+  commentId: T:System.IServiceProvider
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  name: IServiceProvider
+  nameWithType: IServiceProvider
+  fullName: System.IServiceProvider
+- uid: Routeables.Abstraction.IRouteableBrokerService
+  commentId: T:Routeables.Abstraction.IRouteableBrokerService
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableBrokerService.html
+  name: IRouteableBrokerService
+  nameWithType: IRouteableBrokerService
+  fullName: Routeables.Abstraction.IRouteableBrokerService
+- uid: Routeables.Routing.LockCoordinator.Subscribe*
+  commentId: Overload:Routeables.Routing.LockCoordinator.Subscribe
+  href: Routeables.Routing.LockCoordinator.html#Routeables_Routing_LockCoordinator_Subscribe
+  name: Subscribe
+  nameWithType: LockCoordinator.Subscribe
+  fullName: Routeables.Routing.LockCoordinator.Subscribe
+- uid: Routeables.Abstraction.ILockCoordinator.Subscribe
+  commentId: M:Routeables.Abstraction.ILockCoordinator.Subscribe
+  parent: Routeables.Abstraction.ILockCoordinator
+  href: Routeables.Abstraction.ILockCoordinator.html#Routeables_Abstraction_ILockCoordinator_Subscribe
+  name: Subscribe()
+  nameWithType: ILockCoordinator.Subscribe()
+  fullName: Routeables.Abstraction.ILockCoordinator.Subscribe()
+  spec.csharp:
+  - uid: Routeables.Abstraction.ILockCoordinator.Subscribe
+    name: Subscribe
+    href: Routeables.Abstraction.ILockCoordinator.html#Routeables_Abstraction_ILockCoordinator_Subscribe
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.ILockCoordinator.Subscribe
+    name: Subscribe
+    href: Routeables.Abstraction.ILockCoordinator.html#Routeables_Abstraction_ILockCoordinator_Subscribe
+  - name: (
+  - name: )
+- uid: Routeables.Routing.LockCoordinator.Dispose*
+  commentId: Overload:Routeables.Routing.LockCoordinator.Dispose
+  href: Routeables.Routing.LockCoordinator.html#Routeables_Routing_LockCoordinator_Dispose
+  name: Dispose
+  nameWithType: LockCoordinator.Dispose
+  fullName: Routeables.Routing.LockCoordinator.Dispose
+- uid: System.IDisposable.Dispose
+  commentId: M:System.IDisposable.Dispose
+  parent: System.IDisposable
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.idisposable.dispose
+  name: Dispose()
+  nameWithType: IDisposable.Dispose()
+  fullName: System.IDisposable.Dispose()
+  spec.csharp:
+  - uid: System.IDisposable.Dispose
+    name: Dispose
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.idisposable.dispose
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.IDisposable.Dispose
+    name: Dispose
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.idisposable.dispose
+  - name: (
+  - name: )
+- uid: Routeables.Routing.LockCoordinator.Unsubscribe*
+  commentId: Overload:Routeables.Routing.LockCoordinator.Unsubscribe
+  href: Routeables.Routing.LockCoordinator.html#Routeables_Routing_LockCoordinator_Unsubscribe
+  name: Unsubscribe
+  nameWithType: LockCoordinator.Unsubscribe
+  fullName: Routeables.Routing.LockCoordinator.Unsubscribe
+- uid: Routeables.Abstraction.ILockCoordinator.Unsubscribe
+  commentId: M:Routeables.Abstraction.ILockCoordinator.Unsubscribe
+  parent: Routeables.Abstraction.ILockCoordinator
+  href: Routeables.Abstraction.ILockCoordinator.html#Routeables_Abstraction_ILockCoordinator_Unsubscribe
+  name: Unsubscribe()
+  nameWithType: ILockCoordinator.Unsubscribe()
+  fullName: Routeables.Abstraction.ILockCoordinator.Unsubscribe()
+  spec.csharp:
+  - uid: Routeables.Abstraction.ILockCoordinator.Unsubscribe
+    name: Unsubscribe
+    href: Routeables.Abstraction.ILockCoordinator.html#Routeables_Abstraction_ILockCoordinator_Unsubscribe
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.ILockCoordinator.Unsubscribe
+    name: Unsubscribe
+    href: Routeables.Abstraction.ILockCoordinator.html#Routeables_Abstraction_ILockCoordinator_Unsubscribe
+  - name: (
+  - name: )

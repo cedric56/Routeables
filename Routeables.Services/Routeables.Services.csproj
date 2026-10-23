@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAotCompatible>true</IsAotCompatible>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Routeables.Services</PackageId>
+    <Version>1.0.0-preview.1</Version>
+    <!-- The types keep the Routeables.Abstraction namespace, so moving them out of that assembly changes no using. -->
+    <RootNamespace>Routeables.Abstraction</RootNamespace>
+    <!--<AllowUnsafeBlocks>true</AllowUnsafeBlocks>-->
+    <Description>Optional UI service contracts for Routeables: dialogs, content and task dialogs, notifications and theme.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Test" />
+    <InternalsVisibleTo Include="Routeables.Razor" />
+    <InternalsVisibleTo Include="Routeables.Maui" />
+    <InternalsVisibleTo Include="Routeables.Avalonia" />
+    <InternalsVisibleTo Include="Routeables.Uno" />
+    <InternalsVisibleTo Include="Routeables.Avalonia.Services" />
+    <InternalsVisibleTo Include="Routeables.Uno.Services" />
+    <InternalsVisibleTo Include="Routeables.Maui.Services" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
+  </ItemGroup>
+</Project>

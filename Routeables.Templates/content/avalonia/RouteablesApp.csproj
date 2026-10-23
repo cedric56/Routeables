@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+<!--#if (RepoPath != "") -->
+    <ProjectReference Include="ROUTEABLES_REPO/Routeables.Avalonia/Routeables.Avalonia.csproj" />
+    <ProjectReference Include="ROUTEABLES_REPO/Routeables.Avalonia.Services/Routeables.Avalonia.Services.csproj" />
+    <ProjectReference Include="ROUTEABLES_REPO/Routeables.Generated/Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+<!--#else -->
+    <PackageReference Include="Routeables.Avalonia" Version="1.0.0-preview.1" />
+    <PackageReference Include="Routeables.Avalonia.Services" Version="1.0.0-preview.1" />
+    <PackageReference Include="Routeables.Generated" Version="1.0.0-preview.1" PrivateAssets="all" />
+<!--#endif -->
+  </ItemGroup>
+</Project>

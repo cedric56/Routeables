@@ -1,0 +1,208 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.IIconResolver
+  commentId: T:Routeables.Abstraction.IIconResolver
+  id: IIconResolver
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.IIconResolver.GetIcon(System.String)
+  - Routeables.Abstraction.IIconResolver.GetSource(System.String)
+  langs:
+  - csharp
+  - vb
+  name: IIconResolver
+  nameWithType: IIconResolver
+  fullName: Routeables.Abstraction.IIconResolver
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IIconProvider.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IIconResolver
+    path: ../Routeables.Abstraction/Interfaces/IIconProvider.cs
+    startLine: 6
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Gives a page its icon from a key (<xref href="Routeables.Abstraction.IRouteableView.Path" data-throw-if-not-resolved="false"></xref>). Implement it to draw icons from your own set, a font or
+
+    resources, and register it with <xref href="Routeables.Abstraction.IconResolver.Register(Routeables.Abstraction.IIconResolver)" data-throw-if-not-resolved="false"></xref>; the first resolver that knows a key wins.
+  example: []
+  syntax:
+    content: public interface IIconResolver
+    content.vb: Public Interface IIconResolver
+  derivedClasses:
+  - Routeables.Abstraction.IconResolverRegistry
+- uid: Routeables.Abstraction.IIconResolver.GetIcon(System.String)
+  commentId: M:Routeables.Abstraction.IIconResolver.GetIcon(System.String)
+  id: GetIcon(System.String)
+  parent: Routeables.Abstraction.IIconResolver
+  langs:
+  - csharp
+  - vb
+  name: GetIcon(string)
+  nameWithType: IIconResolver.GetIcon(string)
+  fullName: Routeables.Abstraction.IIconResolver.GetIcon(string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IIconProvider.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetIcon
+    path: ../Routeables.Abstraction/Interfaces/IIconProvider.cs
+    startLine: 10
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The icon for <code class="paramref">key</code> as something the host puts in a view (a menu entry, a header).
+  example: []
+  syntax:
+    content: object? GetIcon(string key)
+    parameters:
+    - id: key
+      type: System.String
+    return:
+      type: System.Object
+      description: The icon, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when this resolver does not know the key.
+    content.vb: Function GetIcon(key As String) As Object
+  overload: Routeables.Abstraction.IIconResolver.GetIcon*
+  nameWithType.vb: IIconResolver.GetIcon(String)
+  fullName.vb: Routeables.Abstraction.IIconResolver.GetIcon(String)
+  name.vb: GetIcon(String)
+- uid: Routeables.Abstraction.IIconResolver.GetSource(System.String)
+  commentId: M:Routeables.Abstraction.IIconResolver.GetSource(System.String)
+  id: GetSource(System.String)
+  parent: Routeables.Abstraction.IIconResolver
+  langs:
+  - csharp
+  - vb
+  name: GetSource(string)
+  nameWithType: IIconResolver.GetSource(string)
+  fullName: Routeables.Abstraction.IIconResolver.GetSource(string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IIconProvider.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetSource
+    path: ../Routeables.Abstraction/Interfaces/IIconProvider.cs
+    startLine: 14
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The icon for <code class="paramref">key</code> as an image source, for the hosts that draw it themselves (the MAUI shell).
+  example: []
+  syntax:
+    content: object? GetSource(string key)
+    parameters:
+    - id: key
+      type: System.String
+    return:
+      type: System.Object
+      description: The source, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when this resolver does not know the key.
+    content.vb: Function GetSource(key As String) As Object
+  overload: Routeables.Abstraction.IIconResolver.GetSource*
+  nameWithType.vb: IIconResolver.GetSource(String)
+  fullName.vb: Routeables.Abstraction.IIconResolver.GetSource(String)
+  name.vb: GetSource(String)
+references:
+- uid: Routeables.Abstraction.IRouteableView.Path
+  commentId: P:Routeables.Abstraction.IRouteableView.Path
+  parent: Routeables.Abstraction.IRouteableView
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Path
+  name: Path
+  nameWithType: IRouteableView.Path
+  fullName: Routeables.Abstraction.IRouteableView.Path
+- uid: Routeables.Abstraction.IconResolver.Register(Routeables.Abstraction.IIconResolver)
+  commentId: M:Routeables.Abstraction.IconResolver.Register(Routeables.Abstraction.IIconResolver)
+  href: Routeables.Abstraction.IconResolver.html#Routeables_Abstraction_IconResolver_Register_Routeables_Abstraction_IIconResolver_
+  name: Register(IIconResolver)
+  nameWithType: IconResolver.Register(IIconResolver)
+  fullName: Routeables.Abstraction.IconResolver.Register(Routeables.Abstraction.IIconResolver)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IconResolver.Register(Routeables.Abstraction.IIconResolver)
+    name: Register
+    href: Routeables.Abstraction.IconResolver.html#Routeables_Abstraction_IconResolver_Register_Routeables_Abstraction_IIconResolver_
+  - name: (
+  - uid: Routeables.Abstraction.IIconResolver
+    name: IIconResolver
+    href: Routeables.Abstraction.IIconResolver.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IconResolver.Register(Routeables.Abstraction.IIconResolver)
+    name: Register
+    href: Routeables.Abstraction.IconResolver.html#Routeables_Abstraction_IconResolver_Register_Routeables_Abstraction_IIconResolver_
+  - name: (
+  - uid: Routeables.Abstraction.IIconResolver
+    name: IIconResolver
+    href: Routeables.Abstraction.IIconResolver.html
+  - name: )
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.IRouteableView
+  commentId: T:Routeables.Abstraction.IRouteableView
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableView.html
+  name: IRouteableView
+  nameWithType: IRouteableView
+  fullName: Routeables.Abstraction.IRouteableView
+- uid: Routeables.Abstraction.IIconResolver.GetIcon*
+  commentId: Overload:Routeables.Abstraction.IIconResolver.GetIcon
+  href: Routeables.Abstraction.IIconResolver.html#Routeables_Abstraction_IIconResolver_GetIcon_System_String_
+  name: GetIcon
+  nameWithType: IIconResolver.GetIcon
+  fullName: Routeables.Abstraction.IIconResolver.GetIcon
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction.IIconResolver.GetSource*
+  commentId: Overload:Routeables.Abstraction.IIconResolver.GetSource
+  href: Routeables.Abstraction.IIconResolver.html#Routeables_Abstraction_IIconResolver_GetSource_System_String_
+  name: GetSource
+  nameWithType: IIconResolver.GetSource
+  fullName: Routeables.Abstraction.IIconResolver.GetSource

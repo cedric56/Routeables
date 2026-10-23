@@ -1,0 +1,90 @@
+﻿@using Microsoft.JSInterop
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@attribute [RouteableView(typeof(AboutViewModel), route: "about")]
+@inherits RouteableFor<AboutView, AboutViewModel>
+@inject IJSRuntime JS
+
+<PageTitle>About</PageTitle>
+
+<div class="about-page">
+    <div class="about-logo">
+        <img src="_content/XAnimals.Razor/logo.svg" alt="Routeables logo" />
+    </div>
+
+    <div>
+        <h1>
+            <span class="app-name">Routeables Animals</span>
+            <span class="app-version">1.0</span>
+        </h1>
+    </div>
+
+    <section class="about-group">
+        <h2>Messages</h2>
+        <div class="actions">
+            <button @onclick="ViewModel.ShowOkAsync">Ok</button>
+            <button @onclick="ViewModel.ShowErrorAsync">Error</button>
+            <button @onclick="ViewModel.ShowYesNoAsync">Yes / No</button>
+            <button @onclick="ViewModel.ShowOkCancelAsync">Ok / Cancel</button>
+            <button @onclick="ViewModel.ShowOkAbortAsync">Ok / Abort</button>
+            <button @onclick="ViewModel.ShowYesNoCancelAsync">Yes / No / Cancel</button>
+            <button @onclick="ViewModel.ShowYesNoAbortAsync">Yes / No / Abort</button>
+        </div>
+    </section>
+
+    <section class="about-group">
+        <h2>Rich dialogs</h2>
+        <div class="actions">
+            <button @onclick="ViewModel.ShowContentDialogAsync">Content dialog</button>
+            <button @onclick="ViewModel.ShowTaskDialogAsync">Task dialog</button>
+            <button @onclick="ViewModel.ShowProgressDialogAsync">Task dialog with progress</button>
+            <button @onclick="ViewModel.ShowModalAsync">Show modal</button>
+        </div>
+    </section>
+
+    <section class="about-group">
+        <h2>Notifications</h2>
+        <div class="actions">
+            <button @onclick="() => ViewModel.InformationCommand.Execute(null)">Information</button>
+            <button @onclick="() => ViewModel.SuccessCommand.Execute(null)">Success</button>
+            <button @onclick="() => ViewModel.WarningCommand.Execute(null)">Warning</button>
+            <button @onclick="() => ViewModel.NotificationErrorCommand.Execute(null)">Error</button>
+        </div>
+    </section>
+
+    <section class="about-group">
+        <h2>Links</h2>
+        <div class="actions">
+            <button @onclick="OpenLinkAsync">Learn more</button>
+            <button @onclick="ViewModel.OpenPolarBearsAsync">Polar bears</button>
+        </div>
+    </section>
+
+    @if (ViewModel.HasResult)
+    {
+        <p class="about-result" role="status">@ViewModel.Result</p>
+    }
+</div>
+
+@code {
+    private async Task OpenLinkAsync()
+        => await JS.InvokeVoidAsync("window.open", AboutViewModel.LearnMoreUrl, "_blank", "noopener");
+
+    protected override void OnSubscribe()
+    {
+        ViewModel.PropertyChanged += OnViewModelChanged;
+        base.OnSubscribe();
+    }
+
+    private async void OnViewModelChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnUnsubscribe()
+    {
+        ViewModel.PropertyChanged -= OnViewModelChanged;
+        base.OnUnsubscribe();
+    }
+}

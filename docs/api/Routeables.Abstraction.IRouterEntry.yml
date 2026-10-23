@@ -1,0 +1,187 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.IRouterEntry
+  commentId: T:Routeables.Abstraction.IRouterEntry
+  id: IRouterEntry
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.IRouterEntry.Args
+  - Routeables.Abstraction.IRouterEntry.View
+  - Routeables.Abstraction.IRouterEntry.ViewModel
+  langs:
+  - csharp
+  - vb
+  name: IRouterEntry
+  nameWithType: IRouterEntry
+  fullName: Routeables.Abstraction.IRouterEntry
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouterHistory.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IRouterEntry
+    path: ../Routeables.Abstraction/Interfaces/IRouterHistory.cs
+    startLine: 3
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Read-only view of one history entry.
+  example: []
+  syntax:
+    content: public interface IRouterEntry
+    content.vb: Public Interface IRouterEntry
+- uid: Routeables.Abstraction.IRouterEntry.ViewModel
+  commentId: P:Routeables.Abstraction.IRouterEntry.ViewModel
+  id: ViewModel
+  parent: Routeables.Abstraction.IRouterEntry
+  langs:
+  - csharp
+  - vb
+  name: ViewModel
+  nameWithType: IRouterEntry.ViewModel
+  fullName: Routeables.Abstraction.IRouterEntry.ViewModel
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouterHistory.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ViewModel
+    path: ../Routeables.Abstraction/Interfaces/IRouterHistory.cs
+    startLine: 6
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The view model of this entry.
+  example: []
+  syntax:
+    content: object ViewModel { get; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: ReadOnly Property ViewModel As Object
+  overload: Routeables.Abstraction.IRouterEntry.ViewModel*
+- uid: Routeables.Abstraction.IRouterEntry.View
+  commentId: P:Routeables.Abstraction.IRouterEntry.View
+  id: View
+  parent: Routeables.Abstraction.IRouterEntry
+  langs:
+  - csharp
+  - vb
+  name: View
+  nameWithType: IRouterEntry.View
+  fullName: Routeables.Abstraction.IRouterEntry.View
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouterHistory.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: View
+    path: ../Routeables.Abstraction/Interfaces/IRouterHistory.cs
+    startLine: 9
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The view of this entry.
+  example: []
+  syntax:
+    content: object View { get; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: ReadOnly Property View As Object
+  overload: Routeables.Abstraction.IRouterEntry.View*
+- uid: Routeables.Abstraction.IRouterEntry.Args
+  commentId: P:Routeables.Abstraction.IRouterEntry.Args
+  id: Args
+  parent: Routeables.Abstraction.IRouterEntry
+  langs:
+  - csharp
+  - vb
+  name: Args
+  nameWithType: IRouterEntry.Args
+  fullName: Routeables.Abstraction.IRouterEntry.Args
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouterHistory.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Args
+    path: ../Routeables.Abstraction/Interfaces/IRouterHistory.cs
+    startLine: 12
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The arguments the navigation to this entry was made with.
+  example: []
+  syntax:
+    content: IRouteableArgs Args { get; }
+    parameters: []
+    return:
+      type: Routeables.Abstraction.IRouteableArgs
+    content.vb: ReadOnly Property Args As IRouteableArgs
+  overload: Routeables.Abstraction.IRouterEntry.Args*
+references:
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.IRouterEntry.ViewModel*
+  commentId: Overload:Routeables.Abstraction.IRouterEntry.ViewModel
+  href: Routeables.Abstraction.IRouterEntry.html#Routeables_Abstraction_IRouterEntry_ViewModel
+  name: ViewModel
+  nameWithType: IRouterEntry.ViewModel
+  fullName: Routeables.Abstraction.IRouterEntry.ViewModel
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction.IRouterEntry.View*
+  commentId: Overload:Routeables.Abstraction.IRouterEntry.View
+  href: Routeables.Abstraction.IRouterEntry.html#Routeables_Abstraction_IRouterEntry_View
+  name: View
+  nameWithType: IRouterEntry.View
+  fullName: Routeables.Abstraction.IRouterEntry.View
+- uid: Routeables.Abstraction.IRouterEntry.Args*
+  commentId: Overload:Routeables.Abstraction.IRouterEntry.Args
+  href: Routeables.Abstraction.IRouterEntry.html#Routeables_Abstraction_IRouterEntry_Args
+  name: Args
+  nameWithType: IRouterEntry.Args
+  fullName: Routeables.Abstraction.IRouterEntry.Args
+- uid: Routeables.Abstraction.IRouteableArgs
+  commentId: T:Routeables.Abstraction.IRouteableArgs
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableArgs.html
+  name: IRouteableArgs
+  nameWithType: IRouteableArgs
+  fullName: Routeables.Abstraction.IRouteableArgs

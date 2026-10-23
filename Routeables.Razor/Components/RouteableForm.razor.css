@@ -1,0 +1,94 @@
+.split {
+    display: flex;
+    position: relative;
+    width: 100%;
+    /* bound the height: the viewport minus the app bar (Hybrid has no parent height chain) */
+    height: calc(100vh - var(--rt-appbar-height, var(--mud-appbar-height, 64px)));
+    min-height: 0;
+    overflow: hidden; /* no window-level scrollbar */
+}
+
+.split-nav {
+    flex: 0 0 240px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.split-nav-item {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.split-nav-item:hover:not(:disabled) {
+    background: var(--rt-hover, rgba(128, 128, 128, 0.15));
+}
+
+.split-nav-item:focus-visible {
+    outline: 2px solid var(--rt-primary, #594ae2);
+    outline-offset: -2px;
+}
+
+.split-nav-active {
+    color: var(--rt-primary, #594ae2);
+    font-weight: 600;
+}
+
+.split-nav-item:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+/* Busy overlay: covers the whole form and swallows the clicks while something is loading. */
+.split-busy {
+    position: absolute;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.split-spinner {
+    box-sizing: border-box;
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top-color: var(--rt-primary, #594ae2);
+    border-radius: 50%;
+    animation: split-spin 0.8s linear infinite;
+}
+
+@keyframes split-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .split-spinner { animation-duration: 3s; }
+}
+
+.form {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0; /* essential: lets the flex child shrink */
+    display: flex;
+    flex-direction: column;
+}
+
+.form-header, .form-footer {
+    flex: 0 0 auto;
+}
+
+.form-body {
+    flex: 1 1 auto;
+    min-height: 0; /* essential */
+    overflow-y: auto; /* checkboxes scroll here, footer stays pinned */
+}

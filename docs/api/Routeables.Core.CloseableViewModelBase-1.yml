@@ -1,0 +1,1083 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Core.CloseableViewModelBase`1
+  commentId: T:Routeables.Core.CloseableViewModelBase`1
+  id: CloseableViewModelBase`1
+  parent: Routeables.Core
+  children:
+  - Routeables.Core.CloseableViewModelBase`1.CanClose
+  - Routeables.Core.CloseableViewModelBase`1.Close(`0)
+  - Routeables.Core.CloseableViewModelBase`1.CloseCommand
+  - Routeables.Core.CloseableViewModelBase`1.CloseRequested
+  - Routeables.Core.CloseableViewModelBase`1.Commands
+  - Routeables.Core.CloseableViewModelBase`1.Title
+  langs:
+  - csharp
+  - vb
+  name: CloseableViewModelBase<TResult>
+  nameWithType: CloseableViewModelBase<TResult>
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>
+  type: Class
+  source:
+    remote:
+      path: Routeables.Core/Bases/CloseableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: CloseableViewModelBase
+    path: ../Routeables.Core/Bases/CloseableViewModelBase.cs
+    startLine: 10
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Base class for a view model that can be closed and return a result value, without navigation support.
+  example: []
+  syntax:
+    content: 'public abstract class CloseableViewModelBase<TResult> : ICloseableViewModel<TResult>'
+    typeParameters:
+    - id: TResult
+      description: The type of the result produced when this view model is closed.
+    content.vb: Public MustInherit Class CloseableViewModelBase(Of TResult) Implements ICloseableViewModel(Of TResult)
+  inheritance:
+  - System.Object
+  derivedClasses:
+  - Routeables.Core.CloseableViewModel`1
+  implements:
+  - Routeables.Abstraction.ICloseableViewModel{{TResult}}
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+  nameWithType.vb: CloseableViewModelBase(Of TResult)
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult)
+  name.vb: CloseableViewModelBase(Of TResult)
+- uid: Routeables.Core.CloseableViewModelBase`1.CloseRequested
+  commentId: E:Routeables.Core.CloseableViewModelBase`1.CloseRequested
+  id: CloseRequested
+  parent: Routeables.Core.CloseableViewModelBase`1
+  langs:
+  - csharp
+  - vb
+  name: CloseRequested
+  nameWithType: CloseableViewModelBase<TResult>.CloseRequested
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>.CloseRequested
+  type: Event
+  source:
+    remote:
+      path: Routeables.Core/Bases/CloseableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: CloseRequested
+    path: ../Routeables.Core/Bases/CloseableViewModelBase.cs
+    startLine: 15
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Occurs when a close has been requested for this view model, carrying the resulting value, if any.
+  example: []
+  syntax:
+    content: public event EventHandler<TResult?>? CloseRequested
+    return:
+      type: System.EventHandler{{TResult}}
+    content.vb: Public Event CloseRequested As EventHandler(Of TResult)
+  implements:
+  - Routeables.Abstraction.ICloseableViewModel{{TResult}}.CloseRequested
+  nameWithType.vb: CloseableViewModelBase(Of TResult).CloseRequested
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult).CloseRequested
+- uid: Routeables.Core.CloseableViewModelBase`1.CloseCommand
+  commentId: P:Routeables.Core.CloseableViewModelBase`1.CloseCommand
+  id: CloseCommand
+  parent: Routeables.Core.CloseableViewModelBase`1
+  langs:
+  - csharp
+  - vb
+  name: CloseCommand
+  nameWithType: CloseableViewModelBase<TResult>.CloseCommand
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>.CloseCommand
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Bases/CloseableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: CloseCommand
+    path: ../Routeables.Core/Bases/CloseableViewModelBase.cs
+    startLine: 20
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets the command that, when executed, closes the view model with a default result value.
+  example: []
+  syntax:
+    content: public abstract ICommand CloseCommand { get; }
+    parameters: []
+    return:
+      type: System.Windows.Input.ICommand
+    content.vb: Public MustOverride ReadOnly Property CloseCommand As ICommand
+  overload: Routeables.Core.CloseableViewModelBase`1.CloseCommand*
+  implements:
+  - Routeables.Abstraction.ICloseableViewModel{{TResult}}.CloseCommand
+  nameWithType.vb: CloseableViewModelBase(Of TResult).CloseCommand
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult).CloseCommand
+- uid: Routeables.Core.CloseableViewModelBase`1.Commands
+  commentId: P:Routeables.Core.CloseableViewModelBase`1.Commands
+  id: Commands
+  parent: Routeables.Core.CloseableViewModelBase`1
+  langs:
+  - csharp
+  - vb
+  name: Commands
+  nameWithType: CloseableViewModelBase<TResult>.Commands
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>.Commands
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Bases/CloseableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Commands
+    path: ../Routeables.Core/Bases/CloseableViewModelBase.cs
+    startLine: 25
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets the collection of commands exposed by this view model. Empty by default.
+  example: []
+  syntax:
+    content: public virtual ObservableCollection<RouteableCommand> Commands { get; }
+    parameters: []
+    return:
+      type: System.Collections.ObjectModel.ObservableCollection{Routeables.Abstraction.RouteableCommand}
+    content.vb: Public Overridable ReadOnly Property Commands As ObservableCollection(Of RouteableCommand)
+  overload: Routeables.Core.CloseableViewModelBase`1.Commands*
+  implements:
+  - Routeables.Abstraction.ICloseableViewModel{{TResult}}.Commands
+  nameWithType.vb: CloseableViewModelBase(Of TResult).Commands
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult).Commands
+- uid: Routeables.Core.CloseableViewModelBase`1.Title
+  commentId: P:Routeables.Core.CloseableViewModelBase`1.Title
+  id: Title
+  parent: Routeables.Core.CloseableViewModelBase`1
+  langs:
+  - csharp
+  - vb
+  name: Title
+  nameWithType: CloseableViewModelBase<TResult>.Title
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>.Title
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Bases/CloseableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Title
+    path: ../Routeables.Core/Bases/CloseableViewModelBase.cs
+    startLine: 30
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets the display title for this view model.
+  example: []
+  syntax:
+    content: public abstract string Title { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public MustOverride ReadOnly Property Title As String
+  overload: Routeables.Core.CloseableViewModelBase`1.Title*
+  implements:
+  - Routeables.Abstraction.ICloseableViewModel{{TResult}}.Title
+  nameWithType.vb: CloseableViewModelBase(Of TResult).Title
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult).Title
+- uid: Routeables.Core.CloseableViewModelBase`1.CanClose
+  commentId: M:Routeables.Core.CloseableViewModelBase`1.CanClose
+  id: CanClose
+  parent: Routeables.Core.CloseableViewModelBase`1
+  langs:
+  - csharp
+  - vb
+  name: CanClose()
+  nameWithType: CloseableViewModelBase<TResult>.CanClose()
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>.CanClose()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/CloseableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: CanClose
+    path: ../Routeables.Core/Bases/CloseableViewModelBase.cs
+    startLine: 32
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  syntax:
+    content: public virtual Task<bool> CanClose()
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+    content.vb: Public Overridable Function CanClose() As Task(Of Boolean)
+  overload: Routeables.Core.CloseableViewModelBase`1.CanClose*
+  nameWithType.vb: CloseableViewModelBase(Of TResult).CanClose()
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult).CanClose()
+- uid: Routeables.Core.CloseableViewModelBase`1.Close(`0)
+  commentId: M:Routeables.Core.CloseableViewModelBase`1.Close(`0)
+  id: Close(`0)
+  parent: Routeables.Core.CloseableViewModelBase`1
+  langs:
+  - csharp
+  - vb
+  name: Close(TResult?)
+  nameWithType: CloseableViewModelBase<TResult>.Close(TResult?)
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>.Close(TResult?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/CloseableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Close
+    path: ../Routeables.Core/Bases/CloseableViewModelBase.cs
+    startLine: 39
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Closes this view model, raising <xref href="Routeables.Core.CloseableViewModelBase%601.CloseRequested" data-throw-if-not-resolved="false"></xref> with the supplied result value.
+  example: []
+  syntax:
+    content: public Task Close(TResult? value)
+    parameters:
+    - id: value
+      type: '{TResult}'
+      description: The result value to pass to subscribers of <xref href="Routeables.Core.CloseableViewModelBase%601.CloseRequested" data-throw-if-not-resolved="false"></xref>.
+    return:
+      type: System.Threading.Tasks.Task
+      description: A completed task.
+    content.vb: Public Function Close(value As TResult) As Task
+  overload: Routeables.Core.CloseableViewModelBase`1.Close*
+  implements:
+  - Routeables.Abstraction.ICloseableViewModel{{TResult}}.Close({TResult})
+  nameWithType.vb: CloseableViewModelBase(Of TResult).Close(TResult)
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult).Close(TResult)
+  name.vb: Close(TResult)
+references:
+- uid: Routeables.Core
+  commentId: N:Routeables.Core
+  name: Routeables.Core
+  nameWithType: Routeables.Core
+  fullName: Routeables.Core
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Routeables.Abstraction.ICloseableViewModel{{TResult}}
+  commentId: T:Routeables.Abstraction.ICloseableViewModel{`0}
+  parent: Routeables.Abstraction
+  definition: Routeables.Abstraction.ICloseableViewModel`1
+  href: Routeables.Abstraction.ICloseableViewModel-1.html
+  name: ICloseableViewModel<TResult>
+  nameWithType: ICloseableViewModel<TResult>
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>
+  nameWithType.vb: ICloseableViewModel(Of TResult)
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult)
+  name.vb: ICloseableViewModel(Of TResult)
+  spec.csharp:
+  - uid: Routeables.Abstraction.ICloseableViewModel`1
+    name: ICloseableViewModel
+    href: Routeables.Abstraction.ICloseableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Abstraction.ICloseableViewModel`1
+    name: ICloseableViewModel
+    href: Routeables.Abstraction.ICloseableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction.ICloseableViewModel`1
+  commentId: T:Routeables.Abstraction.ICloseableViewModel`1
+  href: Routeables.Abstraction.ICloseableViewModel-1.html
+  name: ICloseableViewModel<TResult>
+  nameWithType: ICloseableViewModel<TResult>
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>
+  nameWithType.vb: ICloseableViewModel(Of TResult)
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult)
+  name.vb: ICloseableViewModel(Of TResult)
+  spec.csharp:
+  - uid: Routeables.Abstraction.ICloseableViewModel`1
+    name: ICloseableViewModel
+    href: Routeables.Abstraction.ICloseableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Abstraction.ICloseableViewModel`1
+    name: ICloseableViewModel
+    href: Routeables.Abstraction.ICloseableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.ICloseableViewModel{{TResult}}.CloseRequested
+  commentId: E:Routeables.Abstraction.ICloseableViewModel{`0}.CloseRequested
+  parent: Routeables.Abstraction.ICloseableViewModel{{TResult}}
+  definition: Routeables.Abstraction.ICloseableViewModel`1.CloseRequested
+  href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_CloseRequested
+  name: CloseRequested
+  nameWithType: ICloseableViewModel<TResult>.CloseRequested
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>.CloseRequested
+  nameWithType.vb: ICloseableViewModel(Of TResult).CloseRequested
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult).CloseRequested
+- uid: System.EventHandler{{TResult}}
+  commentId: T:System.EventHandler{`0}
+  parent: System
+  definition: System.EventHandler`1
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<TResult>
+  nameWithType: EventHandler<TResult>
+  fullName: System.EventHandler<TResult>
+  nameWithType.vb: EventHandler(Of TResult)
+  fullName.vb: System.EventHandler(Of TResult)
+  name.vb: EventHandler(Of TResult)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Abstraction.ICloseableViewModel`1.CloseRequested
+  commentId: E:Routeables.Abstraction.ICloseableViewModel`1.CloseRequested
+  href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_CloseRequested
+  name: CloseRequested
+  nameWithType: ICloseableViewModel<TResult>.CloseRequested
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>.CloseRequested
+  nameWithType.vb: ICloseableViewModel(Of TResult).CloseRequested
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult).CloseRequested
+- uid: System.EventHandler`1
+  commentId: T:System.EventHandler`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<TEventArgs>
+  nameWithType: EventHandler<TEventArgs>
+  fullName: System.EventHandler<TEventArgs>
+  nameWithType.vb: EventHandler(Of TEventArgs)
+  fullName.vb: System.EventHandler(Of TEventArgs)
+  name.vb: EventHandler(Of TEventArgs)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - name: TEventArgs
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TEventArgs
+  - name: )
+- uid: Routeables.Core.CloseableViewModelBase`1.CloseCommand*
+  commentId: Overload:Routeables.Core.CloseableViewModelBase`1.CloseCommand
+  href: Routeables.Core.CloseableViewModelBase-1.html#Routeables_Core_CloseableViewModelBase_1_CloseCommand
+  name: CloseCommand
+  nameWithType: CloseableViewModelBase<TResult>.CloseCommand
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>.CloseCommand
+  nameWithType.vb: CloseableViewModelBase(Of TResult).CloseCommand
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult).CloseCommand
+- uid: Routeables.Abstraction.ICloseableViewModel{{TResult}}.CloseCommand
+  commentId: P:Routeables.Abstraction.ICloseableViewModel{`0}.CloseCommand
+  parent: Routeables.Abstraction.ICloseableViewModel{{TResult}}
+  definition: Routeables.Abstraction.ICloseableViewModel`1.CloseCommand
+  href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_CloseCommand
+  name: CloseCommand
+  nameWithType: ICloseableViewModel<TResult>.CloseCommand
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>.CloseCommand
+  nameWithType.vb: ICloseableViewModel(Of TResult).CloseCommand
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult).CloseCommand
+- uid: System.Windows.Input.ICommand
+  commentId: T:System.Windows.Input.ICommand
+  parent: System.Windows.Input
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.windows.input.icommand
+  name: ICommand
+  nameWithType: ICommand
+  fullName: System.Windows.Input.ICommand
+- uid: Routeables.Abstraction.ICloseableViewModel`1.CloseCommand
+  commentId: P:Routeables.Abstraction.ICloseableViewModel`1.CloseCommand
+  href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_CloseCommand
+  name: CloseCommand
+  nameWithType: ICloseableViewModel<TResult>.CloseCommand
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>.CloseCommand
+  nameWithType.vb: ICloseableViewModel(Of TResult).CloseCommand
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult).CloseCommand
+- uid: System.Windows.Input
+  commentId: N:System.Windows.Input
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Windows.Input
+  nameWithType: System.Windows.Input
+  fullName: System.Windows.Input
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Windows
+    name: Windows
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.windows
+  - name: .
+  - uid: System.Windows.Input
+    name: Input
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.windows.input
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Windows
+    name: Windows
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.windows
+  - name: .
+  - uid: System.Windows.Input
+    name: Input
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.windows.input
+- uid: Routeables.Core.CloseableViewModelBase`1.Commands*
+  commentId: Overload:Routeables.Core.CloseableViewModelBase`1.Commands
+  href: Routeables.Core.CloseableViewModelBase-1.html#Routeables_Core_CloseableViewModelBase_1_Commands
+  name: Commands
+  nameWithType: CloseableViewModelBase<TResult>.Commands
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>.Commands
+  nameWithType.vb: CloseableViewModelBase(Of TResult).Commands
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult).Commands
+- uid: Routeables.Abstraction.ICloseableViewModel{{TResult}}.Commands
+  commentId: P:Routeables.Abstraction.ICloseableViewModel{`0}.Commands
+  parent: Routeables.Abstraction.ICloseableViewModel{{TResult}}
+  definition: Routeables.Abstraction.ICloseableViewModel`1.Commands
+  href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_Commands
+  name: Commands
+  nameWithType: ICloseableViewModel<TResult>.Commands
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>.Commands
+  nameWithType.vb: ICloseableViewModel(Of TResult).Commands
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult).Commands
+- uid: System.Collections.ObjectModel.ObservableCollection{Routeables.Abstraction.RouteableCommand}
+  commentId: T:System.Collections.ObjectModel.ObservableCollection{Routeables.Abstraction.RouteableCommand}
+  parent: System.Collections.ObjectModel
+  definition: System.Collections.ObjectModel.ObservableCollection`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  name: ObservableCollection<RouteableCommand>
+  nameWithType: ObservableCollection<RouteableCommand>
+  fullName: System.Collections.ObjectModel.ObservableCollection<Routeables.Abstraction.RouteableCommand>
+  nameWithType.vb: ObservableCollection(Of RouteableCommand)
+  fullName.vb: System.Collections.ObjectModel.ObservableCollection(Of Routeables.Abstraction.RouteableCommand)
+  name.vb: ObservableCollection(Of RouteableCommand)
+  spec.csharp:
+  - uid: System.Collections.ObjectModel.ObservableCollection`1
+    name: ObservableCollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  - name: <
+  - uid: Routeables.Abstraction.RouteableCommand
+    name: RouteableCommand
+    href: Routeables.Abstraction.RouteableCommand.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.ObjectModel.ObservableCollection`1
+    name: ObservableCollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.RouteableCommand
+    name: RouteableCommand
+    href: Routeables.Abstraction.RouteableCommand.html
+  - name: )
+- uid: Routeables.Abstraction.ICloseableViewModel`1.Commands
+  commentId: P:Routeables.Abstraction.ICloseableViewModel`1.Commands
+  href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_Commands
+  name: Commands
+  nameWithType: ICloseableViewModel<TResult>.Commands
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>.Commands
+  nameWithType.vb: ICloseableViewModel(Of TResult).Commands
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult).Commands
+- uid: System.Collections.ObjectModel.ObservableCollection`1
+  commentId: T:System.Collections.ObjectModel.ObservableCollection`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  name: ObservableCollection<T>
+  nameWithType: ObservableCollection<T>
+  fullName: System.Collections.ObjectModel.ObservableCollection<T>
+  nameWithType.vb: ObservableCollection(Of T)
+  fullName.vb: System.Collections.ObjectModel.ObservableCollection(Of T)
+  name.vb: ObservableCollection(Of T)
+  spec.csharp:
+  - uid: System.Collections.ObjectModel.ObservableCollection`1
+    name: ObservableCollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.ObjectModel.ObservableCollection`1
+    name: ObservableCollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.ObjectModel
+  commentId: N:System.Collections.ObjectModel
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.ObjectModel
+  nameWithType: System.Collections.ObjectModel
+  fullName: System.Collections.ObjectModel
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.ObjectModel
+    name: ObjectModel
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.ObjectModel
+    name: ObjectModel
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel
+- uid: Routeables.Core.CloseableViewModelBase`1.Title*
+  commentId: Overload:Routeables.Core.CloseableViewModelBase`1.Title
+  href: Routeables.Core.CloseableViewModelBase-1.html#Routeables_Core_CloseableViewModelBase_1_Title
+  name: Title
+  nameWithType: CloseableViewModelBase<TResult>.Title
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>.Title
+  nameWithType.vb: CloseableViewModelBase(Of TResult).Title
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult).Title
+- uid: Routeables.Abstraction.ICloseableViewModel{{TResult}}.Title
+  commentId: P:Routeables.Abstraction.ICloseableViewModel{`0}.Title
+  parent: Routeables.Abstraction.ICloseableViewModel{{TResult}}
+  definition: Routeables.Abstraction.ICloseableViewModel`1.Title
+  href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_Title
+  name: Title
+  nameWithType: ICloseableViewModel<TResult>.Title
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>.Title
+  nameWithType.vb: ICloseableViewModel(Of TResult).Title
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult).Title
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: Routeables.Abstraction.ICloseableViewModel`1.Title
+  commentId: P:Routeables.Abstraction.ICloseableViewModel`1.Title
+  href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_Title
+  name: Title
+  nameWithType: ICloseableViewModel<TResult>.Title
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>.Title
+  nameWithType.vb: ICloseableViewModel(Of TResult).Title
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult).Title
+- uid: Routeables.Core.CloseableViewModelBase`1.CanClose*
+  commentId: Overload:Routeables.Core.CloseableViewModelBase`1.CanClose
+  href: Routeables.Core.CloseableViewModelBase-1.html#Routeables_Core_CloseableViewModelBase_1_CanClose
+  name: CanClose
+  nameWithType: CloseableViewModelBase<TResult>.CanClose
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>.CanClose
+  nameWithType.vb: CloseableViewModelBase(Of TResult).CanClose
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult).CanClose
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: Routeables.Core.CloseableViewModelBase`1.CloseRequested
+  commentId: E:Routeables.Core.CloseableViewModelBase`1.CloseRequested
+  href: Routeables.Core.CloseableViewModelBase-1.html#Routeables_Core_CloseableViewModelBase_1_CloseRequested
+  name: CloseRequested
+  nameWithType: CloseableViewModelBase<TResult>.CloseRequested
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>.CloseRequested
+  nameWithType.vb: CloseableViewModelBase(Of TResult).CloseRequested
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult).CloseRequested
+- uid: Routeables.Core.CloseableViewModelBase`1.Close*
+  commentId: Overload:Routeables.Core.CloseableViewModelBase`1.Close
+  href: Routeables.Core.CloseableViewModelBase-1.html#Routeables_Core_CloseableViewModelBase_1_Close__0_
+  name: Close
+  nameWithType: CloseableViewModelBase<TResult>.Close
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>.Close
+  nameWithType.vb: CloseableViewModelBase(Of TResult).Close
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult).Close
+- uid: Routeables.Abstraction.ICloseableViewModel{{TResult}}.Close({TResult})
+  commentId: M:Routeables.Abstraction.ICloseableViewModel{`0}.Close(`0)
+  parent: Routeables.Abstraction.ICloseableViewModel{{TResult}}
+  definition: Routeables.Abstraction.ICloseableViewModel`1.Close(`0)
+  href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_Close__0_
+  name: Close(TResult)
+  nameWithType: ICloseableViewModel<TResult>.Close(TResult)
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>.Close(TResult)
+  nameWithType.vb: ICloseableViewModel(Of TResult).Close(TResult)
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult).Close(TResult)
+  spec.csharp:
+  - uid: Routeables.Abstraction.ICloseableViewModel{`0}.Close(`0)
+    name: Close
+    href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_Close__0_
+  - name: (
+  - name: TResult
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.ICloseableViewModel{`0}.Close(`0)
+    name: Close
+    href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_Close__0_
+  - name: (
+  - name: TResult
+  - name: )
+- uid: '{TResult}'
+  commentId: '!:TResult'
+  definition: TResult
+  name: TResult
+  nameWithType: TResult
+  fullName: TResult
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: Routeables.Abstraction.ICloseableViewModel`1.Close(`0)
+  commentId: M:Routeables.Abstraction.ICloseableViewModel`1.Close(`0)
+  href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_Close__0_
+  name: Close(TResult)
+  nameWithType: ICloseableViewModel<TResult>.Close(TResult)
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>.Close(TResult)
+  nameWithType.vb: ICloseableViewModel(Of TResult).Close(TResult)
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult).Close(TResult)
+  spec.csharp:
+  - uid: Routeables.Abstraction.ICloseableViewModel`1.Close(`0)
+    name: Close
+    href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_Close__0_
+  - name: (
+  - name: TResult
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.ICloseableViewModel`1.Close(`0)
+    name: Close
+    href: Routeables.Abstraction.ICloseableViewModel-1.html#Routeables_Abstraction_ICloseableViewModel_1_Close__0_
+  - name: (
+  - name: TResult
+  - name: )
+- uid: TResult
+  name: TResult
+  nameWithType: TResult
+  fullName: TResult

@@ -1,0 +1,91 @@
+# Lifecycle, guards and events
+
+## Lifecycle and guards
+
+Implement any of these on a view model (or a view):
+
+```csharp
+public sealed class OrderViewModel : IRouteable, IInitializeAsync, IAsyncDisposable
+{
+    // Return false to block leaving this page.
+    public Task<bool> CanLeaveAsync(CancellationToken ct = default)
+        => Task.FromResult(!HasUnsavedChanges);
+
+    public Task OnEnteringAsync(IRouteableArgs context, CancellationToken ct = default)
+        => Task.CompletedTask;
+
+    public Task OnLeavingAsync(IRouteableArgs context, CancellationToken ct = default)
+        => Task.CompletedTask;
+
+    // Async loading after construction, with the navigation arguments.
+    public Task InitializeAsync(IRouteableArgs args, CancellationToken ct = default)
+        => Task.CompletedTask;
+
+    // Called once the entry has left the history for good.
+    public ValueTask DisposeAsync()
+        => ValueTask.CompletedTask;
+}
+```
+
+Every member of `IRouteable` has a default implementation, so implement only what you need.
+
+Order of events for a route change from page A to page B:
+
+1. `CanLeaveAsync` on A (view model, then view). If one returns `false`, the route change is cancelled and `result.Cancelled` is `true`.
+2. `InitializeAsync` on B (view model, then view). Nothing has been torn down yet, so a failure leaves A in place.
+3. `OnLeavingAsync` on A, then `OnEnteringAsync` on B.
+4. The history is updated, and entries removed by this change are disposed.
+
+### Cleanup
+
+There is no dedicated cleanup interface: use the standard .NET ones. When an entry leaves the history, the router disposes its view model and its view with `DisposeAsync()` if they implement `IAsyncDisposable`, otherwise with `Dispose()` if they implement `IDisposable`. An exception thrown while disposing is swallowed, so cleanup never fails a route change.
+
+Entries leave the history on `PopAsync`, when a new route cuts off the forward entries, when the oldest entry is dropped beyond `History.MaxSize`, and on `EraseHistoryAsync`. `GoBackAsync`, `ForwardAsync` and `MoveToAsync` only move the cursor, so they dispose nothing.
+
+A view and a view model that are the same object, or an instance shared with an entry that stays in the history, are initialized and disposed once and are never disposed while still in use.
+
+`Singleton` and `Scoped` views and view models belong to the cache that builds them: they are disposed with the provider or the scope, never by the router when they leave the history, since the next route change to the same route shows the same instance.
+
+A menu entry (`IRouteableEntry`) remembers the view and view model it showed last and gives them back on its next click. If the router has disposed them since (the entry left the history), the entry gets new ones instead of a disposed page.
+
+> [!NOTE]
+> The DI container also disposes the transient `IDisposable` objects it created when its scope ends, so a view model can be disposed twice. Make `Dispose` idempotent. Blazor does the same for components it renders, so a Razor component must be safe to dispose twice.
+
+### Services injected into a page
+
+A service that a view or a view model receives (constructor argument or `[Inject]`) and that implements `IDisposable` or `IAsyncDisposable` must be registered `Scoped` or `Singleton`, not `Transient`.
+
+Pages are built from the host's provider: the root provider on Avalonia and MAUI, the circuit's scope on Blazor Server. The .NET container keeps every `Transient` disposable object it creates until that provider or scope is disposed. The router disposes the page, not what the container created for it, so a transient disposable dependency stays in memory after each route change. Measured with a page that takes one: 200 route changes leave 200 instances alive, where a `Scoped` or `Singleton` registration leaves one.
+
+```csharp
+services.AddSingleton<IPriceService, PriceService>();   // disposable, shared: fine
+services.AddTransient<IFormatter, Formatter>();         // not disposable: fine
+// services.AddTransient<IPriceService, PriceService>(); // disposable and transient: kept until the app ends
+```
+
+If a page needs its own instance of a disposable service, create it inside the page and dispose it in the page's `Dispose`, which the router calls when the page leaves the history.
+
+## Events
+
+```csharp
+router.Routing += (_, e) => { /* about to navigate */ };
+router.Routed  += (_, e) => { /* navigation finished */ };
+```
+
+A handler that throws never fails or masks the route change, and a `Dispose` that throws when an entry leaves the history never fails it either. A coordination (`IRouteCoordinator`) that is rejected or fails is reported the same way, in addition to the result it returns, so an application that ignores that result still sees it. The callbacks you give to dialogs and notifications (`Opened`, `Closing`, `OnClick`...) are run through `RouteableErrors.Guard`, which reports an exception instead of letting it reach the UI; use it for your own callbacks run from an event handler. These errors are not lost: register an `IRouteableErrorSink` (`services.AddSingleton<IRouteableErrorSink, MySink>()`) to log them; without one they go to `System.Diagnostics.Trace`.
+
+Some errors are reported where no container is at hand (the callbacks run by `Guard`, the follower of a region, a view model base). Those reach the sink set on `RouteableErrors.Default`, so one sink can receive everything, for instance to write to Serilog:
+
+```csharp
+public sealed class SerilogErrorSink : IRouteableErrorSink
+{
+    public void Report(string source, Exception exception)
+        => Log.Warning(exception, "Routeables: {Source}", source);
+}
+
+var sink = new SerilogErrorSink();
+RouteableErrors.Default = sink;                                  // errors reported without a container
+services.AddSingleton<IRouteableErrorSink>(sink);                // errors reported with one
+```
+
+A sink registered in the container wins over `Default` for the errors that have a container.

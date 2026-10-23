@@ -1,0 +1,29 @@
+<Application
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:XAnimals.Uno"
+    x:Class="XAnimals.Uno.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <SolidColorBrush x:Key="BarBrush" Color="#33808080" />
+            <SolidColorBrush x:Key="BarStrongBrush" Color="#662F6B4F" />
+            <SolidColorBrush x:Key="CurrentCardBrush" Color="#552F6B4F" />
+            <SolidColorBrush x:Key="AheadCardBrush" Color="#22808080" />
+            <SolidColorBrush x:Key="PlainCardBrush" Color="#11808080" />
+            <SolidColorBrush x:Key="RefusedBrush" Color="#55B3261E" />
+
+            <local:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+            <local:BoolToVisibilityConverter x:Key="InverseBoolToVisibility" Invert="True" />
+            <local:NullToVisibilityConverter x:Key="NotNullToVisibility" />
+            <local:NullToVisibilityConverter x:Key="NullToVisibility" Invert="True" />
+            <local:BoolToBrushConverter x:Key="StrongBarBrush" TrueBrush="{StaticResource BarStrongBrush}" FalseBrush="{StaticResource BarBrush}" />
+            <local:BoolToBrushConverter x:Key="RefusedStatusBrush" TrueBrush="{StaticResource RefusedBrush}" FalseBrush="{StaticResource PlainCardBrush}" />
+            <local:HistoryCardBrushConverter x:Key="HistoryCardBrush" Current="{StaticResource CurrentCardBrush}" Ahead="{StaticResource AheadCardBrush}" Past="{StaticResource PlainCardBrush}" />
+            <local:AnimalImageConverter x:Key="AnimalImage" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,857 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.IRouteableSystemNotification
+  commentId: T:Routeables.Abstraction.IRouteableSystemNotification
+  id: IRouteableSystemNotification
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.IRouteableSystemNotification.Actions
+  - Routeables.Abstraction.IRouteableSystemNotification.Category
+  - Routeables.Abstraction.IRouteableSystemNotification.Close
+  - Routeables.Abstraction.IRouteableSystemNotification.Expiration
+  - Routeables.Abstraction.IRouteableSystemNotification.Icon
+  - Routeables.Abstraction.IRouteableSystemNotification.Id
+  - Routeables.Abstraction.IRouteableSystemNotification.Message
+  - Routeables.Abstraction.IRouteableSystemNotification.ReplyActionTag
+  - Routeables.Abstraction.IRouteableSystemNotification.SetActions(System.Collections.Generic.IReadOnlyList{Routeables.Abstraction.RouteableSystemNotificationAction})
+  - Routeables.Abstraction.IRouteableSystemNotification.Show
+  - Routeables.Abstraction.IRouteableSystemNotification.Tag
+  - Routeables.Abstraction.IRouteableSystemNotification.Title
+  langs:
+  - csharp
+  - vb
+  name: IRouteableSystemNotification
+  nameWithType: IRouteableSystemNotification
+  fullName: Routeables.Abstraction.IRouteableSystemNotification
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IRouteableSystemNotification
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 67
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    A single system-level (OS notification-center) notification, created via
+
+    <xref href="Routeables.Abstraction.IRouteableSystemNotificationService.CreateNotification(System.String)" data-throw-if-not-resolved="false"></xref>. Mutate the
+
+    properties then call <xref href="Routeables.Abstraction.IRouteableSystemNotification.Show" data-throw-if-not-resolved="false"></xref> to display or update it.
+  example: []
+  syntax:
+    content: public interface IRouteableSystemNotification
+    content.vb: Public Interface IRouteableSystemNotification
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Id
+  commentId: P:Routeables.Abstraction.IRouteableSystemNotification.Id
+  id: Id
+  parent: Routeables.Abstraction.IRouteableSystemNotification
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: IRouteableSystemNotification.Id
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Id
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Id
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 73
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Gets the unique identifier for this notification instance, as tracked
+
+    by <xref href="Routeables.Abstraction.IRouteableSystemNotificationService.ActiveNotifications" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: uint Id { get; }
+    parameters: []
+    return:
+      type: System.UInt32
+    content.vb: ReadOnly Property Id As UInteger
+  overload: Routeables.Abstraction.IRouteableSystemNotification.Id*
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Category
+  commentId: P:Routeables.Abstraction.IRouteableSystemNotification.Category
+  id: Category
+  parent: Routeables.Abstraction.IRouteableSystemNotification
+  langs:
+  - csharp
+  - vb
+  name: Category
+  nameWithType: IRouteableSystemNotification.Category
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Category
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Category
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 80
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Gets the category this notification belongs to. Categories are
+
+    defined at app launch and determine which actions are available by
+
+    default. On Android, a category also acts as the notification channel.
+  example: []
+  syntax:
+    content: string? Category { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: ReadOnly Property Category As String
+  overload: Routeables.Abstraction.IRouteableSystemNotification.Category*
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Title
+  commentId: P:Routeables.Abstraction.IRouteableSystemNotification.Title
+  id: Title
+  parent: Routeables.Abstraction.IRouteableSystemNotification
+  langs:
+  - csharp
+  - vb
+  name: Title
+  nameWithType: IRouteableSystemNotification.Title
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Title
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Title
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 85
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Gets or sets the notification's title.
+  example: []
+  syntax:
+    content: string? Title { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Property Title As String
+  overload: Routeables.Abstraction.IRouteableSystemNotification.Title*
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Tag
+  commentId: P:Routeables.Abstraction.IRouteableSystemNotification.Tag
+  id: Tag
+  parent: Routeables.Abstraction.IRouteableSystemNotification
+  langs:
+  - csharp
+  - vb
+  name: Tag
+  nameWithType: IRouteableSystemNotification.Tag
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Tag
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Tag
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 91
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Gets or sets a tag identifying this notification, e.g. so a later
+
+    call can find/update/replace it.
+  example: []
+  syntax:
+    content: string? Tag { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Property Tag As String
+  overload: Routeables.Abstraction.IRouteableSystemNotification.Tag*
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Message
+  commentId: P:Routeables.Abstraction.IRouteableSystemNotification.Message
+  id: Message
+  parent: Routeables.Abstraction.IRouteableSystemNotification
+  langs:
+  - csharp
+  - vb
+  name: Message
+  nameWithType: IRouteableSystemNotification.Message
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Message
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Message
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 96
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Gets or sets the notification's body text.
+  example: []
+  syntax:
+    content: string? Message { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Property Message As String
+  overload: Routeables.Abstraction.IRouteableSystemNotification.Message*
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Expiration
+  commentId: P:Routeables.Abstraction.IRouteableSystemNotification.Expiration
+  id: Expiration
+  parent: Routeables.Abstraction.IRouteableSystemNotification
+  langs:
+  - csharp
+  - vb
+  name: Expiration
+  nameWithType: IRouteableSystemNotification.Expiration
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Expiration
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Expiration
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 103
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Gets or sets how long the notification remains visible before
+
+    auto-expiring. Not supported on web — setting this has no effect
+
+    there.
+  example: []
+  syntax:
+    content: TimeSpan? Expiration { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.TimeSpan}
+    content.vb: Property Expiration As TimeSpan?
+  overload: Routeables.Abstraction.IRouteableSystemNotification.Expiration*
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Icon
+  commentId: P:Routeables.Abstraction.IRouteableSystemNotification.Icon
+  id: Icon
+  parent: Routeables.Abstraction.IRouteableSystemNotification
+  langs:
+  - csharp
+  - vb
+  name: Icon
+  nameWithType: IRouteableSystemNotification.Icon
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Icon
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Icon
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 109
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Gets or sets the icon shown on the notification. Only supported on
+
+    web — setting this has no effect on other platforms.
+  example: []
+  syntax:
+    content: string? Icon { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Property Icon As String
+  overload: Routeables.Abstraction.IRouteableSystemNotification.Icon*
+- uid: Routeables.Abstraction.IRouteableSystemNotification.ReplyActionTag
+  commentId: P:Routeables.Abstraction.IRouteableSystemNotification.ReplyActionTag
+  id: ReplyActionTag
+  parent: Routeables.Abstraction.IRouteableSystemNotification
+  langs:
+  - csharp
+  - vb
+  name: ReplyActionTag
+  nameWithType: IRouteableSystemNotification.ReplyActionTag
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.ReplyActionTag
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ReplyActionTag
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 117
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Gets or sets the action tag that, when set, enables text input on
+
+    the notification and designates the matching action as the "reply"
+
+    action (its typed text arrives via
+
+    <xref href="Routeables.Abstraction.RouteableSystemNotificationEventArgs.UserData" data-throw-if-not-resolved="false"></xref>).
+  example: []
+  syntax:
+    content: string? ReplyActionTag { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Property ReplyActionTag As String
+  overload: Routeables.Abstraction.IRouteableSystemNotification.ReplyActionTag*
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Actions
+  commentId: P:Routeables.Abstraction.IRouteableSystemNotification.Actions
+  id: Actions
+  parent: Routeables.Abstraction.IRouteableSystemNotification
+  langs:
+  - csharp
+  - vb
+  name: Actions
+  nameWithType: IRouteableSystemNotification.Actions
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Actions
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Actions
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 124
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Gets the action buttons currently attached to this notification.
+
+    The available set is constrained by the notification's
+
+    <xref href="Routeables.Abstraction.IRouteableSystemNotification.Category" data-throw-if-not-resolved="false"></xref> (categories are defined at launch).
+  example: []
+  syntax:
+    content: IReadOnlyList<RouteableSystemNotificationAction>? Actions { get; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.IReadOnlyList{Routeables.Abstraction.RouteableSystemNotificationAction}
+    content.vb: ReadOnly Property Actions As IReadOnlyList(Of RouteableSystemNotificationAction)
+  overload: Routeables.Abstraction.IRouteableSystemNotification.Actions*
+- uid: Routeables.Abstraction.IRouteableSystemNotification.SetActions(System.Collections.Generic.IReadOnlyList{Routeables.Abstraction.RouteableSystemNotificationAction})
+  commentId: M:Routeables.Abstraction.IRouteableSystemNotification.SetActions(System.Collections.Generic.IReadOnlyList{Routeables.Abstraction.RouteableSystemNotificationAction})
+  id: SetActions(System.Collections.Generic.IReadOnlyList{Routeables.Abstraction.RouteableSystemNotificationAction})
+  parent: Routeables.Abstraction.IRouteableSystemNotification
+  langs:
+  - csharp
+  - vb
+  name: SetActions(IReadOnlyList<RouteableSystemNotificationAction>?)
+  nameWithType: IRouteableSystemNotification.SetActions(IReadOnlyList<RouteableSystemNotificationAction>?)
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.SetActions(System.Collections.Generic.IReadOnlyList<Routeables.Abstraction.RouteableSystemNotificationAction>?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: SetActions
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 130
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Sets the action buttons attached to this notification. No-op on iOS.
+  example: []
+  syntax:
+    content: void SetActions(IReadOnlyList<RouteableSystemNotificationAction>? actions)
+    parameters:
+    - id: actions
+      type: System.Collections.Generic.IReadOnlyList{Routeables.Abstraction.RouteableSystemNotificationAction}
+      description: The actions to attach, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>/empty for none.
+    content.vb: Sub SetActions(actions As IReadOnlyList(Of RouteableSystemNotificationAction))
+  overload: Routeables.Abstraction.IRouteableSystemNotification.SetActions*
+  nameWithType.vb: IRouteableSystemNotification.SetActions(IReadOnlyList(Of RouteableSystemNotificationAction))
+  fullName.vb: Routeables.Abstraction.IRouteableSystemNotification.SetActions(System.Collections.Generic.IReadOnlyList(Of Routeables.Abstraction.RouteableSystemNotificationAction))
+  name.vb: SetActions(IReadOnlyList(Of RouteableSystemNotificationAction))
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Show
+  commentId: M:Routeables.Abstraction.IRouteableSystemNotification.Show
+  id: Show
+  parent: Routeables.Abstraction.IRouteableSystemNotification
+  langs:
+  - csharp
+  - vb
+  name: Show()
+  nameWithType: IRouteableSystemNotification.Show()
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Show()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Show
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 137
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Displays the notification. Can be called multiple times on the same
+
+    instance to update an already-active notification in place (e.g.
+
+    after changing <xref href="Routeables.Abstraction.IRouteableSystemNotification.Title" data-throw-if-not-resolved="false"></xref>/<xref href="Routeables.Abstraction.IRouteableSystemNotification.Message" data-throw-if-not-resolved="false"></xref>).
+  example: []
+  syntax:
+    content: Task Show()
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function Show() As Task
+  overload: Routeables.Abstraction.IRouteableSystemNotification.Show*
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Close
+  commentId: M:Routeables.Abstraction.IRouteableSystemNotification.Close
+  id: Close
+  parent: Routeables.Abstraction.IRouteableSystemNotification
+  langs:
+  - csharp
+  - vb
+  name: Close()
+  nameWithType: IRouteableSystemNotification.Close()
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Close()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Close
+    path: ../Routeables.Abstraction/Services/IRouteableSystemNotificationService.cs
+    startLine: 142
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Closes/dismisses the notification if it's currently shown.
+  example: []
+  syntax:
+    content: Task Close()
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function Close() As Task
+  overload: Routeables.Abstraction.IRouteableSystemNotification.Close*
+references:
+- uid: Routeables.Abstraction.IRouteableSystemNotificationService.CreateNotification(System.String)
+  commentId: M:Routeables.Abstraction.IRouteableSystemNotificationService.CreateNotification(System.String)
+  isExternal: true
+  href: Routeables.Abstraction.IRouteableSystemNotificationService.html#Routeables_Abstraction_IRouteableSystemNotificationService_CreateNotification_System_String_
+  name: CreateNotification(string)
+  nameWithType: IRouteableSystemNotificationService.CreateNotification(string)
+  fullName: Routeables.Abstraction.IRouteableSystemNotificationService.CreateNotification(string)
+  nameWithType.vb: IRouteableSystemNotificationService.CreateNotification(String)
+  fullName.vb: Routeables.Abstraction.IRouteableSystemNotificationService.CreateNotification(String)
+  name.vb: CreateNotification(String)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableSystemNotificationService.CreateNotification(System.String)
+    name: CreateNotification
+    href: Routeables.Abstraction.IRouteableSystemNotificationService.html#Routeables_Abstraction_IRouteableSystemNotificationService_CreateNotification_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableSystemNotificationService.CreateNotification(System.String)
+    name: CreateNotification
+    href: Routeables.Abstraction.IRouteableSystemNotificationService.html#Routeables_Abstraction_IRouteableSystemNotificationService_CreateNotification_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Show
+  commentId: M:Routeables.Abstraction.IRouteableSystemNotification.Show
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Show
+  name: Show()
+  nameWithType: IRouteableSystemNotification.Show()
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Show()
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableSystemNotification.Show
+    name: Show
+    href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Show
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableSystemNotification.Show
+    name: Show
+    href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Show
+  - name: (
+  - name: )
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.IRouteableSystemNotificationService.ActiveNotifications
+  commentId: M:Routeables.Abstraction.IRouteableSystemNotificationService.ActiveNotifications
+  href: Routeables.Abstraction.IRouteableSystemNotificationService.html#Routeables_Abstraction_IRouteableSystemNotificationService_ActiveNotifications
+  name: ActiveNotifications()
+  nameWithType: IRouteableSystemNotificationService.ActiveNotifications()
+  fullName: Routeables.Abstraction.IRouteableSystemNotificationService.ActiveNotifications()
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableSystemNotificationService.ActiveNotifications
+    name: ActiveNotifications
+    href: Routeables.Abstraction.IRouteableSystemNotificationService.html#Routeables_Abstraction_IRouteableSystemNotificationService_ActiveNotifications
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableSystemNotificationService.ActiveNotifications
+    name: ActiveNotifications
+    href: Routeables.Abstraction.IRouteableSystemNotificationService.html#Routeables_Abstraction_IRouteableSystemNotificationService_ActiveNotifications
+  - name: (
+  - name: )
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Id*
+  commentId: Overload:Routeables.Abstraction.IRouteableSystemNotification.Id
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Id
+  name: Id
+  nameWithType: IRouteableSystemNotification.Id
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Id
+- uid: System.UInt32
+  commentId: T:System.UInt32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.uint32
+  name: uint
+  nameWithType: uint
+  fullName: uint
+  nameWithType.vb: UInteger
+  fullName.vb: UInteger
+  name.vb: UInteger
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Category*
+  commentId: Overload:Routeables.Abstraction.IRouteableSystemNotification.Category
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Category
+  name: Category
+  nameWithType: IRouteableSystemNotification.Category
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Category
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Title*
+  commentId: Overload:Routeables.Abstraction.IRouteableSystemNotification.Title
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Title
+  name: Title
+  nameWithType: IRouteableSystemNotification.Title
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Title
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Tag*
+  commentId: Overload:Routeables.Abstraction.IRouteableSystemNotification.Tag
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Tag
+  name: Tag
+  nameWithType: IRouteableSystemNotification.Tag
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Tag
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Message*
+  commentId: Overload:Routeables.Abstraction.IRouteableSystemNotification.Message
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Message
+  name: Message
+  nameWithType: IRouteableSystemNotification.Message
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Message
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Expiration*
+  commentId: Overload:Routeables.Abstraction.IRouteableSystemNotification.Expiration
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Expiration
+  name: Expiration
+  nameWithType: IRouteableSystemNotification.Expiration
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Expiration
+- uid: System.Nullable{System.TimeSpan}
+  commentId: T:System.Nullable{System.TimeSpan}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.timespan
+  name: TimeSpan?
+  nameWithType: TimeSpan?
+  fullName: System.TimeSpan?
+  spec.csharp:
+  - uid: System.TimeSpan
+    name: TimeSpan
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.timespan
+  - name: '?'
+  spec.vb:
+  - uid: System.TimeSpan
+    name: TimeSpan
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.timespan
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Icon*
+  commentId: Overload:Routeables.Abstraction.IRouteableSystemNotification.Icon
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Icon
+  name: Icon
+  nameWithType: IRouteableSystemNotification.Icon
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Icon
+- uid: Routeables.Abstraction.RouteableSystemNotificationEventArgs.UserData
+  commentId: P:Routeables.Abstraction.RouteableSystemNotificationEventArgs.UserData
+  href: Routeables.Abstraction.RouteableSystemNotificationEventArgs.html#Routeables_Abstraction_RouteableSystemNotificationEventArgs_UserData
+  name: UserData
+  nameWithType: RouteableSystemNotificationEventArgs.UserData
+  fullName: Routeables.Abstraction.RouteableSystemNotificationEventArgs.UserData
+- uid: Routeables.Abstraction.IRouteableSystemNotification.ReplyActionTag*
+  commentId: Overload:Routeables.Abstraction.IRouteableSystemNotification.ReplyActionTag
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_ReplyActionTag
+  name: ReplyActionTag
+  nameWithType: IRouteableSystemNotification.ReplyActionTag
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.ReplyActionTag
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Category
+  commentId: P:Routeables.Abstraction.IRouteableSystemNotification.Category
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Category
+  name: Category
+  nameWithType: IRouteableSystemNotification.Category
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Category
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Actions*
+  commentId: Overload:Routeables.Abstraction.IRouteableSystemNotification.Actions
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Actions
+  name: Actions
+  nameWithType: IRouteableSystemNotification.Actions
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Actions
+- uid: System.Collections.Generic.IReadOnlyList{Routeables.Abstraction.RouteableSystemNotificationAction}
+  commentId: T:System.Collections.Generic.IReadOnlyList{Routeables.Abstraction.RouteableSystemNotificationAction}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IReadOnlyList`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<RouteableSystemNotificationAction>
+  nameWithType: IReadOnlyList<RouteableSystemNotificationAction>
+  fullName: System.Collections.Generic.IReadOnlyList<Routeables.Abstraction.RouteableSystemNotificationAction>
+  nameWithType.vb: IReadOnlyList(Of RouteableSystemNotificationAction)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of Routeables.Abstraction.RouteableSystemNotificationAction)
+  name.vb: IReadOnlyList(Of RouteableSystemNotificationAction)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - uid: Routeables.Abstraction.RouteableSystemNotificationAction
+    name: RouteableSystemNotificationAction
+    href: Routeables.Abstraction.RouteableSystemNotificationAction.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.RouteableSystemNotificationAction
+    name: RouteableSystemNotificationAction
+    href: Routeables.Abstraction.RouteableSystemNotificationAction.html
+  - name: )
+- uid: System.Collections.Generic.IReadOnlyList`1
+  commentId: T:System.Collections.Generic.IReadOnlyList`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<T>
+  nameWithType: IReadOnlyList<T>
+  fullName: System.Collections.Generic.IReadOnlyList<T>
+  nameWithType.vb: IReadOnlyList(Of T)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of T)
+  name.vb: IReadOnlyList(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: Routeables.Abstraction.IRouteableSystemNotification.SetActions*
+  commentId: Overload:Routeables.Abstraction.IRouteableSystemNotification.SetActions
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_SetActions_System_Collections_Generic_IReadOnlyList_Routeables_Abstraction_RouteableSystemNotificationAction__
+  name: SetActions
+  nameWithType: IRouteableSystemNotification.SetActions
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.SetActions
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Title
+  commentId: P:Routeables.Abstraction.IRouteableSystemNotification.Title
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Title
+  name: Title
+  nameWithType: IRouteableSystemNotification.Title
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Title
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Message
+  commentId: P:Routeables.Abstraction.IRouteableSystemNotification.Message
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Message
+  name: Message
+  nameWithType: IRouteableSystemNotification.Message
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Message
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Show*
+  commentId: Overload:Routeables.Abstraction.IRouteableSystemNotification.Show
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Show
+  name: Show
+  nameWithType: IRouteableSystemNotification.Show
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Show
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: Routeables.Abstraction.IRouteableSystemNotification.Close*
+  commentId: Overload:Routeables.Abstraction.IRouteableSystemNotification.Close
+  href: Routeables.Abstraction.IRouteableSystemNotification.html#Routeables_Abstraction_IRouteableSystemNotification_Close
+  name: Close
+  nameWithType: IRouteableSystemNotification.Close
+  fullName: Routeables.Abstraction.IRouteableSystemNotification.Close

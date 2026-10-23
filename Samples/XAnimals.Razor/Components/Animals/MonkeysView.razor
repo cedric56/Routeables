@@ -1,0 +1,60 @@
+﻿@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@attribute [RouteableView(typeof(MonkeysViewModel), route: "/monkeys")]
+@inherits RouteableFor<MonkeysView, MonkeysViewModel>
+
+<PageTitle>Monkeys</PageTitle>
+
+@if (ViewModel.CurrentView is RouteableFor routeable)
+{
+    @routeable.Render()
+}
+else
+{
+    <div class="animals-page">
+        <input class="search-box"
+        type="search"
+        placeholder="Enter search term"
+        @bind="ViewModel.SearchText"
+        @bind:event="oninput" />
+
+        @if (!ViewModel.FilteredAnimals.Any())
+        {
+            <p class="no-results">No monkeys found.</p>
+        }
+
+        <div class="animal-list">
+            @foreach (var monkey in ViewModel.FilteredAnimals)
+            {
+                <div class="animal-item @(monkey == ViewModel.SelectedAnimal ? "selected" : null)"
+                @onclick="async () => await ViewModel.OnSelectedAnimalAsync(monkey)">
+                    <img src="@monkey.ThumbnailUrl" onerror="if(this.dataset.retried){this.onerror=null;this.src='_content/XAnimals.Razor/placeholder.svg'}else{this.dataset.retried=1;this.src='@monkey.ImageUrl'}" alt="@monkey.Name" width="20" height="20" />
+                    <div class="animal-text">
+                        <span class="animal-name">@monkey.Name</span>
+                        <span class="animal-location">@monkey.Location</span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+@code
+{
+    protected override void OnSubscribe()
+    {
+        ViewModel.CurrentViewChanged += OnCurrentViewChanged;
+        base.OnSubscribe();
+    }
+
+    private async void OnCurrentViewChanged(object? sender, object? view)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnUnsubscribe()
+    {
+        ViewModel.CurrentViewChanged -= OnCurrentViewChanged;
+        base.OnUnsubscribe();
+    }
+}

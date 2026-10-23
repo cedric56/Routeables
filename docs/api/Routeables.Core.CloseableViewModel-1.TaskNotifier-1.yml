@@ -1,0 +1,464 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+  commentId: T:Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+  id: CloseableViewModel`1.TaskNotifier`1
+  parent: Routeables.Core
+  children:
+  - Routeables.Core.CloseableViewModel`1.TaskNotifier`1.op_Implicit(Routeables.Core.CloseableViewModel{`0}.TaskNotifier{`1})~System.Threading.Tasks.Task{`1}
+  langs:
+  - csharp
+  - vb
+  name: CloseableViewModel<TResult>.TaskNotifier<T>
+  nameWithType: CloseableViewModel<TResult>.TaskNotifier<T>
+  fullName: Routeables.Core.CloseableViewModel<TResult>.TaskNotifier<T>
+  type: Class
+  source:
+    id: TaskNotifier
+    path: C:\Users\cedri\source\repos\Routeables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.CloseableViewModel`1.g.cs
+    startLine: 478
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: A wrapping class that can hold a <xref href="System.Threading.Tasks.Task%601" data-throw-if-not-resolved="false"></xref> value.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected sealed class CloseableViewModel<TResult>.TaskNotifier<T>
+    typeParameters:
+    - id: T
+      description: The type of value for the wrapped <xref href="System.Threading.Tasks.Task%601" data-throw-if-not-resolved="false"></xref> instance.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected NotInheritable Class CloseableViewModel(Of TResult).TaskNotifier(Of T)
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: CloseableViewModel(Of TResult).TaskNotifier(Of T)
+  fullName.vb: Routeables.Core.CloseableViewModel(Of TResult).TaskNotifier(Of T)
+  name.vb: CloseableViewModel(Of TResult).TaskNotifier(Of T)
+- uid: Routeables.Core.CloseableViewModel`1.TaskNotifier`1.op_Implicit(Routeables.Core.CloseableViewModel{`0}.TaskNotifier{`1})~System.Threading.Tasks.Task{`1}
+  commentId: M:Routeables.Core.CloseableViewModel`1.TaskNotifier`1.op_Implicit(Routeables.Core.CloseableViewModel{`0}.TaskNotifier{`1})~System.Threading.Tasks.Task{`1}
+  id: op_Implicit(Routeables.Core.CloseableViewModel{`0}.TaskNotifier{`1})~System.Threading.Tasks.Task{`1}
+  parent: Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+  langs:
+  - csharp
+  - vb
+  name: implicit operator Task<T>?(TaskNotifier<T>?)
+  nameWithType: CloseableViewModel<TResult>.TaskNotifier<T>.implicit operator Task<T>?(CloseableViewModel<TResult>.TaskNotifier<T>?)
+  fullName: Routeables.Core.CloseableViewModel<TResult>.TaskNotifier<T>.implicit operator System.Threading.Tasks.Task<T>?(Routeables.Core.CloseableViewModel<TResult>.TaskNotifier<T>?)
+  type: Operator
+  source:
+    id: op_Implicit
+    path: C:\Users\cedri\source\repos\Routeables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.CloseableViewModel`1.g.cs
+    startLine: 498
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Unwraps the <xref href="System.Threading.Tasks.Task%601" data-throw-if-not-resolved="false"></xref> value stored in the current instance.
+  example: []
+  syntax:
+    content: public static implicit operator Task<T>?(CloseableViewModel<TResult>.TaskNotifier<T>? notifier)
+    parameters:
+    - id: notifier
+      type: Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+      description: The input <xref href="Routeables.Core.CloseableViewModel%601.TaskNotifier%601" data-throw-if-not-resolved="false"></xref> instance.
+    return:
+      type: System.Threading.Tasks.Task{{T}}
+    content.vb: Public Shared Widening Operator CType(notifier As CloseableViewModel(Of TResult).TaskNotifier(Of T)) As Task(Of T)
+  overload: Routeables.Core.CloseableViewModel`1.TaskNotifier`1.op_Implicit*
+  nameWithType.vb: CloseableViewModel(Of TResult).TaskNotifier(Of T).CType(CloseableViewModel(Of TResult).TaskNotifier(Of T))
+  fullName.vb: Routeables.Core.CloseableViewModel(Of TResult).TaskNotifier(Of T).CType(Routeables.Core.CloseableViewModel(Of TResult).TaskNotifier(Of T))
+  name.vb: CType(TaskNotifier(Of T))
+references:
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Core
+  commentId: N:Routeables.Core
+  name: Routeables.Core
+  nameWithType: Routeables.Core
+  fullName: Routeables.Core
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+  commentId: T:Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+  parent: Routeables.Core
+  href: Routeables.Core.CloseableViewModel-1.html
+  name: CloseableViewModel<TResult>.TaskNotifier<T>
+  nameWithType: CloseableViewModel<TResult>.TaskNotifier<T>
+  fullName: Routeables.Core.CloseableViewModel<TResult>.TaskNotifier<T>
+  nameWithType.vb: CloseableViewModel(Of TResult).TaskNotifier(Of T)
+  fullName.vb: Routeables.Core.CloseableViewModel(Of TResult).TaskNotifier(Of T)
+  name.vb: CloseableViewModel(Of TResult).TaskNotifier(Of T)
+  spec.csharp:
+  - uid: Routeables.Core.CloseableViewModel`1
+    name: CloseableViewModel
+    href: Routeables.Core.CloseableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  - name: .
+  - uid: Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.CloseableViewModel-1.TaskNotifier-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Core.CloseableViewModel`1
+    name: CloseableViewModel
+    href: Routeables.Core.CloseableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+  - name: .
+  - uid: Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.CloseableViewModel-1.TaskNotifier-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: Routeables.Core.CloseableViewModel`1.TaskNotifier`1.op_Implicit*
+  commentId: Overload:Routeables.Core.CloseableViewModel`1.TaskNotifier`1.op_Implicit
+  name: implicit operator
+  nameWithType: CloseableViewModel<TResult>.TaskNotifier<T>.implicit operator
+  fullName: Routeables.Core.CloseableViewModel<TResult>.TaskNotifier<T>.implicit operator
+  nameWithType.vb: CloseableViewModel(Of TResult).TaskNotifier(Of T).CType
+  fullName.vb: Routeables.Core.CloseableViewModel(Of TResult).TaskNotifier(Of T).CType
+  name.vb: CType
+  spec.csharp:
+  - name: implicit
+  - name: " "
+  - name: operator
+- uid: System.Threading.Tasks.Task{{T}}
+  commentId: T:System.Threading.Tasks.Task{``0}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<T>
+  nameWithType: Task<T>
+  fullName: System.Threading.Tasks.Task<T>
+  nameWithType.vb: Task(Of T)
+  fullName.vb: System.Threading.Tasks.Task(Of T)
+  name.vb: Task(Of T)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks

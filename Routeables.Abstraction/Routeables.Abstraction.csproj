@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAotCompatible>true</IsAotCompatible>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Routeables.Abstraction</PackageId>
+    <Version>1.0.0-preview.1</Version>
+    <Description>Contracts of Routeables: IRouter, IRouteable, route arguments and the attributes that declare routes.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Routing" />
+    <InternalsVisibleTo Include="Routeables.Segments" />
+    <InternalsVisibleTo Include="Routeables.Regions" />
+    <InternalsVisibleTo Include="Routeables.Test" />
+    <InternalsVisibleTo Include="Routeables.Core" />
+    <InternalsVisibleTo Include="Routeables.Razor" />
+    <InternalsVisibleTo Include="Routeables.Maui" />
+    <InternalsVisibleTo Include="Routeables.Avalonia" />
+    <InternalsVisibleTo Include="Routeables.Uno" />
+    <InternalsVisibleTo Include="Routeables.Benchmarks" />
+    <!-- Lets NSubstitute/Castle build proxies of the internal interfaces (e.g. ILockCoordinatorFactory) in tests. -->
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <!-- The package carries the source generator as an analyzer, so a project that references Routeables by NuGet needs nothing else. -->
+  <ItemGroup>
+    <!-- Only so that the generator is built before this project is packed: nothing of it is referenced or becomes a dependency. -->
+    <ProjectReference Include="..\Routeables.Generated\Routeables.Generated.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
+    <!-- No Exists() condition: a missing generator must fail the pack, not leave it out without a word. -->
+    <None Include="..\Routeables.Generated\bin\$(Configuration)\netstandard2.0\Routeables.Generated.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.13" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,29 @@
+<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="using:Routeables.Uno"
+    x:Class="XAnimals.Uno.MainPage"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.ColumnSpan="2" Margin="20,12" FontSize="22" FontWeight="SemiBold" Text="{Binding Title}" />
+
+        <!-- The menu: one entry per RouteableEntry of MainViewModel. The DataContext is the main view model. -->
+        <ScrollViewer Grid.Row="1">
+            <routeables:RouteableListView />
+        </ScrollViewer>
+
+        <!-- The page the router shows. -->
+        <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentView}"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+    </Grid>
+</Page>

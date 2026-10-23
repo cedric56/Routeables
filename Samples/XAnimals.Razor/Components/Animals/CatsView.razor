@@ -1,0 +1,9 @@
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@attribute [RouteableView(typeof(CatsViewModel), route: "/cats")]
+@inherits RouteableFor<CatsView, CatsViewModel>
+
+<PageTitle>Cats</PageTitle>
+
+<AnimalList ViewModel="ViewModel" NoResultsText="No cats found." />
