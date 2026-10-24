@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <Version>1.0.0</Version>
     <!--
       This project is the "Routeables" package: it carries Abstraction, Routing, Core, Regions, Services, Locking, Segments and the source
       generator. The files and the dependencies of the package are those of Routeables.nuspec (a project that references this one

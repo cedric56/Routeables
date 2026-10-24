@@ -7,7 +7,6 @@
     <LangVersion>latest</LangVersion>
     <IsRoslynComponent>true</IsRoslynComponent>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-    <Version>1.0.0</Version>
     <!-- Shipped inside the Routeables package (Routeables.Core/Routeables.nuspec): the assembly goes to analyzers/, not as a package of its own. -->
     <IsPackable>false</IsPackable>
   </PropertyGroup>

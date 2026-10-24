@@ -3,7 +3,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <!-- What every package of the repository shares. Version, id, authors, readme and license are set in each project. -->
+  <!-- The version of every package of the repository, in one place: VersionSuffix is empty for a release. -->
+  <PropertyGroup>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>preview.1</VersionSuffix>
+  </PropertyGroup>
+
+  <!-- What every package of the repository shares. Id, authors, readme and license are set in each project. -->
   <PropertyGroup>
     <Copyright>Copyright (c) 2026 Cedric</Copyright>
     <PackageProjectUrl>https://github.com/cedric56/Routeables</PackageProjectUrl>

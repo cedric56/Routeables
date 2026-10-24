@@ -34,7 +34,7 @@ dotnet pack Routeables.Core -c Release -o artifacts     # the Routeables package
 dotnet pack Routeables.Razor -c Release -o artifacts    # a host; same for the others
 ```
 
-The CI packs the packages that need no workload and fails if one of them depends on a project that is not a package.
+The version of every package is in `Directory.Build.props` (`VersionPrefix`, and `VersionSuffix` for a preview; empty it for a release). The CI checks that the dependencies written in the nuspec match the projects (`.github/scripts/check-nuspec.sh`), packs the packages that need no workload, and fails if one of them depends on a project that is not a package.
 
 ## Documentation
 

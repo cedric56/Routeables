@@ -204,6 +204,9 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      - name: Check the dependencies written in the nuspec
+        run: .github/scripts/check-nuspec.sh
+
       - name: Pack
         run: |
           dotnet pack Routeables.Core/Routeables.Core.csproj -c Release -o artifacts

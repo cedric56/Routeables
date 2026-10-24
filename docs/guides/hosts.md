@@ -9,13 +9,15 @@
 - `RouteableViewModelBase`: the abstract base under it; manages routing between a set of `IRouteableEntry` items (menus, tab bars), implements `IMainRouteables` and guards the change of the current item.
 - `CloseableViewModelBase<TResult>`: a view model that can be closed and returns a result (dialogs).
 
-The CommunityToolkit.Mvvm flavour is opt-in. Declare the feature you want in your project file and `Routeables.targets` (in the `Routeables` package) adds the packages and the matching source files:
+The CommunityToolkit.Mvvm and ReactiveUI flavours are opt-in sources: they are not in the assembly, and the application keeps the package and the version it chooses. Add the package, then declare the feature in your project file; `Routeables.targets` (in the `Routeables` package) adds the matching source files:
 
 ```xml
 <PropertyGroup>
-  <RouteablesFeatures>;CommunityToolkit;</RouteablesFeatures>
-  <!-- ;ReactiveUI; is recognised by the targets but no ReactiveUI sources ship yet -->
+  <RouteablesFeatures>;CommunityToolkit;</RouteablesFeatures>   <!-- or ;ReactiveUI;, not both -->
 </PropertyGroup>
+<ItemGroup>
+  <PackageReference Include="CommunityToolkit.Mvvm" Version="..." />   <!-- or ReactiveUI and ReactiveUI.SourceGenerators -->
+</ItemGroup>
 ```
 
 ## Shared services

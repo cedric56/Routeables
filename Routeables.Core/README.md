@@ -21,18 +21,21 @@ It is one package built from several projects of the repository:
 | --- | --- |
 | A page | nothing: a plain class that takes `IRouter` (add `IRouteable` for `CanLeaveAsync`, `OnEnteringAsync`...) |
 | The menu or tab bar | `MainViewModelBase`: return the entries from `GetRouteables()` |
-| The menu, with CommunityToolkit.Mvvm | `RouteableViewModel` (feature `;CommunityToolkit;`) |
-| A view model shown in a dialog, closing with a result | `CloseableViewModel<TResult>` (CommunityToolkit) or `CloseableViewModelBase<TResult>` |
+| The menu, with CommunityToolkit.Mvvm or ReactiveUI | `RouteableViewModel` (feature `;CommunityToolkit;` or `;ReactiveUI;`) |
+| A view model shown in a dialog, closing with a result | `CloseableViewModel<TResult>` (CommunityToolkit or ReactiveUI) or `CloseableViewModelBase<TResult>` |
 | Your own base (another MVVM library) | `RouteableViewModelBase` for a menu, `RouterViewModelBase` for back and forward only |
 
 Register the menu with `UseRouteables<MainViewModel>(...)` on your host, or `services.RegisterMainRouteables<MainViewModel>()`. The host chooses the lifetime (`Scoped` per circuit on Blazor, `Singleton` elsewhere). It implements `IMainRouteables`: the entries, the selected one, the current view, and the guard that stops a change of entry while a page blocks leaving.
 
-The CommunityToolkit flavour is opt-in: declare it in the project file and `Routeables.targets` adds the package and the sources.
+The CommunityToolkit.Mvvm and ReactiveUI flavours are opt-in sources, not part of the assembly. Add the package of your MVVM library to your project, then declare the flavour in the project file: `Routeables.targets` adds its sources.
 
 ```xml
 <PropertyGroup>
-  <RouteablesFeatures>;CommunityToolkit;</RouteablesFeatures>
+  <RouteablesFeatures>;CommunityToolkit;</RouteablesFeatures>   <!-- or ;ReactiveUI; (one of them) -->
 </PropertyGroup>
+<ItemGroup>
+  <PackageReference Include="CommunityToolkit.Mvvm" Version="..." />   <!-- or ReactiveUI and ReactiveUI.SourceGenerators -->
+</ItemGroup>
 ```
 
 ## Runtime information

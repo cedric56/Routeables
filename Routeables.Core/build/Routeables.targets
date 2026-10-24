@@ -6,20 +6,16 @@
     <_RouteablesLibTfm>$(TargetFramework.Split('-')[0])</_RouteablesLibTfm>
   </PropertyGroup>
 
+  <!-- The flavours are opt-in sources: RouteablesFeatures adds them to the project. The packages they use (CommunityToolkit.Mvvm;
+       ReactiveUI and ReactiveUI.SourceGenerators) are the application's own PackageReference, with the version it chooses. -->
   <ItemGroup Condition="$(RouteablesFeatures.Contains(';CommunityToolkit;'))">
-    <PackageReference Include="CommunityToolkit.Mvvm" />
     <Compile Include="$(MSBuildThisFileDirectory)..\lib\$(_RouteablesLibTfm)\Community\**\*.cs">
       <Visible>false</Visible>
     </Compile>
   </ItemGroup>
 
   <ItemGroup Condition="$(RouteablesFeatures.Contains(';ReactiveUI;'))">
-    <PackageReference Include="ReactiveUI" />
-    <PackageReference Include="ReactiveUI.SourceGenerators">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <Compile Include="$(MSBuildThisFileDirectory)..\lib\$(_RouteablesLibTfm)\ReactiveUI\**\*.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)..\lib\$(_RouteablesLibTfm)\Reactive\**\*.cs">
       <Visible>false</Visible>
     </Compile>
   </ItemGroup>

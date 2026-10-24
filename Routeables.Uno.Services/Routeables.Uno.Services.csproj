@@ -12,7 +12,6 @@
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>Routeables.Uno.Services</RootNamespace>
-    <Version>1.0.0</Version>
     <PackageId>Routeables.Uno.Services</PackageId>
     <Authors>Cedric</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>

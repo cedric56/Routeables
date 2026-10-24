@@ -19,7 +19,6 @@
     <icon>icon.png</icon>
     <dependencies>
       <group targetFramework="net10.0">
-        <dependency id="CommunityToolkit.Mvvm" version="8.4.2" />
         <dependency id="Microsoft.Extensions.DependencyInjection" version="10.0.13" />
         <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="10.0.13" />
       </group>
@@ -48,8 +47,9 @@
     <!-- The source generator: an analyzer, it adds nothing to the references of the project. -->
     <file src="../Routeables.Generated/bin/$configuration$/netstandard2.0/Routeables.Generated.dll" target="analyzers/dotnet/cs" />
 
-    <!-- The opt-in flavours (RouteablesFeatures): Routeables.targets adds these sources to the project that asks for them. -->
+    <!-- The opt-in flavours (RouteablesFeatures): Routeables.targets adds these sources to the project that asks for them. They are not compiled in Routeables.Core.dll. -->
     <file src="build/Routeables.targets" target="buildTransitive" />
     <file src="Community/**" target="lib/net10.0/Community" />
+    <file src="Reactive/**" target="lib/net10.0/Reactive" />
   </files>
 </package>

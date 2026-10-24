@@ -7,7 +7,6 @@
     <IsAotCompatible>true</IsAotCompatible>
     <!-- Trim / AOT findings are reported but do not stop the build until the first CI run has shown what the UI packages raise. -->
     <WarningsNotAsErrors>$(WarningsNotAsErrors);IL2026;IL2067;IL2070;IL2072;IL2075;IL2087;IL2091;IL3050</WarningsNotAsErrors>
-    <Version>1.0.0</Version>
     <PackageId>Reshapes.Razor.MudBlazor</PackageId>
     <Authors>Cedric</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>

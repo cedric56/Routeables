@@ -3,7 +3,6 @@
   <PropertyGroup>
     <PackageType>Template</PackageType>
     <Title>Routeables templates</Title>
-    <Version>1.0.0</Version>
     <PackageId>Routeables.Templates</PackageId>
     <Authors>Cedric</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -13,8 +13,8 @@
     <ProjectReference Include="ROUTEABLES_REPO/Routeables.Razor.Services/Routeables.Razor.Services.csproj" />
     <ProjectReference Include="ROUTEABLES_REPO/Routeables.Generated/Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 <!--#else -->
-    <PackageReference Include="Routeables.Razor" Version="1.0.0" />
-    <PackageReference Include="Routeables.Razor.Services" Version="1.0.0" />
+    <PackageReference Include="Routeables.Razor" Version="1.0.0-preview.1" />
+    <PackageReference Include="Routeables.Razor.Services" Version="1.0.0-preview.1" />
 <!--#endif -->
   </ItemGroup>
 

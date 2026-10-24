@@ -7,7 +7,6 @@
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>Routeables.Razor.Services</RootNamespace>
-    <Version>1.0.0</Version>
     <PackageId>Routeables.Razor.Services</PackageId>
     <Authors>Cedric</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
