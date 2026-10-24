@@ -11,4 +11,6 @@ public sealed class FakeMainRouteables : IMainRouteables
     public object? CurrentView { get; set; }
     public EventHandler<object?>? CurrentViewChanged { get; set; }
     public EventHandler? LockChanged { get; set; }
+
+    public string? CurrentTitle { get; }
 }

@@ -1,7 +1,7 @@
 ﻿using Routeables.Abstraction;
 using XAminals.Models;
 
-namespace XAnimals.ViewModels;
+namespace XAnimals.Common;
 
 /// <summary>
 /// What every animal list page has in common: the search, the selection and the hosting of the detail view.
@@ -21,10 +21,10 @@ public abstract class AnimalsViewModel(IRouter router, IEnumerable<Animal> anima
     /// </summary>
     public bool HostsDetail { get; private set; } = true;
 
-    /// <summary>A page sent to a region (see <see cref="RegionEntries"/>) is told so by its entry: the region shows its detail.</summary>
+    /// <summary>A page sent to a region (see <c>RegionEntries</c>) is told so by its entry: the region shows its detail.</summary>
     public Task OnEnteredAsync(IRouteableArgs context, CancellationToken ct = default)
     {
-        HostsDetail = !context.Values.Any(v => v.name == RegionEntries.RegionKey);
+        HostsDetail = !context.Values.Any(v => v.name == PageArguments.RegionKey);
         return Task.CompletedTask;
     }
 

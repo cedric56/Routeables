@@ -2,7 +2,7 @@ global using AnimalSelection = (XAminals.Models.Animal Animal, System.Action Bac
 using Routeables.Abstraction;
 using XAminals.Models;
 
-namespace XAnimals.ViewModels;
+namespace XAnimals.Common;
 
 /// <summary>
 /// What every animal detail page has in common: the animal and the way back to the list.

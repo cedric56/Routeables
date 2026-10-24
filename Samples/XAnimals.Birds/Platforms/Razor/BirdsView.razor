@@ -1,0 +1,10 @@
+﻿@namespace XAnimals.Razor.Components.Animals
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.Birds
+@attribute [RouteableView(typeof(BirdsViewModel), route: BirdsModule.Route)]
+@inherits RouteableFor<BirdsView, BirdsViewModel>
+
+@* <PageTitle>Birds</PageTitle>
+
+<AnimalList ViewModel="ViewModel" NoResultsText="No birds found." /> *@

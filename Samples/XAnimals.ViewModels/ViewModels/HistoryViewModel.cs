@@ -2,6 +2,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Routing;
 using System.Windows.Input;
+using XAminals.Common;
+using XAnimals.Common;
 
 namespace XAnimals.ViewModels;
 
@@ -78,16 +80,6 @@ public class HistoryViewModel : ViewModelBase, IRouteable, IDisposable
 
     /// <summary>Whether <see cref="IRouter.ForwardAsync"/> has an entry to go to: only entries left with Back can be reached.</summary>
     public bool CanGoForward => _region.CanGoForward;
-
-    /// <summary>Where the cursor is in the history.</summary>
-    public string Position
-    {
-        get
-        {
-            var history = _region.History;
-            return $"Entry {history.CurrentIndex + 1} of {history.Count} (the history keeps {history.MaxSize} at most).";
-        }
-    }
 
     private AnimalsViewModel? Page => _region.CurrentViewModel as AnimalsViewModel;
 
@@ -241,6 +233,5 @@ public class HistoryViewModel : ViewModelBase, IRouteable, IDisposable
         OnPropertyChanged(nameof(GuardText));
         OnPropertyChanged(nameof(CanGoBack));
         OnPropertyChanged(nameof(CanGoForward));
-        OnPropertyChanged(nameof(Position));
     }
 }

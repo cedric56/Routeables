@@ -10,7 +10,7 @@ Your view models depend on one `IRouter` interface instead of framework-specific
 wired by source generators, and a call to a view model can be generated as a typed method that mirrors its constructor.
 
 > [!WARNING]
-> Routeables is in preview (`1.0.0-preview.1`): APIs change between commits.
+> Routeables is in preview (`1.0.0`): APIs change between commits.
 
 - [Introduction](introduction.md): what it does and how the projects fit together.
 - [Getting started](getting-started.md): install, declare routes, set up a host, route.

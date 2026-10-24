@@ -5,9 +5,11 @@
     <Nullable>enable</Nullable>
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
     <PackageId>Routeables.Locking</PackageId>
-    <Version>1.0.0-preview.1</Version>
+    <Authors>Cedric</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Page locking for Routeables: pages that can block leaving, and the broker that locks the main menu.</Description>
   </PropertyGroup>
 

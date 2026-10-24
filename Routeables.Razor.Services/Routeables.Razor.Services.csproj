@@ -6,10 +6,12 @@
     <Nullable>enable</Nullable>
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>Routeables.Razor.Services</PackageId>
     <RootNamespace>Routeables.Razor.Services</RootNamespace>
-    <Version>1.0.0-preview.1</Version>
+    <Version>1.0.0</Version>
+    <PackageId>Routeables.Razor.Services</PackageId>
+    <Authors>Cedric</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Dialogs, content dialogs, task dialogs, modals, notifications and the default layout for Routeables on Blazor.</Description>
   </PropertyGroup>
 

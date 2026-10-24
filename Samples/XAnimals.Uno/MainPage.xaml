@@ -15,7 +15,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.ColumnSpan="2" Margin="20,12" FontSize="22" FontWeight="SemiBold" Text="{Binding Title}" />
+        <TextBlock Grid.ColumnSpan="2" Margin="20,12" FontSize="22" FontWeight="SemiBold" Text="{Binding CurrentTitle}" />
 
         <!-- The menu: one entry per RouteableEntry of MainViewModel. The DataContext is the main view model. -->
         <ScrollViewer Grid.Row="1">

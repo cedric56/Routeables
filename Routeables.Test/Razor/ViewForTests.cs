@@ -29,6 +29,8 @@ public class ViewForTests
         public EventHandler<object?>? CurrentViewChanged { get; set; }
         public object? CurrentView { get; set; }
         public IRouteableEntry? Routeable { get; set; }
+
+        public string? CurrentTitle { get; }
     }
 
     private sealed class ChildView : ComponentBase

@@ -6,11 +6,11 @@
   <a href="https://github.com/cedric56/Routeables/actions/workflows/ci.yml"><img src="https://github.com/cedric56/Routeables/actions/workflows/ci.yml/badge.svg?branch=master" alt="CI"></a>
   <a href="LICENSE.txt"><img src="https://img.shields.io/badge/license-MIT-5B35E0" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white" alt=".NET 10">
-  <img src="https://img.shields.io/badge/version-1.0.0--preview.1-orange" alt="1.0.0-preview.1">
+  <img src="https://img.shields.io/badge/version-1.0.0-orange" alt="1.0.0">
 </p>
 
 > [!WARNING]
-> **Routeables is under active development (`1.0.0-preview.1`).** APIs change between commits. Just for experimenting.
+> **Routeables is under active development (`1.0.0`).** APIs change between commits. Just for experimenting.
 
 # Routeables
 
@@ -93,7 +93,7 @@ A project that only routes carries no dialog, notification, region-follower or s
 - **Four UI hosts**: Blazor (Razor), .NET MAUI, Avalonia and Uno Platform (preview).
 - **Optional MVVM helpers**: a view-model base for CommunityToolkit.Mvvm, opt in through an MSBuild property (ReactiveUI is planned, not shipped yet).
 
-Routeables routes; it does not choose your MVVM library. It ships no commands, no view-model locator, no event aggregator and no modules: use CommunityToolkit.Mvvm, ReactiveUI or plain C#. Coming from Prism? See [Migrating from Prism](docs/guides/migrating-from-prism.md).
+Routeables routes; it does not choose your MVVM library. It ships no commands, no view-model locator, no event aggregator and no module catalog (a feature library is [one extension method](#modules)): use CommunityToolkit.Mvvm, ReactiveUI or plain C#. Coming from Prism? See [Migrating from Prism](docs/guides/migrating-from-prism.md).
 
 ## Projects
 
@@ -333,6 +333,30 @@ Build the entries from code only, not from a field or a constructor parameter: `
 
 The menu or tab bar (`IMainRouteables`) is registered by the host with `services.RegisterMainRouteables<MainViewModel>(lifetime)`: `Scoped` on Blazor Server (one per circuit), `Singleton` on Avalonia and MAUI. A `Transient` one is refused with an `ArgumentException`, because each consumer would get another instance than the one the window shows. At start the host calls `IMainRouteables.SelectFirst()`, which selects the first entry when none is selected, the same way on the three hosts.
 
+### Modules
+
+A feature of the application (orders, customers...) can live in a class library of its own. There is no module catalog and no loading at run time: a module is an extension method that the application calls, so the compiler, the trimmer and Native AOT see every module.
+
+```csharp
+// In the Orders library, which references Routeables.Generated.
+public static class OrdersModule
+{
+    public static IServiceCollection AddOrdersModule(this IServiceCollection services)
+        => services.AddGeneratedRoutes()                                   // the routes of this library
+                   .AddSingleton<IOrderRepository, OrderRepository>()      // its own services
+                   .AddMenuEntries(() =>
+                   [
+                       new RouteableEntry<OrdersViewModel>("Orders", route: "/orders", template: "/orders"),
+                   ]);
+}
+
+// In the application.
+services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton);
+services.AddOrdersModule();
+```
+
+`AddGeneratedRoutes()` is `internal` in each project, which is why the library wraps it in a public method. `AddMenuEntries` puts the entries of the module in the menu, after those of the main view model, in the order the modules were added. The function runs once for each main view model: build new entries in it, so that a lock or a selection is not shared between the circuits of a Blazor Server application. A module that needs another one calls its method (`AddCustomersModule()`) itself.
+
 ### Lifetimes
 
 A view and its view model are `Transient` by default: a new pair is built for each route change. Declare another lifetime on the attribute; `ViewModelLifetime` and `ViewLifetime` set one of the two, and `Lifetime` (or the constructor argument) sets both:
@@ -533,6 +557,8 @@ The [`Samples`](Samples) folder contains the same Animals app on several stacks,
 | Sample | Stack |
 | --- | --- |
 | `XAnimals.ViewModels` | Shared view models (uses `[RouteableViewModel]`) |
+| `XAnimals.Birds` | A [module](#modules): a page, `AddBirdsModule()`, and its views per head in `Platforms/<head>` (each head imports the `.props` of its folder). The heads do not reference it: `XAnimals.ViewModels` calls it in `RegisterViewModels` (`AddAnimalModules()`); the Modules page lists the loaded modules |
+| `XAnimals.Common` | What the view models and the modules share (bases, `Animal`, the list and detail every animal kind derives from, icons): a module references it, not `XAnimals.ViewModels`, which references the module |
 | `XAnimals.Avalonia` (+ `.Desktop`, `.Android`, `.iOS`, `.Browser`) | Avalonia |
 | `XAnimals.Uno` | Uno Platform (desktop head; preview, see [`Routeables.Uno`](Routeables.Uno/README.md)) |
 | `XAnimals.Maui`, `XAnimals.MauiHybrid` | .NET MAUI and MAUI Blazor Hybrid |

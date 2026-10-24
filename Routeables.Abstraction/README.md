@@ -8,7 +8,7 @@ an API specific to Blazor, .NET MAUI or Avalonia, so the same routing code runs 
 
 ## Requirements
 
-Targets **.NET 10** (`net10.0`), version `1.0.0-preview.1`, nullable reference types on. Its only package is
+Targets **.NET 10** (`net10.0`), version `1.0.0`, nullable reference types on. Its only package is
 `Microsoft.Extensions.DependencyInjection.Abstractions`.
 
 From a project of this repository:

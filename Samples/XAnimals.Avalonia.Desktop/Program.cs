@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Avalonia;
+using FluentAvalonia.Styling;
 
 namespace XAnimals.Avalonia.Desktop;
 
@@ -15,7 +16,12 @@ class Program
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
-        => App.CreateApp()
+        => App.CreateApp(new Reshapes.Avalonia.Fluent.ReshapeMessageBoxService())
+            .AfterSetup(builder =>
+            {
+                var app = builder.Instance;
+                app?.Styles.Add(new FluentAvaloniaTheme());
+            })
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();

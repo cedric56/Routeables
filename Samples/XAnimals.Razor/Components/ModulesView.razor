@@ -1,0 +1,39 @@
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@attribute [RouteableView(typeof(ModulesViewModel), route: "modules")]
+@inherits RouteableFor<ModulesView, ModulesViewModel>
+
+<PageTitle>Modules</PageTitle>
+
+<div class="about-page">
+    <div>
+        <h1>
+            <span class="app-name">Modules</span>
+        </h1>
+        <p>
+            A module is an extension method that the application calls in <code>services</code>. It registers its own services and adds its pages to the menu.
+        </p>
+    </div>
+
+    <section class="about-group">
+        <h2>Loaded</h2>
+        @if (ViewModel.HasModules)
+        {
+            @foreach (var module in ViewModel.Modules)
+            {
+                <div>
+                    <strong>@module.Name</strong>
+                    <p>@module.Description</p>
+                    <div class="actions">
+                        <button @onclick="() => module.OpenCommand.Execute(null)">@module.OpenText</button>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No module is loaded. The host adds one with <code>services.AddBirdsModule()</code>.</p>
+        }
+    </section>
+</div>

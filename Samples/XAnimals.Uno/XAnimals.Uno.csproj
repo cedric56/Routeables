@@ -30,14 +30,11 @@
     <UnoSplashScreen Include="Assets\Brand\splash.svg" BaseSize="128,128" Color="#4A22C8" />
   </ItemGroup>
 
-  <!--<ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-  </ItemGroup>-->
-
   <ItemGroup>
     <ProjectReference Include="..\..\Routeables.Uno\Routeables.Uno.csproj" />
     <ProjectReference Include="..\..\Routeables.Uno.Services\Routeables.Uno.Services.csproj" />
     <ProjectReference Include="..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
   </ItemGroup>
+
 </Project>

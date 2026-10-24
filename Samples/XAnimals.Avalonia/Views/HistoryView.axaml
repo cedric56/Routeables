@@ -8,10 +8,6 @@
     
         <Grid RowDefinitions="Auto, *, Auto">
             <StackPanel Grid.Row="0">
-                <TextBlock Text="A region is a router of its own, with its own history. The frame shows the view it displays: Back and Forward move the cursor, Push adds the next animal page after it, Pop goes back and forgets the page it leaves."
-                           TextWrapping="Wrap" Foreground="{DynamicResource AnMuted}" />
-
-                <TextBlock Text="History" Margin="0,14,0,0" FontWeight="SemiBold" Foreground="{DynamicResource AnMuted}" />
                 <ItemsControl ItemsSource="{Binding Entries}" Margin="0,10,0,0">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -38,7 +34,6 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <TextBlock Text="{Binding Position}" TextWrapping="Wrap" Foreground="{DynamicResource AnMuted}" />
             </StackPanel>
             
                     <Border Grid.Row="1" x:Name="FrameHost" BorderBrush="{DynamicResource AnCanopy}" BorderThickness="2" CornerRadius="18" ClipToBounds="True" Margin="0,4,0,0">

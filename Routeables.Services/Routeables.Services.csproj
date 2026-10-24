@@ -5,12 +5,14 @@
     <Nullable>enable</Nullable>
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>Routeables.Services</PackageId>
-    <Version>1.0.0-preview.1</Version>
     <!-- The types keep the Routeables.Abstraction namespace, so moving them out of that assembly changes no using. -->
     <RootNamespace>Routeables.Abstraction</RootNamespace>
     <!--<AllowUnsafeBlocks>true</AllowUnsafeBlocks>-->
+    <Version>1.0.0</Version>
+    <PackageId>Routeables.Services</PackageId>
+    <Authors>Cedric</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Optional UI service contracts for Routeables: dialogs, content and task dialogs, notifications and theme.</Description>
   </PropertyGroup>
 

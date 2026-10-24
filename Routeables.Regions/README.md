@@ -2,7 +2,7 @@
 
 Optional helpers for windows made of several regions (a header, a footer, a menu on the side and a content). The regions themselves, the keyed routers registered with `AddRegion` and resolved with `GetRouter`, are part of routing; this package only adds what drives them. A project that does not use it carries none of it.
 
-Namespace `Routeables.Regions`. Targets **.NET 10** (`net10.0`), version `1.0.0-preview.1`. It references `Routeables.Abstraction` and `Routeables.Routing`.
+Namespace `Routeables.Regions`. Targets **.NET 10** (`net10.0`), version `1.0.0`. It references `Routeables.Abstraction` and `Routeables.Routing`.
 
 | Type | Purpose |
 | --- | --- |

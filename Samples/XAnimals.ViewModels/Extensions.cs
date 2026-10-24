@@ -5,6 +5,7 @@ using Routeables.Routing;
 using Routeables.Locking;
 using Routeables.Regions;
 using Routeables.Segments;
+using XAnimals.Birds;
 
 namespace XAnimals.ViewModels;
 
@@ -45,12 +46,20 @@ public static class Extensions
         services.RegisterRoute<TDogDetailView, DogDetailViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/dogs/{name}");
 
         services.AddDebugErrorSink();
+        services.AddAnimalModules();
         services.AddHistoryRegion();
         services.AddShellRegions();
 
         // Reachable by segments: MainViewModel.GoToAsync("/Bears?SearchText=polar").
         services.RegisterSegment<BearsViewModel>("Bears", "/bears");
     }
+
+    /// <summary>
+    /// The modules of the sample: today Birds, whose page is added to the menu after the entries of <see cref="MainViewModel"/>.
+    /// The heads do not know them: <see cref="RegisterViewModels"/> calls it, Maui calls it from its own start.
+    /// </summary>
+    public static IServiceCollection AddAnimalModules(this IServiceCollection services)
+        => services.AddBirdsModule();
 
     /// <summary>
     /// The router of the History page: a region, with its own history, that shows real pages of the application in a frame

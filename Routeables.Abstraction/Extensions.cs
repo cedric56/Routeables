@@ -14,14 +14,6 @@ namespace Routeables.Abstraction;
 /// </summary>
 public static class Extensions
 {
-    class RouteableArgsFactory(Func<IRouteableArgs> factory) : IRouteableArgsFactory
-    {
-        public IRouteableArgs New()
-        {
-            return factory();
-        }
-    }
-
     public static void RegisterRouteableArgsFactory(this IServiceCollection services, Func<IRouteableArgs> factory)
     {
         services.AddSingleton<IRouteableArgsFactory>(sp => new RouteableArgsFactory(factory));
@@ -47,8 +39,50 @@ public static class Extensions
             throw new ArgumentException(
                 "The main routeables must be Scoped or Singleton: a Transient one gives each consumer another instance.", nameof(lifetime));
 
-        services.Add(new ServiceDescriptor(typeof(IMainRouteables), typeof(TMain), lifetime));
+        // TMain is registered itself so that the container can check its dependencies when it is built; IMainRouteables is that same
+        // instance, once the entries of the modules (AddMenuEntries) have been added to its menu.
+        services.Add(new ServiceDescriptor(typeof(TMain), typeof(TMain), lifetime));
+        services.Add(new ServiceDescriptor(typeof(IMainRouteables), sp => WithModuleEntries(sp.GetRequiredService<TMain>(), sp), lifetime));
         return services;
+    }
+
+    /// <summary>
+    /// Adds entries to the menu of the main view model, from a module: a class library that registers its own routes and shows its
+    /// own pages in the menu of the application that uses it.
+    /// <code>
+    /// public static IServiceCollection AddOrdersModule(this IServiceCollection services)
+    ///     => services.AddGeneratedRoutes()
+    ///                .AddMenuEntries(() => [new RouteableEntry&lt;OrdersViewModel&gt;("Orders", route: "/orders", template: "/orders")]);
+    /// </code>
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="entries">
+    /// Builds the entries. It runs once for each main view model, so each one has entries of its own (a lock or a selection is not
+    /// shared between the circuits of a Blazor Server application): return new entries, not ones kept in a field.
+    /// </param>
+    /// <remarks>
+    /// The entries come after the ones of the main view model, in the order the modules were added. This works with
+    /// <see cref="RegisterMainRouteables{TMain}"/>; call <see cref="AddMenuEntries"/> once for a module.
+    /// </remarks>
+    public static IServiceCollection AddMenuEntries(this IServiceCollection services, Func<IEnumerable<IRouteableEntry>> entries)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(entries);
+
+        services.AddSingleton(new MenuEntries(entries));
+        return services;
+    }
+
+    /// <summary>The entries a module adds to the menu; see <see cref="AddMenuEntries"/>.</summary>
+    private sealed record MenuEntries(Func<IEnumerable<IRouteableEntry>> Build);
+
+    private static IMainRouteables WithModuleEntries(IMainRouteables main, IServiceProvider provider)
+    {
+        foreach (var module in provider.GetServices<MenuEntries>())
+            foreach (var entry in module.Build())
+                main.Routeables.Add(entry);
+
+        return main;
     }
 
     /// <summary>

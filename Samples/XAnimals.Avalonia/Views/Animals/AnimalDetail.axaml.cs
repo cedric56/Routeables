@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using System;
+using XAnimals.Common;
 using XAnimals.ViewModels;
 using RoutedEventArgs = Avalonia.Interactivity.RoutedEventArgs;
 

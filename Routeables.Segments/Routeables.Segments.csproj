@@ -5,9 +5,11 @@
     <Nullable>enable</Nullable>
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
     <PackageId>Routeables.Segments</PackageId>
-    <Version>1.0.0-preview.1</Version>
+    <Authors>Cedric</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Routing by segments for Routeables (Orders?id=5/Detail).</Description>
   </PropertyGroup>
 

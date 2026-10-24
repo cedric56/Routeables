@@ -44,9 +44,9 @@
     <ProjectReference Include="ROUTEABLES_REPO/Routeables.Maui.Services/Routeables.Maui.Services.csproj" />
     <ProjectReference Include="ROUTEABLES_REPO/Routeables.Generated/Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 <!--#else -->
-    <PackageReference Include="Routeables.Maui" Version="1.0.0-preview.1" />
-    <PackageReference Include="Routeables.Maui.Services" Version="1.0.0-preview.1" />
-    <PackageReference Include="Routeables.Generated" Version="1.0.0-preview.1" PrivateAssets="all" />
+    <PackageReference Include="Routeables.Maui" Version="1.0.0" />
+    <PackageReference Include="Routeables.Maui.Services" Version="1.0.0" />
+    <PackageReference Include="Routeables.Generated" Version="1.0.0" PrivateAssets="all" />
 <!--#endif -->
   </ItemGroup>
 

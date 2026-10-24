@@ -26,9 +26,9 @@
     <ProjectReference Include="ROUTEABLES_REPO/Routeables.Avalonia.Services/Routeables.Avalonia.Services.csproj" />
     <ProjectReference Include="ROUTEABLES_REPO/Routeables.Generated/Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 <!--#else -->
-    <PackageReference Include="Routeables.Avalonia" Version="1.0.0-preview.1" />
-    <PackageReference Include="Routeables.Avalonia.Services" Version="1.0.0-preview.1" />
-    <PackageReference Include="Routeables.Generated" Version="1.0.0-preview.1" PrivateAssets="all" />
+    <PackageReference Include="Routeables.Avalonia" Version="1.0.0" />
+    <PackageReference Include="Routeables.Avalonia.Services" Version="1.0.0" />
+    <PackageReference Include="Routeables.Generated" Version="1.0.0" PrivateAssets="all" />
 <!--#endif -->
   </ItemGroup>
 </Project>

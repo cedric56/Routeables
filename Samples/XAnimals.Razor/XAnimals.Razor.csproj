@@ -17,4 +17,7 @@
   <ItemGroup>
     <None Include="wwwroot\logo.svg" />
   </ItemGroup>
+  <!-- The Birds module brings its own views for this head. -->
+  <Import Project="..\XAnimals.Birds\Platforms\Razor\XAnimals.Birds.Razor.props" />
+
 </Project>

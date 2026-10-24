@@ -4,11 +4,13 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IsAotCompatible>true</IsAotCompatible>
-    <Version>1.0.0-preview.1</Version>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Version>1.0.0</Version>
     <PackageId>Routeables.Core</PackageId>
+    <Authors>Cedric</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Routing-aware view-model bases and runtime information for Routeables.</Description>
   </PropertyGroup>
 
@@ -40,10 +42,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Routeables.Routing\Routeables.Routing.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Bases\" />
   </ItemGroup>
 
 </Project>

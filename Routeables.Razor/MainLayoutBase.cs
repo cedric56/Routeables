@@ -55,7 +55,11 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
 
     private async void LockChanged(object? sender, EventArgs e) => await RefreshAsync("MainLayout.LockChanged");
 
-    private async void CurrentViewChanged(object? sender, object? view) => await RefreshAsync("MainLayout.CurrentViewChanged");
+    private async void CurrentViewChanged(object? sender, object? view)
+    {
+        await RefreshAsync("MainLayout.CurrentViewChanged");
+        Title = Main.CurrentTitle ?? "Application";
+    }
 
     // These are event handlers (async void): an exception would reach the circuit. A layout removed between the event
     // and the render is not an error.

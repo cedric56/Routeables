@@ -1,0 +1,68 @@
+﻿@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@attribute [RouteableView(typeof(DialogsViewModel), route: "dialogs")]
+@inherits RouteableFor<DialogsView, DialogsViewModel>
+
+<PageTitle>Dialogs</PageTitle>
+
+<div class="about-page">
+    <h1>Dialogs</h1>
+
+    <section class="about-group">
+        <h2>Messages</h2>
+        <div class="actions">
+            <button @onclick="ViewModel.ShowOkAsync">Ok</button>
+            <button @onclick="ViewModel.ShowErrorAsync">Error</button>
+            <button @onclick="ViewModel.ShowYesNoAsync">Yes / No</button>
+            <button @onclick="ViewModel.ShowOkCancelAsync">Ok / Cancel</button>
+            <button @onclick="ViewModel.ShowOkAbortAsync">Ok / Abort</button>
+            <button @onclick="ViewModel.ShowYesNoCancelAsync">Yes / No / Cancel</button>
+            <button @onclick="ViewModel.ShowYesNoAbortAsync">Yes / No / Abort</button>
+        </div>
+    </section>
+
+    <section class="about-group">
+        <h2>Rich dialogs</h2>
+        <div class="actions">
+            <button @onclick="ViewModel.ShowContentDialogAsync">Content dialog</button>
+            <button @onclick="ViewModel.ShowTaskDialogAsync">Task dialog</button>
+            <button @onclick="ViewModel.ShowProgressDialogAsync">Task dialog with progress</button>
+            <button @onclick="ViewModel.ShowModalAsync">Show modal</button>
+        </div>
+    </section>
+
+    <section class="about-group">
+        <h2>Notifications</h2>
+        <div class="actions">
+            <button @onclick="() => ViewModel.InformationCommand.Execute(null)">Information</button>
+            <button @onclick="() => ViewModel.SuccessCommand.Execute(null)">Success</button>
+            <button @onclick="() => ViewModel.WarningCommand.Execute(null)">Warning</button>
+            <button @onclick="() => ViewModel.NotificationErrorCommand.Execute(null)">Error</button>
+        </div>
+    </section>
+
+    @if (ViewModel.HasResult)
+    {
+        <p class="about-result" role="status">@ViewModel.Result</p>
+    }
+</div>
+
+@code {
+    protected override void OnSubscribe()
+    {
+        ViewModel.PropertyChanged += OnViewModelChanged;
+        base.OnSubscribe();
+    }
+
+    private async void OnViewModelChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnUnsubscribe()
+    {
+        ViewModel.PropertyChanged -= OnViewModelChanged;
+        base.OnUnsubscribe();
+    }
+}

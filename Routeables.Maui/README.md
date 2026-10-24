@@ -5,7 +5,7 @@ view model, the region control and the theme service. The dialog, modal and noti
 
 ## Requirements
 
-Version `1.0.0-preview.1`. It targets `net10.0`, `net10.0-android`, `net10.0-ios`, `net10.0-maccatalyst` and `net10.0-windows10.0.19041.0`, with
+Version `1.0.0`. It targets `net10.0`, `net10.0-android`, `net10.0-ios`, `net10.0-maccatalyst` and `net10.0-windows10.0.19041.0`, with
 minimum platform versions Android 21, iOS 15, Mac Catalyst 17 and Windows 10.0.17763. It references `Microsoft.Maui.Controls`,
 `Routeables.Abstraction` and `Routeables.Core`; the MAUI workload must be installed. On CI, `-p:CiBuild=true` builds only the plain `net10.0` target.
 

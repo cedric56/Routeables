@@ -3,7 +3,7 @@
 The optional UI services of the MAUI host: dialogs, content dialogs, task dialogs, modal pages and toast notifications.
 [`Routeables.Maui`](../Routeables.Maui/README.md) alone routes; add this package when you want these services.
 
-Version `1.0.0-preview.1`, same target frameworks as `Routeables.Maui` (`net10.0`, Android, iOS, Mac Catalyst and Windows), namespace `Routeables.Maui.Services`.
+Version `1.0.0`, same target frameworks as `Routeables.Maui` (`net10.0`, Android, iOS, Mac Catalyst and Windows), namespace `Routeables.Maui.Services`.
 It references `Routeables.Maui` and the contracts of [`Routeables.Services`](../Routeables.Services/README.md).
 
 ```csharp

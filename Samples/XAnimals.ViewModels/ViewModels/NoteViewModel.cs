@@ -1,6 +1,8 @@
 ﻿using Routeables.Abstraction;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using XAminals.Common;
+using XAnimals.Common;
 
 namespace XAnimals.ViewModels;
 
@@ -16,8 +18,8 @@ public class NoteViewModel : ViewModelBase, ICloseableViewModel<string?>
     {
         Commands =
         [
-            new RouteableCommand { Name = "Save", Command = new RelayCommand(async () => await CloseAsync(_note.Trim()), () => _note.Trim().Length > 0) },
-            new RouteableCommand { Name = "Cancel", Command = new RelayCommand(async () => await CloseAsync(null)) }
+            new RouteableCommand { Name = "Save", Command = new AsyncCommand(async () => await CloseAsync(_note.Trim()), () => _note.Trim().Length > 0) },
+            new RouteableCommand { Name = "Cancel", Command = new AsyncCommand(async () => await CloseAsync(null)) }
         ];
         _save = Commands[0].Command;
     }
@@ -35,7 +37,7 @@ public class NoteViewModel : ViewModelBase, ICloseableViewModel<string?>
             if (_note == value) return;
             _note = value;
             OnPropertyChanged();
-            (_save as RelayCommand)?.RaiseCanExecuteChanged();
+            (_save as AsyncCommand)?.RaiseCanExecuteChanged();
         }
     }
 
@@ -49,16 +51,5 @@ public class NoteViewModel : ViewModelBase, ICloseableViewModel<string?>
     {
         CloseRequested?.Invoke(this, value);
         return Task.CompletedTask;
-    }
-
-    private sealed class RelayCommand(Func<Task> execute, Func<bool>? canExecute = null) : ICommand
-    {
-        public event EventHandler? CanExecuteChanged;
-
-        public bool CanExecute(object? parameter) => canExecute?.Invoke() ?? true;
-
-        public async void Execute(object? parameter) => await execute();
-
-        public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

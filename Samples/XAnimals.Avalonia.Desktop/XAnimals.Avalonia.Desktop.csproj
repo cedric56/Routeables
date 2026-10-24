@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Reshapes\Reshapes.Avalonia.Fluent\Reshapes.Avalonia.Fluent.csproj" />
     <ProjectReference Include="..\XAnimals.Avalonia\XAnimals.Avalonia.csproj" />
   </ItemGroup>
 </Project>

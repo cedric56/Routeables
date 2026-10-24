@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Routing;
+using XAnimals.Common;
 
 namespace XAnimals.ViewModels;
 
@@ -11,19 +12,19 @@ namespace XAnimals.ViewModels;
 public static class RegionEntries
 {
     /// <summary>The key of the name of a page in the arguments of its entry.</summary>
-    public const string NameKey = "page";
+    public const string NameKey = PageArguments.NameKey; // "page";
 
     /// <summary>The key of the icon of a page in the arguments of its entry.</summary>
-    public const string IconKey = "icon";
+    public const string IconKey = PageArguments.IconKey; // "icon";
 
     /// <summary>The key of the region a page was sent to, in the arguments of its entry: a page that finds it is shown by a region.</summary>
-    public const string RegionKey = "region";
+    public const string RegionKey = PageArguments.RegionKey; // "region";
 
     /// <summary>The key of the description of a page in the arguments of its entry.</summary>
-    public const string DescriptionKey = "description";
+    public const string DescriptionKey = PageArguments.DescriptionKey; // "description";
 
     // The pages a region shows: the animal lists of the menu. Not the History or Regions pages (they would show themselves),
-    // nor the pages that act on the application (Lock) or open dialogs (About).
+    // nor the pages that act on the application (Lock) or open dialogs (Dialogs).
     private static readonly string[] PageRoutes = ["/cats", "/dogs", "/monkeys", "/elephants", "/bears", "/pandas"];
 
     /// <summary>The animal pages of the main menu, in the order of the menu.</summary>

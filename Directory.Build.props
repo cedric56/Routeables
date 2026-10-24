@@ -3,6 +3,24 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <!-- What every package of the repository shares. Version, id, authors, readme and license are set in each project. -->
+  <PropertyGroup>
+    <Copyright>Copyright (c) 2026 Cedric</Copyright>
+    <PackageProjectUrl>https://github.com/cedric56/Routeables</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/cedric56/Routeables.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>routing;mvvm;viewmodel;blazor;maui;avalonia;uno</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
+    <!-- Symbols (.snupkg) with Source Link: a consumer can step into the library from the debugger. -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
   <!--
     On the CI build (-p:CiBuild=true) these warnings fail the build: use of an obsolete API, a cached route with parameters
     (ROUT201), and the trimming / AOT analyzers the libraries opt in to with IsAotCompatible. Locally they stay warnings.

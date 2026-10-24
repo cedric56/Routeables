@@ -6,7 +6,7 @@
 
 ## Requirements
 
-Targets **.NET 10** (`net10.0`), version `1.0.0-preview.1`. It references `Uno.WinUI` (6.7) and `Routeables.Core`. It contains no XAML of its own, only code, so it needs nothing but the `net10.0` reference assembly of Uno: a library built on it runs on every head.
+Targets **.NET 10** (`net10.0`), version `1.0.0`. It references `Uno.WinUI` (6.7) and `Routeables.Core`. It contains no XAML of its own, only code, so it needs nothing but the `net10.0` reference assembly of Uno: a library built on it runs on every head.
 
 ```xml
 <ItemGroup>

@@ -18,6 +18,8 @@ public interface IMainRouteables
     /// <summary>The view the selected entry shows, or <see langword="null"/> when there is none.</summary>
     object? CurrentView { get; set; }
 
+    string? CurrentTitle { get; }
+
     /// <summary>Raised when <see cref="CurrentView"/> changes; the argument is the new view.</summary>
     EventHandler<object?>? CurrentViewChanged { get; set; }
 

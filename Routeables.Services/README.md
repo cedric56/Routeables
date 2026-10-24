@@ -2,7 +2,7 @@
 
 The contracts of the user-interface services that the hosts implement in their optional services packages ([Razor](../Routeables.Razor.Services/README.md), [MAUI](../Routeables.Maui.Services/README.md), [Avalonia](../Routeables.Avalonia.Services/README.md)); the theme service stays in the host. They are not needed to route: a project that only uses `IRouter` references [`Routeables.Abstraction`](../Routeables.Abstraction/README.md) and [`Routeables.Routing`](../Routeables.Routing/README.md) and carries none of this.
 
-Targets **.NET 10** (`net10.0`), version `1.0.0-preview.1`. The types are in the `Routeables.Services` namespace.
+Targets **.NET 10** (`net10.0`), version `1.0.0`. The types are in the `Routeables.Services` namespace.
 
 | Interface | Purpose |
 | --- | --- |

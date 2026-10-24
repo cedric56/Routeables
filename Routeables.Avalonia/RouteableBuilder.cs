@@ -4,7 +4,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Core;
-using Routeables.Routing;
 using Routeables.Services;
 
 namespace Routeables.Avalonia;

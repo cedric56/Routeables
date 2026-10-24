@@ -6,9 +6,11 @@
     <Nullable>enable</Nullable>
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
     <PackageId>Routeables.Routing</PackageId>
-    <Version>1.0.0-preview.1</Version>
+    <Authors>Cedric</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>The Routeables router: history, route locking and dependency injection registration.</Description>
   </PropertyGroup>
 

@@ -6,7 +6,7 @@ notifications are optional, in [`Routeables.Avalonia.Services`](../Routeables.Av
 
 ## Requirements
 
-Targets **.NET 10** (`net10.0`), version `1.0.0-preview.1`. It references `Avalonia` and `Routeables.Core`. It does not depend on FluentAvalonia
+Targets **.NET 10** (`net10.0`), version `1.0.0`. It references `Avalonia` and `Routeables.Core`. It does not depend on FluentAvalonia
 or MessageBox.Avalonia: the default dialogs are drawn with Avalonia controls. A FluentAvalonia implementation is a separate project,
 [`Reshapes.Avalonia.Fluent`](../Reshapes/README.md).
 

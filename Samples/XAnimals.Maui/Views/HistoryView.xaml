@@ -11,10 +11,6 @@
     <!-- Three rows: what comes before the frame, the frame (it takes the room that is left), what comes after. -->
     <Grid RowDefinitions="Auto,*,Auto">
         <VerticalStackLayout>
-            <Label Text="A region is a router of its own, with its own history. The frame shows the view it displays: Back and Forward move the cursor, Push adds the next animal page after it, Pop goes back and forgets the page it leaves."
-                   TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
-
-            <Label Text="History" FontAttributes="Bold" Margin="0,14,0,0" TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
             <!-- A history entry is an arch: filled where the cursor is, dimmed ahead of it (reached with Forward). -->
             <FlexLayout Wrap="Wrap" JustifyContent="Start" Margin="0,10,0,0" BindableLayout.ItemsSource="{Binding Entries}">
                 <BindableLayout.ItemTemplate>
@@ -72,9 +68,6 @@
                     </DataTemplate>
                 </BindableLayout.ItemTemplate>
             </FlexLayout>
-            <Label Text="{Binding Position}" TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
-
-            <Label Text="Current view" FontAttributes="Bold" Margin="0,14,0,0" TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
         </VerticalStackLayout>
 
             <Border x:Name="FrameHost" Stroke="{StaticResource Primary}" StrokeThickness="2" Padding="0" Margin="0,4,0,0"
@@ -89,7 +82,6 @@
             </Border>
 
         <VerticalStackLayout Grid.Row="2">
-            <Label Text="The view the &quot;navigation&quot; region shows, rendered here." FontSize="13" TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
             <FlexLayout Wrap="Wrap" JustifyContent="Start">
                 <Button Margin="0,0,8,8" Text="＋ Push" Command="{Binding PushCommand}" />
                 <Button Margin="0,0,8,8" Text="◀ Back" Command="{Binding BackCommand}" IsEnabled="{Binding CanGoBack}" />

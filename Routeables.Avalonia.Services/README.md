@@ -3,7 +3,7 @@
 The optional UI services of the Avalonia host: dialogs, content dialogs, task dialogs and notifications, drawn by an `IMessageBoxService`.
 [`Routeables.Avalonia`](../Routeables.Avalonia/README.md) alone routes; add this package when you want these services.
 
-Targets **.NET 10** (`net10.0`), version `1.0.0-preview.1`, namespace `Routeables.Avalonia.Services`. It references `Avalonia`, `Routeables.Avalonia` and
+Targets **.NET 10** (`net10.0`), version `1.0.0`, namespace `Routeables.Avalonia.Services`. It references `Avalonia`, `Routeables.Avalonia` and
 the contracts of [`Routeables.Services`](../Routeables.Services/README.md).
 
 ```csharp

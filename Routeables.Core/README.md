@@ -6,7 +6,7 @@ model that closes with a result, and information about the runtime. It builds on
 
 ## Requirements
 
-Targets **.NET 10** (`net10.0`), version `1.0.0-preview.1`. It references `Routeables.Routing` and `CommunityToolkit.Mvvm` (the toolkit
+Targets **.NET 10** (`net10.0`), version `1.0.0`. It references `Routeables.Routing` and `CommunityToolkit.Mvvm` (the toolkit
 flavour is opt-in, see below).
 
 ```xml

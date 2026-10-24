@@ -37,7 +37,7 @@ public class MainViewModelBaseTests
         var sut = new Menu(CreateRouter());
 
         Assert.Equal(["A", "B"], sut.Routeables.Select(r => r.DisplayName));
-        Assert.Equal("Application", sut.Title);
+        Assert.Equal("Application", sut.CurrentTitle);
     }
 
     [Fact]
@@ -63,8 +63,8 @@ public class MainViewModelBaseTests
         sut.ViewModelBecameCurrent(new PageB());
 
         Assert.Same(sut.Routeables[1], sut.Routeable);
-        Assert.Equal("B", sut.Title);
-        Assert.Contains(nameof(sut.Title), changed);
+        Assert.Equal("B", sut.CurrentTitle);
+        Assert.Contains(nameof(sut.CurrentTitle), changed);
     }
 
     [Fact]

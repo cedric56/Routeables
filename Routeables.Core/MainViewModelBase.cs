@@ -28,15 +28,12 @@ public abstract class MainViewModelBase(IRouter router, bool initialize = true) 
     /// <summary>Raised when a property changes (<see cref="RouteableViewModelBase.Routeable"/>, <see cref="RouteableViewModelBase.CurrentView"/>, <see cref="Title"/>).</summary>
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    /// <summary>The name of the selected entry, for a host that shows a title; "Application" before any is selected.</summary>
-    public virtual string Title => Routeable?.DisplayName ?? "Application";
-
     /// <inheritdoc />
     protected override void NotifyPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         if (propertyName == nameof(Routeable))
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Title)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentTitle)));
     }
 
     /// <summary>Nothing to refresh: this class has no commands. Override it to refresh yours.</summary>

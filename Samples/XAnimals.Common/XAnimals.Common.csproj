@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- What the view models of the samples and the modules (XAnimals.Birds) share: the bases of a view model, an animal, the list
+       and the detail every kind of animal derives from, the icons, the record of a module. A module references this project, not
+       XAnimals.ViewModels, which references the module. The namespaces are those of XAnimals.ViewModels. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Routeables.Core\Routeables.Core.csproj" />
+    <ProjectReference Include="..\..\Routeables.Routing\Routeables.Routing.csproj" />
+  </ItemGroup>
+
+</Project>

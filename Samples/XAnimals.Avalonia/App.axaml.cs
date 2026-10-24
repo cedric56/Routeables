@@ -1,12 +1,10 @@
 ﻿using AsyncImageLoader;
 using AsyncImageLoader.Core.Caching;
 using AsyncImageLoader.Core.Pipeline;
-using AsyncImageLoader.Loaders;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
-using Routeables.Abstraction;
 using Routeables.Avalonia;
 using Routeables.Avalonia.Services;
 using Routeables.Generated;
@@ -14,6 +12,7 @@ using System;
 using System.Net.Http;
 using XAminals.Models;
 using XAnimals.Avalonia.Views;
+using XAnimals.Common;
 using XAnimals.ViewModels;
 
 namespace XAnimals.Avalonia;
@@ -21,6 +20,7 @@ namespace XAnimals.Avalonia;
 public partial class App : Application
 {
     public static AppBuilder CreateApp(
+        IMessageBoxService? messageBoxService = null,
         Action<IServiceCollection>? configureServices = null,
         Action<IServiceProvider>? afterBuildProvider = null,
         Action? onAppDispose = null)
@@ -29,7 +29,7 @@ public partial class App : Application
         return AppBuilder.Configure<App>().UseRouteables(
            configureExternalServices: services =>
            {
-               services.UseRouteablesServices("avares://XAnimals.Avalonia/Assets/icon.ico");
+               services.UseRouteablesServices("avares://XAnimals.Avalonia/Assets/icon.ico", messageBoxService);
                services.AddGeneratedRoutes();
                AnimalIcons.Register();
                services.RegisterViewModels<CatDetailView, DogDetailView>();

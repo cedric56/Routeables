@@ -6,19 +6,8 @@
 
 <PageTitle>History</PageTitle>
 
-<div class="about-page">
-    <div>
-        <h1>
-            <span class="app-name">History</span>
-        </h1>
-        <p>
-            A region is a router of its own, with its own history. The frame shows the view it displays: Back and Forward move
-            the cursor, Push adds the next animal page after it, Pop goes back and forgets the page it leaves.
-        </p>
-    </div>
-
+<div class="about-page">    
     <section class="about-group">
-        <h2>History</h2>
         <div class="nav-track" role="list">
             @foreach (var item in ViewModel.Entries)
             {
@@ -31,16 +20,13 @@
                 </div>
             }
         </div>
-        <p>@ViewModel.Position</p>
     </section>
 
     <section class="about-group">
-        <h2>Current view</h2>
         <div class="nav-frame" inert>
             @* The zone of the "history" region: nothing assigns the view, the component shows what the router of the region displays. *@
             <RouteableRegion Region="history" />
         </div>
-        <p class="nav-frame-note">The view the "history" region shows, rendered here.</p>
     </section>
 
     <section class="about-group">

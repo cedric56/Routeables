@@ -1,0 +1,12 @@
+<Project>
+
+  <!-- Imported by the Maui head: the views of the Birds module live in the module (Platforms/Maui), the head only compiles them. -->
+  <ItemGroup>
+    <!-- The pages of the Birds module for the MAUI head: compiled with its views, so they find AnimalList. -->
+    <MauiXaml Include="$(MSBuildThisFileDirectory)*.xaml" Link="Views\Animals\%(Filename)%(Extension)">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <Compile Include="$(MSBuildThisFileDirectory)*.xaml.cs" Link="Views\Animals\%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>

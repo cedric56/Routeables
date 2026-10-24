@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace XAnimals.ViewModels;
+namespace XAnimals.Common;
 
 /// <summary>The part every view model of the samples has in common: it tells the view when a property changes.</summary>
 public abstract class ViewModelBase : INotifyPropertyChanged

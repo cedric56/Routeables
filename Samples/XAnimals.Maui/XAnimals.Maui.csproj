@@ -58,6 +58,8 @@
 
     <!-- Custom Fonts -->
     <MauiFont Include="Resources\Fonts\*" />
+    <!-- The menu icons Windows draws as pictures (see MauiProgram); 24 is their size in the menu. -->
+    <MauiImage Update="Resources\Images\icon_*.png" BaseSize="24,24" />
 
     <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
     <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
@@ -78,6 +80,12 @@
 
   <ItemGroup>
     <MauiXaml Update="Views\AboutView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\DialogsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\ModulesView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Views\Animals\AnimalDetail.xaml">
@@ -144,5 +152,8 @@
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>
+
+  <!-- The Birds module brings its own views for this head. -->
+  <Import Project="..\XAnimals.Birds\Platforms\Maui\XAnimals.Birds.Maui.props" />
 
 </Project>

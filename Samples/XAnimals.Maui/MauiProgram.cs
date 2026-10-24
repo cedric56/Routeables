@@ -35,9 +35,12 @@ namespace XAnimals.Maui
             builder.Services.AddHistoryRegion();
             builder.Services.AddShellRegions();
             // MAUI draws a FontImageSource on Windows only from a font file the application registered: from a system font (the emoji
-            // here) it fails with "not supported for a relative URI". There the entries have no icon image (their glyph is still text).
-            AnimalIcons.Register(glyph => OperatingSystem.IsWindows() ? null : new FontImageSource { Glyph = glyph, Size = 24 });
+            // here) it fails with "not supported for a relative URI". There the icons are the pictures of Resources/Images (icon_<key>.png).
+            AnimalIcons.Register((key, glyph) => OperatingSystem.IsWindows()
+                ? ImageSource.FromFile($"icon_{key}.png")
+                : new FontImageSource { Glyph = glyph, Size = 24 });
             builder.Services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton);
+            builder.Services.AddAnimalModules();      // the modules of the sample (Birds): their pages are added to the menu
 
 #if DEBUG
             // A registration that cannot be built fails at start, with its name, instead of at the first navigation.

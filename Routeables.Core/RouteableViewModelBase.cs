@@ -169,6 +169,8 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
     /// </summary>
     public ObservableCollection<IRouteableEntry> Routeables { get { return _routeables ??= GetRouteables(); } }
 
+    public virtual string? CurrentTitle { get => Routeable?.DisplayName ?? "Application"; }
+
     /// <summary>
     /// Returns the entries of the menu.
     /// </summary>

@@ -2,7 +2,7 @@
 
 Optional routing by segments, in the manner of Prism: `Orders?status=open/Detail?id=5` runs the segments one after the other, each on its router and with only its own query parameters. A project that only uses `IRouter` does not carry it.
 
-Namespace `Routeables.Segments`. Targets **.NET 10** (`net10.0`), version `1.0.0-preview.1`. It references `Routeables.Abstraction` and `Routeables.Routing`.
+Namespace `Routeables.Segments`. Targets **.NET 10** (`net10.0`), version `1.0.0`. It references `Routeables.Abstraction` and `Routeables.Routing`.
 
 ```csharp
 services.RegisterRouting();

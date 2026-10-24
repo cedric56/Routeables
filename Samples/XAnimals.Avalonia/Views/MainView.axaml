@@ -12,7 +12,7 @@
       </Design.DataContext>
 
 	<DrawerPage Content="{Binding CurrentView}"
-			 Header="{Binding Title}">
+			 Header="{Binding CurrentTitle}">
 		 <DrawerPage.Drawer>
 		    <routeables:RouteableListBox/>
 		</DrawerPage.Drawer>

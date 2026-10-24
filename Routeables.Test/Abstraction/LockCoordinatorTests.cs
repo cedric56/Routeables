@@ -160,6 +160,7 @@ public class LockCoordinatorTests
         public int LockCount { get; private set; }
         public int UnlockCount { get; private set; }
 
+        public string? CurrentTitle { get; }
 
         public void Lock()
         {

@@ -1,0 +1,24 @@
+﻿@using Microsoft.AspNetCore.Components
+@namespace XAnimals.Razor.Components.Animals
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.Birds
+@attribute [RouteableView(typeof(BirdDetailViewModel), route: BirdDetailViewModel.Route)]
+@inherits RouteableFor<BirdDetailView, BirdDetailViewModel>
+
+@* <PageTitle>Bird Details</PageTitle>
+
+<AnimalDetail ViewModel="ViewModel" /> *@
+
+@code {
+    /// <summary>The bird, from <c>{bird::}</c> in the address: an attribute parameter lands in this [Parameter].</summary>
+    [Parameter]
+    public string? Bird { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Bird is not null)
+            ViewModel.Name = Bird;
+        base.OnParametersSet();
+    }
+}

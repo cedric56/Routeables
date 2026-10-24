@@ -2,7 +2,7 @@
 
 Optional locking of the main entries: while a page blocks leaving (`CanLeaveAsync` returns `false`), the menu or tab bar that shows it cannot be used to go elsewhere. The contract (`ILockCoordinator`, `ILockCoordinatorFactory`) stays in [`Routeables.Abstraction`](../Routeables.Abstraction/README.md), so routing and the view-model bases work without this package; this one adds the broker that carries the messages and the coordinator that applies them.
 
-Namespace `Routeables.Locking`. Targets **.NET 10** (`net10.0`), version `1.0.0-preview.1`. It references `Routeables.Abstraction`.
+Namespace `Routeables.Locking`. Targets **.NET 10** (`net10.0`), version `1.0.0`. It references `Routeables.Abstraction`.
 
 ```csharp
 services.AddLocking();   // the broker, and the coordinator that a MainViewModelBase asks the router for

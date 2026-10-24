@@ -5,7 +5,7 @@ Razor components and keeps the browser address in step with the router. The dial
 
 ## Requirements
 
-Targets **.NET 10** (`net10.0`), version `1.0.0-preview.1`. It references `Microsoft.AspNetCore.Components`, `Microsoft.AspNetCore.Components.Web`,
+Targets **.NET 10** (`net10.0`), version `1.0.0`. It references `Microsoft.AspNetCore.Components`, `Microsoft.AspNetCore.Components.Web`,
 `Routeables.Abstraction` and `Routeables.Core`. It has no dependency on a component library: the layouts and hosts are plain Razor. A
 MudBlazor flavour is a separate project, see [`Reshapes.Razor.MudBlazor`](../Reshapes/README.md).
 

@@ -5,7 +5,7 @@ history, the serialization of route changes, the lifecycle calls, the parsing of
 
 ## Requirements
 
-Targets **.NET 10** (`net10.0`), version `1.0.0-preview.1`, nullable reference types on. It references `Microsoft.Extensions.DependencyInjection`
+Targets **.NET 10** (`net10.0`), version `1.0.0`, nullable reference types on. It references `Microsoft.Extensions.DependencyInjection`
 and `Routeables.Abstraction`.
 
 ```xml

@@ -1,11 +1,11 @@
 using Routeables.Abstraction;
 
-namespace XAnimals.ViewModels;
+namespace XAnimals.Common;
 
 /// <summary>
 /// The icon of each page of the menu. A page names its icon by a key (the second argument of <c>RouteableEntry</c>),
 /// and <see cref="IconResolver"/> turns the key into what the platform displays: a glyph (text) for Razor and Avalonia,
-/// an <c>ImageSource</c> for Maui, built from the same glyph by the function given to <see cref="Register"/>.
+/// an <c>ImageSource</c> for Maui, built from the key and the glyph by the function given to <see cref="Register"/>.
 /// </summary>
 public static class AnimalIcons
 {
@@ -18,6 +18,9 @@ public static class AnimalIcons
     public const string Lock = "lock";
     public const string History = "history";
     public const string Regions = "regions";
+    public const string Dialogs = "dialogs";
+    public const string Modules = "modules";
+    public const string Bird = "bird";
     public const string About = "about";
 
     private static readonly Dictionary<string, string> glyphs = new()
@@ -31,6 +34,9 @@ public static class AnimalIcons
         [Lock] = "🔒",
         [History] = "🧭",
         [Regions] = "🧩",
+        [Dialogs] = "💬",
+        [Modules] = "🧱",
+        [Bird] = "🐦",
         [About] = "ℹ️",
     };
 
@@ -42,19 +48,19 @@ public static class AnimalIcons
     /// <summary>
     /// Registers the resolver once (it is process-wide and cannot be unregistered).
     /// </summary>
-    /// <param name="toSource">Builds the platform image from a glyph; leave null where the glyph itself is displayed.</param>
-    public static void Register(Func<string, object?>? toSource = null)
+    /// <param name="toSource">Builds the platform image from the key and the glyph of an icon; leave null where the glyph itself is displayed.</param>
+    public static void Register(Func<string, string, object?>? toSource = null)
     {
         if (registered) return;
         registered = true;
         IconResolver.Register(new GlyphResolver(toSource));
     }
 
-    private sealed class GlyphResolver(Func<string, object?>? toSource) : IIconResolver
+    private sealed class GlyphResolver(Func<string, string, object?>? toSource) : IIconResolver
     {
         public object? GetIcon(string key) => glyphs.GetValueOrDefault(key);
 
         public object? GetSource(string key)
-            => toSource is not null && glyphs.TryGetValue(key, out var glyph) ? toSource(glyph) : null;
+            => toSource is not null && glyphs.TryGetValue(key, out var glyph) ? toSource(key, glyph) : null;
     }
 }

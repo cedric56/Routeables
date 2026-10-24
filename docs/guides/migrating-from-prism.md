@@ -1,6 +1,6 @@
 # Migrating from Prism
 
-Routeables does the route change part of Prism: views and view models, routes with parameters, a history, a lifecycle with guards, regions and dialogs. It stays out of the rest. It ships **no** `DelegateCommand`, **no** view-model locator, **no** event aggregator and **no** modules: the MVVM library is your choice (CommunityToolkit.Mvvm, ReactiveUI, plain C#), and so is how you split an application into assemblies.
+Routeables does the route change part of Prism: views and view models, routes with parameters, a history, a lifecycle with guards, regions and dialogs. It stays out of the rest. It ships **no** `DelegateCommand`, **no** view-model locator, **no** event aggregator and **no** module catalog: the MVVM library is your choice (CommunityToolkit.Mvvm, ReactiveUI, plain C#). A feature assembly is one extension method (see [Modules](routes.md#modules)).
 
 ## Concepts side by side
 
@@ -20,7 +20,7 @@ Routeables does the route change part of Prism: views and view models, routes wi
 | `ViewModelLocator.AutoWireViewModel` | Not provided. The router builds the view model and gives it to the view. |
 | `DelegateCommand`, `BindableBase` | Not provided. Use your MVVM library. |
 | `IEventAggregator` | Not provided. Use `WeakReferenceMessenger` from CommunityToolkit.Mvvm, or whatever you already use. |
-| `IModule`, `IModuleCatalog` | Not provided. A feature assembly calls `services.AddGeneratedRoutes()` from its own `Add...` extension method. |
+| `IModule`, `IModuleCatalog` | Not provided. A feature assembly exposes an `Add...Module()` extension method that calls `services.AddGeneratedRoutes()` and `services.AddMenuEntries(...)`; no loading at run time (it would break trimming and Native AOT). See [Modules](routes.md#modules). |
 
 ## A view model, before and after
 
@@ -70,7 +70,7 @@ The route, its parameter and its type are written once. The id is a constructor 
 3. **Move the parameters.** Read them from constructor parameters instead of from `INavigationParameters` in `OnNavigatedTo`.
 4. **Move the lifecycle.** `OnNavigatedTo` is usually `InitializeAsync` (loading) or `OnEnteredAsync` (reacting to the arrival); `CanNavigate` is `CanLeaveAsync`.
 5. **Keep your MVVM library.** Commands, observable properties and messaging do not change.
-6. **Replace modules by extension methods.** Each feature assembly exposes one method that calls `AddGeneratedRoutes()` and registers its services.
+6. **Replace modules by extension methods.** Each feature assembly exposes one method that calls `AddGeneratedRoutes()`, registers its services and adds its entries to the menu with `AddMenuEntries`.
 
 ## Pick the packages
 
