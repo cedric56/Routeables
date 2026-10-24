@@ -20,7 +20,7 @@ Routeables does the route change part of Prism: views and view models, routes wi
 | `ViewModelLocator.AutoWireViewModel` | Not provided. The router builds the view model and gives it to the view. |
 | `DelegateCommand`, `BindableBase` | Not provided. Use your MVVM library. |
 | `IEventAggregator` | Not provided. Use `WeakReferenceMessenger` from CommunityToolkit.Mvvm, or whatever you already use. |
-| `IModule`, `IModuleCatalog` | Not provided. A feature assembly exposes an `Add...Module()` extension method that calls `services.AddGeneratedRoutes()` and `services.AddMenuEntries(...)`; no loading at run time (it would break trimming and Native AOT). See [Modules](routes.md#modules). |
+| `IModule`, `IModuleCatalog`, `ModuleInitializationMode` | No catalog. A feature assembly exposes an `Add...Module()` extension method that calls `services.AddGeneratedRoutes()` and `services.AddMenuEntries(...)`; the application calls it at start (`WhenAvailable`), or `IRouteableModules.Load(...)` calls it when the user asks (`OnDemand`), from code or from a DLL. See [Modules](routes.md#modules). |
 
 ## A view model, before and after
 

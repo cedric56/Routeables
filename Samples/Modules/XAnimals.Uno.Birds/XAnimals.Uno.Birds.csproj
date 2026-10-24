@@ -1,0 +1,24 @@
+<Project Sdk="Uno.Sdk">
+
+  <!-- The Birds module for the Uno hosts: its two pages, which draw with the controls of XAnimals.Uno.Controls. The shared part (data, view models, the menu entry) is XAnimals.Birds. The head references this project: its AddGeneratedRoutes() finds the pages. -->
+  <PropertyGroup>
+    <TargetFrameworks>net10.0-android;net10.0-ios;net10.0-browserwasm;net10.0-desktop</TargetFrameworks>
+    <!-- As the head: the CI builds the desktop target only. -->
+    <TargetFrameworks Condition="'$(CiBuild)' == 'true'">net10.0-desktop</TargetFrameworks>
+    <OutputType>Library</OutputType>
+    <UnoSingleProject>true</UnoSingleProject>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <UnoFeatures></UnoFeatures>
+    <UnoVersion>6.7.135</UnoVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+    <ProjectReference Include="..\..\..\Routeables.Uno\Routeables.Uno.csproj" />
+    <ProjectReference Include="..\..\Controls\XAnimals.Uno.Controls\XAnimals.Uno.Controls.csproj" />
+    <ProjectReference Include="..\XAnimals.Birds\XAnimals.Birds.csproj" />
+  </ItemGroup>
+
+</Project>

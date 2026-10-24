@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
+    xmlns:views="clr-namespace:XAnimals.Maui.Views;assembly=XAnimals.Maui.Controls"
+    x:Class="XAnimals.Maui.Views.BirdDetailView">
+
+    <views:AnimalDetail />
+</routeables:RouteableFor>

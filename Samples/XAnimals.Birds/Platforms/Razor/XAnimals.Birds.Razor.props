@@ -1,9 +1,0 @@
-<Project>
-
-  <!-- Imported by the Razor head: the views of the Birds module live in the module (Platforms/Razor), the head only compiles them. -->
-  <ItemGroup>
-    <!-- The pages of the Birds module for the Razor head: compiled with its components, so they find AnimalList. -->
-    <RazorComponent Include="$(MSBuildThisFileDirectory)*.razor" Link="Components\Animals\%(Filename)%(Extension)" />
-  </ItemGroup>
-
-</Project>

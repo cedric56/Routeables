@@ -13,10 +13,8 @@
     <Project Path="Samples/XAnimals.Avalonia.Desktop/XAnimals.Avalonia.Desktop.csproj" />
     <Project Path="Samples/XAnimals.Avalonia.iOS/XAnimals.Avalonia.iOS.csproj" />
     <Project Path="Samples/XAnimals.Avalonia/XAnimals.Avalonia.csproj" />
-    <Project Path="Samples/XAnimals.Birds/XAnimals.Birds.csproj" />
     <Project Path="Samples/Xanimals.BlazorApp/Xanimals.BlazorApp.csproj" Id="36a9a6a9-a8e3-4bf4-a2db-f9fb15a9090a" />
     <Project Path="Samples/XAnimals.BlazorWebAssembly/XAnimals.BlazorWebAssembly.csproj" Id="83704bd0-b477-4023-b11d-d0e984037d6e" />
-    <Project Path="Samples/XAnimals.Common/XAnimals.Common.csproj" />
     <Project Path="Samples/XAnimals.Maui/XAnimals.Maui.csproj" Id="741dae18-0e00-470f-8699-59b3779a4a84">
       <Deploy Solution="Debug|*" />
     </Project>
@@ -25,7 +23,22 @@
     </Project>
     <Project Path="Samples/XAnimals.Razor/XAnimals.Razor.csproj" Id="40dcae35-9b5a-4589-8f5a-9060824b6dec" />
     <Project Path="Samples/XAnimals.Uno/XAnimals.Uno.csproj" />
-    <Project Path="Samples/XAnimals.ViewModels/XAnimals.ViewModels.csproj" Id="79831334-247e-44ba-92af-9e55f06beb09" />
+  </Folder>
+  <Folder Name="/Samples/Bases/">
+    <Project Path="Samples/Bases/XAnimals.Common/XAnimals.Common.csproj" />
+    <Project Path="Samples/Bases/XAnimals.ViewModels/XAnimals.ViewModels.csproj" Id="79831334-247e-44ba-92af-9e55f06beb09" />
+  </Folder>
+  <Folder Name="/Samples/Controls/">
+    <Project Path="Samples/Controls/XAnimals.Avalonia.Controls/XAnimals.Avalonia.Controls.csproj" />
+    <Project Path="Samples/Controls/XAnimals.Maui.Controls/XAnimals.Maui.Controls.csproj" />
+    <Project Path="Samples/Controls/XAnimals.Uno.Controls/XAnimals.Uno.Controls.csproj" />
+  </Folder>
+  <Folder Name="/Samples/Modules/">
+    <Project Path="Samples/Modules/XAnimals.Avalonia.Birds/XAnimals.Avalonia.Birds.csproj" />
+    <Project Path="Samples/Modules/XAnimals.Birds/XAnimals.Birds.csproj" />
+    <Project Path="Samples/Modules/XAnimals.Maui.Birds/XAnimals.Maui.Birds.csproj" />
+    <Project Path="Samples/Modules/XAnimals.Razor.Birds/XAnimals.Razor.Birds.csproj" />
+    <Project Path="Samples/Modules/XAnimals.Uno.Birds/XAnimals.Uno.Birds.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="README.md" />

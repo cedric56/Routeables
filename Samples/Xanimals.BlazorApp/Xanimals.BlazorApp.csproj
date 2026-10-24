@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Modules\XAnimals.Razor.Birds\XAnimals.Razor.Birds.csproj" />
     <ProjectReference Include="..\XAnimals.Razor\XAnimals.Razor.csproj" />
     <ProjectReference Include="..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>

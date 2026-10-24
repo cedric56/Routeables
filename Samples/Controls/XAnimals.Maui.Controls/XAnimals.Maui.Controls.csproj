@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The controls the animal pages of the MAUI sample are made of (the list, the detail) and the converter of their photos.
+       They draw with the colors of the application (Paper, OffBlack, Lichen...), found when they are shown. -->
+  <PropertyGroup>
+    <TargetFrameworks>net10.0-android</TargetFrameworks>
+    <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+    <UseMaui>true</UseMaui>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <MauiXamlInflator>SourceGen</MauiXamlInflator>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">17.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+    <SingleProject>true</SingleProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.110" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Routeables.Maui\Routeables.Maui.csproj" />
+    <ProjectReference Include="..\..\Bases\XAnimals.Common\XAnimals.Common.csproj" />
+    <ProjectReference Include="..\..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

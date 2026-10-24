@@ -34,11 +34,9 @@
     <ProjectReference Include="..\..\Routeables.Uno\Routeables.Uno.csproj" />
     <ProjectReference Include="..\..\Routeables.Uno.Services\Routeables.Uno.Services.csproj" />
     <ProjectReference Include="..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
+    <ProjectReference Include="..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
+    <ProjectReference Include="..\Controls\XAnimals.Uno.Controls\XAnimals.Uno.Controls.csproj" />
+    <ProjectReference Include="..\Modules\XAnimals.Uno.Birds\XAnimals.Uno.Birds.csproj" />
   </ItemGroup>
-
-  <!-- The Birds module brings its own views for this head. -->
-  <Import Project="..\XAnimals.Birds\Platforms\Uno\XAnimals.Birds.Uno.props" />
-
 
 </Project>

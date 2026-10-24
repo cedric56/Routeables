@@ -45,6 +45,10 @@ public static class Extensions
         services.Add(new ServiceDescriptor(typeof(TMain), MainKey, typeof(TMain), lifetime));
         services.Add(new ServiceDescriptor(typeof(TMain), sp => WithModuleEntries(sp.GetRequiredKeyedService<TMain>(MainKey), sp), lifetime));
         services.Add(new ServiceDescriptor(typeof(IMainRouteables), sp => sp.GetRequiredService<TMain>(), lifetime));
+
+        // The service that loads modules while the application runs; one for the application, whatever the main's lifetime.
+        services.TryAddSingleton<RouteableModules>(sp => new RouteableModules(sp));
+        services.TryAddSingleton<IRouteableModules>(sp => sp.GetRequiredService<RouteableModules>());
         return services;
     }
 
@@ -84,14 +88,14 @@ public static class Extensions
     // The key under which the container builds the main view model; see RegisterMainRouteables.
     private const string MainKey = "Routeables.MainRouteables";
 
-    /// <summary>The entries a module adds to the menu; see <see cref="AddMenuEntries"/>.</summary>
-    private sealed record MenuEntries(Func<IEnumerable<IRouteableEntry>> Build);
-
     private static IMainRouteables WithModuleEntries(IMainRouteables main, IServiceProvider provider)
     {
         foreach (var module in provider.GetServices<MenuEntries>())
             foreach (var entry in module.Build())
                 main.Routeables.Add(entry);
+
+        // The modules loaded while running: the ones already loaded add their entries now, the next ones when they are loaded.
+        provider.GetService<RouteableModules>()?.Attach(main);
 
         return main;
     }
@@ -842,6 +846,27 @@ public static class Extensions
     public static T? GetViewModel<T>(this IServiceProvider provider, string route, IRouteableArgs? args = null)
         => (T?)GetViewModel(provider, route, args);
 
+    // The factory of a view or view model: the one of the container, or else the one of a module loaded while running, which is built
+    // with the services of the module on top of the application's.
+    private static Func<IServiceProvider, IRouteableArgs, object>? FindFactory(this IServiceProvider provider, object key, out IServiceProvider factoryProvider)
+    {
+        var factory = provider.GetKeyedService<Func<IServiceProvider, IRouteableArgs, object>>(key);
+        if (factory is not null)
+        {
+            factoryProvider = provider;
+            return factory;
+        }
+
+        if (provider.GetService<RouteableModules>() is { } modules && modules.TryGetFactory(key, provider, out var late, out var moduleProvider))
+        {
+            factoryProvider = moduleProvider;
+            return late;
+        }
+
+        factoryProvider = provider;
+        return null;
+    }
+
     // Weak tracking is for what nobody owns (transient pages). A singleton or scoped page belongs to its cache, which
     // disposes it: tracking it too would dispose it twice.
     private static void TrackUnlessCached(this IServiceProvider provider, object? instance)
@@ -862,10 +887,10 @@ public static class Extensions
     /// <exception cref="InvalidOperationException">Nothing is registered for the key, or the factory returned null.</exception>
     public static object? GetViewModel(this IServiceProvider provider, string route, IRouteableArgs? args = null)
     {
-        var factory = provider.GetKeyedService<Func<IServiceProvider, IRouteableArgs, object>>(route);
+        var factory = provider.FindFactory(route, out var factoryProvider);
         if (factory != null)
         {
-            var instance = factory(provider, args ?? provider.GetRequiredService<IRouteableArgsFactory>().New());
+            var instance = factory(factoryProvider, args ?? provider.GetRequiredService<IRouteableArgsFactory>().New());
             provider.TrackUnlessCached(instance);
 
             return instance;
@@ -883,10 +908,10 @@ public static class Extensions
     /// <exception cref="InvalidOperationException">No view is registered for the key, or the factory returned null.</exception>
     internal static object? GetView(this IServiceProvider provider, object key, IRouteableArgs? args = null)
     {
-        var factory = provider.GetKeyedService<Func<IServiceProvider, IRouteableArgs, object>>(key);
+        var factory = provider.FindFactory(key, out var factoryProvider);
         if (factory != null)
         {
-            var instance = factory(provider, args ?? provider.GetRequiredService<IRouteableArgsFactory>().New())
+            var instance = factory(factoryProvider, args ?? provider.GetRequiredService<IRouteableArgsFactory>().New())
             ?? throw new InvalidOperationException($"Unable to create view for {key}. Ensure that it is registered with the service provider.");
 
             // Track with weak reference
@@ -917,10 +942,10 @@ public static class Extensions
     /// <exception cref="InvalidOperationException">No view is registered for the key, or the factory returned null.</exception>
     public static object GetContent(this IServiceProvider provider, object key, object context)
     {
-        var factory = provider.GetKeyedService<Func<IServiceProvider, IRouteableArgs, object>>(key)
+        var factory = provider.FindFactory(key, out var factoryProvider)
             ?? throw new InvalidOperationException($"No such view registered: {key}");
 
-        return factory(provider, provider.GetRequiredService<IRouteableArgsFactory>().New().ForView(
+        return factory(factoryProvider, provider.GetRequiredService<IRouteableArgsFactory>().New().ForView(
             new RouteableArgument(context, Constants.Key)))
             ?? throw new InvalidOperationException($"Unable to create view for {key}. Ensure that it is registered with the service provider.");
     }

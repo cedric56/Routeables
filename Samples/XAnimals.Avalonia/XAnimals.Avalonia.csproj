@@ -24,9 +24,9 @@
     <ProjectReference Include="..\..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
     <ProjectReference Include="..\..\Routeables.Avalonia.Services\Routeables.Avalonia.Services.csproj" />
     <ProjectReference Include="..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
+    <ProjectReference Include="..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
+    <ProjectReference Include="..\Controls\XAnimals.Avalonia.Controls\XAnimals.Avalonia.Controls.csproj" />
+    <ProjectReference Include="..\Modules\XAnimals.Avalonia.Birds\XAnimals.Avalonia.Birds.csproj" />
   </ItemGroup>
-  <!-- The Birds module brings its own views for this head. -->
-  <Import Project="..\XAnimals.Birds\Platforms\Avalonia\XAnimals.Birds.Avalonia.props" />
 
 </Project>

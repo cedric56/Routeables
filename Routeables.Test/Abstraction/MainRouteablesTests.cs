@@ -111,6 +111,24 @@ public class MainRouteablesTests
     }
 
     [Fact]
+    public void A_module_that_needs_another_one_calls_it_and_the_other_is_added_once()
+    {
+        // Orders needs Customers (a dependency is a call, as in any code); the application adds both.
+        static IEnumerable<IRouteableEntry> CustomersEntries() => [View("customers")];
+        static IEnumerable<IRouteableEntry> OrdersEntries() => [View("orders")];
+        static IServiceCollection AddCustomersModule(IServiceCollection services) => services.AddMenuEntries(CustomersEntries);
+        static IServiceCollection AddOrdersModule(IServiceCollection services) => AddCustomersModule(services).AddMenuEntries(OrdersEntries);
+
+        var services = new ServiceCollection();
+        services.RegisterMainRouteables<FakeMainRouteables>(ServiceLifetime.Singleton);
+        AddOrdersModule(services);
+        AddCustomersModule(services);
+        using var provider = services.BuildServiceProvider();
+
+        Assert.Equal(["customers", "orders"], provider.GetRequiredService<IMainRouteables>().Routeables.Select(entry => entry.DisplayName));
+    }
+
+    [Fact]
     public void The_container_still_checks_the_dependencies_of_the_main_when_it_is_built()
     {
         var services = new ServiceCollection();

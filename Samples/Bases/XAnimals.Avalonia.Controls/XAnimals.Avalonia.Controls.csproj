@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The controls the animal pages of the Avalonia sample are made of: the list (search, selection, hosting of the detail) and the detail.
+       They draw with the resources and the styles of the application (AnPaper, AnInk, the classes an, arch, hero...), found when they
+       are shown. The application and the modules (XAnimals.Avalonia.Birds) reference this project. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AsyncImageLoader.Avalonia" Version="4.0.0" />
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
+    <ProjectReference Include="..\XAnimals.Common\XAnimals.Common.csproj" />
+    <ProjectReference Include="..\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

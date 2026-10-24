@@ -50,7 +50,7 @@ The [`Samples`](https://github.com/cedric56/Routeables/tree/master/Samples) fold
 
 | Sample | Stack |
 | --- | --- |
-| `XAnimals.Birds` | A [module](routes.md#modules): a page, `AddBirdsModule()`, and its views per head in `Platforms/<head>` (each head imports the `.props` of its folder). The heads do not reference it: `XAnimals.ViewModels` calls it in `RegisterViewModels` (`AddAnimalModules()`); the Modules page lists the loaded modules |
+| `XAnimals.Birds` | The shared part of a [module](routes.md#modules): a page, `AddBirdsModule()`, its view models and data. Its views are in `XAnimals.Razor.Birds`, `XAnimals.Avalonia.Birds`, `XAnimals.Maui.Birds` and `XAnimals.Uno.Birds`, which the heads reference (they draw with `XAnimals.<Platform>.Controls`). `XAnimals.ViewModels` calls it in `RegisterViewModels` (`AddAnimalModules()`) |
 | `XAnimals.Common` | What the view models and the modules share (bases, `Animal`, the list and detail every animal kind derives from, icons): a module references it, not `XAnimals.ViewModels`, which references the module |
 | `XAnimals.ViewModels` | Shared view models (uses `[RouteableViewModel]`) |
 | `XAnimals.Avalonia` (+ `.Desktop`, `.Android`, `.iOS`, `.Browser`) | Avalonia |

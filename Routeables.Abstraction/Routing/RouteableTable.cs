@@ -20,6 +20,13 @@ internal sealed class RouteableTable
         get { lock (_gate) return _entries.ToArray(); }
     }
 
+    /// <summary>Takes the routes of another table (the one a module loaded while running filled); the ones already here are kept.</summary>
+    internal void AddRange(RouteableTable other)
+    {
+        foreach (var (template, go) in other.Entries)
+            Add(template, go);
+    }
+
     internal void Add(string template, Func<IRouter, string, IRouteableArgs, CancellationToken, Task<RouteableResult>> go)
     {
         lock (_gate)

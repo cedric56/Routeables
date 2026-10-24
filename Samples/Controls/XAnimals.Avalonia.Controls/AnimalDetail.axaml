@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:XAnimals.Common;assembly=XAnimals.Common"
+             xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             x:Class="XAnimals.Avalonia.AnimalDetail"
+             x:DataType="vm:AnimalDetailViewModel"
+             Background="{DynamicResource AnPaper}">
+
+    <UserControl.Styles>
+       
+    </UserControl.Styles>
+
+    <ScrollViewer>
+        <StackPanel Margin="20,28,20,40" Spacing="6" MaxWidth="640" HorizontalAlignment="Center">
+            <Border x:Name="Hero" Classes="arch hero" Width="260" Height="330" CornerRadius="130,130,14,14">
+                <Image Stretch="UniformToFill"
+                       ail:ImageLoader.Source="{Binding Animal.PhotoUrl}" />
+            </Border>
+            <StackPanel Classes="settle" Spacing="6" Margin="0,14,0,0">
+                <TextBlock Text="{Binding Animal.Name}"
+                           FontFamily="{DynamicResource AnDisplayFont}"
+                           FontSize="36" FontWeight="SemiBold"
+                           Foreground="{DynamicResource AnInk}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Animal.Location}"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource AnSaffron}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Animal.Details}"
+                           Margin="0,12,0,18"
+                           LineHeight="24"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource AnInk}" />
+                <Button Classes="an"
+                        Content="Back"
+                        HorizontalAlignment="Center"
+                        Click="Button_Click" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
