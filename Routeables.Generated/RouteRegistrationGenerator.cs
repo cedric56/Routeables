@@ -38,6 +38,16 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
+        // Two views registered for the same view model, route and region replace one another: the last registered is the one the
+        // router builds. It happens when an assembly brings the views of several hosts, or when a view is left behind after a copy.
+        private static readonly DiagnosticDescriptor SeveralViewsForOneRoute = new DiagnosticDescriptor(
+            "ROUT203",
+            "Several views for the same view model and route",
+            "{0}",
+            "Routeables",
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             // 1) Current compilation (syntax). AllowMultiple => iterate ALL attributes.
@@ -340,6 +350,7 @@ namespace Routeables.Generated
         {
             var viewList = viewsIn.ToList();
             AddConventionViews(spc, viewList, routesIn.ToList(), candidates);
+            ReportSeveralViews(spc, viewList);
 
             // Deterministic output
             var views = viewList
@@ -361,6 +372,27 @@ namespace Routeables.Generated
 
             var source = new RegistrationWriter().Write(views, routes, routesByType);
             spc.AddSource("RouteRegistration.g.cs", SourceText.From(source, Encoding.UTF8));
+        }
+
+        private static void ReportSeveralViews(SourceProductionContext spc, List<ViewReg> views)
+        {
+            var groups = views
+                .GroupBy(v => (v.ViewModelFullName, Route: v.Route ?? string.Empty, Region: v.Region ?? string.Empty))
+                .OrderBy(g => g.Key.ViewModelFullName, StringComparer.Ordinal)
+                .ThenBy(g => g.Key.Route, StringComparer.Ordinal);
+
+            foreach (var group in groups)
+            {
+                var names = group.Select(v => v.ViewFullName).Distinct(StringComparer.Ordinal).OrderBy(n => n, StringComparer.Ordinal).ToList();
+                if (names.Count < 2)
+                    continue;
+
+                var route = group.Key.Route.Length > 0 ? " on the route '" + group.Key.Route + "'" : string.Empty;
+                spc.ReportDiagnostic(Diagnostic.Create(
+                    SeveralViewsForOneRoute,
+                    group.Select(v => v.Location?.ToLocation()).FirstOrDefault(l => l is not null) ?? Location.None,
+                    names.Count + " views are registered for " + group.Key.ViewModelFullName + route + " (" + string.Join(", ", names) + "): the last registered replaces the others. Keep one view for it, or give the others another route or region."));
+            }
         }
 
         // A [Routeable] view model that no [RouteableView] names gets the view its name says: OrderViewModel => OrderView, a routed class

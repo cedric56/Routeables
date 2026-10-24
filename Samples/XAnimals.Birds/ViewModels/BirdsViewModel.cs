@@ -14,7 +14,7 @@ public class BirdsViewModel(IRouter router) : AnimalsViewModel(router, BirdsData
         // the view declares with its platform's attribute ([Parameter], [QueryProperty], [RouteableParameter]).
         var arguments = RouteableArgs.Create()
             .ForViewModel(back)
-            .WithRoute($"/birds/{Uri.EscapeDataString(animal.Name)}");
+            .WithRoute($"{BirdsModule.Route}/{Uri.EscapeDataString(animal.Name)}");
 
         var routeableView = new RouteableEntry<BirdDetailViewModel>(string.Empty, route: BirdDetailViewModel.Route, template: BirdDetailViewModel.Route)
         {

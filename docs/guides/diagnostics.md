@@ -20,4 +20,5 @@ The registration generator (`AddGeneratedRoutes`) reports:
 | --- | --- | --- |
 | `ROUT201` | Warning | A route with parameters (`/dogs/{name}`) whose view or view model is `Scoped` or `Singleton`: the instance is cached by route and built once, so the later route changes do not pass their own arguments. Use `Transient` |
 | `ROUT202` | Warning | A `[Routeable]` view model with no `[RouteableView]` whose name matches several views (`OrderViewModel` and two classes called `OrderView`): none is picked. Put `[RouteableView(typeof(OrderViewModel))]` on the one you mean. |
+| `ROUT203` | Warning | Several views registered for the same view model, route and region: the last one registered replaces the others (two hosts' views in one assembly, or a view left behind after a copy). Keep one view for it, or give the others another route or region. |
 | `ROUT301` | Warning | `IMainRouteables` registered with `AddTransient` / `TryAddTransient`: each consumer would get another instance than the one the window shows. Use `RegisterMainRouteables<T>(Scoped or Singleton)` |

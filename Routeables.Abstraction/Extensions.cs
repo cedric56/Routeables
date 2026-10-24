@@ -39,10 +39,12 @@ public static class Extensions
             throw new ArgumentException(
                 "The main routeables must be Scoped or Singleton: a Transient one gives each consumer another instance.", nameof(lifetime));
 
-        // TMain is registered itself so that the container can check its dependencies when it is built; IMainRouteables is that same
-        // instance, once the entries of the modules (AddMenuEntries) have been added to its menu.
-        services.Add(new ServiceDescriptor(typeof(TMain), typeof(TMain), lifetime));
-        services.Add(new ServiceDescriptor(typeof(IMainRouteables), sp => WithModuleEntries(sp.GetRequiredService<TMain>(), sp), lifetime));
+        // The container builds TMain under a key, so that it can check its dependencies when it is built. TMain and IMainRouteables
+        // both give that instance once the entries of the modules (AddMenuEntries) have been added to its menu: whichever of the two
+        // a consumer asks for, the menu is the same.
+        services.Add(new ServiceDescriptor(typeof(TMain), MainKey, typeof(TMain), lifetime));
+        services.Add(new ServiceDescriptor(typeof(TMain), sp => WithModuleEntries(sp.GetRequiredKeyedService<TMain>(MainKey), sp), lifetime));
+        services.Add(new ServiceDescriptor(typeof(IMainRouteables), sp => sp.GetRequiredService<TMain>(), lifetime));
         return services;
     }
 
@@ -62,16 +64,25 @@ public static class Extensions
     /// </param>
     /// <remarks>
     /// The entries come after the ones of the main view model, in the order the modules were added. This works with
-    /// <see cref="RegisterMainRouteables{TMain}"/>; call <see cref="AddMenuEntries"/> once for a module.
+    /// <see cref="RegisterMainRouteables{TMain}"/>, whether a consumer asks for <typeparamref name="TMain"/> or for
+    /// <see cref="IMainRouteables"/>. Adding the same module twice adds its entries once (the same <paramref name="entries"/> function);
+    /// a function that captures something different on each call counts as another module.
     /// </remarks>
     public static IServiceCollection AddMenuEntries(this IServiceCollection services, Func<IEnumerable<IRouteableEntry>> entries)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(entries);
 
+        // A module added twice (a host that calls it and a helper that calls it too) adds its entries once.
+        if (services.Any(d => d.ServiceType == typeof(MenuEntries) && d.ImplementationInstance is MenuEntries known && known.Build.Equals(entries)))
+            return services;
+
         services.AddSingleton(new MenuEntries(entries));
         return services;
     }
+
+    // The key under which the container builds the main view model; see RegisterMainRouteables.
+    private const string MainKey = "Routeables.MainRouteables";
 
     /// <summary>The entries a module adds to the menu; see <see cref="AddMenuEntries"/>.</summary>
     private sealed record MenuEntries(Func<IEnumerable<IRouteableEntry>> Build);

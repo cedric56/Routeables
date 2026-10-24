@@ -82,6 +82,57 @@ public class MainRouteablesTests
     }
 
     [Fact]
+    public void The_menu_is_the_same_whether_the_main_or_its_interface_is_asked_for_first()
+    {
+        var services = new ServiceCollection();
+        services.RegisterMainRouteables<FakeMainRouteables>(ServiceLifetime.Singleton);
+        services.AddMenuEntries(() => [View("orders")]);
+        using var provider = services.BuildServiceProvider();
+
+        var main = provider.GetRequiredService<FakeMainRouteables>();       // the class first, not the interface
+
+        Assert.Single(main.Routeables);
+        Assert.Same(main, provider.GetRequiredService<IMainRouteables>());
+        Assert.Single(main.Routeables);
+    }
+
+    [Fact]
+    public void The_same_module_added_twice_adds_its_entries_once()
+    {
+        static IEnumerable<IRouteableEntry> Orders() => [View("orders")];
+
+        var services = new ServiceCollection();
+        services.RegisterMainRouteables<FakeMainRouteables>(ServiceLifetime.Singleton);
+        services.AddMenuEntries(Orders);
+        services.AddMenuEntries(Orders);
+        using var provider = services.BuildServiceProvider();
+
+        Assert.Single(provider.GetRequiredService<IMainRouteables>().Routeables);
+    }
+
+    [Fact]
+    public void The_container_still_checks_the_dependencies_of_the_main_when_it_is_built()
+    {
+        var services = new ServiceCollection();
+        services.RegisterMainRouteables<MainWithDependency>(ServiceLifetime.Singleton);
+
+        Assert.Throws<AggregateException>(() => services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true }));
+    }
+
+    private interface IMissing;
+
+    private sealed class MainWithDependency(IMissing missing) : IMainRouteables
+    {
+        public IMissing Missing { get; } = missing;
+        public System.Collections.ObjectModel.ObservableCollection<IRouteableEntry> Routeables { get; } = [];
+        public IRouteableEntry? Routeable { get; set; }
+        public object? CurrentView { get; set; }
+        public EventHandler<object?>? CurrentViewChanged { get; set; }
+        public EventHandler? LockChanged { get; set; }
+        public string? CurrentTitle { get; }
+    }
+
+    [Fact]
     public void Each_scope_gets_entries_of_its_own()
     {
         var services = new ServiceCollection();

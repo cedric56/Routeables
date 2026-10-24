@@ -465,6 +465,47 @@ public class RouteRegistrationGeneratorTests
     }
 
     [Fact]
+    public void Generator_warns_when_two_views_are_registered_for_the_same_view_model_and_route()
+    {
+        var result = RunGenerator("""
+            using Routeables.Abstraction;
+
+            public class CatsViewModel { }
+
+            [RouteableView(typeof(CatsViewModel), route: "/cats")]
+            public class CatsView { }
+
+            [RouteableView(typeof(CatsViewModel), route: "/cats")]
+            public class OldCatsView { }
+            """);
+
+        var warning = Assert.Single(result.Diagnostics, d => d.Id == "ROUT203");
+        Assert.Equal(DiagnosticSeverity.Warning, warning.Severity);
+        Assert.Contains("CatsView", warning.GetMessage());
+        Assert.Contains("OldCatsView", warning.GetMessage());
+        Assert.Contains("/cats", warning.GetMessage());
+    }
+
+    [Fact]
+    public void Generator_does_not_warn_when_the_views_of_a_view_model_have_other_routes_or_one_view_has_two_routes()
+    {
+        var result = RunGenerator("""
+            using Routeables.Abstraction;
+
+            public class CatsViewModel { }
+
+            [RouteableView(typeof(CatsViewModel), route: "/cats")]
+            [RouteableView(typeof(CatsViewModel), route: "/felines")]
+            public class CatsView { }
+
+            [RouteableView(typeof(CatsViewModel), route: "/kittens")]
+            public class KittensView { }
+            """);
+
+        Assert.DoesNotContain(result.Diagnostics, d => d.Id == "ROUT203");
+    }
+
+    [Fact]
     public void Generator_gives_the_convention_pair_one_registration_per_route_of_the_view_model()
     {
         var result = RunGenerator("""

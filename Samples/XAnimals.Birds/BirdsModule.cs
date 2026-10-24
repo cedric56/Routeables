@@ -7,7 +7,8 @@ namespace XAnimals.Birds;
 
 /// <summary>
 /// The Birds module. The application loads it with one line, <c>services.AddBirdsModule()</c>, and its page appears in the menu,
-/// after the entries of the main view model. Nothing else of the application mentions birds.
+/// after the entries of the main view model. The application code does not mention birds: the module is called from
+/// <c>XAnimals.ViewModels</c>, and each head imports the views of <c>Platforms/&lt;head&gt;</c> in its project file.
 /// </summary>
 public static class BirdsModule
 {
@@ -15,8 +16,6 @@ public static class BirdsModule
 
     public static IServiceCollection AddBirdsModule(this IServiceCollection services)
         => services
-            // What the Modules page lists. This is the sample's own record, not something Routeables asks for.
-            .AddSingleton(new ModuleInfo("Birds", "Adds the Birds page to the menu.", Route))
             // The entries of the module, built for each main view model. The view of the page is paired with its view model by
             // the [RouteableView] attribute on the view of the head, which AddGeneratedRoutes() of the head registers.
             .AddMenuEntries(() =>

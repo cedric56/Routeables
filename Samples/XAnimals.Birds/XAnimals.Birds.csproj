@@ -10,10 +10,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <!-- Platforms/<head>: the views of each head. The module does not compile them; each head imports its XAnimals.Birds.<head>.props. -->
+  <!-- Platforms/<head>: the views of each head. The module does not compile them; each head imports its XAnimals.Birds.<head>.props.
+       This layout is for the demonstration: a real module has a project per head (XAnimals.Birds.<head>) that the head references. -->
   <ItemGroup>
     <Compile Remove="Platforms\**" />
-    <None Include="Platforms\**" />
   </ItemGroup>
 
   <ItemGroup>

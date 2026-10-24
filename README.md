@@ -355,7 +355,9 @@ services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton);
 services.AddOrdersModule();
 ```
 
-`AddGeneratedRoutes()` is `internal` in each project, which is why the library wraps it in a public method. `AddMenuEntries` puts the entries of the module in the menu, after those of the main view model, in the order the modules were added. The function runs once for each main view model: build new entries in it, so that a lock or a selection is not shared between the circuits of a Blazor Server application. A module that needs another one calls its method (`AddCustomersModule()`) itself.
+`AddGeneratedRoutes()` is `internal` in each project, which is why the library wraps it in a public method. `AddMenuEntries` puts the entries of the module in the menu, after those of the main view model, in the order the modules were added. The function runs once for each main view model: build new entries in it, so that a lock or a selection is not shared between the circuits of a Blazor Server application. Adding the same module twice adds its entries once. A module that needs another one calls its method (`AddCustomersModule()`) itself.
+
+The Birds module of the samples is the other shape, a module that serves several hosts (Razor, Avalonia, MAUI, Uno). Its view models and its data are in one library (`XAnimals.Birds`), and its views are in one folder of that project, `Platforms/<host>`, since a view belongs to the UI framework of its host. The library does not compile them: each host imports the `.props` of its folder (one line in its project file) and compiles the views with its own controls. For that reason this module does not call `AddGeneratedRoutes()`: the views are part of the host, whose `AddGeneratedRoutes()` registers them. Keep one view per host for a route: two views registered for the same view model and route replace one another, and the last registered wins. This folder layout is there for the demonstration, to show every host in one place. In a real application, give each host a project of its own (`XAnimals.Birds.Razor`, `XAnimals.Birds.Avalonia`, `XAnimals.Birds.Maui`, `XAnimals.Birds.Uno`) that references the module and the controls of its host: it is the shape that can be shipped as a package, its views are real types of their own assembly, and the host only references it (its `AddGeneratedRoutes()` finds the views in the referenced assembly).
 
 ### Lifetimes
 
@@ -557,7 +559,7 @@ The [`Samples`](Samples) folder contains the same Animals app on several stacks,
 | Sample | Stack |
 | --- | --- |
 | `XAnimals.ViewModels` | Shared view models (uses `[RouteableViewModel]`) |
-| `XAnimals.Birds` | A [module](#modules): a page, `AddBirdsModule()`, and its views per head in `Platforms/<head>` (each head imports the `.props` of its folder). The heads do not reference it: `XAnimals.ViewModels` calls it in `RegisterViewModels` (`AddAnimalModules()`); the Modules page lists the loaded modules |
+| `XAnimals.Birds` | A [module](#modules): a page, `AddBirdsModule()`, and its views per head in `Platforms/<head>` (each head imports the `.props` of its folder). The heads do not reference it: `XAnimals.ViewModels` calls it in `RegisterViewModels` (`AddAnimalModules()`) |
 | `XAnimals.Common` | What the view models and the modules share (bases, `Animal`, the list and detail every animal kind derives from, icons): a module references it, not `XAnimals.ViewModels`, which references the module |
 | `XAnimals.Avalonia` (+ `.Desktop`, `.Android`, `.iOS`, `.Browser`) | Avalonia |
 | `XAnimals.Uno` | Uno Platform (desktop head; preview, see [`Routeables.Uno`](Routeables.Uno/README.md)) |
@@ -827,6 +829,7 @@ The registration generator (`AddGeneratedRoutes`) reports:
 | --- | --- | --- |
 | `ROUT201` | Warning | A route with parameters (`/dogs/{name}`) whose view or view model is `Scoped` or `Singleton`: the instance is cached by route and built once, so the later route changes do not pass their own arguments. Use `Transient` |
 | `ROUT202` | Warning | A `[Routeable]` view model with no `[RouteableView]` whose name matches several views (`OrderViewModel` and two classes called `OrderView`): none is picked. Put `[RouteableView(typeof(OrderViewModel))]` on the one you mean. |
+| `ROUT203` | Warning | Several views registered for the same view model, route and region: the last one registered replaces the others (two hosts' views in one assembly, or a view left behind after a copy). Keep one view for it, or give the others another route or region. |
 | `ROUT301` | Warning | `IMainRouteables` registered with `AddTransient` / `TryAddTransient`: each consumer would get another instance than the one the window shows. Use `RegisterMainRouteables<T>(Scoped or Singleton)` |
 
 ## Documentation
