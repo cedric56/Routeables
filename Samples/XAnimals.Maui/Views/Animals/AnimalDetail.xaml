@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:app="clr-namespace:XAnimals.Maui"
-    xmlns:vm="clr-namespace:XAnimals.ViewModels;assembly=XAnimals.ViewModels"
+    xmlns:vm="clr-namespace:XAnimals.Common;assembly=XAnimals.Common"
     x:Class="XAnimals.Maui.Views.AnimalDetail"
     x:DataType="vm:AnimalDetailViewModel"
     BackgroundColor="{AppThemeBinding Light={StaticResource Paper}, Dark={StaticResource OffBlack}}">

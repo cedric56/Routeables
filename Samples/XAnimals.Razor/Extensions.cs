@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using XAnimals.Common;
 using XAnimals.Razor.Components.Animals;
 using XAnimals.ViewModels;
 

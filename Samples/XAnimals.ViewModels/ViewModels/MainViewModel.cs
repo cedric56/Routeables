@@ -25,7 +25,6 @@ public sealed class MainViewModel(IRouter router, IRouteCoordinator coordinator)
         new RouteableEntry<RegionsViewModel>("Regions", AnimalIcons.Regions, route: "regions", template: "regions", description: string.Join(Environment.NewLine, "RouteableRegion", "Header, Footer, LeftPanel, Content", "An entry names its region")),
         new RouteableEntry<LockViewModel>("Lock", AnimalIcons.Lock, route: "lock", template: "lock", description: string.Join(Environment.NewLine, "ILockCoordinator", "A RouteableLockMessage locks the menu")),
         new RouteableEntry<DialogsViewModel>("Dialogs", AnimalIcons.Dialogs, route: "dialogs", template: "dialogs", description: string.Join(Environment.NewLine, "Dialogs, notifications and modal", "The services next to IRouter")),
-        new RouteableEntry<ModulesViewModel>("Modules", AnimalIcons.Modules, route: "modules", template: "modules", description: string.Join(Environment.NewLine, "A module is a method", "AddMenuEntries adds its pages")),
         new RouteableEntry<AboutViewModel>("About", AnimalIcons.About, route: "about", template: "about", description: string.Join(Environment.NewLine, "The logo", "A link and a segment route"))
     ];
 

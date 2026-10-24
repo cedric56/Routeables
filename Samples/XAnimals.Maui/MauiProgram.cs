@@ -8,6 +8,7 @@ using Routeables.Maui;
 using Routeables.Segments;
 using XAnimals.ViewModels;
 using CommunityToolkit.Maui;
+using XAnimals.Common;
 
 namespace XAnimals.Maui
 {

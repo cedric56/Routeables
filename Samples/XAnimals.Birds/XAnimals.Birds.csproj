@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <!-- A module of the samples: a class library with a page (its view model) and one extension method the application calls.
        The views of the page are in Platforms/<head> (Razor, MAUI, Avalonia, Uno); each head imports the props
@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Routeables.Core\Routeables.Core.csproj" />
-    <ProjectReference Include="..\..\Routeables.Razor\Routeables.Razor.csproj" />
+    <!--<ProjectReference Include="..\..\Routeables.Razor\Routeables.Razor.csproj" />-->
     <ProjectReference Include="..\..\Routeables.Routing\Routeables.Routing.csproj" />
     <ProjectReference Include="..\XAnimals.Common\XAnimals.Common.csproj" />
   </ItemGroup>

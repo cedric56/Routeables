@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.ComponentModel;
 using XAminals.Models;
+using XAnimals.Common;
 using XAnimals.ViewModels;
 
 namespace XAnimals.Uno.Views;
