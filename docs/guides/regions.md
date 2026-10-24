@@ -45,7 +45,7 @@ await provider.GoToAsync(entry);
 
 A page shown in a region routes that region. The router that builds a view model hands itself to it: a view model whose constructor takes an `IRouter` receives the router of its region, not the default one (`IRouteableArgs.Router`; a router given with `ForViewModel(router)` wins). A list that opens its detail with `_router.GoToRouteAsync(...)` therefore opens it in its own region, and its `Back` or `Pop` returns to the list there.
 
-`provider.RouterFor(entry)` and `provider.GetRouter(region)` give the router itself (`Back`, `Forward`, `Pop`, `History`...). The host follows every change of its history, `Back`, `Forward`, `EraseHistoryAsync` included, shows the view the router already holds when it is created, and lets go of the router when it leaves the screen. Avalonia and Maui hosts find the router in the running host (`CreateRouteableApp`, `UseRouteables`); the `Services` property points a host to another provider. `RegionBinding` is the same behavior without UI, to build a host for another framework.
+`provider.RouterFor(entry)` and `provider.GetRouter(region)` give the router itself (`Back`, `Forward`, `Pop`, `History`...). The host follows every change of its history, `Back`, `Forward`, `EraseHistoryAsync` included, shows the view the router already holds when it is created, and lets go of the router when it leaves the screen. Avalonia and Maui hosts find the router in the running host (`UseRouteables`); the `Services` property points a host to another provider. `RegionBinding` is the same behavior without UI, to build a host for another framework.
 
 ### Routing with a result
 

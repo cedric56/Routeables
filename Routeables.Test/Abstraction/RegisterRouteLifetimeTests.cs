@@ -80,8 +80,8 @@ public class RegisterRouteLifetimeTests
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
 
-        var main = scope.ServiceProvider.GetRegion("main");
-        var side = scope.ServiceProvider.GetRegion("side");
+        var main = scope.ServiceProvider.GetRouter("main");
+        var side = scope.ServiceProvider.GetRouter("side");
         await main.GoAsync(new StubView(), new StubVm(), cancellationToken: TestContext.Current.CancellationToken);
         await main.GoAsync(new StubView(), new StubVm(), cancellationToken: TestContext.Current.CancellationToken);
 
@@ -102,12 +102,12 @@ public class RegisterRouteLifetimeTests
         IRouter first;
         using (var scope = provider.CreateScope())
         {
-            first = scope.ServiceProvider.GetRegion("main");
-            Assert.Same(first, scope.ServiceProvider.GetRegion("main"));
+            first = scope.ServiceProvider.GetRouter("main");
+            Assert.Same(first, scope.ServiceProvider.GetRouter("main"));
         }
 
         using var secondScope = provider.CreateScope();
-        var second = secondScope.ServiceProvider.GetRegion("main");
+        var second = secondScope.ServiceProvider.GetRouter("main");
         Assert.NotSame(first, second);
     }
 }

@@ -6,15 +6,18 @@ namespace Reshapes.Maui.CommunityToolkit;
 public static class Extensions
 {
     /// <summary>
-    /// Registers Routeables for MAUI (<c>UseRouteables()</c> then <c>UseRouteablesServices()</c>) with the content dialog, task dialog, modal and notification services built on
-    /// CommunityToolkit.Maui (popups and snackbars), and configures CommunityToolkit.Maui itself.
-    /// Use it instead of <c>UseRouteables()</c>; do not call <c>UseMauiCommunityToolkit()</c> as well.
+    /// Draws the modals, content dialogs, task dialogs and notifications with CommunityToolkit.Maui (popups and snackbars).
+    /// Call it after <c>UseRouteables</c>; there is no need to call <c>UseRouteablesServices</c> as well. CommunityToolkit.Maui itself
+    /// is set up the usual way, with <c>UseMauiCommunityToolkit()</c>.
+    /// <code>
+    /// builder.UseMauiApp&lt;App&gt;().UseMauiCommunityToolkit().UseRouteables&lt;MainViewModel&gt;().UseCommunityToolkit();
+    /// </code>
     /// </summary>
     /// <param name="builder">The MAUI app builder to configure.</param>
     /// <returns>The same <paramref name="builder"/>, for chaining.</returns>
-    public static MauiAppBuilder UseRouteablesCommunityToolkit(this MauiAppBuilder builder)
+    public static MauiAppBuilder UseCommunityToolkit(this MauiAppBuilder builder)
     {
-        return builder.UseRouteables().UseRouteablesServices(
+        return builder.UseRouteablesServices(
             modalService: sp => new ReshapeModalService(sp.GetRequiredService<IRouteableDialogWindowContext>()),
             contentDialogService: sp => new ReshapeContentDialogService(sp.GetRequiredService<IRouteableDialogWindowContext>()),
             taskDialogService: sp => new ReshapeTaskDialogService(sp.GetRequiredService<IRouteableDialogWindowContext>()),

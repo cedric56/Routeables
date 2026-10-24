@@ -51,7 +51,7 @@ public abstract class RegionLayout : IDisposable
     public IReadOnlyList<string> Regions { get; }
 
     /// <summary>The router of the primary region.</summary>
-    protected IRouter PrimaryRouter => Provider.GetRegion(Primary);
+    protected IRouter PrimaryRouter => Provider.GetRouter(Primary);
 
     /// <summary>
     /// Whether the other regions follow the primary one. Set it to <see langword="false"/> while they show something else
@@ -126,7 +126,7 @@ public abstract class RegionLayout : IDisposable
 
     /// <summary>Shows <paramref name="view"/> in the region it names, whichever it is.</summary>
     protected Task<RouteableResult> GoToAsync(string region, IRouteableEntry view, CancellationToken cancellationToken = default)
-        => Provider.GetRegion(region).GoToRouteAsync(view, cancellationToken);
+        => Provider.GetRouter(region).GoToRouteAsync(view, cancellationToken);
 
     /// <summary>
     /// Updates <paramref name="region"/> to <paramref name="view"/>, unless <paramref name="key"/> (a record or a value that

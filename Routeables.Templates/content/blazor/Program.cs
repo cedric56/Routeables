@@ -11,10 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.UseRouteables(Runtime.BlazorServer);       // the router
-builder.Services.UseRouteablesServices();                   // optional: dialogs, notifications and the default layout
-builder.Services.AddGeneratedRoutes();                      // the routes declared by attributes
-builder.Services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Scoped);   // one menu per circuit
+builder.Services.UseRouteablesServer<MainViewModel>(   // the router and the menu (one per circuit)
+    services => services.AddGeneratedRoutes());                  // the routes declared by attributes
+builder.Services.UseRouteablesServices();                             // optional: dialogs, notifications and the default layout
 
 var app = builder.Build();
 

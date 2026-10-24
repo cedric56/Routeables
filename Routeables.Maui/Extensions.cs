@@ -1,4 +1,5 @@
-﻿using Routeables.Abstraction;
+﻿using System.Diagnostics.CodeAnalysis;
+using Routeables.Abstraction;
 using Routeables.Core;
 using Routeables.Routing;
 using Routeables.Services;
@@ -12,19 +13,30 @@ namespace Routeables.Maui;
 public static class Extensions
 {
     /// <summary>
-    /// Registers the router, the arguments factory, the property injection, the environment information and the theme service.
+    /// Starts Routeables on MAUI: registers the router, the arguments factory, the property injection, the environment information and the
+    /// theme service, and <typeparamref name="TMain"/> as the main view model (the menu), one for the application.
+    /// <code>
+    /// builder.UseMauiApp&lt;App&gt;().UseRouteables&lt;MainViewModel&gt;(r => r.AddGeneratedRoutes());
+    /// </code>
     /// </summary>
     /// <remarks>
     /// The modal, content dialog, task dialog, dialog and notification services are optional: add
     /// <c>UseRouteablesServices()</c> from <c>Routeables.Maui.Services</c> to get them.
     /// </remarks>
+    /// <typeparam name="TMain">The main view model.</typeparam>
     /// <param name="builder">The MAUI app builder to configure.</param>
+    /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
     /// <returns>The same <paramref name="builder"/>, for chaining.</returns>
-    public static MauiAppBuilder UseRouteables(this MauiAppBuilder builder)
+    public static MauiAppBuilder UseRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
+        this MauiAppBuilder builder, Action<IServiceCollection>? configure = null)
+        where TMain : class, IMainRouteables
     {
+        ArgumentNullException.ThrowIfNull(builder);
         builder.Services.AddRouteableHost(Runtime.Maui,
             new RouteablePropertyEntry(typeof(QueryPropertyAttribute), a => ((QueryPropertyAttribute)a).Name, FromContainer: false));
         builder.Services.AddSingleton<IRouteableRequestedThemeService, RouteableRequestThemeService>();
+        builder.Services.RegisterMainRouteables<TMain>();
+        configure?.Invoke(builder.Services);
         return builder;
     }
 }

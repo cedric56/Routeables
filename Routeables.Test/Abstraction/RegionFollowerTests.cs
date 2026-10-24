@@ -21,9 +21,9 @@ public class RegionFollowerTests
     {
         using var provider = Build();
         var seen = new List<string>();
-        using var follower = new RegionFollower(provider.GetRegion("content"), async () =>
+        using var follower = new RegionFollower(provider.GetRouter("content"), async () =>
         {
-            var shown = provider.GetRegion("content").History.Current!.ViewModel.GetType().Name;
+            var shown = provider.GetRouter("content").History.Current!.ViewModel.GetType().Name;
             await provider.GoToAsync(Entry<RegionDogsViewModel>("/dogs", "header"));
             seen.Add(shown);
         });
@@ -32,7 +32,7 @@ public class RegionFollowerTests
         await follower.SettledAsync();
 
         Assert.Equal(["RegionCatsViewModel"], seen);
-        Assert.Equal(1, provider.GetRegion("header").History.Count);
+        Assert.Equal(1, provider.GetRouter("header").History.Count);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class RegionFollowerTests
     {
         using var provider = Build();
         var running = 0; var overlapped = false; var runs = 0;
-        using var follower = new RegionFollower(provider.GetRegion("content"), async () =>
+        using var follower = new RegionFollower(provider.GetRouter("content"), async () =>
         {
             if (Interlocked.Increment(ref running) > 1) overlapped = true;
             await Task.Delay(20);
@@ -61,7 +61,7 @@ public class RegionFollowerTests
     {
         using var provider = Build();
         Exception? failure = null;
-        using var follower = new RegionFollower(provider.GetRegion("content"), () => throw new InvalidOperationException("bar"));
+        using var follower = new RegionFollower(provider.GetRouter("content"), () => throw new InvalidOperationException("bar"));
         follower.Failed += (_, ex) => failure = ex;
 
         var result = await provider.GoToAsync(Entry<RegionCatsViewModel>("/cats", "content"), TestContext.Current.CancellationToken);
@@ -76,7 +76,7 @@ public class RegionFollowerTests
     {
         using var provider = Build();
         var runs = 0;
-        var follower = new RegionFollower(provider.GetRegion("content"), () => { runs++; return Task.CompletedTask; });
+        var follower = new RegionFollower(provider.GetRouter("content"), () => { runs++; return Task.CompletedTask; });
         follower.Dispose();
 
         await provider.GoToAsync(Entry<RegionCatsViewModel>("/cats", "content"), TestContext.Current.CancellationToken);
@@ -94,7 +94,7 @@ public class RegionFollowerTests
         {
             RegionFollower? follower = null;
             int? created = null; int? ran = null;
-            await context.RunAsync(() => { created = Environment.CurrentManagedThreadId; follower = new RegionFollower(provider.GetRegion("content"), () => { ran = Environment.CurrentManagedThreadId; return Task.CompletedTask; }); });
+            await context.RunAsync(() => { created = Environment.CurrentManagedThreadId; follower = new RegionFollower(provider.GetRouter("content"), () => { ran = Environment.CurrentManagedThreadId; return Task.CompletedTask; }); });
 
             await provider.GoToAsync(Entry<RegionCatsViewModel>("/cats", "content"), TestContext.Current.CancellationToken);
             await follower!.SettledAsync();
@@ -115,8 +115,8 @@ public class RegionFollowerTests
 
         await provider.EraseRegionsAsync(["content", "header"], TestContext.Current.CancellationToken);
 
-        Assert.Equal(0, provider.GetRegion("content").History.Count);
-        Assert.Equal(0, provider.GetRegion("header").History.Count);
+        Assert.Equal(0, provider.GetRouter("content").History.Count);
+        Assert.Equal(0, provider.GetRouter("header").History.Count);
     }
 
     /// <summary>A thread with a synchronization context, like a UI thread.</summary>

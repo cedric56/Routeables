@@ -1,9 +1,9 @@
-using Routeables.Core;
 using Routeables.Generated;
 using Routeables.Razor;
 using Routeables.Razor.Services;
 using Xanimals.BlazorApp.Components;
 using Xanimals.Razor;
+using XAnimals.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.UseRouteables(Runtime.BlazorServer).UseRouteablesServices();
+builder.Services.UseRouteablesServer<MainViewModel>().UseRouteablesServices();
 builder.Services.AddGeneratedRoutes();   // here, not in XAnimals.Razor: the Razor views of that library are seen as referenced assemblies
 builder.Services.UseSharedLibrary();
 

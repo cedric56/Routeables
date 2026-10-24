@@ -39,10 +39,10 @@ Reference the host package and the generator (as an analyzer), then start Routea
 
 | Host | Package | Setup |
 | --- | --- | --- |
-| Blazor | [`Routeables.Razor`](Routeables.Razor/README.md) | `services.UseRouteables(Runtime.BlazorServer)` |
-| .NET MAUI | [`Routeables.Maui`](Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables()` |
-| Avalonia | [`Routeables.Avalonia`](Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables(services => { ... })` |
-| Uno Platform | [`Routeables.Uno`](Routeables.Uno/README.md) | `this.UseRouteables(services => { ... })` |
+| Blazor | [`Routeables.Razor`](Routeables.Razor/README.md) | `services.UseRouteablesServer<MainViewModel>(r => { ... })` |
+| .NET MAUI | [`Routeables.Maui`](Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => { ... })` |
+| Avalonia | [`Routeables.Avalonia`](Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r => { ... })` |
+| Uno Platform | [`Routeables.Uno`](Routeables.Uno/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
 
 ```xml
 <ItemGroup>
@@ -52,11 +52,10 @@ Reference the host package and the generator (as an analyzer), then start Routea
 </ItemGroup>
 ```
 
-Then register your routes and your menu (the main view model) in the same place:
+The call starts Routeables and registers your menu (the main view model). The block is for your own registrations, the same on every host:
 
 ```csharp
-services.AddGeneratedRoutes();
-services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton);
+r => r.AddGeneratedRoutes()
 ```
 
 Each host README has the complete setup. [Getting started](docs/getting-started.md) walks through it, and `dotnet new routeables-blazor | routeables-maui | routeables-avalonia` creates a working app.

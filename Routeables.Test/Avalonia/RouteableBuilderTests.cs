@@ -4,6 +4,7 @@ using Routeables.Avalonia;
 using Routeables.Avalonia.Services;
 using Routeables.Services;
 using AvaloniaApplication = global::Avalonia.Application;
+using Routeables.Tests.Core;
 
 namespace Routeables.Tests.Avalonia;
 
@@ -29,9 +30,8 @@ public class RouteableBuilderTests
     {
         IServiceProvider? provider = null;
 
-        var builder = RouteableBuilder.CreateRouteableApp<TestApplication>(
-            appFactory: _ => new TestApplication(),
-            configureExternalServices: services => services.UseRouteablesServices(string.Empty, messageBoxService),
+        var builder = global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMainRouteables>(
+            configure: services => services.UseRouteablesServices(string.Empty, messageBoxService),
             afterBuild: services => provider = services);
 
         Assert.NotNull(builder);
@@ -39,7 +39,7 @@ public class RouteableBuilderTests
     }
 
     [Fact]
-    public void CreateRouteableApp_registers_the_Avalonia_services_before_returning_the_builder()
+    public void UseRouteables_registers_the_Avalonia_services_before_returning_the_builder()
     {
         var serviceProvider = Build(new MessageBoxService());
         using (serviceProvider as IDisposable)
@@ -79,8 +79,8 @@ public class RouteableBuilderTests
         IServiceProvider? provider = null;
 
         var builder = global::Avalonia.AppBuilder.Configure<TestApplication>()
-            .UseRouteables(
-                configureExternalServices: services => services.UseRouteablesServices(string.Empty),
+            .UseRouteables<FakeMainRouteables>(
+                configure: services => services.UseRouteablesServices(string.Empty),
                 afterBuild: services => provider = services);
 
         Assert.NotNull(builder);
@@ -97,8 +97,8 @@ public class RouteableBuilderTests
         IServiceProvider? provider = null;
         var custom = new MessageBoxService();
 
-        global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables(
-            configureExternalServices: services =>
+        global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMainRouteables>(
+            configure: services =>
             {
                 services.AddSingleton<Marker>();
                 services.UseRouteablesServices(string.Empty, custom);
@@ -118,7 +118,7 @@ public class RouteableBuilderTests
         IServiceProvider? provider = null;
 
         global::Avalonia.AppBuilder.Configure<TestApplication>()
-            .UseRouteables(afterBuild: services => provider = services);
+            .UseRouteables<FakeMainRouteables>(afterBuild: services => provider = services);
 
         using (provider as IDisposable)
         {

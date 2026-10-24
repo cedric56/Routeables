@@ -39,7 +39,7 @@ public class RouteableRegion : TransitioningContentControl
     }
 
     /// <summary>
-    /// Where the router is found. By default the provider of the running host (<c>UseRouteables</c> or <c>CreateRouteableApp</c>); set it to show the
+    /// Where the router is found. By default the provider of the running host (<c>UseRouteables</c>); set it to show the
     /// regions of another one.
     /// </summary>
     public IServiceProvider? Services { get; set; }

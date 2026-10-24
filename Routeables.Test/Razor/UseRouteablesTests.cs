@@ -5,6 +5,7 @@ using Routeables.Core;
 using Routeables.Razor;
 using Routeables.Razor.Services;
 using Routeables.Services;
+using Routeables.Tests.Core;
 
 namespace Routeables.Tests.Razor;
 
@@ -15,6 +16,44 @@ public class UseRouteablesTests
         public TestNavigationManager() => Initialize("http://localhost/", "http://localhost/");
 
         protected override void NavigateToCore(string uri, bool forceLoad) { }
+    }
+
+    [Fact]
+    public void UseRouteablesServer_registers_the_main_scoped_and_runs_the_block()
+    {
+        var services = new ServiceCollection();
+        var blockRan = false;
+
+        services.UseRouteablesServer<Tests.Core.FakeMainRouteables>(r => blockRan = ReferenceEquals(r, services));
+
+        Assert.True(blockRan);
+        Assert.Equal(ServiceLifetime.Scoped, services.Last(d => d.ServiceType == typeof(IMainRouteables)).Lifetime);
+    }
+
+    [Fact]
+    public void Each_Razor_host_registers_its_own_runtime()
+    {
+        foreach (var (use, expected) in new (Action<IServiceCollection>, Runtime)[]
+        {
+            (s => s.UseRouteablesServer<FakeMainRouteables>(), Runtime.BlazorServer),
+            (s => s.UseRouteablesWebAssembly<FakeMainRouteables>(), Runtime.BlazorWebAssembly),
+            (s => s.UseRouteablesHybrid<FakeMainRouteables>(), Runtime.MauiHybrid),
+        })
+        {
+            var services = new ServiceCollection();
+            use(services);
+            using var provider = services.BuildServiceProvider();
+            Assert.Equal(expected, provider.GetRequiredService<IRuntime>().Current);
+        }
+    }
+
+    [Fact]
+    public void UseRouteablesServer_refuses_a_main_registered_as_singleton_before_it()
+    {
+        var services = new ServiceCollection();
+        services.RegisterMainRouteables<Tests.Core.FakeMainRouteables>();     // no host yet: Singleton
+
+        Assert.Throws<InvalidOperationException>(() => services.UseRouteablesServer<FakeMainRouteables>());
     }
 
     [Fact]
@@ -29,7 +68,7 @@ public class UseRouteablesTests
         };
         services.AddSingleton<NavigationManager>(new TestNavigationManager());
 
-        services.UseRouteables(Runtime.BlazorServer, onCircuitProviderChanged: callback);
+        services.UseRouteablesServer<FakeMainRouteables>(onCircuitProviderChanged: callback);
         services.UseRouteablesServices();
         using var provider = services.BuildServiceProvider();
         using var firstScope = provider.CreateScope();
@@ -67,7 +106,7 @@ public class UseRouteablesTests
         var services = new ServiceCollection();
         services.AddSingleton<NavigationManager>(new TestNavigationManager());
 
-        services.UseRouteables(Runtime.BlazorServer);
+        services.UseRouteablesServer<FakeMainRouteables>();
         services.UseRouteablesServices(position: position, maxDispayments: 3);
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
@@ -88,7 +127,7 @@ public class UseRouteablesTests
         var services = new ServiceCollection();
         services.AddSingleton<NavigationManager>(new TestNavigationManager());
 
-        services.UseRouteables(Runtime.BlazorServer);
+        services.UseRouteablesServer<FakeMainRouteables>();
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
 
@@ -108,7 +147,7 @@ public class UseRouteablesTests
         services.AddSingleton<NavigationManager>(new TestNavigationManager());
         var custom = new RouteableNotificationService(new RouteableNotificationOptions());
 
-        services.UseRouteables(Runtime.BlazorServer);
+        services.UseRouteablesServer<FakeMainRouteables>();
         services.UseRouteablesServices(routeableNotificationService: _ => custom);
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();

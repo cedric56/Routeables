@@ -15,11 +15,7 @@ The [Avalonia](https://avaloniaui.net/) host of Routeables (desktop, Android, iO
 ```csharp
 public static AppBuilder BuildAvaloniaApp() =>
     AppBuilder.Configure<App>()
-        .UseRouteables(services =>
-        {
-            services.AddGeneratedRoutes();
-            services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton);
-        })
+        .UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes())
         .UsePlatformDetect();
 ```
 

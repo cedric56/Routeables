@@ -17,20 +17,21 @@ public static class SegmentExtensions
     /// </summary>
     /// <param name="services">The service collection to add to.</param>
     /// <param name="lifetime">
-    /// Use the lifetime of the routers it drives: a coordinator resolves region routers from its own provider.
-    /// Transient is not supported (the coordinator exposes events).
+    /// The lifetime of the routers it drives, which is the one of the host when omitted: a coordinator resolves region routers
+    /// from its own provider. Transient is not supported (the coordinator exposes events).
     /// </param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="lifetime"/> is <see cref="ServiceLifetime.Transient"/>.</exception>
     public static IServiceCollection AddRouteCoordinator(
-        this IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Singleton)
+        this IServiceCollection services, ServiceLifetime? lifetime = null)
     {
         ArgumentNullException.ThrowIfNull(services);
-        if (lifetime == ServiceLifetime.Transient)
-            throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, "A transient coordinator would lose its subscribers.");
+        var chosen = lifetime ?? services.GetRouteableLifetime();
+        if (chosen == ServiceLifetime.Transient)
+            throw new ArgumentOutOfRangeException(nameof(lifetime), chosen, "A transient coordinator would lose its subscribers.");
 
         var registry = GetSegmentRegistry(services);
         services.TryAdd(new ServiceDescriptor(
-            typeof(IRouteCoordinator), sp => new RouteCoordinator(sp, registry), lifetime));
+            typeof(IRouteCoordinator), sp => new RouteCoordinator(sp, registry), chosen));
         return services;
     }
 

@@ -4,7 +4,7 @@ Dialogs and notifications for the Avalonia host, drawn with Avalonia controls. [
 
 ```csharp
 AppBuilder.Configure<App>()
-    .UseRouteables(services =>
+    .UseRouteables<MainViewModel>(services =>
     {
         services.UseRouteablesServices("avares://MyApp/Assets/icon.ico");
         services.AddGeneratedRoutes();

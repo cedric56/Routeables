@@ -58,7 +58,7 @@ public class RouteApiTests
         var result = await provider.GoToAsync("orders/7", region: "side", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(result.Success, result.Exception?.Message);
-        Assert.Equal(7, provider.GetRegion("side").GetCurrentViewModel<OrderVm>()!.Id);
+        Assert.Equal(7, provider.GetRouter("side").GetCurrentViewModel<OrderVm>()!.Id);
         Assert.Null(provider.GetRequiredService<IRouter>().CurrentViewModel);
     }
 

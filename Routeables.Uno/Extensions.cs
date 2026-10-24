@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Routeables.Abstraction;
@@ -14,30 +15,36 @@ namespace Routeables.Uno;
 public static class Extensions
 {
     /// <summary>
-    /// Builds the container with the router, the property injection and the theme service, and keeps it for the views.
+    /// Builds the container with the router, the property injection, the theme service and <typeparamref name="TMain"/> as the main view
+    /// model (the menu), and keeps it for the views.
     /// Call it once, from the constructor of the <see cref="Microsoft.UI.Xaml.Application"/>: the container is then ready when
     /// <c>OnLaunched</c> creates the window. The dialogs, content dialogs, task dialogs and notifications are optional: register
-    /// them in <paramref name="configureExternalServices"/> with <c>UseRouteablesServices()</c> from <c>Routeables.Uno.Services</c>.
+    /// them in <paramref name="configure"/> with <c>UseRouteablesServices()</c> from <c>Routeables.Uno.Services</c>.
     /// <code>
-    /// Services = this.UseRouteables(services =>
+    /// Services = this.UseRouteables&lt;MainViewModel&gt;(services =>
     /// {
     ///     services.UseRouteablesServices();
     ///     services.AddGeneratedRoutes();
-    ///     services.RegisterMainRouteables&lt;MainViewModel&gt;(ServiceLifetime.Singleton);
     /// });
     /// </code>
     /// </summary>
+    /// <typeparam name="TMain">The main view model.</typeparam>
     /// <param name="application">The application.</param>
-    /// <param name="configureExternalServices">Optional callback to register additional services with the container.</param>
+    /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
     /// <param name="afterBuild">Optional callback executed immediately after the service provider is built.</param>
     /// <returns>The container, which <see cref="GetRouteableServices"/> returns too.</returns>
-    public static IServiceProvider UseRouteables(
+    public static IServiceProvider UseRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
         this Microsoft.UI.Xaml.Application application,
-        Action<IServiceCollection>? configureExternalServices = null,
+        Action<IServiceCollection>? configure = null,
         Action<IServiceProvider>? afterBuild = null)
+        where TMain : class, IMainRouteables
     {
         ArgumentNullException.ThrowIfNull(application);
-        return BuildProvider(configureExternalServices, afterBuild);
+        return BuildProvider(services =>
+        {
+            services.RegisterMainRouteables<TMain>();
+            configure?.Invoke(services);
+        }, afterBuild);
     }
 
     /// <summary>The container of the running Routeables host.</summary>
@@ -147,7 +154,7 @@ public static class Extensions
     }
 
     private static IServiceProvider BuildProvider(
-        Action<IServiceCollection>? configureExternalServices,
+        Action<IServiceCollection>? configure,
         Action<IServiceProvider>? afterBuild)
     {
         var services = new ServiceCollection();
@@ -155,7 +162,7 @@ public static class Extensions
         services.AddRouteableHost(Runtime.Uno, new RouteablePropertyEntry(typeof(InjectPropertyAttribute)));
         services.AddSingleton<IRouteableRequestedThemeService, RouteableRequestThemeService>();
 
-        configureExternalServices?.Invoke(services);
+        configure?.Invoke(services);
         var provider = services.BuildRouteableProvider();
         ServiceLocator.Services = provider;
         afterBuild?.Invoke(provider);

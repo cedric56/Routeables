@@ -20,7 +20,8 @@ namespace XAnimals.Maui
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
-                .UseRouteablesCommunityToolkit()
+                .UseRouteables<MainViewModel>()
+                .UseCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("Inter-Regular.otf", "InterRegular");
@@ -40,7 +41,6 @@ namespace XAnimals.Maui
             AnimalIcons.Register((key, glyph) => OperatingSystem.IsWindows()
                 ? ImageSource.FromFile($"icon_{key}.png")
                 : new FontImageSource { Glyph = glyph, Size = 24 });
-            builder.Services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton);
             builder.Services.AddAnimalModules();      // the modules of the sample (Birds): their pages are added to the menu
 
 #if DEBUG

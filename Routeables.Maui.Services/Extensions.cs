@@ -4,7 +4,7 @@ namespace Routeables.Maui.Services;
 
 /// <summary>
 /// Registers the modal, content dialog, task dialog, dialog and notification services of a MAUI application.
-/// <c>UseRouteables()</c> (Routeables.Maui) registers the router only; this package is for applications that want the UI services too.
+/// <c>UseRouteables&lt;TMain&gt;()</c> (Routeables.Maui) registers the router only; this package is for applications that want the UI services too.
 /// </summary>
 public static class Extensions
 {
@@ -15,7 +15,7 @@ public static class Extensions
     /// </summary>
     /// <remarks>
     /// They are Routeables' own and need nothing but MAUI. Pass a factory to replace one, or call
-    /// <c>UseRouteablesCommunityToolkit()</c> (Reshapes.Maui.CommunityToolkit) to use CommunityToolkit.Maui popups and snackbars instead.
+    /// <c>UseCommunityToolkit()</c> (Reshapes.Maui.CommunityToolkit) to use CommunityToolkit.Maui popups and snackbars instead.
     /// </remarks>
     /// <param name="builder">The MAUI app builder to configure.</param>
     /// <param name="modalService">Factory of the <see cref="IRouteableModalService"/>; null keeps Routeables' own.</param>

@@ -15,16 +15,13 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
-            .UseRouteables()            // the router
+            .UseRouteables<MainViewModel>(services => services.AddGeneratedRoutes())   // the router, the menu and the routes
             .UseRouteablesServices()    // optional: dialogs and notifications
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("Inter-Regular.otf", "InterRegular");
                 fonts.AddFont("Inter-SemiBold.otf", "InterSemibold");
             });
-
-        builder.Services.AddGeneratedRoutes();                                             // the routes declared by attributes
-        builder.Services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton); // one menu for the application
 
 #if DEBUG
         builder.Logging.AddDebug();

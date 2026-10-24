@@ -10,6 +10,6 @@ public static class Extensions
     public static void UseSharedLibrary(this IServiceCollection services)
     {
         AnimalIcons.Register();
-        services.RegisterViewModels<CatDetailView, DogDetailView>(ServiceLifetime.Scoped);
+        services.RegisterViewModels<CatDetailView, DogDetailView>();
     }
 }

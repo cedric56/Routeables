@@ -51,24 +51,20 @@ public class HostContractTests
         {
             var services = new ServiceCollection();
             services.AddSingleton<NavigationManager>(new TestNavigationManager());
-            services.UseRouteables(Runtime.BlazorServer);
-            services.RegisterMainRouteables<FakeMainRouteables>(ServiceLifetime.Scoped);
+            services.UseRouteablesServer<FakeMainRouteables>();
             return (Scoped(services, out var owner), owner);
         }),
         new Host("Avalonia", ServiceLifetime.Singleton, () =>
         {
             IServiceProvider? provider = null;
-            RouteableBuilder.CreateRouteableApp<TestApplication>(
-                _ => new TestApplication(),
-                configureExternalServices: s => s.RegisterMainRouteables<FakeMainRouteables>(ServiceLifetime.Singleton),
+            global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMainRouteables>(
                 afterBuild: p => provider = p);
             return (provider!, (IDisposable)provider!);
         }),
         new Host("Maui", ServiceLifetime.Singleton, () =>
         {
             var builder = MauiApp.CreateBuilder();
-            Routeables.Maui.Extensions.UseRouteables(builder);
-            builder.Services.RegisterMainRouteables<FakeMainRouteables>(ServiceLifetime.Singleton);
+            Routeables.Maui.Extensions.UseRouteables<FakeMainRouteables>(builder);
             var root = builder.Services.BuildServiceProvider();
             return (root, root);
         }),

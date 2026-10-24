@@ -19,11 +19,7 @@ The [Uno Platform](https://platform.uno/) host of Routeables (Windows, Linux, ma
 public App()
 {
     InitializeComponent();
-    Services = this.UseRouteables(services =>
-    {
-        services.AddGeneratedRoutes();
-        services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton);
-    });
+    Services = this.UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes());
 }
 
 protected override void OnLaunched(LaunchActivatedEventArgs args) =>

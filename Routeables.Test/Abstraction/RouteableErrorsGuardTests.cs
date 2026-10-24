@@ -114,7 +114,7 @@ public class RouteableErrorsGuardTests
     {
         var capture = new Capture();
         using var provider = RegionTestServices.Build(s => s.AddRegion("content"));
-        using var follower = new RegionFollower(provider.GetRegion("content"), () => throw new InvalidOperationException("follow-me-not-1"));
+        using var follower = new RegionFollower(provider.GetRouter("content"), () => throw new InvalidOperationException("follow-me-not-1"));
 
         Trace.Listeners.Add(capture);
         try
@@ -133,7 +133,7 @@ public class RouteableErrorsGuardTests
         var capture = new Capture();
         using var provider = RegionTestServices.Build(s => s.AddRegion("content"));
         var runs = 0;
-        using var follower = new RegionFollower(provider.GetRegion("content"), () =>
+        using var follower = new RegionFollower(provider.GetRouter("content"), () =>
         {
             runs++;
             throw new InvalidOperationException("update-failed");

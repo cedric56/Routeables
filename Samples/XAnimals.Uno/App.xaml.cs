@@ -20,7 +20,7 @@ public partial class App : Application
         InitializeComponent();
 
         // The container is built now, so it is ready when OnLaunched creates the window.
-        Services = this.UseRouteables(services =>
+        Services = this.UseRouteables<MainViewModel>(services =>
         {
             services.UseRouteablesServices();       // dialogs, content dialogs, task dialogs, notifications
             services.AddGeneratedRoutes();          // the routes declared by attributes on the views of this project

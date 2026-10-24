@@ -5,7 +5,7 @@ namespace Routeables.Abstraction;
 /// <summary>
 /// The main view model of an application: the menu entries, the one that is selected and the view it shows. Each host binds its
 /// menu to <see cref="Routeables"/> and <see cref="Routeable"/>, and shows <see cref="CurrentView"/>. Register it with
-/// <c>RegisterMainRouteables</c>: one instance per host (a singleton on Avalonia and MAUI, scoped on Blazor Server).
+/// <c>RegisterMainRouteables</c>: one instance per host (a singleton on Avalonia, MAUI and Uno, scoped on Blazor).
 /// </summary>
 public interface IMainRouteables
 {

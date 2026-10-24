@@ -27,15 +27,14 @@ public static class Extensions
     public static void RegisterViewModels<
         TCatDetailView,
         TDogDetailView
-        >(this IServiceCollection services, ServiceLifetime mainLifetime = ServiceLifetime.Singleton)
+        >(this IServiceCollection services)
         where TCatDetailView : class
         where TDogDetailView : class
     {
-        // One main view model per host: Singleton on Avalonia and MAUI, Scoped on Blazor Server.
-        services.RegisterMainRouteables<MainViewModel>(mainLifetime);
+        // The main view model is registered by the head, with UseRouteables<MainViewModel>(...).
 
         // The coordinator that MainViewModel uses for segments; it lives as long as the routers it drives.
-        services.AddRouteCoordinator(mainLifetime);
+        services.AddRouteCoordinator();
 
         // The Lock page publishes a RouteableLockMessage: with the broker and the coordinator, the menu locks while a page blocks leaving.
         services.AddLocking();

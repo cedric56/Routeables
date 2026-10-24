@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
 using Routeables.Routing;
 
@@ -22,6 +23,7 @@ internal static class RouteableHostRegistration
             new PropertyInjection([new RouteablePropertyEntry(typeof(RouteableParameterAttribute), FromContainer: false), .. otherProperties]));
         services.RegisterEnvironments(runtime);
         services.RegisterRouting();
+        services.TryAddSingleton(new RouteableHostLifetime(ServiceLifetime.Singleton));
     }
 
     /// <summary>

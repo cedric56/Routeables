@@ -26,8 +26,8 @@ public partial class App : Application
         Action? onAppDispose = null)
     {
         // The usual Avalonia shape: the application has its own constructor, Routeables is added to the builder.
-        return AppBuilder.Configure<App>().UseRouteables(
-           configureExternalServices: services =>
+        return AppBuilder.Configure<App>().UseRouteables<MainViewModel>(
+           configure: services =>
            {
                services.UseRouteablesServices("avares://XAnimals.Avalonia/Assets/icon.ico", messageBoxService);
                services.AddGeneratedRoutes();

@@ -23,7 +23,7 @@ public sealed class OrderViewModel(IRouter router, int id) { }
 
 ### Main view model per host
 
-The menu or tab bar (`IMainRouteables`) is registered by the host with `services.RegisterMainRouteables<MainViewModel>(lifetime)`: `Scoped` on Blazor Server (one per circuit), `Singleton` on Avalonia and MAUI. A `Transient` one is refused with an `ArgumentException`, because each consumer would get another instance than the one the window shows. At start the host calls `IMainRouteables.SelectFirst()`, which selects the first entry when none is selected, the same way on the three hosts.
+The menu or tab bar (`IMainRouteables`) is registered by `UseRouteables<MainViewModel>(...)` of the host (or by `services.RegisterMainRouteables<MainViewModel>()`, which does the same). Its lifetime is the host's: `Scoped` on Blazor (one per circuit), `Singleton` on Avalonia, MAUI and Uno. Pass a lifetime only to override it. A `Transient` one is refused with an `ArgumentException`, because each consumer would get another instance than the one the window shows. At start the host calls `IMainRouteables.SelectFirst()`, which selects the first entry when none is selected, the same way on the four hosts.
 
 ### Modules
 
@@ -43,7 +43,7 @@ public static class OrdersModule
 }
 
 // In the application.
-services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton);
+services.RegisterMainRouteables<MainViewModel>();      // or UseRouteables<MainViewModel>(r => r.AddOrdersModule())
 services.AddOrdersModule();
 ```
 

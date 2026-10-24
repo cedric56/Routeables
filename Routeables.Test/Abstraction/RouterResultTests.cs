@@ -137,7 +137,7 @@ public class RouterResultTests
     public async Task It_works_on_the_router_of_a_region()
     {
         using var provider = Build();
-        var side = provider.GetRegion("side");
+        var side = provider.GetRouter("side");
         await side.GoToAsync("/about", cancellationToken: Ct);
 
         var waiting = side.GoToForResultAsync<string>("/picker", cancellationToken: Ct);

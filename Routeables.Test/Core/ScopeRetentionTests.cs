@@ -81,8 +81,8 @@ public class ScopeRetentionTests
         for (var i = 0; i < count; i++)
         {
             await using var scope = root.CreateAsyncScope();
-            var main = scope.ServiceProvider.GetRegion("main");
-            var side = scope.ServiceProvider.GetRegion("side");
+            var main = scope.ServiceProvider.GetRouter("main");
+            var side = scope.ServiceProvider.GetRouter("side");
             for (var p = 0; p < 3; p++)
             {
                 await main.GoToRouteAsync("/region", template: "/region");

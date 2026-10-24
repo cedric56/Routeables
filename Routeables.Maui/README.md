@@ -14,10 +14,7 @@ The .NET MAUI host of Routeables: the setup call, a routed `ContentView` base, a
 
 ```csharp
 var builder = MauiApp.CreateBuilder();
-builder.UseMauiApp<App>().UseRouteables();
-
-builder.Services.AddGeneratedRoutes();
-builder.Services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton);
+builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes());
 ```
 
 ## A view
@@ -39,7 +36,7 @@ builder.Services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton
 
 - Property injection understands `[RouteableParameter]` and MAUI's `[QueryProperty]`.
 - `RouteableMauiEntry` shows a validation error from an `INotifyDataErrorInfo` context.
-- CommunityToolkit popups and snackbars: use `UseRouteablesCommunityToolkit()` from [`Reshapes`](../Reshapes/README.md) **instead of** `UseRouteables()`.
+- CommunityToolkit popups and snackbars: call `UseCommunityToolkit()` from [`Reshapes`](../Reshapes/README.md) after `UseRouteables`, next to the usual `UseMauiCommunityToolkit()`.
 - On CI, `-p:CiBuild=true` builds only the plain `net10.0` target.
 
 ## Next

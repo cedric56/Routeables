@@ -12,21 +12,22 @@ namespace Reshapes.Razor.MudBlazor;
 public static class Extensions
 {
     /// <summary>
-    /// Registers the Routeables framework, services, routing engine, dialog services, and MudBlazor configurations 
-    /// into the specified service collection.
+    /// Draws the dialogs, content dialogs, task dialogs and notifications with MudBlazor (dialogs and snackbars) and adds MudBlazor itself.
+    /// Call it after <c>UseRouteables</c>; there is no need to call <c>UseRouteablesServices</c> as well.
+    /// <code>
+    /// services.UseRouteablesServer&lt;MainViewModel&gt;(r => r.AddGeneratedRoutes());
+    /// services.UseMudBlazor();
+    /// </code>
     /// </summary>
     /// <param name="services">The service collection to add services to.</param>
-    /// <param name="runtime">The runtime environment settings.</param>
-    /// <param name="onCircuitProviderChanged">Optional callback executed when the circuit provider initializes.</param>
     /// <param name="position">The screen position where toast notifications should appear, defaulting to bottom-left.</param>
     /// <param name="maxDispayments">The maximum number of simultaneous notifications displayed, defaulting to 5.</param>
-    public static void UseRouteablesMudBlazor(this IServiceCollection services,
-        Runtime runtime,
-        Func<IServiceProvider, Task>? onCircuitProviderChanged = null,
+    public static IServiceCollection UseMudBlazor(this IServiceCollection services,
         RouteableNotificationPosition position = RouteableNotificationPosition.BottomLeft,
-        int maxDispayments = 5
-        )
+        int maxDispayments = 5)
     {
+        ArgumentNullException.ThrowIfNull(services);
+
         services.AddMudServices(config =>
         {
             config.SnackbarConfiguration = new SnackbarConfiguration()
@@ -47,8 +48,7 @@ public static class Extensions
         });
 
 
-        services.UseRouteables(runtime, onCircuitProviderChanged);
-        services.UseRouteablesServices(
+        return services.UseRouteablesServices(
             sp => new ReshapeDialogService(sp.GetRequiredService<IDialogService>()),
             sp => new ReshapeContentDialogService(sp.GetRequiredService<IDialogService>()),
             sp => new ReshapeTaskDialogService(sp.GetRequiredService<IDialogService>()),

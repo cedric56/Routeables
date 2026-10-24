@@ -6,7 +6,7 @@ Dialogs and notifications for the [Uno Platform](https://platform.uno/) host. [`
 > Preview, like the host: built by CI, not run on a device yet.
 
 ```csharp
-Services = this.UseRouteables(services => services.UseRouteablesServices());
+Services = this.UseRouteables<MainViewModel>(services => services.UseRouteablesServices());
 ```
 
 ## What it brings

@@ -24,32 +24,50 @@ public static class Extensions
     /// the lock coordinator and the start selection all refer to.
     /// </summary>
     /// <remarks>
-    /// The host decides the lifetime: <see cref="ServiceLifetime.Scoped"/> for Blazor Server (one per circuit),
-    /// <see cref="ServiceLifetime.Singleton"/> for Avalonia and MAUI. A <see cref="ServiceLifetime.Transient"/> one is refused:
+    /// Leave <paramref name="lifetime"/> out: the host decides, <see cref="ServiceLifetime.Scoped"/> for Blazor (one per circuit)
+    /// and <see cref="ServiceLifetime.Singleton"/> for Avalonia, MAUI and Uno. Call <c>UseRouteables</c> first, so the host has said
+    /// which it is. A <see cref="ServiceLifetime.Transient"/> one is refused:
     /// each resolution would be another instance, so the one the window displays would not be the one that is selected,
     /// locked or subscribed.
     /// </remarks>
+    /// <param name="services">The service collection.</param>
+    /// <param name="lifetime">The lifetime of the main view model; the one of the host when omitted.</param>
     /// <exception cref="ArgumentException"><paramref name="lifetime"/> is <see cref="ServiceLifetime.Transient"/>.</exception>
     public static IServiceCollection RegisterMainRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
-        this IServiceCollection services, ServiceLifetime lifetime)
+        this IServiceCollection services, ServiceLifetime? lifetime = null)
         where TMain : class, IMainRouteables
     {
         ArgumentNullException.ThrowIfNull(services);
-        if (lifetime == ServiceLifetime.Transient)
+        var chosen = lifetime ?? services.GetRouteableLifetime();
+        if (chosen == ServiceLifetime.Transient)
             throw new ArgumentException(
                 "The main routeables must be Scoped or Singleton: a Transient one gives each consumer another instance.", nameof(lifetime));
 
         // The container builds TMain under a key, so that it can check its dependencies when it is built. TMain and IMainRouteables
         // both give that instance once the entries of the modules (AddMenuEntries) have been added to its menu: whichever of the two
         // a consumer asks for, the menu is the same.
-        services.Add(new ServiceDescriptor(typeof(TMain), MainKey, typeof(TMain), lifetime));
-        services.Add(new ServiceDescriptor(typeof(TMain), sp => WithModuleEntries(sp.GetRequiredKeyedService<TMain>(MainKey), sp), lifetime));
-        services.Add(new ServiceDescriptor(typeof(IMainRouteables), sp => sp.GetRequiredService<TMain>(), lifetime));
+        services.Add(new ServiceDescriptor(typeof(TMain), MainKey, typeof(TMain), chosen));
+        services.Add(new ServiceDescriptor(typeof(TMain), sp => WithModuleEntries(sp.GetRequiredKeyedService<TMain>(MainKey), sp), chosen));
+        services.Add(new ServiceDescriptor(typeof(IMainRouteables), sp => sp.GetRequiredService<TMain>(), chosen));
 
         // The service that loads modules while the application runs; one for the application, whatever the main's lifetime.
         services.TryAddSingleton<RouteableModules>(sp => new RouteableModules(sp));
         services.TryAddSingleton<IRouteableModules>(sp => sp.GetRequiredService<RouteableModules>());
         return services;
+    }
+
+    /// <summary>
+    /// The lifetime that lives as long as the routers of the host: <see cref="ServiceLifetime.Scoped"/> for Blazor (one per circuit),
+    /// <see cref="ServiceLifetime.Singleton"/> everywhere else. The host says which with <see cref="RouteableHostLifetime"/> when
+    /// <c>UseRouteables</c> runs; before that, or without a host, it is Singleton.
+    /// </summary>
+    public static ServiceLifetime GetRouteableLifetime(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        for (var i = services.Count - 1; i >= 0; i--)
+            if (services[i].ServiceType == typeof(RouteableHostLifetime) && services[i].ImplementationInstance is RouteableHostLifetime host)
+                return host.Lifetime;
+        return ServiceLifetime.Singleton;
     }
 
     /// <summary>
@@ -221,16 +239,6 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Resolves the <see cref="IRouter"/> registered for <paramref name="region"/>
-    /// </summary>
-    /// <param name="provider">The provider (scope) to resolve from.</param>
-    /// <param name="region">The region's identifier/>.</param>
-    /// <exception cref="InvalidOperationException">No region is registered under <paramref name="region"/>.</exception>
-    [EditorBrowsable(EditorBrowsableState.Never)]   // GetRouter(region) is the one to call: it also accepts null for the default router
-    public static IRouter GetRegion(this IServiceProvider provider, string region)
-        => provider.GetRequiredKeyedService<IRouter>(region);
-
-    /// <summary>
     /// The router of a region: the one registered with <c>AddRegion</c> under <paramref name="region"/>, or the default
     /// router when <paramref name="region"/> is <see langword="null"/> or blank.
     /// </summary>
@@ -241,7 +249,7 @@ public static class Extensions
         ArgumentNullException.ThrowIfNull(provider);
         return string.IsNullOrWhiteSpace(region)
             ? provider.GetRequiredService<IRouter>()
-            : provider.GetRegion(region);
+            : provider.GetRequiredKeyedService<IRouter>(region);
     }
 
     /// <summary>
@@ -254,7 +262,7 @@ public static class Extensions
         ArgumentNullException.ThrowIfNull(provider);
         ArgumentNullException.ThrowIfNull(regions);
         foreach (var region in regions)
-            await provider.GetRegion(region).EraseHistoryAsync(cancellationToken);
+            await provider.GetRequiredKeyedService<IRouter>(region).EraseHistoryAsync(cancellationToken);
     }
 
     /// <summary>

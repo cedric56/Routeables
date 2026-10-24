@@ -13,12 +13,11 @@ The Blazor host of Routeables: Blazor Server, Blazor WebAssembly and MAUI Blazor
 ## Set up
 
 ```csharp
-services.UseRouteables(Runtime.BlazorServer);        // or BlazorWebAssembly, MauiHybrid
-services.AddGeneratedRoutes();
-services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Scoped);   // Scoped: one per circuit
+services.UseRouteablesServer<MainViewModel>(      // or UseRouteablesWebAssembly, UseRouteablesHybrid
+    r => r.AddGeneratedRoutes());
 ```
 
-Everything is scoped, so each Blazor Server circuit has its own history. Nothing is discovered for you: the routes and the main view model are the two lines above.
+Everything is scoped, so each Blazor Server circuit has its own history, and so has its menu. Nothing is discovered for you: the main view model and the routes are what you give.
 
 ## A view
 

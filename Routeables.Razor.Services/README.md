@@ -3,7 +3,7 @@
 Dialogs, modals and notifications for the Blazor host, drawn with plain Razor, plus a default `MainLayout`. [`Routeables.Razor`](../Routeables.Razor/README.md) routes without it. Targets **.NET 10**.
 
 ```csharp
-services.UseRouteables(Runtime.BlazorServer);
+services.UseRouteablesServer<MainViewModel>();
 services.UseRouteablesServices(position: RouteableNotificationPosition.BottomLeft, maxDispayments: 5);
 ```
 

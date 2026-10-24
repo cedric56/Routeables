@@ -12,7 +12,7 @@ What the four hosts share: view-model bases that know about routing, the contrac
 | A view model shown in a dialog, closing with a result | `CloseableViewModel<TResult>` (CommunityToolkit) or `CloseableViewModelBase<TResult>` |
 | Your own base (another MVVM library) | `RouteableViewModelBase` for a menu, `RouterViewModelBase` for back and forward only |
 
-Register the menu with `services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton)` (`Scoped` per circuit on Blazor Server). It implements `IMainRouteables`: the entries, the selected one, the current view, and the guard that stops a change of entry while a page blocks leaving.
+Register the menu with `UseRouteables<MainViewModel>(...)` on your host, or `services.RegisterMainRouteables<MainViewModel>()`. The host chooses the lifetime (`Scoped` per circuit on Blazor, `Singleton` elsewhere). It implements `IMainRouteables`: the entries, the selected one, the current view, and the guard that stops a change of entry while a page blocks leaving.
 
 The CommunityToolkit flavour is opt-in: declare it in the project file and `Routeables.Core.targets` adds the package and the sources.
 

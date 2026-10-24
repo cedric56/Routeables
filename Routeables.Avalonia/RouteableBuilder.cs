@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Core;
@@ -16,40 +17,47 @@ public static class RouteableBuilder
 {
     /// <summary>
     /// Adds Routeables to an <see cref="AppBuilder"/> the usual Avalonia way: the application keeps its own constructor
-    /// (<c>AppBuilder.Configure&lt;App&gt;()</c>), and this builds the container with the router, the property injection and the
-    /// theme service, then attaches it. An <see cref="Application"/> that needs the container reads it with <see cref="GetRouteableServices"/>.
+    /// (<c>AppBuilder.Configure&lt;App&gt;()</c>), and this builds the container with the router, the property injection, the
+    /// theme service and <typeparamref name="TMain"/> as the main view model (the menu), then attaches it. An <see cref="Application"/>
+    /// that needs the container reads it with <see cref="GetRouteableServices"/>.
     /// The dialogs, content dialogs, task dialogs and notifications are optional: register them in
-    /// <paramref name="configureExternalServices"/> with <c>UseRouteablesServices(icon)</c> from <c>Routeables.Avalonia.Services</c>.
+    /// <paramref name="configure"/> with <c>UseRouteablesServices(icon)</c> from <c>Routeables.Avalonia.Services</c>.
     /// <code>
     /// AppBuilder.Configure&lt;App&gt;()
-    ///     .UseRouteables(services =>
+    ///     .UseRouteables&lt;MainViewModel&gt;(r =>
     ///     {
-    ///         services.UseRouteablesServices("avares://MyApp/Assets/icon.ico");
-    ///         services.AddGeneratedRoutes();
+    ///         r.UseRouteablesServices("avares://MyApp/Assets/icon.ico");
+    ///         r.AddGeneratedRoutes();
     ///     })
     ///     .UsePlatformDetect();
     /// </code>
     /// </summary>
+    /// <typeparam name="TMain">The main view model.</typeparam>
     /// <param name="builder">The builder to configure.</param>
-    /// <param name="configureExternalServices">Optional callback to register additional services with the container.</param>
+    /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
     /// <param name="afterBuild">Optional callback executed immediately after the service provider is built.</param>
     /// <param name="onDispose">Optional callback executed when the application window closes and disposes.</param>
     /// <returns>The same <see cref="AppBuilder"/>, ready for further setup.</returns>
-    public static AppBuilder UseRouteables(
+    public static AppBuilder UseRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
         this AppBuilder builder,
-        Action<IServiceCollection>? configureExternalServices = null,
+        Action<IServiceCollection>? configure = null,
         Action<IServiceProvider>? afterBuild = null,
         Action? onDispose = null)
+        where TMain : class, IMainRouteables
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        var provider = BuildProvider(configureExternalServices, afterBuild);
+        var provider = BuildProvider(services =>
+        {
+            services.RegisterMainRouteables<TMain>();
+            configure?.Invoke(services);
+        }, afterBuild);
         return Attach(builder, provider, onDispose);
     }
 
     /// <summary>
     /// The container of the running Routeables host, for an <see cref="Application"/> built with
-    /// <see cref="UseRouteables"/> that has no constructor parameter to receive it.
+    /// <see cref="UseRouteables{TMain}"/> that has no constructor parameter to receive it.
     /// </summary>
     /// <exception cref="InvalidOperationException">No Routeables host is running.</exception>
     public static IServiceProvider GetRouteableServices(this Application application)
@@ -93,30 +101,8 @@ public static class RouteableBuilder
         }
     }
 
-    /// <summary>
-    /// Configures an <see cref="AppBuilder"/> for an application-derived type,
-    /// constructing the app instance from the built service provider. Prefer <see cref="UseRouteables"/> when the application
-    /// does not need the provider in its constructor.
-    /// </summary>
-    /// <typeparam name="TApp">The application type to configure.</typeparam>
-    /// <param name="appFactory">A factory that creates the application instance given the built service provider.</param>
-    /// <param name="configureExternalServices">Optional callback to register additional services with the container.</param>
-    /// <param name="afterBuild">Optional callback executed immediately after the service provider is built.</param>
-    /// <param name="onDispose">Optional callback executed when the application window closes and disposes.</param>
-    /// <returns>The configured <see cref="AppBuilder"/>, ready for further setup.</returns>
-    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public static AppBuilder CreateRouteableApp<TApp>(
-       Func<IServiceProvider, TApp> appFactory,
-       Action<IServiceCollection>? configureExternalServices = null,
-       Action<IServiceProvider>? afterBuild = null,
-       Action? onDispose = null) where TApp : Application
-    {
-        var provider = BuildProvider(configureExternalServices, afterBuild);
-        return Attach(AppBuilder.Configure(() => appFactory.Invoke(provider)), provider, onDispose);
-    }
-
     private static IServiceProvider BuildProvider(
-        Action<IServiceCollection>? configureExternalServices,
+        Action<IServiceCollection>? configure,
         Action<IServiceProvider>? afterBuild)
     {
         var services = new ServiceCollection();
@@ -124,7 +110,7 @@ public static class RouteableBuilder
         services.AddRouteableHost(Runtime.Avalonia, new RouteablePropertyEntry(typeof(InjectPropertyAttribute)));
         services.AddSingleton<IRouteableRequestedThemeService, RouteableRequestThemeService>();
 
-        configureExternalServices?.Invoke(services);
+        configure?.Invoke(services);
         var provider = services.BuildRouteableProvider();
         ServiceLocator.Services = provider;
         afterBuild?.Invoke(provider);

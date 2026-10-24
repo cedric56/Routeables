@@ -17,4 +17,4 @@ await coordinator.CoordinateAsync("Orders?status=open/Detail?id=5");
 | `..` | Goes back one entry |
 | leading `/` | Absolute: clears the history of the routers involved first |
 
-`AddRouteCoordinator(lifetime)` takes the lifetime of the routers it drives (`Scoped` on Blazor Server). Types: `IRouteCoordinator`, `RouteCoordination` (parsed, or fluent with `RouteCoordination.Create()`), `RouteSegment`.
+`AddRouteCoordinator()` takes the lifetime of the host, like the main view model; pass one only to override it. Types: `IRouteCoordinator`, `RouteCoordination` (parsed, or fluent with `RouteCoordination.Create()`), `RouteSegment`.

@@ -45,8 +45,8 @@ public class RegionLayoutTests
         await layout.StartAsync(TestContext.Current.CancellationToken);
         await layout.SettledAsync();
 
-        Assert.Equal(1, provider.GetRegion("content").History.Count);
-        Assert.Equal(1, provider.GetRegion("header").History.Count);
+        Assert.Equal(1, provider.GetRouter("content").History.Count);
+        Assert.Equal(1, provider.GetRouter("header").History.Count);
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class RegionLayoutTests
         await layout.ShowAsync(Cats(), TestContext.Current.CancellationToken);
 
         Assert.Equal(3, layout.Moves);
-        Assert.Equal(1, provider.GetRegion("header").History.Count);
+        Assert.Equal(1, provider.GetRouter("header").History.Count);
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public class RegionLayoutTests
         await layout.SettledAsync();
 
         Assert.Equal([nameof(RegionCatsViewModel), nameof(RegionDogsViewModel)], layout.Titles);
-        Assert.Equal(2, provider.GetRegion("header").History.Count);
+        Assert.Equal(2, provider.GetRouter("header").History.Count);
     }
 
     [Fact]
@@ -120,14 +120,14 @@ public class RegionLayoutTests
         await layout.ShowAsync(Cats(), TestContext.Current.CancellationToken);
 
         await layout.StartAsync(TestContext.Current.CancellationToken);
-        Assert.Equal(1, provider.GetRegion("content").History.Count);
+        Assert.Equal(1, provider.GetRouter("content").History.Count);
 
         await layout.ClearAsync(TestContext.Current.CancellationToken);
-        Assert.Equal(0, provider.GetRegion("content").History.Count);
-        Assert.Equal(0, provider.GetRegion("header").History.Count);
+        Assert.Equal(0, provider.GetRouter("content").History.Count);
+        Assert.Equal(0, provider.GetRouter("header").History.Count);
 
         var moves = layout.Moves;
-        await provider.GetRegion("content").GoToRouteAsync(Cats(), TestContext.Current.CancellationToken);
+        await provider.GetRouter("content").GoToRouteAsync(Cats(), TestContext.Current.CancellationToken);
         await layout.SettledAsync();
         Assert.Equal(moves, layout.Moves);
     }

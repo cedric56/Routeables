@@ -19,7 +19,7 @@ public sealed class MainRouteablesLifetimeAnalyzer : DiagnosticAnalyzer
     private static readonly DiagnosticDescriptor TransientMain = new DiagnosticDescriptor(
         DiagnosticId,
         "IMainRouteables registered as transient",
-        "IMainRouteables must be Scoped (Blazor Server) or Singleton (Avalonia, MAUI): a transient one gives each consumer another instance than the one that is displayed. Use RegisterMainRouteables<T>(lifetime).",
+        "IMainRouteables must be Scoped (Blazor Server) or Singleton (Avalonia, MAUI): a transient one gives each consumer another instance than the one that is displayed. Use RegisterMainRouteables<T>().",
         "Routeables",
         DiagnosticSeverity.Warning,
         isEnabledByDefault: true);

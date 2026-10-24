@@ -63,6 +63,6 @@ public class RoutingRegistrationTests
         Assert.Same(main, mainAgain);
         Assert.NotSame(main, side);
         Assert.NotSame(main.History, side.History);
-        Assert.Same(main, provider.GetRegion("main"));
+        Assert.Same(main, provider.GetRouter("main"));
     }
 }

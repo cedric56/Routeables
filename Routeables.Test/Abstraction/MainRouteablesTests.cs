@@ -43,6 +43,29 @@ public class MainRouteablesTests
     }
 
     [Fact]
+    public void Without_a_lifetime_the_main_follows_the_host()
+    {
+        var singleton = new ServiceCollection();
+        singleton.RegisterMainRouteables<FakeMainRouteables>();                       // no host: Singleton
+        var scoped = new ServiceCollection();
+        scoped.AddSingleton(new RouteableHostLifetime(ServiceLifetime.Scoped));     // what the Blazor host registers
+        scoped.RegisterMainRouteables<FakeMainRouteables>();
+
+        Assert.Equal(ServiceLifetime.Singleton, singleton.Last(d => d.ServiceType == typeof(IMainRouteables)).Lifetime);
+        Assert.Equal(ServiceLifetime.Scoped, scoped.Last(d => d.ServiceType == typeof(IMainRouteables)).Lifetime);
+    }
+
+    [Fact]
+    public void A_lifetime_given_wins_over_the_one_of_the_host()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton(new RouteableHostLifetime(ServiceLifetime.Scoped));
+        services.RegisterMainRouteables<FakeMainRouteables>(ServiceLifetime.Singleton);
+
+        Assert.Equal(ServiceLifetime.Singleton, services.Last(d => d.ServiceType == typeof(IMainRouteables)).Lifetime);
+    }
+
+    [Fact]
     public void A_transient_main_is_refused()
     {
         Assert.Throws<ArgumentException>(() => new ServiceCollection().RegisterMainRouteables<FakeMainRouteables>(ServiceLifetime.Transient));

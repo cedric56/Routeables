@@ -17,7 +17,7 @@ public static class Extensions
     /// <summary>
     /// Registers <see cref="IRouteableDialogService"/>, <see cref="IRouteableContentDialogService"/>,
     /// <see cref="IRouteableTaskDialogService"/>, <see cref="IRouteableNotificationService"/> and the <see cref="IMessageBoxService"/>
-    /// that draws them. Call it from the <c>configureExternalServices</c> callback of <c>UseRouteables</c>.
+    /// that draws them. Call it from the <c>configure</c> callback of <c>UseRouteables</c>.
     /// <code>
     /// Services = this.UseRouteables(services => services.UseRouteablesServices());
     /// </code>

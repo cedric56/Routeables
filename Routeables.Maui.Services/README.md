@@ -4,12 +4,12 @@ Dialogs, modal pages and toast notifications for the MAUI host. [`Routeables.Mau
 
 ```csharp
 builder
-    .UseRouteables()
-    .UseRouteablesServices()
-    .UseMauiApp<App>();
+    .UseMauiApp<App>()
+    .UseRouteables<MainViewModel>()
+    .UseRouteablesServices();
 ```
 
-`UseRouteablesServices` takes optional factories to replace a service. For CommunityToolkit.Maui popups and snackbars use `UseRouteablesCommunityToolkit()` from [`Reshapes`](../Reshapes/README.md), which calls both setup methods for you.
+`UseRouteablesServices` takes optional factories to replace a service. For CommunityToolkit.Maui popups and snackbars call `UseCommunityToolkit()` from [`Reshapes`](../Reshapes/README.md) after `UseRouteables`: it replaces the services, so `UseRouteablesServices()` is not needed.
 
 ## What it brings
 

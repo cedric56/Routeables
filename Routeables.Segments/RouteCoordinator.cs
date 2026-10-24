@@ -89,7 +89,7 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
             {
                 router = segment.Region is null
                     ? provider.GetRequiredService<IRouter>()
-                    : provider.GetRegion(segment.Region);
+                    : provider.GetRouter(segment.Region);
             }
             catch (InvalidOperationException ex)
             {

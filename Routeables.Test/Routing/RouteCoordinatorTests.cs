@@ -146,7 +146,7 @@ public class RouteCoordinatorTests
 
         Assert.True(result.Success);
         Assert.IsType<OrdersVm>(provider.GetRequiredService<IRouter>().CurrentViewModel);
-        var side = provider.GetRegion("side");
+        var side = provider.GetRouter("side");
         Assert.Equal("faq", Assert.IsType<SideVm>(side.CurrentViewModel).Topic);
     }
 
