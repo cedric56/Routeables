@@ -38,10 +38,10 @@ public sealed class RouteableTaskDialogSession
     public IReadOnlyList<RouteableDialogButton> Buttons { get; }
 
     /// <summary>Tells the dialog it is about to open (<c>Opening</c>).</summary>
-    public void Opening() => RouteableErrors.Guard(null, "Dialog.Opening", _dialog.Opening);
+    public void Opening() => RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpening, _dialog.Opening);
 
     /// <summary>Tells the dialog it is on screen (<c>Opened</c>).</summary>
-    public void Opened() => RouteableErrors.Guard(null, "Dialog.Opened", _dialog.Opened);
+    public void Opened() => RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpened, _dialog.Opened);
 
     /// <summary>
     /// The user dismissed the dialog (Escape, a click outside). Asks <c>Closing</c>; when it allows it the result is
@@ -49,7 +49,7 @@ public sealed class RouteableTaskDialogSession
     /// </summary>
     public bool TryDismiss()
     {
-        if (RouteableErrors.Guard(null, "TaskDialog.Closing", _dialog.Closing))
+        if (RouteableErrors.Guard(null, RouteableCallbackSources.TaskDialogClosing, _dialog.Closing))
             return false;
 
         Result = RouteableTaskDialogResult.None;
@@ -57,11 +57,11 @@ public sealed class RouteableTaskDialogSession
     }
 
     /// <summary>The dialog is closed: <c>Closed</c> is told. Call it once, whatever the way the dialog closed.</summary>
-    public void Release() => RouteableErrors.Guard(null, "Dialog.Closed", _dialog.Closed);
+    public void Release() => RouteableErrors.Guard(null, RouteableCallbackSources.DialogClosed, _dialog.Closed);
 
     private bool Submit(RouteableTaskDialogResult requested)
     {
-        if (RouteableErrors.Guard(null, "TaskDialog.Closing", _dialog.Closing))
+        if (RouteableErrors.Guard(null, RouteableCallbackSources.TaskDialogClosing, _dialog.Closing))
             return false;
 
         Result = requested;

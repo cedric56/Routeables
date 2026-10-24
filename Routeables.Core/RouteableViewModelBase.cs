@@ -134,7 +134,7 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
     /// </summary>
     /// <param name="exception">The exception that caused the failure.</param>
     protected virtual void OnSelectionFailed(Exception exception)
-        => RouteableErrors.Report(null, "RouteableViewModelBase.Routeable", exception);
+        => RouteableErrors.Report<RouteableViewModelBase>(null, exception);
 
     /// <summary>
     /// Selects an entry and waits for its view to be shown. Selections run one at a time; a selection that a newer one has replaced does nothing.

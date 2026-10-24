@@ -433,7 +433,7 @@ public class RouteableUrlSyncTests
 
         await Fixture.Until(() => routing.Calls.Count > 0);
         Assert.Equal([("/home", true)], routing.Calls);
-        Assert.Contains(sink.Sources, s => s.StartsWith("RouteableUrlSync.Open"));
+        Assert.Contains(sink.Sources, s => s.StartsWith(nameof(RouteableUrlSync) + "."));
         Assert.IsType<HomeVm>(router.CurrentViewModel);
     }
 

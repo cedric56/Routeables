@@ -54,7 +54,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         try { await ApplyAsync(Relative(e.Location)); }
         catch (Exception ex)
         {
-            RouteableErrors.Report(provider, "RouteableUrlSync.LocationChanged", ex);
+            RouteableErrors.Report<RouteableUrlSync>(provider, ex);
             // The address must not keep showing a page that is not displayed.
             if (AddressOf(router.History.Current) is { } current)
                 Show(current, replace: true);
@@ -91,7 +91,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             }
             catch (Exception ex)    // a typed or refreshed address the page cannot be built for must not take the app down
             {
-                RouteableErrors.Report(provider, $"RouteableUrlSync.Open '{path}'", ex);
+                RouteableErrors.Report<RouteableUrlSync>(provider, ex, path);
                 result = RouteableResult.Fail(ex);
             }
             // The page was not chosen in the menu: make the layout display it.
@@ -117,7 +117,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         try { navigation.NavigateTo(route, replace: replace); }
         catch (Exception ex)    // for example while the page is only being prerendered
         {
-            RouteableErrors.Report(provider, $"RouteableUrlSync.Show '{route}'", ex);
+            RouteableErrors.Report<RouteableUrlSync>(provider, ex, route);
         }
     }
 

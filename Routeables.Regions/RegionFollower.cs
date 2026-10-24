@@ -73,12 +73,12 @@ public sealed class RegionFollower : IDisposable
             // Told to whoever follows the failures. With nobody listening (or a listener that throws) it is reported instead of lost.
             if (Failed is not { } failed)
             {
-                RouteableErrors.Report(null, "RegionFollower.Update", ex);
+                RouteableErrors.Report<RegionFollower>(null, ex);
                 return;
             }
 
             try { failed(this, ex); }
-            catch (Exception handler) { RouteableErrors.Report(null, "RegionFollower.Failed", handler); }
+            catch (Exception handler) { RouteableErrors.Report<RegionFollower>(null, handler, nameof(Failed)); }
         }
     }
 

@@ -50,18 +50,18 @@ public class ReshapeMessageBoxService : IMessageBoxService
                 dialog.PrimaryButtonCommandParameter = @params.PrimaryButtonCommandParameter;
                 dialog.SecondaryButtonCommand = @params.SecondaryButtonCommand;
                 dialog.SecondaryButtonCommandParameter = @params.SecondaryButtonCommandParameter;
-                dialog.Opening += opening = (sender, args) => RouteableErrors.Guard(null, "Dialog.Opening", @params.Opening);
-                dialog.Closing += closing = (sender, args) => args.Cancel = RouteableErrors.Guard(null, "ContentDialog.Closing", @params.Closing, args.Result.ToString());
-                dialog.PrimaryButtonClick += primaryButtonClick = (sender, args) => RouteableErrors.Guard(null, "ContentDialog.PrimaryButtonClick", @params.PrimaryButtonClick);
-                dialog.SecondaryButtonClick += secondaryButtonClick = (sender, args) => RouteableErrors.Guard(null, "ContentDialog.SecondaryButtonClick", @params.SecondaryButtonClick);
-                dialog.CloseButtonClick += closeButtonClick = (sender, args) => RouteableErrors.Guard(null, "ContentDialog.CloseButtonClick", @params.CloseButtonClick);
+                dialog.Opening += opening = (sender, args) => RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpening, @params.Opening);
+                dialog.Closing += closing = (sender, args) => args.Cancel = RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogClosing, @params.Closing, args.Result.ToString());
+                dialog.PrimaryButtonClick += primaryButtonClick = (sender, args) => RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogPrimaryButtonClick, @params.PrimaryButtonClick);
+                dialog.SecondaryButtonClick += secondaryButtonClick = (sender, args) => RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogSecondaryButtonClick, @params.SecondaryButtonClick);
+                dialog.CloseButtonClick += closeButtonClick = (sender, args) => RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogCloseButtonClick, @params.CloseButtonClick);
                 dialog.Opened += opened = (sender, args) =>
                 {
-                    RouteableErrors.Guard(null, "Dialog.Opened", @params.Opened);
+                    RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpened, @params.Opened);
                 };
                 dialog.Closed += closed = (sender, args) =>
                 {
-                    RouteableErrors.Guard(null, "Dialog.Closed", @params.Closed);
+                    RouteableErrors.Guard(null, RouteableCallbackSources.DialogClosed, @params.Closed);
                     dialog.Opened -= opened;
                     dialog.Opening -= opening;
                     dialog.Closing -= closing;
@@ -98,12 +98,12 @@ public class ReshapeMessageBoxService : IMessageBoxService
             XamlRoot = topLevel
         };
 
-        taskDialog.Opening += opening = (sender, args) => RouteableErrors.Guard(null, "Dialog.Opening", @params.Opening);
-        taskDialog.Opened += opened = (sender, args) => RouteableErrors.Guard(null, "Dialog.Opened", @params.Opened);
-        taskDialog.Closing += closing = (sender, args) => args.Cancel = RouteableErrors.Guard(null, "TaskDialog.Closing", @params.Closing);
+        taskDialog.Opening += opening = (sender, args) => RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpening, @params.Opening);
+        taskDialog.Opened += opened = (sender, args) => RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpened, @params.Opened);
+        taskDialog.Closing += closing = (sender, args) => args.Cancel = RouteableErrors.Guard(null, RouteableCallbackSources.TaskDialogClosing, @params.Closing);
         taskDialog.Closed += closed = (sender, args) =>
         {
-            RouteableErrors.Guard(null, "Dialog.Closed", @params.Closed);
+            RouteableErrors.Guard(null, RouteableCallbackSources.DialogClosed, @params.Closed);
 
             taskDialog.Opened -= opened;
             taskDialog.Opening -= opening;

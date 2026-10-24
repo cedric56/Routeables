@@ -30,6 +30,26 @@ public class RouteableErrorsGuardTests
         public bool Saw(string text) { lock (Lines) return Lines.Any(l => l.Contains(text)); }
     }
 
+    private sealed class Owner<T>
+    {
+        public static void Fail(IServiceProvider provider, string? detail = null)
+            => RouteableErrors.Report<Owner<T>>(provider, new InvalidOperationException("boom"), detail);
+    }
+
+    [Fact]
+    public void The_source_of_a_report_is_the_owner_and_the_method_that_caught_the_error()
+    {
+        var (provider, sink) = WithSink();
+
+        Owner<int>.Fail(provider);
+        Owner<int>.Fail(provider, "/orders");
+        RouteableErrors.Report(provider, new InvalidOperationException("boom"), typeof(RouteableErrors), "detail");
+
+        Assert.Equal(
+            ["Owner.Fail", "Owner.Fail '/orders'", $"{nameof(RouteableErrors)}.{nameof(The_source_of_a_report_is_the_owner_and_the_method_that_caught_the_error)} 'detail'"],
+            sink.Reported.Select(r => r.Source));
+    }
+
     private static (ServiceProvider Provider, Sink Sink) WithSink()
     {
         var sink = new Sink();

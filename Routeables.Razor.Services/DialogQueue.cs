@@ -61,7 +61,7 @@ internal abstract class DialogQueue<TRequest, TResult> : IDisposable
 
         try
         {
-            RouteableErrors.Guard(null, "Dialog.Closed", closed);
+            RouteableErrors.Guard(null, RouteableCallbackSources.DialogClosed, closed);
         }
         finally
         {

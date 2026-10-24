@@ -38,7 +38,7 @@ internal class ReshapeNotificationService(ISnackbar SnackbarService) : IRouteabl
                     config.VisibleStateDuration = (int)expiration.Value.TotalMilliseconds;
                 config.OnClick = snackbar =>
                 {
-                    RouteableErrors.Guard(null, "Toast.OnClick", onClick);
+                    RouteableErrors.Guard(null, RouteableCallbackSources.ToastOnClick, onClick);
                     return Task.CompletedTask;
                 };
             });
@@ -49,7 +49,7 @@ internal class ReshapeNotificationService(ISnackbar SnackbarService) : IRouteabl
             closeHandler = (snackbar) =>
             {
                 snack.OnClose -= closeHandler;   // detach immediately, fire-once
-                RouteableErrors.Guard(null, "Toast.OnClose", onClose);
+                RouteableErrors.Guard(null, RouteableCallbackSources.ToastOnClose, onClose);
             };
             snack.OnClose += closeHandler;
         }

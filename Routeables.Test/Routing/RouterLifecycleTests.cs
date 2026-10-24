@@ -87,7 +87,7 @@ public class RouterLifecycleTests
 
         Assert.Same(routingFailure, thrown);
         var reported = Assert.Single(sink.Reported);
-        Assert.Equal("RouterLifecycle.Recover", reported.Source);
+        Assert.StartsWith("RouterLifecycle.", reported.Source);
         Assert.Same(recoveryFailure, reported.Exception);
     }
 

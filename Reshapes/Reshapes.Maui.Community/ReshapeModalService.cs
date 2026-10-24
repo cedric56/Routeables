@@ -67,7 +67,7 @@ public class ReshapeModalService(IRouteableDialogWindowContext context) : IRoute
        TResult? result)
         {
             try { await CloseOnceAsync(result); }
-            catch (Exception ex) { RouteableErrors.Report(null, "ModalPopup.Close", ex); }   // async void
+            catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(ReshapeModalService)); }   // async void
         }
 
         /// <summary>Stops listening to the view model.</summary>

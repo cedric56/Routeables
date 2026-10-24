@@ -82,7 +82,7 @@ internal abstract class RouteablePopupPage<TResult> : ContentPage
         catch (Exception ex)
         {
             // Callers are event handlers (async void): an exception here would end the application.
-            RouteableErrors.Report(null, "RouteablePopupPage.Close", ex);
+            RouteableErrors.Report(null, ex, typeof(RouteablePopupPage<TResult>));
         }
         finally
         {

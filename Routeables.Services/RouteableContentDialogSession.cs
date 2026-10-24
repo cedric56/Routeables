@@ -38,10 +38,10 @@ public sealed class RouteableContentDialogSession
     public IReadOnlyList<RouteableDialogButton> Buttons { get; }
 
     /// <summary>Tells the dialog it is about to open (<c>Opening</c>).</summary>
-    public void Opening() => RouteableErrors.Guard(null, "Dialog.Opening", _dialog.Opening);
+    public void Opening() => RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpening, _dialog.Opening);
 
     /// <summary>Tells the dialog it is on screen (<c>Opened</c>).</summary>
-    public void Opened() => RouteableErrors.Guard(null, "Dialog.Opened", _dialog.Opened);
+    public void Opened() => RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpened, _dialog.Opened);
 
     /// <summary>
     /// The user dismissed the dialog (Escape, a click outside). Asks <c>Closing</c>; when it allows it the result is
@@ -49,7 +49,7 @@ public sealed class RouteableContentDialogSession
     /// </summary>
     public bool TryDismiss()
     {
-        if (RouteableErrors.Guard(null, "ContentDialog.Closing", _dialog.Closing, nameof(RouteableContentDialogResult.None)))
+        if (RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogClosing, _dialog.Closing, nameof(RouteableContentDialogResult.None)))
             return false;
 
         Result = RouteableContentDialogResult.None;
@@ -77,7 +77,7 @@ public sealed class RouteableContentDialogSession
     public void Release()
     {
         _dialog.Close = null;
-        RouteableErrors.Guard(null, "Dialog.Closed", _dialog.Closed);
+        RouteableErrors.Guard(null, RouteableCallbackSources.DialogClosed, _dialog.Closed);
     }
 
     private List<RouteableDialogButton> CreateButtons()
@@ -108,9 +108,9 @@ public sealed class RouteableContentDialogSession
         if (command is not null)
             command.Execute(parameter);
         else
-            RouteableErrors.Guard(null, "ContentDialog.Click", click);
+            RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogClick, click);
 
-        if (RouteableErrors.Guard(null, "ContentDialog.Closing", _dialog.Closing, requested.ToString()))
+        if (RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogClosing, _dialog.Closing, requested.ToString()))
             return false;
 
         Result = requested;

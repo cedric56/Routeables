@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Routeables.Abstraction;
@@ -53,6 +54,29 @@ public static class RouteableErrors
             // A sink that fails is not reported again.
         }
     }
+
+    /// <summary>
+    /// <see cref="Report(IServiceProvider?, string, Exception)"/> with a source the compiler writes: <c>Owner.Member</c>, where the member is
+    /// the method that caught the error. No name is typed by hand, so a renamed method renames its source.
+    /// </summary>
+    /// <param name="provider">Where to find the <see cref="IRouteableErrorSink"/>.</param>
+    /// <param name="exception">The error that was not propagated.</param>
+    /// <param name="owner">The type that caught it (<c>typeof(RouterLifecycle)</c>; use this overload for a static class).</param>
+    /// <param name="detail">What the error is about (a route, a type name); added after the source in quotes.</param>
+    /// <param name="member">Filled by the compiler with the name of the calling method.</param>
+    public static void Report(IServiceProvider? provider, Exception exception, Type owner, string? detail = null, [CallerMemberName] string member = "")
+    {
+        var name = owner.Name;
+        var tick = name.IndexOf('`');
+        if (tick >= 0)
+            name = name[..tick];
+
+        Report(provider, detail is null ? $"{name}.{member}" : $"{name}.{member} '{detail}'", exception);
+    }
+
+    /// <summary><see cref="Report(IServiceProvider?, Exception, Type, string?, string)"/> for the type <typeparamref name="TOwner"/>.</summary>
+    public static void Report<TOwner>(IServiceProvider? provider, Exception exception, string? detail = null, [CallerMemberName] string member = "")
+        => Report(provider, exception, typeof(TOwner), detail, member);
 
     /// <summary>
     /// Runs a callback that belongs to the application (a dialog's <c>Opened</c>, a toast's <c>OnClick</c>...) from a place where an

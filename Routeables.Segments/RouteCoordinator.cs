@@ -70,7 +70,7 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
     }
 
     private void ReportFailure(Exception exception)
-        => RouteableErrors.Report(provider, "RouteCoordinator.CoordinateAsync", exception);
+        => RouteableErrors.Report<RouteCoordinator>(provider, exception);
 
     private static Task<RouteableResult> RunAsync(Step step, CancellationToken cancellationToken)
         => step.Segment.Kind == RouteSegmentKind.Back
@@ -144,5 +144,5 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
 
     // Observers must never break, or mask the error of, a coordination (same rule as Router).
     private void Raise<T>(EventHandler<T>? handlers, T args) where T : EventArgs
-        => RouteableEvents.Raise(provider, "RouteCoordinator", handlers, this, args);
+        => RouteableEvents.Raise(provider, typeof(RouteCoordinator), handlers, this, args);
 }

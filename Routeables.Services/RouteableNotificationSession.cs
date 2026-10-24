@@ -57,7 +57,7 @@ public sealed class RouteableNotificationSession
     public bool IsClosed => Volatile.Read(ref _closed) == 1;
 
     /// <summary>The user tapped the notification: runs its click callback, if any. The host then closes the notification.</summary>
-    public void Click() => RouteableErrors.Guard(null, "Notification.Click", _onClick);
+    public void Click() => RouteableErrors.Guard(null, RouteableCallbackSources.NotificationClick, _onClick);
 
     /// <summary>
     /// The notification is gone: runs its close callback, once. Returns <see langword="true"/> the first time and
@@ -68,7 +68,7 @@ public sealed class RouteableNotificationSession
         if (Interlocked.Exchange(ref _closed, 1) != 0)
             return false;
 
-        RouteableErrors.Guard(null, "Notification.Close", _onClose);
+        RouteableErrors.Guard(null, RouteableCallbackSources.NotificationClose, _onClose);
         return true;
     }
 }

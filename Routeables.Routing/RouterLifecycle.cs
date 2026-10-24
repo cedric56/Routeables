@@ -47,7 +47,7 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
             catch (Exception recovery)
             {
                 // Recovery itself failed. Do not hide the original exception: it is thrown below; this one is reported.
-                RouteableErrors.Report(provider, "RouterLifecycle.Recover", recovery);
+                RouteableErrors.Report<RouterLifecycle>(provider, recovery);
             }
 
             throw;
@@ -104,7 +104,7 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
             catch (Exception ex)
             {
                 // Same road as every other error of the library: the sink the application registered, a trace otherwise.
-                RouteableErrors.Report(provider, $"{target.GetType().Name}.OnEntered/OnLeft", ex);
+                RouteableErrors.Report<RouterLifecycle>(provider, ex, target.GetType().Name);
             }
         }
     }
@@ -167,7 +167,7 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
                     if (target is IAsyncDisposable ad) { _destroyed.TryAdd(target, target); await ad.DisposeAsync(); }
                     else if (target is IDisposable d) { _destroyed.TryAdd(target, target); d.Dispose(); }
                 }
-                catch (Exception ex) { RouteableErrors.Report(provider, "RouterLifecycle.Destroy", ex); }   // cleanup must never fail a navigation
+                catch (Exception ex) { RouteableErrors.Report<RouterLifecycle>(provider, ex); }   // cleanup must never fail a navigation
             }
         }
     }

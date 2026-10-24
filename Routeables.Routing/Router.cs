@@ -52,7 +52,7 @@ internal class Router(
 
     // Observers must never break, or mask the error of, a route change.
     private void Raise<T>(EventHandler<T>? handlers, object sender, T args) where T : EventArgs
-        => RouteableEvents.Raise(provider, "Router", handlers, sender, args);
+        => RouteableEvents.Raise(provider, typeof(Router), handlers, sender, args);
 
     // Call only while the gate is held.
     private async Task<RouteableResult> ObserveAsync(

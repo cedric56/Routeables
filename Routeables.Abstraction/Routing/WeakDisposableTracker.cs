@@ -48,7 +48,7 @@ internal sealed class WeakDisposableTracker : IDisposable, IAsyncDisposable
                 if (item is IDisposable d) d.Dispose();
                 else if (item is IAsyncDisposable a) a.DisposeAsync().AsTask().GetAwaiter().GetResult();
             }
-            catch (Exception ex) { RouteableErrors.Report(null, "WeakDisposableTracker.Dispose", ex); }
+            catch (Exception ex) { RouteableErrors.Report<WeakDisposableTracker>(null, ex); }
         }
     }
 
@@ -61,7 +61,7 @@ internal sealed class WeakDisposableTracker : IDisposable, IAsyncDisposable
                 if (item is IAsyncDisposable a) await a.DisposeAsync();
                 else if (item is IDisposable d) d.Dispose();
             }
-            catch (Exception ex) { RouteableErrors.Report(null, "WeakDisposableTracker.DisposeAsync", ex); }
+            catch (Exception ex) { RouteableErrors.Report<WeakDisposableTracker>(null, ex); }
         }
     }
 

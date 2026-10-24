@@ -32,6 +32,6 @@ public class ReshapeNotificationService(IRouteableDialogWindowContext context) :
     private static async Task DisplayAsync(Page page, string message, Action? onClick, TimeSpan? expiration)
     {
         try { await page.DisplaySnackbar(message, onClick, duration: expiration); }
-        catch (Exception ex) { RouteableErrors.Report(null, "ReshapeNotificationService.Show", ex); }
+        catch (Exception ex) { RouteableErrors.Report<ReshapeNotificationService>(null, ex); }
     }
 }

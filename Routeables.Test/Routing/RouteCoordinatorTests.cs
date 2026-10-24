@@ -275,7 +275,7 @@ public class RouteCoordinatorTests
         private readonly List<(string Source, Exception Exception)> _all = [];
 
         // The test setup injects [Param] properties from the container, which reports its own errors: only the coordinator's count here.
-        public List<(string Source, Exception Exception)> Reported => _all.Where(r => r.Source == "RouteCoordinator.CoordinateAsync").ToList();
+        public List<(string Source, Exception Exception)> Reported => _all.Where(r => r.Source.StartsWith(nameof(RouteCoordinator) + ".")).ToList();
         public void Report(string source, Exception exception) => _all.Add((source, exception));
     }
 
@@ -290,7 +290,7 @@ public class RouteCoordinatorTests
 
         Assert.False(result.Success);
         var reported = Assert.Single(sink.Reported);
-        Assert.Equal("RouteCoordinator.CoordinateAsync", reported.Source);
+        Assert.StartsWith(nameof(RouteCoordinator) + ".", reported.Source);
         Assert.Same(result.Exception, reported.Exception);
     }
 

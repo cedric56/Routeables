@@ -50,7 +50,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
                 // Loading a name again does nothing: a button clicked twice is not an error. Another way to add the same name is probably one:
                 // the second module is not loaded, and the one that was is returned.
                 if (assembly is null && !add.Equals(known.Add))
-                    RouteableErrors.Report(root, "IRouteableModules.Load", new InvalidOperationException(
+                    RouteableErrors.Report<RouteableModules>(root, new InvalidOperationException(
                         $"The module '{name}' is already loaded, with another method: this one was not run."));
                 return known.Info;
             }

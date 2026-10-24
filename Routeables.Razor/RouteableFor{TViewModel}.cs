@@ -108,7 +108,7 @@ public partial class RouteableFor<[DynamicallyAccessedMembers(DynamicallyAccesse
         // between the event and the render, which is not an error.
         try { await InvokeAsync(StateHasChanged); }
         catch (ObjectDisposedException) { }
-        catch (Exception ex) { RouteableErrors.Report(null, "RouteableFor.LockChanged", ex); }
+        catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(RouteableFor<TView, TViewModel>)); }
     }
 
     /// <summary>

@@ -59,7 +59,7 @@ public class RouterSwallowedErrorTests
 
         Assert.True(result.Success);
         Assert.Single(sink!.Reported);
-        Assert.Equal("RouterLifecycle.Destroy", sink.Reported[0].Source);
+        Assert.StartsWith("RouterLifecycle.Destroy", sink.Reported[0].Source);
     }
 
     [Fact]

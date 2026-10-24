@@ -100,20 +100,20 @@
     /// <summary>
     /// Handles changes to the current active view by triggering a UI state refresh.
     /// </summary>
-    private async void OnViewChanged(object? sender, object? view) => await RefreshAsync("RouteableForm.ViewChanged");
+    private async void OnViewChanged(object? sender, object? view) => await RefreshAsync();
 
     /// <summary>
     /// Handles lock state changes on the view model by triggering a UI state refresh.
     /// </summary>
-    private async void OnLockChanged(object? sender, EventArgs e) => await RefreshAsync("RouteableForm.LockChanged");
+    private async void OnLockChanged(object? sender, EventArgs e) => await RefreshAsync();
 
     // These are event handlers (async void): an exception would reach the circuit. A form removed between the event and
     // the render is not an error.
-    private async Task RefreshAsync(string source)
+    private async Task RefreshAsync([System.Runtime.CompilerServices.CallerMemberName] string member = "")
     {
         try { await InvokeAsync(StateHasChanged); }
         catch (ObjectDisposedException) { }
-        catch (Exception ex) { RouteableErrors.Report(null, source, ex); }
+        catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(RouteableForm), member: member); }
     }
 
     /// <summary>

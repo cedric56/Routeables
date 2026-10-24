@@ -153,7 +153,7 @@ public static class RouteableBuilder
                         // The main view model is a singleton (RegisterMainRouteables refuses a transient one), so this is the
                         // instance the window displays.
                         try { provider.GetService<IMainRouteables>()?.SelectFirst(); }
-                        catch (Exception ex) { RouteableErrors.Report(provider, "RouteableBuilder.SelectFirst", ex); }   // raised from an event: it must not end the application
+                        catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(RouteableBuilder)); }   // raised from an event: it must not end the application
 
                         topLevel?.Closed += OnClosed;
 
@@ -162,7 +162,7 @@ public static class RouteableBuilder
                             topLevel?.Closed -= OnClosed;
 
                             try { onDispose?.Invoke(); }
-                            catch (Exception ex) { RouteableErrors.Report(provider, "RouteableBuilder.OnDispose", ex); }   // the provider is still disposed below
+                            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(RouteableBuilder)); }   // the provider is still disposed below
 
                             // The static locator must not keep serving the service of a host that is gone (a second host
                             // in the same process, or the next test).
