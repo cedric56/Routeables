@@ -21,22 +21,41 @@ public partial class RouteablesShell : Shell
         BindingContext = vm;
 
         foreach (var routeable in vm.Routeables)
-        {
-            // The view produced by the router is shown inside this host.
-            var host = new ContentView();
-            hosts.Add(host);
-
-            Items.Add(new ShellContent
-            {
-                Title = routeable.DisplayName,
-                Icon = routeable.Source as ImageSource,
-                Content = BuildPage(routeable, host)
-            });
-        }
+            AddItem(routeable, hosts.Count);
 
         // The content of the first item is resolved from the start: its route change begins now, not when the shell appears.
         vm.SelectFirst();
     }
+
+    // An item for an entry, at its place in the collection: the view produced by the router is shown inside its host.
+    private void AddItem(IRouteableEntry routeable, int index)
+    {
+        var host = new ContentView();
+        index = Math.Clamp(index, 0, hosts.Count);
+        hosts.Insert(index, host);
+
+        ShellItem item = new ShellContent
+        {
+            Title = routeable.DisplayName,
+            Icon = routeable.Source as ImageSource,
+            Content = BuildPage(routeable, host)
+        };
+        Items.Insert(index, item);
+
+        // The entry shown keeps its item: an item put before it moves its index.
+        if (shown >= index)
+            shown++;
+    }
+
+    // An entry added while the application runs (a module loaded on demand, IRouteableModules.Load) gets its item at its place in the
+    // collection (AddMenuEntries chooses it). Other changes of the collection are not followed.
+    private void OnRouteablesChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) => OnUiThread(() =>
+    {
+        if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add || e.NewItems is null) return;
+        var index = e.NewStartingIndex >= 0 ? e.NewStartingIndex : vm.Routeables.Count - e.NewItems.Count;
+        foreach (IRouteableEntry routeable in e.NewItems)
+            AddItem(routeable, index++);
+    });
 
     // A locked entry (see ILockCoordinator) is greyed in the flyout and the tabs. Which of the item, its section or its content a
     // platform reads depends on how it draws them (a ShellContent put in Items is wrapped in an item and a section), so all three are set.
@@ -99,13 +118,16 @@ public partial class RouteablesShell : Shell
         {
             vm.LockChanged -= OnLockChanged;
             vm.CurrentViewChanged -= OnCurrentViewChanged;
+            vm.Routeables.CollectionChanged -= OnRouteablesChanged;
             following = false;
         }
         else if (args.NewHandler is not null && !following)
         {
             vm.LockChanged += OnLockChanged;
             vm.CurrentViewChanged += OnCurrentViewChanged;
+            vm.Routeables.CollectionChanged += OnRouteablesChanged;
             following = true;
+            SyncItems();                              // the entries added before the shell had a handler
             OnLockChanged(this, EventArgs.Empty);     // the locks set before the shell had a handler
             ShowCurrent();                            // the view of the first entry, if its navigation ended before
         }
@@ -131,6 +153,18 @@ public partial class RouteablesShell : Shell
     }
 
     // The description (if any) is shown as a caption above the view, since a flyout item has no subtitle.
+    // The entries added between the constructor and the handler (a module loaded in that time) are in the collection but not in the shell.
+    private void SyncItems()
+    {
+        if (hosts.Count == vm.Routeables.Count) return;
+
+        Items.Clear();
+        hosts.Clear();
+        shown = -1;
+        foreach (var routeable in vm.Routeables)
+            AddItem(routeable, hosts.Count);
+    }
+
     private static ContentPage BuildPage(IRouteableEntry routeable, ContentView host)
     {
         if (string.IsNullOrWhiteSpace(routeable.Description))

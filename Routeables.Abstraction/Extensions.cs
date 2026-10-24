@@ -66,13 +66,18 @@ public static class Extensions
     /// Builds the entries. It runs once for each main view model, so each one has entries of its own (a lock or a selection is not
     /// shared between the circuits of a Blazor Server application): return new entries, not ones kept in a field.
     /// </param>
+    /// <param name="index">
+    /// Where the entries go in the menu: <c>0</c> puts them first, <c>1</c> after the first entry, and so on. It counts the entries the menu has
+    /// when the module is added to it (the ones of the main view model and of the modules added before), and a value past the end, like the
+    /// default <see langword="null"/>, puts them last. The entries of one module stay together, in the order they were built.
+    /// </param>
     /// <remarks>
-    /// The entries come after the ones of the main view model, in the order the modules were added. This works with
+    /// By default the entries come after the ones of the main view model, in the order the modules were added. This works with
     /// <see cref="RegisterMainRouteables{TMain}"/>, whether a consumer asks for <typeparamref name="TMain"/> or for
     /// <see cref="IMainRouteables"/>. Adding the same module twice adds its entries once (the same <paramref name="entries"/> function);
     /// a function that captures something different on each call counts as another module.
     /// </remarks>
-    public static IServiceCollection AddMenuEntries(this IServiceCollection services, Func<IEnumerable<IRouteableEntry>> entries)
+    public static IServiceCollection AddMenuEntries(this IServiceCollection services, Func<IEnumerable<IRouteableEntry>> entries, int? index = null)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(entries);
@@ -81,7 +86,7 @@ public static class Extensions
         if (services.Any(d => d.ServiceType == typeof(MenuEntries) && d.ImplementationInstance is MenuEntries known && known.Build.Equals(entries)))
             return services;
 
-        services.AddSingleton(new MenuEntries(entries));
+        services.AddSingleton(new MenuEntries(entries, index));
         return services;
     }
 
@@ -91,8 +96,7 @@ public static class Extensions
     private static IMainRouteables WithModuleEntries(IMainRouteables main, IServiceProvider provider)
     {
         foreach (var module in provider.GetServices<MenuEntries>())
-            foreach (var entry in module.Build())
-                main.Routeables.Add(entry);
+            module.AddTo(main);
 
         // The modules loaded while running: the ones already loaded add their entries now, the next ones when they are loaded.
         provider.GetService<RouteableModules>()?.Attach(main);

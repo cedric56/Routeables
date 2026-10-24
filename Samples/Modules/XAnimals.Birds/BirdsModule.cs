@@ -22,5 +22,6 @@ public static class BirdsModule
             [
                 new RouteableEntry<BirdsViewModel>("Birds", AnimalIcons.Bird, route: Route, template: Route,
                     description: string.Join(Environment.NewLine, "A module", "AddMenuEntries"))
-            ]);
+
+            ], 10);
 }

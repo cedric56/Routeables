@@ -50,8 +50,13 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
         base.OnInitialized();
         Main.LockChanged += LockChanged;
         Main.CurrentViewChanged += CurrentViewChanged;
+        Main.Routeables.CollectionChanged += RouteablesChanged;
         Service.RequestedThemeChanged += ThemeChanged;
     }
+
+    // An entry added while the application runs (a module loaded on demand, IRouteableModules.Load): the menu is drawn again.
+    private async void RouteablesChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        => await RefreshAsync("MainLayout.RouteablesChanged");
 
     private async void LockChanged(object? sender, EventArgs e) => await RefreshAsync("MainLayout.LockChanged");
 
@@ -116,6 +121,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     {
         Main.LockChanged -= LockChanged;
         Main.CurrentViewChanged -= CurrentViewChanged;
+        Main.Routeables.CollectionChanged -= RouteablesChanged;
         Service.RequestedThemeChanged -= ThemeChanged;
     }
 }

@@ -65,6 +65,36 @@ public class MainRouteablesTests
     }
 
     [Fact]
+    public void A_module_can_choose_where_its_entries_go_in_the_menu()
+    {
+        var services = new ServiceCollection();
+        services.RegisterMainRouteables<FakeMainRouteables>(ServiceLifetime.Singleton);
+        services.AddMenuEntries(() => [View("first"), View("second")], index: 0);
+        services.AddMenuEntries(() => [View("middle")], index: 1);
+        services.AddMenuEntries(() => [View("far")], index: 99);          // past the end: last
+        services.AddMenuEntries(() => [View("last")]);
+        using var provider = services.BuildServiceProvider();
+
+        var main = provider.GetRequiredService<IMainRouteables>();
+
+        Assert.Equal(["first", "middle", "second", "far", "last"], main.Routeables.Select(entry => entry.DisplayName));
+    }
+
+    [Fact]
+    public void A_module_loaded_while_running_goes_where_it_asked()
+    {
+        var services = new ServiceCollection();
+        services.RegisterMainRouteables<FakeMainRouteables>(ServiceLifetime.Singleton);
+        services.AddMenuEntries(() => [View("home"), View("about")]);
+        using var provider = services.BuildServiceProvider();
+        var main = provider.GetRequiredService<IMainRouteables>();
+
+        provider.GetRequiredService<IRouteableModules>().Load("Orders", s => s.AddMenuEntries(() => [View("orders")], index: 1));
+
+        Assert.Equal(["home", "orders", "about"], main.Routeables.Select(entry => entry.DisplayName));
+    }
+
+    [Fact]
     public void The_entries_of_a_module_are_added_once_to_the_one_main_of_a_scope()
     {
         var services = new ServiceCollection();

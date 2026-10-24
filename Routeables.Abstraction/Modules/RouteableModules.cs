@@ -73,8 +73,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
         }
 
         foreach (var (main, menu) in pending)
-            foreach (var entry in menu.Build())
-                main.Routeables.Add(entry);
+            menu.AddTo(main);
 
         ModuleLoaded?.Invoke(this, info);
         return info;
@@ -115,8 +114,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
         }
 
         foreach (var menu in menus)
-            foreach (var entry in menu.Build())
-                main.Routeables.Add(entry);
+            menu.AddTo(main);
     }
 
     private List<IMainRouteables> AliveMains()
