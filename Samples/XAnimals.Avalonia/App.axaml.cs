@@ -26,7 +26,8 @@ public partial class App : Application
         Action? onAppDispose = null)
     {
         // The usual Avalonia shape: the application has its own constructor, Routeables is added to the builder.
-        return AppBuilder.Configure<App>().UseRouteables<MainViewModel>(
+        return AppBuilder.Configure<App>()
+            .UseRouteables<MainViewModel>(
            configure: services =>
            {
                if (messageBoxService is not null)

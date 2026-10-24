@@ -7,6 +7,9 @@
   <PropertyGroup>
     <VersionPrefix>1.0.0</VersionPrefix>
     <VersionSuffix>preview.1</VersionSuffix>
+    <!-- The SDK computes Version later than the body of a project, where Routeables.Core.csproj hands it to its nuspec: set it here. -->
+    <Version Condition="'$(VersionSuffix)' == ''">$(VersionPrefix)</Version>
+    <Version Condition="'$(VersionSuffix)' != ''">$(VersionPrefix)-$(VersionSuffix)</Version>
   </PropertyGroup>
 
   <!-- What every package of the repository shares. Id, authors, readme and license are set in each project. -->
