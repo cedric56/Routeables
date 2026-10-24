@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
-    <ProjectReference Include="..\..\Routeables.Avalonia.Services\Routeables.Avalonia.Services.csproj" />
     <ProjectReference Include="..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
     <ProjectReference Include="..\Controls\XAnimals.Avalonia.Controls\XAnimals.Avalonia.Controls.csproj" />

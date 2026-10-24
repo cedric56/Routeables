@@ -34,6 +34,27 @@ public partial class HomeView : RouteableFor<HomeViewModel> { public HomeView() 
 
 `RouteableListBox` lists the entries of the main view model, selects the current one and disables locked ones.
 
+## Dialogs and notifications
+
+Optional, drawn with Avalonia controls (`Routeables.Avalonia.Services` namespace). Call `UseRouteablesServices` where you register the routes:
+
+```csharp
+AppBuilder.Configure<App>()
+    .UseRouteables<MainViewModel>(services =>
+    {
+        services.UseRouteablesServices("avares://MyApp/Assets/icon.ico");
+        services.AddGeneratedRoutes();
+    })
+    .UsePlatformDetect();
+```
+
+The icon is the one of the windows that are drawn. To change the look, pass your own `IMessageBoxService` (such as the FluentAvalonia one of [`Reshapes`](../Reshapes/README.md)).
+
+- Dialogs, content dialogs, task dialogs and notifications, through `IMessageBoxService` (`DefaultMessageBoxService`): modal windows on desktop, an overlay on single-view platforms (Android, iOS, browser).
+- `DialogView<TViewModel, TResult>`: the base of a modal view backed by a closeable view model.
+
+Contracts: [`Routeables.Services`](../Routeables.Services/README.md).
+
 ## Good to know
 
 - No dependency on FluentAvalonia: the default dialogs are drawn with Avalonia controls. FluentAvalonia flavour: [`Reshapes`](../Reshapes/README.md).
@@ -42,4 +63,4 @@ public partial class HomeView : RouteableFor<HomeViewModel> { public HomeView() 
 
 ## Next
 
-[`Routeables.Avalonia.Services`](../Routeables.Avalonia.Services/README.md) (dialogs, notifications), [Hosts guide](../docs/guides/hosts.md), samples `Samples/XAnimals.Avalonia` and its Desktop, Android, iOS and Browser heads.
+[Hosts guide](../docs/guides/hosts.md), samples `Samples/XAnimals.Avalonia` and its Desktop, Android, iOS and Browser heads.

@@ -35,7 +35,6 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(
         typeof(Routeables.Razor.MainLayoutBase).Assembly,
-        typeof(Routeables.Razor.Services.MainLayout).Assembly,
         typeof(Xanimals.Razor.Extensions).Assembly
     );
 

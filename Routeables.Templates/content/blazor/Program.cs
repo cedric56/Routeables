@@ -26,7 +26,6 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(
-        typeof(MainLayoutBase).Assembly,        // Routeables.Razor: the catch-all page
-        typeof(MainLayout).Assembly);           // Routeables.Razor.Services: the layout and the not-found page
+        typeof(MainLayoutBase).Assembly);       // Routeables.Razor: the catch-all page, the layout and the not-found page
 
 app.Run();

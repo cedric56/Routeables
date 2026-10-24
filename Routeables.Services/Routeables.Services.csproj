@@ -18,9 +18,9 @@
     <InternalsVisibleTo Include="Routeables.Maui" />
     <InternalsVisibleTo Include="Routeables.Avalonia" />
     <InternalsVisibleTo Include="Routeables.Uno" />
-    <InternalsVisibleTo Include="Routeables.Avalonia.Services" />
-    <InternalsVisibleTo Include="Routeables.Uno.Services" />
-    <InternalsVisibleTo Include="Routeables.Maui.Services" />
+    <InternalsVisibleTo Include="Routeables.Avalonia" />
+    <InternalsVisibleTo Include="Routeables.Uno" />
+    <InternalsVisibleTo Include="Routeables.Maui" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 

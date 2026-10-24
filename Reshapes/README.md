@@ -8,6 +8,6 @@ Optional projects that change how dialogs, notifications and modals look, by bui
 | `Reshapes.Maui.Community` | [MAUI](../Routeables.Maui/README.md) | `builder.UseCommunityToolkit()` |
 | `Reshapes.Avalonia.Fluent` | [Avalonia](../Routeables.Avalonia/README.md) | `services.UseFluentAvalonia(icon)` |
 
-Uno has no reshape yet: its [services](../Routeables.Uno.Services/README.md) accept your own `IMessageBoxService`.
+Uno has no reshape yet: its [services](../Routeables.Uno/README.md#dialogs-and-notifications) accept your own `IMessageBoxService`.
 
 Add a project reference next to the host's.

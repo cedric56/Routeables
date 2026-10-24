@@ -15,7 +15,7 @@ Routeables does the route change part of Prism: views and view models, routes wi
 | `IInitializeAsync` | `IInitializeAsync` (same idea, with the arguments) |
 | `IDestructible` | `IAsyncDisposable`, called when the entry leaves the history for good |
 | `IRegionManager`, `RegisterViewWithRegion` | `services.AddRegion("name")` and a `RouteableRegion` in the view. See [Regions](regions.md). |
-| `IDialogService` | `IRouteableDialogs` (`MessageBox`, `ContentDialog`, `TaskDialog`) and `IRouteableNotificationService` from `Routeables.Services`, implemented by the optional `Routeables.<Host>.Services` package |
+| `IDialogService` | `IRouteableDialogService`, `IRouteableContentDialogService`, `IRouteableTaskDialogService` and `IRouteableNotificationService` from `Routeables.Services`, implemented by each host and turned on with `UseRouteablesServices()` |
 | Shell and tab routing | A main view model derived from `MainViewModelBase`, which returns the entries of the menu |
 | `ViewModelLocator.AutoWireViewModel` | Not provided. The router builds the view model and gives it to the view. |
 | `DelegateCommand`, `BindableBase` | Not provided. Use your MVVM library. |

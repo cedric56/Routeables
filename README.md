@@ -15,7 +15,7 @@
 A view model asks an `IRouter` to go somewhere. It never touches a page, a frame or a navigation API of the framework, so the same code runs on every host.
 
 > [!WARNING]
-> Preview (`1.0.0`): APIs change between commits. Uno support has not been run on a device yet.
+> Preview (`1.0.0`): APIs change between commits.
 
 ## In one minute
 
@@ -58,7 +58,7 @@ The call starts Routeables and registers your menu (the main view model). The bl
 r => r.AddGeneratedRoutes()
 ```
 
-Each host README has the complete setup. [Getting started](docs/getting-started.md) walks through it, and `dotnet new routeables-blazor | routeables-maui | routeables-avalonia` creates a working app.
+Each host README has the complete setup. [Getting started](docs/getting-started.md) walks through it. To start, create a project with the template of your framework (`dotnet new avalonia.app`, `dotnet new maui`, `dotnet new blazor`, or the Uno one) and add the host package.
 
 ## What you get
 
@@ -73,10 +73,7 @@ Routeables routes. It ships no commands, view-model locator or event aggregator:
 
 ## Add what you need
 
-| I want | Package |
-| --- | --- |
-| Dialogs, notifications, theme | `Routeables.Razor.Services`, `Routeables.Maui.Services`, `Routeables.Avalonia.Services` or `Routeables.Uno.Services` |
-| MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs | [`Reshapes`](Reshapes/README.md) |
+The host package already holds the dialogs, modals and notifications of its framework: `services.UseRouteablesServices()` turns them on. For MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs, add a package of [`Reshapes`](Reshapes/README.md).
 
 Everything else is in the one `Routeables` package, which every host brings: the contracts ([`Abstraction`](Routeables.Abstraction/README.md)), the router ([`Routing`](Routeables.Routing/README.md)), the view-model bases ([`Core`](Routeables.Core/README.md)), [`Regions`](Routeables.Regions/README.md), [`Segments`](Routeables.Segments/README.md) (`Orders?id=5/Detail`), [`Locking`](Routeables.Locking/README.md) (pages that block leaving, a locked menu), the dialog and notification contracts ([`Services`](Routeables.Services/README.md)) and the source generator. They are separate projects of this repository and one package.
 

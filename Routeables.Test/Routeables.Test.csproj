@@ -42,11 +42,8 @@
     <ProjectReference Include="..\Routeables.Routing\Routeables.Routing.csproj" />
     <ProjectReference Include="..\Routeables.Services\Routeables.Services.csproj" />
     <ProjectReference Include="..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
-    <ProjectReference Include="..\Routeables.Avalonia.Services\Routeables.Avalonia.Services.csproj" />
     <ProjectReference Include="..\Routeables.Maui\Routeables.Maui.csproj" />
-    <ProjectReference Include="..\Routeables.Maui.Services\Routeables.Maui.Services.csproj" />
     <ProjectReference Include="..\Routeables.Razor\Routeables.Razor.csproj" />
-    <ProjectReference Include="..\Routeables.Razor.Services\Routeables.Razor.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

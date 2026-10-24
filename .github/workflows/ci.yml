@@ -95,9 +95,7 @@ jobs:
       - name: Libraries and Reshapes
         run: |
           dotnet build Routeables.Razor/Routeables.Razor.csproj -c Debug
-          dotnet build Routeables.Razor.Services/Routeables.Razor.Services.csproj -c Debug
           dotnet build Routeables.Avalonia/Routeables.Avalonia.csproj -c Debug
-          dotnet build Routeables.Avalonia.Services/Routeables.Avalonia.Services.csproj -c Debug
           dotnet build Reshapes/Reshapes.Razor.MudBlazor/Reshapes.Razor.MudBlazor.csproj -c Debug
           dotnet build Reshapes/Reshapes.Avalonia.Fluent/Reshapes.Avalonia.Fluent.csproj -c Debug
 
@@ -141,7 +139,6 @@ jobs:
       - name: Uno libraries
         run: |
           dotnet build Routeables.Uno/Routeables.Uno.csproj -c Debug -p:CiBuild=true
-          dotnet build Routeables.Uno.Services/Routeables.Uno.Services.csproj -c Debug -p:CiBuild=true
 
       - name: Sample, Uno (desktop)
         run: dotnet build Samples/XAnimals.Uno/XAnimals.Uno.csproj -c Debug -p:CiBuild=true
@@ -211,9 +208,7 @@ jobs:
         run: |
           dotnet pack Routeables.Core/Routeables.Core.csproj -c Release -o artifacts
           dotnet pack Routeables.Razor/Routeables.Razor.csproj -c Release -o artifacts
-          dotnet pack Routeables.Razor.Services/Routeables.Razor.Services.csproj -c Release -o artifacts
           dotnet pack Routeables.Avalonia/Routeables.Avalonia.csproj -c Release -o artifacts
-          dotnet pack Routeables.Avalonia.Services/Routeables.Avalonia.Services.csproj -c Release -o artifacts
 
       - name: Check the dependencies and the content
         run: .github/scripts/check-packages.sh artifacts
@@ -249,7 +244,6 @@ jobs:
       - name: MAUI
         run: |
           dotnet build Routeables.Maui/Routeables.Maui.csproj -c Debug -f net10.0-android
-          dotnet build Routeables.Maui.Services/Routeables.Maui.Services.csproj -c Debug -f net10.0-android
           dotnet build Reshapes/Reshapes.Maui.Community/Reshapes.Maui.Community.csproj -c Debug -f net10.0-android
           dotnet build Samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-android
           dotnet build Samples/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj -c Debug -f net10.0-android
@@ -287,7 +281,6 @@ jobs:
           failed=0
           for project in \
             Routeables.Maui/Routeables.Maui.csproj \
-            Routeables.Maui.Services/Routeables.Maui.Services.csproj \
             Reshapes/Reshapes.Maui.Community/Reshapes.Maui.Community.csproj \
             Samples/XAnimals.Maui/XAnimals.Maui.csproj \
             Samples/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj; do

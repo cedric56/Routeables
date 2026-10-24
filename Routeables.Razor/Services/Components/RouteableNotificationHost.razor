@@ -1,0 +1,50 @@
+@namespace Routeables.Razor.Services
+@using Microsoft.AspNetCore.Components.Web
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using Routeables.Services
+@implements IDisposable
+@inject RouteableNotificationService Service
+
+@if (Service.Items.Count > 0)
+{
+    <div class="rt-toasts @PositionClass(Service.Position)" aria-live="polite">
+        @foreach (var toast in Service.Items)
+        {
+            <div @key="toast"
+                 class="rt-toast rt-@(toast.Type.ToString().ToLowerInvariant())"
+                 role="@(toast.Type == RouteableNotificationType.Error ? "alert" : "status")"
+                 @onclick="() => Service.Click(toast)">
+                <div class="rt-toast-text">
+                    @if (!string.IsNullOrWhiteSpace(toast.Title))
+                    {
+                        <strong class="rt-toast-title">@toast.Title</strong>
+                    }
+                    <div class="rt-toast-message">@toast.Message</div>
+                </div>
+                <button type="button" class="rt-toast-close" aria-label="Close"
+                        @onclick="() => Service.Close(toast)"
+                        @onclick:stopPropagation="true">&times;</button>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    protected override void OnInitialized() => Service.Changed += OnChanged;
+
+    private void OnChanged() => _ = InvokeAsync(StateHasChanged);
+
+    private static string PositionClass(RouteableNotificationPosition position) => position switch
+    {
+        RouteableNotificationPosition.TopLeft => "rt-top-left",
+        RouteableNotificationPosition.TopCenter => "rt-top-center",
+        RouteableNotificationPosition.TopRight => "rt-top-right",
+        RouteableNotificationPosition.BottomLeft => "rt-bottom-left",
+        RouteableNotificationPosition.BottomCenter => "rt-bottom-center",
+        RouteableNotificationPosition.BottomRight => "rt-bottom-right",
+        _ => "rt-top-right"
+    };
+
+    public void Dispose() => Service.Changed -= OnChanged;
+}

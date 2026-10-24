@@ -67,8 +67,7 @@ builder.Services.UseRouteablesServer<MainViewModel>(      // or UseRouteablesWeb
 builder.Services.UseRouteablesServices();                                // optional: dialogs, notifications, default layout
 app.MapRazorComponents<App>()
    .AddInteractiveServerRenderMode()
-   .AddAdditionalAssemblies(typeof(MainLayoutBase).Assembly,     // Routeables.Razor: the catch-all page
-                            typeof(MainLayout).Assembly);        // Routeables.Razor.Services: layout, not-found page
+   .AddAdditionalAssemblies(typeof(MainLayoutBase).Assembly);    // Routeables.Razor: catch-all page, layout, not-found page
 
 // .NET MAUI (MauiProgram.cs)
 builder.UseMauiApp<App>()
@@ -94,7 +93,7 @@ Services = this.UseRouteables<MainViewModel>(r =>
 //    _window = this.OpenMainWindow(new MainPage());
 ```
 
-`dotnet new routeables-blazor`, `routeables-maui` and `routeables-avalonia` create an app with exactly this setup. See each host's README for the details ([Razor](https://github.com/cedric56/Routeables/blob/master/Routeables.Razor/README.md), [MAUI](https://github.com/cedric56/Routeables/blob/master/Routeables.Maui/README.md), [Avalonia](https://github.com/cedric56/Routeables/blob/master/Routeables.Avalonia/README.md), [Uno](https://github.com/cedric56/Routeables/blob/master/Routeables.Uno/README.md), which has its own quick start).
+Create the project with the template of your framework, add the host package, then follow the setup above. See each host's README for the details ([Razor](https://github.com/cedric56/Routeables/blob/master/Routeables.Razor/README.md), [MAUI](https://github.com/cedric56/Routeables/blob/master/Routeables.Maui/README.md), [Avalonia](https://github.com/cedric56/Routeables/blob/master/Routeables.Avalonia/README.md), [Uno](https://github.com/cedric56/Routeables/blob/master/Routeables.Uno/README.md), which has its own quick start).
 
 #### The words
 

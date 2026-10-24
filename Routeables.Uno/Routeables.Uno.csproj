@@ -15,12 +15,11 @@
     <Authors>Cedric</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Routeables for Uno Platform: view-model-first routing, routed views and regions.</Description>
+    <Description>Routeables for Uno Platform: view-model-first routing, routed views, regions, dialogs and notifications.</Description>
   </PropertyGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Routeables.Test" />
-    <InternalsVisibleTo Include="Routeables.Uno.Services" />
   </ItemGroup>
 
   <ItemGroup>

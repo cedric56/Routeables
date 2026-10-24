@@ -10,7 +10,7 @@
     <Authors>Cedric</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Routeables for Blazor: view-model-first routing, routed components and regions.</Description>
+    <Description>Routeables for Blazor: view-model-first routing, routed components, regions, dialogs, notifications and the default layout.</Description>
   </PropertyGroup>
 
   <ItemGroup>

@@ -21,7 +21,7 @@
     <Authors>Cedric</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Routeables for .NET MAUI: view-model-first routing, Shell integration, routed views and regions.</Description>
+    <Description>Routeables for .NET MAUI: view-model-first routing, Shell integration, routed views, regions, dialogs and notifications.</Description>
   </PropertyGroup>
 
   <ItemGroup>

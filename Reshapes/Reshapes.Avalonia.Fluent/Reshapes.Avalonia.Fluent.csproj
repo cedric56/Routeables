@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
-    <ProjectReference Include="..\..\Routeables.Avalonia.Services\Routeables.Avalonia.Services.csproj" />
   </ItemGroup>
 
 </Project>

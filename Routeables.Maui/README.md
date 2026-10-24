@@ -32,6 +32,24 @@ builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes
 
 `RouteablesShell` is a `Shell` whose tabs or flyout entries come from the main view model, and it follows entries added later (modules). Shell owns the top level and Routeables the route changes inside each item: do not also use `Shell.GoToAsync` on those pages.
 
+## Dialogs and notifications
+
+Optional, in the `Routeables.Maui.Services` namespace:
+
+```csharp
+builder
+    .UseMauiApp<App>()
+    .UseRouteables<MainViewModel>()
+    .UseRouteablesServices();
+```
+
+`UseRouteablesServices` takes optional factories to replace a service. For CommunityToolkit.Maui popups and snackbars call `UseCommunityToolkit()` from [`Reshapes`](../Reshapes/README.md) after `UseRouteables`: it replaces the services, so `UseRouteablesServices()` is not needed.
+
+- Dialogs, content dialogs, task dialogs and notifications. Toasts are native on Windows, Android, iOS and Mac Catalyst, and an overlay on the plain `net10.0` target.
+- `RouteableModalFor<TViewModel, TResult>`: the base of a modal view that returns a typed result.
+
+Dialogs and modals need an active page to appear on. Contracts: [`Routeables.Services`](../Routeables.Services/README.md).
+
 ## Good to know
 
 - Property injection understands `[RouteableParameter]` and MAUI's `[QueryProperty]`.
@@ -41,4 +59,4 @@ builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes
 
 ## Next
 
-[`Routeables.Maui.Services`](../Routeables.Maui.Services/README.md) (dialogs, modals, notifications), [Hosts guide](../docs/guides/hosts.md), samples `Samples/XAnimals.Maui` and `XAnimals.MauiHybrid`.
+[Hosts guide](../docs/guides/hosts.md), samples `Samples/XAnimals.Maui` and `XAnimals.MauiHybrid`.

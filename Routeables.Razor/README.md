@@ -31,9 +31,26 @@ Everything is scoped, so each Blazor Server circuit has its own history, and so 
 
 ## The layout
 
-A layout inherits `MainLayoutBase`: it follows the current view, the lock and the theme. The ready-made `MainLayout` is in [`Routeables.Razor.Services`](../Routeables.Razor.Services/README.md) with the dialogs and notifications.
+A layout inherits `MainLayoutBase`: it follows the current view, the lock and the theme. The ready-made `MainLayout` comes with the [dialogs and notifications](#dialogs-modals-and-notifications).
 
 For a route declared with an explicit address (`/customers/{id:int}`), the browser address and the router stay in step: a route change updates the address, a typed address or the browser's back button route the router, and a refused change puts the address back.
+
+## Dialogs, modals and notifications
+
+Optional, drawn with plain Razor (`Routeables.Razor.Services` namespace):
+
+```csharp
+services.UseRouteablesServer<MainViewModel>();
+services.UseRouteablesServices(position: RouteableNotificationPosition.BottomLeft, maxDispayments: 5);
+```
+
+Everything is scoped. Each service has an optional factory to replace it; [`Reshapes.Razor.MudBlazor`](../Reshapes/README.md) passes the MudBlazor ones.
+
+- The hosts that draw the services: `RouteableDialogHost`, `RouteableContentDialogHost`, `RouteableTaskDialogHost`, `RouteableModalHost`, `RouteableNotificationHost`. The default `MainLayout` already contains them; a layout of your own inherits `MainLayoutBase` and adds them.
+- `RouteableModalFor<TView, TViewModel, TResult>`: shows a view in a modal and returns a typed result when its view model closes.
+- `NotFound`, the default page for an unknown address.
+
+Contracts: [`Routeables.Services`](../Routeables.Services/README.md).
 
 ## Good to know
 
@@ -43,4 +60,4 @@ For a route declared with an explicit address (`/customers/{id:int}`), the brows
 
 ## Next
 
-[`Routeables.Razor.Services`](../Routeables.Razor.Services/README.md) (dialogs, modals, notifications), [Hosts guide](../docs/guides/hosts.md), samples `Samples/XAnimals.Razor` and the Blazor Server and WebAssembly heads.
+[Hosts guide](../docs/guides/hosts.md), samples `Samples/XAnimals.Razor` and the Blazor Server and WebAssembly heads.

@@ -1,10 +1,9 @@
 # Routeables.Services
 
-The contracts of the optional UI services: dialogs, notifications and theme. Each host implements them in its own services package: [Razor](../Routeables.Razor.Services/README.md), [MAUI](../Routeables.Maui.Services/README.md), [Avalonia](../Routeables.Avalonia.Services/README.md), [Uno](../Routeables.Uno.Services/README.md). Routing does not need any of this. Targets **.NET 10**, namespace `Routeables.Services`.
+The contracts of the optional UI services: dialogs, notifications and theme. Each host implements them and turns them on with `UseRouteablesServices()`: [Razor](../Routeables.Razor/README.md), [MAUI](../Routeables.Maui/README.md), [Avalonia](../Routeables.Avalonia/README.md), [Uno](../Routeables.Uno/README.md). Routing does not need any of this. Targets **.NET 10**, namespace `Routeables.Services`.
 
 | Inject | For |
 | --- | --- |
-| `IRouteableDialogs` | The one to start with: `MessageBox`, `ContentDialog` and `TaskDialog` |
 | `IRouteableDialogService` | Message boxes |
 | `IRouteableContentDialogService` | A dialog that hosts a view and its view model |
 | `IRouteableTaskDialogService` | Dialogs with a header, buttons and progress |
@@ -12,9 +11,9 @@ The contracts of the optional UI services: dialogs, notifications and theme. Eac
 | `IRouteableRequestedThemeService` | Light, dark or system theme (registered by the host) |
 
 ```csharp
-public sealed class OrderViewModel(IRouteableDialogs dialogs)
+public sealed class OrderViewModel(IRouteableDialogService dialogs)
 {
-    public Task AskAsync() => dialogs.MessageBox.ShowAsync("Delete this order?", "Orders", "YesNo");
+    public Task AskAsync() => dialogs.ShowYesNoAsync("Delete this order?", "Orders");
 }
 ```
 

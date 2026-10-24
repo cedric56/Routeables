@@ -1,0 +1,92 @@
+@namespace Routeables.Razor.Services
+@using Microsoft.AspNetCore.Components.Web
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using Routeables.Services
+@implements IDisposable
+@inject RouteableContentDialogService Service
+
+@if (Service.Current is { } request)
+{
+    var dialog = request.Parameters;
+    <div class="rt-backdrop" @onclick="Service.Dismiss">
+        <div class="rt-dialog @(dialog.FullSizeDesired ? "rt-full" : string.Empty)"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="@(HasTitle(dialog) ? "rt-content-title" : null)"
+             tabindex="-1"
+             @ref="dialogElement"
+             @onclick:stopPropagation="true"
+             @onkeydown="OnKeyDown">
+            @if (HasTitle(dialog))
+            {
+                <h2 id="rt-content-title" class="rt-title">@dialog.Title</h2>
+            }
+            <div class="rt-content">
+                @if (dialog.Content is RouteableFor routeable)
+                {
+                    @routeable.Render()
+                }
+                else
+                {
+                    @dialog.Content
+                }
+
+            </div>
+            <div class="rt-actions">
+                @* Primary, secondary, close: the order of the session. *@
+                @foreach (var button in request.Session.Buttons)
+                {
+                    var current = button;
+                    <button type="button" class="rt-button @(current.IsDefault ? "rt-primary" : string.Empty)"
+                            disabled="@(!CanPress(current))"
+                            @onclick="() => Press(current)">
+                        @current.Text
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private ElementReference dialogElement;
+    private ContentDialogRequest? shown;
+
+    private static bool HasTitle(RouteableContentDialog dialog) => !string.IsNullOrWhiteSpace(dialog.Title);
+
+    protected override void OnInitialized() => Service.Changed += OnChanged;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // A newly displayed dialog: announce it, then move the focus inside so the keyboard acts on it.
+        if (Service.Current is { } request && !ReferenceEquals(request, shown))
+        {
+            shown = request;
+            request.Session.Opening();
+            await dialogElement.FocusAsync();
+            request.Session.Opened();
+        }
+        else if (Service.Current is null)
+        {
+            // Nothing is shown any more: do not keep the last dialog (its content and callbacks) alive until the next one.
+            shown = null;
+        }
+    }
+
+    // A button with a command is pressed only while the command can execute.
+    private static bool CanPress(RouteableDialogButton button) =>
+        button.IsEnabled && (button.Command is null || button.Command.CanExecute(button.CommandParameter));
+
+    private static void Press(RouteableDialogButton button) => button.Press();
+
+    private void OnChanged() => _ = InvokeAsync(StateHasChanged);
+
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+            Service.Dismiss();
+    }
+
+    public void Dispose() => Service.Changed -= OnChanged;
+}

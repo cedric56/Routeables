@@ -21,7 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
     <ProjectReference Include="..\..\Routeables.Razor\Routeables.Razor.csproj" />
-    <ProjectReference Include="..\..\Routeables.Razor.Services\Routeables.Razor.Services.csproj" />
   </ItemGroup>
 
 </Project>
