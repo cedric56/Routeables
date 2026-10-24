@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml;
 
 namespace XAnimals.Uno.Views;
 
-[RouteableView(typeof(AboutViewModel), route: "about")]
 public sealed partial class AboutView : RouteableFor
 {
     public AboutView()

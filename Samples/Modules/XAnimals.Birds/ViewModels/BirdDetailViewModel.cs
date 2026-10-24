@@ -7,6 +7,7 @@ namespace XAnimals.Birds;
 /// The detail of a tanager. Like the one of the pandas, it does not read its bird from a constructor: the view receives
 /// <c>{bird::}</c> from the address in a property decorated with its platform's attribute and gives it to <see cref="Name"/>.
 /// </summary>
+[Routeable(BirdDetailViewModel.Route)]
 public class BirdDetailViewModel(IRouter router, Action? back = null) : AnimalDetailViewModel(router, null, back)
 {
     /// <summary>The route and template of the detail; <c>::</c> marks <c>bird</c> as an attribute parameter.</summary>

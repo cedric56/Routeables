@@ -6,6 +6,7 @@ using XAnimals.Common;
 namespace XAnimals.ViewModels;
 
 /// <remarks>The animal comes from the passed values, or from <paramref name="name"/> when the page is opened from its address (<c>/cats/Manx</c>).</remarks>
+[Routeable("/cats/{name}")]
 public class CatDetailViewModel(IRouter router, string? name = null)
     : AnimalDetailViewModel(router, CatData.Cats.FirstOrDefault(c => c.Name == name)), IInitializeAsync
 {

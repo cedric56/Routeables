@@ -5,7 +5,6 @@ using RoutedEventArgs = Avalonia.Interactivity.RoutedEventArgs;
 
 namespace XAnimals.Avalonia;
 
-[RouteableView(typeof(MonkeyDetailViewModel), route: "/monkeys/{name}")]
 public partial class MonkeyDetailView : RouteableFor<MonkeyDetailViewModel>
 {
     public MonkeyDetailView()

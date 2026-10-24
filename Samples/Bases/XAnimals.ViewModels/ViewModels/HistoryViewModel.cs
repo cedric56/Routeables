@@ -35,6 +35,7 @@ public sealed record HistoryItem(int Number, string Name, string Glyph, string C
 /// current page answer <see langword="false"/>: every call is then refused until the box is cleared.
 /// </para>
 /// </summary>
+[Routeable("history")]
 public class HistoryViewModel : ViewModelBase, IRouteable, IDisposable
 {
     /// <summary>The identifier of the region (registered by <see cref="Extensions.AddHistoryRegion"/>).</summary>

@@ -1,3 +1,5 @@
+using Routeables.Abstraction;
+
 namespace XAnimals.ViewModels;
 
 /// <summary>What a bar of the Regions page says.</summary>
@@ -17,6 +19,7 @@ public sealed record LayoutBarInfo(string Glyph, string Title, string Detail, bo
 /// entry or segment, from the <see cref="LayoutBarInfo"/> it carries (matched to the constructor by type,
 /// <c>ForViewModel(info)</c>).
 /// </summary>
+[Routeable("layout-bar")]
 public class LayoutBarViewModel(LayoutBarInfo info)
 {
     public string Glyph { get; } = info.Glyph;

@@ -1,7 +1,6 @@
 @using Routeables.Abstraction
 @using Routeables.Razor
 @using XAnimals.ViewModels
-@attribute [RouteableView(typeof(LayoutBarViewModel), route: "layout-bar")]
 @inherits RouteableFor<LayoutBarView, LayoutBarViewModel>
 
 <div class="rg-bar @(ViewModel.IsStrong ? "strong" : "")">

@@ -5,7 +5,6 @@ using XAnimals.Uno.Birds;
 
 namespace XAnimals.Uno.Views;
 
-[RouteableView(typeof(BirdsViewModel), route: BirdsModule.Route)]
 public sealed partial class BirdsView : RouteableFor
 {
     public BirdsView()

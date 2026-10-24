@@ -525,6 +525,80 @@ public class RouteRegistrationGeneratorTests
         Assert.Equal(2, generated.Split("RegisterRoute<global::CatsView, global::CatsViewModel>(").Length - 1);
     }
 
+    // ---------------------------------------------------------------- ROUT204: [RouteableView] in a .razor file
+
+    private const string CallsAddGeneratedRoutes = """
+        using Microsoft.Extensions.DependencyInjection;
+        using Routeables.Generated;
+
+        public static class Startup
+        {
+            public static void Run(IServiceCollection services) => services.AddGeneratedRoutes();
+        }
+        """;
+
+    [Fact]
+    public void A_razor_view_attribute_is_reported_when_the_project_calls_AddGeneratedRoutes()
+    {
+        var result = RunGeneratorWithRazor(CallsAddGeneratedRoutes, ("Components/CatsView.razor", """
+            @using Routeables.Abstraction
+            @attribute [RouteableView(typeof(CatsViewModel), route: "/cats")]
+            @inherits RouteableFor<CatsView, CatsViewModel>
+            """));
+
+        var warning = Assert.Single(result.Diagnostics, d => d.Id == "ROUT204");
+        Assert.Equal(DiagnosticSeverity.Warning, warning.Severity);
+        Assert.EndsWith("CatsView.razor", warning.Location.GetLineSpan().Path);
+        Assert.Equal(1, warning.Location.GetLineSpan().StartLinePosition.Line);
+    }
+
+    [Fact]
+    public void A_razor_view_attribute_is_not_reported_when_the_project_does_not_call_AddGeneratedRoutes()
+    {
+        // A component library: the application that references it calls AddGeneratedRoutes(), and finds the views in the assembly.
+        var result = RunGeneratorWithRazor("public class Library { }", ("CatsView.razor", """
+            @attribute [RouteableView(typeof(CatsViewModel), route: "/cats")]
+            """));
+
+        Assert.DoesNotContain(result.Diagnostics, d => d.Id == "ROUT204");
+    }
+
+    [Fact]
+    public void Other_razor_attributes_are_not_reported()
+    {
+        var result = RunGeneratorWithRazor(CallsAddGeneratedRoutes, ("Page.razor", """
+            @attribute [Authorize]
+            @attribute [Obsolete("RouteableView is old")]
+            <p>@attribute [RouteableView(typeof(X))] is only text here</p>
+            """));
+
+        Assert.DoesNotContain(result.Diagnostics, d => d.Id == "ROUT204");
+    }
+
+    private sealed class RazorText(string path, string text) : AdditionalText
+    {
+        public override string Path { get; } = path;
+
+        public override Microsoft.CodeAnalysis.Text.SourceText GetText(CancellationToken cancellationToken = default)
+            => Microsoft.CodeAnalysis.Text.SourceText.From(text);
+    }
+
+    private static GeneratorDriverRunResult RunGeneratorWithRazor(string source, params (string Path, string Text)[] razorFiles)
+    {
+        var compilation = CSharpCompilation.Create(
+            assemblyName: "Routeables.Generated.Tests",
+            syntaxTrees: [CSharpSyntaxTree.ParseText(source)],
+            references: GetMetadataReferences(),
+            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(
+            generators: [new RouteRegistrationGenerator().AsSourceGenerator()],
+            additionalTexts: razorFiles.Select(f => (AdditionalText)new RazorText(f.Path, f.Text)).ToArray());
+        driver = driver.RunGenerators(compilation);
+
+        return driver.GetRunResult();
+    }
+
     private static GeneratorDriverRunResult RunGenerator(string source, params MetadataReference[] more)
     {
         var compilation = CSharpCompilation.Create(

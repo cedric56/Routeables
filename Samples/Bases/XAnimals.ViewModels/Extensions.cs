@@ -24,12 +24,7 @@ public static class Extensions
         return services;
     }
 
-    public static void RegisterViewModels<
-        TCatDetailView,
-        TDogDetailView
-        >(this IServiceCollection services)
-        where TCatDetailView : class
-        where TDogDetailView : class
+    public static void RegisterViewModels(this IServiceCollection services)
     {
         // The main view model is registered by the head, with UseRouteables<MainViewModel>(...).
 
@@ -39,10 +34,8 @@ public static class Extensions
         // The Lock page publishes a RouteableLockMessage: with the broker and the coordinator, the menu locks while a page blocks leaving.
         services.AddLocking();
 
-        // A detail is built for each navigation: a Scoped or Singleton one would be created once, for the first animal
-        // opened, and then reused for every other (the instance is cached by key, the later arguments are ignored).
-        services.RegisterRoute<TCatDetailView, CatDetailViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/cats/{name}");
-        services.RegisterRoute<TDogDetailView, DogDetailViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/dogs/{name}");
+        // The routes are the [Routeable] attributes of the view models, registered by the head with AddGeneratedRoutes().
+        // The details stay Transient (the default): a Scoped or Singleton one would be created once, for the first animal opened.
 
         services.AddDebugErrorSink();
         services.AddAnimalModules();

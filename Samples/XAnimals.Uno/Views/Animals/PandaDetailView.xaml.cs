@@ -6,7 +6,6 @@ using XAnimals.ViewModels;
 
 namespace XAnimals.Uno.Views;
 
-[RouteableView(typeof(PandaDetailViewModel), route: PandaDetailViewModel.Route)]
 public sealed partial class PandaDetailView : RouteableFor
 {
     private string? _panda;

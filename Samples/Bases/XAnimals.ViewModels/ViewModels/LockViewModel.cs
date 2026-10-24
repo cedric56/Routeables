@@ -15,6 +15,7 @@ namespace XAnimals.ViewModels;
 /// The page itself stays usable, so it can unlock the menu again.
 /// </para>
 /// </summary>
+[Routeable("lock")]
 public class LockViewModel : ViewModelBase, IDisposable
 {
     /// <summary>How long "Lock for a few seconds" keeps the menu locked.</summary>

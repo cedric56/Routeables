@@ -6,7 +6,6 @@ using XAnimals.ViewModels;
 
 namespace XAnimals.Uno.Views;
 
-[RouteableView(typeof(LogoViewModel), route: "shell-logo")]
 public sealed partial class LogoView : RouteableFor
 {
     public LogoView()

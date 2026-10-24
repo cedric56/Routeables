@@ -9,6 +9,7 @@ namespace XAnimals.ViewModels;
 /// The About page: the logo, a link to the project and a shortcut to the polar bears. The dialogs and notifications are on the
 /// Dialogs page (<see cref="DialogsViewModel"/>).
 /// </summary>
+[Routeable("about")]
 public class AboutViewModel : ViewModelBase
 {
     public const string LearnMoreUrl = "https://github.com/cedric56/Routeables";

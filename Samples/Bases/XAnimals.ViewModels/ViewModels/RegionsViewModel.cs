@@ -17,6 +17,7 @@ namespace XAnimals.ViewModels;
 /// the application is in the header and the copyright in the left panel, each segment handed to the router of its region.
 /// </para>
 /// </summary>
+[Routeable("regions")]
 public class RegionsViewModel : ViewModelBase, IRouteable
 {
     private readonly LayoutController _controller;

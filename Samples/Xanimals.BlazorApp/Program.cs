@@ -11,7 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.UseRouteablesServer<MainViewModel>().UseRouteablesServices();
+builder.Services.UseRouteablesServer<MainViewModel>()
+    .UseRouteablesServices();
 builder.Services.AddGeneratedRoutes();   // here, not in XAnimals.Razor: the Razor views of that library are seen as referenced assemblies
 builder.Services.UseSharedLibrary();
 

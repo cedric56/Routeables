@@ -8,4 +8,10 @@ public sealed partial class MainPage : Page
     {
         InitializeComponent();
     }
+
+    private void PaneToggleButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Inverser l'état d'ouverture/fermeture du panneau
+        RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
+    }
 }

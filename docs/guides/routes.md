@@ -85,13 +85,14 @@ The container is built at start and cannot take services afterwards, so a module
 A view and its view model are `Transient` by default: a new pair is built for each route change. Declare another lifetime on the attribute; `ViewModelLifetime` and `ViewLifetime` set one of the two, and `Lifetime` (or the constructor argument) sets both:
 
 ```csharp
-// One cart for the whole app, the view is built again for each navigation.
+// Both scoped (one pair per scope: per circuit in Blazor Server).
+[Routeable("/profile", serviceLifetime: ServiceLifetime.Scoped)]
+public sealed class ProfileViewModel { }
+
+// One cart for the whole app, the view is built again for each route change:
+// the lifetimes of the two halves are set on the view.
 [RouteableView(typeof(CartViewModel), "/cart", ViewModelLifetime = ServiceLifetime.Singleton)]
 public partial class CartView { }
-
-// Both scoped (one pair per scope: per circuit in Blazor Server).
-[RouteableView(typeof(ProfileViewModel), "/profile", serviceLifetime: ServiceLifetime.Scoped)]
-public partial class ProfileView { }
 ```
 
 Without the generator, `services.RegisterRoute<TView, TViewModel>(viewModelLifetime:, viewLifetime:, route)` takes the same two lifetimes.

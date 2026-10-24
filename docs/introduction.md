@@ -7,7 +7,7 @@ Your view models depend on a single `IRouter` interface instead of framework-spe
 ## Features
 
 - **View-model-first routing**: route by route string with typed segments such as `/orders/{id:int}`, or by a view model's declared route.
-- **Source-generated registration**: decorate views and view models with `[RouteableView]` / `[Routeable]` and call `AddGeneratedRoutes()`, with no manual wiring.
+- **Source-generated registration**: put `[Routeable("/path")]` on the view model (`[RouteableView]` on the view only when its name does not follow the convention) and call `AddGeneratedRoutes()`, with no manual wiring.
 - **Generated typed routing**: `[RouteableViewModel(typeof(Caller))]` generates `GoTo{Name}Async` on the caller only, with the destination's constructor parameters as arguments, checked at compile time.
 - **Back/forward history**: back, forward, pop, move to an entry, or return to the root.
 - **Routing guards**: an async `CanLeaveAsync` can veto leaving a page.

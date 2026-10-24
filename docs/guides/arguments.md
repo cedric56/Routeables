@@ -29,7 +29,8 @@ A template parameter written `{name::}` (two colons) is not given to a construct
 
 ```csharp
 // "/pandas/{panda::}" opens PandaDetailView, and "Red Panda" ends up in its Panda property.
-[RouteableView(typeof(PandaDetailViewModel), route: "/pandas/{panda::}")]
+[Routeable("/pandas/{panda::}")]
+public sealed class PandaDetailViewModel { }
 ```
 
 The view is created before its view model is set, so a view hands the value over when both exist (`PandaDetailView` in the samples).

@@ -11,6 +11,7 @@ namespace XAnimals.Birds;
 /// the More birds module while the application runs (<see cref="LoadMoreBirds"/>): its view calls it with the method of its
 /// platform that adds the module, since the views of a platform are in the project of this platform.
 /// </summary>
+[Routeable(BirdsModule.Route)]
 public class BirdsViewModel : AnimalsViewModel
 {
     private readonly IRouteableModules _modules;

@@ -25,7 +25,7 @@ public partial class App : Application
             services.UseRouteablesServices();       // dialogs, content dialogs, task dialogs, notifications
             services.AddGeneratedRoutes();          // the routes declared by attributes on the views of this project
             AnimalIcons.Register();                 // the glyph of each page of the menu
-            services.RegisterViewModels<CatDetailView, DogDetailView>();
+            services.RegisterViewModels();
         });
     }
 

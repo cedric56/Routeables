@@ -10,20 +10,30 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="280" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.ColumnSpan="2" Margin="20,12" FontSize="22" FontWeight="SemiBold" Text="{Binding CurrentTitle}" />
+        <!-- Barre d'en-tête : titre + bouton de bascule -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,12" Spacing="12">
+            <Button x:Name="PaneToggleButton"
+                    Content="☰"
+                    Click="PaneToggleButton_Click"
+                    VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding CurrentTitle}"
+                       FontSize="22"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
 
-        <!-- The menu: one entry per RouteableEntry of MainViewModel. The DataContext is the main view model. -->
-        <ScrollViewer Grid.Row="1">
-            <routeables:RouteableListView />
-        </ScrollViewer>
+        <!-- SplitView : nécessite x:Name pour être référencé dans le code-behind -->
+        <SplitView Grid.Row="1"
+                   x:Name="RootSplitView"
+                   IsPaneOpen="True">
+            <SplitView.Pane>
+                <routeables:RouteableListView />
+            </SplitView.Pane>
 
-        <!-- The page the router shows. -->
-        <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentView}"
-                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+            <ContentControl Content="{Binding CurrentView}"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch" />
+        </SplitView>
     </Grid>
 </Page>

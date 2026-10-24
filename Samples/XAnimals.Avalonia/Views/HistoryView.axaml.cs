@@ -7,7 +7,6 @@ using XAnimals.ViewModels;
 
 namespace XAnimals.Avalonia;
 
-[RouteableView(typeof(HistoryViewModel), route: "history")]
 public partial class HistoryView : RouteableFor<HistoryViewModel>
 {
     public HistoryView()

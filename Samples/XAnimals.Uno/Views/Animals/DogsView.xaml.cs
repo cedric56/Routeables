@@ -6,7 +6,6 @@ using XAnimals.ViewModels;
 
 namespace XAnimals.Uno.Views;
 
-[RouteableView(typeof(DogsViewModel), route: "/dogs")]
 public sealed partial class DogsView : RouteableFor
 {
     public DogsView()

@@ -4,7 +4,6 @@ using XAnimals.ViewModels;
 
 namespace XAnimals.Avalonia;
 
-[RouteableView(typeof(LayoutBarViewModel), route: "layout-bar")]
 public partial class LayoutBarView : RouteableFor<LayoutBarViewModel>
 {
     public LayoutBarView()

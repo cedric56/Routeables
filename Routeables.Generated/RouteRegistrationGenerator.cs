@@ -48,8 +48,79 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
+        // A .razor file of the project that declares [RouteableView] with @attribute: the Razor compiler is another generator, and a
+        // generator does not see the output of another one, so nothing is registered. Only reported when this project calls its own
+        // AddGeneratedRoutes(): a component library whose views are registered by the application that references it is fine.
+        private static readonly DiagnosticDescriptor RazorViewAttributeIgnored = new DiagnosticDescriptor(
+            "ROUT204",
+            "[RouteableView] in a .razor file is ignored here",
+            "{0}",
+            "Routeables",
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        private static readonly System.Text.RegularExpressions.Regex RazorViewAttribute = new System.Text.RegularExpressions.Regex(
+            @"^[ \t]*@attribute[ \t]*\[[ \t]*(?:Routeables\.Abstraction\.)?RouteableView(?:Attribute)?\b",
+            System.Text.RegularExpressions.RegexOptions.Multiline | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
+        private static void InitializeRazorCheck(IncrementalGeneratorInitializationContext context)
+        {
+            var callsAddGeneratedRoutes = context.SyntaxProvider
+                .CreateSyntaxProvider(
+                    predicate: static (node, _) => node is InvocationExpressionSyntax invocation && CallsAddGeneratedRoutes(invocation),
+                    transform: static (_, _) => true)
+                .Collect();
+
+            var razorAttributes = context.AdditionalTextsProvider
+                .Where(static text => text.Path.EndsWith(".razor", StringComparison.OrdinalIgnoreCase))
+                .SelectMany(static (text, ct) => FindRazorViewAttributes(text, ct))
+                .Collect();
+
+            context.RegisterSourceOutput(callsAddGeneratedRoutes.Combine(razorAttributes), static (spc, data) =>
+            {
+                if (data.Left.Length == 0)
+                    return;
+
+                foreach (var found in data.Right)
+                {
+                    spc.ReportDiagnostic(Diagnostic.Create(
+                        RazorViewAttributeIgnored,
+                        Location.Create(found.Path, found.Span, found.LineSpan),
+                        "This .razor file declares [RouteableView], but the generator cannot read the .razor files of the project that calls "
+                        + "AddGeneratedRoutes(): the route is not registered. Put [Routeable] on the view model (the view is found by its name), "
+                        + "move the view to a referenced project, or register it with RegisterRoute."));
+                }
+            });
+        }
+
+        private static bool CallsAddGeneratedRoutes(InvocationExpressionSyntax invocation) =>
+            invocation.Expression switch
+            {
+                MemberAccessExpressionSyntax member => member.Name.Identifier.ValueText == "AddGeneratedRoutes",
+                IdentifierNameSyntax name => name.Identifier.ValueText == "AddGeneratedRoutes",
+                _ => false,
+            };
+
+        private static IEnumerable<RazorAttributeLocation> FindRazorViewAttributes(AdditionalText text, System.Threading.CancellationToken ct)
+        {
+            var source = text.GetText(ct);
+            if (source is null)
+                yield break;
+
+            var content = source.ToString();
+            foreach (System.Text.RegularExpressions.Match match in RazorViewAttribute.Matches(content))
+            {
+                var span = new TextSpan(match.Index, match.Length);
+                yield return new RazorAttributeLocation(text.Path, span, source.Lines.GetLinePositionSpan(span));
+            }
+        }
+
+        private readonly record struct RazorAttributeLocation(string Path, TextSpan Span, LinePositionSpan LineSpan);
+
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
+            InitializeRazorCheck(context);
+
             // 1) Current compilation (syntax). AllowMultiple => iterate ALL attributes.
             var localViews = context.SyntaxProvider
                 .ForAttributeWithMetadataName(

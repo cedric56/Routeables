@@ -6,7 +6,6 @@ using XAnimals.ViewModels;
 
 namespace XAnimals.Avalonia;
 
-[RouteableView(typeof(PandaDetailViewModel), route: PandaDetailViewModel.Route)]
 public partial class PandaDetailView : RouteableFor<PandaDetailViewModel>
 {
     private string? _panda;

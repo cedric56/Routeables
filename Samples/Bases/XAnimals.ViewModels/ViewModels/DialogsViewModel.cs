@@ -10,6 +10,7 @@ namespace XAnimals.ViewModels;
 /// The Dialogs page: one button for every kind of dialog and notification Routeables offers, and the answer the user gave.
 /// The services are the platform's own (Razor, Avalonia, Maui or Uno), so the same view model drives the four apps.
 /// </summary>
+[Routeable("dialogs")]
 public class DialogsViewModel : ViewModelBase
 {
     private readonly IRouteableDialogService _dialogs;

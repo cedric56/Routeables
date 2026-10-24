@@ -6,7 +6,6 @@ using XAnimals.Birds;
 
 namespace XAnimals.Avalonia;
 
-[RouteableView(typeof(BirdDetailViewModel), route: BirdDetailViewModel.Route)]
 public partial class BirdDetailView : RouteableFor<BirdDetailViewModel>
 {
     private string? _bird;

@@ -10,5 +10,6 @@ namespace XAnimals.ViewModels;
 /// <c>back</c> is optional because a link has no list to return to.
 /// </summary>
 [RouteableViewModel(typeof(ElephantsViewModel), Route = "/elephants/{name}")]
+[Routeable("/elephants/{name}")]
 public class ElephantDetailViewModel(IRouter router, string name, Action? back = null)
     : AnimalDetailViewModel(router, ElephantData.Elephants.FirstOrDefault(e => e.Name == name), back);

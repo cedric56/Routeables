@@ -8,6 +8,7 @@ namespace XAnimals.ViewModels;
 /// A detail that does not read its panda from a constructor: the view receives <c>{panda::}</c> from the address in a property
 /// decorated with its platform's attribute and gives it to <see cref="Name"/>.
 /// </summary>
+[Routeable(PandaDetailViewModel.Route)]
 public class PandaDetailViewModel(IRouter router, Action? back = null) : AnimalDetailViewModel(router, null, back)
 {
     /// <summary>The route and template of the detail; <c>::</c> marks <c>panda</c> as an attribute parameter.</summary>

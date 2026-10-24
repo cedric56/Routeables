@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml;
 
 namespace XAnimals.Uno.Views;
 
-[RouteableView(typeof(RegionsViewModel), route: "regions")]
 public sealed partial class RegionsView : RouteableFor
 {
     public RegionsView()

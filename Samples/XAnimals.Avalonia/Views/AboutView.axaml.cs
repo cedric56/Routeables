@@ -7,7 +7,6 @@ using RoutedEventArgs = Avalonia.Interactivity.RoutedEventArgs;
 
 namespace XAnimals.Avalonia;
 
-[RouteableView(typeof(AboutViewModel), route: "about")]
 public partial class AboutView : RouteableFor<AboutViewModel>
 {
     public AboutView()

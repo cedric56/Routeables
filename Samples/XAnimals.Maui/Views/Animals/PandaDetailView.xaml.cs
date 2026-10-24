@@ -5,7 +5,6 @@ using XAnimals.ViewModels;
 namespace XAnimals.Maui.Views;
 
 // {panda::} in the route is an attribute parameter: it lands in the Panda property named here, as a Shell query would.
-[RouteableView(typeof(PandaDetailViewModel), route: PandaDetailViewModel.Route)]
 [QueryProperty(nameof(Panda), "panda")]
 public partial class PandaDetailView : RouteableFor
 {

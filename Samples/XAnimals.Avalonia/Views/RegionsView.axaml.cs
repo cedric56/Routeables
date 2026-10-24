@@ -9,7 +9,6 @@ using HorizontalAlignment = Avalonia.Layout.HorizontalAlignment;
 
 namespace XAnimals.Avalonia;
 
-[RouteableView(typeof(RegionsViewModel), route: "regions")]
 public partial class RegionsView : RouteableFor<RegionsViewModel>
 {
     public RegionsView()

@@ -5,7 +5,6 @@ using XAnimals.Birds;
 namespace XAnimals.Maui.Views;
 
 // {bird::} in the route is an attribute parameter: it lands in the Bird property named here, as a Shell query would.
-[RouteableView(typeof(BirdDetailViewModel), route: BirdDetailViewModel.Route)]
 [QueryProperty(nameof(Bird), "bird")]
 public partial class BirdDetailView : RouteableFor
 {

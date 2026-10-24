@@ -4,7 +4,6 @@ using XAnimals.ViewModels;
 
 namespace XAnimals.Maui.Views;
 
-[RouteableView(typeof(AboutViewModel), route: "about")]
 public partial class AboutView : RouteableFor
 {
     public AboutView()

@@ -32,7 +32,7 @@ public partial class App : Application
                services.UseRouteablesServices("avares://XAnimals.Avalonia/Assets/icon.ico", messageBoxService);
                services.AddGeneratedRoutes();
                AnimalIcons.Register();
-               services.RegisterViewModels<CatDetailView, DogDetailView>();
+               services.RegisterViewModels();
                configureServices?.Invoke(services);
            },
            afterBuild: afterBuildProvider,

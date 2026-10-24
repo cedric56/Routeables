@@ -7,4 +7,5 @@ Rule ID | Category | Severity | Notes
 ROUT201 | Routeables | Warning | Cached route with parameters
 ROUT202 | Routeables | Warning | Several views match the naming convention
 ROUT203 | Routeables | Warning | Several views for the same view model and route
+ROUT204 | Routeables | Warning | [RouteableView] in a .razor file is ignored here
 ROUT301 | Routeables | Warning | IMainRouteables registered as transient
