@@ -187,6 +187,34 @@ jobs:
             echo "::error::Routeables raised trim warnings"; exit 1
           fi
 
+  # ---------------------------------------------------------------------------------------------------------------------------
+  # The packages: the Routeables package holds seven libraries and the generator, and no package may depend on one of those
+  # libraries as if it were a package of its own. The packages that need a MAUI or Uno workload are not packed here.
+  # ---------------------------------------------------------------------------------------------------------------------------
+
+  packages:
+    name: Pack and check the packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Pack
+        run: |
+          dotnet pack Routeables.Core/Routeables.Core.csproj -c Release -o artifacts
+          dotnet pack Routeables.Razor/Routeables.Razor.csproj -c Release -o artifacts
+          dotnet pack Routeables.Razor.Services/Routeables.Razor.Services.csproj -c Release -o artifacts
+          dotnet pack Routeables.Avalonia/Routeables.Avalonia.csproj -c Release -o artifacts
+          dotnet pack Routeables.Avalonia.Services/Routeables.Avalonia.Services.csproj -c Release -o artifacts
+
+      - name: Check the dependencies and the content
+        run: .github/scripts/check-packages.sh artifacts
+
   android:
     name: Build Android (MAUI, Avalonia)
     runs-on: ubuntu-latest

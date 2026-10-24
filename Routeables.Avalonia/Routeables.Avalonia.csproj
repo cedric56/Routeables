@@ -24,8 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Routeables.Regions\Routeables.Regions.csproj" />
-    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" />
-    <ProjectReference Include="..\Routeables.Services\Routeables.Services.csproj" />
+    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
   </ItemGroup>
 </Project>

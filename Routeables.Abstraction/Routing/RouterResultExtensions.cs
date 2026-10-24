@@ -16,19 +16,10 @@ public static class RouterResultExtensions
     /// of itself. The value comes from the page's <see cref="IReturnsResult{TResult}"/>.
     /// </summary>
     public static Task<RouteableResult<TResult>> GoToForResultAsync<TResult>(
-        this IRouter router, string url, IRouteableArgs? args = null, CancellationToken cancellationToken = default)
+        this IRouter router, string url, IRouteableArgs? args = null, string? template = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(router);
-        return router.WaitForResultAsync<TResult>(() => router.GoToAsync(url, args, cancellationToken), cancellationToken);
-    }
-
-    /// <summary>The same for a page reached with <see cref="IRouter.GoToRouteAsync{TViewModel}"/>.</summary>
-    public static Task<RouteableResult<TResult>> GoToForResultAsync<TViewModel, TResult>(
-        this IRouter router, string route, IRouteableArgs? args = null, string? template = null, CancellationToken cancellationToken = default)
-        where TViewModel : class
-    {
-        ArgumentNullException.ThrowIfNull(router);
-        return router.WaitForResultAsync<TResult>(() => router.GoToRouteAsync<TViewModel>(route, args, template, cancellationToken), cancellationToken);
+        return router.WaitForResultAsync<TResult>(() => router.GoToAsync(url, args, template, cancellationToken), cancellationToken);
     }
 
     private static async Task<RouteableResult<TResult>> WaitForResultAsync<TResult>(

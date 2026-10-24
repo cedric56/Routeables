@@ -28,13 +28,13 @@ public class RouterGenericRouteTests
     }
 
     [Fact]
-    public async Task GoToRouteAsync_resolves_the_view_model_from_the_route_template()
+    public async Task GoToAsync_resolves_the_view_model_from_the_route_template()
     {
         // title is declared in the template: a query value the template does not declare never reaches the constructor.
         const string template = "details/{id:int}?{title?}";
         var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: template));
 
-        var result = await router.GoToRouteAsync<DetailVm>(
+        var result = await router.GoToAsync(
             "details/42?title=hello", template: template, cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(result.Success);
@@ -44,11 +44,11 @@ public class RouterGenericRouteTests
     }
 
     [Fact]
-    public async Task GoToRouteAsync_reports_a_route_that_does_not_match_its_template()
+    public async Task GoToAsync_reports_a_route_that_does_not_match_its_template()
     {
         var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
 
-        var result = await router.GoToRouteAsync<DetailVm>(
+        var result = await router.GoToAsync(
             "details/not-a-number", template: "details/{id:int}", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.False(result.Success);
@@ -56,20 +56,20 @@ public class RouterGenericRouteTests
     }
 
     [Fact]
-    public async Task GoToRouteAsync_rejects_a_null_route()
+    public async Task GoToAsync_rejects_a_null_route()
     {
         var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
 
         await Assert.ThrowsAsync<ArgumentNullException>(() =>
-            router.GoToRouteAsync<DetailVm>((string)null!, cancellationToken: TestContext.Current.CancellationToken));
+            router.GoToAsync(null!, cancellationToken: TestContext.Current.CancellationToken));
     }
 
     [Fact]
-    public async Task GoToRouteAsync_finds_the_template_of_a_route_given_without_one()
+    public async Task GoToAsync_finds_the_template_of_a_route_given_without_one()
     {
         var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
 
-        var result = await router.GoToRouteAsync<DetailVm>("details/7?title=x", cancellationToken: TestContext.Current.CancellationToken);
+        var result = await router.GoToAsync("details/7?title=x", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(result.Success);
         Assert.Equal(7, Assert.IsType<DetailVm>(router.CurrentViewModel).Id);

@@ -7,11 +7,16 @@
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Version>1.0.0</Version>
-    <PackageId>Routeables.Core</PackageId>
-    <Authors>Cedric</Authors>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Routing-aware view-model bases and runtime information for Routeables.</Description>
+    <!--
+      This project is the "Routeables" package: it carries Abstraction, Routing, Core, Regions, Services, Locking, Segments and the source
+      generator. The files and the dependencies of the package are those of Routeables.nuspec (a project that references this one
+      depends on "Routeables"). The projects below are built before the pack, so that their assemblies exist.
+    -->
+    <PackageId>Routeables</PackageId>
+    <NuspecFile>Routeables.nuspec</NuspecFile>
+    <NuspecProperties>version=$(Version);configuration=$(Configuration)</NuspecProperties>
+    <!-- The symbols are the .pdb files listed in the nuspec. -->
+    <IncludeSymbols>false</IncludeSymbols>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,17 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="build\**" Pack="true" PackagePath="buildTransitive/" />
-    <!--<Compile Remove="Community\**" />-->
-    <TfmSpecificPackageFile Include="Community\**">
-      <PackagePath>lib/$(TargetFramework)/Community/%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
-      <PackageCopyToOutput>true</PackageCopyToOutput>
-    </TfmSpecificPackageFile>
     <Compile Remove="ReactiveUI\**" />
-    <TfmSpecificPackageFile Include="ReactiveUI\**">
-      <PackagePath>lib/$(TargetFramework)/ReactiveUI/%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
-      <PackageCopyToOutput>true</PackageCopyToOutput>
-    </TfmSpecificPackageFile>
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +37,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Routeables.Routing\Routeables.Routing.csproj" />
+    <ProjectReference Include="..\Routeables.Regions\Routeables.Regions.csproj" />
+    <ProjectReference Include="..\Routeables.Services\Routeables.Services.csproj" />
+    <ProjectReference Include="..\Routeables.Locking\Routeables.Locking.csproj" />
+    <ProjectReference Include="..\Routeables.Segments\Routeables.Segments.csproj" />
+    <!-- Only so that the generator is built before the pack: nothing of it is referenced. The nuspec puts it in analyzers/. -->
+    <ProjectReference Include="..\Routeables.Generated\Routeables.Generated.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

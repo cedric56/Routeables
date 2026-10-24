@@ -88,7 +88,7 @@ public class RouterTypedExtensionsTests
     {
         var router = Build(s => s.RegisterRoute<PlainView, PlainVm>(route: "/plain"));
 
-        await router.GoToRouteAsync<PlainVm>("/plain", cancellationToken: TestContext.Current.CancellationToken);
+        await router.GoToAsync("/plain", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.Null(((PlainVm)router.CurrentViewModel!).Received);
     }

@@ -35,7 +35,7 @@ A route on the view model, the view with the matching name, one registration cal
 
 ## Start with your host
 
-Reference the host package and the generator (as an analyzer), then start Routeables where your framework starts.
+Reference the host package, then start Routeables where your framework starts. From NuGet, the host package brings the `Routeables` package, which carries the generator: there is nothing else to add. From source, reference the generator as an analyzer too:
 
 | Host | Package | Setup |
 | --- | --- | --- |
@@ -77,11 +77,8 @@ Routeables routes. It ships no commands, view-model locator or event aggregator:
 | --- | --- |
 | Dialogs, notifications, theme | `Routeables.Razor.Services`, `Routeables.Maui.Services`, `Routeables.Avalonia.Services` or `Routeables.Uno.Services` |
 | MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs | [`Reshapes`](Reshapes/README.md) |
-| Pages that block leaving, a locked menu | [`Routeables.Locking`](Routeables.Locking/README.md) |
-| Region layouts and followers | [`Routeables.Regions`](Routeables.Regions/README.md) |
-| Routing by segments (`Orders?id=5/Detail`) | [`Routeables.Segments`](Routeables.Segments/README.md) |
 
-The contracts are in [`Routeables.Abstraction`](Routeables.Abstraction/README.md), the router in [`Routeables.Routing`](Routeables.Routing/README.md), the view-model bases in [`Routeables.Core`](Routeables.Core/README.md).
+Everything else is in the one `Routeables` package, which every host brings: the contracts ([`Abstraction`](Routeables.Abstraction/README.md)), the router ([`Routing`](Routeables.Routing/README.md)), the view-model bases ([`Core`](Routeables.Core/README.md)), [`Regions`](Routeables.Regions/README.md), [`Segments`](Routeables.Segments/README.md) (`Orders?id=5/Detail`), [`Locking`](Routeables.Locking/README.md) (pages that block leaving, a locked menu), the dialog and notification contracts ([`Services`](Routeables.Services/README.md)) and the source generator. They are separate projects of this repository and one package.
 
 ## Learn more
 

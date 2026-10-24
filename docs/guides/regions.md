@@ -54,7 +54,7 @@ implements `IReturnsResult<T>`; the router needs nothing more.
 
 ```csharp
 // The caller
-var picked = await router.GoToForResultAsync<Color>("/colors");     // or GoToForResultAsync<ColorsViewModel, Color>(route)
+var picked = await router.GoToForResultAsync<Color>("/colors");
 if (picked.Returned) Apply(picked.Value);                           // picked.OpenResult says whether the page opened
 
 // The page

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction;
 
 /// <summary>
 /// The route change of an application, or of one region of it: it keeps a history of entries (a view model and its view) and moves a
@@ -62,10 +60,16 @@ public interface IRouter
     /// <summary>
     /// Goes to a registered route by its address, as a browser would: <c>GoToAsync("/orders/42")</c>. The route is looked up in
     /// the routes registered with an explicit route (<c>RouteableTable</c>) and in the main routeables; its parameters
-    /// (<c>{id:int}</c>, query) are read from <paramref name="url"/> and no template is needed. The leading <c>/</c> is optional.
-    /// Fails (without throwing) when no route matches.
+    /// (<c>{id:int}</c>, query) are read from <paramref name="url"/>. The leading <c>/</c> is optional. Fails (without throwing) when no route matches.
     /// </summary>
-    Task<RouteableResult> GoToAsync(string url, IRouteableArgs? args = null, CancellationToken cancellationToken = default);
+    /// <param name="url">The address to go to.</param>
+    /// <param name="args">The arguments of the route change, or <see langword="null"/> for none.</param>
+    /// <param name="template">
+    /// The registered route to go to, when the address alone does not tell it (<c>"/orders/{id:int}"</c>); found from the
+    /// address when omitted. A template that is not registered is used as it is.
+    /// </param>
+    /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    Task<RouteableResult> GoToAsync(string url, IRouteableArgs? args = null, string? template = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Goes to a view and a view model you built yourself, adding them to the history. The router does not create anything:
@@ -87,28 +91,6 @@ public interface IRouter
         CancellationToken cancellationToken = default,
         params string[] viewKeys)
         where TViewModel : class;
-
-    /// <summary>
-    /// Goes to <paramref name="route"/> with <typeparamref name="TViewModel"/>. The <paramref name="template"/> is optional:
-    /// without it, it is the one registered for the route (<c>RouteableTable</c>, then the main routeables), or the route itself.
-    /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]    // prefer GoToAsync(url)
-    Task<RouteableResult> GoToRouteAsync<TViewModel>(
-       string route,
-       IRouteableArgs? args = null,
-       string? template = null,
-       CancellationToken cancellationToken = default,
-       params string[] viewKeys);
-
-    /// <summary>Goes to <paramref name="route"/>; the optional <paramref name="template"/> is found from the route when omitted.</summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]    // prefer GoToAsync(url)
-    Task<RouteableResult> GoToRouteAsync(
-        string route,
-        IRouteableArgs? args = null,
-        string? template = null,
-        CancellationToken cancellationToken = default,
-        params string[] viewKeys);
-
 
     /// <summary>Goes to a menu entry, which knows its route, its template and its view model.</summary>
     /// <param name="routeableView">The entry to go to.</param>

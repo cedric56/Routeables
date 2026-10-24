@@ -44,7 +44,7 @@ public class ScopeRetentionTests
             var main = scope.ServiceProvider.GetRequiredService<IMainRouteables>();
             var router = scope.ServiceProvider.GetRequiredService<IRouter>();
             for (var p = 0; p < 3; p++)
-                await router.GoToRouteAsync("/page", template: "/page");
+                await router.GoToAsync("/page", template: "/page");
             main.Lock();
             main.Unlock();
         }
@@ -85,8 +85,8 @@ public class ScopeRetentionTests
             var side = scope.ServiceProvider.GetRouter("side");
             for (var p = 0; p < 3; p++)
             {
-                await main.GoToRouteAsync("/region", template: "/region");
-                await side.GoToRouteAsync("/region", template: "/region");
+                await main.GoToAsync("/region", template: "/region");
+                await side.GoToAsync("/region", template: "/region");
             }
         }
     }

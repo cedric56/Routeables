@@ -83,11 +83,11 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             return true;
         }
         else if (provider.GetService<RouteableTable>()?.Entries
-                     .FirstOrDefault(e => RouteParser.TryMatch(e.Template, path)) is { Go: not null } found)
+                     .Where(e => RouteParser.TryMatch(e.Template, path)).Select(e => e.Template).FirstOrDefault() is { } template)
         {
             try
             {
-                result = await found.Go(router, path, RouteableArgs.Create(), CancellationToken.None);
+                result = await router.GoToAsync(path, RouteableArgs.Create(), template, CancellationToken.None);
             }
             catch (Exception ex)    // a typed or refreshed address the page cannot be built for must not take the app down
             {

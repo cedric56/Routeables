@@ -54,7 +54,7 @@ public class RouteSecurityTests
         var router = provider.GetRequiredService<IRouter>();
         var args = RouteableArgs.Create().WithViewModel("tenant", "trusted");
 
-        var result = await router.GoToAsync("/secure/5?tenant=attacker", args, Ct);
+        var result = await router.GoToAsync("/secure/5?tenant=attacker", args, cancellationToken: Ct);
 
         Assert.True(result.Success, result.Exception?.Message);
         Assert.Equal("trusted", router.GetCurrentViewModel<TenantVm>()!.Tenant);

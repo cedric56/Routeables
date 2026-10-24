@@ -28,7 +28,6 @@
 <!--#else -->
     <PackageReference Include="Routeables.Avalonia" Version="1.0.0" />
     <PackageReference Include="Routeables.Avalonia.Services" Version="1.0.0" />
-    <PackageReference Include="Routeables.Generated" Version="1.0.0" PrivateAssets="all" />
 <!--#endif -->
   </ItemGroup>
 </Project>

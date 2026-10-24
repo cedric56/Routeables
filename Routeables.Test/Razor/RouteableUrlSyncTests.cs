@@ -71,10 +71,10 @@ public class RouteableUrlSyncTests
         }
 
         public Task<RouteableResult> Home() =>
-            Router.GoToRouteAsync<HomeVm>("/home", template: "/home", cancellationToken: TestContext.Current.CancellationToken);
+            Router.GoToAsync("/home", template: "/home", cancellationToken: TestContext.Current.CancellationToken);
 
         public Task<RouteableResult> Customer(int id) =>
-            Router.GoToRouteAsync<CustomerVm>($"/customers/{id}", template: "/customers/{id:int}", cancellationToken: TestContext.Current.CancellationToken);
+            Router.GoToAsync($"/customers/{id}", template: "/customers/{id:int}", cancellationToken: TestContext.Current.CancellationToken);
 
         // The address handler is async void (an event handler): wait for its effect.
         public static async Task Until(Func<bool> condition)
@@ -97,8 +97,8 @@ public class RouteableUrlSyncTests
         using var f = new Fixture();
         var args = RouteableArgs.Create();
 
-        var first = await f.Router.GoToRouteAsync<CustomerVm>("/customers/1", args, "/customers/{id:int}", TestContext.Current.CancellationToken);
-        var second = await f.Router.GoToRouteAsync<CustomerVm>("/customers/2", args, "/customers/{id:int}", TestContext.Current.CancellationToken);
+        var first = await f.Router.GoToAsync("/customers/1", args, "/customers/{id:int}", TestContext.Current.CancellationToken);
+        var second = await f.Router.GoToAsync("/customers/2", args, "/customers/{id:int}", TestContext.Current.CancellationToken);
 
         Assert.True(first.Success);
         Assert.True(second.Success);
@@ -115,7 +115,7 @@ public class RouteableUrlSyncTests
     {
         using var f = new Fixture();
 
-        var result = await f.Router.GoToRouteAsync<CustomerVm>(route, template: "/customers/{id:int}", cancellationToken: TestContext.Current.CancellationToken);
+        var result = await f.Router.GoToAsync(route, template: "/customers/{id:int}", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.False(result.Success);
         Assert.Contains(route, result.Exception!.Message);
@@ -192,7 +192,7 @@ public class RouteableUrlSyncTests
         using var sync = new RouteableUrlSync(routing, router, provider);
         await sync.StartAsync();
 
-        await router.GoToRouteAsync<HomeVm>("about", template: "about", cancellationToken: TestContext.Current.CancellationToken);
+        await router.GoToAsync("about", template: "about", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.Equal([("/about", true)], routing.Calls);
         Assert.Equal("http://localhost/about", routing.Uri);
@@ -426,7 +426,7 @@ public class RouteableUrlSyncTests
         var router = provider.GetRequiredService<IRouter>();
         using var sync = new RouteableUrlSync(routing, router, provider);
         await sync.StartAsync();
-        await router.GoToRouteAsync<HomeVm>("/home", template: "/home", cancellationToken: TestContext.Current.CancellationToken);
+        await router.GoToAsync("/home", template: "/home", cancellationToken: TestContext.Current.CancellationToken);
         routing.Calls.Clear();
 
         routing.BrowserGoesTo("/boom");

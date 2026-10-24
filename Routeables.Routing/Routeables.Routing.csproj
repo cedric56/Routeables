@@ -7,11 +7,8 @@
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Version>1.0.0</Version>
-    <PackageId>Routeables.Routing</PackageId>
-    <Authors>Cedric</Authors>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>The Routeables router: history, route locking and dependency injection registration.</Description>
+    <!-- Shipped inside the Routeables package (Routeables.Core/Routeables.nuspec), not as a package of its own. -->
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,6 +1,19 @@
-# Routeables.Core
+# Routeables
 
-What the four hosts share: view-model bases that know about routing, the contract of a view model that closes with a result, and information about the runtime. It builds on [`Routeables.Routing`](../Routeables.Routing/README.md). Targets **.NET 10**. A host references it, so an application usually gets it through the host.
+Routing between view models for Blazor, .NET MAUI, Avalonia and Uno. This package is what the four hosts share, and an application gets it through the package of its host (`Routeables.Razor`, `Routeables.Maui`, `Routeables.Avalonia`, `Routeables.Uno`). Targets **.NET 10**.
+
+It is one package built from several projects of the repository:
+
+| Part | What it holds |
+| --- | --- |
+| [`Abstraction`](../Routeables.Abstraction/README.md) | The contracts (`IRouter`, `IRouteable`, route arguments) and the attributes that declare routes |
+| [`Routing`](../Routeables.Routing/README.md) | The router: history, route locking, registration |
+| `Core` (this folder) | The view-model bases that know about routing, and information about the runtime |
+| [`Regions`](../Routeables.Regions/README.md) | Several areas of the screen, each with its own history |
+| [`Segments`](../Routeables.Segments/README.md) | Routing by segments (`Orders?id=5/Detail`) |
+| [`Locking`](../Routeables.Locking/README.md) | Pages that block leaving, a locked menu |
+| [`Services`](../Routeables.Services/README.md) | The contracts of the dialogs, notifications and theme (the host packages implement them) |
+| [`Generated`](../Routeables.Generated/README.md) | The source generator, as an analyzer: `AddGeneratedRoutes()` and the typed `GoTo…Async` methods |
 
 ## Which base?
 
@@ -14,7 +27,7 @@ What the four hosts share: view-model bases that know about routing, the contrac
 
 Register the menu with `UseRouteables<MainViewModel>(...)` on your host, or `services.RegisterMainRouteables<MainViewModel>()`. The host chooses the lifetime (`Scoped` per circuit on Blazor, `Singleton` elsewhere). It implements `IMainRouteables`: the entries, the selected one, the current view, and the guard that stops a change of entry while a page blocks leaving.
 
-The CommunityToolkit flavour is opt-in: declare it in the project file and `Routeables.Core.targets` adds the package and the sources.
+The CommunityToolkit flavour is opt-in: declare it in the project file and `Routeables.targets` adds the package and the sources.
 
 ```xml
 <PropertyGroup>
@@ -26,4 +39,4 @@ The CommunityToolkit flavour is opt-in: declare it in the project file and `Rout
 
 `Runtime`, `Desktop` and `Distribution` describe the host, the operating-system family and the distribution. Each host registers them; by hand: `services.RegisterEnvironments(Runtime.Avalonia)`. The values are `Avalonia`, `Maui`, `MauiHybrid`, `BlazorServer`, `BlazorWebAssembly`, `Uno` and `Unknown`.
 
-Related: [`Routeables.Abstraction`](../Routeables.Abstraction/README.md), [`Routeables.Routing`](../Routeables.Routing/README.md), [hosts](../docs/guides/hosts.md).
+Related: [hosts](../docs/guides/hosts.md), [getting started](../docs/getting-started.md).

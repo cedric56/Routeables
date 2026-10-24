@@ -24,8 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
     <ProjectReference Include="..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
-    <ProjectReference Include="..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
-    <ProjectReference Include="..\Routeables.Services\Routeables.Services.csproj" />
   </ItemGroup>
 </Project>

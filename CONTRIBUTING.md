@@ -23,6 +23,19 @@ dotnet run -c Release --project Routeables.Benchmarks -- --leak
 
 [docs/benchmarks.md](docs/benchmarks.md) explains the benchmarks, and [docs/host-scenarios.md](docs/host-scenarios.md) lists the scenarios to play by hand on each host.
 
+## Packages
+
+The repository has many projects and few packages. `Routeables.Core` is the **`Routeables`** package: it holds the assemblies of Abstraction, Routing, Core, Regions, Services, Locking and Segments, and the generator in `analyzers/`. Its files and dependencies are listed in `Routeables.Core/Routeables.nuspec`: add a new file or change a `PackageReference` of one of those projects there too. Those projects have `IsPackable` off.
+
+The host projects (`Routeables.Razor`, `.Maui`, `.Avalonia`, `.Uno`, their `.Services`, the Reshapes) are packed as they are. A packed project must not reference Abstraction, Routing, Regions, Services, Locking, Segments or Generated directly: pack would make it depend on a package that does not exist. It references `Routeables.Core` (with `PrivateAssets="none"`, so the analyzer reaches the application) and sees the others through it.
+
+```bash
+dotnet pack Routeables.Core -c Release -o artifacts     # the Routeables package
+dotnet pack Routeables.Razor -c Release -o artifacts    # a host; same for the others
+```
+
+The CI packs the packages that need no workload and fails if one of them depends on a project that is not a package.
+
 ## Documentation
 
 The guides and the API reference are published at <https://cedric56.github.io/Routeables/>, built with [DocFX](https://dotnet.github.io/docfx/) from the `docs`

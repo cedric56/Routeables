@@ -5,6 +5,16 @@
     <Project Path="Reshapes/Reshapes.Maui.Community/Reshapes.Maui.Community.csproj" Id="90e9e577-6f0e-458d-ad04-37914db4b98e" />
     <Project Path="Reshapes/Reshapes.Razor.MudBlazor/Reshapes.Razor.MudBlazor.csproj" Id="4b5f66a3-73fb-44ed-8f1e-733fac24cd35" />
   </Folder>
+  <Folder Name="/Routeables/">
+    <Project Path="Routeables.Abstraction/Routeables.Abstraction.csproj" />
+    <Project Path="Routeables.Core/Routeables.Core.csproj" />
+    <Project Path="Routeables.Generated/Routeables.Generated.csproj" Id="f5d73331-cfab-460c-b3ae-d3fb64222f17" />
+    <Project Path="Routeables.Locking/Routeables.Locking.csproj" />
+    <Project Path="Routeables.Regions/Routeables.Regions.csproj" />
+    <Project Path="Routeables.Routing/Routeables.Routing.csproj" />
+    <Project Path="Routeables.Segments/Routeables.Segments.csproj" />
+    <Project Path="Routeables.Services/Routeables.Services.csproj" />
+  </Folder>
   <Folder Name="/Samples/">
     <Project Path="Samples/XAnimals.Avalonia.Android/XAnimals.Avalonia.Android.csproj">
       <Deploy Solution="Debug|*" />
@@ -49,22 +59,14 @@
     <File Path="logo-icon.svg" />
     <File Path="logo.svg" />
   </Folder>
-  <Project Path="Routeables.Abstraction/Routeables.Abstraction.csproj" />
   <Project Path="Routeables.AotSmoke/Routeables.AotSmoke.csproj" />
   <Project Path="Routeables.Avalonia.Services/Routeables.Avalonia.Services.csproj" />
   <Project Path="Routeables.Avalonia/Routeables.Avalonia.csproj" />
   <Project Path="Routeables.Benchmarks/Routeables.Benchmarks.csproj" />
-  <Project Path="Routeables.Core/Routeables.Core.csproj" />
-  <Project Path="Routeables.Generated/Routeables.Generated.csproj" Id="f5d73331-cfab-460c-b3ae-d3fb64222f17" />
-  <Project Path="Routeables.Locking/Routeables.Locking.csproj" />
   <Project Path="Routeables.Maui.Services/Routeables.Maui.Services.csproj" />
   <Project Path="Routeables.Maui/Routeables.Maui.csproj" />
   <Project Path="Routeables.Razor.Services/Routeables.Razor.Services.csproj" />
   <Project Path="Routeables.Razor/Routeables.Razor.csproj" />
-  <Project Path="Routeables.Regions/Routeables.Regions.csproj" />
-  <Project Path="Routeables.Routing/Routeables.Routing.csproj" />
-  <Project Path="Routeables.Segments/Routeables.Segments.csproj" />
-  <Project Path="Routeables.Services/Routeables.Services.csproj" />
   <Project Path="Routeables.Templates/Routeables.Templates.csproj" />
   <Project Path="Routeables.Test/Routeables.Test.csproj" Id="19b50f73-16a6-45b8-b30b-1b4d16ca42df" />
   <Project Path="Routeables.Uno.Services/Routeables.Uno.Services.csproj" />

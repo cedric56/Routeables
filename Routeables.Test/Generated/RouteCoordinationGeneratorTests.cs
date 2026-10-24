@@ -43,7 +43,7 @@ public class RouteCoordinationGeneratorTests
         Assert.Contains("this global::Sample.HomeViewModel caller,", output.Generated);
         Assert.Contains("global::Sample.Animal monkey,", output.Generated);
         Assert.Contains("global::System.Action back,", output.Generated);
-        Assert.Contains("router.GoToRouteAsync<global::Sample.MonkeyDetailViewModel>(__route, __args, \"/monkeys\", cancellationToken)", output.Generated);
+        Assert.Contains("router.GoToAsync(__route, __args, \"/monkeys\", cancellationToken)", output.Generated);
 
         // The IRouter constructor parameter is filled with the router the method is called with:
         // it is not asked from the caller a second time.

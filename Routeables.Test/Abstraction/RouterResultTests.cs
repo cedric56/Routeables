@@ -147,18 +147,4 @@ public class RouterResultTests
         Assert.Equal("side", (await waiting).Value);
         Assert.Null(provider.GetRequiredService<IRouter>().CurrentViewModel);
     }
-
-    [Fact]
-    public async Task The_typed_view_model_overload_reads_the_same_result()
-    {
-        using var provider = Build();
-        var router = provider.GetRequiredService<IRouter>();
-        await router.GoToAsync("/about", cancellationToken: Ct);
-
-        var waiting = router.GoToForResultAsync<PickerVm, string>("/picker", cancellationToken: Ct);
-        router.GetCurrentViewModel<PickerVm>()!.Pick("typed");
-        await router.PopAsync(Ct);
-
-        Assert.Equal("typed", (await waiting).Value);
-    }
 }

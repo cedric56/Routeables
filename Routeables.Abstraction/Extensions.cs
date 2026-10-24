@@ -270,8 +270,8 @@ public static class Extensions
     /// <paramref name="region"/> (the default router when <see langword="null"/>). See <see cref="IRouter.GoToAsync"/>.
     /// </summary>
     public static Task<RouteableResult> GoToAsync(
-        this IServiceProvider provider, string url, string? region = null, IRouteableArgs? args = null, CancellationToken cancellationToken = default)
-        => provider.GetRouter(region).GoToAsync(url, args, cancellationToken);
+        this IServiceProvider provider, string url, string? region = null, IRouteableArgs? args = null, string? template = null, CancellationToken cancellationToken = default)
+        => provider.GetRouter(region).GoToAsync(url, args, template, cancellationToken);
 
     /// <summary>The current view model as a <typeparamref name="T"/>, or <see langword="null"/> when it is another type or none.</summary>
     public static T? GetCurrentViewModel<T>(this IRouter router) where T : class
@@ -531,14 +531,14 @@ public static class Extensions
         // A route given by the caller ("about", "/customers/{id:int}") can be reached from an address (Blazor URL,
         // deep link): remember how to go to it. The default keys (no route given) are not addresses.
         if (!string.IsNullOrWhiteSpace(route))
-            services.GetRouteableTable().Add(route, (router, url, args, ct) => router.GoToRouteAsync<TViewModel>(url, args, route, ct));
+            services.GetRouteableTable().Add(route, typeof(TViewModel));
     }
 
     // A route without a view model (a view only, or a custom factory): the view is found under the route itself.
     private static void AddAddressableRoute(this IServiceCollection services, string route)
     {
         if (!string.IsNullOrWhiteSpace(route))
-            services.GetRouteableTable().Add(route, (router, url, args, ct) => router.GoToRouteAsync(url, args, route, ct));
+            services.GetRouteableTable().Add(route, null);
     }
 
     // One table per collection, found through its instance registration so the order of calls does not matter.

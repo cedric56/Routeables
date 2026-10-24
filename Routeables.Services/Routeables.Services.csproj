@@ -9,11 +9,8 @@
     <RootNamespace>Routeables.Abstraction</RootNamespace>
     <!--<AllowUnsafeBlocks>true</AllowUnsafeBlocks>-->
     <Version>1.0.0</Version>
-    <PackageId>Routeables.Services</PackageId>
-    <Authors>Cedric</Authors>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Optional UI service contracts for Routeables: dialogs, content and task dialogs, notifications and theme.</Description>
+    <!-- Shipped inside the Routeables package (Routeables.Core/Routeables.nuspec), not as a package of its own. -->
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

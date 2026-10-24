@@ -37,19 +37,16 @@ public static class RouterTypedExtensions
     /// <param name="data">The data handed to <see cref="IInitializeAsync{TData}.InitializeAsync"/>.</param>
     /// <param name="template">The route template; found from the route when omitted.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    /// <param name="viewKeys">Optional view keys, as for <see cref="IRouter.GoToRouteAsync{TViewModel}(string, IRouteableArgs?, string?, CancellationToken, string[])"/>.</param>
     /// <returns>The route change result.</returns>
     public static Task<RouteableResult> GoToRouteAsync<TViewModel, TData>(
         this IRouter router,
         string route,
         TData data,
         string? template = null,
-        CancellationToken cancellationToken = default,
-        params string[] viewKeys)
+        CancellationToken cancellationToken = default)
         where TViewModel : class, IInitializeAsync<TData>
     {
         ArgumentNullException.ThrowIfNull(router);
-        return router.GoToRouteAsync<TViewModel>(
-            route, TypedInitialization.CreateArgs(data), template, cancellationToken, viewKeys);
+        return router.GoToAsync(route, TypedInitialization.CreateArgs(data), template, cancellationToken);
     }
 }

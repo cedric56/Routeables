@@ -8,7 +8,7 @@ The projects target **.NET 10** (`net10.0`), so you need a .NET 10 SDK. MAUI als
 git clone https://github.com/cedric56/Routeables.git
 ```
 
-Add a project reference to the host you need (the host references `Routeables.Core`, which brings in routing and the abstractions), and the source generator as an analyzer:
+From NuGet, add the package of your host (`Routeables.Razor`, `Routeables.Maui`, `Routeables.Avalonia` or `Routeables.Uno`): it brings `Routeables`, which holds the routing, the abstractions and the source generator. From source, add a project reference to the host you need (it references `Routeables.Core`, which brings in routing and the abstractions), and the source generator as an analyzer:
 
 ```xml
 <ItemGroup>

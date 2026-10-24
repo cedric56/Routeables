@@ -1,6 +1,6 @@
 # Routeables.Generated
 
-The source generators of Routeables. Reference them as an analyzer from every project that declares routes:
+The source generators of Routeables. From NuGet they are inside the `Routeables` package, which every host package brings: there is nothing to add. From source, reference them as an analyzer from every project that declares routes:
 
 ```xml
 <ItemGroup>

@@ -13,6 +13,8 @@ var args = RouteableArgs.Create()
 await router.GoToAsync("/orders/42", args);
 ```
 
+The route is found from the address. When the address alone does not say which route you mean, give its template: `router.GoToAsync("/orders/42", args, template: "/orders/{id:int}")`.
+
 `ForViewModel`, `ForView` and `ForValues` take plain values (several at once: `ForViewModel(order, back)`); `WithViewModel`, `WithView` and `WithValue` take a name and a value. In a hook, read the values by name: `args.Get<Action>("back")` (or `args.Get<Animal>()` when only one value has that type; two of the same type throw instead of silently taking the first).
 
 `new RouteableArgument(value, name, attribute)` is still there for the rare argument that needs the `attribute` flag in a list.
@@ -45,7 +47,7 @@ public sealed class OrderViewModel : IInitializeAsync<Order>
     public Task InitializeAsync(Order data, CancellationToken ct = default) { /* ... */ return Task.CompletedTask; }
 }
 
-await router.GoToRouteAsync<OrderViewModel, Order>("/orders/42", "/orders/{id:int}", order);
+await router.GoToRouteAsync<OrderViewModel, Order>("/orders/42", order);
 ```
 
 Prefer constructor parameters for required data (the object is valid as soon as it exists, and the generator checks them at compile time). Use `IInitializeAsync` for work that must be asynchronous.

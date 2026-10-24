@@ -24,12 +24,12 @@ public class RouterSingletonLifetimeTests
         using var provider = services.BuildServiceProvider();
         var router = new Router(new RouterHistory(), new RouterGate(), new RouterLifecycle(provider), provider);
 
-        await router.GoToRouteAsync("/home", template: "/home", cancellationToken: Ct);
-        await router.GoToRouteAsync("/shared", template: "/shared", cancellationToken: Ct);
+        await router.GoToAsync("/home", template: "/home", cancellationToken: Ct);
+        await router.GoToAsync("/shared", template: "/shared", cancellationToken: Ct);
         var shared = (Page)router.CurrentView!;
         await router.GoBackToRootAsync(Ct);
 
-        await router.GoToRouteAsync("/shared", template: "/shared", cancellationToken: Ct);
+        await router.GoToAsync("/shared", template: "/shared", cancellationToken: Ct);
 
         Assert.Same(shared, router.CurrentView);
         Assert.Equal(0, shared.Disposed);
@@ -45,8 +45,8 @@ public class RouterSingletonLifetimeTests
         var scope = root.CreateScope();
         var router = new Router(new RouterHistory(), new RouterGate(), new RouterLifecycle(scope.ServiceProvider), scope.ServiceProvider);
 
-        await router.GoToRouteAsync("/home", template: "/home", cancellationToken: Ct);
-        await router.GoToRouteAsync("/scoped", template: "/scoped", cancellationToken: Ct);
+        await router.GoToAsync("/home", template: "/home", cancellationToken: Ct);
+        await router.GoToAsync("/scoped", template: "/scoped", cancellationToken: Ct);
         var page = (Page)router.CurrentView!;
         await router.GoBackToRootAsync(Ct);
 

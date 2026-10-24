@@ -95,7 +95,7 @@ public class RouteApiTests
             .WithViewModel("to", 9)
             .WithViewModel("from", 3);
 
-        var result = await router.GoToAsync("/range", args, TestContext.Current.CancellationToken);
+        var result = await router.GoToAsync("/range", args, cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(result.Success, result.Exception?.Message);
         var vm = router.GetCurrentViewModel<RangeVm>()!;
@@ -120,12 +120,12 @@ public class RouteApiTests
         using var provider = Build();
         var router = provider.GetRequiredService<IRouter>();
 
-        var result = await router.GoToRouteAsync<OrderVm>("/orders/5", cancellationToken: TestContext.Current.CancellationToken);
+        var result = await router.GoToAsync("/orders/5", cancellationToken: TestContext.Current.CancellationToken);
         Assert.True(result.Success, result.Exception?.Message);
         Assert.Equal(5, router.GetCurrentViewModel<OrderVm>()!.Id);
 
         // A route without parameter is its own template.
-        Assert.True((await router.GoToRouteAsync<AboutVm>("/about", cancellationToken: TestContext.Current.CancellationToken)).Success);
+        Assert.True((await router.GoToAsync("/about", cancellationToken: TestContext.Current.CancellationToken)).Success);
         Assert.NotNull(router.GetCurrentViewModel<AboutVm>());
     }
 }

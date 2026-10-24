@@ -938,7 +938,7 @@ namespace Routeables.Generated
                 sb.AppendLine(body + (e.Conditional ? "if (" + value + " is not null) " : string.Empty) + statement);
             }
 
-            sb.AppendLine(body + "return router.GoToRouteAsync<" + m.DestinationName + ">(__route, __args, " + Literal(m.Template) + ", cancellationToken);");
+            sb.AppendLine(body + "return router.GoToAsync(__route, __args, " + Literal(m.Template) + ", cancellationToken);");
             sb.AppendLine(indent + "}");
         }
 

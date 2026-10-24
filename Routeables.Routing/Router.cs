@@ -190,42 +190,6 @@ internal class Router(
         finally { gate.Exit(); }
     }
 
-    /// <inheritdoc />
-    public Task<RouteableResult> GoToRouteAsync(
-        string route,
-        IRouteableArgs? args = null,
-        string? template = null,
-        CancellationToken cancellationToken = default,
-        params string[] viewKeys)
-    {
-        ArgumentNullException.ThrowIfNull(route);
-        template ??= TemplateOf(route);
-        return GoToRouteAsync(route, template, template, template, args, null, null, cancellationToken, viewKeys);
-    }
-
-    /// <summary>
-    /// The template of a route that was not given one: the one registered for it (an address like <c>/orders/42</c> finds
-    /// <c>/orders/{id:int}</c>), else the one of the menu entry with that route, else the route itself (a route without parameter
-    /// is its own template).
-    /// </summary>
-    private string TemplateOf(string route)
-    {
-        static string Normal(string? value) => (value ?? string.Empty).Split('?')[0].Trim('/');
-
-        var entries = provider.GetService<RouteableTable>()?.Entries ?? [];
-        var exact = entries.FirstOrDefault(e => string.Equals(Normal(e.Template), Normal(route), StringComparison.OrdinalIgnoreCase));
-        if (exact.Template is not null)
-            return exact.Template;
-
-        var matching = entries.FirstOrDefault(e => RouteParser.TryMatch(e.Template, route));
-        if (matching.Template is not null)
-            return matching.Template;
-
-        var item = provider.GetService<IMainRouteables>()?.Routeables
-            .FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(route), StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(r.Template));
-        return item?.Template ?? route;
-    }
-
     public async Task<RouteableResult> GoAsync(object view, object viewModel, IRouteableArgs? args = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(view);
@@ -339,16 +303,34 @@ internal class Router(
         };
 
     /// <inheritdoc />
-    public async Task<RouteableResult> GoToAsync(string url, IRouteableArgs? args = null, CancellationToken cancellationToken = default)
+    public async Task<RouteableResult> GoToAsync(
+        string url, IRouteableArgs? args = null, string? template = null, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(url);
 
         // A route registered with an explicit template (RegisterRoute(route: "/orders/{id:int}"), [Routeable]): the template
-        // reads the parameters from the address.
-        var found = provider.GetService<RouteableTable>()?.Entries
-            .FirstOrDefault(e => RouteParser.TryMatch(e.Template, url));
-        if (found is { Go: not null } hit)
-            return await hit.Go(this, url, args ?? RouteableArgs.Create(), cancellationToken);
+        // reads the parameters from the address. Given a template, it is the registered route with that template.
+        var found = default((string Template, Type? ViewModelType));
+        foreach (var entry in provider.GetService<RouteableTable>()?.Entries ?? [])
+        {
+            if (template is null ? RouteParser.TryMatch(entry.Template, url) : string.Equals(entry.Template, template, StringComparison.OrdinalIgnoreCase))
+            {
+                found = entry;
+                break;
+            }
+        }
+        if (found.Template is not null)
+        {
+            var keys = found.ViewModelType is null
+                ? (viewKey: found.Template, viewModelKey: found.Template)
+                : RouteableKeys.GetKeys(found.ViewModelType, found.Template);
+            // RouteParser.TryMatch fills the instance it is given; without one the parsed route values would be lost.
+            return await GoToRouteAsync(url, found.Template, keys.viewKey, keys.viewModelKey, args ?? RouteableArgs.Create(), null, null, cancellationToken);
+        }
+
+        // A template that is not registered is the route itself: the view and the view model are found under it.
+        if (template is not null)
+            return await GoToRouteAsync(url, template, template, template, args, null, null, cancellationToken);
 
         // A page of the menu, whose route has no parameter.
         static string Normal(string? route) => (route ?? string.Empty).Split('?')[0].Trim('/');
@@ -408,20 +390,5 @@ internal class Router(
     {
         var keys = RouteableKeys.GetKeys(typeof(TViewModel), routeableView.Route);
         return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys);
-    }
-
-    /// <inheritdoc />
-    public Task<RouteableResult> GoToRouteAsync<TViewModel>(string route, IRouteableArgs? args = null, string? template = null, CancellationToken cancellationToken = default, params string[] viewKeys)
-    {
-        ArgumentNullException.ThrowIfNull(route);
-        template ??= TemplateOf(route);
-
-        // Routes are registered under their template (see RegisterRoute), so the keys come from the template.
-        var keys = RouteableKeys.GetKeys(typeof(TViewModel), template);
-
-        // RouteParser.TryMatch fills the instance it is given; without one the parsed route values would be lost.
-        return GoToRouteAsync(
-            route, template, keys.viewKey, keys.viewModelKey,
-            args ?? RouteableArgs.Create(), null, null, cancellationToken, viewKeys);
     }
 }

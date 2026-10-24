@@ -9,7 +9,7 @@
 - `RouteableViewModelBase`: the abstract base under it; manages routing between a set of `IRouteableEntry` items (menus, tab bars), implements `IMainRouteables` and guards the change of the current item.
 - `CloseableViewModelBase<TResult>`: a view model that can be closed and returns a result (dialogs).
 
-The CommunityToolkit.Mvvm flavour is opt-in. Declare the feature you want in your project file and `Routeables.Core.targets` adds the packages and the matching source files:
+The CommunityToolkit.Mvvm flavour is opt-in. Declare the feature you want in your project file and `Routeables.targets` (in the `Routeables` package) adds the packages and the matching source files:
 
 ```xml
 <PropertyGroup>

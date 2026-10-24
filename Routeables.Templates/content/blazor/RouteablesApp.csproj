@@ -15,7 +15,6 @@
 <!--#else -->
     <PackageReference Include="Routeables.Razor" Version="1.0.0" />
     <PackageReference Include="Routeables.Razor.Services" Version="1.0.0" />
-    <PackageReference Include="Routeables.Generated" Version="1.0.0" PrivateAssets="all" />
 <!--#endif -->
   </ItemGroup>
 

@@ -6,11 +6,8 @@
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Version>1.0.0</Version>
-    <PackageId>Routeables.Abstraction</PackageId>
-    <Authors>Cedric</Authors>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Contracts of Routeables: IRouter, IRouteable, route arguments and the attributes that declare routes.</Description>
+    <!-- Shipped inside the Routeables package (Routeables.Core/Routeables.nuspec), not as a package of its own. -->
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,14 +23,6 @@
     <InternalsVisibleTo Include="Routeables.Benchmarks" />
     <!-- Lets NSubstitute/Castle build proxies of the internal interfaces (e.g. ILockCoordinatorFactory) in tests. -->
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
-  </ItemGroup>
-
-  <!-- The package carries the source generator as an analyzer, so a project that references Routeables by NuGet needs nothing else. -->
-  <ItemGroup>
-    <!-- Only so that the generator is built before this project is packed: nothing of it is referenced or becomes a dependency. -->
-    <ProjectReference Include="..\Routeables.Generated\Routeables.Generated.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
-    <!-- No Exists() condition: a missing generator must fail the pack, not leave it out without a word. -->
-    <None Include="..\Routeables.Generated\bin\$(Configuration)\netstandard2.0\Routeables.Generated.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 
   <ItemGroup>
