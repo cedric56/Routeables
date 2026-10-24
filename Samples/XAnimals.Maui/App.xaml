@@ -2,6 +2,8 @@
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:XAnimals.Maui"
+             xmlns:controls="clr-namespace:XAnimals.Maui;assembly=XAnimals.Maui.Controls"
+             xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
              x:Class="XAnimals.Maui.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -9,6 +11,10 @@
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- The converters of the animal controls (XAnimals.Maui.Controls). -->
+            <controls:WebImageConverter x:Key="WebImage" />
+            <routeables:RouteableNullConverter x:Key="IsNull" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

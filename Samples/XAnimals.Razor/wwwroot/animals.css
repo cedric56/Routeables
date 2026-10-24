@@ -195,3 +195,6 @@ body .rt-layout.rt-layout[data-wui-theme="dark"] {
 .rg-app .rg-menu button.rg-menu-item:hover { background: color-mix(in srgb, var(--an-saffron) 22%, transparent); box-shadow: none; }
 .rg-app .rg-menu button.rg-menu-item.current { background: var(--an-canopy); color: #fff; border-color: var(--an-saffron); }
 .rg-app .rg-menu-glyph { font-size: 1.2rem; }
+
+/* Buttons that load a module while the application runs (the Birds page). */
+.load-module { padding: .75rem 1rem 0; }

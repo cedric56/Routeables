@@ -7,11 +7,6 @@
     xmlns:models="clr-namespace:XAminals.Models;assembly=XAnimals.Common"
     x:Class="XAnimals.Maui.Views.AnimalList">
 
-    <ContentView.Resources>
-        <app:WebImageConverter x:Key="WebImage" />
-        <routeables:RouteableNullConverter x:Key="IsNull" />
-    </ContentView.Resources>
-
     <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Paper}, Dark={StaticResource OffBlack}}">
         <!-- The detail view, once the router has navigated to it: it fades in on load (see AnimalDetail). -->
         <ContentView Content="{Binding CurrentView}" />

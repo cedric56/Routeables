@@ -8,7 +8,7 @@
 
     <Grid RowDefinitions="Auto,*">
         <!-- Loads a module while the application runs: its entry appears in the menu without restarting. -->
-        <Button x:Name="LoadButton" Grid.Row="0" Margin="16,12,16,0" Text="Load Module" IsEnabled="{Binding CanLoadMoreBirds}" Clicked="OnLoadModule" />
+        <Button x:Name="LoadButton" Grid.Row="0" StyleClass="module" Text="Load Module" IsEnabled="{Binding CanLoadMoreBirds}" Clicked="OnLoadModule" />
         <views:AnimalList Grid.Row="1" NoResultsText="No birds found." />
     </Grid>
 </routeables:RouteableFor>

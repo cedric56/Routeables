@@ -897,4 +897,4 @@ Issues and pull requests are welcome. As the project is in preview, please open 
 
 ## License
 
-Released under the [MIT License](LICENSE.txt).
+Released under the [MIT License](LICENSE.txt). The samples contain material from other sources: see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

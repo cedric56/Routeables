@@ -24,6 +24,11 @@
             <local:BoolToBrushConverter x:Key="RefusedStatusBrush" TrueBrush="{StaticResource RefusedBrush}" FalseBrush="{StaticResource PlainCardBrush}" />
             <local:HistoryCardBrushConverter x:Key="HistoryCardBrush" Current="{StaticResource CurrentCardBrush}" Ahead="{StaticResource AheadCardBrush}" Past="{StaticResource PlainCardBrush}" />
             <local:AnimalImageConverter x:Key="AnimalImage" />
+
+            <!-- The button that loads a module while the application runs. -->
+            <Style x:Key="LoadModuleButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+                <Setter Property="Margin" Value="20,12,20,0" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -9,7 +9,7 @@
 <PageTitle>Birds</PageTitle>
 
 @* Loads a module while the application runs: its entry appears in the menu without restarting. *@
-<div style="padding: 12px 16px 0;">
+<div class="load-module">
     <button type="button" disabled="@(!ViewModel.CanLoadMoreBirds)" @onclick="LoadModule">
         @(ViewModel.MoreBirdsLoaded ? "Module loaded" : "Load Module")
     </button>

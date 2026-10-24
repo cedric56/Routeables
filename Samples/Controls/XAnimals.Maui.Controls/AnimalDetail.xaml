@@ -8,10 +8,6 @@
     x:DataType="vm:AnimalDetailViewModel"
     BackgroundColor="{AppThemeBinding Light={StaticResource Paper}, Dark={StaticResource OffBlack}}">
 
-    <ContentView.Resources>
-        <app:WebImageConverter x:Key="WebImage" />
-    </ContentView.Resources>
-
     <ScrollView>
         <VerticalStackLayout Padding="20,28,20,40" Spacing="6" MaximumWidthRequest="640" HorizontalOptions="Center">
             <!-- The arch rises, then the text settles (AnimalDetail.xaml.cs). -->

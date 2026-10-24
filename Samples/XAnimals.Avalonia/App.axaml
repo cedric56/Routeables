@@ -48,6 +48,11 @@
             <Setter Property="BorderThickness" Value="1.5" />
         </Style>
 
+        <!-- The button that loads a module while the application runs. -->
+        <Style Selector="Button.module">
+            <Setter Property="Margin" Value="16,12,16,0" />
+        </Style>
+
         <Style Selector="Button.an">
             <Setter Property="Background" Value="{DynamicResource AnCanopy}" />
             <Setter Property="Foreground" Value="White" />

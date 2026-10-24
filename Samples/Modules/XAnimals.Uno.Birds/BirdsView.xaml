@@ -10,7 +10,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!-- Loads a module while the application runs: its entry appears in the menu without restarting. -->
-        <Button x:Name="LoadButton" Grid.Row="0" Margin="20,12,20,0" Content="Load Module" IsEnabled="{Binding CanLoadMoreBirds}" Click="OnLoadModule" />
+        <Button x:Name="LoadButton" Grid.Row="0" Style="{StaticResource LoadModuleButtonStyle}" Content="Load Module" IsEnabled="{Binding CanLoadMoreBirds}" Click="OnLoadModule" />
         <local:AnimalList Grid.Row="1" NoResultsText="No birds found." />
     </Grid>
 </routeables:RouteableFor>
