@@ -4,6 +4,7 @@ using Routeables.Routing;
 using System.Collections.ObjectModel;
 using Routeables.Segments;
 using XAnimals.Common;
+using System.ComponentModel;
 
 namespace XAnimals.ViewModels;
 
@@ -11,8 +12,10 @@ namespace XAnimals.ViewModels;
 /// The menu of the sample. <see cref="MainViewModelBase"/> does the rest: the selected entry (with the refusal of a page that
 /// cannot be left), the current view, the lock coordinator and the notifications. The hosts select the first entry themselves.
 /// </summary>
-public sealed class MainViewModel(IRouter router, IRouteCoordinator coordinator) : MainViewModelBase(router, initialize: false)
+public sealed class MainViewModel(IRouter router, IRouteCoordinator coordinator) : MainViewModelBase(router, initialize: false), INotifyPropertyChanged
 {
+    public event PropertyChangedEventHandler? PropertyChanged;
+
     protected override ObservableCollection<IRouteableEntry> GetRouteables() =>
     [
         new RouteableEntry<CatsViewModel>("Cats", AnimalIcons.Cat, route: "/cats", template: "/cats", description: string.Join(Environment.NewLine, "GoToRouteAsync<TViewModel>", "Named values (WithValue)")),
@@ -39,5 +42,11 @@ public sealed class MainViewModel(IRouter router, IRouteCoordinator coordinator)
         if (result.Success)
             CurrentView = _router.CurrentView;
         return result;
+    }
+
+    protected override void NotifyPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        //base.NotifyPropertyChanged(propertyName);
     }
 }

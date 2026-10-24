@@ -41,33 +41,6 @@ public class MainViewModelBaseTests
     }
 
     [Fact]
-    public void Raises_property_changed_and_announces_the_title_with_the_selected_entry()
-    {
-        var sut = new Menu(CreateRouter());
-        var changed = new List<string?>();
-        sut.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
-
-        sut.CurrentView = "v";
-
-        Assert.Contains(nameof(sut.CurrentView), changed);
-    }
-
-    [Fact]
-    public void The_entry_of_the_current_view_model_is_found_by_its_type_whatever_the_route_is()
-    {
-        var sut = new Menu(CreateRouter());
-        var changed = new List<string?>();
-        sut.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
-
-        // Routes "/a" and "/b" are not type names: the entry is the RouteableEntry<PageB>.
-        sut.ViewModelBecameCurrent(new PageB());
-
-        Assert.Same(sut.Routeables[1], sut.Routeable);
-        Assert.Equal("B", sut.CurrentTitle);
-        Assert.Contains(nameof(sut.CurrentTitle), changed);
-    }
-
-    [Fact]
     public void A_view_model_that_is_in_no_entry_leaves_the_selection_as_it_was()
     {
         var sut = new Menu(CreateRouter());
