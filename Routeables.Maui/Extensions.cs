@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Routeables.Abstraction;
 using Routeables.Core;
+using Routeables.Maui.Services;
 using Routeables.Routing;
 using Routeables.Services;
 
@@ -20,8 +21,8 @@ public static class Extensions
     /// </code>
     /// </summary>
     /// <remarks>
-    /// The modal, content dialog, task dialog, dialog and notification services are optional: add
-    /// <c>UseRouteablesServices()</c> from <c>Routeables.Maui.Services</c> to get them.
+    /// It registers the modal, content dialog, task dialog, dialog and notification services too (<c>UseRouteablesServices()</c> of
+    /// <c>Routeables.Maui.Services</c>); call that one again only to replace a service.
     /// </remarks>
     /// <typeparam name="TMain">The main view model.</typeparam>
     /// <param name="builder">The MAUI app builder to configure.</param>
@@ -36,6 +37,7 @@ public static class Extensions
             new RouteablePropertyEntry(typeof(QueryPropertyAttribute), a => ((QueryPropertyAttribute)a).Name, FromContainer: false));
         builder.Services.AddSingleton<IRouteableRequestedThemeService, RouteableRequestThemeService>();
         builder.Services.RegisterMainRouteables<TMain>();
+        builder.UseRouteablesServices();
         configure?.Invoke(builder.Services);
         return builder;
     }

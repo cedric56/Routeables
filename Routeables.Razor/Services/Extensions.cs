@@ -1,16 +1,19 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Services;
 
 namespace Routeables.Razor.Services;
 
 /// <summary>
 /// Registers the dialogs, content dialogs, task dialogs, modals and notifications of a Blazor application.
-/// <c>UseRouteables</c> (Routeables.Razor) registers the router only; this package is for applications that want the UI services too.
+/// <c>UseRouteablesServer</c>, <c>UseRouteablesWebAssembly</c> and <c>UseRouteablesHybrid</c> already call <see cref="UseRouteablesServices"/> with its
+/// defaults: call it again only to replace a service or to move the notifications.
 /// </summary>
 public static class Extensions
 {
     /// <summary>
-    /// Registers the dialog, content dialog, task dialog, modal and notification services. Display them with the hosts
+    /// Registers the dialog, content dialog, task dialog, modal and notification services; <c>UseRouteablesServer</c> already calls it,
+    /// and a second call replaces the first. Display them with the hosts
     /// of <c>MainLayout</c>, or place <c>RouteableDialogHost</c>, <c>RouteableContentDialogHost</c>, <c>RouteableTaskDialogHost</c>,
     /// <c>RouteableModalHost</c> and <c>RouteableNotificationHost</c> once in your own layout.
     /// </summary>
@@ -31,6 +34,8 @@ public static class Extensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        services.RemoveAll<RouteableModalService>();
+        services.RemoveAll<RouteableNotificationOptions>();
         services.AddScoped<RouteableModalService>();
         services.RegisterServices<IRouteableDialogService, RouteableDialogService>(routeableDialogService);
         services.RegisterServices<IRouteableContentDialogService, RouteableContentDialogService>(routeableContentDialogService);
@@ -57,6 +62,8 @@ public static class Extensions
         where TImplementation : class, TInterface
         where TInterface : class
     {
+        services.RemoveAll<TInterface>();
+        services.RemoveAll<TImplementation>();
         Func<IServiceProvider, TInterface>? service = factory;
         if (service == null)
         {

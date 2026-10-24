@@ -36,19 +36,19 @@ public partial class HomeView : RouteableFor<HomeViewModel> { public HomeView() 
 
 ## Dialogs and notifications
 
-Optional, drawn with Avalonia controls (`Routeables.Avalonia.Services` namespace). Call `UseRouteablesServices` where you register the routes:
+Drawn with Avalonia controls (`Routeables.Avalonia.Services` namespace). `UseRouteables` already registers them, and the dialog windows take the icon of the window that opens them. To draw them another way, register your own `IMessageBoxService` in the block (such as the FluentAvalonia one of [`Reshapes`](../Reshapes/README.md)):
 
 ```csharp
 AppBuilder.Configure<App>()
     .UseRouteables<MainViewModel>(services =>
     {
-        services.UseRouteablesServices("avares://MyApp/Assets/icon.ico");
+        services.AddSingleton<IMessageBoxService>(new MyMessageBoxService());   // optional
         services.AddGeneratedRoutes();
     })
     .UsePlatformDetect();
 ```
 
-The icon is the one of the windows that are drawn. To change the look, pass your own `IMessageBoxService` (such as the FluentAvalonia one of [`Reshapes`](../Reshapes/README.md)).
+`UseRouteablesServices(icon)` is only for a dialog icon other than the one of the main window.
 
 - Dialogs, content dialogs, task dialogs and notifications, through `IMessageBoxService` (`DefaultMessageBoxService`): modal windows on desktop, an overlay on single-view platforms (Android, iOS, browser).
 - `DialogView<TViewModel, TResult>`: the base of a modal view backed by a closeable view model.

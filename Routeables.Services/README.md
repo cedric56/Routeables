@@ -1,6 +1,6 @@
 # Routeables.Services
 
-The contracts of the optional UI services: dialogs, notifications and theme. Each host implements them and turns them on with `UseRouteablesServices()`: [Razor](../Routeables.Razor/README.md), [MAUI](../Routeables.Maui/README.md), [Avalonia](../Routeables.Avalonia/README.md), [Uno](../Routeables.Uno/README.md). Routing does not need any of this. Targets **.NET 10**, namespace `Routeables.Services`.
+The contracts of the optional UI services: dialogs, notifications and theme. Each host implements them and registers them in `UseRouteables`: [Razor](../Routeables.Razor/README.md), [MAUI](../Routeables.Maui/README.md), [Avalonia](../Routeables.Avalonia/README.md), [Uno](../Routeables.Uno/README.md). Routing does not need any of this. Targets **.NET 10**, namespace `Routeables.Services`.
 
 | Inject | For |
 | --- | --- |

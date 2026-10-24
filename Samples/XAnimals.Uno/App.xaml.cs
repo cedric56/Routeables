@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Generated;
 using Routeables.Uno;
-using Routeables.Uno.Services;
 using XAnimals.Uno.Views;
 using XAnimals.ViewModels;
 using XAnimals.Common;
@@ -22,7 +21,6 @@ public partial class App : Application
         // The container is built now, so it is ready when OnLaunched creates the window.
         Services = this.UseRouteables<MainViewModel>(services =>
         {
-            services.UseRouteablesServices();       // dialogs, content dialogs, task dialogs, notifications
             services.AddGeneratedRoutes();          // the routes declared by attributes on the views of this project
             AnimalIcons.Register();                 // the glyph of each page of the menu
             services.RegisterViewModels();

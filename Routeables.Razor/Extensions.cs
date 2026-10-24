@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
 using Routeables.Core;
+using Routeables.Razor.Services;
 using Routeables.Routing;
 using Routeables.Services;
 
@@ -17,8 +18,8 @@ public static class Extensions
     /// <summary>
     /// Starts Routeables in a Blazor Server application: registers the router, the property injection, the address synchronization,
     /// the environment information and the theme, and <typeparamref name="TMain"/> as the main view model (the menu), scoped: one per circuit.
-    /// The dialogs, content dialogs, task dialogs, modals and notifications are optional: add <c>UseRouteablesServices()</c>
-    /// from <c>Routeables.Razor.Services</c>.
+    /// It registers the dialogs, content dialogs, task dialogs, modals and notifications too (<c>UseRouteablesServices()</c> of
+    /// <c>Routeables.Razor.Services</c>); call that one again only to replace a service or to move the notifications.
     /// <code>
     /// services.UseRouteablesServer&lt;MainViewModel&gt;(r => r.AddGeneratedRoutes());
     /// </code>
@@ -88,6 +89,7 @@ public static class Extensions
         services.RegisterEnvironments(runtime);
         services.AddScoped<IRouteableRequestedThemeService, RouteableRequestThemeService>();
         services.RegisterMainRouteables<TMain>();
+        services.UseRouteablesServices();
         configure?.Invoke(services);
         return services;
     }

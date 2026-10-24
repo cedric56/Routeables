@@ -24,7 +24,7 @@ internal static class DialogPresenter
     private static readonly List<Border> OpenBackdrops = [];
 
     /// <summary>Shows <paramref name="card"/> and completes when the dialog is closed.</summary>
-    public static Task ShowAsync(TopLevel owner, string icon, string? title, Control card, RouteableDialogHandle handle)
+    public static Task ShowAsync(TopLevel owner, string? icon, string? title, Control card, RouteableDialogHandle handle)
     {
         ArgumentNullException.ThrowIfNull(owner);
         ArgumentNullException.ThrowIfNull(card);
@@ -35,19 +35,19 @@ internal static class DialogPresenter
             : ShowInOverlayAsync(owner, title, card, handle);
     }
 
-    private static async Task ShowInWindowAsync(Window owner, string icon, string? title, Control card, RouteableDialogHandle handle)
+    private static async Task ShowInWindowAsync(Window owner, string? icon, string? title, Control card, RouteableDialogHandle handle)
     {
         // The window icon is built from the bitmap; the bitmap and its stream are released when the dialog is closed, or
         // each dialog would keep a native image for the life of the application.
-        using var stream = AssetLoader.Open(new Uri(icon));
-        using var bitmap = new Bitmap(stream);
+        using var stream = string.IsNullOrEmpty(icon) ? null : AssetLoader.Open(new Uri(icon));
+        using var bitmap = stream is null ? null : new Bitmap(stream);
 
         // A window that already has a modal child cannot be the owner of another modal: a dialog opened while
         // others are open is owned by the topmost one, so it appears over it and the ones below stay blocked.
         var parent = OpenWindows.LastOrDefault(open => IsOwnedBy(open, owner)) ?? owner;
         var dialog = new Window
         {
-            Icon = new WindowIcon(bitmap),
+            Icon = bitmap is null ? owner.Icon : new WindowIcon(bitmap),   // no icon given: the one of the window that opens the dialog
             Title = title ?? string.Empty,
             Content = card,
             SizeToContent = SizeToContent.WidthAndHeight,

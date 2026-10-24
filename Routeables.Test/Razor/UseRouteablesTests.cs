@@ -122,7 +122,7 @@ public class UseRouteablesTests
     }
 
     [Fact]
-    public void UseRouteables_alone_registers_the_router_and_the_theme_but_no_dialog_or_notification()
+    public void UseRouteables_registers_the_router_the_theme_and_the_dialogs_and_notifications()
     {
         var services = new ServiceCollection();
         services.AddSingleton<NavigationManager>(new TestNavigationManager());
@@ -133,11 +133,28 @@ public class UseRouteablesTests
 
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouter>());
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouteableRequestedThemeService>());
-        Assert.Null(scope.ServiceProvider.GetService<IRouteableDialogService>());
-        Assert.Null(scope.ServiceProvider.GetService<IRouteableContentDialogService>());
-        Assert.Null(scope.ServiceProvider.GetService<IRouteableTaskDialogService>());
-        Assert.Null(scope.ServiceProvider.GetService<IRouteableNotificationService>());
-        Assert.Null(scope.ServiceProvider.GetService<RouteableNotificationOptions>());
+        Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouteableDialogService>());
+        Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouteableContentDialogService>());
+        Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouteableTaskDialogService>());
+        Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouteableNotificationService>());
+    }
+
+    [Fact]
+    public void Calling_UseRouteablesServices_again_replaces_the_defaults_without_duplicating_them()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<NavigationManager>(new TestNavigationManager());
+
+        services.UseRouteablesServer<FakeMainRouteables>();
+        services.UseRouteablesServices(position: RouteableNotificationPosition.TopRight);
+        services.UseRouteablesServices(position: RouteableNotificationPosition.BottomCenter);
+
+        Assert.Single(services, d => d.ServiceType == typeof(IRouteableDialogService));
+        Assert.Single(services, d => d.ServiceType == typeof(IRouteableNotificationService));
+        Assert.Single(services, d => d.ServiceType == typeof(RouteableNotificationOptions));
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        Assert.Equal(RouteableNotificationPosition.BottomCenter, scope.ServiceProvider.GetRequiredService<RouteableNotificationOptions>().Position);
     }
 
     [Fact]

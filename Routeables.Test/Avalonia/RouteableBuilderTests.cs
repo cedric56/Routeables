@@ -113,7 +113,7 @@ public class RouteableBuilderTests
     }
 
     [Fact]
-    public void UseRouteables_alone_registers_the_router_and_the_theme_but_no_dialog_or_notification()
+    public void UseRouteables_registers_the_router_the_theme_and_the_default_dialogs_and_notifications()
     {
         IServiceProvider? provider = null;
 
@@ -124,11 +124,11 @@ public class RouteableBuilderTests
         {
             Assert.NotNull(provider!.GetRequiredService<IRouter>());
             Assert.IsType<RouteableRequestThemeService>(provider!.GetRequiredService<IRouteableRequestedThemeService>());
-            Assert.Null(provider!.GetService<IMessageBoxService>());
-            Assert.Null(provider!.GetService<IRouteableDialogService>());
-            Assert.Null(provider!.GetService<IRouteableContentDialogService>());
-            Assert.Null(provider!.GetService<IRouteableTaskDialogService>());
-            Assert.Null(provider!.GetService<IRouteableNotificationService>());
+            Assert.IsType<DefaultMessageBoxService>(provider!.GetRequiredService<IMessageBoxService>());
+            Assert.NotNull(provider!.GetRequiredService<IRouteableDialogService>());
+            Assert.NotNull(provider!.GetRequiredService<IRouteableContentDialogService>());
+            Assert.NotNull(provider!.GetRequiredService<IRouteableTaskDialogService>());
+            Assert.NotNull(provider!.GetRequiredService<IRouteableNotificationService>());
         }
     }
 

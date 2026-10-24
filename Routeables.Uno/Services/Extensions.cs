@@ -3,23 +3,25 @@ global using Orientation = Microsoft.UI.Xaml.Controls.Orientation;
 global using Button = Microsoft.UI.Xaml.Controls.Button;
 global using Application = Microsoft.UI.Xaml.Application;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Services;
 
 namespace Routeables.Uno.Services;
 
 /// <summary>
 /// Registers the dialog, content dialog, task dialog and notification services of an Uno Platform application.
-/// <c>Application.UseRouteables</c> (Routeables.Uno) builds the container with the router only; this package is for applications
-/// that want the UI services too.
+/// <c>Application.UseRouteables</c> already calls <see cref="UseRouteablesServices"/> with its defaults: call it again only to give
+/// another <see cref="IMessageBoxService"/>.
 /// </summary>
 public static class Extensions
 {
     /// <summary>
     /// Registers <see cref="IRouteableDialogService"/>, <see cref="IRouteableContentDialogService"/>,
     /// <see cref="IRouteableTaskDialogService"/>, <see cref="IRouteableNotificationService"/> and the <see cref="IMessageBoxService"/>
-    /// that draws them. Call it from the <c>configure</c> callback of <c>UseRouteables</c>.
+    /// that draws them. <c>UseRouteables</c> already calls it; call it again from its <c>configure</c> callback to give another message box
+    /// service. A second call replaces the first.
     /// <code>
-    /// Services = this.UseRouteables(services => services.UseRouteablesServices());
+    /// Services = this.UseRouteables&lt;MainViewModel&gt;(services => services.UseRouteablesServices(new MyMessageBoxService()));
     /// </code>
     /// </summary>
     /// <param name="services">The service collection to add services to.</param>
@@ -30,6 +32,12 @@ public static class Extensions
         IMessageBoxService? messageBoxService = null)
     {
         ArgumentNullException.ThrowIfNull(services);
+
+        services.RemoveAll<IMessageBoxService>();
+        services.RemoveAll<IRouteableNotificationService>();
+        services.RemoveAll<IRouteableContentDialogService>();
+        services.RemoveAll<IRouteableTaskDialogService>();
+        services.RemoveAll<IRouteableDialogService>();
 
         services.AddSingleton(messageBoxService ?? new DefaultMessageBoxService());
         services.AddSingleton<IRouteableNotificationService>(sp => new RouteableNotificationService(sp.GetRequiredService<IMessageBoxService>()));

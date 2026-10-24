@@ -58,35 +58,28 @@ You can also register routes by hand with `services.RegisterRoute<OrderView, Ord
 
 ### 2. Set up your host
 
-One call per host starts Routeables, registers your main view model (its lifetime is the host's choice) and takes a block `r => ...` for your own registrations. The block is the same on the four hosts. The dialogs and notifications are an optional second call from a separate package per host (a host that only routes carries no UI code). Only the shape of the call differs, because each framework has its own way to start.
+One call per host starts Routeables, registers your main view model (its lifetime is the host's choice) and takes a block `r => ...` for your own registrations. The block is the same on the four hosts. The same call registers the dialogs and notifications of the host. Only the shape of the call differs, because each framework has its own way to start.
 
 ```csharp
 // Blazor (Program.cs)
 builder.Services.UseRouteablesServer<MainViewModel>(      // or UseRouteablesWebAssembly, UseRouteablesHybrid
     r => r.AddGeneratedRoutes());
-builder.Services.UseRouteablesServices();                                // optional: dialogs, notifications, default layout
 app.MapRazorComponents<App>()
    .AddInteractiveServerRenderMode()
    .AddAdditionalAssemblies(typeof(MainLayoutBase).Assembly);    // Routeables.Razor: catch-all page, layout, not-found page
 
 // .NET MAUI (MauiProgram.cs)
 builder.UseMauiApp<App>()
-       .UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes())
-       .UseRouteablesServices();                             // optional: dialogs, notifications
+       .UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes());
 
 // Avalonia (App.axaml.cs)
-AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r =>
-{
-    r.UseRouteablesServices("avares://MyApp/Assets/icon.ico");   // optional; the icon is the window icon of the dialogs
-    r.AddGeneratedRoutes();
-});
+AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes());
 // ...then, in OnFrameworkInitializationCompleted, show the window with its menu:
 //    this.OpenMainView(new MainWindow());
 
 // Uno Platform (App.xaml.cs)
 Services = this.UseRouteables<MainViewModel>(r =>
 {
-    r.UseRouteablesServices();                               // optional: dialogs, notifications
     r.AddGeneratedRoutes();
 });
 // ...then, in OnLaunched, one call creates the window, gives the page its menu and connects it:

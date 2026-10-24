@@ -29,7 +29,8 @@ public partial class App : Application
         return AppBuilder.Configure<App>().UseRouteables<MainViewModel>(
            configure: services =>
            {
-               services.UseRouteablesServices("avares://XAnimals.Avalonia/Assets/icon.ico", messageBoxService);
+               if (messageBoxService is not null)
+                   services.AddSingleton(messageBoxService);   // the head chooses how the dialogs are drawn
                services.AddGeneratedRoutes();
                AnimalIcons.Register();
                services.RegisterViewModels();

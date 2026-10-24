@@ -37,11 +37,11 @@ For a route declared with an explicit address (`/customers/{id:int}`), the brows
 
 ## Dialogs, modals and notifications
 
-Optional, drawn with plain Razor (`Routeables.Razor.Services` namespace):
+Drawn with plain Razor (`Routeables.Razor.Services` namespace). `UseRouteablesServer` (and `UseRouteablesWebAssembly`, `UseRouteablesHybrid`) already registers them; call `UseRouteablesServices` yourself only to move the notifications or replace a service:
 
 ```csharp
 services.UseRouteablesServer<MainViewModel>();
-services.UseRouteablesServices(position: RouteableNotificationPosition.BottomLeft, maxDispayments: 5);
+services.UseRouteablesServices(position: RouteableNotificationPosition.TopRight, maxDispayments: 3);   // optional
 ```
 
 Everything is scoped. Each service has an optional factory to replace it; [`Reshapes.Razor.MudBlazor`](../Reshapes/README.md) passes the MudBlazor ones.

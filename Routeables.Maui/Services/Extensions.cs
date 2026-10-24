@@ -1,10 +1,11 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Services;
 
 namespace Routeables.Maui.Services;
 
 /// <summary>
 /// Registers the modal, content dialog, task dialog, dialog and notification services of a MAUI application.
-/// <c>UseRouteables&lt;TMain&gt;()</c> (Routeables.Maui) registers the router only; this package is for applications that want the UI services too.
+/// <c>UseRouteables&lt;TMain&gt;()</c> (Routeables.Maui) already calls <see cref="UseRouteablesServices"/> with its defaults: call it again only to replace a service.
 /// </summary>
 public static class Extensions
 {
@@ -14,7 +15,7 @@ public static class Extensions
     /// <see cref="IRouteableDialogWindowContext"/> they draw on.
     /// </summary>
     /// <remarks>
-    /// They are Routeables' own and need nothing but MAUI. Pass a factory to replace one, or call
+    /// <c>UseRouteables</c> already calls it. They are Routeables' own and need nothing but MAUI. A second call replaces the first: pass a factory to replace one, or call
     /// <c>UseCommunityToolkit()</c> (Reshapes.Maui.CommunityToolkit) to use CommunityToolkit.Maui popups and snackbars instead.
     /// </remarks>
     /// <param name="builder">The MAUI app builder to configure.</param>
@@ -32,6 +33,9 @@ public static class Extensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
+        builder.Services.RemoveAll<IRouteableDialogService>();
+        builder.Services.RemoveAll<RouteableDialogService>();
+        builder.Services.RemoveAll<IRouteableDialogWindowContext>();
         builder.Services.AddSingleton<IRouteableDialogService, RouteableDialogService>();
         builder.Services.AddSingleton<RouteableDialogService>(sp => (RouteableDialogService)sp.GetRequiredService<IRouteableDialogService>());
         RegisterOrDefault<IRouteableModalService, RouteableModalService>(builder.Services, modalService);
@@ -49,6 +53,7 @@ public static class Extensions
         where TService : class
         where TImplementation : class, TService
     {
+        services.RemoveAll<TService>();
         if (factory is null)
             services.AddSingleton<TService, TImplementation>();
         else

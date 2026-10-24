@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
+using Routeables.Avalonia.Services;
 using Routeables.Abstraction;
 using Routeables.Core;
 using Routeables.Services;
@@ -20,15 +21,11 @@ public static class RouteableBuilder
     /// (<c>AppBuilder.Configure&lt;App&gt;()</c>), and this builds the container with the router, the property injection, the
     /// theme service and <typeparamref name="TMain"/> as the main view model (the menu), then attaches it. An <see cref="Application"/>
     /// that needs the container reads it with <see cref="GetRouteableServices"/>.
-    /// The dialogs, content dialogs, task dialogs and notifications are optional: register them in
-    /// <paramref name="configure"/> with <c>UseRouteablesServices(icon)</c> from <c>Routeables.Avalonia.Services</c>.
+    /// It registers the dialogs, content dialogs, task dialogs and notifications too; the dialog windows take the icon of the window that opens them.
+    /// To draw them another way, register your own <c>IMessageBoxService</c> in <paramref name="configure"/>.
     /// <code>
     /// AppBuilder.Configure&lt;App&gt;()
-    ///     .UseRouteables&lt;MainViewModel&gt;(r =>
-    ///     {
-    ///         r.UseRouteablesServices("avares://MyApp/Assets/icon.ico");
-    ///         r.AddGeneratedRoutes();
-    ///     })
+    ///     .UseRouteables&lt;MainViewModel&gt;(r => r.AddGeneratedRoutes())
     ///     .UsePlatformDetect();
     /// </code>
     /// </summary>
@@ -50,6 +47,7 @@ public static class RouteableBuilder
         var provider = BuildProvider(services =>
         {
             services.RegisterMainRouteables<TMain>();
+            services.UseRouteablesServices();
             configure?.Invoke(services);
         }, afterBuild);
         return Attach(builder, provider, onDispose);

@@ -14,7 +14,7 @@ public static class Extensions
     /// <summary>
     /// In a Debug build, errors that Routeables swallows reach <see cref="DebugErrorSink"/>: the debug output, and a break when a
     /// debugger is attached. A Release build is left alone; an application that registered its own sink keeps it.
-    /// Each host calls it (<see cref="RegisterViewModels"/> does, Maui calls it from its own start).
+    /// Called by <see cref="RegisterViewModels"/>.
     /// </summary>
     public static IServiceCollection AddDebugErrorSink(this IServiceCollection services)
     {
@@ -48,7 +48,7 @@ public static class Extensions
 
     /// <summary>
     /// The modules of the sample: today Birds, whose page is added to the menu after the entries of <see cref="MainViewModel"/>.
-    /// The heads do not know them: <see cref="RegisterViewModels"/> calls it, Maui calls it from its own start.
+    /// The heads do not know them: <see cref="RegisterViewModels"/> calls it.
     /// </summary>
     public static IServiceCollection AddAnimalModules(this IServiceCollection services)
         => services.AddBirdsModule();
@@ -56,14 +56,14 @@ public static class Extensions
     /// <summary>
     /// The router of the History page: a region, with its own history, that shows real pages of the application in a frame
     /// (a page cannot show the current view of the router that shows it: it would draw itself).
-    /// Each host calls it once: <see cref="RegisterViewModels"/> does, Maui calls it from its own start.
+    /// Called once by <see cref="RegisterViewModels"/>.
     /// </summary>
     public static IServiceCollection AddHistoryRegion(this IServiceCollection services)
         => services.AddRegion(HistoryViewModel.Region);
 
     /// <summary>
     /// The four regions of the Regions page (Header, Footer, LeftPanel and Content) and the class that drives them.
-    /// Each host calls it once: <see cref="RegisterViewModels"/> does, Maui calls it from its own start.
+    /// Called once by <see cref="RegisterViewModels"/>.
     /// </summary>
     public static IServiceCollection AddLayoutRegions(this IServiceCollection services)
     {

@@ -44,11 +44,7 @@ The menu is a `MainViewModelBase` and `<routeables:RouteableListView />`; the cu
 
 ## Dialogs and notifications
 
-Optional, in the `Routeables.Uno.Services` namespace:
-
-```csharp
-Services = this.UseRouteables<MainViewModel>(services => services.UseRouteablesServices());
-```
+In the `Routeables.Uno.Services` namespace. `UseRouteables` already registers them; call `UseRouteablesServices(messageBoxService)` yourself only to draw them another way.
 
 - Dialogs, content dialogs and task dialogs, drawn as `ContentDialog`s in the window the user last worked in. A window shows one at a time; a second waits for the first.
 - Notifications: `InfoBar`s stacked at the top of the active window, closed after five seconds or by the user.

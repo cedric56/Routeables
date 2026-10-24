@@ -14,7 +14,7 @@ namespace Routeables.Avalonia.Services;
 /// active <see cref="TopLevel"/>; where there is a single view (Android, iOS, Browser) they are drawn in the
 /// top level's overlay layer.
 /// </summary>
-public class DefaultMessageBoxService(string icon) : IMessageBoxService
+public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
 {
     /// <inheritdoc />
     public async Task<string?> ShowMessageBoxAsync(string title, string message, string buttons, TopLevel? topLevel = null)

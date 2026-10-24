@@ -1,6 +1,6 @@
 # Reshapes
 
-Optional projects that change how dialogs, notifications and modals look, by building them on a UI library. Routing is unchanged, and every host works without them. Each one is a single call after `UseRouteables`, and replaces `UseRouteablesServices`.
+Optional projects that change how dialogs, notifications and modals look, by building them on a UI library. Routing is unchanged, and every host works without them. Each one is a single call after `UseRouteables`, and replaces the default dialogs and notifications of the host.
 
 | Project | Host | Setup |
 | --- | --- | --- |

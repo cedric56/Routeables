@@ -101,7 +101,7 @@ jobs:
 
       - name: Samples, Razor and Blazor
         run: |
-          dotnet build Samples/XAnimals.ViewModels/XAnimals.ViewModels.csproj -c Debug
+          dotnet build Samples/Bases/XAnimals.ViewModels/XAnimals.ViewModels.csproj -c Debug
           dotnet build Samples/XAnimals.Razor/XAnimals.Razor.csproj -c Debug
           dotnet build Samples/Xanimals.BlazorApp/Xanimals.BlazorApp.csproj -c Debug
           dotnet build Samples/XAnimals.BlazorWebAssembly/XAnimals.BlazorWebAssembly.csproj -c Debug
@@ -202,7 +202,7 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Check the dependencies written in the nuspec
-        run: .github/scripts/check-nuspec.sh
+        run: bash .github/scripts/check-nuspec.sh
 
       - name: Pack
         run: |
@@ -211,7 +211,7 @@ jobs:
           dotnet pack Routeables.Avalonia/Routeables.Avalonia.csproj -c Release -o artifacts
 
       - name: Check the dependencies and the content
-        run: .github/scripts/check-packages.sh artifacts
+        run: bash .github/scripts/check-packages.sh artifacts
 
   android:
     name: Build Android (MAUI, Avalonia)

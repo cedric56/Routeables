@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
+using Routeables.Uno.Services;
 using Routeables.Abstraction;
 using Routeables.Core;
 using Routeables.Routing;
@@ -18,14 +19,10 @@ public static class Extensions
     /// Builds the container with the router, the property injection, the theme service and <typeparamref name="TMain"/> as the main view
     /// model (the menu), and keeps it for the views.
     /// Call it once, from the constructor of the <see cref="Microsoft.UI.Xaml.Application"/>: the container is then ready when
-    /// <c>OnLaunched</c> creates the window. The dialogs, content dialogs, task dialogs and notifications are optional: register
-    /// them in <paramref name="configure"/> with <c>UseRouteablesServices()</c> from <c>Routeables.Uno.Services</c>.
+    /// <c>OnLaunched</c> creates the window. The dialogs, content dialogs, task dialogs and notifications are registered too;
+    /// call <c>UseRouteablesServices(messageBoxService)</c> in <paramref name="configure"/> only to draw them another way.
     /// <code>
-    /// Services = this.UseRouteables&lt;MainViewModel&gt;(services =>
-    /// {
-    ///     services.UseRouteablesServices();
-    ///     services.AddGeneratedRoutes();
-    /// });
+    /// Services = this.UseRouteables&lt;MainViewModel&gt;(services => services.AddGeneratedRoutes());
     /// </code>
     /// </summary>
     /// <typeparam name="TMain">The main view model.</typeparam>
@@ -43,6 +40,7 @@ public static class Extensions
         return BuildProvider(services =>
         {
             services.RegisterMainRouteables<TMain>();
+            services.UseRouteablesServices();
             configure?.Invoke(services);
         }, afterBuild);
     }

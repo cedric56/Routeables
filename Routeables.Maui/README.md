@@ -34,16 +34,7 @@ builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes
 
 ## Dialogs and notifications
 
-Optional, in the `Routeables.Maui.Services` namespace:
-
-```csharp
-builder
-    .UseMauiApp<App>()
-    .UseRouteables<MainViewModel>()
-    .UseRouteablesServices();
-```
-
-`UseRouteablesServices` takes optional factories to replace a service. For CommunityToolkit.Maui popups and snackbars call `UseCommunityToolkit()` from [`Reshapes`](../Reshapes/README.md) after `UseRouteables`: it replaces the services, so `UseRouteablesServices()` is not needed.
+In the `Routeables.Maui.Services` namespace. `UseRouteables` already registers them; `UseRouteablesServices` takes optional factories, to call only to replace a service. For CommunityToolkit.Maui popups and snackbars call `UseCommunityToolkit()` from [`Reshapes`](../Reshapes/README.md) after `UseRouteables`: it replaces them.
 
 - Dialogs, content dialogs, task dialogs and notifications. Toasts are native on Windows, Android, iOS and Mac Catalyst, and an overlay on the plain `net10.0` target.
 - `RouteableModalFor<TViewModel, TResult>`: the base of a modal view that returns a typed result.
