@@ -42,7 +42,11 @@ public interface IRouteableModules
     /// modules.Load("Orders", services => services.AddOrdersModule());
     /// </code>
     /// </summary>
-    /// <param name="name">The name of the module. Loading a name already loaded does nothing and returns the module that was loaded.</param>
+    /// <param name="name">
+    /// The name of the module. Loading a name already loaded does nothing and returns the module that was loaded; if <paramref name="add"/> is
+    /// not the method that loaded it, the second one is not run and the mistake is reported to the <see cref="IRouteableErrorSink"/>.
+    /// A module that throws, or whose entries cannot be built, is not loaded at all: nothing of it is registered.
+    /// </param>
     /// <param name="add">Adds the routes, the menu entries and the services of the module to the collection it is given.</param>
     RouteableModuleInfo Load(string name, Action<IServiceCollection> add);
 

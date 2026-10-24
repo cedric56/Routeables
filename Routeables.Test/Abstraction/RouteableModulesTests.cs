@@ -169,4 +169,70 @@ public class RouteableModulesTests
         Assert.Throws<InvalidOperationException>(() => modules.Load(typeof(IRouteableModules).Assembly));
         Assert.Throws<FileNotFoundException>(() => modules.LoadFrom("does-not-exist.dll"));
     }
+
+    private sealed class RecordingSink : IRouteableErrorSink
+    {
+        public List<string> Reports { get; } = [];
+        public void Report(string source, Exception exception) => Reports.Add(source + ": " + exception.Message);
+    }
+
+    [Fact]
+    public void A_module_that_throws_is_not_loaded_and_leaves_nothing_behind()
+    {
+        using var provider = Application();
+        var modules = provider.GetRequiredService<IRouteableModules>();
+        var main = provider.GetRequiredService<IMainRouteables>();
+
+        Assert.Throws<InvalidOperationException>(() => modules.Load("Broken", services =>
+        {
+            services.RegisterRoute("/broken", (_, _) => new object());
+            services.AddMenuEntries(() => [Entry("broken")]);
+            throw new InvalidOperationException("the module fails");
+        }));
+
+        Assert.False(modules.IsLoaded("Broken"));
+        Assert.Empty(modules.Loaded);
+        Assert.Null(provider.GetViewModel("/broken", new RouteableArgs()));
+        Assert.DoesNotContain(main.Routeables, e => e.DisplayName == "broken");
+        modules.Load("Broken", s => s.RegisterRoute("/broken", (_, _) => new object()));      // and it can be loaded again
+        Assert.True(modules.IsLoaded("Broken"));
+    }
+
+    [Fact]
+    public void A_module_whose_entries_cannot_be_built_is_not_half_loaded()
+    {
+        using var provider = Application();
+        var modules = provider.GetRequiredService<IRouteableModules>();
+        var main = provider.GetRequiredService<IMainRouteables>();
+
+        Assert.Throws<InvalidOperationException>(() => modules.Load("Broken", services =>
+        {
+            services.RegisterRoute("/broken", (_, _) => new object());
+            services.AddMenuEntries(() => throw new InvalidOperationException("no entries"));
+        }));
+
+        Assert.False(modules.IsLoaded("Broken"));
+        Assert.Null(provider.GetViewModel("/broken", new RouteableArgs()));
+        Assert.Empty(main.Routeables);
+    }
+
+    [Fact]
+    public void Loading_a_name_again_with_another_method_is_reported_and_does_not_run_it()
+    {
+        var sink = new RecordingSink();
+        using var provider = Application(more: s => s.AddSingleton<IRouteableErrorSink>(sink));
+        var modules = provider.GetRequiredService<IRouteableModules>();
+        var ran = false;
+
+        var first = modules.Load("Orders", AddOrders);
+        modules.Load("Orders", AddOrders);                                          // the same method: nothing to say
+        Assert.Empty(sink.Reports);
+
+        var second = modules.Load("Orders", services => { ran = true; AddOrders(services); });
+
+        Assert.Same(first, second);
+        Assert.False(ran);
+        Assert.Single(sink.Reports);
+        Assert.Contains("Orders", sink.Reports[0]);
+    }
 }

@@ -21,7 +21,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
     private readonly Dictionary<object, (Func<IServiceProvider, IRouteableArgs, object> Factory, ModuleServices Services)> _factories = [];
     private readonly List<WeakReference<IMainRouteables>> _mains = [];
 
-    private sealed record ModuleEntry(RouteableModuleInfo Info, IReadOnlyList<MenuEntries> Menus, ModuleServices Services);
+    private sealed record ModuleEntry(RouteableModuleInfo Info, IReadOnlyList<MenuEntries> Menus, ModuleServices Services, Action<IServiceCollection> Add);
 
     public event EventHandler<RouteableModuleInfo>? ModuleLoaded;
 
@@ -41,13 +41,22 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
         ArgumentNullException.ThrowIfNull(add);
 
         RouteableModuleInfo info;
-        List<(IMainRouteables Main, MenuEntries Menu)> pending = [];
+        List<(IMainRouteables Main, IReadOnlyList<IRouteableEntry> Entries, MenuEntries Menu)> pending = [];
         lock (_gate)
         {
             var known = _loaded.FirstOrDefault(l => string.Equals(l.Info.Name, name, StringComparison.OrdinalIgnoreCase));
             if (known is not null)
+            {
+                // Loading a name again does nothing: a button clicked twice is not an error. Another way to add the same name is probably one:
+                // the second module is not loaded, and the one that was is returned.
+                if (assembly is null && !add.Equals(known.Add))
+                    RouteableErrors.Report(root, "IRouteableModules.Load", new InvalidOperationException(
+                        $"The module '{name}' is already loaded, with another method: this one was not run."));
                 return known.Info;
+            }
 
+            // Everything that can fail runs before anything is changed: a module that throws, or whose entries cannot be built, is not
+            // half loaded (it is not marked as loaded, and none of its routes or entries is there).
             var collection = new ServiceCollection();
             add(collection);
 
@@ -55,6 +64,10 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
             var routes = (table?.Entries.Select(e => e.Template) ?? []).ToArray();
             var menus = collection.Where(d => d.ServiceType == typeof(MenuEntries)).Select(d => (MenuEntries)d.ImplementationInstance!).ToArray();
             var services = new ModuleServices(collection.Where(d => !Infrastructure.Contains(d.ServiceType) && !IsRouteFactory(d)));
+
+            foreach (var main in AliveMains())
+                foreach (var menu in menus)
+                    pending.Add((main, menu.Build().ToList(), menu));
 
             // The routes the router can reach from an address.
             if (table is not null && root.GetService<RouteableTable>() is { } applicationTable)
@@ -65,15 +78,11 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
                 _factories.TryAdd(d.ServiceKey!, ((Func<IServiceProvider, IRouteableArgs, object>)d.KeyedImplementationInstance!, services));
 
             info = new RouteableModuleInfo(name, assembly, routes);
-            _loaded.Add(new ModuleEntry(info, menus, services));
-
-            foreach (var main in AliveMains())
-                foreach (var menu in menus)
-                    pending.Add((main, menu));
+            _loaded.Add(new ModuleEntry(info, menus, services, add));
         }
 
-        foreach (var (main, menu) in pending)
-            menu.AddTo(main);
+        foreach (var (main, entries, menu) in pending)
+            menu.AddTo(main, entries);
 
         ModuleLoaded?.Invoke(this, info);
         return info;
