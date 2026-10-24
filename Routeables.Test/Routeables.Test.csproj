@@ -44,6 +44,7 @@
     <ProjectReference Include="..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
     <ProjectReference Include="..\Routeables.Maui\Routeables.Maui.csproj" />
     <ProjectReference Include="..\Routeables.Razor\Routeables.Razor.csproj" />
+    <ProjectReference Include="..\Routeables.Uno\Routeables.Uno.csproj" />
   </ItemGroup>
 
   <ItemGroup>

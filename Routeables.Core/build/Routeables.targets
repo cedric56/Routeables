@@ -1,21 +1,16 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <!-- Folder under lib\ that the package was packed with (see Routeables.nuspec).
-       Strips the platform suffix so net10.0-android / net10.0-windows10.0.19041 resolve to net10.0. -->
-  <PropertyGroup>
-    <_RouteablesLibTfm>$(TargetFramework.Split('-')[0])</_RouteablesLibTfm>
-  </PropertyGroup>
-
-  <!-- The flavours are opt-in sources: RouteablesFeatures adds them to the project. The packages they use (CommunityToolkit.Mvvm;
+  <!-- The flavours are opt-in sources, next to this file whatever the target framework of the project (net10.0, net11.0, net10.0-android...):
+       RouteablesFeatures adds them to the project. The packages they use (CommunityToolkit.Mvvm;
        ReactiveUI and ReactiveUI.SourceGenerators) are the application's own PackageReference, with the version it chooses. -->
   <ItemGroup Condition="$(RouteablesFeatures.Contains(';CommunityToolkit;'))">
-    <Compile Include="$(MSBuildThisFileDirectory)..\lib\$(_RouteablesLibTfm)\Community\**\*.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Community\**\*.cs">
       <Visible>false</Visible>
     </Compile>
   </ItemGroup>
 
   <ItemGroup Condition="$(RouteablesFeatures.Contains(';ReactiveUI;'))">
-    <Compile Include="$(MSBuildThisFileDirectory)..\lib\$(_RouteablesLibTfm)\Reactive\**\*.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Reactive\**\*.cs">
       <Visible>false</Visible>
     </Compile>
   </ItemGroup>

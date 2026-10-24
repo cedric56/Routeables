@@ -13,7 +13,7 @@ using AvaloniaApplication = global::Avalonia.Application;
 namespace Routeables.Tests.Hosts;
 
 /// <summary>
-/// What every host (Blazor, Avalonia, MAUI) must give the application, whatever its platform: the same services, the same
+/// What every host (Blazor, Avalonia, MAUI, Uno) must give the application, whatever its platform: the same services, the same
 /// injection rules and a main view model that is one instance for the whole host. A host that drifts from the others fails here.
 /// </summary>
 public class HostContractTests
@@ -59,6 +59,12 @@ public class HostContractTests
             IServiceProvider? provider = null;
             global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMainRouteables>(
                 afterBuild: p => provider = p);
+            return (provider!, (IDisposable)provider!);
+        }),
+        new Host("Uno", ServiceLifetime.Singleton, () =>
+        {
+            IServiceProvider? provider = null;
+            Routeables.Uno.Extensions.StartRouteables<FakeMainRouteables>(afterBuild: p => provider = p);
             return (provider!, (IDisposable)provider!);
         }),
         new Host("Maui", ServiceLifetime.Singleton, () =>

@@ -26,8 +26,7 @@ public partial class App : Application
         Action? onAppDispose = null)
     {
         // The usual Avalonia shape: the application has its own constructor, Routeables is added to the builder.
-        return AppBuilder.Configure<App>()
-            .UseRouteables<MainViewModel>(
+        return AppBuilder.Configure<App>().UseRouteables<MainViewModel>(
            configure: services =>
            {
                if (messageBoxService is not null)
@@ -58,7 +57,7 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         // The window on a desktop, the view on a single-view platform; both get the menu as their DataContext.
-        this.OpenMainView(ApplicationLifetime is ISingleViewApplicationLifetime ? new MainView() : new MainWindow());
+        this.OpenMainView(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime ? new MainWindow() : new MainView());
 
         base.OnFrameworkInitializationCompleted();
     }

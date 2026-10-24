@@ -37,13 +37,20 @@ public static class Extensions
         where TMain : class, IMainRouteables
     {
         ArgumentNullException.ThrowIfNull(application);
-        return BuildProvider(services =>
+        return StartRouteables<TMain>(configure, afterBuild);
+    }
+
+    // What UseRouteables does, without an Application: the tests of the contract of the hosts call it, as an Application cannot be created outside Uno.
+    internal static IServiceProvider StartRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
+        Action<IServiceCollection>? configure = null,
+        Action<IServiceProvider>? afterBuild = null)
+        where TMain : class, IMainRouteables
+        => BuildProvider(services =>
         {
             services.RegisterMainRouteables<TMain>();
             services.UseRouteablesServices();
             configure?.Invoke(services);
         }, afterBuild);
-    }
 
     /// <summary>The container of the running Routeables host.</summary>
     /// <exception cref="InvalidOperationException">No Routeables host is running.</exception>

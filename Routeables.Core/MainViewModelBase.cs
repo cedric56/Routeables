@@ -23,17 +23,14 @@ namespace Routeables.Core;
 /// </remarks>
 /// <param name="router">The router that shows the selected entry.</param>
 /// <param name="initialize">Whether the first entry is selected when the view model is created.</param>
-public abstract class MainViewModelBase(IRouter router, bool initialize = true) : RouteableViewModelBase(router, initialize), INotifyPropertyChanged
+public abstract class MainViewModelBase(IRouter router, bool initialize = true) : RouteableViewModelBase(router, initialize)
 {
-    /// <summary>Raised when a property changes (<see cref="RouteableViewModelBase.Routeable"/>, <see cref="RouteableViewModelBase.CurrentView"/>, <see cref="Title"/>).</summary>
-    public event PropertyChangedEventHandler? PropertyChanged;
-
     /// <inheritdoc />
     protected override void NotifyPropertyChanged(string propertyName)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         if (propertyName == nameof(Routeable))
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentTitle)));
+            NotifyPropertyChanged(nameof(CurrentTitle));
     }
 
     /// <summary>Nothing to refresh: this class has no commands. Override it to refresh yours.</summary>

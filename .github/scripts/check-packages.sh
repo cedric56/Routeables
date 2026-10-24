@@ -13,11 +13,16 @@ for nupkg in "$dir"/*.nupkg; do
     status=1
   fi
 done
+# Every package carries the symbols of its libraries.
+for nupkg in "$dir"/*.nupkg; do
+  unzip -l "$nupkg" | grep -q '\.pdb$' || { echo "::error::$(basename "$nupkg") has no .pdb"; status=1; }
+done
 # The Routeables package must hold its libraries and the generator.
 core=$(ls "$dir"/Routeables.[0-9]*.nupkg | grep -v 'symbols' | head -1)
 for entry in lib/net10.0/Routeables.Abstraction.dll lib/net10.0/Routeables.Routing.dll lib/net10.0/Routeables.Core.dll \
              lib/net10.0/Routeables.Regions.dll lib/net10.0/Routeables.Services.dll lib/net10.0/Routeables.Locking.dll \
-             lib/net10.0/Routeables.Segments.dll analyzers/dotnet/cs/Routeables.Generated.dll buildTransitive/Routeables.targets; do
+             lib/net10.0/Routeables.Segments.dll analyzers/dotnet/cs/Routeables.Generated.dll buildTransitive/Routeables.targets \
+             buildTransitive/Community/RouteableViewModel.cs buildTransitive/Reactive/RouteableViewModel.cs; do
   unzip -l "$core" | grep -q " $entry\$" || { echo "::error::$(basename "$core") does not contain $entry"; status=1; }
 done
 exit $status

@@ -67,14 +67,14 @@ public static class RouteableBuilder
 
     /// <summary>
     /// Shows the main view of the application: the <see cref="Window"/> on a desktop, the view on a single-view platform
-    /// (mobile, browser). The view gets the main view model as its <c>DataContext</c> unless it already has one.
+    /// (browser) or in the activity of an Android application. The view gets the main view model as its <c>DataContext</c> unless it already has one.
     /// Call it from <c>OnFrameworkInitializationCompleted</c>, before <c>base.OnFrameworkInitializationCompleted()</c>.
     /// <code>
-    /// this.OpenMainView(ApplicationLifetime is ISingleViewApplicationLifetime ? new MainView() : new MainWindow());
+    /// this.OpenMainView(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime ? new MainWindow() : new MainView());
     /// </code>
     /// </summary>
     /// <param name="application">The application.</param>
-    /// <param name="view">A <see cref="Window"/> for a desktop lifetime; any control for a single-view lifetime.</param>
+    /// <param name="view">A <see cref="Window"/> for a desktop lifetime; any control for the other lifetimes.</param>
     /// <exception cref="InvalidOperationException">No Routeables host is running, or the lifetime cannot show this view.</exception>
     public static void OpenMainView(this Application application, Control view)
     {
@@ -88,6 +88,9 @@ public static class RouteableBuilder
         {
             case IClassicDesktopStyleApplicationLifetime desktop when view is Window window:
                 desktop.MainWindow = window;
+                break;
+            case IActivityApplicationLifetime activity:
+                activity.MainViewFactory = () => view;
                 break;
             case ISingleViewApplicationLifetime singleView:
                 singleView.MainView = view;

@@ -19,7 +19,7 @@ public static AppBuilder BuildAvaloniaApp() =>
         .UsePlatformDetect();
 ```
 
-Show the main view from `OnFrameworkInitializationCompleted`: `this.OpenMainView(...)` takes the window on desktop or the view on a single-view platform, and gives it the menu as `DataContext`. `this.GetRouteableServices()` returns the container.
+Show the main view from `OnFrameworkInitializationCompleted`: `this.OpenMainView(...)` takes the window on desktop, or the view on Android (activity) and single-view platforms (browser), and gives it the menu as `DataContext`. `this.GetRouteableServices()` returns the container.
 
 ## A view
 

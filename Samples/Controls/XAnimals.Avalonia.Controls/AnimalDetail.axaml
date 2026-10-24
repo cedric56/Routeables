@@ -8,7 +8,7 @@
 
     <ScrollViewer>
         <StackPanel Margin="20,28,20,40" Spacing="6" MaxWidth="640" HorizontalAlignment="Center">
-            <Border x:Name="Hero" Classes="arch hero" Width="260" Height="330" CornerRadius="130,130,14,14">
+            <Border x:Name="Hero" Classes="arch" CornerRadius="130,130,14,14">
                 <Image Stretch="UniformToFill"
                        ail:ImageLoader.Source="{Binding Animal.PhotoUrl}" />
             </Border>
