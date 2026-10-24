@@ -6,10 +6,10 @@ using XAnimals.ViewModels;
 
 namespace XAnimals.Uno.Views;
 
-[RouteableView(typeof(ShellMenuViewModel), route: "shell-menu")]
-public sealed partial class ShellMenuView : RouteableFor
+[RouteableView(typeof(LayoutBarViewModel), route: "layout-bar")]
+public sealed partial class LayoutBarView : RouteableFor
 {
-    public ShellMenuView()
+    public LayoutBarView()
     {
         InitializeComponent();
     }

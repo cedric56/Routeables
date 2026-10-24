@@ -48,7 +48,7 @@ public static class Extensions
         services.AddDebugErrorSink();
         services.AddAnimalModules();
         services.AddHistoryRegion();
-        services.AddShellRegions();
+        services.AddLayoutRegions();
 
         // Reachable by segments: MainViewModel.GoToAsync("/Bears?SearchText=polar").
         services.RegisterSegment<BearsViewModel>("Bears", "/bears");
@@ -73,14 +73,14 @@ public static class Extensions
     /// The four regions of the Regions page (Header, Footer, LeftPanel and Content) and the class that drives them.
     /// Each host calls it once: <see cref="RegisterViewModels"/> does, Maui calls it from its own start.
     /// </summary>
-    public static IServiceCollection AddShellRegions(this IServiceCollection services)
+    public static IServiceCollection AddLayoutRegions(this IServiceCollection services)
     {
-        services.AddRegionLayout<ShellController>(ShellController.Content, ShellController.Header, ShellController.Footer, ShellController.LeftPanel);
+        services.AddRegionLayout<LayoutController>(LayoutController.Content, LayoutController.Header, LayoutController.Footer, LayoutController.LeftPanel);
 
         // Reachable by segments, in any region: RouteCoordination.Create().Segment("Bar", region, ("Title", "Cedric")). The credits of
-        // the Regions page are one such navigation (see ShellController.ShowCreditsAsync).
-        services.RegisterSegment<ShellBarViewModel>(ShellController.BarSegment, "shell-bar");
-        services.RegisterSegment<LogoViewModel>(ShellController.LogoSegment, "shell-logo");
+        // the Regions page are one such navigation (see LayoutController.ShowCreditsAsync).
+        services.RegisterSegment<LayoutBarViewModel>(LayoutController.BarSegment, "layout-bar");
+        services.RegisterSegment<LogoViewModel>(LayoutController.LogoSegment, "shell-logo");
 
         return services;
     }

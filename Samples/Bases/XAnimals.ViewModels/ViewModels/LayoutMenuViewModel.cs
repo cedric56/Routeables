@@ -6,18 +6,18 @@ using XAnimals.Common;
 namespace XAnimals.ViewModels;
 
 /// <summary>One page of the left panel; <paramref name="Select"/> shows it in the content.</summary>
-public sealed record ShellMenuItem(string Name, string Glyph, bool IsCurrent, ICommand Select);
+public sealed record LayoutMenuItem(string Name, string Glyph, bool IsCurrent, ICommand Select);
 
 /// <summary>
-/// The left panel of the Regions page: it chooses what the content shows. It asks the <see cref="ShellController"/>, which sends
+/// The left panel of the Regions page: it chooses what the content shows. It asks the <see cref="LayoutController"/>, which sends
 /// the page to the content region by name: the panel does not know where the content is, nor that a header and a footer follow.
 /// </summary>
-public class ShellMenuViewModel : ViewModelBase, IDisposable
+public class LayoutMenuViewModel : ViewModelBase, IDisposable
 {
-    private readonly ShellController _controller;
-    private IReadOnlyList<ShellMenuItem> _items = [];
+    private readonly LayoutController _controller;
+    private IReadOnlyList<LayoutMenuItem> _items = [];
 
-    public ShellMenuViewModel(ShellController controller)
+    public LayoutMenuViewModel(LayoutController controller)
     {
         _controller = controller;
         BackCommand = new AsyncCommand(() => _controller.BackAsync());
@@ -30,7 +30,7 @@ public class ShellMenuViewModel : ViewModelBase, IDisposable
     public ICommand ForwardCommand { get; }
 
     /// <summary>The animal pages, the one the content shows marked.</summary>
-    public IReadOnlyList<ShellMenuItem> Items
+    public IReadOnlyList<LayoutMenuItem> Items
     {
         get => _items;
         private set
@@ -50,7 +50,7 @@ public class ShellMenuViewModel : ViewModelBase, IDisposable
     {
         var current = _controller.Current;
         Items = _controller.Pages
-            .Select(page => new ShellMenuItem(
+            .Select(page => new LayoutMenuItem(
                 page.DisplayName,
                 AnimalIcons.GlyphOf(page.Path ?? string.Empty),
                 page.DisplayName == current,

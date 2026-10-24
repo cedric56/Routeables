@@ -18,7 +18,7 @@
     --an-arch: 999px 999px 14px 14px;
 }
 
-/* Shell: recolour the Routeables layout without touching the library. */
+/* Layout: recolour the Routeables layout without touching the library. */
 body .rt-layout.rt-layout {
     --rt-primary: var(--an-canopy);
     --rt-primary-text: #fff;

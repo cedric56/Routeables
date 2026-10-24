@@ -4,10 +4,10 @@ using XAnimals.ViewModels;
 
 namespace XAnimals.Maui.Views;
 
-[RouteableView(typeof(ShellMenuViewModel), route: "shell-menu")]
-public partial class ShellMenuView : RouteableFor
+[RouteableView(typeof(LayoutBarViewModel), route: "layout-bar")]
+public partial class LayoutBarView : RouteableFor
 {
-    public ShellMenuView()
+    public LayoutBarView()
     {
         InitializeComponent();
     }

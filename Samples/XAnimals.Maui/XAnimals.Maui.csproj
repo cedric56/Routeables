@@ -154,10 +154,10 @@
     <MauiXaml Update="Views\RegionsView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Views\ShellBarView.xaml">
+    <MauiXaml Update="Views\LayoutBarView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Views\ShellMenuView.xaml">
+    <MauiXaml Update="Views\LayoutMenuView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>

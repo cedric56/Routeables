@@ -1,8 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:XAnimals.ViewModels"
-             x:Class="XAnimals.Avalonia.ShellBarView"
-             x:DataType="vm:ShellBarViewModel">
+             x:Class="XAnimals.Avalonia.LayoutBarView"
+             x:DataType="vm:LayoutBarViewModel">
 
     <!-- One view for the header and the footer: the strong one is the header. -->
     <Border Classes="bar" Classes.strong="{Binding IsStrong}" Padding="14,8">

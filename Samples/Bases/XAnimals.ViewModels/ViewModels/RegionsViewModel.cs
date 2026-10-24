@@ -19,10 +19,10 @@ namespace XAnimals.ViewModels;
 /// </summary>
 public class RegionsViewModel : ViewModelBase, IRouteable
 {
-    private readonly ShellController _controller;
+    private readonly LayoutController _controller;
     private readonly IRouteCoordinator _coordinator;
 
-    public RegionsViewModel(ShellController controller, IRouteCoordinator coordinator)
+    public RegionsViewModel(LayoutController controller, IRouteCoordinator coordinator)
     {
         _controller = controller;
         _coordinator = coordinator;

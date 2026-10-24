@@ -10,7 +10,7 @@
 
     <!-- An application of its own: four zones, four routers. Each zone only has a name, and receives whatever the router of that
          region displays. Every page in it navigates its own region: nothing here assigns a view to a zone. -->
-    <Grid x:Name="ShellGrid" RowDefinitions="Auto,*,Auto" ColumnDefinitions="190,*">
+    <Grid x:Name="LayoutGrid" RowDefinitions="Auto,*,Auto" ColumnDefinitions="190,*">
         <routeables:RouteableRegion Grid.ColumnSpan="2" Region="shell-header" />
         <Grid Grid.Row="1" RowDefinitions="Auto,*,Auto" BackgroundColor="{AppThemeBinding Light={StaticResource Lichen}, Dark={StaticResource Moss}}">
             <Button x:Name="CollapseButton" Margin="6" Padding="10,0" HorizontalOptions="End" HeightRequest="34" Text="«" Clicked="OnCollapseClicked"

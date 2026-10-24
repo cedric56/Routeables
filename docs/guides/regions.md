@@ -97,7 +97,7 @@ routes (the *primary*) and the ones that follow it, and write only what is yours
 followers show when the primary moves.
 
 ```csharp
-public sealed class Shell(IServiceProvider provider) : RegionLayout(provider, "content", "header", "menu")
+public sealed class AppLayout(IServiceProvider provider) : RegionLayout(provider, "content", "header", "menu")
 {
     protected override async Task OnStartAsync(CancellationToken ct)
     {
@@ -110,7 +110,7 @@ public sealed class Shell(IServiceProvider provider) : RegionLayout(provider, "c
         => FollowAsync("header", PrimaryRouter.History.Current, () => HeaderFor(PrimaryRouter.History.Current));
 }
 
-services.AddRegionLayout<Shell>("content", "header", "menu");   // the regions and the layout, scoped
+services.AddRegionLayout<AppLayout>("content", "header", "menu");   // the regions and the layout, scoped
 ```
 
 `StartAsync`, `ClearAsync`, `ShowAsync`, `BackAsync`, `ForwardAsync`, `CanGoBack`, `CanGoForward`, `SettledAsync` and `Changed` are

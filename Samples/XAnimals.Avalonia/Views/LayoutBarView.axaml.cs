@@ -4,10 +4,10 @@ using XAnimals.ViewModels;
 
 namespace XAnimals.Avalonia;
 
-[RouteableView(typeof(ShellBarViewModel), route: "shell-bar")]
-public partial class ShellBarView : RouteableFor<ShellBarViewModel>
+[RouteableView(typeof(LayoutBarViewModel), route: "layout-bar")]
+public partial class LayoutBarView : RouteableFor<LayoutBarViewModel>
 {
-    public ShellBarView()
+    public LayoutBarView()
     {
         InitializeComponent();
     }

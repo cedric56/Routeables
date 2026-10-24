@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
     xmlns:vm="clr-namespace:XAnimals.ViewModels;assembly=XAnimals.ViewModels"
-    x:Class="XAnimals.Maui.Views.ShellMenuView"
-    x:DataType="vm:ShellMenuViewModel"
+    x:Class="XAnimals.Maui.Views.LayoutMenuView"
+    x:DataType="vm:LayoutMenuViewModel"
     BackgroundColor="{AppThemeBinding Light={StaticResource Lichen}, Dark={StaticResource Moss}}">
 
     <VerticalStackLayout Padding="10" Spacing="4">
@@ -15,7 +15,7 @@
         </Grid>
         <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Spacing="4">
             <BindableLayout.ItemTemplate>
-                <DataTemplate x:DataType="vm:ShellMenuItem">
+                <DataTemplate x:DataType="vm:LayoutMenuItem">
                     <Border StrokeThickness="2" Stroke="Transparent" Padding="10,4" BackgroundColor="Transparent">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="999" />

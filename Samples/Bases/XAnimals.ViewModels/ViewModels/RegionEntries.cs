@@ -54,8 +54,8 @@ public static class RegionEntries
     }
 
     /// <summary>A bar (header or footer) for <paramref name="region"/>; the router builds a new one each time.</summary>
-    public static RouteableEntry Bar(string region, ShellBarInfo info)
-        => new RouteableEntry<ShellBarViewModel>("Bar", null, route: "shell-bar", template: "shell-bar")
+    public static RouteableEntry Bar(string region, LayoutBarInfo info)
+        => new RouteableEntry<LayoutBarViewModel>("Bar", null, route: "layout-bar", template: "layout-bar")
         {
             Region = region,
             Arguments = RouteableArgs.Create().ForViewModel(info)
@@ -63,7 +63,7 @@ public static class RegionEntries
 
     /// <summary>The menu of the left panel.</summary>
     public static RouteableEntry Menu(string region)
-        => new RouteableEntry<ShellMenuViewModel>("Menu", null, route: "shell-menu", template: "shell-menu") { Region = region };
+        => new RouteableEntry<LayoutMenuViewModel>("Menu", null, route: "layout-menu", template: "layout-menu") { Region = region };
 
     /// <summary>Whether the entry was sent as an animal page (it carries its name), not opened from inside one (a detail).</summary>
     public static bool HasName(IRouterEntry? entry) => ValueOf(entry, NameKey) is not null;

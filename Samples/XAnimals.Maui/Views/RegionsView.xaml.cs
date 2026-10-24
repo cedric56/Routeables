@@ -21,7 +21,7 @@ public partial class RegionsView : RouteableFor
     private void OnCollapseClicked(object? sender, EventArgs e)
     {
         _collapsed = !_collapsed;
-        ShellGrid.ColumnDefinitions[0].Width = _collapsed ? new GridLength(56) : new GridLength(190);
+        LayoutGrid.ColumnDefinitions[0].Width = _collapsed ? new GridLength(56) : new GridLength(190);
         LeftScroll.IsVisible = CreditsButton.IsVisible = !_collapsed;
         CollapseButton.Text = _collapsed ? "»" : "«";
         CollapseButton.HorizontalOptions = _collapsed ? LayoutOptions.Center : LayoutOptions.End;

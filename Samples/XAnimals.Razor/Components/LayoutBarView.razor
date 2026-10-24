@@ -1,8 +1,8 @@
 @using Routeables.Abstraction
 @using Routeables.Razor
 @using XAnimals.ViewModels
-@attribute [RouteableView(typeof(ShellBarViewModel), route: "shell-bar")]
-@inherits RouteableFor<ShellBarView, ShellBarViewModel>
+@attribute [RouteableView(typeof(LayoutBarViewModel), route: "layout-bar")]
+@inherits RouteableFor<LayoutBarView, LayoutBarViewModel>
 
 <div class="rg-bar @(ViewModel.IsStrong ? "strong" : "")">
     <span class="rg-bar-glyph">@ViewModel.Glyph</span>

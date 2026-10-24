@@ -1,8 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:XAnimals.ViewModels"
-             x:Class="XAnimals.Avalonia.ShellMenuView"
-             x:DataType="vm:ShellMenuViewModel">
+             x:Class="XAnimals.Avalonia.LayoutMenuView"
+             x:DataType="vm:LayoutMenuViewModel">
 
     <StackPanel Margin="10" Spacing="4">
         <UniformGrid Columns="2" Margin="0,0,0,6">
@@ -11,7 +11,7 @@
         </UniformGrid>
         <ItemsControl ItemsSource="{Binding Items}">
             <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="vm:ShellMenuItem">
+                <DataTemplate x:DataType="vm:LayoutMenuItem">
                     <Button Classes="item" Classes.current="{Binding IsCurrent}" Command="{Binding Select}">
                         <StackPanel Orientation="Horizontal" Spacing="10">
                             <TextBlock Text="{Binding Glyph}" FontSize="20" VerticalAlignment="Center" />

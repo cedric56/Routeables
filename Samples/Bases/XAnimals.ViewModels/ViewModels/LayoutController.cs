@@ -13,7 +13,7 @@ namespace XAnimals.ViewModels;
 /// follow whatever moved it.
 /// </para>
 /// </summary>
-public sealed class ShellController(IServiceProvider provider) : RegionLayout(provider, Content, Header, Footer, LeftPanel)
+public sealed class LayoutController(IServiceProvider provider) : RegionLayout(provider, Content, Header, Footer, LeftPanel)
 {
     public const string Header = "shell-header";
     public const string Footer = "shell-footer";
@@ -56,14 +56,14 @@ public sealed class ShellController(IServiceProvider provider) : RegionLayout(pr
         await SettledAsync();
 
         // A segment is a name and the region that handles it; what the view model needs is given to it by its arguments.
-        static Action<IRouteableArgs> Bar(ShellBarInfo info) => args => args.ForViewModel(info);
+        static Action<IRouteableArgs> Bar(LayoutBarInfo info) => args => args.ForViewModel(info);
 
         var credits = RouteCoordination.Create()
             .Absolute()
-            .Segment(BarSegment, Bar(ShellBarInfo.Empty), LeftPanel)
+            .Segment(BarSegment, Bar(LayoutBarInfo.Empty), LeftPanel)
             .Segment(LogoSegment, Content)
-            .Segment(BarSegment, Bar(new ShellBarInfo("©", "© 2026 Cedric", "Released under the MIT License", Strong: true)), Header)
-            .Segment(BarSegment, Bar(new ShellBarInfo("✍️", "Cedric", "Author of Routeables")), Footer)
+            .Segment(BarSegment, Bar(new LayoutBarInfo("©", "© 2026 Cedric", "Released under the MIT License", Strong: true)), Header)
+            .Segment(BarSegment, Bar(new LayoutBarInfo("✍️", "Cedric", "Author of Routeables")), Footer)
             .Build();
 
         var result = await coordinator.CoordinateAsync(credits, ct);
@@ -91,10 +91,10 @@ public sealed class ShellController(IServiceProvider provider) : RegionLayout(pr
             ? RegionEntries.DescriptionOf(section)
             : $"Opened: {RegionEntries.NameOf(current)}";
 
-        var header = new ShellBarInfo(RegionEntries.GlyphOf(section), RegionEntries.NameOf(section) ?? string.Empty, detail, Strong: true);
+        var header = new LayoutBarInfo(RegionEntries.GlyphOf(section), RegionEntries.NameOf(section) ?? string.Empty, detail, Strong: true);
         await FollowAsync(Header, header, () => RegionEntries.Bar(Header, header));
 
-        var footer = new ShellBarInfo("🧭", $"Content: entry {history.CurrentIndex + 1} of {history.Count}",
+        var footer = new LayoutBarInfo("🧭", $"Content: entry {history.CurrentIndex + 1} of {history.Count}",
             $"Back: {(history.CanGoBack ? "yes" : "no")} · Forward: {(history.CanGoForward ? "yes" : "no")}");
         await FollowAsync(Footer, footer, () => RegionEntries.Bar(Footer, footer));
     }

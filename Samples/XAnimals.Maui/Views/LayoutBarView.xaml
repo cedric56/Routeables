@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
     xmlns:vm="clr-namespace:XAnimals.ViewModels;assembly=XAnimals.ViewModels"
-    x:Class="XAnimals.Maui.Views.ShellBarView"
-    x:DataType="vm:ShellBarViewModel">
+    x:Class="XAnimals.Maui.Views.LayoutBarView"
+    x:DataType="vm:LayoutBarViewModel">
 
     <!-- One view for the header and the footer: the strong one is the header. -->
     <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Lichen}, Dark={StaticResource Moss}}">
