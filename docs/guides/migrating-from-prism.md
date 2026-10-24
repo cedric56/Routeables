@@ -74,4 +74,4 @@ The route, its parameter and its type are written once. The id is a constructor 
 
 ## Pick the packages
 
-See "What do I install?" in the [README](../../README.md). A Prism application usually needs the host package (`Routeables.Razor`, `Routeables.Maui` or `Routeables.Avalonia`), the matching `.Services` package if it used `IDialogService`, and `Routeables.Regions` if it used regions.
+See "Add what you need" in the [README](../../README.md). A Prism application usually needs the host package (`Routeables.Razor`, `Routeables.Maui`, `Routeables.Avalonia` or `Routeables.Uno`), the matching `.Services` package if it used `IDialogService`, and `Routeables.Regions` if it used regions.

@@ -1,28 +1,19 @@
 # Routeables.Maui.Services
 
-The optional UI services of the MAUI host: dialogs, content dialogs, task dialogs, modal pages and toast notifications.
-[`Routeables.Maui`](../Routeables.Maui/README.md) alone routes; add this package when you want these services.
-
-Version `1.0.0`, same target frameworks as `Routeables.Maui` (`net10.0`, Android, iOS, Mac Catalyst and Windows), namespace `Routeables.Maui.Services`.
-It references `Routeables.Maui` and the contracts of [`Routeables.Services`](../Routeables.Services/README.md).
+Dialogs, modal pages and toast notifications for the MAUI host. [`Routeables.Maui`](../Routeables.Maui/README.md) routes without it. Same target frameworks as the host.
 
 ```csharp
-using Routeables.Maui;
-using Routeables.Maui.Services;
-
-var builder = MauiApp.CreateBuilder();
 builder
-    .UseRouteables()            // the router
-    .UseRouteablesServices()     // the UI services
+    .UseRouteables()
+    .UseRouteablesServices()
     .UseMauiApp<App>();
 ```
 
-`UseRouteablesServices` takes an optional factory for the modal, content dialog, task dialog and notification services. For CommunityToolkit.Maui popups
-and snackbars use `UseRouteablesCommunityToolkit()` from [`Reshapes.Maui.Community`](../Reshapes/README.md), which calls both for you.
+`UseRouteablesServices` takes optional factories to replace a service. For CommunityToolkit.Maui popups and snackbars use `UseRouteablesCommunityToolkit()` from [`Reshapes`](../Reshapes/README.md), which calls both setup methods for you.
 
-## What it contains
+## What it brings
 
-- `IRouteableModalService` and `IRouteableDialogWindowContext` (the page a dialog is drawn on), and `RouteableModalFor<TViewModel, TResult>`, the base of a modal view.
-- The default implementations: dialogs, content dialogs, task dialogs, modal pages and notifications. Toasts use the platform's own on Windows, Android, iOS and Mac Catalyst (UIKit cards on the key window) and an overlay on the plain `net10.0` target.
+- Dialogs, content dialogs, task dialogs and notifications. Toasts are native on Windows, Android, iOS and Mac Catalyst, and an overlay on the plain `net10.0` target.
+- `RouteableModalFor<TViewModel, TResult>`: the base of a modal view that returns a typed result.
 
-Dialogs and modals need an active page to be shown on.
+Dialogs and modals need an active page to appear on. Contracts: [`Routeables.Services`](../Routeables.Services/README.md).

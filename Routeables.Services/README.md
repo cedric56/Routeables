@@ -1,24 +1,23 @@
 # Routeables.Services
 
-The contracts of the user-interface services that the hosts implement in their optional services packages ([Razor](../Routeables.Razor.Services/README.md), [MAUI](../Routeables.Maui.Services/README.md), [Avalonia](../Routeables.Avalonia.Services/README.md)); the theme service stays in the host. They are not needed to route: a project that only uses `IRouter` references [`Routeables.Abstraction`](../Routeables.Abstraction/README.md) and [`Routeables.Routing`](../Routeables.Routing/README.md) and carries none of this.
+The contracts of the optional UI services: dialogs, notifications and theme. Each host implements them in its own services package: [Razor](../Routeables.Razor.Services/README.md), [MAUI](../Routeables.Maui.Services/README.md), [Avalonia](../Routeables.Avalonia.Services/README.md), [Uno](../Routeables.Uno.Services/README.md). Routing does not need any of this. Targets **.NET 10**, namespace `Routeables.Services`.
 
-Targets **.NET 10** (`net10.0`), version `1.0.0`. The types are in the `Routeables.Services` namespace.
-
-| Interface | Purpose |
+| Inject | For |
 | --- | --- |
-| `IRouteableDialogs` | **The one to inject**: gives the three services below as `MessageBox`, `ContentDialog` and `TaskDialog`. Each host's `UseRouteablesServices` registers it. |
-| `IRouteableDialogService` | Message boxes and simple dialogs |
-| `IRouteableContentDialogService` | Dialogs that host a view and a view model (`RouteableContentDialog`, `RouteableContentDialogResult`) |
-| `IRouteableTaskDialogService` | Multi-step / button-rich task dialogs (`RouteableTaskDialog`, `RouteableTaskDialogResult`) |
-| `IRouteableNotificationService` | In-app toast notifications (`RouteableNotificationType`, `RouteableNotificationPosition`) |
-| `IRouteableRequestedThemeService` | Light/dark theme switching (`RouteableRequestedTheme`) |
+| `IRouteableDialogs` | The one to start with: `MessageBox`, `ContentDialog` and `TaskDialog` |
+| `IRouteableDialogService` | Message boxes |
+| `IRouteableContentDialogService` | A dialog that hosts a view and its view model |
+| `IRouteableTaskDialogService` | Dialogs with a header, buttons and progress |
+| `IRouteableNotificationService` | Toast notifications |
+| `IRouteableRequestedThemeService` | Light, dark or system theme (registered by the host) |
 
-Two small base classes are shared by the hosts that draw their dialogs themselves (Avalonia and Uno): `RouteableDialogServiceBase` writes the confirmations of `IRouteableDialogService` once, over a single `ShowMessageAsync(message, title, buttonText)` that returns the index of the button chosen (-1 when dismissed); `RouteableContentDialogServiceBase` answers them with a content dialog, over `ShowAsync`. The words of the buttons (`"YesNoCancel"`) are split by an internal helper, not part of the API.
+```csharp
+public sealed class OrderViewModel(IRouteableDialogs dialogs)
+{
+    public Task AskAsync() => dialogs.MessageBox.ShowAsync("Delete this order?", "Orders", "YesNo");
+}
+```
 
-`RouteableContentDialogSession` and `RouteableTaskDialogSession` hold what a dialog does whatever draws it: its buttons (`RouteableDialogButton`), the command or click callback of a press, the `Closing` veto (it returns `true` to keep the dialog open), `Opening`, `Opened`, `Closed` and the close from code. Razor, Avalonia, Uno and MAUI draw their dialogs over them (and the MudBlazor and CommunityToolkit reshapes too), so they all behave alike: a press runs the command (or the click callback), then asks `Closing`, then closes.
+Every host behaves the same way: a button press runs its command, then asks the `Closing` veto, then closes. A notification closes after five seconds unless you say otherwise (`RouteableNotificationDefaults.Never` keeps it).
 
-`RouteableNotificationSession` holds what a notification does on every host: the delay (`AutoCloseAfter`, `null` for `Never`), a tap that runs `onClick` and then closes it, and an `onClose` that runs once. A notification closes after `RouteableNotificationDefaults.Expiration` (five seconds) on every host unless `expiration` says otherwise; `RouteableNotificationDefaults.Never` keeps it until it is closed.
-
-The contract of OS notifications (`IRouteableSystemNotificationService`) is here too but hidden from IntelliSense: no host implements it yet.
-
-A host registers its implementations; the application resolves the interface it needs. The look can be replaced by a [Reshape](../Reshapes/README.md).
+The look can be replaced: see [`Reshapes`](../Reshapes/README.md) (MudBlazor, CommunityToolkit.Maui, FluentAvalonia).

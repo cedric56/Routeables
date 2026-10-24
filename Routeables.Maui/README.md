@@ -1,71 +1,47 @@
 # Routeables.Maui
 
-`Routeables.Maui` is the .NET MAUI host of Routeables. It provides the setup call, a routed `ContentView` base, a `Shell` driven by the main
-view model, the region control and the theme service. The dialog, modal and notification services are optional, in [`Routeables.Maui.Services`](../Routeables.Maui.Services/README.md).
-
-## Requirements
-
-Version `1.0.0`. It targets `net10.0`, `net10.0-android`, `net10.0-ios`, `net10.0-maccatalyst` and `net10.0-windows10.0.19041.0`, with
-minimum platform versions Android 21, iOS 15, Mac Catalyst 17 and Windows 10.0.17763. It references `Microsoft.Maui.Controls`,
-`Routeables.Abstraction` and `Routeables.Core`; the MAUI workload must be installed. On CI, `-p:CiBuild=true` builds only the plain `net10.0` target.
+The .NET MAUI host of Routeables: the setup call, a routed `ContentView` base, a `Shell` driven by the main view model, and the region control. Targets `net10.0` and the Android, iOS, Mac Catalyst and Windows frameworks (the MAUI workload is required).
 
 ```xml
 <ItemGroup>
-  <ProjectReference Include="..\Routeables.Maui\Routeables.Maui.csproj" />
+  <ProjectReference Include="..\Routeables\Routeables.Maui\Routeables.Maui.csproj" />
+  <ProjectReference Include="..\Routeables\Routeables.Generated\Routeables.Generated.csproj"
+                    OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 </ItemGroup>
 ```
 
-```bash
-dotnet build Routeables.Maui/Routeables.Maui.csproj
-```
-
-## Registering Routeables
+## Set up
 
 ```csharp
-using Routeables.Maui;
-
 var builder = MauiApp.CreateBuilder();
-builder
-    .UseRouteables()
-    .UseMauiApp<App>();
+builder.UseMauiApp<App>().UseRouteables();
 
 builder.Services.AddGeneratedRoutes();
 builder.Services.RegisterMainRouteables<MainViewModel>(ServiceLifetime.Singleton);
-
-var app = builder.Build();
 ```
 
-`UseRouteables()` registers the router (singleton), the arguments factory, the environment information, property
-injection (`[RouteableParameter]` and MAUI's `[QueryProperty]`, neither falling back to the container) and the theme service. Routes and the main view model are yours to register.
-
-Dialogs, content dialogs, task dialogs, modal pages and notifications are **optional**: add `.UseRouteablesServices()` from
-[`Routeables.Maui.Services`](../Routeables.Maui.Services/README.md). For CommunityToolkit.Maui popups and snackbars use `UseRouteablesCommunityToolkit()` from
-[`Reshapes.Maui.Community`](../Reshapes/README.md), which calls `UseRouteables()` and `UseRouteablesServices()` itself: use it **instead of** both.
-
-## Views
-
-- `RouteableFor` is a `ContentView` base: it maps `Context` to `BindingContext` and has the overridable route change and initialization hooks.
-- `RouteableRegion` is the zone that shows a region. Give it the name registered with `AddRegion`; it follows the router of that region:
+## A view
 
 ```xml
-<routeables:RouteableRegion Region="detail" />
-<!-- xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui" -->
+<routeables:RouteableFor x:Class="MyApp.HomeView"
+    xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui" ...>
+    <Label Text="{Binding Title}" />
+</routeables:RouteableFor>
 ```
 
-## RouteablesShell
+`RouteableFor` maps the context to `BindingContext`. A zone that shows a region is `<routeables:RouteableRegion Region="detail" />`.
 
-`RouteablesShell` is a `Shell` whose top-level items (tabs or flyout entries) come from `IMainRouteables.Routeables`. Shell owns the top-level
-structure and Routeables the route change inside each item, so pages managed by the router must not also be routed with `Shell.GoToAsync`.
-With `AddLocking()` (package `Routeables.Locking`), a page that blocks leaving locks the main entries: they are disabled and the selection returns to the locked one.
+## The shell
 
-## Other helpers
+`RouteablesShell` is a `Shell` whose tabs or flyout entries come from the main view model, and it follows entries added later (modules). Shell owns the top level and Routeables the route changes inside each item: do not also use `Shell.GoToAsync` on those pages.
 
-- `RouteableMauiEntry`: an `Entry` that shows a validation error (red underline, icon, tooltip) from a binding context that implements
-  `INotifyDataErrorInfo`; set `ColumnName` to the validated property.
-- `RouteableParameterAttribute` (namespace `Routeables.Abstraction`, shared by the hosts): marks a view or view-model property that receives a route change value.
-- `RouteableNullConverter`: a value converter that gives true for null or a blank string.
-- `RouteableModalFor<TViewModel, TResult>`, the toasts and the dialogs are in [`Routeables.Maui.Services`](../Routeables.Maui.Services/README.md).
+## Good to know
 
-For the shared view-model bases see [`Routeables.Core`](../Routeables.Core/README.md);
-for the routing API, [`Routeables.Abstraction`](../Routeables.Abstraction/README.md) and [`Routeables.Routing`](../Routeables.Routing/README.md).
-Samples: `Samples/XAnimals.Maui` and `XAnimals.MauiHybrid`.
+- Property injection understands `[RouteableParameter]` and MAUI's `[QueryProperty]`.
+- `RouteableMauiEntry` shows a validation error from an `INotifyDataErrorInfo` context.
+- CommunityToolkit popups and snackbars: use `UseRouteablesCommunityToolkit()` from [`Reshapes`](../Reshapes/README.md) **instead of** `UseRouteables()`.
+- On CI, `-p:CiBuild=true` builds only the plain `net10.0` target.
+
+## Next
+
+[`Routeables.Maui.Services`](../Routeables.Maui.Services/README.md) (dialogs, modals, notifications), [Hosts guide](../docs/guides/hosts.md), samples `Samples/XAnimals.Maui` and `XAnimals.MauiHybrid`.

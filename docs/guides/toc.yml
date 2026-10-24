@@ -12,6 +12,8 @@
   href: regions.md
 - name: Hosts, services and samples
   href: hosts.md
+- name: Native AOT and trimming
+  href: aot.md
 - name: Diagnostics reference
   href: diagnostics.md
 - name: Migrating from Prism

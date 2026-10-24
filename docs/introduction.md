@@ -1,6 +1,6 @@
 # Introduction
 
-**View-model-first routing for .NET, with one routing layer for Blazor, .NET MAUI and Avalonia.**
+**View-model-first routing for .NET, with one routing layer for Blazor, .NET MAUI, Avalonia and Uno Platform.**
 
 Your view models depend on a single `IRouter` interface instead of framework-specific routing APIs, so the same routing code is shared across UI stacks. Routes are declared with attributes and wired by Roslyn source generators, and routing calls to a view model can be generated as strongly typed methods that mirror its constructor.
 
@@ -14,7 +14,7 @@ Your view models depend on a single `IRouter` interface instead of framework-spe
 - **Lifecycle hooks**: `IRouteable` and `IInitializeAsync` (plain and typed), plus standard `IDisposable` / `IAsyncDisposable` cleanup when an entry leaves the history.
 - **Regions**: independent routing stacks (for example `main` and `side`), each with its own history.
 - **Shared services**: dialogs, content dialogs, task dialogs, notifications and theme switching behind common interfaces.
-- **Three UI hosts**: Blazor (Razor), .NET MAUI and Avalonia.
+- **Four UI hosts**: Blazor (Razor), .NET MAUI, Avalonia and Uno Platform (preview).
 - **Optional MVVM helpers**: a view-model base for CommunityToolkit.Mvvm, opt in through an MSBuild property (ReactiveUI is planned, not shipped yet).
 
 ## Projects
@@ -32,6 +32,7 @@ Your view models depend on a single `IRouter` interface instead of framework-spe
 | [`Routeables.Razor`](https://github.com/cedric56/Routeables/blob/master/Routeables.Razor/README.md) | Blazor integration |
 | [`Routeables.Maui`](https://github.com/cedric56/Routeables/blob/master/Routeables.Maui/README.md) | .NET MAUI integration |
 | [`Routeables.Avalonia`](https://github.com/cedric56/Routeables/blob/master/Routeables.Avalonia/README.md) | Avalonia integration |
+| [`Routeables.Uno`](https://github.com/cedric56/Routeables/blob/master/Routeables.Uno/README.md) | Uno Platform integration (preview) |
 | [`Samples`](https://github.com/cedric56/Routeables/tree/master/Samples) | Sample apps (see [Samples](guides/hosts.md#samples)) |
 | [`Reshapes`](https://github.com/cedric56/Routeables/blob/master/Reshapes/README.md) | Optional look-and-feel packages: MudBlazor, CommunityToolkit.Maui, FluentAvalonia |
 | [`Routeables.Benchmarks`](https://github.com/cedric56/Routeables/tree/master/Routeables.Benchmarks) | BenchmarkDotNet benchmarks and memory checks of the router (see [docs/benchmarks.md](benchmarks.md)) |

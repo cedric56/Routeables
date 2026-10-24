@@ -4,7 +4,7 @@ _layout: landing
 
 # Routeables
 
-**View-model-first routing for .NET, with one routing layer for Blazor, .NET MAUI and Avalonia.**
+**View-model-first routing for .NET, with one routing layer for Blazor, .NET MAUI, Avalonia and Uno Platform.**
 
 Your view models depend on one `IRouter` interface instead of framework-specific routing APIs. Routes are declared with attributes and
 wired by source generators, and a call to a view model can be generated as a typed method that mirrors its constructor.

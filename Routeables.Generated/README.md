@@ -1,6 +1,6 @@
 # Routeables.Generated
 
-Roslyn source generators of Routeables. Reference it as an analyzer, from every project that contains the attributes it processes:
+The source generators of Routeables. Reference them as an analyzer from every project that declares routes:
 
 ```xml
 <ItemGroup>
@@ -9,9 +9,11 @@ Roslyn source generators of Routeables. Reference it as an analyzer, from every 
 </ItemGroup>
 ```
 
-It does two things:
+Mind the relative path: a wrong one makes `AddGeneratedRoutes` and `GoTo…Async` disappear.
 
-- **Route registration.** A `[Routeable("/path")]` view model is paired with the view of the same name (`OrderViewModel` => `OrderView`), or with the view that carries `[RouteableView(typeof(OrderViewModel))]`. `services.AddGeneratedRoutes()` (generated as an `internal` extension in each project) registers them all.
-- **Typed routes.** `[RouteableViewModel(typeof(Caller))]` on a view model generates `GoTo{Name}Async` on `Caller`, with the constructor parameters of the view model as arguments, checked at compile time.
+## What it does
 
-The diagnostics (`ROUT101` to `ROUT301`) are listed in the [main README](../README.md#diagnostics-reference).
+- **Registers routes.** A `[Routeable("/path")]` view model is paired with the view of the same name (`OrderViewModel` → `OrderView`), or with `[RouteableView(typeof(OrderViewModel))]`. `services.AddGeneratedRoutes()` is generated in each project.
+- **Types the routing methods.** `[RouteableViewModel(typeof(Caller))]` generates `GoTo{Name}Async(...)` on `Caller`, with the constructor parameters as arguments, checked at compile time.
+
+Works the same on Razor, MAUI, Avalonia and Uno. The warnings and errors (`ROUT101` to `ROUT301`) are explained in [Diagnostics](../docs/guides/diagnostics.md).

@@ -1,9 +1,9 @@
 # Reshapes.Avalonia.Fluent
 
-`ReshapeMessageBoxService`, an `IMessageBoxService` built on FluentAvaloniaUI, for [`Routeables.Avalonia`](https://www.nuget.org/packages/Routeables.Avalonia).
+`ReshapeMessageBoxService`: the dialogs and notifications of [`Routeables.Avalonia`](https://www.nuget.org/packages/Routeables.Avalonia) drawn with FluentAvaloniaUI.
 
 ```csharp
-RouteableBuilder.CreateRouteableApp(messageBoxService: new ReshapeMessageBoxService());
+services.UseRouteablesServices("avares://MyApp/Assets/icon.ico", new ReshapeMessageBoxService());
 ```
 
-See the [Reshapes overview](https://github.com/cedric56/Routeables/blob/master/Reshapes/README.md).
+[Reshapes overview](https://github.com/cedric56/Routeables/blob/master/Reshapes/README.md)
