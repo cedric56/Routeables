@@ -11,8 +11,8 @@ title: Routeables
 One `IRouter` for Blazor, .NET MAUI, Avalonia, Uno Platform and WPF. Declare a route with an attribute; your view model never touches a page, a frame or a framework navigation API.
 
 <div class="rt-cta">
-<a class="rt-primary" href="getting-started.html">Get started</a>
-<a class="rt-ghost" href="guides/migrating-from-prism.html">Coming from Prism</a>
+<a class="rt-primary" href="getting-started.md">Get started</a>
+<a class="rt-ghost" href="guides/migrating-from-prism.md">Coming from Prism</a>
 <a class="rt-ghost" href="https://github.com/cedric56/Routeables">GitHub</a>
 </div>
 
@@ -29,15 +29,18 @@ public sealed class HelloViewModel(IRouter router, string name)
 public partial class HelloView : RouteableFor&lt;HelloViewModel&gt; { }
 
 <span class="c">// once, at startup</span>
-services.AddGeneratedRoutes();</code></pre></div>
+services.AddGeneratedRoutes();
+
+<span class="c">// MainView: the zone where pages appear</span>
+<span class="k">&lt;routeables:RouteableRegion</span> <span class="k">/&gt;</span></code></pre></div>
 </div></div>
 
 <ul class="rt-hosts">
-<li><a href="guides/hosts.html">Blazor</a></li>
-<li><a href="guides/hosts.html">.NET MAUI</a></li>
-<li><a href="guides/hosts.html">Avalonia</a></li>
-<li><a href="guides/hosts.html">Uno Platform</a></li>
-<li><a href="guides/hosts.html">WPF</a></li>
+<li><a href="guides/hosts.md">Blazor</a></li>
+<li><a href="guides/hosts.md">.NET MAUI</a></li>
+<li><a href="guides/hosts.md">Avalonia</a></li>
+<li><a href="guides/hosts.md">Uno Platform</a></li>
+<li><a href="guides/hosts.md">WPF</a></li>
 </ul>
 
 <div class="rt-grid">

@@ -44,7 +44,7 @@ jobs:
       - name: Restore the documented projects
         shell: pwsh
         run: |
-          foreach ($p in 'Abstraction','Routing','Core','Razor','Maui','Avalonia','Wpf','Uno') {
+          foreach ($p in 'Abstraction','Routing','Core','Razor','Maui','Avalonia','Uno') {
             dotnet restore "Routeables.$p/Routeables.$p.csproj" -p:CiBuild=true
           }
 

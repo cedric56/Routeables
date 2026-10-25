@@ -15,7 +15,6 @@
             "Routeables.Razor/*.csproj",
             "Routeables.Maui/*.csproj",
             "Routeables.Avalonia/*.csproj",
-            "Routeables.Wpf/*.csproj",
             "Routeables.Uno/*.csproj"
           ]
         }
