@@ -8,6 +8,7 @@ on:
     branches: [master]
     paths:
       - 'docs/**'
+      - 'Samples/**'
       - 'Routeables.*/**/*.cs'
       - 'Routeables.*/**/*.csproj'
       - '.github/workflows/docs.yml'
@@ -27,7 +28,39 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
+  # The Animals sample on Avalonia Browser (WebAssembly, compiled ahead of time in Release): static files, served next to the docs.
+  demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install wasm-tools workload
+        run: dotnet workload install wasm-tools --skip-manifest-update
+
+      - name: Publish Avalonia Browser
+        run: dotnet publish Samples/XAnimals.Avalonia.Browser/XAnimals.Avalonia.Browser.csproj -c Release -o artifacts/avalonia-browser
+
+      - name: Find the site (wwwroot of the publish)
+        run: |
+          site=$(dirname "$(find artifacts/avalonia-browser -name index.html | head -n 1)")
+          test -n "$site" && test -f "$site/index.html"
+          echo "Site folder: $site"
+          mkdir -p artifacts/site
+          cp -r "$site"/. artifacts/site/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: avalonia-demo
+          path: artifacts/site
+          if-no-files-found: error
+
   build:
+    needs: demo
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
@@ -53,6 +86,16 @@ jobs:
 
       - name: Build the site
         run: docfx docs/docfx.json
+
+      # The demo goes next to the docs: /demo/avalonia/. .nojekyll keeps Pages from dropping files that start with an underscore (_framework).
+      - uses: actions/download-artifact@v4
+        with:
+          name: avalonia-demo
+          path: docs/_site/demo/avalonia
+
+      - name: Add .nojekyll
+        shell: pwsh
+        run: New-Item -ItemType File -Force docs/_site/.nojekyll | Out-Null
 
       - uses: actions/configure-pages@v5
 

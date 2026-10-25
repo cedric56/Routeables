@@ -12,6 +12,7 @@ One `IRouter` for Blazor, .NET MAUI, Avalonia, Uno Platform and WPF. Declare a r
 
 <div class="rt-cta">
 <a class="rt-primary" href="getting-started.md">Get started</a>
+<a class="rt-ghost" href="https://cedric56.github.io/Routeables/demo/avalonia/">Try the demo</a>
 <a class="rt-ghost" href="guides/migrating-from-prism.md">Coming from Prism</a>
 <a class="rt-ghost" href="https://github.com/cedric56/Routeables">GitHub</a>
 </div>
