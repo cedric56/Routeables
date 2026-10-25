@@ -28,7 +28,16 @@ public partial class HelloView : RouteableFor<HelloViewModel> { }   // the page:
 services.AddGeneratedRoutes();                       // once, at startup
 ```
 
-A route on the view model, the view with the matching name, one registration call. That is the whole model.
+```xml
+<!-- MainView: the zone where the pages appear (Blazor: <RouteableRegion />) -->
+<routeables:RouteableRegion />
+```
+
+A route on the view model, the view with the matching name, one registration call, and a `RouteableRegion` in your main view: the zone of the screen that shows whatever the router displays. That is the whole model.
+
+### Several zones
+
+`RouteableRegion` without a name shows the default router. To have several zones, each with its own router and history (a side panel, a detail pane, a tab), name them: `services.AddRegion("detail")`, `<routeables:RouteableRegion Region="detail" />`, and `[Routeable("/hello/{name}", region: "detail")]` on the view model. A view model that asks for an `IRouter` receives the router of its region, so `Back` stays in the region. More in [Regions](docs/guides/regions.md).
 
 ## Start with your host
 
