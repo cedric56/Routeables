@@ -17,22 +17,19 @@ A view model asks an `IRouter` to go somewhere. It never touches a page, a frame
 ## In one minute
 
 ```csharp
-// DogDetailViewModel.cs of the XAnimals sample
-[Routeable("/dogs/{name}")]                          // the route is declared on the view model
-public class DogDetailViewModel(IRouter router, string name, Action? back = null)
-    : AnimalDetailViewModel(router, DogData.Dogs.FirstOrDefault(d => d.Name == name), back);
+[Routeable("/hello/{name}")]                         // the route is declared on the view model
+public sealed class HelloViewModel(IRouter router, string name)
+{
+    public Task SayHelloAgainAsync() => router.GoToAsync("/hello/World");
+}
 
-// DogsViewModel.cs: going there
-await router.GoToAsync("/dogs/Eurohound");
-
-// DogDetailView.axaml.cs: the page, found by its name
-public partial class DogDetailView : RouteableFor<DogDetailViewModel> { }
+public partial class HelloView : RouteableFor<HelloViewModel> { }   // the page: found by its name
 
 services.AddGeneratedRoutes();                       // once, at startup
 ```
 
 ```xml
-<!-- MainView: the zone where the pages appear (Blazor: <RouteableRegion />); see Samples/XAnimals.Avalonia/Views -->
+<!-- MainView: the zone where the pages appear (Blazor: <RouteableRegion />) -->
 <routeables:RouteableRegion />
 ```
 
@@ -40,7 +37,7 @@ A route on the view model, the view with the matching name, one registration cal
 
 ### Several zones
 
-`RouteableRegion` without a name shows the default router. To have several zones, each with its own router and history (a side panel, a detail pane, a tab), name them: `services.AddRegion("adopt")`, `<routeables:RouteableRegion Region="adopt" />`, and `[Routeable("/pet", region: "adopt")]` on the view model (the Adopt a pet page of the samples). A view model that asks for an `IRouter` receives the router of its region, so `Back` stays in the region. More in [Regions](docs/guides/regions.md).
+`RouteableRegion` without a name shows the default router. To have several zones, each with its own router and history (a side panel, a detail pane, a tab), name them: `services.AddRegion("detail")`, `<routeables:RouteableRegion Region="detail" />`, and `[Routeable("/hello/{name}", region: "detail")]` on the view model. A view model that asks for an `IRouter` receives the router of its region, so `Back` stays in the region. More in [Regions](docs/guides/regions.md).
 
 ## Start with your host
 

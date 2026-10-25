@@ -18,16 +18,16 @@ One `IRouter` for Blazor, .NET MAUI, Avalonia, Uno Platform and WPF. Declare a r
 </div>
 
 </div>
-<div class="rt-code"><header>DogDetailViewModel.cs</header><pre><code><span class="c">// the route lives on the view model</span>
-<span class="k">[Routeable(</span><span class="s">"/dogs/{name}"</span><span class="k">)]</span>
-public class DogDetailViewModel(IRouter router, string name, Action? back = null)
-    : AnimalDetailViewModel(router, DogData.Dogs.FirstOrDefault(d =&gt; d.Name == name), back);
-
-<span class="c">// going there, from DogsViewModel</span>
-await router.GoToAsync(<span class="s">"/dogs/Eurohound"</span>);
+<div class="rt-code"><header>HelloViewModel.cs</header><pre><code><span class="c">// the route lives on the view model</span>
+<span class="k">[Routeable(</span><span class="s">"/hello/{name}"</span><span class="k">)]</span>
+public sealed class HelloViewModel(IRouter router, string name)
+{
+    public Task SayHelloAgainAsync()
+        =&gt; router.GoToAsync(<span class="s">"/hello/World"</span>);
+}
 
 <span class="c">// the view is found by its name</span>
-public partial class DogDetailView : RouteableFor&lt;DogDetailViewModel&gt; { }
+public partial class HelloView : RouteableFor&lt;HelloViewModel&gt; { }
 
 <span class="c">// once, at startup</span>
 services.AddGeneratedRoutes();
