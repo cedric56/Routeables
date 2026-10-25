@@ -70,7 +70,7 @@ public static class Extensions
         return provider;
     }
 
-    /// <summary>Gets the container built by <see cref="UseRouteables{TMain}"/>.</summary>
+    /// <summary>Gets the container built by <c>UseRouteables</c>.</summary>
     /// <exception cref="InvalidOperationException">Routeables was not added to the application.</exception>
     public static IServiceProvider GetRouteableServices(this Application application)
     {

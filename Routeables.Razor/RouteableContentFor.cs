@@ -17,6 +17,7 @@ public partial class RouteableContentFor<[DynamicallyAccessedMembers(Dynamically
     Dictionary<string, object>? parameters = null)
     : RouteableFor
 {
+    /// <inheritdoc />
     protected override void OpenComponent(RenderTreeBuilder builder)
     {
         builder.OpenComponent(0, typeof(T));

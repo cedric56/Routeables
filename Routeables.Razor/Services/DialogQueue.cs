@@ -29,6 +29,7 @@ internal abstract class DialogQueue<TRequest, TResult> : IDisposable
     protected abstract TResult ResultWhenDisposed(TRequest request);
 
     /// <summary>Shows the request now, or after the ones already waiting.</summary>
+    /// <param name="request">What to show.</param>
     /// <param name="host">The component that shows it (<c>RouteableDialogHost</c>), named in the error when it is missing.</param>
     /// <param name="kind">What it shows (<c>dialogs</c>, <c>task dialogs</c>), for the same error.</param>
     protected Task<TResult> EnqueueAsync(TRequest request, string host, string kind)

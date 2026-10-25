@@ -23,12 +23,12 @@ public enum RouteSegmentKind
 /// <param name="Parameters">
 /// The segment's own named parameters (the query of a URI). A key may repeat, in which case the destination receives
 /// every value as an array. A <see langword="null"/> value is a flag without a value (<c>?flag</c>). They are delivered
-/// to the view model by name (see <see cref="IRouteableArgs.ForViewModel"/>) and kept in the neutral values.
+/// to the view model by name (see <c>IRouteableArgs.ForViewModel</c>) and kept in the neutral values.
 /// </param>
 /// <param name="Configure">
 /// Fills the <see cref="IRouteableArgs"/> of this segment directly, with everything <c>RouteableArgs</c> offers:
-/// <see cref="IRouteableArgs.ForViewModel"/> (positional or named entries), <see cref="IRouteableArgs.ForView"/> and
-/// <see cref="IRouteableArgs.ForValues"/>. It runs after <paramref name="Parameters"/> were applied; as with <c>RouteableArgs</c>, the same named entry must not be given twice. It cannot be written in a
+/// <c>IRouteableArgs.ForViewModel</c> (positional or named entries), <c>IRouteableArgs.ForView</c> and
+/// <c>IRouteableArgs.ForValues</c>. It runs after <paramref name="Parameters"/> were applied; as with <c>RouteableArgs</c>, the same named entry must not be given twice. It cannot be written in a
 /// URI, so <see cref="RouteCoordination.ToString"/> leaves it out.
 /// </param>
 public sealed record RouteSegment(

@@ -2,8 +2,11 @@ using Routeables.Abstraction;
 
 namespace Routeables.Maui.Services;
 
+/// <summary>Shows a modal page for a view model that can be closed with a result (<c>ICloseableViewModel</c>) above the current page of the window.</summary>
+/// <param name="context">Where the current page of the window is found.</param>
 public class RouteableModalService(IRouteableDialogWindowContext context) : IRouteableModalService
 {
+    /// <inheritdoc />
     public async Task<TResult?> ShowModalAsync<TViewModel, TResult>(
     TViewModel viewModel,
     Func<View> viewFactory)

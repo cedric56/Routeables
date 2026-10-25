@@ -15,6 +15,8 @@ public partial class RouteablesShell : Shell
     private readonly List<ContentView> hosts = [];
     private bool started;
 
+    /// <summary>Creates the shell: its items come from the main view model registered in <paramref name="provider"/>.</summary>
+    /// <param name="provider">The container of the application.</param>
     public RouteablesShell(IServiceProvider provider)
     {
         InitializeComponent();
@@ -111,6 +113,7 @@ public partial class RouteablesShell : Shell
 
     private bool following;
 
+    /// <inheritdoc />
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
         base.OnHandlerChanging(args);
@@ -138,8 +141,10 @@ public partial class RouteablesShell : Shell
 
     // The Back button or gesture of the system: the shell first (it closes its flyout), then one page back in the router.
     // At the first page nothing is handled, and Android leaves the application.
+    /// <inheritdoc />
     protected override bool OnBackButtonPressed() => base.OnBackButtonPressed() || RouteableBack.TryGoBack(services);
 
+    /// <inheritdoc />
     protected override void OnAppearing()
     {
         base.OnAppearing();
@@ -152,6 +157,7 @@ public partial class RouteablesShell : Shell
     }
 
     // Shell -> Routeables: selecting another item tells the view model.
+    /// <inheritdoc />
     protected override void OnNavigated(ShellNavigatedEventArgs args)
     {
         base.OnNavigated(args);

@@ -12,11 +12,17 @@ namespace Routeables.Razor;
 /// </summary>
 public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
 {
+    /// <summary>The service that applies the theme a view model asked for.</summary>
     [Inject] protected IRouteableRequestedThemeService ThemeService { get; set; } = default!;
+    /// <summary>The main view model: the menu entries and the selected one.</summary>
     [Inject] protected IMainViewModel Main { get; set; } = default!;
+    /// <summary>The container of the circuit.</summary>
     [Inject] protected IServiceProvider Provider { get; set; } = default!;
+    /// <summary>Starts Routeables for the circuit (registered by <c>UseRouteablesServer</c>).</summary>
     [Inject] protected Func<IServiceProvider, Task> Initialize { get; set; } = default!;
+    /// <summary>Calls JavaScript, to apply the theme.</summary>
     [Inject] protected IJSRuntime JS { get; set; } = default!;
+    /// <summary>Keeps the address of the browser and the router in step.</summary>
     [Inject] protected RouteableUrlSync UrlSync { get; set; } = default!;
 
     /// <summary>
@@ -24,6 +30,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     /// </summary>
     public string Title { get; set; } = "Application";
 
+    /// <summary>Whether the drawer is open.</summary>
     protected bool _drawerOpen = true;
 
     /// <summary>
@@ -47,6 +54,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     /// </summary>
     protected RouteableRequestThemeService Service => (RouteableRequestThemeService)ThemeService;
 
+    /// <summary><c>dark</c> or <c>light</c>: the theme that is shown.</summary>
     protected string ThemeName => Service.IsDarkMode ? "dark" : "light";
 
     /// <inheritdoc />

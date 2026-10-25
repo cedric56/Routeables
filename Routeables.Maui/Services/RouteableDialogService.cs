@@ -4,6 +4,9 @@ using Routeables.Services;
 
 namespace Routeables.Maui.Services;
 
+/// <summary>Message boxes of .NET MAUI (<c>DisplayAlert</c>, <c>DisplayActionSheet</c>), shown over the current page of the window. On Windows one dialog is open at a time.</summary>
+/// <param name="provider">The container of the application.</param>
+/// <param name="windowContext">Where the page to show the dialog over is found.</param>
 public class RouteableDialogService(IServiceProvider provider, IRouteableDialogWindowContext windowContext) : RouteableDialogServiceBase
 {
 #if WINDOWS

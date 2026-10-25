@@ -73,7 +73,7 @@ public class RouteableEntry : IRouteableEntry, INotifyPropertyChanged
 
     /// <summary>
     /// Gets or sets the region this page is shown in (the name given to <c>AddRegion</c> and to a <c>RouteableRegion</c>);
-    /// <see langword="null"/> for the default router. <see cref="Routeables.Abstraction.Extensions.GoToAsync"/> follows it.
+    /// <see langword="null"/> for the default router. <c>IServiceProvider.GoToAsync</c> follows it.
     /// </summary>
     public string? Region { get; set; }
 

@@ -23,6 +23,7 @@ namespace Routeables.Avalonia;
 /// </summary>
 public class RouteableRegionItems : ItemsControl
 {
+    /// <summary>The <see cref="Region"/> property.</summary>
     public static readonly StyledProperty<string?> RegionProperty =
         AvaloniaProperty.Register<RouteableRegionItems, string?>(nameof(Region));
 
@@ -43,20 +44,24 @@ public class RouteableRegionItems : ItemsControl
     public IServiceProvider? Services { get; set; }
 
     // The control keeps the style of ItemsControl.
+    /// <inheritdoc />
     protected override Type StyleKeyOverride => typeof(ItemsControl);
 
+    /// <inheritdoc />
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
         Connect();
     }
 
+    /// <inheritdoc />
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         Disconnect();
         base.OnDetachedFromVisualTree(e);
     }
 
+    /// <inheritdoc />
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);

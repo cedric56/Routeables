@@ -10,6 +10,7 @@ namespace Routeables.Wpf;
 [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 public class RouteableRequestThemeService : IRouteableRequestedThemeService
 {
+    /// <inheritdoc />
     public void Request(RouteableRequestedTheme theme)
     {
         UiThread.Post(() =>

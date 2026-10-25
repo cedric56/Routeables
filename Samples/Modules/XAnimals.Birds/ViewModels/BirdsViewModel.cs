@@ -16,12 +16,12 @@ public class BirdsViewModel : AnimalsViewModel
 {
     private readonly IRouteableModules _modules;
 
-    public BirdsViewModel(IRouter router, IRouteableModules modules) : this(router, modules, BirdsData.Birds)
+    public BirdsViewModel(IRouter router, IRouteableModules modules, IServiceProvider provider) : this(router, modules, provider, BirdsData.Birds)
     {
     }
 
     /// <summary>For the lists that derive from this one: the animals they show. Not used by the container.</summary>
-    protected BirdsViewModel(IRouter router, IRouteableModules modules, IEnumerable<Animal> animals) : base(router, animals)
+    protected BirdsViewModel(IRouter router, IRouteableModules modules, IServiceProvider provider, IEnumerable<Animal> animals) : base(router, provider, animals)
     {
         _modules = modules;
     }

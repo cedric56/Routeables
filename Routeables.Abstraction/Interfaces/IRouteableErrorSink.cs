@@ -80,11 +80,11 @@ public static class RouteableErrors
 
     /// <summary>
     /// Runs a callback that belongs to the application (a dialog's <c>Opened</c>, a toast's <c>OnClick</c>...) from a place where an
-    /// exception would end the program: an event handler of the UI. An exception is reported, as <see cref="Report"/> does, and
+    /// exception would end the program: an event handler of the UI. An exception is reported, as <c>Report</c> does, and
     /// not propagated. Does nothing for a <see langword="null"/> callback.
     /// </summary>
     /// <param name="provider">Where to find the <see cref="IRouteableErrorSink"/>; <see langword="null"/> reports to <see cref="Default"/>, or to <see cref="Trace"/> without one.</param>
-    /// <param name="source">Where the callback was invoked, as in <see cref="Report"/>.</param>
+    /// <param name="source">Where the callback was invoked, as in <c>Report</c>.</param>
     /// <param name="callback">The callback to run.</param>
     public static void Guard(IServiceProvider? provider, string source, Action? callback)
     {

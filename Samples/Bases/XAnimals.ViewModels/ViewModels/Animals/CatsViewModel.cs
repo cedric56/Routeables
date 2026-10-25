@@ -7,7 +7,7 @@ using XAnimals.Common;
 namespace XAnimals.ViewModels;
 
 [Routeable("/cats")]
-public class CatsViewModel(IRouter router) : AnimalsViewModel(router, CatData.Cats)
+public class CatsViewModel(IRouter router, IServiceProvider provider) : AnimalsViewModel(router, provider, CatData.Cats)
 {
     protected override Task<RouteableResult> GoToDetailAsync(Animal animal, Action back)
         => _router.GoToAsync($"/cats/{Uri.EscapeDataString(animal.Name)}",

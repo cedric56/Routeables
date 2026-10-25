@@ -92,7 +92,7 @@ public static class Extensions
     /// </param>
     /// <remarks>
     /// By default the entries come after the ones of the main view model, in the order the modules were added. This works with
-    /// <see cref="RegisterMainViewModel{TMain}"/>, whether a consumer asks for <typeparamref name="TMain"/> or for
+    /// <see cref="RegisterMainViewModel{TMain}"/>, whether a consumer asks for the type given to <c>RegisterMainViewModel</c> or for
     /// <see cref="IMainViewModel"/>. Adding the same module twice adds its entries once (the same <paramref name="entries"/> function);
     /// a function that captures something different on each call counts as another module.
     /// </remarks>

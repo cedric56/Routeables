@@ -16,21 +16,26 @@ public abstract class RouteableFor : UserControl
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 public class RouteableFor<TViewModel> : RouteableFor, IRouteableFor, IRouteable, IDisposable, IInitializeAsync
 {
+    /// <summary>The view model of the view: the router gives it as the <c>DataContext</c>.</summary>
     public object? Context
     {
         get => DataContext;
         set => DataContext = value;
     }
 
+    /// <summary>The view model, typed.</summary>
     public TViewModel ViewModel => (TViewModel)Context!;
 
+    /// <summary>The <see cref="RouteableFor.IsLocked"/> property.</summary>
     public static readonly DirectProperty<RouteableFor, bool> IsLockedProperty =
     AvaloniaProperty.RegisterDirect<RouteableFor, bool>(
         nameof(IsLocked),
         o => o.IsLocked);
 
+    /// <inheritdoc />
     public override bool IsLocked => RouteableLockWatcher.AllLocked(Context as IMainViewModel);
 
+    /// <inheritdoc />
     public virtual Task<bool> CanLeaveAsync(CancellationToken ct = default)
     {
         return Task.FromResult(result: true);
@@ -41,8 +46,10 @@ public class RouteableFor<TViewModel> : RouteableFor, IRouteableFor, IRouteable,
 
     private RouteableLockWatcher Lock => _lock ??= new RouteableLockWatcher(_ => RaisePropertyChanged(IsLockedProperty, false, true));
 
+    /// <inheritdoc />
     public void Dispose() => _lock?.Dispose();
 
+    /// <inheritdoc />
     public virtual Task InitializeAsync(IRouteableArgs args, CancellationToken ct = default)
     {
         // Initialize runs again when a cached view is shown again: one subscription, not one more each time.
@@ -51,11 +58,13 @@ public class RouteableFor<TViewModel> : RouteableFor, IRouteableFor, IRouteable,
         return Task.CompletedTask;
     }
 
+    /// <inheritdoc />
     public virtual Task OnLeavingAsync(IRouteableArgs args, CancellationToken ct = default)
     {
         return Task.CompletedTask;
     }
 
+    /// <inheritdoc />
     public virtual Task OnEnteringAsync(IRouteableArgs args, CancellationToken ct = default)
     {
         return Task.CompletedTask;

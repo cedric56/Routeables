@@ -157,7 +157,7 @@ public static class RouteableState
         return string.Join('\n', routes.Select(Uri.EscapeDataString));
     }
 
-    /// <summary>The routes of a string made by <see cref="Serialize"/>; an empty or <see langword="null"/> string gives no route.</summary>
+    /// <summary>The routes of a string made by <c>Serialize</c>; an empty or <see langword="null"/> string gives no route.</summary>
     public static IReadOnlyList<string> Deserialize(string? text)
         => string.IsNullOrEmpty(text)
             ? []

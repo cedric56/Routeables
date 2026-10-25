@@ -145,6 +145,7 @@ public partial class RouteableFor<[DynamicallyAccessedMembers(DynamicallyAccesse
     /// </summary>
     public void Dispose() => Unsubscribe();
 
+    /// <inheritdoc />
     protected override void OpenComponent(RenderTreeBuilder builder)
     {
         builder.OpenComponent(0, typeof(TView));

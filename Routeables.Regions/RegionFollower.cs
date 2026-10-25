@@ -13,7 +13,7 @@ namespace Routeables.Regions;
 /// <para>
 /// The runs go back to the thread that created the follower (the UI thread when it is created from a view model that a view
 /// started), because the views of the regions are built by their routers and a control cannot be created on another thread.
-/// Pass a <paramref name="scheduler"/> to choose another one.
+/// Pass a <c>scheduler</c> to choose another one.
 /// </para>
 /// </summary>
 public sealed class RegionFollower : IDisposable

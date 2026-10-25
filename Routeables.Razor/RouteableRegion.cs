@@ -36,6 +36,7 @@ public class RouteableRegion : ComponentBase, IDisposable
     [Parameter]
     public string? Class { get; set; }
 
+    /// <inheritdoc />
     protected override void OnParametersSet()
     {
         if (_binding is not null && _boundTo == Region) return;
@@ -53,6 +54,7 @@ public class RouteableRegion : ComponentBase, IDisposable
             _ = InvokeAsync(StateHasChanged);
     }
 
+    /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         builder.OpenElement(0, "div");
@@ -63,6 +65,7 @@ public class RouteableRegion : ComponentBase, IDisposable
         builder.CloseElement();
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         _disposed = true;

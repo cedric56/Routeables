@@ -19,10 +19,12 @@ namespace Routeables.Maui;
 /// </summary>
 public class RouteableRegion : ContentView
 {
+    /// <summary>The <see cref="Region"/> property.</summary>
     public static readonly BindableProperty RegionProperty =
         BindableProperty.Create(nameof(Region), typeof(string), typeof(RouteableRegion), null,
             propertyChanged: (bindable, _, _) => ((RouteableRegion)bindable).Reconnect());
 
+    /// <summary>The <see cref="TransitionDuration"/> property.</summary>
     public static readonly BindableProperty TransitionDurationProperty =
         BindableProperty.Create(nameof(TransitionDuration), typeof(TimeSpan), typeof(RouteableRegion), TimeSpan.Zero);
 
@@ -47,6 +49,7 @@ public class RouteableRegion : ContentView
     public IServiceProvider? Services { get; set; }
 
     // The handler exists while the control is displayed: the router is listened to for that time only.
+    /// <inheritdoc />
     protected override void OnHandlerChanged()
     {
         base.OnHandlerChanged();

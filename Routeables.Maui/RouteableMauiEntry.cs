@@ -17,20 +17,24 @@ public class RouteableMauiEntry : ContentView
 
     INotifyDataErrorInfo? _subscribed;
 
+    /// <summary>Creates the entry, with its validation indicator.</summary>
     public RouteableMauiEntry()
     {
         Content = BuildContent();
     }
 
+    /// <summary>The <see cref="ColumnName"/> property.</summary>
     public static readonly BindableProperty ColumnNameProperty = BindableProperty.Create(
             nameof(ColumnName), typeof(string), typeof(RouteableMauiEntry),
             propertyChanged: (sender, _, _) => ((RouteableMauiEntry)sender).RefreshErrorState());
+    /// <summary>The name of the bound property whose errors this entry shows.</summary>
     public string ColumnName
     {
         get => (string)GetValue(ColumnNameProperty);
         set => SetValue(ColumnNameProperty, value);
     }
 
+    /// <summary>The <see cref="Text"/> property.</summary>
     public static readonly BindableProperty TextProperty = BindableProperty.Create(
             nameof(Text), typeof(string), typeof(RouteableMauiEntry),
             defaultBindingMode: BindingMode.TwoWay,
@@ -40,22 +44,27 @@ public class RouteableMauiEntry : ContentView
                 if (entry is not null && !string.Equals(entry.Text, (string?)text, StringComparison.Ordinal))
                     entry.Text = (string?)text;
             });
+    /// <summary>The text of the entry (two-way).</summary>
     public string Text
     {
         get => (string)GetValue(TextProperty);
         set => SetValue(TextProperty, value);
     }
 
+    /// <summary>The <see cref="UnderlineColor"/> property.</summary>
     public static readonly BindableProperty UnderlineColorProperty = BindableProperty.Create(
             nameof(UnderlineColor), typeof(Color), typeof(RouteableMauiEntry), Colors.Black);
+    /// <summary>The color of the underline.</summary>
     public Color UnderlineColor
     {
         get => (Color)GetValue(UnderlineColorProperty);
         set => SetValue(UnderlineColorProperty, value);
     }
 
+    /// <summary>The <see cref="UnderlineThickness"/> property.</summary>
     public static readonly BindableProperty UnderlineThicknessProperty = BindableProperty.Create(
             nameof(UnderlineThickness), typeof(int), typeof(RouteableMauiEntry), 0);
+    /// <summary>The thickness of the underline.</summary>
     public int UnderlineThickness
     {
         get => (int)GetValue(UnderlineThicknessProperty);
@@ -65,14 +74,19 @@ public class RouteableMauiEntry : ContentView
     // Read-only from the outside: the state of the validation indicator, set from the view model's errors.
     static readonly BindablePropertyKey HasErrorPropertyKey = BindableProperty.CreateReadOnly(
             nameof(HasError), typeof(bool), typeof(RouteableMauiEntry), false);
+    /// <summary>The <see cref="HasError"/> property.</summary>
     public static readonly BindableProperty HasErrorProperty = HasErrorPropertyKey.BindableProperty;
+    /// <summary>Whether the view model reports an error for <see cref="ColumnName"/>.</summary>
     public bool HasError => (bool)GetValue(HasErrorProperty);
 
     static readonly BindablePropertyKey ErrorMessagePropertyKey = BindableProperty.CreateReadOnly(
             nameof(ErrorMessage), typeof(string), typeof(RouteableMauiEntry), null);
+    /// <summary>The <see cref="ErrorMessage"/> property.</summary>
     public static readonly BindableProperty ErrorMessageProperty = ErrorMessagePropertyKey.BindableProperty;
+    /// <summary>The first error the view model reports for <see cref="ColumnName"/>, or <see langword="null"/>.</summary>
     public string? ErrorMessage => (string?)GetValue(ErrorMessageProperty);
 
+    /// <inheritdoc />
     protected override void OnBindingContextChanged()
     {
         base.OnBindingContextChanged();
@@ -87,6 +101,7 @@ public class RouteableMauiEntry : ContentView
 
     // The view model outlives the entry: it listens to the view model only while the entry is on screen (has a handler),
     // or the view model would keep every entry it was ever bound to.
+    /// <inheritdoc />
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
         base.OnHandlerChanging(args);

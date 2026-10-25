@@ -7,7 +7,7 @@ namespace XAnimals.Common;
 /// What every animal list page has in common: the search, the selection and the hosting of the detail view.
 /// A concrete list only gives its animals and the navigation to its own detail view model.
 /// </summary>
-public abstract class AnimalsViewModel(IRouter router, IEnumerable<Animal> animals) : ViewModelBase, IRouteable
+public abstract class AnimalsViewModel(IRouter router, IServiceProvider provider, IEnumerable<Animal> animals) : ViewModelBase, IRouteable
 {
     private string _searchText = string.Empty;
     private object? currentView;
@@ -21,10 +21,14 @@ public abstract class AnimalsViewModel(IRouter router, IEnumerable<Animal> anima
     /// </summary>
     public bool HostsDetail { get; private set; } = true;
 
-    /// <summary>A page sent to a region (see <c>RegionEntries</c>) is told so by its entry: the region shows its detail.</summary>
+    /// <summary>
+    /// A page sent to a region by its entry (see <c>RegionEntries</c>) is told so by the entry, and a page that a control routes in a
+    /// region of its own (the tabs) is not on the default router: in both cases the region shows the detail.
+    /// </summary>
     public Task OnEnteredAsync(IRouteableArgs context, CancellationToken ct = default)
     {
-        HostsDetail = !context.Values.Any(v => v.name == PageArguments.RegionKey);
+        var inRegion = context.Values.Any(v => v.name == PageArguments.RegionKey) || !ReferenceEquals(_router, provider.GetRouter(null));
+        HostsDetail = !inRegion;
         return Task.CompletedTask;
     }
 

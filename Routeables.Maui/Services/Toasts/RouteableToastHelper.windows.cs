@@ -14,6 +14,13 @@ public static class RouteableToastHelper
     const string HostTag = "Routeables.ToastHost";
     const double CardWidth = 360;
 
+    /// <summary>Shows a toast card over the window and returns it, or <see langword="null"/> when the window cannot show one.</summary>
+    /// <param name="title">The title.</param>
+    /// <param name="message">The message.</param>
+    /// <param name="type">The type of notification.</param>
+    /// <param name="expiration">How long it stays; the default one when <see langword="null"/>.</param>
+    /// <param name="onClick">Called when the user taps the toast.</param>
+    /// <param name="onClose">Called once, when the toast is gone.</param>
     public static Microsoft.UI.Xaml.FrameworkElement? Show(
         string title,
         string message,
