@@ -1,0 +1,615 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Avalonia.RouteableTaskDialogService
+  commentId: T:Routeables.Avalonia.RouteableTaskDialogService
+  id: RouteableTaskDialogService
+  parent: Routeables.Avalonia
+  children:
+  - Routeables.Avalonia.RouteableTaskDialogService.#ctor(Routeables.Avalonia.IMessageBoxService)
+  - Routeables.Avalonia.RouteableTaskDialogService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Routeables.Abstraction.RouteableTaskDialogResult[])
+  langs:
+  - csharp
+  - vb
+  name: RouteableTaskDialogService
+  nameWithType: RouteableTaskDialogService
+  fullName: Routeables.Avalonia.RouteableTaskDialogService
+  type: Class
+  source:
+    remote:
+      path: Routeables.Avalonia/Services/RouteableTaskDialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RouteableTaskDialogService
+    path: ../Routeables.Avalonia/Services/RouteableTaskDialogService.cs
+    startLine: 5
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  syntax:
+    content: 'public class RouteableTaskDialogService : IRouteableTaskDialogService'
+    content.vb: Public Class RouteableTaskDialogService Implements IRouteableTaskDialogService
+  inheritance:
+  - System.Object
+  implements:
+  - Routeables.Abstraction.IRouteableTaskDialogService
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: Routeables.Avalonia.RouteableTaskDialogService.#ctor(Routeables.Avalonia.IMessageBoxService)
+  commentId: M:Routeables.Avalonia.RouteableTaskDialogService.#ctor(Routeables.Avalonia.IMessageBoxService)
+  id: '#ctor(Routeables.Avalonia.IMessageBoxService)'
+  parent: Routeables.Avalonia.RouteableTaskDialogService
+  langs:
+  - csharp
+  - vb
+  name: RouteableTaskDialogService(IMessageBoxService)
+  nameWithType: RouteableTaskDialogService.RouteableTaskDialogService(IMessageBoxService)
+  fullName: Routeables.Avalonia.RouteableTaskDialogService.RouteableTaskDialogService(Routeables.Avalonia.IMessageBoxService)
+  type: Constructor
+  source:
+    remote:
+      path: Routeables.Avalonia/Services/RouteableTaskDialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: .ctor
+    path: ../Routeables.Avalonia/Services/RouteableTaskDialogService.cs
+    startLine: 5
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  syntax:
+    content: public RouteableTaskDialogService(IMessageBoxService service)
+    parameters:
+    - id: service
+      type: Routeables.Avalonia.IMessageBoxService
+    content.vb: Public Sub New(service As IMessageBoxService)
+  overload: Routeables.Avalonia.RouteableTaskDialogService.#ctor*
+  nameWithType.vb: RouteableTaskDialogService.New(IMessageBoxService)
+  fullName.vb: Routeables.Avalonia.RouteableTaskDialogService.New(Routeables.Avalonia.IMessageBoxService)
+  name.vb: New(IMessageBoxService)
+- uid: Routeables.Avalonia.RouteableTaskDialogService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Routeables.Abstraction.RouteableTaskDialogResult[])
+  commentId: M:Routeables.Avalonia.RouteableTaskDialogService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Routeables.Abstraction.RouteableTaskDialogResult[])
+  id: ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Routeables.Abstraction.RouteableTaskDialogResult[])
+  parent: Routeables.Avalonia.RouteableTaskDialogService
+  langs:
+  - csharp
+  - vb
+  name: ShowAsync(RouteableTaskDialog, params RouteableTaskDialogResult[])
+  nameWithType: RouteableTaskDialogService.ShowAsync(RouteableTaskDialog, params RouteableTaskDialogResult[])
+  fullName: Routeables.Avalonia.RouteableTaskDialogService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog, params Routeables.Abstraction.RouteableTaskDialogResult[])
+  type: Method
+  source:
+    remote:
+      path: Routeables.Avalonia/Services/RouteableTaskDialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ShowAsync
+    path: ../Routeables.Avalonia/Services/RouteableTaskDialogService.cs
+    startLine: 7
+  assemblies:
+  - Routeables.Avalonia
+  namespace: Routeables.Avalonia
+  summary: Shows the dialog and awaits the user's response.
+  example: []
+  syntax:
+    content: public Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, params RouteableTaskDialogResult[] results)
+    parameters:
+    - id: params
+      type: Routeables.Abstraction.RouteableTaskDialog
+      description: The content, header, icon, and callbacks to show.
+    - id: results
+      type: Routeables.Abstraction.RouteableTaskDialogResult[]
+      description: >-
+        The set of standard results (e.g. OK/Cancel, Yes/No) the dialog
+
+        should offer as buttons. The platform adapter renders one button
+
+        per value supplied here.
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableTaskDialogResult}
+      description: >-
+        The <xref href="Routeables.Abstraction.RouteableTaskDialogResult" data-throw-if-not-resolved="false"></xref> corresponding to
+
+        whichever button the user tapped, or
+
+        <xref href="Routeables.Abstraction.RouteableTaskDialogResult.None" data-throw-if-not-resolved="false"></xref> if the dialog was
+
+        dismissed without tapping a button.
+    content.vb: Public Function ShowAsync(params As RouteableTaskDialog, ParamArray results As RouteableTaskDialogResult()) As Task(Of RouteableTaskDialogResult)
+  overload: Routeables.Avalonia.RouteableTaskDialogService.ShowAsync*
+  implements:
+  - Routeables.Abstraction.IRouteableTaskDialogService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Routeables.Abstraction.RouteableTaskDialogResult[])
+  nameWithType.vb: RouteableTaskDialogService.ShowAsync(RouteableTaskDialog, ParamArray RouteableTaskDialogResult())
+  fullName.vb: Routeables.Avalonia.RouteableTaskDialogService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog, ParamArray Routeables.Abstraction.RouteableTaskDialogResult())
+  name.vb: ShowAsync(RouteableTaskDialog, ParamArray RouteableTaskDialogResult())
+references:
+- uid: Routeables.Avalonia
+  commentId: N:Routeables.Avalonia
+  name: Routeables.Avalonia
+  nameWithType: Routeables.Avalonia
+  fullName: Routeables.Avalonia
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Avalonia
+    name: Avalonia
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Avalonia
+    name: Avalonia
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Routeables.Abstraction.IRouteableTaskDialogService
+  commentId: T:Routeables.Abstraction.IRouteableTaskDialogService
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableTaskDialogService.html
+  name: IRouteableTaskDialogService
+  nameWithType: IRouteableTaskDialogService
+  fullName: Routeables.Abstraction.IRouteableTaskDialogService
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Avalonia.RouteableTaskDialogService.#ctor*
+  commentId: Overload:Routeables.Avalonia.RouteableTaskDialogService.#ctor
+  href: Routeables.Avalonia.RouteableTaskDialogService.html#Routeables_Avalonia_RouteableTaskDialogService__ctor_Routeables_Avalonia_IMessageBoxService_
+  name: RouteableTaskDialogService
+  nameWithType: RouteableTaskDialogService.RouteableTaskDialogService
+  fullName: Routeables.Avalonia.RouteableTaskDialogService.RouteableTaskDialogService
+  nameWithType.vb: RouteableTaskDialogService.New
+  fullName.vb: Routeables.Avalonia.RouteableTaskDialogService.New
+  name.vb: New
+- uid: Routeables.Avalonia.IMessageBoxService
+  commentId: T:Routeables.Avalonia.IMessageBoxService
+  parent: Routeables.Avalonia
+  href: Routeables.Avalonia.IMessageBoxService.html
+  name: IMessageBoxService
+  nameWithType: IMessageBoxService
+  fullName: Routeables.Avalonia.IMessageBoxService
+- uid: Routeables.Abstraction.RouteableTaskDialogResult
+  commentId: T:Routeables.Abstraction.RouteableTaskDialogResult
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  name: RouteableTaskDialogResult
+  nameWithType: RouteableTaskDialogResult
+  fullName: Routeables.Abstraction.RouteableTaskDialogResult
+- uid: Routeables.Abstraction.RouteableTaskDialogResult.None
+  commentId: F:Routeables.Abstraction.RouteableTaskDialogResult.None
+  href: Routeables.Abstraction.RouteableTaskDialogResult.html#Routeables_Abstraction_RouteableTaskDialogResult_None
+  name: None
+  nameWithType: RouteableTaskDialogResult.None
+  fullName: Routeables.Abstraction.RouteableTaskDialogResult.None
+- uid: Routeables.Avalonia.RouteableTaskDialogService.ShowAsync*
+  commentId: Overload:Routeables.Avalonia.RouteableTaskDialogService.ShowAsync
+  href: Routeables.Avalonia.RouteableTaskDialogService.html#Routeables_Avalonia_RouteableTaskDialogService_ShowAsync_Routeables_Abstraction_RouteableTaskDialog_Routeables_Abstraction_RouteableTaskDialogResult___
+  name: ShowAsync
+  nameWithType: RouteableTaskDialogService.ShowAsync
+  fullName: Routeables.Avalonia.RouteableTaskDialogService.ShowAsync
+- uid: Routeables.Abstraction.IRouteableTaskDialogService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Routeables.Abstraction.RouteableTaskDialogResult[])
+  commentId: M:Routeables.Abstraction.IRouteableTaskDialogService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Routeables.Abstraction.RouteableTaskDialogResult[])
+  parent: Routeables.Abstraction.IRouteableTaskDialogService
+  href: Routeables.Abstraction.IRouteableTaskDialogService.html#Routeables_Abstraction_IRouteableTaskDialogService_ShowAsync_Routeables_Abstraction_RouteableTaskDialog_Routeables_Abstraction_RouteableTaskDialogResult___
+  name: ShowAsync(RouteableTaskDialog, params RouteableTaskDialogResult[])
+  nameWithType: IRouteableTaskDialogService.ShowAsync(RouteableTaskDialog, params RouteableTaskDialogResult[])
+  fullName: Routeables.Abstraction.IRouteableTaskDialogService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog, params Routeables.Abstraction.RouteableTaskDialogResult[])
+  nameWithType.vb: IRouteableTaskDialogService.ShowAsync(RouteableTaskDialog, ParamArray RouteableTaskDialogResult())
+  fullName.vb: Routeables.Abstraction.IRouteableTaskDialogService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog, ParamArray Routeables.Abstraction.RouteableTaskDialogResult())
+  name.vb: ShowAsync(RouteableTaskDialog, ParamArray RouteableTaskDialogResult())
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableTaskDialogService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Routeables.Abstraction.RouteableTaskDialogResult[])
+    name: ShowAsync
+    href: Routeables.Abstraction.IRouteableTaskDialogService.html#Routeables_Abstraction_IRouteableTaskDialogService_ShowAsync_Routeables_Abstraction_RouteableTaskDialog_Routeables_Abstraction_RouteableTaskDialogResult___
+  - name: (
+  - uid: Routeables.Abstraction.RouteableTaskDialog
+    name: RouteableTaskDialog
+    href: Routeables.Abstraction.RouteableTaskDialog.html
+  - name: ','
+  - name: " "
+  - name: params
+  - name: " "
+  - uid: Routeables.Abstraction.RouteableTaskDialogResult
+    name: RouteableTaskDialogResult
+    href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  - name: '['
+  - name: ']'
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableTaskDialogService.ShowAsync(Routeables.Abstraction.RouteableTaskDialog,Routeables.Abstraction.RouteableTaskDialogResult[])
+    name: ShowAsync
+    href: Routeables.Abstraction.IRouteableTaskDialogService.html#Routeables_Abstraction_IRouteableTaskDialogService_ShowAsync_Routeables_Abstraction_RouteableTaskDialog_Routeables_Abstraction_RouteableTaskDialogResult___
+  - name: (
+  - uid: Routeables.Abstraction.RouteableTaskDialog
+    name: RouteableTaskDialog
+    href: Routeables.Abstraction.RouteableTaskDialog.html
+  - name: ','
+  - name: " "
+  - name: ParamArray
+  - name: " "
+  - uid: Routeables.Abstraction.RouteableTaskDialogResult
+    name: RouteableTaskDialogResult
+    href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  - name: (
+  - name: )
+  - name: )
+- uid: Routeables.Abstraction.RouteableTaskDialog
+  commentId: T:Routeables.Abstraction.RouteableTaskDialog
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.RouteableTaskDialog.html
+  name: RouteableTaskDialog
+  nameWithType: RouteableTaskDialog
+  fullName: Routeables.Abstraction.RouteableTaskDialog
+- uid: Routeables.Abstraction.RouteableTaskDialogResult[]
+  isExternal: true
+  href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  name: RouteableTaskDialogResult[]
+  nameWithType: RouteableTaskDialogResult[]
+  fullName: Routeables.Abstraction.RouteableTaskDialogResult[]
+  nameWithType.vb: RouteableTaskDialogResult()
+  fullName.vb: Routeables.Abstraction.RouteableTaskDialogResult()
+  name.vb: RouteableTaskDialogResult()
+  spec.csharp:
+  - uid: Routeables.Abstraction.RouteableTaskDialogResult
+    name: RouteableTaskDialogResult
+    href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  - name: '['
+  - name: ']'
+  spec.vb:
+  - uid: Routeables.Abstraction.RouteableTaskDialogResult
+    name: RouteableTaskDialogResult
+    href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  - name: (
+  - name: )
+- uid: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableTaskDialogResult}
+  commentId: T:System.Threading.Tasks.Task{Routeables.Abstraction.RouteableTaskDialogResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<RouteableTaskDialogResult>
+  nameWithType: Task<RouteableTaskDialogResult>
+  fullName: System.Threading.Tasks.Task<Routeables.Abstraction.RouteableTaskDialogResult>
+  nameWithType.vb: Task(Of RouteableTaskDialogResult)
+  fullName.vb: System.Threading.Tasks.Task(Of Routeables.Abstraction.RouteableTaskDialogResult)
+  name.vb: Task(Of RouteableTaskDialogResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: Routeables.Abstraction.RouteableTaskDialogResult
+    name: RouteableTaskDialogResult
+    href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.RouteableTaskDialogResult
+    name: RouteableTaskDialogResult
+    href: Routeables.Abstraction.RouteableTaskDialogResult.html
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks

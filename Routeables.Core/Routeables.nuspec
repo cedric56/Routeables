@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The "Routeables" package, packed from Routeables.Core.csproj (dotnet pack Routeables.Core). It is written by hand because it holds
+  the assemblies of seven projects and the dependencies of those projects are not packages.
+  When a PackageReference of one of them changes, change the dependencies below.
+-->
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Routeables</id>
+    <version>$version$</version>
+    <authors>Cedric</authors>
+    <description>Routing between view models for Blazor, .NET MAUI, Avalonia, Uno and WPF: routes declared by attributes and registered by a source generator, regions, segments, page locking, and the contracts of the dialog and notification services. Add the package of your host (Routeables.Razor, Routeables.Maui, Routeables.Avalonia, Routeables.Uno or Routeables.Wpf) to use it.</description>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/cedric56/Routeables</projectUrl>
+    <repository type="git" url="https://github.com/cedric56/Routeables.git" />
+    <copyright>Copyright (c) 2026 Cedric</copyright>
+    <tags>routing mvvm viewmodel blazor maui avalonia uno wpf</tags>
+    <readme>README.md</readme>
+    <icon>icon.png</icon>
+    <dependencies>
+      <group targetFramework="net10.0">
+        <dependency id="Microsoft.Extensions.DependencyInjection" version="10.0.13" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="10.0.13" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="README.md" target="" />
+    <file src="../Images/icon.png" target="" />
+
+    <!-- The libraries, with their symbols. -->
+    <file src="../Routeables.Abstraction/bin/$configuration$/net10.0/Routeables.Abstraction.dll" target="lib/net10.0" />
+    <file src="../Routeables.Abstraction/bin/$configuration$/net10.0/Routeables.Abstraction.pdb" target="lib/net10.0" />
+    <file src="../Routeables.Routing/bin/$configuration$/net10.0/Routeables.Routing.dll" target="lib/net10.0" />
+    <file src="../Routeables.Routing/bin/$configuration$/net10.0/Routeables.Routing.pdb" target="lib/net10.0" />
+    <file src="bin/$configuration$/net10.0/Routeables.Core.dll" target="lib/net10.0" />
+    <file src="bin/$configuration$/net10.0/Routeables.Core.pdb" target="lib/net10.0" />
+    <file src="../Routeables.Regions/bin/$configuration$/net10.0/Routeables.Regions.dll" target="lib/net10.0" />
+    <file src="../Routeables.Regions/bin/$configuration$/net10.0/Routeables.Regions.pdb" target="lib/net10.0" />
+    <file src="../Routeables.Services/bin/$configuration$/net10.0/Routeables.Services.dll" target="lib/net10.0" />
+    <file src="../Routeables.Services/bin/$configuration$/net10.0/Routeables.Services.pdb" target="lib/net10.0" />
+    <file src="../Routeables.Locking/bin/$configuration$/net10.0/Routeables.Locking.dll" target="lib/net10.0" />
+    <file src="../Routeables.Locking/bin/$configuration$/net10.0/Routeables.Locking.pdb" target="lib/net10.0" />
+    <file src="../Routeables.Segments/bin/$configuration$/net10.0/Routeables.Segments.dll" target="lib/net10.0" />
+    <file src="../Routeables.Segments/bin/$configuration$/net10.0/Routeables.Segments.pdb" target="lib/net10.0" />
+
+    <!-- The source generator: an analyzer, it adds nothing to the references of the project. -->
+    <file src="../Routeables.Generated/bin/$configuration$/netstandard2.0/Routeables.Generated.dll" target="analyzers/dotnet/cs" />
+
+    <!-- The opt-in flavours (RouteablesFeatures): Routeables.targets adds these sources to the project that asks for them. They are not compiled in Routeables.Core.dll. -->
+    <file src="build/Routeables.targets" target="buildTransitive" />
+    <file src="Community/**" target="buildTransitive/Community" />
+    <file src="Reactive/**" target="buildTransitive/Reactive" />
+  </files>
+</package>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 160" width="680" height="160" role="img" aria-label="Routeables">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7C5CFF"/>
+      <stop offset="1" stop-color="#4A22C8"/>
+    </linearGradient>
+    <style>
+      .name { fill: #1f2328; font: 700 60px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; letter-spacing: -1px; }
+      .tag  { fill: #59636e; font: 400 19px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+      .accent { fill: #5B35E0; }
+      @media (prefers-color-scheme: dark) {
+        .name { fill: #f0f6fc; }
+        .tag  { fill: #9198a1; }
+        .accent { fill: #A892FF; }
+      }
+    </style>
+  </defs>
+  <g transform="translate(16 16)">
+    <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+    <g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M44 98 V30 H70 C94 30 94 68 70 68 H44"/>
+      <path d="M68 68 L90 98"/>
+    </g>
+    <circle cx="44" cy="98" r="10" fill="#fff"/>
+    <circle cx="90" cy="98" r="10" fill="#4A22C8" stroke="#fff" stroke-width="7"/>
+  </g>
+  <text x="168" y="88" class="name">Route<tspan class="accent">ables</tspan></text>
+  <text x="170" y="118" class="tag">One routing layer for Blazor, MAUI, Avalonia, Uno &amp; WPF</text>
+</svg>

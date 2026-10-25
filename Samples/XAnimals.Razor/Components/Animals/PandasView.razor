@@ -1,0 +1,8 @@
+﻿@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@inherits RouteableFor<PandasView, PandasViewModel>
+
+<PageTitle>Pandas</PageTitle>
+
+<AnimalList ViewModel="ViewModel" NoResultsText="No pandas found." />

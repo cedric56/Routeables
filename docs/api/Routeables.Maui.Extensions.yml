@@ -1,0 +1,691 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Maui.Extensions
+  commentId: T:Routeables.Maui.Extensions
+  id: Extensions
+  parent: Routeables.Maui
+  children:
+  - Routeables.Maui.Extensions.UseRouteables(Microsoft.Maui.Hosting.MauiAppBuilder,System.Func{System.IServiceProvider,Routeables.Maui.IRouteableModalService},System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableContentDialogService},System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableTaskDialogService},System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableNotificationService})
+  langs:
+  - csharp
+  - vb
+  name: Extensions
+  nameWithType: Extensions
+  fullName: Routeables.Maui.Extensions
+  type: Class
+  source:
+    remote:
+      path: Routeables.Maui/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Extensions
+    path: ../Routeables.Maui/Extensions.cs
+    startLine: 10
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  summary: >-
+    Extension methods for wiring up the Routeables IoC container and its associated services
+
+    into a MAUI application's <xref href="Microsoft.Maui.Hosting.MauiAppBuilder" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public static class Extensions
+    content.vb: Public Module Extensions
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: Routeables.Maui.Extensions.UseRouteables(Microsoft.Maui.Hosting.MauiAppBuilder,System.Func{System.IServiceProvider,Routeables.Maui.IRouteableModalService},System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableContentDialogService},System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableTaskDialogService},System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableNotificationService})
+  commentId: M:Routeables.Maui.Extensions.UseRouteables(Microsoft.Maui.Hosting.MauiAppBuilder,System.Func{System.IServiceProvider,Routeables.Maui.IRouteableModalService},System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableContentDialogService},System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableTaskDialogService},System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableNotificationService})
+  id: UseRouteables(Microsoft.Maui.Hosting.MauiAppBuilder,System.Func{System.IServiceProvider,Routeables.Maui.IRouteableModalService},System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableContentDialogService},System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableTaskDialogService},System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableNotificationService})
+  isExtensionMethod: true
+  parent: Routeables.Maui.Extensions
+  langs:
+  - csharp
+  - vb
+  name: UseRouteables(MauiAppBuilder, Func<IServiceProvider, IRouteableModalService>?, Func<IServiceProvider, IRouteableContentDialogService>?, Func<IServiceProvider, IRouteableTaskDialogService>?, Func<IServiceProvider, IRouteableNotificationService>?)
+  nameWithType: Extensions.UseRouteables(MauiAppBuilder, Func<IServiceProvider, IRouteableModalService>?, Func<IServiceProvider, IRouteableContentDialogService>?, Func<IServiceProvider, IRouteableTaskDialogService>?, Func<IServiceProvider, IRouteableNotificationService>?)
+  fullName: Routeables.Maui.Extensions.UseRouteables(Microsoft.Maui.Hosting.MauiAppBuilder, System.Func<System.IServiceProvider, Routeables.Maui.IRouteableModalService>?, System.Func<System.IServiceProvider, Routeables.Abstraction.IRouteableContentDialogService>?, System.Func<System.IServiceProvider, Routeables.Abstraction.IRouteableTaskDialogService>?, System.Func<System.IServiceProvider, Routeables.Abstraction.IRouteableNotificationService>?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Maui/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: UseRouteables
+    path: ../Routeables.Maui/Extensions.cs
+    startLine: 29
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  summary: >-
+    Registers a shared 
+
+    <xref href="Routeables.Abstraction.IRouteableDialogService" data-throw-if-not-resolved="false"></xref>, <xref href="Routeables.Abstraction.IRouteableContentDialogService" data-throw-if-not-resolved="false"></xref>, <xref href="Routeables.Abstraction.IRouteableTaskDialogService" data-throw-if-not-resolved="false"></xref>,
+
+    <xref href="Routeables.Abstraction.IRouteableNotificationService" data-throw-if-not-resolved="false"></xref>, and <xref href="Routeables.Abstraction.IRouteableRequestedThemeService" data-throw-if-not-resolved="false"></xref>),
+
+    a transient <xref href="Routeables.Routing.Router" data-throw-if-not-resolved="false"></xref>,
+  remarks: >-
+    The modal, content dialog, task dialog and notification services are Routeables' own and need nothing but MAUI.
+
+    Pass a factory to replace one, or call <code>UseRouteablesCommunityToolkit()</code> (Reshapes.Maui.CommunityToolkit)
+
+    to use CommunityToolkit.Maui popups and snackbars instead.
+  example: []
+  syntax:
+    content: public static MauiAppBuilder UseRouteables(this MauiAppBuilder builder, Func<IServiceProvider, IRouteableModalService>? modalService = null, Func<IServiceProvider, IRouteableContentDialogService>? contentDialogService = null, Func<IServiceProvider, IRouteableTaskDialogService>? taskDialogService = null, Func<IServiceProvider, IRouteableNotificationService>? notificationService = null)
+    parameters:
+    - id: builder
+      type: Microsoft.Maui.Hosting.MauiAppBuilder
+      description: The MAUI app builder to configure.
+    - id: modalService
+      type: System.Func{System.IServiceProvider,Routeables.Maui.IRouteableModalService}
+      description: Factory of the <xref href="Routeables.Maui.IRouteableModalService" data-throw-if-not-resolved="false"></xref>; null keeps Routeables' own.
+    - id: contentDialogService
+      type: System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableContentDialogService}
+      description: Factory of the <xref href="Routeables.Abstraction.IRouteableContentDialogService" data-throw-if-not-resolved="false"></xref>; null keeps Routeables' own.
+    - id: taskDialogService
+      type: System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableTaskDialogService}
+      description: Factory of the <xref href="Routeables.Abstraction.IRouteableTaskDialogService" data-throw-if-not-resolved="false"></xref>; null keeps Routeables' own.
+    - id: notificationService
+      type: System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableNotificationService}
+      description: Factory of the <xref href="Routeables.Abstraction.IRouteableNotificationService" data-throw-if-not-resolved="false"></xref>; null keeps Routeables' own.
+    return:
+      type: Microsoft.Maui.Hosting.MauiAppBuilder
+      description: The same <code class="paramref">builder</code>, for chaining.
+    content.vb: Public Shared Function UseRouteables(builder As MauiAppBuilder, modalService As Func(Of IServiceProvider, IRouteableModalService) = Nothing, contentDialogService As Func(Of IServiceProvider, IRouteableContentDialogService) = Nothing, taskDialogService As Func(Of IServiceProvider, IRouteableTaskDialogService) = Nothing, notificationService As Func(Of IServiceProvider, IRouteableNotificationService) = Nothing) As MauiAppBuilder
+  overload: Routeables.Maui.Extensions.UseRouteables*
+  nameWithType.vb: Extensions.UseRouteables(MauiAppBuilder, Func(Of IServiceProvider, IRouteableModalService), Func(Of IServiceProvider, IRouteableContentDialogService), Func(Of IServiceProvider, IRouteableTaskDialogService), Func(Of IServiceProvider, IRouteableNotificationService))
+  fullName.vb: Routeables.Maui.Extensions.UseRouteables(Microsoft.Maui.Hosting.MauiAppBuilder, System.Func(Of System.IServiceProvider, Routeables.Maui.IRouteableModalService), System.Func(Of System.IServiceProvider, Routeables.Abstraction.IRouteableContentDialogService), System.Func(Of System.IServiceProvider, Routeables.Abstraction.IRouteableTaskDialogService), System.Func(Of System.IServiceProvider, Routeables.Abstraction.IRouteableNotificationService))
+  name.vb: UseRouteables(MauiAppBuilder, Func(Of IServiceProvider, IRouteableModalService), Func(Of IServiceProvider, IRouteableContentDialogService), Func(Of IServiceProvider, IRouteableTaskDialogService), Func(Of IServiceProvider, IRouteableNotificationService))
+references:
+- uid: Microsoft.Maui.Hosting.MauiAppBuilder
+  commentId: T:Microsoft.Maui.Hosting.MauiAppBuilder
+  parent: Microsoft.Maui.Hosting
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.maui.hosting.mauiappbuilder
+  name: MauiAppBuilder
+  nameWithType: MauiAppBuilder
+  fullName: Microsoft.Maui.Hosting.MauiAppBuilder
+- uid: Routeables.Maui
+  commentId: N:Routeables.Maui
+  name: Routeables.Maui
+  nameWithType: Routeables.Maui
+  fullName: Routeables.Maui
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Maui
+    name: Maui
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Maui
+    name: Maui
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: Microsoft.Maui.Hosting
+  commentId: N:Microsoft.Maui.Hosting
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Maui.Hosting
+  nameWithType: Microsoft.Maui.Hosting
+  fullName: Microsoft.Maui.Hosting
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Maui
+    name: Maui
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui
+  - name: .
+  - uid: Microsoft.Maui.Hosting
+    name: Hosting
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.hosting
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Maui
+    name: Maui
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui
+  - name: .
+  - uid: Microsoft.Maui.Hosting
+    name: Hosting
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.hosting
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction.IRouteableDialogService
+  commentId: T:Routeables.Abstraction.IRouteableDialogService
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableDialogService.html
+  name: IRouteableDialogService
+  nameWithType: IRouteableDialogService
+  fullName: Routeables.Abstraction.IRouteableDialogService
+- uid: Routeables.Abstraction.IRouteableContentDialogService
+  commentId: T:Routeables.Abstraction.IRouteableContentDialogService
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableContentDialogService.html
+  name: IRouteableContentDialogService
+  nameWithType: IRouteableContentDialogService
+  fullName: Routeables.Abstraction.IRouteableContentDialogService
+- uid: Routeables.Abstraction.IRouteableTaskDialogService
+  commentId: T:Routeables.Abstraction.IRouteableTaskDialogService
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableTaskDialogService.html
+  name: IRouteableTaskDialogService
+  nameWithType: IRouteableTaskDialogService
+  fullName: Routeables.Abstraction.IRouteableTaskDialogService
+- uid: Routeables.Abstraction.IRouteableNotificationService
+  commentId: T:Routeables.Abstraction.IRouteableNotificationService
+  href: Routeables.Abstraction.IRouteableNotificationService.html
+  name: IRouteableNotificationService
+  nameWithType: IRouteableNotificationService
+  fullName: Routeables.Abstraction.IRouteableNotificationService
+- uid: Routeables.Abstraction.IRouteableRequestedThemeService
+  commentId: T:Routeables.Abstraction.IRouteableRequestedThemeService
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableRequestedThemeService.html
+  name: IRouteableRequestedThemeService
+  nameWithType: IRouteableRequestedThemeService
+  fullName: Routeables.Abstraction.IRouteableRequestedThemeService
+- uid: Routeables.Routing.Router
+  commentId: T:Routeables.Routing.Router
+  name: Router
+  nameWithType: Router
+  fullName: Routeables.Routing.Router
+- uid: Routeables.Maui.IRouteableModalService
+  commentId: T:Routeables.Maui.IRouteableModalService
+  parent: Routeables.Maui
+  href: Routeables.Maui.IRouteableModalService.html
+  name: IRouteableModalService
+  nameWithType: IRouteableModalService
+  fullName: Routeables.Maui.IRouteableModalService
+- uid: Routeables.Maui.Extensions.UseRouteables*
+  commentId: Overload:Routeables.Maui.Extensions.UseRouteables
+  href: Routeables.Maui.Extensions.html#Routeables_Maui_Extensions_UseRouteables_Microsoft_Maui_Hosting_MauiAppBuilder_System_Func_System_IServiceProvider_Routeables_Maui_IRouteableModalService__System_Func_System_IServiceProvider_Routeables_Abstraction_IRouteableContentDialogService__System_Func_System_IServiceProvider_Routeables_Abstraction_IRouteableTaskDialogService__System_Func_System_IServiceProvider_Routeables_Abstraction_IRouteableNotificationService__
+  name: UseRouteables
+  nameWithType: Extensions.UseRouteables
+  fullName: Routeables.Maui.Extensions.UseRouteables
+- uid: System.Func{System.IServiceProvider,Routeables.Maui.IRouteableModalService}
+  commentId: T:System.Func{System.IServiceProvider,Routeables.Maui.IRouteableModalService}
+  parent: System
+  definition: System.Func`2
+  href: https://learn.microsoft.com/dotnet/api/system.func-2
+  name: Func<IServiceProvider, IRouteableModalService>
+  nameWithType: Func<IServiceProvider, IRouteableModalService>
+  fullName: System.Func<System.IServiceProvider, Routeables.Maui.IRouteableModalService>
+  nameWithType.vb: Func(Of IServiceProvider, IRouteableModalService)
+  fullName.vb: System.Func(Of System.IServiceProvider, Routeables.Maui.IRouteableModalService)
+  name.vb: Func(Of IServiceProvider, IRouteableModalService)
+  spec.csharp:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: <
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Maui.IRouteableModalService
+    name: IRouteableModalService
+    href: Routeables.Maui.IRouteableModalService.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Maui.IRouteableModalService
+    name: IRouteableModalService
+    href: Routeables.Maui.IRouteableModalService.html
+  - name: )
+- uid: System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableContentDialogService}
+  commentId: T:System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableContentDialogService}
+  parent: System
+  definition: System.Func`2
+  href: https://learn.microsoft.com/dotnet/api/system.func-2
+  name: Func<IServiceProvider, IRouteableContentDialogService>
+  nameWithType: Func<IServiceProvider, IRouteableContentDialogService>
+  fullName: System.Func<System.IServiceProvider, Routeables.Abstraction.IRouteableContentDialogService>
+  nameWithType.vb: Func(Of IServiceProvider, IRouteableContentDialogService)
+  fullName.vb: System.Func(Of System.IServiceProvider, Routeables.Abstraction.IRouteableContentDialogService)
+  name.vb: Func(Of IServiceProvider, IRouteableContentDialogService)
+  spec.csharp:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: <
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableContentDialogService
+    name: IRouteableContentDialogService
+    href: Routeables.Abstraction.IRouteableContentDialogService.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableContentDialogService
+    name: IRouteableContentDialogService
+    href: Routeables.Abstraction.IRouteableContentDialogService.html
+  - name: )
+- uid: System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableTaskDialogService}
+  commentId: T:System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableTaskDialogService}
+  parent: System
+  definition: System.Func`2
+  href: https://learn.microsoft.com/dotnet/api/system.func-2
+  name: Func<IServiceProvider, IRouteableTaskDialogService>
+  nameWithType: Func<IServiceProvider, IRouteableTaskDialogService>
+  fullName: System.Func<System.IServiceProvider, Routeables.Abstraction.IRouteableTaskDialogService>
+  nameWithType.vb: Func(Of IServiceProvider, IRouteableTaskDialogService)
+  fullName.vb: System.Func(Of System.IServiceProvider, Routeables.Abstraction.IRouteableTaskDialogService)
+  name.vb: Func(Of IServiceProvider, IRouteableTaskDialogService)
+  spec.csharp:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: <
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableTaskDialogService
+    name: IRouteableTaskDialogService
+    href: Routeables.Abstraction.IRouteableTaskDialogService.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableTaskDialogService
+    name: IRouteableTaskDialogService
+    href: Routeables.Abstraction.IRouteableTaskDialogService.html
+  - name: )
+- uid: System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableNotificationService}
+  commentId: T:System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableNotificationService}
+  parent: System
+  definition: System.Func`2
+  href: https://learn.microsoft.com/dotnet/api/system.func-2
+  name: Func<IServiceProvider, IRouteableNotificationService>
+  nameWithType: Func<IServiceProvider, IRouteableNotificationService>
+  fullName: System.Func<System.IServiceProvider, Routeables.Abstraction.IRouteableNotificationService>
+  nameWithType.vb: Func(Of IServiceProvider, IRouteableNotificationService)
+  fullName.vb: System.Func(Of System.IServiceProvider, Routeables.Abstraction.IRouteableNotificationService)
+  name.vb: Func(Of IServiceProvider, IRouteableNotificationService)
+  spec.csharp:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: <
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableNotificationService
+    name: IRouteableNotificationService
+    href: Routeables.Abstraction.IRouteableNotificationService.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableNotificationService
+    name: IRouteableNotificationService
+    href: Routeables.Abstraction.IRouteableNotificationService.html
+  - name: )
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: System.Func`2
+  commentId: T:System.Func`2
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.func-2
+  name: Func<T, TResult>
+  nameWithType: Func<T, TResult>
+  fullName: System.Func<T, TResult>
+  nameWithType.vb: Func(Of T, TResult)
+  fullName.vb: System.Func(Of T, TResult)
+  name.vb: Func(Of T, TResult)
+  spec.csharp:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: <
+  - name: T
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: )

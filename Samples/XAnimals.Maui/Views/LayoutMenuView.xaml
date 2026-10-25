@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
+    xmlns:vm="clr-namespace:XAnimals.ViewModels;assembly=XAnimals.ViewModels"
+    x:Class="XAnimals.Maui.Views.LayoutMenuView"
+    x:DataType="vm:LayoutMenuViewModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource Lichen}, Dark={StaticResource Moss}}">
+
+    <VerticalStackLayout Padding="10" Spacing="4">
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="6" Margin="0,0,0,6">
+            <Button Grid.Column="0" Text="◀ Back" Command="{Binding BackCommand}" IsEnabled="{Binding CanGoBack}" />
+            <Button Grid.Column="1" Text="Forward ▶" Command="{Binding ForwardCommand}" IsEnabled="{Binding CanGoForward}" />
+        </Grid>
+        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Spacing="4">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate x:DataType="vm:LayoutMenuItem">
+                    <Border StrokeThickness="2" Stroke="Transparent" Padding="10,4" BackgroundColor="Transparent">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="999" />
+                        </Border.StrokeShape>
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding IsCurrent}" Value="True">
+                                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                <Setter Property="Stroke" Value="{StaticResource Tertiary}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Select}" />
+                        </Border.GestureRecognizers>
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="{Binding Glyph}" FontSize="20" VerticalOptions="Center" />
+                            <Label Text="{Binding Name}" VerticalOptions="Center">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsCurrent}" Value="True">
+                                        <Setter Property="TextColor" Value="White" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </HorizontalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
+    </VerticalStackLayout>
+</routeables:RouteableFor>

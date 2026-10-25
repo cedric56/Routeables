@@ -1,0 +1,76 @@
+﻿@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@inherits RouteableFor<FeaturesView, FeaturesViewModel>
+
+<PageTitle>Features</PageTitle>
+
+<div class="about-page">
+    
+    <section class="about-group">
+        <h2>Guard and return</h2>
+        <p>The Members page is for members. Signed out, opening it brings you here; sign in, then open it.</p>
+        <div class="actions">
+            <button @onclick="ViewModel.SignInAsync" disabled="@(!ViewModel.IsSignedOut)">Sign in</button>
+            <button @onclick="ViewModel.SignOutAsync" disabled="@(!ViewModel.IsSignedIn)">Sign out</button>
+            <button @onclick="ViewModel.OpenMembersAsync">Open Members</button>
+        </div>
+    </section>
+
+    <section class="about-group">
+        <h2>Link</h2>
+        <p>An address from outside, followed through the router. In a browser the address bar does the same job.</p>
+        <div class="actions">
+            <button @onclick="ViewModel.OpenLinkAsync">Open @ViewModel.Link</button>
+        </div>
+    </section>
+
+    @if (ViewModel.IsMobile)
+    {
+    <section class="about-group">
+        <h2>Saved values</h2>
+        <p>Type a note: it is kept with the page when the application saves its pages.</p>
+        <input type="text" placeholder="A note" @bind="ViewModel.Draft" @bind:event="oninput" />
+    </section>
+    }
+
+    <section class="about-group">
+        <h2>Lock</h2>
+        <p>The page publishes a lock message; the menu entries are disabled until it publishes the unlock one.</p>
+        <div class="actions">
+            <button @onclick="ViewModel.LockAsync" disabled="@(!ViewModel.CanLock)">Lock</button>
+            <button @onclick="ViewModel.UnlockAsync" disabled="@(!ViewModel.CanUnlock)">Unlock</button>
+            <button @onclick="ViewModel.LockForAsync" disabled="@(!ViewModel.CanLock)">Lock for @FeaturesViewModel.LockSeconds seconds</button>
+        </div>
+        <p class="about-result" role="status">@ViewModel.LockStatus</p>
+    </section>
+
+    <section class="about-group">
+        <h2>Measures</h2>
+        <div class="actions">
+            <button @onclick="ViewModel.RefreshAsync">Show the last route changes</button>
+        </div>
+        <pre>@ViewModel.Measures</pre>
+    </section>
+
+    <p class="about-result" role="status">@ViewModel.Status</p>
+</div>
+
+@code {
+    protected override void OnSubscribe()
+    {
+        ViewModel.PropertyChanged += OnViewModelChanged;
+        base.OnSubscribe();
+    }
+
+    private async void OnViewModelChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnUnsubscribe()
+    {
+        ViewModel.PropertyChanged -= OnViewModelChanged;
+        base.OnUnsubscribe();
+    }
+}

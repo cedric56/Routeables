@@ -1,0 +1,85 @@
+<p align="center">
+  <img src="Images/logo.svg" alt="Routeables" width="420">
+</p>
+
+<p align="center">
+  <a href="https://github.com/cedric56/Routeables/actions/workflows/ci.yml"><img src="https://github.com/cedric56/Routeables/actions/workflows/ci.yml/badge.svg?branch=master" alt="CI"></a>
+  <a href="LICENSE.txt"><img src="https://img.shields.io/badge/license-MIT-5B35E0" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white" alt=".NET 10">
+</p>
+
+# Routeables
+
+**Routing from your view models, for Blazor, .NET MAUI, Avalonia, Uno Platform and WPF.**
+
+A view model asks an `IRouter` to go somewhere. It never touches a page, a frame or a navigation API of the framework, so the same code runs on every host.
+
+## In one minute
+
+```csharp
+[Routeable("/hello/{name}")]                         // the route is declared on the view model
+public sealed class HelloViewModel(IRouter router, string name)
+{
+    public Task SayHelloAgainAsync() => router.GoToAsync("/hello/Ada");
+}
+
+public partial class HelloView : RouteableFor<HelloViewModel> { }   // the page: found by its name
+
+services.AddGeneratedRoutes();                       // once, at startup
+```
+
+A route on the view model, the view with the matching name, one registration call. That is the whole model.
+
+## Start with your host
+
+Reference the host package, then start Routeables where your framework starts. From NuGet, the host package brings the `Routeables` package, which carries the generator: there is nothing else to add. From source, reference the generator as an analyzer too:
+
+| Host | Package | Setup |
+| --- | --- | --- |
+| Blazor | [`Routeables.Razor`](Routeables.Razor/README.md) | `services.UseRouteablesServer<MainViewModel>(r => { ... })` |
+| .NET MAUI | [`Routeables.Maui`](Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => { ... })` |
+| Avalonia | [`Routeables.Avalonia`](Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r => { ... })` |
+| Uno Platform | [`Routeables.Uno`](Routeables.Uno/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
+| WPF | [`Routeables.Wpf`](Routeables.Wpf/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
+
+```xml
+<ItemGroup>
+  <ProjectReference Include="..\Routeables\Routeables.Avalonia\Routeables.Avalonia.csproj" />   <!-- your host -->
+  <ProjectReference Include="..\Routeables\Routeables.Generated\Routeables.Generated.csproj"
+                    OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+</ItemGroup>
+```
+
+The call starts Routeables and registers your menu (the main view model). The block is for your own registrations, the same on every host:
+
+```csharp
+r => r.AddGeneratedRoutes()
+```
+
+Each host README has the complete setup. [Getting started](docs/getting-started.md) walks through it. To start, create a project with the template of your framework (`dotnet new avalonia.app`, `dotnet new maui`, `dotnet new blazor`, or the Uno one) and add the host package.
+
+## What you get
+
+- **Routes from attributes**, paired with views by name, registered by a source generator.
+- **Typed routing methods** generated from a view model's constructor: `GoToOrderAsync(id)` instead of a string.
+- **History**: back, forward, pop, return to the root; a page can veto leaving.
+- **Regions**: several areas of the screen, each with its own history.
+- **Modules**: a feature is one extension method, loaded at startup or on demand.
+- **Native AOT and trimming** compatible; nothing scans assemblies at run time.
+
+Routeables routes. It ships no commands, view-model locator or event aggregator: use CommunityToolkit.Mvvm, ReactiveUI or plain C#. Coming from Prism? Read [Migrating from Prism](docs/guides/migrating-from-prism.md).
+
+## Add what you need
+
+The host package already holds the dialogs, modals and notifications of its framework, registered by `UseRouteables`. For MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs, add a package of [`Reshapes`](Reshapes/README.md).
+
+Everything else is in the one `Routeables` package, which every host brings: the contracts ([`Abstraction`](Routeables.Abstraction/README.md)), the router ([`Routing`](Routeables.Routing/README.md)), the view-model bases ([`Core`](Routeables.Core/README.md)), [`Regions`](Routeables.Regions/README.md), [`Segments`](Routeables.Segments/README.md) (`Orders?id=5/Detail`), [`Locking`](Routeables.Locking/README.md) (pages that block leaving, a locked menu), the dialog and notification contracts ([`Services`](Routeables.Services/README.md)) and the source generator. They are separate projects of this repository and one package.
+
+## Learn more
+
+- [Getting started](docs/getting-started.md) and the [guides](docs/guides/routes.md): routes, typed routing, arguments, lifecycle, history, regions, modules, hosts.
+- [Samples](Samples): the same Animals app on Blazor, MAUI, Avalonia, Uno and WPF.
+- [Documentation site](https://cedric56.github.io/Routeables/) and API reference.
+- [Contributing](CONTRIBUTING.md), [third-party notices](THIRD-PARTY-NOTICES.md).
+
+Released under the [MIT License](LICENSE.txt).

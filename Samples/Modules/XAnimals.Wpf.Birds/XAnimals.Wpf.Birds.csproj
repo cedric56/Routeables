@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The Birds module for the WPF hosts: its two pages, which draw with the controls of XAnimals.Wpf.Controls. The shared part (data, view models, the menu entry) is XAnimals.Birds. The head references this project: its AddGeneratedRoutes() finds the pages. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\..\Routeables.Wpf\Routeables.Wpf.csproj" />
+    <ProjectReference Include="..\..\Controls\XAnimals.Wpf.Controls\XAnimals.Wpf.Controls.csproj" />
+    <ProjectReference Include="..\XAnimals.Birds\XAnimals.Birds.csproj" />
+  </ItemGroup>
+
+</Project>

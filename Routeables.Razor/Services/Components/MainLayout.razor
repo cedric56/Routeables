@@ -1,0 +1,64 @@
+@using Microsoft.AspNetCore.Components.Web
+@namespace Routeables.Razor.Services
+@using Routeables.Abstraction
+@using Routeables.Razor
+@inherits MainLayoutBase
+@if (ChildContent != null)
+{
+    @ChildContent
+}
+else
+{
+    <div class="rt-layout" data-wui-theme="@ThemeName">
+            <RouteableDialogHost />
+            <RouteableContentDialogHost />
+            <RouteableTaskDialogHost />
+            <RouteableModalHost />
+            <RouteableNotificationHost />
+        
+        <header class="rt-appbar">
+            <button type="button" class="rt-menu-button" aria-label="Toggle menu" aria-expanded="@_drawerOpen.ToString().ToLowerInvariant()" @onclick="DrawerToggle">
+                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" /></svg>
+            </button>
+            <span class="rt-title">@Title</span>
+            <button type="button" class="rt-menu-button rt-theme-button" aria-label="Switch between the light and the dark theme" title="Switch between the light and the dark theme" @onclick="ToggleTheme">
+                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 3a9 9 0 1 0 0 18V3z" /><circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>
+            </button>
+        </header>
+
+        <nav class="rt-drawer @(_drawerOpen ? "" : "rt-drawer-closed")" aria-label="Menu">
+            @foreach (var item in Main.Routeables)
+            {
+                <button type="button"
+                class="rt-nav-link @(ReferenceEquals(item, Main.Routeable) ? "rt-active" : "")"
+                disabled="@item.IsLock"
+                aria-current="@(ReferenceEquals(item, Main.Routeable) ? "page" : null)"
+                @onclick="() => OnNavClick(item)">
+                    @if (item.Icon is string glyph)
+                    {
+                        <span class="rt-nav-icon" aria-hidden="true">@glyph</span>
+                    }
+                    <span class="rt-nav-text">
+                        <span class="rt-nav-name">@item.DisplayName</span>
+                        @if (!string.IsNullOrWhiteSpace(item.Description))
+                        {
+                            <span class="rt-nav-description">@item.Description</span>
+                        }
+                    </span>
+                </button>
+            }
+        </nav>
+
+        <main class="rt-content">
+            @if (Main.CurrentView is RouteableFor routeable)
+            {
+                @routeable.Render()
+            }
+        </main>
+    </div>
+}
+@code
+{
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

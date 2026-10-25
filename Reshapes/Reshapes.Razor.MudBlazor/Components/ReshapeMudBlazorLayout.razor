@@ -1,0 +1,35 @@
+﻿@using Routeables.Abstraction
+@using Routeables.Razor
+@using Routeables.Razor.Components
+@using global::MudBlazor
+@* Lifecycle, theme, URL sync, Title, _drawerOpen, DrawerToggle, OnNavClick and Service come from MainLayoutBase. *@
+@inherits MainLayoutBase
+
+    <MudThemeProvider IsDarkMode="Service.IsDarkMode" />
+    <MudPopoverProvider />
+    <MudDialogProvider BackdropClick="false" />
+    <MudSnackbarProvider />
+
+    <MudLayout>
+        <MudAppBar>
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            @Title
+        </MudAppBar>
+        <MudDrawer @bind-Open="@_drawerOpen">
+            <MudNavMenu>
+                @foreach (var item in Main.Routeables)
+                {
+                    <MudNavLink Disabled="@item.IsLock" OnClick="@(() => OnNavClick(item))">
+                        @item.DisplayName
+                    </MudNavLink>
+                }
+            </MudNavMenu>
+        </MudDrawer>
+   
+        <MudMainContent>
+            @if (Main.CurrentView is RouteableFor view)
+            {
+                @view.Render()
+            }
+        </MudMainContent>
+    </MudLayout>

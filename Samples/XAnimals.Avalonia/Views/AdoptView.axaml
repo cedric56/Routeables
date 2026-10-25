@@ -1,0 +1,49 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:routeables="using:Routeables.Avalonia"
+             xmlns:vm="using:XAnimals.ViewModels"
+             x:Class="XAnimals.Avalonia.AdoptView"
+             x:DataType="vm:AdoptViewModel"
+             Background="{DynamicResource AnPaper}">
+
+    <Grid RowDefinitions="Auto,Auto,*" Margin="20" RowSpacing="8">
+        <!-- One button per animal: adopting it routes its card into the region "adopt". -->
+        <ItemsControl Grid.Row="0" ItemsSource="{Binding Choices}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:AdoptChoice">
+                    <Button Command="{Binding AdoptCommand}" Margin="0,0,6,6" Padding="12,4">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="{Binding Glyph}" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <DockPanel Grid.Row="1" LastChildFill="True">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="6">
+                <Button Content="Release the last" Command="{Binding ReleaseCommand}" />
+                <Button Content="Release all" Command="{Binding ReleaseAllCommand}" />
+            </StackPanel>
+            <TextBlock Text="{Binding Status}" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.75" />
+        </DockPanel>
+
+        <!-- Not one view but all of them: the region "adopt" holds a history, this control lays out every page of it, in rows and columns.
+             Nothing assigns a view to the control. -->
+        <ScrollViewer Grid.Row="2">
+            <routeables:RouteableRegionItems Region="adopt">
+                <routeables:RouteableRegionItems.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </routeables:RouteableRegionItems.ItemsPanel>
+            </routeables:RouteableRegionItems>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

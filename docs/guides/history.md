@@ -1,0 +1,18 @@
+# History
+
+## History
+
+Each router keeps a history of entries (view model, view and arguments):
+
+| Operation | Effect |
+| --- | --- |
+| `GoToAsync` (or `GoToRouteAsync`) | Pushes a new entry. Forward entries are cut off, and the oldest entry is dropped beyond `History.MaxSize` |
+| `GoBackAsync` / `ForwardAsync` | Moves the cursor. Nothing is removed, so a page you went back from stays alive for `Forward` |
+| `MoveToAsync(index)` | Moves the cursor to an entry |
+| `PopAsync` | Goes back and removes the entry you left |
+| `GoBackToRootAsync` | Returns to the first entry |
+| `EraseHistoryAsync` | Clears the history |
+
+Which one to call: `GoBackAsync` for history you can come back to (a back button next to a forward one), `PopAsync` to leave a page for good (the detail opened from a list, a wizard step), which is what the samples do. Both answer `CanGoBack`.
+
+`router.CanGoBack`, `router.CanGoForward`, `router.CurrentViewModel`, `router.CurrentView` and `router.History` (read-only entries) describe the current state. Operations are serialized by a gate, so two route changes never interleave.

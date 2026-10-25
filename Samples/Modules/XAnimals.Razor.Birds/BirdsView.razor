@@ -1,0 +1,21 @@
+@namespace XAnimals.Razor.Components.Animals
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.Birds
+@using XAnimals.Razor.Birds
+@inherits RouteableFor<BirdsView, BirdsViewModel>
+
+<PageTitle>Birds</PageTitle>
+
+@* Loads a module while the application runs: its entry appears in the menu without restarting. *@
+<div class="load-module">
+    <button type="button" disabled="@(!ViewModel.CanLoadMoreBirds)" @onclick="LoadModule">
+        @(ViewModel.MoreBirdsLoaded ? "Module loaded" : "Load Module")
+    </button>
+</div>
+
+<AnimalList ViewModel="ViewModel" NoResultsText="No birds found." />
+
+@code {
+    private void LoadModule() => ViewModel.LoadMoreBirds(services => services.AddRazorMoreBirdsModule());
+}

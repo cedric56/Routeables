@@ -1,0 +1,41 @@
+<Project Sdk="Uno.Sdk">
+
+  <PropertyGroup>
+    <!-- The desktop (Skia) head. Add net10.0-android, net10.0-ios, net10.0-browserwasm... as needed, with their platform folders. -->
+    <TargetFrameworks>net10.0-android;net10.0-ios;net10.0-browserwasm;net10.0-desktop</TargetFrameworks>
+    <!-- The CI builds the desktop head only: restore needs the workload of every target framework listed, and the Linux runner has none of them. -->
+    <TargetFrameworks Condition="'$(CiBuild)' == 'true'">net10.0-desktop</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <UnoSingleProject>true</UnoSingleProject>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>XAnimals.Uno</RootNamespace>
+    <!--<TreatWarningsAsErrors>false</TreatWarningsAsErrors>-->
+    <IsAotCompatible>true</IsAotCompatible>
+    <ApplicationTitle>XAnimals.Uno</ApplicationTitle>
+    <ApplicationId>com.companyname.xanimals.uno</ApplicationId>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+
+    <!-- No Uno.Extensions, Material or Toolkit: Routeables brings the navigation and the services. -->
+    <UnoFeatures></UnoFeatures>
+
+    <!-- Uno.Sdk and Uno.WinUI have their own version numbers. Routeables.Uno is built on Uno.WinUI 6.7.135: the head must not use an older one. -->
+    <UnoVersion>6.7.135</UnoVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Uno.Resizetizer turns these into the app icon and the splash screen of every head (the Android styles ask for uno_splash_color and uno_splash_image). -->
+    <UnoIcon Include="Assets\Brand\icon.svg" Color="#4A22C8" />
+    <UnoSplashScreen Include="Assets\Brand\splash.svg" BaseSize="128,128" Color="#4A22C8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Routeables.Uno\Routeables.Uno.csproj" />
+    <ProjectReference Include="..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
+    <ProjectReference Include="..\Controls\XAnimals.Uno.Controls\XAnimals.Uno.Controls.csproj" />
+    <ProjectReference Include="..\Modules\XAnimals.Uno.Birds\XAnimals.Uno.Birds.csproj" />
+  </ItemGroup>
+
+</Project>

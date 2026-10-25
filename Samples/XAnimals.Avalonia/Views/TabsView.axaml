@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:XAnimals.ViewModels"
+             xmlns:routeables="using:Routeables.Avalonia"
+             x:Class="XAnimals.Avalonia.TabsView"
+             x:DataType="vm:TabsViewModel"
+             Background="{DynamicResource AnPaper}">
+    <TabControl x:Name="Tabs">
+        <TabItem Header="Cats" routeables:RouteableItem.Route="cats" />
+        <TabItem Header="Dogs" routeables:RouteableItem.Route="dogs" />
+        <TabItem Header="Monkeys" routeables:RouteableItem.Route="monkeys" />
+    </TabControl>
+</UserControl>

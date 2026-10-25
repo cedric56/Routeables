@@ -1,0 +1,373 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel superseded runs of the same branch / PR.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  CONFIGURATION: Release
+  # Routeables.Maui multi-targets android/ios/maccatalyst/windows, which no single
+  # runner can build. CiBuild=true makes Routeables.Maui.csproj build only its plain
+  # net10.0 target (the one Routeables.Test references). Do NOT pass
+  # -p:TargetFrameworks globally: it makes NuGet treat every single-TFM project as
+  # multi-targeted and some packages' .props (Avalonia, ...) are then not imported.
+  CI_PROPS: -p:CiBuild=true
+
+jobs:
+  build-and-test:
+    name: Build & test
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install MAUI workload
+        run: dotnet workload install maui --skip-manifest-update
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore Routeables.Test/Routeables.Test.csproj ${{ env.CI_PROPS }}
+
+      - name: Build
+        run: dotnet build Routeables.Test/Routeables.Test.csproj --no-restore -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+
+      # .NET 10 SDK: `dotnet test` runs xunit.v3 through Microsoft.Testing.Platform,
+      # enabled by global.json. The project is passed with --project.
+      - name: Test
+        run: dotnet test --project Routeables.Test/Routeables.Test.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+
+  # ---------------------------------------------------------------------------------------------------------------------------
+  # Compile every project of the solution, so that an error in a sample or a Reshape no longer waits for a local build.
+  # The libraries and the tests are built above with CiBuild (Release, strict analyzers); the samples are built here in
+  # Debug, which also compiles what is under #if DEBUG. CiBuild is not set: it would make the samples fail on the
+  # trimming warnings meant for the libraries.
+  # ---------------------------------------------------------------------------------------------------------------------------
+
+  web-and-desktop:
+    name: Build Razor, Blazor, Avalonia (desktop, browser)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      # Avalonia.Browser needs the WebAssembly build tools (its Release configuration also compiles ahead of time; Debug does not).
+      - name: Install wasm-tools workload
+        run: dotnet workload install wasm-tools --skip-manifest-update
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-web-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-web-
+
+      - name: Libraries and Reshapes
+        run: |
+          dotnet build Routeables.Razor/Routeables.Razor.csproj -c Debug
+          dotnet build Routeables.Avalonia/Routeables.Avalonia.csproj -c Debug
+          dotnet build Reshapes/Reshapes.Razor.MudBlazor/Reshapes.Razor.MudBlazor.csproj -c Debug
+          dotnet build Reshapes/Reshapes.Avalonia.Fluent/Reshapes.Avalonia.Fluent.csproj -c Debug
+
+      - name: Samples, Razor and Blazor
+        run: |
+          dotnet build Samples/Bases/XAnimals.ViewModels/XAnimals.ViewModels.csproj -c Debug
+          dotnet build Samples/XAnimals.Razor/XAnimals.Razor.csproj -c Debug
+          dotnet build Samples/Xanimals.BlazorApp/Xanimals.BlazorApp.csproj -c Debug
+          dotnet build Samples/XAnimals.BlazorWebAssembly/XAnimals.BlazorWebAssembly.csproj -c Debug
+
+      - name: Samples, Avalonia
+        run: |
+          dotnet build Samples/XAnimals.Avalonia/XAnimals.Avalonia.csproj -c Debug
+          dotnet build Samples/XAnimals.Avalonia.Desktop/XAnimals.Avalonia.Desktop.csproj -c Debug
+          dotnet build Samples/XAnimals.Avalonia.Browser/XAnimals.Avalonia.Browser.csproj -c Debug
+
+      - name: Benchmarks
+        run: dotnet build Routeables.Benchmarks/Routeables.Benchmarks.csproj -c Release
+
+  # The Uno projects are in a job of their own: they were written without being able to restore Uno Platform, so a failure here
+  # must not hide the result of the jobs above. Once it is green, fold it into web-and-desktop.
+  uno:
+    name: Build Uno
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-uno-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-uno-
+
+      - name: Uno libraries
+        run: |
+          dotnet build Routeables.Uno/Routeables.Uno.csproj -c Debug -p:CiBuild=true
+
+      - name: Sample, Uno (desktop)
+        run: dotnet build Samples/XAnimals.Uno/XAnimals.Uno.csproj -c Debug -p:CiBuild=true
+
+  # WPF runs on Windows only, so it is a job of its own. Like the Uno job, it starts separate: the project was written where
+  # the Windows Desktop targeting pack was not available. Once it is green, fold it into build-and-test.
+  wpf:
+    name: Build WPF
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-wpf-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-wpf-
+
+      - name: WPF library
+        run: dotnet build Routeables.Wpf/Routeables.Wpf.csproj -c Debug ${{ env.CI_PROPS }}
+
+      - name: Sample, WPF
+        run: dotnet build Samples/XAnimals.Wpf/XAnimals.Wpf.csproj -c Debug
+
+      - name: Pack
+        run: dotnet pack Routeables.Wpf/Routeables.Wpf.csproj -c Release -o artifacts
+
+  # ---------------------------------------------------------------------------------------------------------------------------
+  # The AOT / trimming guarantee, proven rather than declared: a console app using the libraries the way an application does is
+  # published with Native AOT (any trim or AOT warning fails the publish) and the native binary is run (a navigation that only
+  # worked through reflection fails). The Blazor WebAssembly sample is then published trimmed, and any trim warning raised
+  # by Routeables code fails the job.
+  # ---------------------------------------------------------------------------------------------------------------------------
+
+  aot:
+    name: Native AOT and trimming
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Native AOT clang
+        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+
+      - name: Publish Native AOT smoke app
+        run: dotnet publish Routeables.AotSmoke/Routeables.AotSmoke.csproj -c Release -r linux-x64 -o artifacts/aot-smoke
+
+      - name: Run the native binary
+        run: ./artifacts/aot-smoke/Routeables.AotSmoke
+
+      - name: Install wasm-tools workload
+        run: dotnet workload install wasm-tools --skip-manifest-update
+
+      # A Blazor WebAssembly Release publish trims by default. Do not pass PublishTrimmed on the command line: it is a global
+      # property, so it also reaches Routeables.Generated (netstandard2.0), which cannot be trimmed (NETSDK1124).
+      - name: Publish Blazor WebAssembly trimmed
+        shell: bash
+        run: |
+          dotnet publish Samples/XAnimals.BlazorWebAssembly/XAnimals.BlazorWebAssembly.csproj -c Release -p:TrimmerSingleWarn=false -o artifacts/wasm 2>&1 | tee wasm-publish.log
+          if grep -E "warning IL[23][0-9]{3}" wasm-publish.log | grep -i "routeables"; then
+            echo "::error::Routeables raised trim warnings"; exit 1
+          fi
+
+  # ---------------------------------------------------------------------------------------------------------------------------
+  # The packages: the Routeables package holds seven libraries and the generator, and no package may depend on one of those
+  # libraries as if it were a package of its own. The packages that need a MAUI or Uno workload are not packed here.
+  # ---------------------------------------------------------------------------------------------------------------------------
+
+  packages:
+    name: Pack and check the packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Check the dependencies written in the nuspec
+        run: bash .github/scripts/check-nuspec.sh
+
+      - name: Pack
+        run: |
+          dotnet pack Routeables.Core/Routeables.Core.csproj -c Release -o artifacts
+          dotnet pack Routeables.Razor/Routeables.Razor.csproj -c Release -o artifacts
+          dotnet pack Routeables.Avalonia/Routeables.Avalonia.csproj -c Release -o artifacts
+
+      - name: Check the dependencies and the content
+        run: bash .github/scripts/check-packages.sh artifacts
+
+  android:
+    name: Build Android (MAUI, Avalonia)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      # .NET for Android needs a recent JDK.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android --skip-manifest-update
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-android-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-android-
+
+      - name: MAUI
+        run: |
+          dotnet build Routeables.Maui/Routeables.Maui.csproj -c Debug -f net10.0-android
+          dotnet build Reshapes/Reshapes.Maui.Community/Reshapes.Maui.Community.csproj -c Debug -f net10.0-android
+          dotnet build Samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-android
+          dotnet build Samples/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj -c Debug -f net10.0-android
+
+      - name: Avalonia
+        run: dotnet build Samples/XAnimals.Avalonia.Android/XAnimals.Avalonia.Android.csproj -c Debug
+
+  maui-windows:
+    name: Build MAUI (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install MAUI workload
+        run: dotnet workload install maui --skip-manifest-update
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-maui-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-maui-
+
+      # bash, not PowerShell: PowerShell only reports the exit code of the last command of a script, so an earlier failed build would pass.
+      - name: MAUI
+        shell: bash
+        run: |
+          # Every project is built even when an earlier one fails, and only the errors are printed, so one run shows all of them.
+          failed=0
+          for project in \
+            Routeables.Maui/Routeables.Maui.csproj \
+            Reshapes/Reshapes.Maui.Community/Reshapes.Maui.Community.csproj \
+            Samples/XAnimals.Maui/XAnimals.Maui.csproj \
+            Samples/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj; do
+            echo "::group::$project"
+            if ! dotnet build "$project" -c Debug -f net10.0-windows10.0.19041.0 -nologo -clp:ErrorsOnly; then
+              echo "::error title=MAUI Windows build failed::$project"
+              failed=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $failed
+
+  # Apple targets depend on the Xcode version the runner has, which .NET pins: a mismatch fails here without meaning the code is
+  # wrong. It reports but does not block (continue-on-error); remove that line once it runs green.
+  apple:
+    name: Build iOS and Mac Catalyst (not blocking)
+    runs-on: macos-latest
+    continue-on-error: true
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      # .NET for iOS / Mac Catalyst 26.0 requires exactly Xcode 26.0; the runner selects a newer one by default.
+      - name: Select Xcode 26.0
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.0'
+
+      - name: Install MAUI workloads
+        # The whole maui workload, not only the Apple ones: a project that targets android as well is restored for every one of its
+        # target frameworks, so building it for Mac Catalyst still needs the android workload.
+        run: dotnet workload install maui ios --skip-manifest-update
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-apple-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-apple-
+
+      - name: MAUI, Mac Catalyst
+        run: |
+          dotnet build Samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-maccatalyst
+          dotnet build Samples/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj -c Debug -f net10.0-maccatalyst
+
+      # actool compiles the asset catalog against the iOS simulator SDK, even for a device build, and needs the matching simulator
+      # runtime. The runner image only has the runtimes of newer Xcode versions, so the one of Xcode 26.0 is downloaded.
+      - name: Install the iOS runtime of Xcode 26.0
+        run: sudo xcodebuild -downloadPlatform iOS
+
+      # Built for a device, without signing.
+      - name: MAUI and Avalonia, iOS
+        run: |
+          dotnet build Samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-ios -r ios-arm64 -p:EnableCodeSigning=false
+          dotnet build Samples/XAnimals.Avalonia.iOS/XAnimals.Avalonia.iOS.csproj -c Debug -r ios-arm64 -p:EnableCodeSigning=false

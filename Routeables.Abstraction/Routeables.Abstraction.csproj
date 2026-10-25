@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAotCompatible>true</IsAotCompatible>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Shipped inside the Routeables package (Routeables.Core/Routeables.nuspec), not as a package of its own. -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Routing" />
+    <InternalsVisibleTo Include="Routeables.Segments" />
+    <InternalsVisibleTo Include="Routeables.Regions" />
+    <InternalsVisibleTo Include="Routeables.Test" />
+    <InternalsVisibleTo Include="Routeables.Core" />
+    <InternalsVisibleTo Include="Routeables.Razor" />
+    <InternalsVisibleTo Include="Routeables.Maui" />
+    <InternalsVisibleTo Include="Routeables.Avalonia" />
+    <InternalsVisibleTo Include="Routeables.Uno" />
+    <InternalsVisibleTo Include="Routeables.Wpf" />
+    <InternalsVisibleTo Include="Routeables.Benchmarks" />
+    <!-- Lets NSubstitute/Castle build proxies of the internal interfaces (e.g. ILockCoordinatorFactory) in tests. -->
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.13" />
+  </ItemGroup>
+</Project>

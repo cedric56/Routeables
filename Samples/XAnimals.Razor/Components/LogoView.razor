@@ -1,0 +1,8 @@
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@inherits RouteableFor<LogoView, LogoViewModel>
+
+<div class="rg-logo">
+    <img src="_content/XAnimals.Razor/logo.svg" alt="@ViewModel.Name logo" />
+</div>

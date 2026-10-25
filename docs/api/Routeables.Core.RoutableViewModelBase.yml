@@ -1,0 +1,1954 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Core.RoutableViewModelBase
+  commentId: T:Routeables.Core.RoutableViewModelBase
+  id: RoutableViewModelBase
+  parent: Routeables.Core
+  children:
+  - Routeables.Core.RoutableViewModelBase.#ctor(Routeables.Abstraction.IRouter,System.Boolean)
+  - Routeables.Core.RoutableViewModelBase.CanNavigateAsync(System.Threading.CancellationToken)
+  - Routeables.Core.RoutableViewModelBase.CurrentView
+  - Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+  - Routeables.Core.RoutableViewModelBase.Dispose
+  - Routeables.Core.RoutableViewModelBase.GetRoutables
+  - Routeables.Core.RoutableViewModelBase.GetView(Routeables.Abstraction.IRouteableView)
+  - Routeables.Core.RoutableViewModelBase.LockChanged
+  - Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged(System.String)
+  - Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableArgs)
+  - Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  - Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  - Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  - Routeables.Core.RoutableViewModelBase.OnNavigationFailed(System.Exception)
+  - Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView,System.Int32)
+  - Routeables.Core.RoutableViewModelBase.OnViewModelChanged(System.Object)
+  - Routeables.Core.RoutableViewModelBase.Routable
+  - Routeables.Core.RoutableViewModelBase.Routeables
+  - Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+  langs:
+  - csharp
+  - vb
+  name: RoutableViewModelBase
+  nameWithType: RoutableViewModelBase
+  fullName: Routeables.Core.RoutableViewModelBase
+  type: Class
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: RoutableViewModelBase
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 63
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Base class for a view model that manages navigation between a set of <xref href="Routeables.Abstraction.IRouteableView" data-throw-if-not-resolved="false"></xref> items,
+
+    caching the view/view-model pair for each one as it is visited.
+  example: []
+  syntax:
+    content: 'public abstract class RoutableViewModelBase : RouterViewModelBase, IDisposable, IRouteable, IMainRouteables'
+    content.vb: Public MustInherit Class RoutableViewModelBase Inherits RouterViewModelBase Implements IDisposable, IRouteable, IMainRouteables
+  inheritance:
+  - System.Object
+  - Routeables.Core.RouterViewModelBase
+  derivedClasses:
+  - Routeables.Core.RoutableViewModel
+  - Routeables.Core.RoutableViewModelBase`1
+  implements:
+  - System.IDisposable
+  - Routeables.Abstraction.IRouteable
+  - Routeables.Abstraction.IMainRouteables
+  inheritedMembers:
+  - Routeables.Core.RouterViewModelBase._router
+  - Routeables.Core.RouterViewModelBase.GoBack
+  - Routeables.Core.RouterViewModelBase.CanGoBack
+  - Routeables.Core.RouterViewModelBase.GoForward
+  - Routeables.Core.RouterViewModelBase.CanGoForward
+  - Routeables.Core.RouterViewModelBase.RaiseCanExecutesChanged
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+  commentId: P:Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+  id: CurrentViewChanged
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: CurrentViewChanged
+  nameWithType: RoutableViewModelBase.CurrentViewChanged
+  fullName: Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: CurrentViewChanged
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 68
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Occurs when the currently displayed view changes.
+  example: []
+  syntax:
+    content: public EventHandler<object?>? CurrentViewChanged { get; set; }
+    parameters: []
+    return:
+      type: System.EventHandler{System.Object}
+    content.vb: Public Property CurrentViewChanged As EventHandler(Of Object)
+  overload: Routeables.Core.RoutableViewModelBase.CurrentViewChanged*
+  implements:
+  - Routeables.Abstraction.IMainRouteables.CurrentViewChanged
+- uid: Routeables.Core.RoutableViewModelBase.LockChanged
+  commentId: P:Routeables.Core.RoutableViewModelBase.LockChanged
+  id: LockChanged
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: LockChanged
+  nameWithType: RoutableViewModelBase.LockChanged
+  fullName: Routeables.Core.RoutableViewModelBase.LockChanged
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: LockChanged
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 73
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Occurs when the lock state of the routable collection changes.
+  example: []
+  syntax:
+    content: public EventHandler? LockChanged { get; set; }
+    parameters: []
+    return:
+      type: System.EventHandler
+    content.vb: Public Property LockChanged As EventHandler
+  overload: Routeables.Core.RoutableViewModelBase.LockChanged*
+  implements:
+  - Routeables.Abstraction.IMainRouteables.LockChanged
+- uid: Routeables.Core.RoutableViewModelBase.OnViewModelChanged(System.Object)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnViewModelChanged(System.Object)
+  id: OnViewModelChanged(System.Object)
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: OnViewModelChanged(object?)
+  nameWithType: RoutableViewModelBase.OnViewModelChanged(object?)
+  fullName: Routeables.Core.RoutableViewModelBase.OnViewModelChanged(object?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: OnViewModelChanged
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 80
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Updates <xref href="Routeables.Core.RoutableViewModelBase.Routable" data-throw-if-not-resolved="false"></xref> and <xref href="Routeables.Core.RoutableViewModelBase.CurrentView" data-throw-if-not-resolved="false"></xref> to reflect a change in the
+
+    active view model, and raises the corresponding change notifications.
+  example: []
+  syntax:
+    content: protected override void OnViewModelChanged(object? viewModel)
+    parameters:
+    - id: viewModel
+      type: System.Object
+      description: The view model that has become active.
+    content.vb: Protected Overrides Sub OnViewModelChanged(viewModel As Object)
+  overridden: Routeables.Core.RouterViewModelBase.OnViewModelChanged(System.Object)
+  overload: Routeables.Core.RoutableViewModelBase.OnViewModelChanged*
+  nameWithType.vb: RoutableViewModelBase.OnViewModelChanged(Object)
+  fullName.vb: Routeables.Core.RoutableViewModelBase.OnViewModelChanged(Object)
+  name.vb: OnViewModelChanged(Object)
+- uid: Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged(System.String)
+  commentId: M:Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged(System.String)
+  id: NotifyPropertyChanged(System.String)
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: NotifyPropertyChanged(string)
+  nameWithType: RoutableViewModelBase.NotifyPropertyChanged(string)
+  fullName: Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged(string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: NotifyPropertyChanged
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 101
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Raises a property-changed notification for the specified property.
+  example: []
+  syntax:
+    content: protected abstract void NotifyPropertyChanged(string propertyName)
+    parameters:
+    - id: propertyName
+      type: System.String
+      description: The name of the property that changed.
+    content.vb: Protected MustOverride Sub NotifyPropertyChanged(propertyName As String)
+  overload: Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged*
+  nameWithType.vb: RoutableViewModelBase.NotifyPropertyChanged(String)
+  fullName.vb: Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged(String)
+  name.vb: NotifyPropertyChanged(String)
+- uid: Routeables.Core.RoutableViewModelBase.CurrentView
+  commentId: P:Routeables.Core.RoutableViewModelBase.CurrentView
+  id: CurrentView
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: CurrentView
+  nameWithType: RoutableViewModelBase.CurrentView
+  fullName: Routeables.Core.RoutableViewModelBase.CurrentView
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: CurrentView
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 109
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Gets or sets the view currently being displayed. Setting this property raises
+
+    <xref href="Routeables.Core.RoutableViewModelBase.CurrentViewChanged" data-throw-if-not-resolved="false"></xref> and a property-changed notification.
+  example: []
+  syntax:
+    content: public object? CurrentView { get; set; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: Public Property CurrentView As Object
+  overload: Routeables.Core.RoutableViewModelBase.CurrentView*
+  implements:
+  - Routeables.Abstraction.IMainRouteables.CurrentView
+- uid: Routeables.Core.RoutableViewModelBase.Routable
+  commentId: P:Routeables.Core.RoutableViewModelBase.Routable
+  id: Routable
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: Routable
+  nameWithType: RoutableViewModelBase.Routable
+  fullName: Routeables.Core.RoutableViewModelBase.Routable
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: Routable
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 127
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets or sets the currently active navigable item. Setting this property initiates an asynchronous selection task.
+  example: []
+  syntax:
+    content: public IRouteableView? Routable { get; set; }
+    parameters: []
+    return:
+      type: Routeables.Abstraction.IRouteableView
+    content.vb: Public Property Routable As IRouteableView
+  overload: Routeables.Core.RoutableViewModelBase.Routable*
+  implements:
+  - Routeables.Abstraction.IMainRouteables.Routable
+- uid: Routeables.Core.RoutableViewModelBase.#ctor(Routeables.Abstraction.IRouter,System.Boolean)
+  commentId: M:Routeables.Core.RoutableViewModelBase.#ctor(Routeables.Abstraction.IRouter,System.Boolean)
+  id: '#ctor(Routeables.Abstraction.IRouter,System.Boolean)'
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: RoutableViewModelBase(IRouter, bool)
+  nameWithType: RoutableViewModelBase.RoutableViewModelBase(IRouter, bool)
+  fullName: Routeables.Core.RoutableViewModelBase.RoutableViewModelBase(Routeables.Abstraction.IRouter, bool)
+  type: Constructor
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: .ctor
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 153
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Initializes a new instance of the <xref href="Routeables.Core.RoutableViewModelBase" data-throw-if-not-resolved="false"></xref> class.
+  example: []
+  syntax:
+    content: public RoutableViewModelBase(IRouter router, bool initialize = true)
+    parameters:
+    - id: router
+      type: Routeables.Abstraction.IRouter
+      description: The router used to manage navigation between views.
+    - id: initialize
+      type: System.Boolean
+      description: >-
+        If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>, <xref href="Routeables.Core.RoutableViewModelBase.Routable" data-throw-if-not-resolved="false"></xref> is set to the first available
+
+        navigable item on construction.
+    content.vb: Public Sub New(router As IRouter, initialize As Boolean = True)
+  overload: Routeables.Core.RoutableViewModelBase.#ctor*
+  nameWithType.vb: RoutableViewModelBase.New(IRouter, Boolean)
+  fullName.vb: Routeables.Core.RoutableViewModelBase.New(Routeables.Abstraction.IRouter, Boolean)
+  name.vb: New(IRouter, Boolean)
+- uid: Routeables.Core.RoutableViewModelBase.OnNavigationFailed(System.Exception)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnNavigationFailed(System.Exception)
+  id: OnNavigationFailed(System.Exception)
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: OnNavigationFailed(Exception)
+  nameWithType: RoutableViewModelBase.OnNavigationFailed(Exception)
+  fullName: Routeables.Core.RoutableViewModelBase.OnNavigationFailed(System.Exception)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: OnNavigationFailed
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 186
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Called when a selection started by the <xref href="Routeables.Core.RoutableViewModelBase.Routable" data-throw-if-not-resolved="false"></xref> setter (or the constructor) fails.
+  example: []
+  syntax:
+    content: protected virtual void OnNavigationFailed(Exception exception)
+    parameters:
+    - id: exception
+      type: System.Exception
+      description: The exception that caused the failure.
+    content.vb: Protected Overridable Sub OnNavigationFailed(exception As Exception)
+  overload: Routeables.Core.RoutableViewModelBase.OnNavigationFailed*
+- uid: Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+  commentId: M:Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+  id: SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: SelectAsync(IRouteableView?, IRouteableView?)
+  nameWithType: RoutableViewModelBase.SelectAsync(IRouteableView?, IRouteableView?)
+  fullName: Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView?, Routeables.Abstraction.IRouteableView?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: SelectAsync
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 194
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Selects the specified navigable item asynchronously, serializing requests and guarding against out-of-order execution.
+  example: []
+  syntax:
+    content: public Task SelectAsync(IRouteableView? value, IRouteableView? old = null)
+    parameters:
+    - id: value
+      type: Routeables.Abstraction.IRouteableView
+      description: The target navigable item.
+    - id: old
+      type: Routeables.Abstraction.IRouteableView
+      description: The previous navigable item, restored on failure.
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Function SelectAsync(value As IRouteableView, old As IRouteableView = Nothing) As Task
+  overload: Routeables.Core.RoutableViewModelBase.SelectAsync*
+  nameWithType.vb: RoutableViewModelBase.SelectAsync(IRouteableView, IRouteableView)
+  fullName.vb: Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView, Routeables.Abstraction.IRouteableView)
+  name.vb: SelectAsync(IRouteableView, IRouteableView)
+- uid: Routeables.Core.RoutableViewModelBase.Routeables
+  commentId: P:Routeables.Core.RoutableViewModelBase.Routeables
+  id: Routeables
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: Routeables
+  nameWithType: RoutableViewModelBase.Routeables
+  fullName: Routeables.Core.RoutableViewModelBase.Routeables
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: Routeables
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 221
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Gets the collection of navigable items available to this view model, lazily populated
+
+    via <xref href="Routeables.Core.RoutableViewModelBase.GetRoutables" data-throw-if-not-resolved="false"></xref> on first access.
+  example: []
+  syntax:
+    content: public ObservableCollection<IRouteableView> Routeables { get; }
+    parameters: []
+    return:
+      type: System.Collections.ObjectModel.ObservableCollection{Routeables.Abstraction.IRouteableView}
+    content.vb: Public ReadOnly Property Routeables As ObservableCollection(Of IRouteableView)
+  overload: Routeables.Core.RoutableViewModelBase.Routeables*
+  implements:
+  - Routeables.Abstraction.IMainRouteables.Routeables
+- uid: Routeables.Core.RoutableViewModelBase.GetRoutables
+  commentId: M:Routeables.Core.RoutableViewModelBase.GetRoutables
+  id: GetRoutables
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: GetRoutables()
+  nameWithType: RoutableViewModelBase.GetRoutables()
+  fullName: Routeables.Core.RoutableViewModelBase.GetRoutables()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: GetRoutables
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 227
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: When implemented in a derived class, returns the collection of navigable items this view model exposes.
+  example: []
+  syntax:
+    content: protected abstract ObservableCollection<IRouteableView> GetRoutables()
+    return:
+      type: System.Collections.ObjectModel.ObservableCollection{Routeables.Abstraction.IRouteableView}
+      description: The collection of available <xref href="Routeables.Abstraction.IRouteableView" data-throw-if-not-resolved="false"></xref> items.
+    content.vb: Protected MustOverride Function GetRoutables() As ObservableCollection(Of IRouteableView)
+  overload: Routeables.Core.RoutableViewModelBase.GetRoutables*
+- uid: Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView,System.Int32)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView,System.Int32)
+  id: OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView,System.Int32)
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: OnRoutableChangedAsync(IRouteableView?, IRouteableView?, int)
+  nameWithType: RoutableViewModelBase.OnRoutableChangedAsync(IRouteableView?, IRouteableView?, int)
+  fullName: Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView?, Routeables.Abstraction.IRouteableView?, int)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: OnRoutableChangedAsync
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 238
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Handles a change to <xref href="Routeables.Core.RoutableViewModelBase.Routable" data-throw-if-not-resolved="false"></xref> by resolving (or creating) the associated
+
+    view/view-model pair, updating <xref href="Routeables.Core.RoutableViewModelBase.CurrentView" data-throw-if-not-resolved="false"></xref>, and recording navigation history.
+  example: []
+  syntax:
+    content: public virtual Task OnRoutableChangedAsync(IRouteableView? value, IRouteableView? old, int version = 0)
+    parameters:
+    - id: value
+      type: Routeables.Abstraction.IRouteableView
+      description: The newly selected navigable item, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if none is selected.
+    - id: old
+      type: Routeables.Abstraction.IRouteableView
+      description: The previously selected item, restored on failure.
+    - id: version
+      type: System.Int32
+      description: The selection version this call is running under, as assigned by <xref href="Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView%2cRouteables.Abstraction.IRouteableView)" data-throw-if-not-resolved="false"></xref>.
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Overridable Function OnRoutableChangedAsync(value As IRouteableView, old As IRouteableView, version As Integer = 0) As Task
+  overload: Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync*
+  nameWithType.vb: RoutableViewModelBase.OnRoutableChangedAsync(IRouteableView, IRouteableView, Integer)
+  fullName.vb: Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView, Routeables.Abstraction.IRouteableView, Integer)
+  name.vb: OnRoutableChangedAsync(IRouteableView, IRouteableView, Integer)
+- uid: Routeables.Core.RoutableViewModelBase.GetView(Routeables.Abstraction.IRouteableView)
+  commentId: M:Routeables.Core.RoutableViewModelBase.GetView(Routeables.Abstraction.IRouteableView)
+  id: GetView(Routeables.Abstraction.IRouteableView)
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: GetView(IRouteableView)
+  nameWithType: RoutableViewModelBase.GetView(IRouteableView)
+  fullName: Routeables.Core.RoutableViewModelBase.GetView(Routeables.Abstraction.IRouteableView)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: GetView
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 284
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Retrieves or navigates to the view for the specified routable item.
+  example: []
+  syntax:
+    content: protected virtual Task<bool> GetView(IRouteableView value)
+    parameters:
+    - id: value
+      type: Routeables.Abstraction.IRouteableView
+      description: The navigable item.
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if navigation succeeded; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.
+    content.vb: Protected Overridable Function GetView(value As IRouteableView) As Task(Of Boolean)
+  overload: Routeables.Core.RoutableViewModelBase.GetView*
+- uid: Routeables.Core.RoutableViewModelBase.Dispose
+  commentId: M:Routeables.Core.RoutableViewModelBase.Dispose
+  id: Dispose
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: Dispose()
+  nameWithType: RoutableViewModelBase.Dispose()
+  fullName: Routeables.Core.RoutableViewModelBase.Dispose()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: Dispose
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 299
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+  example: []
+  syntax:
+    content: public virtual void Dispose()
+    content.vb: Public Overridable Sub Dispose()
+  overload: Routeables.Core.RoutableViewModelBase.Dispose*
+  implements:
+  - System.IDisposable.Dispose
+- uid: Routeables.Core.RoutableViewModelBase.CanNavigateAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Core.RoutableViewModelBase.CanNavigateAsync(System.Threading.CancellationToken)
+  id: CanNavigateAsync(System.Threading.CancellationToken)
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: CanNavigateAsync(CancellationToken)
+  nameWithType: RoutableViewModelBase.CanNavigateAsync(CancellationToken)
+  fullName: Routeables.Core.RoutableViewModelBase.CanNavigateAsync(System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: CanNavigateAsync
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 310
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Determines whether navigation away from this view model is allowed.
+  example: []
+  syntax:
+    content: public virtual Task<bool> CanNavigateAsync(CancellationToken ct = default)
+    parameters:
+    - id: ct
+      type: System.Threading.CancellationToken
+      description: A cancellation token.
+    return:
+      type: System.Threading.Tasks.Task{System.Boolean}
+      description: A task returning <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if navigation is allowed.
+    content.vb: Public Overridable Function CanNavigateAsync(ct As CancellationToken = Nothing) As Task(Of Boolean)
+  overload: Routeables.Core.RoutableViewModelBase.CanNavigateAsync*
+  implements:
+  - Routeables.Abstraction.IRouteable.CanNavigateAsync(System.Threading.CancellationToken)
+- uid: Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  id: OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: OnNavigatingToAsync(IRouteableArgs, CancellationToken)
+  nameWithType: RoutableViewModelBase.OnNavigatingToAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: OnNavigatingToAsync
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 320
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Called asynchronously when navigating to this view model.
+  example: []
+  syntax:
+    content: public virtual Task OnNavigatingToAsync(IRouteableArgs args, CancellationToken ct = default)
+    parameters:
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+      description: The routing arguments.
+    - id: ct
+      type: System.Threading.CancellationToken
+      description: A cancellation token.
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Overridable Function OnNavigatingToAsync(args As IRouteableArgs, ct As CancellationToken = Nothing) As Task
+  overload: Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync*
+  implements:
+  - Routeables.Abstraction.IRouteable.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+- uid: Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  id: OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: OnNavigatingFromAsync(IRouteableArgs, CancellationToken)
+  nameWithType: RoutableViewModelBase.OnNavigatingFromAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: OnNavigatingFromAsync
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 330
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Called asynchronously when navigating away from this view model.
+  example: []
+  syntax:
+    content: public virtual Task OnNavigatingFromAsync(IRouteableArgs args, CancellationToken ct = default)
+    parameters:
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+      description: The routing arguments.
+    - id: ct
+      type: System.Threading.CancellationToken
+      description: A cancellation token.
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Overridable Function OnNavigatingFromAsync(args As IRouteableArgs, ct As CancellationToken = Nothing) As Task
+  overload: Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync*
+  implements:
+  - Routeables.Abstraction.IRouteable.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+- uid: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableArgs)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableArgs)
+  id: OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableArgs)
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: OnCurrentRoutableChanged(IRouteableArgs?)
+  nameWithType: RoutableViewModelBase.OnCurrentRoutableChanged(IRouteableArgs?)
+  fullName: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableArgs?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: OnCurrentRoutableChanged
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 339
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Called when the current routable arguments change.
+  example: []
+  syntax:
+    content: public Task OnCurrentRoutableChanged(IRouteableArgs? value)
+    parameters:
+    - id: value
+      type: Routeables.Abstraction.IRouteableArgs
+      description: The new routable arguments.
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Function OnCurrentRoutableChanged(value As IRouteableArgs) As Task
+  overload: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged*
+  nameWithType.vb: RoutableViewModelBase.OnCurrentRoutableChanged(IRouteableArgs)
+  fullName.vb: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableArgs)
+  name.vb: OnCurrentRoutableChanged(IRouteableArgs)
+- uid: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  id: OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  parent: Routeables.Core.RoutableViewModelBase
+  langs:
+  - csharp
+  - vb
+  name: OnCurrentRoutableChanged(IRouteableView?)
+  nameWithType: RoutableViewModelBase.OnCurrentRoutableChanged(IRouteableView?)
+  fullName: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Bases/RoutableViewModelBase.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: OnCurrentRoutableChanged
+    path: ../Routeables.Core/Bases/RoutableViewModelBase.cs
+    startLine: 348
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Called when the current routable view item changes.
+  example: []
+  syntax:
+    content: public Task OnCurrentRoutableChanged(IRouteableView? value)
+    parameters:
+    - id: value
+      type: Routeables.Abstraction.IRouteableView
+      description: The new routable view item.
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Function OnCurrentRoutableChanged(value As IRouteableView) As Task
+  overload: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged*
+  implements:
+  - Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  nameWithType.vb: RoutableViewModelBase.OnCurrentRoutableChanged(IRouteableView)
+  fullName.vb: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  name.vb: OnCurrentRoutableChanged(IRouteableView)
+references:
+- uid: Routeables.Abstraction.IRouteableView
+  commentId: T:Routeables.Abstraction.IRouteableView
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableView.html
+  name: IRouteableView
+  nameWithType: IRouteableView
+  fullName: Routeables.Abstraction.IRouteableView
+- uid: Routeables.Core
+  commentId: N:Routeables.Core
+  name: Routeables.Core
+  nameWithType: Routeables.Core
+  fullName: Routeables.Core
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Routeables.Core.RouterViewModelBase
+  commentId: T:Routeables.Core.RouterViewModelBase
+  parent: Routeables.Core
+  href: Routeables.Core.RouterViewModelBase.html
+  name: RouterViewModelBase
+  nameWithType: RouterViewModelBase
+  fullName: Routeables.Core.RouterViewModelBase
+- uid: System.IDisposable
+  commentId: T:System.IDisposable
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.idisposable
+  name: IDisposable
+  nameWithType: IDisposable
+  fullName: System.IDisposable
+- uid: Routeables.Abstraction.IRouteable
+  commentId: T:Routeables.Abstraction.IRouteable
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteable.html
+  name: IRouteable
+  nameWithType: IRouteable
+  fullName: Routeables.Abstraction.IRouteable
+- uid: Routeables.Abstraction.IMainRouteables
+  commentId: T:Routeables.Abstraction.IMainRouteables
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IMainRouteables.html
+  name: IMainRouteables
+  nameWithType: IMainRouteables
+  fullName: Routeables.Abstraction.IMainRouteables
+- uid: Routeables.Core.RouterViewModelBase._router
+  commentId: F:Routeables.Core.RouterViewModelBase._router
+  parent: Routeables.Core.RouterViewModelBase
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase__router
+  name: _router
+  nameWithType: RouterViewModelBase._router
+  fullName: Routeables.Core.RouterViewModelBase._router
+- uid: Routeables.Core.RouterViewModelBase.GoBack
+  commentId: M:Routeables.Core.RouterViewModelBase.GoBack
+  parent: Routeables.Core.RouterViewModelBase
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_GoBack
+  name: GoBack()
+  nameWithType: RouterViewModelBase.GoBack()
+  fullName: Routeables.Core.RouterViewModelBase.GoBack()
+  spec.csharp:
+  - uid: Routeables.Core.RouterViewModelBase.GoBack
+    name: GoBack
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_GoBack
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RouterViewModelBase.GoBack
+    name: GoBack
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_GoBack
+  - name: (
+  - name: )
+- uid: Routeables.Core.RouterViewModelBase.CanGoBack
+  commentId: M:Routeables.Core.RouterViewModelBase.CanGoBack
+  parent: Routeables.Core.RouterViewModelBase
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_CanGoBack
+  name: CanGoBack()
+  nameWithType: RouterViewModelBase.CanGoBack()
+  fullName: Routeables.Core.RouterViewModelBase.CanGoBack()
+  spec.csharp:
+  - uid: Routeables.Core.RouterViewModelBase.CanGoBack
+    name: CanGoBack
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_CanGoBack
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RouterViewModelBase.CanGoBack
+    name: CanGoBack
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_CanGoBack
+  - name: (
+  - name: )
+- uid: Routeables.Core.RouterViewModelBase.GoForward
+  commentId: M:Routeables.Core.RouterViewModelBase.GoForward
+  parent: Routeables.Core.RouterViewModelBase
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_GoForward
+  name: GoForward()
+  nameWithType: RouterViewModelBase.GoForward()
+  fullName: Routeables.Core.RouterViewModelBase.GoForward()
+  spec.csharp:
+  - uid: Routeables.Core.RouterViewModelBase.GoForward
+    name: GoForward
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_GoForward
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RouterViewModelBase.GoForward
+    name: GoForward
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_GoForward
+  - name: (
+  - name: )
+- uid: Routeables.Core.RouterViewModelBase.CanGoForward
+  commentId: M:Routeables.Core.RouterViewModelBase.CanGoForward
+  parent: Routeables.Core.RouterViewModelBase
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_CanGoForward
+  name: CanGoForward()
+  nameWithType: RouterViewModelBase.CanGoForward()
+  fullName: Routeables.Core.RouterViewModelBase.CanGoForward()
+  spec.csharp:
+  - uid: Routeables.Core.RouterViewModelBase.CanGoForward
+    name: CanGoForward
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_CanGoForward
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RouterViewModelBase.CanGoForward
+    name: CanGoForward
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_CanGoForward
+  - name: (
+  - name: )
+- uid: Routeables.Core.RouterViewModelBase.RaiseCanExecutesChanged
+  commentId: M:Routeables.Core.RouterViewModelBase.RaiseCanExecutesChanged
+  parent: Routeables.Core.RouterViewModelBase
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_RaiseCanExecutesChanged
+  name: RaiseCanExecutesChanged()
+  nameWithType: RouterViewModelBase.RaiseCanExecutesChanged()
+  fullName: Routeables.Core.RouterViewModelBase.RaiseCanExecutesChanged()
+  spec.csharp:
+  - uid: Routeables.Core.RouterViewModelBase.RaiseCanExecutesChanged
+    name: RaiseCanExecutesChanged
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_RaiseCanExecutesChanged
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RouterViewModelBase.RaiseCanExecutesChanged
+    name: RaiseCanExecutesChanged
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_RaiseCanExecutesChanged
+  - name: (
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Core.RoutableViewModelBase.CurrentViewChanged*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_CurrentViewChanged
+  name: CurrentViewChanged
+  nameWithType: RoutableViewModelBase.CurrentViewChanged
+  fullName: Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+- uid: Routeables.Abstraction.IMainRouteables.CurrentViewChanged
+  commentId: P:Routeables.Abstraction.IMainRouteables.CurrentViewChanged
+  parent: Routeables.Abstraction.IMainRouteables
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_CurrentViewChanged
+  name: CurrentViewChanged
+  nameWithType: IMainRouteables.CurrentViewChanged
+  fullName: Routeables.Abstraction.IMainRouteables.CurrentViewChanged
+- uid: System.EventHandler{System.Object}
+  commentId: T:System.EventHandler{System.Object}
+  parent: System
+  definition: System.EventHandler`1
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<object>
+  nameWithType: EventHandler<object>
+  fullName: System.EventHandler<object>
+  nameWithType.vb: EventHandler(Of Object)
+  fullName.vb: System.EventHandler(Of Object)
+  name.vb: EventHandler(Of Object)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.EventHandler`1
+  commentId: T:System.EventHandler`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<TEventArgs>
+  nameWithType: EventHandler<TEventArgs>
+  fullName: System.EventHandler<TEventArgs>
+  nameWithType.vb: EventHandler(Of TEventArgs)
+  fullName.vb: System.EventHandler(Of TEventArgs)
+  name.vb: EventHandler(Of TEventArgs)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - name: TEventArgs
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TEventArgs
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.LockChanged*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.LockChanged
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_LockChanged
+  name: LockChanged
+  nameWithType: RoutableViewModelBase.LockChanged
+  fullName: Routeables.Core.RoutableViewModelBase.LockChanged
+- uid: Routeables.Abstraction.IMainRouteables.LockChanged
+  commentId: P:Routeables.Abstraction.IMainRouteables.LockChanged
+  parent: Routeables.Abstraction.IMainRouteables
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_LockChanged
+  name: LockChanged
+  nameWithType: IMainRouteables.LockChanged
+  fullName: Routeables.Abstraction.IMainRouteables.LockChanged
+- uid: System.EventHandler
+  commentId: T:System.EventHandler
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler
+  name: EventHandler
+  nameWithType: EventHandler
+  fullName: System.EventHandler
+- uid: Routeables.Core.RoutableViewModelBase.Routable
+  commentId: P:Routeables.Core.RoutableViewModelBase.Routable
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_Routable
+  name: Routable
+  nameWithType: RoutableViewModelBase.Routable
+  fullName: Routeables.Core.RoutableViewModelBase.Routable
+- uid: Routeables.Core.RoutableViewModelBase.CurrentView
+  commentId: P:Routeables.Core.RoutableViewModelBase.CurrentView
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_CurrentView
+  name: CurrentView
+  nameWithType: RoutableViewModelBase.CurrentView
+  fullName: Routeables.Core.RoutableViewModelBase.CurrentView
+- uid: Routeables.Core.RouterViewModelBase.OnViewModelChanged(System.Object)
+  commentId: M:Routeables.Core.RouterViewModelBase.OnViewModelChanged(System.Object)
+  parent: Routeables.Core.RouterViewModelBase
+  isExternal: true
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_OnViewModelChanged_System_Object_
+  name: OnViewModelChanged(object)
+  nameWithType: RouterViewModelBase.OnViewModelChanged(object)
+  fullName: Routeables.Core.RouterViewModelBase.OnViewModelChanged(object)
+  nameWithType.vb: RouterViewModelBase.OnViewModelChanged(Object)
+  fullName.vb: Routeables.Core.RouterViewModelBase.OnViewModelChanged(Object)
+  name.vb: OnViewModelChanged(Object)
+  spec.csharp:
+  - uid: Routeables.Core.RouterViewModelBase.OnViewModelChanged(System.Object)
+    name: OnViewModelChanged
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_OnViewModelChanged_System_Object_
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RouterViewModelBase.OnViewModelChanged(System.Object)
+    name: OnViewModelChanged
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_OnViewModelChanged_System_Object_
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.OnViewModelChanged*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.OnViewModelChanged
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnViewModelChanged_System_Object_
+  name: OnViewModelChanged
+  nameWithType: RoutableViewModelBase.OnViewModelChanged
+  fullName: Routeables.Core.RoutableViewModelBase.OnViewModelChanged
+- uid: Routeables.Core.RoutableViewModelBase
+  commentId: T:Routeables.Core.RoutableViewModelBase
+  parent: Routeables.Core
+  href: Routeables.Core.RoutableViewModelBase.html
+  name: RoutableViewModelBase
+  nameWithType: RoutableViewModelBase
+  fullName: Routeables.Core.RoutableViewModelBase
+- uid: Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_NotifyPropertyChanged_System_String_
+  name: NotifyPropertyChanged
+  nameWithType: RoutableViewModelBase.NotifyPropertyChanged
+  fullName: Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+  commentId: P:Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_CurrentViewChanged
+  name: CurrentViewChanged
+  nameWithType: RoutableViewModelBase.CurrentViewChanged
+  fullName: Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+- uid: Routeables.Core.RoutableViewModelBase.CurrentView*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.CurrentView
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_CurrentView
+  name: CurrentView
+  nameWithType: RoutableViewModelBase.CurrentView
+  fullName: Routeables.Core.RoutableViewModelBase.CurrentView
+- uid: Routeables.Abstraction.IMainRouteables.CurrentView
+  commentId: P:Routeables.Abstraction.IMainRouteables.CurrentView
+  parent: Routeables.Abstraction.IMainRouteables
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_CurrentView
+  name: CurrentView
+  nameWithType: IMainRouteables.CurrentView
+  fullName: Routeables.Abstraction.IMainRouteables.CurrentView
+- uid: Routeables.Core.RoutableViewModelBase.Routable*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.Routable
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_Routable
+  name: Routable
+  nameWithType: RoutableViewModelBase.Routable
+  fullName: Routeables.Core.RoutableViewModelBase.Routable
+- uid: Routeables.Abstraction.IMainRouteables.Routable
+  commentId: P:Routeables.Abstraction.IMainRouteables.Routable
+  parent: Routeables.Abstraction.IMainRouteables
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Routable
+  name: Routable
+  nameWithType: IMainRouteables.Routable
+  fullName: Routeables.Abstraction.IMainRouteables.Routable
+- uid: Routeables.Core.RoutableViewModelBase.#ctor*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.#ctor
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase__ctor_Routeables_Abstraction_IRouter_System_Boolean_
+  name: RoutableViewModelBase
+  nameWithType: RoutableViewModelBase.RoutableViewModelBase
+  fullName: Routeables.Core.RoutableViewModelBase.RoutableViewModelBase
+  nameWithType.vb: RoutableViewModelBase.New
+  fullName.vb: Routeables.Core.RoutableViewModelBase.New
+  name.vb: New
+- uid: Routeables.Abstraction.IRouter
+  commentId: T:Routeables.Abstraction.IRouter
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouter.html
+  name: IRouter
+  nameWithType: IRouter
+  fullName: Routeables.Abstraction.IRouter
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: Routeables.Core.RoutableViewModelBase.OnNavigationFailed*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.OnNavigationFailed
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnNavigationFailed_System_Exception_
+  name: OnNavigationFailed
+  nameWithType: RoutableViewModelBase.OnNavigationFailed
+  fullName: Routeables.Core.RoutableViewModelBase.OnNavigationFailed
+- uid: System.Exception
+  commentId: T:System.Exception
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.exception
+  name: Exception
+  nameWithType: Exception
+  fullName: System.Exception
+- uid: Routeables.Core.RoutableViewModelBase.SelectAsync*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.SelectAsync
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_SelectAsync_Routeables_Abstraction_IRouteableView_Routeables_Abstraction_IRouteableView_
+  name: SelectAsync
+  nameWithType: RoutableViewModelBase.SelectAsync
+  fullName: Routeables.Core.RoutableViewModelBase.SelectAsync
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: Routeables.Core.RoutableViewModelBase.GetRoutables
+  commentId: M:Routeables.Core.RoutableViewModelBase.GetRoutables
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_GetRoutables
+  name: GetRoutables()
+  nameWithType: RoutableViewModelBase.GetRoutables()
+  fullName: Routeables.Core.RoutableViewModelBase.GetRoutables()
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.GetRoutables
+    name: GetRoutables
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_GetRoutables
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.GetRoutables
+    name: GetRoutables
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_GetRoutables
+  - name: (
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.Routeables*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.Routeables
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_Routeables
+  name: Routeables
+  nameWithType: RoutableViewModelBase.Routeables
+  fullName: Routeables.Core.RoutableViewModelBase.Routeables
+- uid: Routeables.Abstraction.IMainRouteables.Routeables
+  commentId: P:Routeables.Abstraction.IMainRouteables.Routeables
+  parent: Routeables.Abstraction.IMainRouteables
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Routeables
+  name: Routeables
+  nameWithType: IMainRouteables.Routeables
+  fullName: Routeables.Abstraction.IMainRouteables.Routeables
+- uid: System.Collections.ObjectModel.ObservableCollection{Routeables.Abstraction.IRouteableView}
+  commentId: T:System.Collections.ObjectModel.ObservableCollection{Routeables.Abstraction.IRouteableView}
+  parent: System.Collections.ObjectModel
+  definition: System.Collections.ObjectModel.ObservableCollection`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  name: ObservableCollection<IRouteableView>
+  nameWithType: ObservableCollection<IRouteableView>
+  fullName: System.Collections.ObjectModel.ObservableCollection<Routeables.Abstraction.IRouteableView>
+  nameWithType.vb: ObservableCollection(Of IRouteableView)
+  fullName.vb: System.Collections.ObjectModel.ObservableCollection(Of Routeables.Abstraction.IRouteableView)
+  name.vb: ObservableCollection(Of IRouteableView)
+  spec.csharp:
+  - uid: System.Collections.ObjectModel.ObservableCollection`1
+    name: ObservableCollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  - name: <
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.ObjectModel.ObservableCollection`1
+    name: ObservableCollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+- uid: System.Collections.ObjectModel.ObservableCollection`1
+  commentId: T:System.Collections.ObjectModel.ObservableCollection`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  name: ObservableCollection<T>
+  nameWithType: ObservableCollection<T>
+  fullName: System.Collections.ObjectModel.ObservableCollection<T>
+  nameWithType.vb: ObservableCollection(Of T)
+  fullName.vb: System.Collections.ObjectModel.ObservableCollection(Of T)
+  name.vb: ObservableCollection(Of T)
+  spec.csharp:
+  - uid: System.Collections.ObjectModel.ObservableCollection`1
+    name: ObservableCollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.ObjectModel.ObservableCollection`1
+    name: ObservableCollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.ObjectModel
+  commentId: N:System.Collections.ObjectModel
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.ObjectModel
+  nameWithType: System.Collections.ObjectModel
+  fullName: System.Collections.ObjectModel
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.ObjectModel
+    name: ObjectModel
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.ObjectModel
+    name: ObjectModel
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel
+- uid: Routeables.Core.RoutableViewModelBase.GetRoutables*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.GetRoutables
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_GetRoutables
+  name: GetRoutables
+  nameWithType: RoutableViewModelBase.GetRoutables
+  fullName: Routeables.Core.RoutableViewModelBase.GetRoutables
+- uid: Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+  commentId: M:Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_SelectAsync_Routeables_Abstraction_IRouteableView_Routeables_Abstraction_IRouteableView_
+  name: SelectAsync(IRouteableView, IRouteableView)
+  nameWithType: RoutableViewModelBase.SelectAsync(IRouteableView, IRouteableView)
+  fullName: Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView, Routeables.Abstraction.IRouteableView)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+    name: SelectAsync
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_SelectAsync_Routeables_Abstraction_IRouteableView_Routeables_Abstraction_IRouteableView_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+    name: SelectAsync
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_SelectAsync_Routeables_Abstraction_IRouteableView_Routeables_Abstraction_IRouteableView_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnRoutableChangedAsync_Routeables_Abstraction_IRouteableView_Routeables_Abstraction_IRouteableView_System_Int32_
+  name: OnRoutableChangedAsync
+  nameWithType: RoutableViewModelBase.OnRoutableChangedAsync
+  fullName: Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: Routeables.Core.RoutableViewModelBase.GetView*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.GetView
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_GetView_Routeables_Abstraction_IRouteableView_
+  name: GetView
+  nameWithType: RoutableViewModelBase.GetView
+  fullName: Routeables.Core.RoutableViewModelBase.GetView
+- uid: System.Threading.Tasks.Task{System.Boolean}
+  commentId: T:System.Threading.Tasks.Task{System.Boolean}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<bool>
+  nameWithType: Task<bool>
+  fullName: System.Threading.Tasks.Task<bool>
+  nameWithType.vb: Task(Of Boolean)
+  fullName.vb: System.Threading.Tasks.Task(Of Boolean)
+  name.vb: Task(Of Boolean)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: System.Boolean
+    name: bool
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Boolean
+    name: Boolean
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.boolean
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.Dispose*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.Dispose
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_Dispose
+  name: Dispose
+  nameWithType: RoutableViewModelBase.Dispose
+  fullName: Routeables.Core.RoutableViewModelBase.Dispose
+- uid: System.IDisposable.Dispose
+  commentId: M:System.IDisposable.Dispose
+  parent: System.IDisposable
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.idisposable.dispose
+  name: Dispose()
+  nameWithType: IDisposable.Dispose()
+  fullName: System.IDisposable.Dispose()
+  spec.csharp:
+  - uid: System.IDisposable.Dispose
+    name: Dispose
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.idisposable.dispose
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.IDisposable.Dispose
+    name: Dispose
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.idisposable.dispose
+  - name: (
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.CanNavigateAsync*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.CanNavigateAsync
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_CanNavigateAsync_System_Threading_CancellationToken_
+  name: CanNavigateAsync
+  nameWithType: RoutableViewModelBase.CanNavigateAsync
+  fullName: Routeables.Core.RoutableViewModelBase.CanNavigateAsync
+- uid: Routeables.Abstraction.IRouteable.CanNavigateAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouteable.CanNavigateAsync(System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouteable
+  isExternal: true
+  href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_CanNavigateAsync_System_Threading_CancellationToken_
+  name: CanNavigateAsync(CancellationToken)
+  nameWithType: IRouteable.CanNavigateAsync(CancellationToken)
+  fullName: Routeables.Abstraction.IRouteable.CanNavigateAsync(System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteable.CanNavigateAsync(System.Threading.CancellationToken)
+    name: CanNavigateAsync
+    href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_CanNavigateAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteable.CanNavigateAsync(System.Threading.CancellationToken)
+    name: CanNavigateAsync
+    href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_CanNavigateAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: System.Threading.CancellationToken
+  commentId: T:System.Threading.CancellationToken
+  parent: System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: CancellationToken
+  nameWithType: CancellationToken
+  fullName: System.Threading.CancellationToken
+- uid: System.Threading
+  commentId: N:System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading
+  nameWithType: System.Threading
+  fullName: System.Threading
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+- uid: Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnNavigatingToAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: OnNavigatingToAsync
+  nameWithType: RoutableViewModelBase.OnNavigatingToAsync
+  fullName: Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync
+- uid: Routeables.Abstraction.IRouteable.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouteable.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouteable
+  isExternal: true
+  href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_OnNavigatingToAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: OnNavigatingToAsync(IRouteableArgs, CancellationToken)
+  nameWithType: IRouteable.OnNavigatingToAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Abstraction.IRouteable.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteable.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: OnNavigatingToAsync
+    href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_OnNavigatingToAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteable.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: OnNavigatingToAsync
+    href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_OnNavigatingToAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Abstraction.IRouteableArgs
+  commentId: T:Routeables.Abstraction.IRouteableArgs
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableArgs.html
+  name: IRouteableArgs
+  nameWithType: IRouteableArgs
+  fullName: Routeables.Abstraction.IRouteableArgs
+- uid: Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnNavigatingFromAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: OnNavigatingFromAsync
+  nameWithType: RoutableViewModelBase.OnNavigatingFromAsync
+  fullName: Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync
+- uid: Routeables.Abstraction.IRouteable.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouteable.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouteable
+  isExternal: true
+  href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_OnNavigatingFromAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: OnNavigatingFromAsync(IRouteableArgs, CancellationToken)
+  nameWithType: IRouteable.OnNavigatingFromAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Abstraction.IRouteable.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteable.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: OnNavigatingFromAsync
+    href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_OnNavigatingFromAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteable.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: OnNavigatingFromAsync
+    href: Routeables.Abstraction.IRouteable.html#Routeables_Abstraction_IRouteable_OnNavigatingFromAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged*
+  commentId: Overload:Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnCurrentRoutableChanged_Routeables_Abstraction_IRouteableArgs_
+  name: OnCurrentRoutableChanged
+  nameWithType: RoutableViewModelBase.OnCurrentRoutableChanged
+  fullName: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged
+- uid: Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  commentId: M:Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  parent: Routeables.Abstraction.IMainRouteables
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_OnCurrentRoutableChanged_Routeables_Abstraction_IRouteableView_
+  name: OnCurrentRoutableChanged(IRouteableView)
+  nameWithType: IMainRouteables.OnCurrentRoutableChanged(IRouteableView)
+  fullName: Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+    name: OnCurrentRoutableChanged
+    href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_OnCurrentRoutableChanged_Routeables_Abstraction_IRouteableView_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+    name: OnCurrentRoutableChanged
+    href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_OnCurrentRoutableChanged_Routeables_Abstraction_IRouteableView_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )

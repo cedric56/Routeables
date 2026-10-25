@@ -1,0 +1,407 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Core
+  commentId: N:Routeables.Core
+  id: Routeables.Core
+  children:
+  - Routeables.Core.CloseableViewModelBase`1
+  - Routeables.Core.CloseableViewModel`1
+  - Routeables.Core.CloseableViewModel`1.TaskNotifier
+  - Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+  - Routeables.Core.Desktop
+  - Routeables.Core.Extensions
+  - Routeables.Core.IRuntime
+  - Routeables.Core.RouteableViewModel
+  - Routeables.Core.RouteableViewModel.TaskNotifier
+  - Routeables.Core.RouteableViewModel.TaskNotifier`1
+  - Routeables.Core.RouteableViewModelBase
+  - Routeables.Core.RouteableViewModelBase`1
+  - Routeables.Core.RouteableViewModel`1
+  - Routeables.Core.RouteableViewModel`1.TaskNotifier
+  - Routeables.Core.RouteableViewModel`1.TaskNotifier`1
+  - Routeables.Core.RouterViewModelBase
+  - Routeables.Core.Runtime
+  langs:
+  - csharp
+  - vb
+  name: Routeables.Core
+  nameWithType: Routeables.Core
+  fullName: Routeables.Core
+  type: Namespace
+  assemblies:
+  - Routeables.Core
+references:
+- uid: Routeables.Core.CloseableViewModelBase`1
+  commentId: T:Routeables.Core.CloseableViewModelBase`1
+  href: Routeables.Core.CloseableViewModelBase-1.html
+  name: CloseableViewModelBase<TResult>
+  nameWithType: CloseableViewModelBase<TResult>
+  fullName: Routeables.Core.CloseableViewModelBase<TResult>
+  nameWithType.vb: CloseableViewModelBase(Of TResult)
+  fullName.vb: Routeables.Core.CloseableViewModelBase(Of TResult)
+  name.vb: CloseableViewModelBase(Of TResult)
+  spec.csharp:
+  - uid: Routeables.Core.CloseableViewModelBase`1
+    name: CloseableViewModelBase
+    href: Routeables.Core.CloseableViewModelBase-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Core.CloseableViewModelBase`1
+    name: CloseableViewModelBase
+    href: Routeables.Core.CloseableViewModelBase-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Core.RouteableViewModelBase`1
+  commentId: T:Routeables.Core.RouteableViewModelBase`1
+  href: Routeables.Core.RouteableViewModelBase-1.html
+  name: RouteableViewModelBase<TResult>
+  nameWithType: RouteableViewModelBase<TResult>
+  fullName: Routeables.Core.RouteableViewModelBase<TResult>
+  nameWithType.vb: RouteableViewModelBase(Of TResult)
+  fullName.vb: Routeables.Core.RouteableViewModelBase(Of TResult)
+  name.vb: RouteableViewModelBase(Of TResult)
+  spec.csharp:
+  - uid: Routeables.Core.RouteableViewModelBase`1
+    name: RouteableViewModelBase
+    href: Routeables.Core.RouteableViewModelBase-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Core.RouteableViewModelBase`1
+    name: RouteableViewModelBase
+    href: Routeables.Core.RouteableViewModelBase-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Core.RouteableViewModelBase
+  commentId: T:Routeables.Core.RouteableViewModelBase
+  parent: Routeables.Core
+  href: Routeables.Core.RouteableViewModelBase.html
+  name: RouteableViewModelBase
+  nameWithType: RouteableViewModelBase
+  fullName: Routeables.Core.RouteableViewModelBase
+- uid: Routeables.Core.RouterViewModelBase
+  commentId: T:Routeables.Core.RouterViewModelBase
+  parent: Routeables.Core
+  href: Routeables.Core.RouterViewModelBase.html
+  name: RouterViewModelBase
+  nameWithType: RouterViewModelBase
+  fullName: Routeables.Core.RouterViewModelBase
+- uid: Routeables.Core.CloseableViewModel`1
+  commentId: T:Routeables.Core.CloseableViewModel`1
+  href: Routeables.Core.CloseableViewModel-1.html
+  name: CloseableViewModel<TResult>
+  nameWithType: CloseableViewModel<TResult>
+  fullName: Routeables.Core.CloseableViewModel<TResult>
+  nameWithType.vb: CloseableViewModel(Of TResult)
+  fullName.vb: Routeables.Core.CloseableViewModel(Of TResult)
+  name.vb: CloseableViewModel(Of TResult)
+  spec.csharp:
+  - uid: Routeables.Core.CloseableViewModel`1
+    name: CloseableViewModel
+    href: Routeables.Core.CloseableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Core.CloseableViewModel`1
+    name: CloseableViewModel
+    href: Routeables.Core.CloseableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Core.CloseableViewModel`1.TaskNotifier
+  commentId: T:Routeables.Core.CloseableViewModel`1.TaskNotifier
+  parent: Routeables.Core
+  href: Routeables.Core.CloseableViewModel-1.html
+  name: CloseableViewModel<TResult>.TaskNotifier
+  nameWithType: CloseableViewModel<TResult>.TaskNotifier
+  fullName: Routeables.Core.CloseableViewModel<TResult>.TaskNotifier
+  nameWithType.vb: CloseableViewModel(Of TResult).TaskNotifier
+  fullName.vb: Routeables.Core.CloseableViewModel(Of TResult).TaskNotifier
+  name.vb: CloseableViewModel(Of TResult).TaskNotifier
+  spec.csharp:
+  - uid: Routeables.Core.CloseableViewModel`1
+    name: CloseableViewModel
+    href: Routeables.Core.CloseableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  - name: .
+  - uid: Routeables.Core.CloseableViewModel`1.TaskNotifier
+    name: TaskNotifier
+    href: Routeables.Core.CloseableViewModel-1.TaskNotifier.html
+  spec.vb:
+  - uid: Routeables.Core.CloseableViewModel`1
+    name: CloseableViewModel
+    href: Routeables.Core.CloseableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+  - name: .
+  - uid: Routeables.Core.CloseableViewModel`1.TaskNotifier
+    name: TaskNotifier
+    href: Routeables.Core.CloseableViewModel-1.TaskNotifier.html
+- uid: Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+  commentId: T:Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+  parent: Routeables.Core
+  href: Routeables.Core.CloseableViewModel-1.html
+  name: CloseableViewModel<TResult>.TaskNotifier<T>
+  nameWithType: CloseableViewModel<TResult>.TaskNotifier<T>
+  fullName: Routeables.Core.CloseableViewModel<TResult>.TaskNotifier<T>
+  nameWithType.vb: CloseableViewModel(Of TResult).TaskNotifier(Of T)
+  fullName.vb: Routeables.Core.CloseableViewModel(Of TResult).TaskNotifier(Of T)
+  name.vb: CloseableViewModel(Of TResult).TaskNotifier(Of T)
+  spec.csharp:
+  - uid: Routeables.Core.CloseableViewModel`1
+    name: CloseableViewModel
+    href: Routeables.Core.CloseableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  - name: .
+  - uid: Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.CloseableViewModel-1.TaskNotifier-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Core.CloseableViewModel`1
+    name: CloseableViewModel
+    href: Routeables.Core.CloseableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+  - name: .
+  - uid: Routeables.Core.CloseableViewModel`1.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.CloseableViewModel-1.TaskNotifier-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: Routeables.Core.RouteableViewModel
+  commentId: T:Routeables.Core.RouteableViewModel
+  href: Routeables.Core.RouteableViewModel.html
+  name: RouteableViewModel
+  nameWithType: RouteableViewModel
+  fullName: Routeables.Core.RouteableViewModel
+- uid: Routeables.Core.RouteableViewModel.TaskNotifier
+  commentId: T:Routeables.Core.RouteableViewModel.TaskNotifier
+  parent: Routeables.Core
+  href: Routeables.Core.RouteableViewModel.html
+  name: RouteableViewModel.TaskNotifier
+  nameWithType: RouteableViewModel.TaskNotifier
+  fullName: Routeables.Core.RouteableViewModel.TaskNotifier
+  spec.csharp:
+  - uid: Routeables.Core.RouteableViewModel
+    name: RouteableViewModel
+    href: Routeables.Core.RouteableViewModel.html
+  - name: .
+  - uid: Routeables.Core.RouteableViewModel.TaskNotifier
+    name: TaskNotifier
+    href: Routeables.Core.RouteableViewModel.TaskNotifier.html
+  spec.vb:
+  - uid: Routeables.Core.RouteableViewModel
+    name: RouteableViewModel
+    href: Routeables.Core.RouteableViewModel.html
+  - name: .
+  - uid: Routeables.Core.RouteableViewModel.TaskNotifier
+    name: TaskNotifier
+    href: Routeables.Core.RouteableViewModel.TaskNotifier.html
+- uid: Routeables.Core.RouteableViewModel.TaskNotifier`1
+  commentId: T:Routeables.Core.RouteableViewModel.TaskNotifier`1
+  parent: Routeables.Core
+  href: Routeables.Core.RouteableViewModel.html
+  name: RouteableViewModel.TaskNotifier<T>
+  nameWithType: RouteableViewModel.TaskNotifier<T>
+  fullName: Routeables.Core.RouteableViewModel.TaskNotifier<T>
+  nameWithType.vb: RouteableViewModel.TaskNotifier(Of T)
+  fullName.vb: Routeables.Core.RouteableViewModel.TaskNotifier(Of T)
+  name.vb: RouteableViewModel.TaskNotifier(Of T)
+  spec.csharp:
+  - uid: Routeables.Core.RouteableViewModel
+    name: RouteableViewModel
+    href: Routeables.Core.RouteableViewModel.html
+  - name: .
+  - uid: Routeables.Core.RouteableViewModel.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.RouteableViewModel.TaskNotifier-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Core.RouteableViewModel
+    name: RouteableViewModel
+    href: Routeables.Core.RouteableViewModel.html
+  - name: .
+  - uid: Routeables.Core.RouteableViewModel.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.RouteableViewModel.TaskNotifier-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: Routeables.Core.RouteableViewModel`1
+  commentId: T:Routeables.Core.RouteableViewModel`1
+  href: Routeables.Core.RouteableViewModel-1.html
+  name: RouteableViewModel<TResult>
+  nameWithType: RouteableViewModel<TResult>
+  fullName: Routeables.Core.RouteableViewModel<TResult>
+  nameWithType.vb: RouteableViewModel(Of TResult)
+  fullName.vb: Routeables.Core.RouteableViewModel(Of TResult)
+  name.vb: RouteableViewModel(Of TResult)
+  spec.csharp:
+  - uid: Routeables.Core.RouteableViewModel`1
+    name: RouteableViewModel
+    href: Routeables.Core.RouteableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Core.RouteableViewModel`1
+    name: RouteableViewModel
+    href: Routeables.Core.RouteableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Core.RouteableViewModel`1.TaskNotifier
+  commentId: T:Routeables.Core.RouteableViewModel`1.TaskNotifier
+  parent: Routeables.Core
+  href: Routeables.Core.RouteableViewModel-1.html
+  name: RouteableViewModel<TResult>.TaskNotifier
+  nameWithType: RouteableViewModel<TResult>.TaskNotifier
+  fullName: Routeables.Core.RouteableViewModel<TResult>.TaskNotifier
+  nameWithType.vb: RouteableViewModel(Of TResult).TaskNotifier
+  fullName.vb: Routeables.Core.RouteableViewModel(Of TResult).TaskNotifier
+  name.vb: RouteableViewModel(Of TResult).TaskNotifier
+  spec.csharp:
+  - uid: Routeables.Core.RouteableViewModel`1
+    name: RouteableViewModel
+    href: Routeables.Core.RouteableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  - name: .
+  - uid: Routeables.Core.RouteableViewModel`1.TaskNotifier
+    name: TaskNotifier
+    href: Routeables.Core.RouteableViewModel-1.TaskNotifier.html
+  spec.vb:
+  - uid: Routeables.Core.RouteableViewModel`1
+    name: RouteableViewModel
+    href: Routeables.Core.RouteableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+  - name: .
+  - uid: Routeables.Core.RouteableViewModel`1.TaskNotifier
+    name: TaskNotifier
+    href: Routeables.Core.RouteableViewModel-1.TaskNotifier.html
+- uid: Routeables.Core.RouteableViewModel`1.TaskNotifier`1
+  commentId: T:Routeables.Core.RouteableViewModel`1.TaskNotifier`1
+  parent: Routeables.Core
+  href: Routeables.Core.RouteableViewModel-1.html
+  name: RouteableViewModel<TResult>.TaskNotifier<T>
+  nameWithType: RouteableViewModel<TResult>.TaskNotifier<T>
+  fullName: Routeables.Core.RouteableViewModel<TResult>.TaskNotifier<T>
+  nameWithType.vb: RouteableViewModel(Of TResult).TaskNotifier(Of T)
+  fullName.vb: Routeables.Core.RouteableViewModel(Of TResult).TaskNotifier(Of T)
+  name.vb: RouteableViewModel(Of TResult).TaskNotifier(Of T)
+  spec.csharp:
+  - uid: Routeables.Core.RouteableViewModel`1
+    name: RouteableViewModel
+    href: Routeables.Core.RouteableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  - name: .
+  - uid: Routeables.Core.RouteableViewModel`1.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.RouteableViewModel-1.TaskNotifier-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Core.RouteableViewModel`1
+    name: RouteableViewModel
+    href: Routeables.Core.RouteableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+  - name: .
+  - uid: Routeables.Core.RouteableViewModel`1.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.RouteableViewModel-1.TaskNotifier-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: Routeables.Core.Desktop
+  commentId: T:Routeables.Core.Desktop
+  parent: Routeables.Core
+  href: Routeables.Core.Desktop.html
+  name: Desktop
+  nameWithType: Desktop
+  fullName: Routeables.Core.Desktop
+- uid: Routeables.Core.IRuntime
+  commentId: T:Routeables.Core.IRuntime
+  parent: Routeables.Core
+  href: Routeables.Core.IRuntime.html
+  name: IRuntime
+  nameWithType: IRuntime
+  fullName: Routeables.Core.IRuntime
+- uid: Routeables.Core.Runtime
+  commentId: T:Routeables.Core.Runtime
+  parent: Routeables.Core
+  href: Routeables.Core.Runtime.html
+  name: Runtime
+  nameWithType: Runtime
+  fullName: Routeables.Core.Runtime
+- uid: Routeables.Core.Extensions
+  commentId: T:Routeables.Core.Extensions
+  parent: Routeables.Core
+  href: Routeables.Core.Extensions.html
+  name: Extensions
+  nameWithType: Extensions
+  fullName: Routeables.Core.Extensions
+- uid: Routeables.Core
+  commentId: N:Routeables.Core
+  name: Routeables.Core
+  nameWithType: Routeables.Core
+  fullName: Routeables.Core
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core

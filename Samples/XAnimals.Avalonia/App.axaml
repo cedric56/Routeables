@@ -1,0 +1,228 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="XAnimals.Avalonia.App"
+             RequestedThemeVariant="Default">
+    <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.Resources>
+      <ResourceDictionary>
+        <!-- Same palette and fonts as the Razor and Maui samples. -->
+        <FontFamily x:Key="AnDisplayFont">avares://XAnimals.Avalonia/Assets/Fonts#Lora</FontFamily>
+        <Color x:Key="AnCanopyColor">#1B6B57</Color>
+        <SolidColorBrush x:Key="AnCanopy" Color="#1B6B57" />
+        <SolidColorBrush x:Key="AnCanopyHover" Color="#175A49" />
+        <SolidColorBrush x:Key="AnSaffron" Color="#B97A16" />
+        <ResourceDictionary.ThemeDictionaries>
+            <ResourceDictionary x:Key="Light">
+                <SolidColorBrush x:Key="AnPaper" Color="#F8FAF6" />
+                <SolidColorBrush x:Key="AnLichen" Color="#ECF0EA" />
+                <SolidColorBrush x:Key="AnInk" Color="#15221D" />
+                <SolidColorBrush x:Key="AnMuted" Color="#5E6F67" />
+                <SolidColorBrush x:Key="AnArchFill" Color="#D6E7DF" />
+            </ResourceDictionary>
+            <ResourceDictionary x:Key="Dark">
+                <SolidColorBrush x:Key="AnPaper" Color="#0F1A16" />
+                <SolidColorBrush x:Key="AnLichen" Color="#17261F" />
+                <SolidColorBrush x:Key="AnInk" Color="#E7EFE9" />
+                <SolidColorBrush x:Key="AnMuted" Color="#9DB0A6" />
+                <SolidColorBrush x:Key="AnArchFill" Color="#1E3A30" />
+            </ResourceDictionary>
+        </ResourceDictionary.ThemeDictionaries>
+      </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+
+        <!-- Motion tokens: 140 ms for feedback, 220 ms for content, cubic-out. -->
+        <Style Selector="TextBox.an">
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="16,10" />
+            <Setter Property="MinHeight" Value="44" />
+            <Setter Property="Background" Value="{DynamicResource AnLichen}" />
+            <Setter Property="Foreground" Value="{DynamicResource AnInk}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="TextBox.an:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="{DynamicResource AnCanopy}" />
+            <Setter Property="BorderThickness" Value="1.5" />
+        </Style>
+
+        <!-- The button that loads a module while the application runs. -->
+        <Style Selector="Button.module">
+            <Setter Property="Margin" Value="16,12,16,0" />
+        </Style>
+
+        <Style Selector="Button.an">
+            <Setter Property="Background" Value="{DynamicResource AnCanopy}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="22,10" />
+            <Setter Property="MinHeight" Value="44" />
+            <Setter Property="RenderTransform" Value="none" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.14" Easing="CubicEaseOut" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.an /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.14" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.an:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AnCanopyHover}" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="Button.an:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.97)" />
+        </Style>
+        <Style Selector="Button.an:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AnCanopyHover}" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <!-- Animal rows: Lichen on hover, Canopy while pressed, 140 ms colour change. -->
+        <Style Selector="ListBox.an ListBoxItem">
+            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="CornerRadius" Value="18" />
+            <Setter Property="Margin" Value="0,2" />
+        </Style>
+        <Style Selector="ListBox.an ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.14" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="ListBox.an ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AnCanopy}" />
+            <Setter Property="TextElement.Foreground" Value="White" />
+        </Style>
+
+        <!-- Arch-shaped image windows, the one bold element of the identity. -->
+        <Style Selector="Border.arch">
+            <Setter Property="ClipToBounds" Value="True" />
+            <Setter Property="Background" Value="{DynamicResource AnArchFill}" />
+        </Style>
+
+
+        <Style Selector="Button.credits">
+            <Setter Property="Foreground" Value="{DynamicResource AnInk}" />
+        </Style>
+        <Style Selector="Button.credits /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AnCanopy}" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+        <Style Selector="Button.credits:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#40E9A23B" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AnSaffron}" />
+            <Setter Property="Foreground" Value="{DynamicResource AnInk}" />
+        </Style>
+
+        <Style Selector="Button.item">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource AnInk}" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="10,6" />
+        </Style>
+        <Style Selector="Button.item /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="Button.item.current /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AnCanopy}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AnSaffron}" />
+        </Style>
+
+        <Style Selector="Border.bar">
+            <Setter Property="Background" Value="{DynamicResource AnLichen}" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource AnInk}" />
+        </Style>
+        <Style Selector="Border.bar.strong">
+            <Setter Property="Background" Value="{DynamicResource AnCanopy}" />
+            <Setter Property="TextElement.Foreground" Value="White" />
+        </Style>
+
+         <!-- The arch rises, then the text settles: the single entrance animation. -->
+        <Style Selector="Border.hero">
+            <Style.Animations>
+                <Animation Duration="0:0:0.52" Easing="CubicEaseOut" FillMode="Both">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="0.3" />
+                        <Setter Property="TranslateTransform.Y" Value="28" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="1" />
+                        <Setter Property="TranslateTransform.Y" Value="0" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+        <Style Selector="StackPanel.settle > :is(Control)">
+            <Style.Animations>
+                <Animation Duration="0:0:0.38" Delay="0:0:0.14" Easing="CubicEaseOut" FillMode="Both">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="0" />
+                        <Setter Property="TranslateTransform.Y" Value="10" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="1" />
+                        <Setter Property="TranslateTransform.Y" Value="0" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+
+         <!-- A history entry is an arch: filled where the cursor is, dimmed ahead of it (reached with Forward). -->
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="{DynamicResource AnLichen}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="CornerRadius" Value="22,22,8,8" />
+            <Setter Property="Padding" Value="8,6,8,5" />
+            <Setter Property="MinWidth" Value="52" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border.card.current">
+            <Setter Property="Background" Value="{DynamicResource AnCanopy}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AnSaffron}" />
+            <Setter Property="RenderTransform" Value="translateY(-2px)" />
+        </Style>
+        <Style Selector="Border.card TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource AnInk}" />
+        </Style>
+        <Style Selector="Border.card.current TextBlock">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="Border.card.ahead">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AnMuted}" />
+            <Setter Property="Opacity" Value="0.6" />
+        </Style>
+        <Style Selector="Border.status">
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="BorderThickness" Value="4,0,0,0" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="Border.status.refused">
+            <Setter Property="Background" Value="#40E9A23B" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AnSaffron}" />
+        </Style>
+    </Application.Styles>
+</Application>

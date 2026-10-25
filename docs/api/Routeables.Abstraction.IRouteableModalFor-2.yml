@@ -1,0 +1,240 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.IRouteableModalFor`2
+  commentId: T:Routeables.Abstraction.IRouteableModalFor`2
+  id: IRouteableModalFor`2
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.IRouteableModalFor`2.ShowModalAsync
+  langs:
+  - csharp
+  - vb
+  name: IRouteableModalFor<T, TResult>
+  nameWithType: IRouteableModalFor<T, TResult>
+  fullName: Routeables.Abstraction.IRouteableModalFor<T, TResult>
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableModalFor.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IRouteableModalFor
+    path: ../Routeables.Abstraction/Interfaces/IRouteableModalFor.cs
+    startLine: 8
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    A view that is shown as a modal and gives a result back: the base types of each host implement it, with a view model that
+
+    implements <xref href="Routeables.Abstraction.ICloseableViewModel%601" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: 'public interface IRouteableModalFor<T, TResult> : IRouteableFor where T : class'
+    typeParameters:
+    - id: T
+      description: The type of the view model.
+    - id: TResult
+      description: The type of the value the modal returns.
+    content.vb: Public Interface IRouteableModalFor(Of T As Class, TResult) Inherits IRouteableFor
+  derivedClasses:
+  - Routeables.Avalonia.DialogView`2
+  - Routeables.Maui.RouteableModalFor`2
+  - Routeables.Razor.RouteableModalFor`3
+  inheritedMembers:
+  - Routeables.Abstraction.IRouteableFor.Context
+  nameWithType.vb: IRouteableModalFor(Of T, TResult)
+  fullName.vb: Routeables.Abstraction.IRouteableModalFor(Of T, TResult)
+  name.vb: IRouteableModalFor(Of T, TResult)
+- uid: Routeables.Abstraction.IRouteableModalFor`2.ShowModalAsync
+  commentId: M:Routeables.Abstraction.IRouteableModalFor`2.ShowModalAsync
+  id: ShowModalAsync
+  parent: Routeables.Abstraction.IRouteableModalFor`2
+  langs:
+  - csharp
+  - vb
+  name: ShowModalAsync()
+  nameWithType: IRouteableModalFor<T, TResult>.ShowModalAsync()
+  fullName: Routeables.Abstraction.IRouteableModalFor<T, TResult>.ShowModalAsync()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableModalFor.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ShowModalAsync
+    path: ../Routeables.Abstraction/Interfaces/IRouteableModalFor.cs
+    startLine: 12
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Shows the view as a modal and waits until it is closed.
+  example: []
+  syntax:
+    content: Task<TResult?> ShowModalAsync()
+    return:
+      type: System.Threading.Tasks.Task{{TResult}}
+      description: The value the view model closed with, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/default">default</a> when the modal was dismissed.
+    content.vb: Function ShowModalAsync() As Task(Of TResult)
+  overload: Routeables.Abstraction.IRouteableModalFor`2.ShowModalAsync*
+  nameWithType.vb: IRouteableModalFor(Of T, TResult).ShowModalAsync()
+  fullName.vb: Routeables.Abstraction.IRouteableModalFor(Of T, TResult).ShowModalAsync()
+references:
+- uid: Routeables.Abstraction.ICloseableViewModel`1
+  commentId: T:Routeables.Abstraction.ICloseableViewModel`1
+  href: Routeables.Abstraction.ICloseableViewModel-1.html
+  name: ICloseableViewModel<TResult>
+  nameWithType: ICloseableViewModel<TResult>
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>
+  nameWithType.vb: ICloseableViewModel(Of TResult)
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult)
+  name.vb: ICloseableViewModel(Of TResult)
+  spec.csharp:
+  - uid: Routeables.Abstraction.ICloseableViewModel`1
+    name: ICloseableViewModel
+    href: Routeables.Abstraction.ICloseableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Abstraction.ICloseableViewModel`1
+    name: ICloseableViewModel
+    href: Routeables.Abstraction.ICloseableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.IRouteableFor.Context
+  commentId: P:Routeables.Abstraction.IRouteableFor.Context
+  parent: Routeables.Abstraction.IRouteableFor
+  href: Routeables.Abstraction.IRouteableFor.html#Routeables_Abstraction_IRouteableFor_Context
+  name: Context
+  nameWithType: IRouteableFor.Context
+  fullName: Routeables.Abstraction.IRouteableFor.Context
+- uid: Routeables.Abstraction.IRouteableFor
+  commentId: T:Routeables.Abstraction.IRouteableFor
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableFor.html
+  name: IRouteableFor
+  nameWithType: IRouteableFor
+  fullName: Routeables.Abstraction.IRouteableFor
+- uid: Routeables.Abstraction.IRouteableModalFor`2.ShowModalAsync*
+  commentId: Overload:Routeables.Abstraction.IRouteableModalFor`2.ShowModalAsync
+  href: Routeables.Abstraction.IRouteableModalFor-2.html#Routeables_Abstraction_IRouteableModalFor_2_ShowModalAsync
+  name: ShowModalAsync
+  nameWithType: IRouteableModalFor<T, TResult>.ShowModalAsync
+  fullName: Routeables.Abstraction.IRouteableModalFor<T, TResult>.ShowModalAsync
+  nameWithType.vb: IRouteableModalFor(Of T, TResult).ShowModalAsync
+  fullName.vb: Routeables.Abstraction.IRouteableModalFor(Of T, TResult).ShowModalAsync
+- uid: System.Threading.Tasks.Task{{TResult}}
+  commentId: T:System.Threading.Tasks.Task{`1}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 160" width="760" height="160" role="img" aria-label="Routeables">
+  <!-- The logo of the samples that draw SVG with a small renderer (WPF, Uno, Avalonia): no <style>, no class, no media query, only
+       presentation attributes, and colours that read on a light and on a dark background. The viewBox is wide enough for a
+       fallback font that is wider than Segoe UI (a browser without it draws a monospace one). -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7C5CFF"/>
+      <stop offset="1" stop-color="#4A22C8"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(16 16)">
+    <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+    <g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M44 98 V30 H70 C94 30 94 68 70 68 H44"/>
+      <path d="M68 68 L90 98"/>
+    </g>
+    <circle cx="44" cy="98" r="10" fill="#fff"/>
+    <circle cx="90" cy="98" r="10" fill="#4A22C8" stroke="#fff" stroke-width="7"/>
+  </g>
+  <text x="168" y="88" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="60" font-weight="700" fill="#6B7280">Route<tspan fill="#7C5CFF">ables</tspan></text>
+  <text x="170" y="118" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#8B93A1">One routing layer for Blazor, MAUI, Avalonia, Uno &amp; WPF</text>
+</svg>

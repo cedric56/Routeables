@@ -1,0 +1,47 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:routeables="using:Routeables.Avalonia"
+             xmlns:vm="using:XAnimals.ViewModels"
+             x:Class="XAnimals.Avalonia.BoardView"
+             x:DataType="vm:BoardViewModel"
+             Background="{DynamicResource AnPaper}">
+
+    <Grid RowDefinitions="Auto,Auto,*" Margin="20" RowSpacing="8">
+        <!-- One button per animal: it routes that page into the region "board". -->
+        <ItemsControl Grid.Row="0" ItemsSource="{Binding Choices}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:BoardChoice">
+                    <Button Command="{Binding AddCommand}" Margin="0,0,6,6" Padding="12,4">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="{Binding Glyph}" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <DockPanel Grid.Row="1" LastChildFill="True">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="6">
+                <Button Content="Remove the last" Command="{Binding RemoveCommand}" />
+                <Button Content="Clear" Command="{Binding ClearCommand}" />
+            </StackPanel>
+            <TextBlock Text="{Binding Status}" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.75" />
+        </DockPanel>
+
+        <!-- Not one view but all of them: the region "board" holds a history, this control lays out every page of it, side by side.
+             Nothing assigns a view to the control. -->
+        <routeables:RouteableRegionItems Grid.Row="2" Region="board">
+            <routeables:RouteableRegionItems.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1" />
+                </ItemsPanelTemplate>
+            </routeables:RouteableRegionItems.ItemsPanel>
+        </routeables:RouteableRegionItems>
+    </Grid>
+</UserControl>

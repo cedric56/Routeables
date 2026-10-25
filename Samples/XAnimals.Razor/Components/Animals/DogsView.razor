@@ -1,0 +1,8 @@
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@inherits RouteableFor<DogsView, DogsViewModel>
+
+<PageTitle>Dogs</PageTitle>
+
+<AnimalList ViewModel="ViewModel" NoResultsText="No dogs found." />

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
+    xmlns:views="clr-namespace:XAnimals.Maui.Views;assembly=XAnimals.Maui.Controls"
+    x:Class="XAnimals.Maui.Views.BirdsView">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Loads a module while the application runs: its entry appears in the menu without restarting. -->
+        <Button x:Name="LoadButton" Grid.Row="0" StyleClass="module" Text="Load Module" IsEnabled="{Binding CanLoadMoreBirds}" Clicked="OnLoadModule" />
+        <views:AnimalList Grid.Row="1" NoResultsText="No birds found." />
+    </Grid>
+</routeables:RouteableFor>

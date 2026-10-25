@@ -1,0 +1,1926 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.IRouter
+  commentId: T:Routeables.Abstraction.IRouter
+  id: IRouter
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.IRouter.BackAsync(System.Threading.CancellationToken)
+  - Routeables.Abstraction.IRouter.BackToRootAsync(System.Threading.CancellationToken)
+  - Routeables.Abstraction.IRouter.CanGoBack
+  - Routeables.Abstraction.IRouter.CanGoForward
+  - Routeables.Abstraction.IRouter.CurrentView
+  - Routeables.Abstraction.IRouter.CurrentViewModel
+  - Routeables.Abstraction.IRouter.EraseHistoryAsync(System.Threading.CancellationToken)
+  - Routeables.Abstraction.IRouter.ForwardAsync(System.Threading.CancellationToken)
+  - Routeables.Abstraction.IRouter.GoAsync(System.Object,System.Object,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  - Routeables.Abstraction.IRouter.GoToAsync(System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  - Routeables.Abstraction.IRouter.GoToRouteAsync(Routeables.Abstraction.IRouteableView,System.Threading.CancellationToken,System.String[])
+  - Routeables.Abstraction.IRouter.GoToRouteAsync``1(Routeables.Abstraction.IRouteableView,System.Threading.CancellationToken,System.String[])
+  - Routeables.Abstraction.IRouter.History
+  - Routeables.Abstraction.IRouter.MoveToAsync(System.Int32,System.Threading.CancellationToken)
+  - Routeables.Abstraction.IRouter.PopAsync(System.Threading.CancellationToken)
+  - Routeables.Abstraction.IRouter.Routed
+  - Routeables.Abstraction.IRouter.Routing
+  langs:
+  - csharp
+  - vb
+  name: IRouter
+  nameWithType: IRouter
+  fullName: Routeables.Abstraction.IRouter
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IRouter
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 10
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    The navigation of an application, or of one region of it: it keeps a history of entries (a view model and its view) and moves a
+
+    cursor through it. Every operation checks the guards of the page being left, runs the lifecycle (<xref href="Routeables.Abstraction.IRouteable" data-throw-if-not-resolved="false"></xref>),
+
+    and returns a <xref href="Routeables.Abstraction.RouteableResult" data-throw-if-not-resolved="false"></xref> instead of throwing when the navigation is refused or fails. The default router is
+
+    the main area; <code>AddRegion</code> registers one more, by name, for a <code>RouteableRegion</code>.
+  example: []
+  syntax:
+    content: public interface IRouter
+    content.vb: Public Interface IRouter
+  extensionMethods:
+  - Routeables.Abstraction.IRouter.Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IMainRouteables)
+  - Routeables.Abstraction.IRouter.Routeables.Abstraction.Extensions.GetCurrentViewModel``1
+  - Routeables.Abstraction.IRouter.Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``1(System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  - Routeables.Abstraction.IRouter.Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``2(System.String,Routeables.Abstraction.IRouteableArgs,System.String,System.Threading.CancellationToken)
+  - Routeables.Abstraction.IRouter.Routeables.Routing.RouterTypedExtensions.GoToRouteAsync``2(System.String,{TData},System.String,System.Threading.CancellationToken,System.String[])
+- uid: Routeables.Abstraction.IRouter.History
+  commentId: P:Routeables.Abstraction.IRouter.History
+  id: History
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: History
+  nameWithType: IRouter.History
+  fullName: Routeables.Abstraction.IRouter.History
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: History
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 13
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: 'The history of this router: its entries and the cursor.'
+  example: []
+  syntax:
+    content: IRouterHistory History { get; }
+    parameters: []
+    return:
+      type: Routeables.Abstraction.IRouterHistory
+    content.vb: ReadOnly Property History As IRouterHistory
+  overload: Routeables.Abstraction.IRouter.History*
+- uid: Routeables.Abstraction.IRouter.Routing
+  commentId: E:Routeables.Abstraction.IRouter.Routing
+  id: Routing
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: Routing
+  nameWithType: IRouter.Routing
+  fullName: Routeables.Abstraction.IRouter.Routing
+  type: Event
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Routing
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 20
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Raised once a navigation attempt is under way (target known, before any guard or lifecycle callback).
+
+    Not raised when there is nothing to do (no back entry, already at the target).
+
+    Raised while the router gate is held: handlers must not start a navigation.
+  example: []
+  syntax:
+    content: event EventHandler<RouteableRoutingEventArgs>? Routing
+    return:
+      type: System.EventHandler{Routeables.Abstraction.RouteableRoutingEventArgs}
+    content.vb: Event Routing As EventHandler(Of RouteableRoutingEventArgs)
+- uid: Routeables.Abstraction.IRouter.Routed
+  commentId: E:Routeables.Abstraction.IRouter.Routed
+  id: Routed
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: Routed
+  nameWithType: IRouter.Routed
+  fullName: Routeables.Abstraction.IRouter.Routed
+  type: Event
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Routed
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 23
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Raised exactly once after every <xref href="Routeables.Abstraction.IRouter.Routing" data-throw-if-not-resolved="false"></xref>, whatever the outcome.
+  example: []
+  syntax:
+    content: event EventHandler<RouteableRoutedEventArgs>? Routed
+    return:
+      type: System.EventHandler{Routeables.Abstraction.RouteableRoutedEventArgs}
+    content.vb: Event Routed As EventHandler(Of RouteableRoutedEventArgs)
+- uid: Routeables.Abstraction.IRouter.CanGoBack
+  commentId: P:Routeables.Abstraction.IRouter.CanGoBack
+  id: CanGoBack
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: CanGoBack
+  nameWithType: IRouter.CanGoBack
+  fullName: Routeables.Abstraction.IRouter.CanGoBack
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: CanGoBack
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 26
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Whether <xref href="Routeables.Abstraction.IRouter.BackAsync(System.Threading.CancellationToken)" data-throw-if-not-resolved="false"></xref> has an entry to go back to.
+  example: []
+  syntax:
+    content: bool CanGoBack { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: ReadOnly Property CanGoBack As Boolean
+  overload: Routeables.Abstraction.IRouter.CanGoBack*
+- uid: Routeables.Abstraction.IRouter.CanGoForward
+  commentId: P:Routeables.Abstraction.IRouter.CanGoForward
+  id: CanGoForward
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: CanGoForward
+  nameWithType: IRouter.CanGoForward
+  fullName: Routeables.Abstraction.IRouter.CanGoForward
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: CanGoForward
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 29
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Whether <xref href="Routeables.Abstraction.IRouter.ForwardAsync(System.Threading.CancellationToken)" data-throw-if-not-resolved="false"></xref> has an entry to go forward to.
+  example: []
+  syntax:
+    content: bool CanGoForward { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: ReadOnly Property CanGoForward As Boolean
+  overload: Routeables.Abstraction.IRouter.CanGoForward*
+- uid: Routeables.Abstraction.IRouter.CurrentViewModel
+  commentId: P:Routeables.Abstraction.IRouter.CurrentViewModel
+  id: CurrentViewModel
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: CurrentViewModel
+  nameWithType: IRouter.CurrentViewModel
+  fullName: Routeables.Abstraction.IRouter.CurrentViewModel
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: CurrentViewModel
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 32
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The view model of the current entry. Use <code>GetCurrentViewModel&lt;T&gt;()</code> for a typed one.
+  example: []
+  syntax:
+    content: object? CurrentViewModel { get; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: ReadOnly Property CurrentViewModel As Object
+  overload: Routeables.Abstraction.IRouter.CurrentViewModel*
+- uid: Routeables.Abstraction.IRouter.CurrentView
+  commentId: P:Routeables.Abstraction.IRouter.CurrentView
+  id: CurrentView
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: CurrentView
+  nameWithType: IRouter.CurrentView
+  fullName: Routeables.Abstraction.IRouter.CurrentView
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: CurrentView
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 35
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The view of the current entry, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when the history is empty.
+  example: []
+  syntax:
+    content: object? CurrentView { get; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: ReadOnly Property CurrentView As Object
+  overload: Routeables.Abstraction.IRouter.CurrentView*
+- uid: Routeables.Abstraction.IRouter.BackAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouter.BackAsync(System.Threading.CancellationToken)
+  id: BackAsync(System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: BackAsync(CancellationToken)
+  nameWithType: IRouter.BackAsync(CancellationToken)
+  fullName: Routeables.Abstraction.IRouter.BackAsync(System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: BackAsync
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 41
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Moves the cursor back one entry and keeps the entry it left, so <xref href="Routeables.Abstraction.IRouter.ForwardAsync(System.Threading.CancellationToken)" data-throw-if-not-resolved="false"></xref> returns to it
+
+    (browser-style history). To leave a page for good, such as a detail opened from a list, use <xref href="Routeables.Abstraction.IRouter.PopAsync(System.Threading.CancellationToken)" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: Task<RouteableResult> BackAsync(CancellationToken cancellationToken = default)
+    parameters:
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+    content.vb: Function BackAsync(cancellationToken As CancellationToken = Nothing) As Task(Of RouteableResult)
+  overload: Routeables.Abstraction.IRouter.BackAsync*
+- uid: Routeables.Abstraction.IRouter.ForwardAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouter.ForwardAsync(System.Threading.CancellationToken)
+  id: ForwardAsync(System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: ForwardAsync(CancellationToken)
+  nameWithType: IRouter.ForwardAsync(CancellationToken)
+  fullName: Routeables.Abstraction.IRouter.ForwardAsync(System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ForwardAsync
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 44
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Moves the cursor forward one entry. Only entries left with <xref href="Routeables.Abstraction.IRouter.BackAsync(System.Threading.CancellationToken)" data-throw-if-not-resolved="false"></xref> can be reached.
+  example: []
+  syntax:
+    content: Task<RouteableResult> ForwardAsync(CancellationToken cancellationToken = default)
+    parameters:
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+    content.vb: Function ForwardAsync(cancellationToken As CancellationToken = Nothing) As Task(Of RouteableResult)
+  overload: Routeables.Abstraction.IRouter.ForwardAsync*
+- uid: Routeables.Abstraction.IRouter.BackToRootAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouter.BackToRootAsync(System.Threading.CancellationToken)
+  id: BackToRootAsync(System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: BackToRootAsync(CancellationToken)
+  nameWithType: IRouter.BackToRootAsync(CancellationToken)
+  fullName: Routeables.Abstraction.IRouter.BackToRootAsync(System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: BackToRootAsync
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 47
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Go to the first entry and discard every entry after it.
+  example: []
+  syntax:
+    content: Task<RouteableResult> BackToRootAsync(CancellationToken cancellationToken = default)
+    parameters:
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+    content.vb: Function BackToRootAsync(cancellationToken As CancellationToken = Nothing) As Task(Of RouteableResult)
+  overload: Routeables.Abstraction.IRouter.BackToRootAsync*
+- uid: Routeables.Abstraction.IRouter.PopAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouter.PopAsync(System.Threading.CancellationToken)
+  id: PopAsync(System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: PopAsync(CancellationToken)
+  nameWithType: IRouter.PopAsync(CancellationToken)
+  fullName: Routeables.Abstraction.IRouter.PopAsync(System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: PopAsync
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 53
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Go back one entry and discard the entry (and any forward entries) that was left: the way out of a drill-down
+
+    page (a detail, a dialog-like step) that must not stay in the history.
+  example: []
+  syntax:
+    content: Task<RouteableResult> PopAsync(CancellationToken cancellationToken = default)
+    parameters:
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+    content.vb: Function PopAsync(cancellationToken As CancellationToken = Nothing) As Task(Of RouteableResult)
+  overload: Routeables.Abstraction.IRouter.PopAsync*
+- uid: Routeables.Abstraction.IRouter.MoveToAsync(System.Int32,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouter.MoveToAsync(System.Int32,System.Threading.CancellationToken)
+  id: MoveToAsync(System.Int32,System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: MoveToAsync(int, CancellationToken)
+  nameWithType: IRouter.MoveToAsync(int, CancellationToken)
+  fullName: Routeables.Abstraction.IRouter.MoveToAsync(int, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: MoveToAsync
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 56
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Jump to the entry at <code class="paramref">index</code> (see IRouterHistory.Entries), keeping all entries.
+  example: []
+  syntax:
+    content: Task<RouteableResult> MoveToAsync(int index, CancellationToken cancellationToken = default)
+    parameters:
+    - id: index
+      type: System.Int32
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+    content.vb: Function MoveToAsync(index As Integer, cancellationToken As CancellationToken = Nothing) As Task(Of RouteableResult)
+  overload: Routeables.Abstraction.IRouter.MoveToAsync*
+  nameWithType.vb: IRouter.MoveToAsync(Integer, CancellationToken)
+  fullName.vb: Routeables.Abstraction.IRouter.MoveToAsync(Integer, System.Threading.CancellationToken)
+  name.vb: MoveToAsync(Integer, CancellationToken)
+- uid: Routeables.Abstraction.IRouter.EraseHistoryAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouter.EraseHistoryAsync(System.Threading.CancellationToken)
+  id: EraseHistoryAsync(System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: EraseHistoryAsync(CancellationToken)
+  nameWithType: IRouter.EraseHistoryAsync(CancellationToken)
+  fullName: Routeables.Abstraction.IRouter.EraseHistoryAsync(System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: EraseHistoryAsync
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 59
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Forgets every entry, disposing the view models that are disposable. The router is then empty until the next navigation.
+  example: []
+  syntax:
+    content: Task EraseHistoryAsync(CancellationToken cancellationToken = default)
+    parameters:
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function EraseHistoryAsync(cancellationToken As CancellationToken = Nothing) As Task
+  overload: Routeables.Abstraction.IRouter.EraseHistoryAsync*
+- uid: Routeables.Abstraction.IRouter.GoToAsync(System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouter.GoToAsync(System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  id: GoToAsync(System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: GoToAsync(string, IRouteableArgs?, CancellationToken)
+  nameWithType: IRouter.GoToAsync(string, IRouteableArgs?, CancellationToken)
+  fullName: Routeables.Abstraction.IRouter.GoToAsync(string, Routeables.Abstraction.IRouteableArgs?, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GoToAsync
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 67
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Navigates to a registered route by its address, as a browser would: <code>GoToAsync("/orders/42")</code>. The route is looked up in
+
+    the routes registered with an explicit route (<code>RouteableTable</code>) and in the main routeables; its parameters
+
+    (<code>{id:int}</code>, query) are read from <code class="paramref">url</code> and no template is needed. The leading <code>/</code> is optional.
+
+    Fails (without throwing) when no route matches.
+  example: []
+  syntax:
+    content: Task<RouteableResult> GoToAsync(string url, IRouteableArgs? args = null, CancellationToken cancellationToken = default)
+    parameters:
+    - id: url
+      type: System.String
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+    content.vb: Function GoToAsync(url As String, args As IRouteableArgs = Nothing, cancellationToken As CancellationToken = Nothing) As Task(Of RouteableResult)
+  overload: Routeables.Abstraction.IRouter.GoToAsync*
+  nameWithType.vb: IRouter.GoToAsync(String, IRouteableArgs, CancellationToken)
+  fullName.vb: Routeables.Abstraction.IRouter.GoToAsync(String, Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  name.vb: GoToAsync(String, IRouteableArgs, CancellationToken)
+- uid: Routeables.Abstraction.IRouter.GoAsync(System.Object,System.Object,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouter.GoAsync(System.Object,System.Object,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  id: GoAsync(System.Object,System.Object,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: GoAsync(object, object, IRouteableArgs?, CancellationToken)
+  nameWithType: IRouter.GoAsync(object, object, IRouteableArgs?, CancellationToken)
+  fullName: Routeables.Abstraction.IRouter.GoAsync(object, object, Routeables.Abstraction.IRouteableArgs?, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GoAsync
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 77
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Navigates to a view and a view model you built yourself, adding them to the history. The router does not create anything:
+
+    it binds the view to the view model (<xref href="Routeables.Abstraction.IRouteableFor.Context" data-throw-if-not-resolved="false"></xref>) and runs the lifecycle.
+  example: []
+  syntax:
+    content: Task<RouteableResult> GoAsync(object view, object viewModel, IRouteableArgs? args = null, CancellationToken cancellationToken = default)
+    parameters:
+    - id: view
+      type: System.Object
+      description: The view to show.
+    - id: viewModel
+      type: System.Object
+      description: The view model of that view.
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+      description: The arguments of the navigation, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> for none.
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+      description: A token to observe for cancellation.
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+    content.vb: Function GoAsync(view As Object, viewModel As Object, args As IRouteableArgs = Nothing, cancellationToken As CancellationToken = Nothing) As Task(Of RouteableResult)
+  overload: Routeables.Abstraction.IRouter.GoAsync*
+  nameWithType.vb: IRouter.GoAsync(Object, Object, IRouteableArgs, CancellationToken)
+  fullName.vb: Routeables.Abstraction.IRouter.GoAsync(Object, Object, Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  name.vb: GoAsync(Object, Object, IRouteableArgs, CancellationToken)
+- uid: Routeables.Abstraction.IRouter.GoToRouteAsync``1(Routeables.Abstraction.IRouteableView,System.Threading.CancellationToken,System.String[])
+  commentId: M:Routeables.Abstraction.IRouter.GoToRouteAsync``1(Routeables.Abstraction.IRouteableView,System.Threading.CancellationToken,System.String[])
+  id: GoToRouteAsync``1(Routeables.Abstraction.IRouteableView,System.Threading.CancellationToken,System.String[])
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: GoToRouteAsync<TViewModel>(IRouteableView, CancellationToken, params string[])
+  nameWithType: IRouter.GoToRouteAsync<TViewModel>(IRouteableView, CancellationToken, params string[])
+  fullName: Routeables.Abstraction.IRouter.GoToRouteAsync<TViewModel>(Routeables.Abstraction.IRouteableView, System.Threading.CancellationToken, params string[])
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GoToRouteAsync
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 84
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Navigates to a menu entry, with <code class="typeparamref">TViewModel</code> as the view model.
+  example: []
+  syntax:
+    content: 'Task<RouteableResult> GoToRouteAsync<TViewModel>(IRouteableView routableView, CancellationToken cancellationToken = default, params string[] viewKeys) where TViewModel : class'
+    parameters:
+    - id: routableView
+      type: Routeables.Abstraction.IRouteableView
+      description: The entry to navigate to.
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+      description: A token to observe for cancellation.
+    - id: viewKeys
+      type: System.String[]
+      description: Keys that tell views of the same type apart in the cache.
+    typeParameters:
+    - id: TViewModel
+      description: The type of the view model to build.
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+    content.vb: Function GoToRouteAsync(Of TViewModel As Class)(routableView As IRouteableView, cancellationToken As CancellationToken = Nothing, ParamArray viewKeys As String()) As Task(Of RouteableResult)
+  overload: Routeables.Abstraction.IRouter.GoToRouteAsync*
+  nameWithType.vb: IRouter.GoToRouteAsync(Of TViewModel)(IRouteableView, CancellationToken, ParamArray String())
+  fullName.vb: Routeables.Abstraction.IRouter.GoToRouteAsync(Of TViewModel)(Routeables.Abstraction.IRouteableView, System.Threading.CancellationToken, ParamArray String())
+  name.vb: GoToRouteAsync(Of TViewModel)(IRouteableView, CancellationToken, ParamArray String())
+- uid: Routeables.Abstraction.IRouter.GoToRouteAsync(Routeables.Abstraction.IRouteableView,System.Threading.CancellationToken,System.String[])
+  commentId: M:Routeables.Abstraction.IRouter.GoToRouteAsync(Routeables.Abstraction.IRouteableView,System.Threading.CancellationToken,System.String[])
+  id: GoToRouteAsync(Routeables.Abstraction.IRouteableView,System.Threading.CancellationToken,System.String[])
+  parent: Routeables.Abstraction.IRouter
+  langs:
+  - csharp
+  - vb
+  name: GoToRouteAsync(IRouteableView, CancellationToken, params string[])
+  nameWithType: IRouter.GoToRouteAsync(IRouteableView, CancellationToken, params string[])
+  fullName: Routeables.Abstraction.IRouter.GoToRouteAsync(Routeables.Abstraction.IRouteableView, System.Threading.CancellationToken, params string[])
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouter.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GoToRouteAsync
+    path: ../Routeables.Abstraction/Interfaces/IRouter.cs
+    startLine: 116
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Navigates to a menu entry, which knows its route, its template and its view model.
+  example: []
+  syntax:
+    content: Task<RouteableResult> GoToRouteAsync(IRouteableView routableView, CancellationToken cancellationToken = default, params string[] viewKeys)
+    parameters:
+    - id: routableView
+      type: Routeables.Abstraction.IRouteableView
+      description: The entry to navigate to.
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+      description: A token to observe for cancellation.
+    - id: viewKeys
+      type: System.String[]
+      description: Keys that tell views of the same type apart in the cache.
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+    content.vb: Function GoToRouteAsync(routableView As IRouteableView, cancellationToken As CancellationToken = Nothing, ParamArray viewKeys As String()) As Task(Of RouteableResult)
+  overload: Routeables.Abstraction.IRouter.GoToRouteAsync*
+  nameWithType.vb: IRouter.GoToRouteAsync(IRouteableView, CancellationToken, ParamArray String())
+  fullName.vb: Routeables.Abstraction.IRouter.GoToRouteAsync(Routeables.Abstraction.IRouteableView, System.Threading.CancellationToken, ParamArray String())
+  name.vb: GoToRouteAsync(IRouteableView, CancellationToken, ParamArray String())
+references:
+- uid: Routeables.Abstraction.IRouteable
+  commentId: T:Routeables.Abstraction.IRouteable
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteable.html
+  name: IRouteable
+  nameWithType: IRouteable
+  fullName: Routeables.Abstraction.IRouteable
+- uid: Routeables.Abstraction.RouteableResult
+  commentId: T:Routeables.Abstraction.RouteableResult
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.RouteableResult.html
+  name: RouteableResult
+  nameWithType: RouteableResult
+  fullName: Routeables.Abstraction.RouteableResult
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.IRouter.Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IMainRouteables)
+  commentId: M:Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter,Routeables.Abstraction.IMainRouteables)
+  parent: Routeables.Abstraction.Extensions
+  definition: Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter,Routeables.Abstraction.IMainRouteables)
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_CreateLockCoordinator_Routeables_Abstraction_IRouter_Routeables_Abstraction_IMainRouteables_
+  name: CreateLockCoordinator(IRouter, IMainRouteables)
+  nameWithType: Extensions.CreateLockCoordinator(IRouter, IMainRouteables)
+  fullName: Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter, Routeables.Abstraction.IMainRouteables)
+  spec.csharp:
+  - uid: Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter,Routeables.Abstraction.IMainRouteables)
+    name: CreateLockCoordinator
+    href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_CreateLockCoordinator_Routeables_Abstraction_IRouter_Routeables_Abstraction_IMainRouteables_
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IMainRouteables
+    name: IMainRouteables
+    href: Routeables.Abstraction.IMainRouteables.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter,Routeables.Abstraction.IMainRouteables)
+    name: CreateLockCoordinator
+    href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_CreateLockCoordinator_Routeables_Abstraction_IRouter_Routeables_Abstraction_IMainRouteables_
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IMainRouteables
+    name: IMainRouteables
+    href: Routeables.Abstraction.IMainRouteables.html
+  - name: )
+- uid: Routeables.Abstraction.IRouter.Routeables.Abstraction.Extensions.GetCurrentViewModel``1
+  commentId: M:Routeables.Abstraction.Extensions.GetCurrentViewModel``1(Routeables.Abstraction.IRouter)
+  parent: Routeables.Abstraction.Extensions
+  definition: Routeables.Abstraction.Extensions.GetCurrentViewModel``1(Routeables.Abstraction.IRouter)
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetCurrentViewModel__1_Routeables_Abstraction_IRouter_
+  name: GetCurrentViewModel<T>(IRouter)
+  nameWithType: Extensions.GetCurrentViewModel<T>(IRouter)
+  fullName: Routeables.Abstraction.Extensions.GetCurrentViewModel<T>(Routeables.Abstraction.IRouter)
+  nameWithType.vb: Extensions.GetCurrentViewModel(Of T)(IRouter)
+  fullName.vb: Routeables.Abstraction.Extensions.GetCurrentViewModel(Of T)(Routeables.Abstraction.IRouter)
+  name.vb: GetCurrentViewModel(Of T)(IRouter)
+  spec.csharp:
+  - uid: Routeables.Abstraction.Extensions.GetCurrentViewModel``1(Routeables.Abstraction.IRouter)
+    name: GetCurrentViewModel
+    href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetCurrentViewModel__1_Routeables_Abstraction_IRouter_
+  - name: <
+  - name: T
+  - name: '>'
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.Extensions.GetCurrentViewModel``1(Routeables.Abstraction.IRouter)
+    name: GetCurrentViewModel
+    href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetCurrentViewModel__1_Routeables_Abstraction_IRouter_
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: )
+- uid: Routeables.Abstraction.IRouter.Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``1(System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``1(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.RouterResultExtensions
+  definition: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``1(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  href: Routeables.Abstraction.RouterResultExtensions.html#Routeables_Abstraction_RouterResultExtensions_GoToForResultAsync__1_Routeables_Abstraction_IRouter_System_String_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: GoToForResultAsync<TResult>(IRouter, string, IRouteableArgs, CancellationToken)
+  nameWithType: RouterResultExtensions.GoToForResultAsync<TResult>(IRouter, string, IRouteableArgs, CancellationToken)
+  fullName: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync<TResult>(Routeables.Abstraction.IRouter, string, Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  nameWithType.vb: RouterResultExtensions.GoToForResultAsync(Of TResult)(IRouter, String, IRouteableArgs, CancellationToken)
+  fullName.vb: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync(Of TResult)(Routeables.Abstraction.IRouter, String, Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  name.vb: GoToForResultAsync(Of TResult)(IRouter, String, IRouteableArgs, CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``1(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: GoToForResultAsync
+    href: Routeables.Abstraction.RouterResultExtensions.html#Routeables_Abstraction_RouterResultExtensions_GoToForResultAsync__1_Routeables_Abstraction_IRouter_System_String_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: <
+  - name: TResult
+  - name: '>'
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``1(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: GoToForResultAsync
+    href: Routeables.Abstraction.RouterResultExtensions.html#Routeables_Abstraction_RouterResultExtensions_GoToForResultAsync__1_Routeables_Abstraction_IRouter_System_String_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Abstraction.IRouter.Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``2(System.String,Routeables.Abstraction.IRouteableArgs,System.String,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``2(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.String,System.Threading.CancellationToken)
+  parent: Routeables.Abstraction.RouterResultExtensions
+  definition: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``2(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.String,System.Threading.CancellationToken)
+  href: Routeables.Abstraction.RouterResultExtensions.html#Routeables_Abstraction_RouterResultExtensions_GoToForResultAsync__2_Routeables_Abstraction_IRouter_System_String_Routeables_Abstraction_IRouteableArgs_System_String_System_Threading_CancellationToken_
+  name: GoToForResultAsync<TViewModel, TResult>(IRouter, string, IRouteableArgs, string, CancellationToken)
+  nameWithType: RouterResultExtensions.GoToForResultAsync<TViewModel, TResult>(IRouter, string, IRouteableArgs, string, CancellationToken)
+  fullName: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync<TViewModel, TResult>(Routeables.Abstraction.IRouter, string, Routeables.Abstraction.IRouteableArgs, string, System.Threading.CancellationToken)
+  nameWithType.vb: RouterResultExtensions.GoToForResultAsync(Of TViewModel, TResult)(IRouter, String, IRouteableArgs, String, CancellationToken)
+  fullName.vb: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync(Of TViewModel, TResult)(Routeables.Abstraction.IRouter, String, Routeables.Abstraction.IRouteableArgs, String, System.Threading.CancellationToken)
+  name.vb: GoToForResultAsync(Of TViewModel, TResult)(IRouter, String, IRouteableArgs, String, CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``2(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.String,System.Threading.CancellationToken)
+    name: GoToForResultAsync
+    href: Routeables.Abstraction.RouterResultExtensions.html#Routeables_Abstraction_RouterResultExtensions_GoToForResultAsync__2_Routeables_Abstraction_IRouter_System_String_Routeables_Abstraction_IRouteableArgs_System_String_System_Threading_CancellationToken_
+  - name: <
+  - name: TViewModel
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: '>'
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``2(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.String,System.Threading.CancellationToken)
+    name: GoToForResultAsync
+    href: Routeables.Abstraction.RouterResultExtensions.html#Routeables_Abstraction_RouterResultExtensions_GoToForResultAsync__2_Routeables_Abstraction_IRouter_System_String_Routeables_Abstraction_IRouteableArgs_System_String_System_Threading_CancellationToken_
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TViewModel
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: )
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Abstraction.IRouter.Routeables.Routing.RouterTypedExtensions.GoToRouteAsync``2(System.String,{TData},System.String,System.Threading.CancellationToken,System.String[])
+  commentId: M:Routeables.Routing.RouterTypedExtensions.GoToRouteAsync``2(Routeables.Abstraction.IRouter,System.String,``1,System.String,System.Threading.CancellationToken,System.String[])
+  parent: Routeables.Routing.RouterTypedExtensions
+  definition: Routeables.Routing.RouterTypedExtensions.GoToRouteAsync``2(Routeables.Abstraction.IRouter,System.String,``1,System.String,System.Threading.CancellationToken,System.String[])
+  href: Routeables.Routing.RouterTypedExtensions.html#Routeables_Routing_RouterTypedExtensions_GoToRouteAsync__2_Routeables_Abstraction_IRouter_System_String___1_System_String_System_Threading_CancellationToken_System_String___
+  name: GoToRouteAsync<TViewModel, TData>(IRouter, string, TData, string, CancellationToken, params string[])
+  nameWithType: RouterTypedExtensions.GoToRouteAsync<TViewModel, TData>(IRouter, string, TData, string, CancellationToken, params string[])
+  fullName: Routeables.Routing.RouterTypedExtensions.GoToRouteAsync<TViewModel, TData>(Routeables.Abstraction.IRouter, string, TData, string, System.Threading.CancellationToken, params string[])
+  nameWithType.vb: RouterTypedExtensions.GoToRouteAsync(Of TViewModel, TData)(IRouter, String, TData, String, CancellationToken, ParamArray String())
+  fullName.vb: Routeables.Routing.RouterTypedExtensions.GoToRouteAsync(Of TViewModel, TData)(Routeables.Abstraction.IRouter, String, TData, String, System.Threading.CancellationToken, ParamArray String())
+  name.vb: GoToRouteAsync(Of TViewModel, TData)(IRouter, String, TData, String, CancellationToken, ParamArray String())
+  spec.csharp:
+  - uid: Routeables.Routing.RouterTypedExtensions.GoToRouteAsync``2(Routeables.Abstraction.IRouter,System.String,``1,System.String,System.Threading.CancellationToken,System.String[])
+    name: GoToRouteAsync
+    href: Routeables.Routing.RouterTypedExtensions.html#Routeables_Routing_RouterTypedExtensions_GoToRouteAsync__2_Routeables_Abstraction_IRouter_System_String___1_System_String_System_Threading_CancellationToken_System_String___
+  - name: <
+  - name: TViewModel
+  - name: ','
+  - name: " "
+  - name: TData
+  - name: '>'
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - name: TData
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: ','
+  - name: " "
+  - name: params
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '['
+  - name: ']'
+  - name: )
+  spec.vb:
+  - uid: Routeables.Routing.RouterTypedExtensions.GoToRouteAsync``2(Routeables.Abstraction.IRouter,System.String,``1,System.String,System.Threading.CancellationToken,System.String[])
+    name: GoToRouteAsync
+    href: Routeables.Routing.RouterTypedExtensions.html#Routeables_Routing_RouterTypedExtensions_GoToRouteAsync__2_Routeables_Abstraction_IRouter_System_String___1_System_String_System_Threading_CancellationToken_System_String___
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TViewModel
+  - name: ','
+  - name: " "
+  - name: TData
+  - name: )
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - name: TData
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: ','
+  - name: " "
+  - name: ParamArray
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: (
+  - name: )
+  - name: )
+- uid: Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter,Routeables.Abstraction.IMainRouteables)
+  commentId: M:Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter,Routeables.Abstraction.IMainRouteables)
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_CreateLockCoordinator_Routeables_Abstraction_IRouter_Routeables_Abstraction_IMainRouteables_
+  name: CreateLockCoordinator(IRouter, IMainRouteables)
+  nameWithType: Extensions.CreateLockCoordinator(IRouter, IMainRouteables)
+  fullName: Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter, Routeables.Abstraction.IMainRouteables)
+  spec.csharp:
+  - uid: Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter,Routeables.Abstraction.IMainRouteables)
+    name: CreateLockCoordinator
+    href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_CreateLockCoordinator_Routeables_Abstraction_IRouter_Routeables_Abstraction_IMainRouteables_
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IMainRouteables
+    name: IMainRouteables
+    href: Routeables.Abstraction.IMainRouteables.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter,Routeables.Abstraction.IMainRouteables)
+    name: CreateLockCoordinator
+    href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_CreateLockCoordinator_Routeables_Abstraction_IRouter_Routeables_Abstraction_IMainRouteables_
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IMainRouteables
+    name: IMainRouteables
+    href: Routeables.Abstraction.IMainRouteables.html
+  - name: )
+- uid: Routeables.Abstraction.Extensions
+  commentId: T:Routeables.Abstraction.Extensions
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.Extensions.html
+  name: Extensions
+  nameWithType: Extensions
+  fullName: Routeables.Abstraction.Extensions
+- uid: Routeables.Abstraction.Extensions.GetCurrentViewModel``1(Routeables.Abstraction.IRouter)
+  commentId: M:Routeables.Abstraction.Extensions.GetCurrentViewModel``1(Routeables.Abstraction.IRouter)
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetCurrentViewModel__1_Routeables_Abstraction_IRouter_
+  name: GetCurrentViewModel<T>(IRouter)
+  nameWithType: Extensions.GetCurrentViewModel<T>(IRouter)
+  fullName: Routeables.Abstraction.Extensions.GetCurrentViewModel<T>(Routeables.Abstraction.IRouter)
+  nameWithType.vb: Extensions.GetCurrentViewModel(Of T)(IRouter)
+  fullName.vb: Routeables.Abstraction.Extensions.GetCurrentViewModel(Of T)(Routeables.Abstraction.IRouter)
+  name.vb: GetCurrentViewModel(Of T)(IRouter)
+  spec.csharp:
+  - uid: Routeables.Abstraction.Extensions.GetCurrentViewModel``1(Routeables.Abstraction.IRouter)
+    name: GetCurrentViewModel
+    href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetCurrentViewModel__1_Routeables_Abstraction_IRouter_
+  - name: <
+  - name: T
+  - name: '>'
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.Extensions.GetCurrentViewModel``1(Routeables.Abstraction.IRouter)
+    name: GetCurrentViewModel
+    href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetCurrentViewModel__1_Routeables_Abstraction_IRouter_
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: )
+- uid: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``1(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``1(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  isExternal: true
+  href: Routeables.Abstraction.RouterResultExtensions.html#Routeables_Abstraction_RouterResultExtensions_GoToForResultAsync__1_Routeables_Abstraction_IRouter_System_String_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: GoToForResultAsync<TResult>(IRouter, string, IRouteableArgs, CancellationToken)
+  nameWithType: RouterResultExtensions.GoToForResultAsync<TResult>(IRouter, string, IRouteableArgs, CancellationToken)
+  fullName: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync<TResult>(Routeables.Abstraction.IRouter, string, Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  nameWithType.vb: RouterResultExtensions.GoToForResultAsync(Of TResult)(IRouter, String, IRouteableArgs, CancellationToken)
+  fullName.vb: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync(Of TResult)(Routeables.Abstraction.IRouter, String, Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  name.vb: GoToForResultAsync(Of TResult)(IRouter, String, IRouteableArgs, CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``1(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: GoToForResultAsync
+    href: Routeables.Abstraction.RouterResultExtensions.html#Routeables_Abstraction_RouterResultExtensions_GoToForResultAsync__1_Routeables_Abstraction_IRouter_System_String_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: <
+  - name: TResult
+  - name: '>'
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``1(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: GoToForResultAsync
+    href: Routeables.Abstraction.RouterResultExtensions.html#Routeables_Abstraction_RouterResultExtensions_GoToForResultAsync__1_Routeables_Abstraction_IRouter_System_String_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Abstraction.RouterResultExtensions
+  commentId: T:Routeables.Abstraction.RouterResultExtensions
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.RouterResultExtensions.html
+  name: RouterResultExtensions
+  nameWithType: RouterResultExtensions
+  fullName: Routeables.Abstraction.RouterResultExtensions
+- uid: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``2(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.String,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``2(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.String,System.Threading.CancellationToken)
+  isExternal: true
+  href: Routeables.Abstraction.RouterResultExtensions.html#Routeables_Abstraction_RouterResultExtensions_GoToForResultAsync__2_Routeables_Abstraction_IRouter_System_String_Routeables_Abstraction_IRouteableArgs_System_String_System_Threading_CancellationToken_
+  name: GoToForResultAsync<TViewModel, TResult>(IRouter, string, IRouteableArgs, string, CancellationToken)
+  nameWithType: RouterResultExtensions.GoToForResultAsync<TViewModel, TResult>(IRouter, string, IRouteableArgs, string, CancellationToken)
+  fullName: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync<TViewModel, TResult>(Routeables.Abstraction.IRouter, string, Routeables.Abstraction.IRouteableArgs, string, System.Threading.CancellationToken)
+  nameWithType.vb: RouterResultExtensions.GoToForResultAsync(Of TViewModel, TResult)(IRouter, String, IRouteableArgs, String, CancellationToken)
+  fullName.vb: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync(Of TViewModel, TResult)(Routeables.Abstraction.IRouter, String, Routeables.Abstraction.IRouteableArgs, String, System.Threading.CancellationToken)
+  name.vb: GoToForResultAsync(Of TViewModel, TResult)(IRouter, String, IRouteableArgs, String, CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``2(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.String,System.Threading.CancellationToken)
+    name: GoToForResultAsync
+    href: Routeables.Abstraction.RouterResultExtensions.html#Routeables_Abstraction_RouterResultExtensions_GoToForResultAsync__2_Routeables_Abstraction_IRouter_System_String_Routeables_Abstraction_IRouteableArgs_System_String_System_Threading_CancellationToken_
+  - name: <
+  - name: TViewModel
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: '>'
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.RouterResultExtensions.GoToForResultAsync``2(Routeables.Abstraction.IRouter,System.String,Routeables.Abstraction.IRouteableArgs,System.String,System.Threading.CancellationToken)
+    name: GoToForResultAsync
+    href: Routeables.Abstraction.RouterResultExtensions.html#Routeables_Abstraction_RouterResultExtensions_GoToForResultAsync__2_Routeables_Abstraction_IRouter_System_String_Routeables_Abstraction_IRouteableArgs_System_String_System_Threading_CancellationToken_
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TViewModel
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: )
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Routing.RouterTypedExtensions.GoToRouteAsync``2(Routeables.Abstraction.IRouter,System.String,``1,System.String,System.Threading.CancellationToken,System.String[])
+  commentId: M:Routeables.Routing.RouterTypedExtensions.GoToRouteAsync``2(Routeables.Abstraction.IRouter,System.String,``1,System.String,System.Threading.CancellationToken,System.String[])
+  isExternal: true
+  href: Routeables.Routing.RouterTypedExtensions.html#Routeables_Routing_RouterTypedExtensions_GoToRouteAsync__2_Routeables_Abstraction_IRouter_System_String___1_System_String_System_Threading_CancellationToken_System_String___
+  name: GoToRouteAsync<TViewModel, TData>(IRouter, string, TData, string, CancellationToken, params string[])
+  nameWithType: RouterTypedExtensions.GoToRouteAsync<TViewModel, TData>(IRouter, string, TData, string, CancellationToken, params string[])
+  fullName: Routeables.Routing.RouterTypedExtensions.GoToRouteAsync<TViewModel, TData>(Routeables.Abstraction.IRouter, string, TData, string, System.Threading.CancellationToken, params string[])
+  nameWithType.vb: RouterTypedExtensions.GoToRouteAsync(Of TViewModel, TData)(IRouter, String, TData, String, CancellationToken, ParamArray String())
+  fullName.vb: Routeables.Routing.RouterTypedExtensions.GoToRouteAsync(Of TViewModel, TData)(Routeables.Abstraction.IRouter, String, TData, String, System.Threading.CancellationToken, ParamArray String())
+  name.vb: GoToRouteAsync(Of TViewModel, TData)(IRouter, String, TData, String, CancellationToken, ParamArray String())
+  spec.csharp:
+  - uid: Routeables.Routing.RouterTypedExtensions.GoToRouteAsync``2(Routeables.Abstraction.IRouter,System.String,``1,System.String,System.Threading.CancellationToken,System.String[])
+    name: GoToRouteAsync
+    href: Routeables.Routing.RouterTypedExtensions.html#Routeables_Routing_RouterTypedExtensions_GoToRouteAsync__2_Routeables_Abstraction_IRouter_System_String___1_System_String_System_Threading_CancellationToken_System_String___
+  - name: <
+  - name: TViewModel
+  - name: ','
+  - name: " "
+  - name: TData
+  - name: '>'
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - name: TData
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: ','
+  - name: " "
+  - name: params
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '['
+  - name: ']'
+  - name: )
+  spec.vb:
+  - uid: Routeables.Routing.RouterTypedExtensions.GoToRouteAsync``2(Routeables.Abstraction.IRouter,System.String,``1,System.String,System.Threading.CancellationToken,System.String[])
+    name: GoToRouteAsync
+    href: Routeables.Routing.RouterTypedExtensions.html#Routeables_Routing_RouterTypedExtensions_GoToRouteAsync__2_Routeables_Abstraction_IRouter_System_String___1_System_String_System_Threading_CancellationToken_System_String___
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TViewModel
+  - name: ','
+  - name: " "
+  - name: TData
+  - name: )
+  - name: (
+  - uid: Routeables.Abstraction.IRouter
+    name: IRouter
+    href: Routeables.Abstraction.IRouter.html
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - name: TData
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: ','
+  - name: " "
+  - name: ParamArray
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: (
+  - name: )
+  - name: )
+- uid: Routeables.Routing.RouterTypedExtensions
+  commentId: T:Routeables.Routing.RouterTypedExtensions
+  parent: Routeables.Routing
+  href: Routeables.Routing.RouterTypedExtensions.html
+  name: RouterTypedExtensions
+  nameWithType: RouterTypedExtensions
+  fullName: Routeables.Routing.RouterTypedExtensions
+- uid: Routeables.Routing
+  commentId: N:Routeables.Routing
+  name: Routeables.Routing
+  nameWithType: Routeables.Routing
+  fullName: Routeables.Routing
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Routing
+    name: Routing
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Routing
+    name: Routing
+- uid: Routeables.Abstraction.IRouter.History*
+  commentId: Overload:Routeables.Abstraction.IRouter.History
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_History
+  name: History
+  nameWithType: IRouter.History
+  fullName: Routeables.Abstraction.IRouter.History
+- uid: Routeables.Abstraction.IRouterHistory
+  commentId: T:Routeables.Abstraction.IRouterHistory
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouterHistory.html
+  name: IRouterHistory
+  nameWithType: IRouterHistory
+  fullName: Routeables.Abstraction.IRouterHistory
+- uid: System.EventHandler{Routeables.Abstraction.RouteableRoutingEventArgs}
+  commentId: T:System.EventHandler{Routeables.Abstraction.RouteableRoutingEventArgs}
+  parent: System
+  definition: System.EventHandler`1
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<RouteableRoutingEventArgs>
+  nameWithType: EventHandler<RouteableRoutingEventArgs>
+  fullName: System.EventHandler<Routeables.Abstraction.RouteableRoutingEventArgs>
+  nameWithType.vb: EventHandler(Of RouteableRoutingEventArgs)
+  fullName.vb: System.EventHandler(Of Routeables.Abstraction.RouteableRoutingEventArgs)
+  name.vb: EventHandler(Of RouteableRoutingEventArgs)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - uid: Routeables.Abstraction.RouteableRoutingEventArgs
+    name: RouteableRoutingEventArgs
+    href: Routeables.Abstraction.RouteableRoutingEventArgs.html
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.RouteableRoutingEventArgs
+    name: RouteableRoutingEventArgs
+    href: Routeables.Abstraction.RouteableRoutingEventArgs.html
+  - name: )
+- uid: System.EventHandler`1
+  commentId: T:System.EventHandler`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<TEventArgs>
+  nameWithType: EventHandler<TEventArgs>
+  fullName: System.EventHandler<TEventArgs>
+  nameWithType.vb: EventHandler(Of TEventArgs)
+  fullName.vb: System.EventHandler(Of TEventArgs)
+  name.vb: EventHandler(Of TEventArgs)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - name: TEventArgs
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TEventArgs
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction.IRouter.Routing
+  commentId: E:Routeables.Abstraction.IRouter.Routing
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_Routing
+  name: Routing
+  nameWithType: IRouter.Routing
+  fullName: Routeables.Abstraction.IRouter.Routing
+- uid: System.EventHandler{Routeables.Abstraction.RouteableRoutedEventArgs}
+  commentId: T:System.EventHandler{Routeables.Abstraction.RouteableRoutedEventArgs}
+  parent: System
+  definition: System.EventHandler`1
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<RouteableRoutedEventArgs>
+  nameWithType: EventHandler<RouteableRoutedEventArgs>
+  fullName: System.EventHandler<Routeables.Abstraction.RouteableRoutedEventArgs>
+  nameWithType.vb: EventHandler(Of RouteableRoutedEventArgs)
+  fullName.vb: System.EventHandler(Of Routeables.Abstraction.RouteableRoutedEventArgs)
+  name.vb: EventHandler(Of RouteableRoutedEventArgs)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - uid: Routeables.Abstraction.RouteableRoutedEventArgs
+    name: RouteableRoutedEventArgs
+    href: Routeables.Abstraction.RouteableRoutedEventArgs.html
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.RouteableRoutedEventArgs
+    name: RouteableRoutedEventArgs
+    href: Routeables.Abstraction.RouteableRoutedEventArgs.html
+  - name: )
+- uid: Routeables.Abstraction.IRouter.BackAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouter.BackAsync(System.Threading.CancellationToken)
+  isExternal: true
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_BackAsync_System_Threading_CancellationToken_
+  name: BackAsync(CancellationToken)
+  nameWithType: IRouter.BackAsync(CancellationToken)
+  fullName: Routeables.Abstraction.IRouter.BackAsync(System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouter.BackAsync(System.Threading.CancellationToken)
+    name: BackAsync
+    href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_BackAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouter.BackAsync(System.Threading.CancellationToken)
+    name: BackAsync
+    href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_BackAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Abstraction.IRouter.CanGoBack*
+  commentId: Overload:Routeables.Abstraction.IRouter.CanGoBack
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_CanGoBack
+  name: CanGoBack
+  nameWithType: IRouter.CanGoBack
+  fullName: Routeables.Abstraction.IRouter.CanGoBack
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: Routeables.Abstraction.IRouter.ForwardAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouter.ForwardAsync(System.Threading.CancellationToken)
+  isExternal: true
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_ForwardAsync_System_Threading_CancellationToken_
+  name: ForwardAsync(CancellationToken)
+  nameWithType: IRouter.ForwardAsync(CancellationToken)
+  fullName: Routeables.Abstraction.IRouter.ForwardAsync(System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouter.ForwardAsync(System.Threading.CancellationToken)
+    name: ForwardAsync
+    href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_ForwardAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouter.ForwardAsync(System.Threading.CancellationToken)
+    name: ForwardAsync
+    href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_ForwardAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Abstraction.IRouter.CanGoForward*
+  commentId: Overload:Routeables.Abstraction.IRouter.CanGoForward
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_CanGoForward
+  name: CanGoForward
+  nameWithType: IRouter.CanGoForward
+  fullName: Routeables.Abstraction.IRouter.CanGoForward
+- uid: Routeables.Abstraction.IRouter.CurrentViewModel*
+  commentId: Overload:Routeables.Abstraction.IRouter.CurrentViewModel
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_CurrentViewModel
+  name: CurrentViewModel
+  nameWithType: IRouter.CurrentViewModel
+  fullName: Routeables.Abstraction.IRouter.CurrentViewModel
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Routeables.Abstraction.IRouter.CurrentView*
+  commentId: Overload:Routeables.Abstraction.IRouter.CurrentView
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_CurrentView
+  name: CurrentView
+  nameWithType: IRouter.CurrentView
+  fullName: Routeables.Abstraction.IRouter.CurrentView
+- uid: Routeables.Abstraction.IRouter.PopAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouter.PopAsync(System.Threading.CancellationToken)
+  isExternal: true
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_PopAsync_System_Threading_CancellationToken_
+  name: PopAsync(CancellationToken)
+  nameWithType: IRouter.PopAsync(CancellationToken)
+  fullName: Routeables.Abstraction.IRouter.PopAsync(System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouter.PopAsync(System.Threading.CancellationToken)
+    name: PopAsync
+    href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_PopAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouter.PopAsync(System.Threading.CancellationToken)
+    name: PopAsync
+    href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_PopAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Abstraction.IRouter.BackAsync*
+  commentId: Overload:Routeables.Abstraction.IRouter.BackAsync
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_BackAsync_System_Threading_CancellationToken_
+  name: BackAsync
+  nameWithType: IRouter.BackAsync
+  fullName: Routeables.Abstraction.IRouter.BackAsync
+- uid: System.Threading.CancellationToken
+  commentId: T:System.Threading.CancellationToken
+  parent: System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: CancellationToken
+  nameWithType: CancellationToken
+  fullName: System.Threading.CancellationToken
+- uid: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+  commentId: T:System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<RouteableResult>
+  nameWithType: Task<RouteableResult>
+  fullName: System.Threading.Tasks.Task<Routeables.Abstraction.RouteableResult>
+  nameWithType.vb: Task(Of RouteableResult)
+  fullName.vb: System.Threading.Tasks.Task(Of Routeables.Abstraction.RouteableResult)
+  name.vb: Task(Of RouteableResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: Routeables.Abstraction.RouteableResult
+    name: RouteableResult
+    href: Routeables.Abstraction.RouteableResult.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.RouteableResult
+    name: RouteableResult
+    href: Routeables.Abstraction.RouteableResult.html
+  - name: )
+- uid: System.Threading
+  commentId: N:System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading
+  nameWithType: System.Threading
+  fullName: System.Threading
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: Routeables.Abstraction.IRouter.ForwardAsync*
+  commentId: Overload:Routeables.Abstraction.IRouter.ForwardAsync
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_ForwardAsync_System_Threading_CancellationToken_
+  name: ForwardAsync
+  nameWithType: IRouter.ForwardAsync
+  fullName: Routeables.Abstraction.IRouter.ForwardAsync
+- uid: Routeables.Abstraction.IRouter.BackToRootAsync*
+  commentId: Overload:Routeables.Abstraction.IRouter.BackToRootAsync
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_BackToRootAsync_System_Threading_CancellationToken_
+  name: BackToRootAsync
+  nameWithType: IRouter.BackToRootAsync
+  fullName: Routeables.Abstraction.IRouter.BackToRootAsync
+- uid: Routeables.Abstraction.IRouter.PopAsync*
+  commentId: Overload:Routeables.Abstraction.IRouter.PopAsync
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_PopAsync_System_Threading_CancellationToken_
+  name: PopAsync
+  nameWithType: IRouter.PopAsync
+  fullName: Routeables.Abstraction.IRouter.PopAsync
+- uid: Routeables.Abstraction.IRouter.MoveToAsync*
+  commentId: Overload:Routeables.Abstraction.IRouter.MoveToAsync
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_MoveToAsync_System_Int32_System_Threading_CancellationToken_
+  name: MoveToAsync
+  nameWithType: IRouter.MoveToAsync
+  fullName: Routeables.Abstraction.IRouter.MoveToAsync
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: Routeables.Abstraction.IRouter.EraseHistoryAsync*
+  commentId: Overload:Routeables.Abstraction.IRouter.EraseHistoryAsync
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_EraseHistoryAsync_System_Threading_CancellationToken_
+  name: EraseHistoryAsync
+  nameWithType: IRouter.EraseHistoryAsync
+  fullName: Routeables.Abstraction.IRouter.EraseHistoryAsync
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: Routeables.Abstraction.IRouter.GoToAsync*
+  commentId: Overload:Routeables.Abstraction.IRouter.GoToAsync
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_GoToAsync_System_String_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: GoToAsync
+  nameWithType: IRouter.GoToAsync
+  fullName: Routeables.Abstraction.IRouter.GoToAsync
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: Routeables.Abstraction.IRouteableArgs
+  commentId: T:Routeables.Abstraction.IRouteableArgs
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableArgs.html
+  name: IRouteableArgs
+  nameWithType: IRouteableArgs
+  fullName: Routeables.Abstraction.IRouteableArgs
+- uid: Routeables.Abstraction.IRouteableFor.Context
+  commentId: P:Routeables.Abstraction.IRouteableFor.Context
+  parent: Routeables.Abstraction.IRouteableFor
+  href: Routeables.Abstraction.IRouteableFor.html#Routeables_Abstraction_IRouteableFor_Context
+  name: Context
+  nameWithType: IRouteableFor.Context
+  fullName: Routeables.Abstraction.IRouteableFor.Context
+- uid: Routeables.Abstraction.IRouter.GoAsync*
+  commentId: Overload:Routeables.Abstraction.IRouter.GoAsync
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_GoAsync_System_Object_System_Object_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: GoAsync
+  nameWithType: IRouter.GoAsync
+  fullName: Routeables.Abstraction.IRouter.GoAsync
+- uid: Routeables.Abstraction.IRouteableFor
+  commentId: T:Routeables.Abstraction.IRouteableFor
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableFor.html
+  name: IRouteableFor
+  nameWithType: IRouteableFor
+  fullName: Routeables.Abstraction.IRouteableFor
+- uid: Routeables.Abstraction.IRouter.GoToRouteAsync*
+  commentId: Overload:Routeables.Abstraction.IRouter.GoToRouteAsync
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_GoToRouteAsync__1_Routeables_Abstraction_IRouteableView_System_Threading_CancellationToken_System_String___
+  name: GoToRouteAsync
+  nameWithType: IRouter.GoToRouteAsync
+  fullName: Routeables.Abstraction.IRouter.GoToRouteAsync
+- uid: Routeables.Abstraction.IRouteableView
+  commentId: T:Routeables.Abstraction.IRouteableView
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableView.html
+  name: IRouteableView
+  nameWithType: IRouteableView
+  fullName: Routeables.Abstraction.IRouteableView
+- uid: System.String[]
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string[]
+  nameWithType: string[]
+  fullName: string[]
+  nameWithType.vb: String()
+  fullName.vb: String()
+  name.vb: String()
+  spec.csharp:
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '['
+  - name: ']'
+  spec.vb:
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: (
+  - name: )

@@ -1,0 +1,34 @@
+﻿@using Microsoft.JSInterop
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@inherits RouteableFor<AboutView, AboutViewModel>
+@inject IJSRuntime JS
+
+<PageTitle>About</PageTitle>
+
+<div class="about-page">
+    <div class="about-logo">
+        <img src="_content/XAnimals.Razor/logo.svg" alt="Routeables logo" />
+    </div>
+
+    <div>
+        <h1>
+            <span class="app-name">Routeables Animals</span>
+            <span class="app-version">1.0</span>
+        </h1>
+    </div>
+
+    <section class="about-group">
+        <h2>Links</h2>
+        <div class="actions">
+            <button @onclick="OpenLinkAsync">Learn more</button>
+            <button @onclick="ViewModel.OpenPolarBearsAsync">Polar bears</button>
+        </div>
+    </section>
+</div>
+
+@code {
+    private async Task OpenLinkAsync()
+        => await JS.InvokeVoidAsync("window.open", AboutViewModel.LearnMoreUrl, "_blank", "noopener");
+}

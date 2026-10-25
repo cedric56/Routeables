@@ -1,0 +1,26 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:svg="using:Svg.Controls.Skia.Avalonia"
+             xmlns:vm="using:XAnimals.ViewModels"
+             x:Class="XAnimals.Avalonia.AboutView"
+             x:DataType="vm:AboutViewModel"
+             Background="{DynamicResource AnPaper}">
+
+    <ScrollViewer>
+        <StackPanel>
+            <Svg Path="/Assets/logo.svg" Height="200" />
+            <StackPanel Margin="20,32,20,40" Spacing="6" MaxWidth="640">
+                <TextBlock FontSize="28" FontFamily="{DynamicResource AnDisplayFont}" Foreground="{DynamicResource AnInk}">
+                    <Run Text="Routeables Animals" FontWeight="SemiBold" />
+                    <Run Text=" 1.0" FontFamily="Inter" FontSize="16" Foreground="{DynamicResource AnMuted}" />
+                </TextBlock>
+
+                <TextBlock Text="Links" Margin="0,14,0,0" FontWeight="SemiBold" Foreground="{DynamicResource AnMuted}" />
+                <WrapPanel>
+                    <Button Margin="0,0,8,8" Content="Learn more" Classes="an" Click="OnLearnMoreClick" />
+                    <Button Margin="0,0,8,8" Content="Polar bears" Classes="an" Command="{Binding PolarBearsCommand}" />
+                </WrapPanel>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

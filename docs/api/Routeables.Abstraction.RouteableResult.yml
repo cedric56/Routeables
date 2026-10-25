@@ -1,0 +1,528 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.RouteableResult
+  commentId: T:Routeables.Abstraction.RouteableResult
+  id: RouteableResult
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.RouteableResult.Cancel
+  - Routeables.Abstraction.RouteableResult.Cancelled
+  - Routeables.Abstraction.RouteableResult.Exception
+  - Routeables.Abstraction.RouteableResult.Fail(System.Exception)
+  - Routeables.Abstraction.RouteableResult.Ok
+  - Routeables.Abstraction.RouteableResult.Success
+  langs:
+  - csharp
+  - vb
+  name: RouteableResult
+  nameWithType: RouteableResult
+  fullName: Routeables.Abstraction.RouteableResult
+  type: Class
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableResult.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RouteableResult
+    path: ../Routeables.Abstraction/Routing/RouteableResult.cs
+    startLine: 5
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Represents the outcome of a routing or navigation operation, indicating success, cancellation, or failure.
+  example: []
+  syntax:
+    content: public sealed class RouteableResult
+    content.vb: Public NotInheritable Class RouteableResult
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: Routeables.Abstraction.RouteableResult.Success
+  commentId: P:Routeables.Abstraction.RouteableResult.Success
+  id: Success
+  parent: Routeables.Abstraction.RouteableResult
+  langs:
+  - csharp
+  - vb
+  name: Success
+  nameWithType: RouteableResult.Success
+  fullName: Routeables.Abstraction.RouteableResult.Success
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableResult.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Success
+    path: ../Routeables.Abstraction/Routing/RouteableResult.cs
+    startLine: 10
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Gets a value indicating whether the routing operation completed successfully.
+  example: []
+  syntax:
+    content: public bool Success { get; init; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property Success As Boolean
+  overload: Routeables.Abstraction.RouteableResult.Success*
+- uid: Routeables.Abstraction.RouteableResult.Cancelled
+  commentId: P:Routeables.Abstraction.RouteableResult.Cancelled
+  id: Cancelled
+  parent: Routeables.Abstraction.RouteableResult
+  langs:
+  - csharp
+  - vb
+  name: Cancelled
+  nameWithType: RouteableResult.Cancelled
+  fullName: Routeables.Abstraction.RouteableResult.Cancelled
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableResult.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Cancelled
+    path: ../Routeables.Abstraction/Routing/RouteableResult.cs
+    startLine: 15
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Gets a value indicating whether the routing operation was cancelled.
+  example: []
+  syntax:
+    content: public bool Cancelled { get; init; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property Cancelled As Boolean
+  overload: Routeables.Abstraction.RouteableResult.Cancelled*
+- uid: Routeables.Abstraction.RouteableResult.Exception
+  commentId: P:Routeables.Abstraction.RouteableResult.Exception
+  id: Exception
+  parent: Routeables.Abstraction.RouteableResult
+  langs:
+  - csharp
+  - vb
+  name: Exception
+  nameWithType: RouteableResult.Exception
+  fullName: Routeables.Abstraction.RouteableResult.Exception
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableResult.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Exception
+    path: ../Routeables.Abstraction/Routing/RouteableResult.cs
+    startLine: 20
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Gets the error message associated with a failed routing operation, if any.
+  example: []
+  syntax:
+    content: public Exception? Exception { get; init; }
+    parameters: []
+    return:
+      type: System.Exception
+    content.vb: Public Property Exception As Exception
+  overload: Routeables.Abstraction.RouteableResult.Exception*
+- uid: Routeables.Abstraction.RouteableResult.Ok
+  commentId: M:Routeables.Abstraction.RouteableResult.Ok
+  id: Ok
+  parent: Routeables.Abstraction.RouteableResult
+  langs:
+  - csharp
+  - vb
+  name: Ok()
+  nameWithType: RouteableResult.Ok()
+  fullName: Routeables.Abstraction.RouteableResult.Ok()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableResult.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Ok
+    path: ../Routeables.Abstraction/Routing/RouteableResult.cs
+    startLine: 26
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Creates and returns a successful <xref href="Routeables.Abstraction.RouteableResult" data-throw-if-not-resolved="false"></xref> instance.
+  example: []
+  syntax:
+    content: public static RouteableResult Ok()
+    return:
+      type: Routeables.Abstraction.RouteableResult
+      description: A new successful routable result.
+    content.vb: Public Shared Function Ok() As RouteableResult
+  overload: Routeables.Abstraction.RouteableResult.Ok*
+- uid: Routeables.Abstraction.RouteableResult.Cancel
+  commentId: M:Routeables.Abstraction.RouteableResult.Cancel
+  id: Cancel
+  parent: Routeables.Abstraction.RouteableResult
+  langs:
+  - csharp
+  - vb
+  name: Cancel()
+  nameWithType: RouteableResult.Cancel()
+  fullName: Routeables.Abstraction.RouteableResult.Cancel()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableResult.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Cancel
+    path: ../Routeables.Abstraction/Routing/RouteableResult.cs
+    startLine: 32
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Creates and returns a cancelled <xref href="Routeables.Abstraction.RouteableResult" data-throw-if-not-resolved="false"></xref> instance.
+  example: []
+  syntax:
+    content: public static RouteableResult Cancel()
+    return:
+      type: Routeables.Abstraction.RouteableResult
+      description: A new cancelled routable result.
+    content.vb: Public Shared Function Cancel() As RouteableResult
+  overload: Routeables.Abstraction.RouteableResult.Cancel*
+- uid: Routeables.Abstraction.RouteableResult.Fail(System.Exception)
+  commentId: M:Routeables.Abstraction.RouteableResult.Fail(System.Exception)
+  id: Fail(System.Exception)
+  parent: Routeables.Abstraction.RouteableResult
+  langs:
+  - csharp
+  - vb
+  name: Fail(Exception)
+  nameWithType: RouteableResult.Fail(Exception)
+  fullName: Routeables.Abstraction.RouteableResult.Fail(System.Exception)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/RouteableResult.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Fail
+    path: ../Routeables.Abstraction/Routing/RouteableResult.cs
+    startLine: 39
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Creates and returns a failed <xref href="Routeables.Abstraction.RouteableResult" data-throw-if-not-resolved="false"></xref> instance that carries the specified exception.
+  example: []
+  syntax:
+    content: public static RouteableResult Fail(Exception ex)
+    parameters:
+    - id: ex
+      type: System.Exception
+      description: The exception that caused the failure.
+    return:
+      type: Routeables.Abstraction.RouteableResult
+      description: A new failed routable result.
+    content.vb: Public Shared Function Fail(ex As Exception) As RouteableResult
+  overload: Routeables.Abstraction.RouteableResult.Fail*
+references:
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction.RouteableResult.Success*
+  commentId: Overload:Routeables.Abstraction.RouteableResult.Success
+  href: Routeables.Abstraction.RouteableResult.html#Routeables_Abstraction_RouteableResult_Success
+  name: Success
+  nameWithType: RouteableResult.Success
+  fullName: Routeables.Abstraction.RouteableResult.Success
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: Routeables.Abstraction.RouteableResult.Cancelled*
+  commentId: Overload:Routeables.Abstraction.RouteableResult.Cancelled
+  href: Routeables.Abstraction.RouteableResult.html#Routeables_Abstraction_RouteableResult_Cancelled
+  name: Cancelled
+  nameWithType: RouteableResult.Cancelled
+  fullName: Routeables.Abstraction.RouteableResult.Cancelled
+- uid: Routeables.Abstraction.RouteableResult.Exception*
+  commentId: Overload:Routeables.Abstraction.RouteableResult.Exception
+  href: Routeables.Abstraction.RouteableResult.html#Routeables_Abstraction_RouteableResult_Exception
+  name: Exception
+  nameWithType: RouteableResult.Exception
+  fullName: Routeables.Abstraction.RouteableResult.Exception
+- uid: System.Exception
+  commentId: T:System.Exception
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.exception
+  name: Exception
+  nameWithType: Exception
+  fullName: System.Exception
+- uid: Routeables.Abstraction.RouteableResult
+  commentId: T:Routeables.Abstraction.RouteableResult
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.RouteableResult.html
+  name: RouteableResult
+  nameWithType: RouteableResult
+  fullName: Routeables.Abstraction.RouteableResult
+- uid: Routeables.Abstraction.RouteableResult.Ok*
+  commentId: Overload:Routeables.Abstraction.RouteableResult.Ok
+  href: Routeables.Abstraction.RouteableResult.html#Routeables_Abstraction_RouteableResult_Ok
+  name: Ok
+  nameWithType: RouteableResult.Ok
+  fullName: Routeables.Abstraction.RouteableResult.Ok
+- uid: Routeables.Abstraction.RouteableResult.Cancel*
+  commentId: Overload:Routeables.Abstraction.RouteableResult.Cancel
+  href: Routeables.Abstraction.RouteableResult.html#Routeables_Abstraction_RouteableResult_Cancel
+  name: Cancel
+  nameWithType: RouteableResult.Cancel
+  fullName: Routeables.Abstraction.RouteableResult.Cancel
+- uid: Routeables.Abstraction.RouteableResult.Fail*
+  commentId: Overload:Routeables.Abstraction.RouteableResult.Fail
+  href: Routeables.Abstraction.RouteableResult.html#Routeables_Abstraction_RouteableResult_Fail_System_Exception_
+  name: Fail
+  nameWithType: RouteableResult.Fail
+  fullName: Routeables.Abstraction.RouteableResult.Fail

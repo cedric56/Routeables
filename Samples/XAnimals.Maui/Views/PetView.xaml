@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
+    xmlns:vm="clr-namespace:XAnimals.ViewModels;assembly=XAnimals.ViewModels"
+    x:Class="XAnimals.Maui.Views.PetView"
+    x:DataType="vm:PetViewModel">
+
+    <!-- The card of one adopted animal; the adoption zone puts them side by side. -->
+    <Border Padding="14" VerticalOptions="Start" StrokeThickness="0"
+            BackgroundColor="{AppThemeBinding Light={StaticResource Lichen}, Dark={StaticResource Moss}}">
+        <Border.StrokeShape><RoundRectangle CornerRadius="16" /></Border.StrokeShape>
+        <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+            <Border WidthRequest="150" HeightRequest="190" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={StaticResource ArchFill}, Dark={StaticResource ArchFillDark}}">
+                <Border.StrokeShape><RoundRectangle CornerRadius="75,75,12,12" /></Border.StrokeShape>
+                <Image Source="{Binding Animal.PhotoUrl, Converter={StaticResource WebImage}}" Aspect="AspectFill" />
+            </Border>
+            <Label Text="{Binding Name}" FontFamily="Lora" FontSize="22" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+            <Label Text="{Binding Location}" FontFamily="InterSemibold" HorizontalOptions="Center" HorizontalTextAlignment="Center"
+                   TextColor="{AppThemeBinding Light={StaticResource SaffronText}, Dark={StaticResource Tertiary}}" />
+            <Label Text="{Binding Glyph}" FontSize="22" HorizontalOptions="Center" />
+        </VerticalStackLayout>
+    </Border>
+</routeables:RouteableFor>

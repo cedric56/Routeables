@@ -1,0 +1,38 @@
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="using:Routeables.Uno"
+    xmlns:local="using:XAnimals.Uno"
+    x:Class="XAnimals.Uno.Views.DialogsView">
+    <ScrollViewer>
+        <StackPanel Margin="20,32,20,40" Spacing="6" MaxWidth="640">
+            <TextBlock Text="Messages" Margin="0,14,0,0" FontWeight="SemiBold" Opacity="0.7" />
+            <local:WrapPanel>
+                <Button Margin="0,0,8,8" Content="Ok" Command="{Binding OkCommand}" />
+                <Button Margin="0,0,8,8" Content="Error" Command="{Binding ErrorCommand}" />
+                <Button Margin="0,0,8,8" Content="Yes / No" Command="{Binding YesNoCommand}" />
+                <Button Margin="0,0,8,8" Content="Ok / Cancel" Command="{Binding OkCancelCommand}" />
+                <Button Margin="0,0,8,8" Content="Ok / Abort" Command="{Binding OkAbortCommand}" />
+                <Button Margin="0,0,8,8" Content="Yes / No / Cancel" Command="{Binding YesNoCancelCommand}" />
+                <Button Margin="0,0,8,8" Content="Yes / No / Abort" Command="{Binding YesNoAbortCommand}" />
+            </local:WrapPanel>
+            <TextBlock Text="Rich dialogs" Margin="0,14,0,0" FontWeight="SemiBold" Opacity="0.7" />
+            <local:WrapPanel>
+                <Button Margin="0,0,8,8" Content="Content dialog" Command="{Binding ContentDialogCommand}" />
+                <Button Margin="0,0,8,8" Content="Task dialog" Command="{Binding TaskDialogCommand}" />
+                <Button Margin="0,0,8,8" Content="Task dialog with progress" Command="{Binding ProgressDialogCommand}" />
+                <Button Margin="0,0,8,8" Content="Show modal" Command="{Binding ModalCommand}" />
+            </local:WrapPanel>
+            <TextBlock Text="Notifications" Margin="0,14,0,0" FontWeight="SemiBold" Opacity="0.7" />
+            <local:WrapPanel>
+                <Button Margin="0,0,8,8" Content="Information" Command="{Binding InformationCommand}" />
+                <Button Margin="0,0,8,8" Content="Success" Command="{Binding SuccessCommand}" />
+                <Button Margin="0,0,8,8" Content="Warning" Command="{Binding WarningCommand}" />
+                <Button Margin="0,0,8,8" Content="Error" Command="{Binding NotificationErrorCommand}" />
+            </local:WrapPanel>
+
+            <TextBlock Text="{Binding Result}" Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}"
+                       Margin="0,10,0,0" TextWrapping="Wrap" />
+        </StackPanel>
+    </ScrollViewer>
+</routeables:RouteableFor>

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Routeables.Core\Routeables.Core.csproj" />
+    <ProjectReference Include="..\..\..\Routeables.Locking\Routeables.Locking.csproj" />
+    <ProjectReference Include="..\..\..\Routeables.Regions\Routeables.Regions.csproj" />
+    <ProjectReference Include="..\..\..\Routeables.Routing\Routeables.Routing.csproj" />
+    <ProjectReference Include="..\..\..\Routeables.Segments\Routeables.Segments.csproj" />
+    <ProjectReference Include="..\..\..\Routeables.Services\Routeables.Services.csproj" />
+    <ProjectReference Include="..\..\Modules\XAnimals.Birds\XAnimals.Birds.csproj" />
+    <ProjectReference Include="..\XAnimals.Common\XAnimals.Common.csproj" />
+    <ProjectReference Include="..\..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>

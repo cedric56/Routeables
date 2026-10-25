@@ -1,0 +1,731 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.IMainRouteables
+  commentId: T:Routeables.Abstraction.IMainRouteables
+  id: IMainRouteables
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.IMainRouteables.CurrentView
+  - Routeables.Abstraction.IMainRouteables.CurrentViewChanged
+  - Routeables.Abstraction.IMainRouteables.Lock
+  - Routeables.Abstraction.IMainRouteables.LockChanged
+  - Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  - Routeables.Abstraction.IMainRouteables.Routable
+  - Routeables.Abstraction.IMainRouteables.Routeables
+  - Routeables.Abstraction.IMainRouteables.SelectFirst
+  - Routeables.Abstraction.IMainRouteables.Unlock
+  langs:
+  - csharp
+  - vb
+  name: IMainRouteables
+  nameWithType: IMainRouteables
+  fullName: Routeables.Abstraction.IMainRouteables
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IMainRouteables.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IMainRouteables
+    path: ../Routeables.Abstraction/Interfaces/IMainRouteables.cs
+    startLine: 9
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    The main view model of an application: the menu entries, the one that is selected and the view it shows. Each host binds its
+
+    menu to <xref href="Routeables.Abstraction.IMainRouteables.Routeables" data-throw-if-not-resolved="false"></xref> and <xref href="Routeables.Abstraction.IMainRouteables.Routable" data-throw-if-not-resolved="false"></xref>, and shows <xref href="Routeables.Abstraction.IMainRouteables.CurrentView" data-throw-if-not-resolved="false"></xref>. Register it with
+
+    <code>RegisterMainRouteables</code>: one instance per host (a singleton on Avalonia and MAUI, scoped on Blazor Server).
+  example: []
+  syntax:
+    content: public interface IMainRouteables
+    content.vb: Public Interface IMainRouteables
+  derivedClasses:
+  - Routeables.Core.RouteableViewModel
+  - Routeables.Core.RouteableViewModelBase
+  - Routeables.Core.RouteableViewModelBase`1
+  - Routeables.Core.RouteableViewModel`1
+- uid: Routeables.Abstraction.IMainRouteables.Routeables
+  commentId: P:Routeables.Abstraction.IMainRouteables.Routeables
+  id: Routeables
+  parent: Routeables.Abstraction.IMainRouteables
+  langs:
+  - csharp
+  - vb
+  name: Routeables
+  nameWithType: IMainRouteables.Routeables
+  fullName: Routeables.Abstraction.IMainRouteables.Routeables
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IMainRouteables.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Routeables
+    path: ../Routeables.Abstraction/Interfaces/IMainRouteables.cs
+    startLine: 12
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The entries of the menu, in the order they are shown.
+  example: []
+  syntax:
+    content: ObservableCollection<IRouteableView> Routeables { get; }
+    parameters: []
+    return:
+      type: System.Collections.ObjectModel.ObservableCollection{Routeables.Abstraction.IRouteableView}
+    content.vb: ReadOnly Property Routeables As ObservableCollection(Of IRouteableView)
+  overload: Routeables.Abstraction.IMainRouteables.Routeables*
+- uid: Routeables.Abstraction.IMainRouteables.Routable
+  commentId: P:Routeables.Abstraction.IMainRouteables.Routable
+  id: Routable
+  parent: Routeables.Abstraction.IMainRouteables
+  langs:
+  - csharp
+  - vb
+  name: Routable
+  nameWithType: IMainRouteables.Routable
+  fullName: Routeables.Abstraction.IMainRouteables.Routable
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IMainRouteables.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Routable
+    path: ../Routeables.Abstraction/Interfaces/IMainRouteables.cs
+    startLine: 15
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The selected entry. Setting it navigates to that entry; <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when none is selected.
+  example: []
+  syntax:
+    content: IRouteableView? Routable { get; set; }
+    parameters: []
+    return:
+      type: Routeables.Abstraction.IRouteableView
+    content.vb: Property Routable As IRouteableView
+  overload: Routeables.Abstraction.IMainRouteables.Routable*
+- uid: Routeables.Abstraction.IMainRouteables.CurrentView
+  commentId: P:Routeables.Abstraction.IMainRouteables.CurrentView
+  id: CurrentView
+  parent: Routeables.Abstraction.IMainRouteables
+  langs:
+  - csharp
+  - vb
+  name: CurrentView
+  nameWithType: IMainRouteables.CurrentView
+  fullName: Routeables.Abstraction.IMainRouteables.CurrentView
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IMainRouteables.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: CurrentView
+    path: ../Routeables.Abstraction/Interfaces/IMainRouteables.cs
+    startLine: 18
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The view the selected entry shows, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when there is none.
+  example: []
+  syntax:
+    content: object? CurrentView { get; set; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: Property CurrentView As Object
+  overload: Routeables.Abstraction.IMainRouteables.CurrentView*
+- uid: Routeables.Abstraction.IMainRouteables.CurrentViewChanged
+  commentId: P:Routeables.Abstraction.IMainRouteables.CurrentViewChanged
+  id: CurrentViewChanged
+  parent: Routeables.Abstraction.IMainRouteables
+  langs:
+  - csharp
+  - vb
+  name: CurrentViewChanged
+  nameWithType: IMainRouteables.CurrentViewChanged
+  fullName: Routeables.Abstraction.IMainRouteables.CurrentViewChanged
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IMainRouteables.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: CurrentViewChanged
+    path: ../Routeables.Abstraction/Interfaces/IMainRouteables.cs
+    startLine: 21
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Raised when <xref href="Routeables.Abstraction.IMainRouteables.CurrentView" data-throw-if-not-resolved="false"></xref> changes; the argument is the new view.
+  example: []
+  syntax:
+    content: EventHandler<object?>? CurrentViewChanged { get; set; }
+    parameters: []
+    return:
+      type: System.EventHandler{System.Object}
+    content.vb: Property CurrentViewChanged As EventHandler(Of Object)
+  overload: Routeables.Abstraction.IMainRouteables.CurrentViewChanged*
+- uid: Routeables.Abstraction.IMainRouteables.LockChanged
+  commentId: P:Routeables.Abstraction.IMainRouteables.LockChanged
+  id: LockChanged
+  parent: Routeables.Abstraction.IMainRouteables
+  langs:
+  - csharp
+  - vb
+  name: LockChanged
+  nameWithType: IMainRouteables.LockChanged
+  fullName: Routeables.Abstraction.IMainRouteables.LockChanged
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IMainRouteables.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: LockChanged
+    path: ../Routeables.Abstraction/Interfaces/IMainRouteables.cs
+    startLine: 24
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Raised after <xref href="Routeables.Abstraction.IMainRouteables.Lock" data-throw-if-not-resolved="false"></xref> or <xref href="Routeables.Abstraction.IMainRouteables.Unlock" data-throw-if-not-resolved="false"></xref> has changed the entries.
+  example: []
+  syntax:
+    content: EventHandler? LockChanged { get; set; }
+    parameters: []
+    return:
+      type: System.EventHandler
+    content.vb: Property LockChanged As EventHandler
+  overload: Routeables.Abstraction.IMainRouteables.LockChanged*
+- uid: Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  commentId: M:Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  id: OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  parent: Routeables.Abstraction.IMainRouteables
+  langs:
+  - csharp
+  - vb
+  name: OnCurrentRoutableChanged(IRouteableView?)
+  nameWithType: IMainRouteables.OnCurrentRoutableChanged(IRouteableView?)
+  fullName: Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IMainRouteables.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: OnCurrentRoutableChanged
+    path: ../Routeables.Abstraction/Interfaces/IMainRouteables.cs
+    startLine: 28
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Tells the main view model that <code class="paramref">value</code> is now the entry that is shown, so that it updates <xref href="Routeables.Abstraction.IMainRouteables.CurrentView" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: Task OnCurrentRoutableChanged(IRouteableView? value)
+    parameters:
+    - id: value
+      type: Routeables.Abstraction.IRouteableView
+      description: The entry that became current, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Function OnCurrentRoutableChanged(value As IRouteableView) As Task
+  overload: Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged*
+  nameWithType.vb: IMainRouteables.OnCurrentRoutableChanged(IRouteableView)
+  fullName.vb: Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  name.vb: OnCurrentRoutableChanged(IRouteableView)
+- uid: Routeables.Abstraction.IMainRouteables.SelectFirst
+  commentId: M:Routeables.Abstraction.IMainRouteables.SelectFirst
+  id: SelectFirst
+  parent: Routeables.Abstraction.IMainRouteables
+  langs:
+  - csharp
+  - vb
+  name: SelectFirst()
+  nameWithType: IMainRouteables.SelectFirst()
+  fullName: Routeables.Abstraction.IMainRouteables.SelectFirst()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IMainRouteables.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: SelectFirst
+    path: ../Routeables.Abstraction/Interfaces/IMainRouteables.cs
+    startLine: 35
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Selects the first entry when nothing is selected yet. Every host calls it once at start, so the first page is chosen
+
+    the same way on Blazor, Avalonia and MAUI.
+  example: []
+  syntax:
+    content: bool SelectFirst()
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> when an entry was selected.
+    content.vb: Function SelectFirst() As Boolean
+  overload: Routeables.Abstraction.IMainRouteables.SelectFirst*
+- uid: Routeables.Abstraction.IMainRouteables.Lock
+  commentId: M:Routeables.Abstraction.IMainRouteables.Lock
+  id: Lock
+  parent: Routeables.Abstraction.IMainRouteables
+  langs:
+  - csharp
+  - vb
+  name: Lock()
+  nameWithType: IMainRouteables.Lock()
+  fullName: Routeables.Abstraction.IMainRouteables.Lock()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IMainRouteables.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Lock
+    path: ../Routeables.Abstraction/Interfaces/IMainRouteables.cs
+    startLine: 45
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: 'Locks every entry (<xref href="Routeables.Abstraction.IRouteableView.IsLock" data-throw-if-not-resolved="false"></xref>): the menu cannot leave the current page. Raises <xref href="Routeables.Abstraction.IMainRouteables.LockChanged" data-throw-if-not-resolved="false"></xref>.'
+  example: []
+  syntax:
+    content: void Lock()
+    content.vb: Sub Lock()
+  overload: Routeables.Abstraction.IMainRouteables.Lock*
+- uid: Routeables.Abstraction.IMainRouteables.Unlock
+  commentId: M:Routeables.Abstraction.IMainRouteables.Unlock
+  id: Unlock
+  parent: Routeables.Abstraction.IMainRouteables
+  langs:
+  - csharp
+  - vb
+  name: Unlock()
+  nameWithType: IMainRouteables.Unlock()
+  fullName: Routeables.Abstraction.IMainRouteables.Unlock()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IMainRouteables.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Unlock
+    path: ../Routeables.Abstraction/Interfaces/IMainRouteables.cs
+    startLine: 54
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Unlocks every entry again. Raises <xref href="Routeables.Abstraction.IMainRouteables.LockChanged" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: void Unlock()
+    content.vb: Sub Unlock()
+  overload: Routeables.Abstraction.IMainRouteables.Unlock*
+references:
+- uid: Routeables.Abstraction.IMainRouteables.Routeables
+  commentId: P:Routeables.Abstraction.IMainRouteables.Routeables
+  parent: Routeables.Abstraction.IMainRouteables
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Routeables
+  name: Routeables
+  nameWithType: IMainRouteables.Routeables
+  fullName: Routeables.Abstraction.IMainRouteables.Routeables
+- uid: Routeables.Abstraction.IMainRouteables.Routable
+  commentId: P:Routeables.Abstraction.IMainRouteables.Routable
+  parent: Routeables.Abstraction.IMainRouteables
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Routable
+  name: Routable
+  nameWithType: IMainRouteables.Routable
+  fullName: Routeables.Abstraction.IMainRouteables.Routable
+- uid: Routeables.Abstraction.IMainRouteables.CurrentView
+  commentId: P:Routeables.Abstraction.IMainRouteables.CurrentView
+  parent: Routeables.Abstraction.IMainRouteables
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_CurrentView
+  name: CurrentView
+  nameWithType: IMainRouteables.CurrentView
+  fullName: Routeables.Abstraction.IMainRouteables.CurrentView
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.IMainRouteables
+  commentId: T:Routeables.Abstraction.IMainRouteables
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IMainRouteables.html
+  name: IMainRouteables
+  nameWithType: IMainRouteables
+  fullName: Routeables.Abstraction.IMainRouteables
+- uid: Routeables.Abstraction.IMainRouteables.Routeables*
+  commentId: Overload:Routeables.Abstraction.IMainRouteables.Routeables
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Routeables
+  name: Routeables
+  nameWithType: IMainRouteables.Routeables
+  fullName: Routeables.Abstraction.IMainRouteables.Routeables
+- uid: System.Collections.ObjectModel.ObservableCollection{Routeables.Abstraction.IRouteableView}
+  commentId: T:System.Collections.ObjectModel.ObservableCollection{Routeables.Abstraction.IRouteableView}
+  parent: System.Collections.ObjectModel
+  definition: System.Collections.ObjectModel.ObservableCollection`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  name: ObservableCollection<IRouteableView>
+  nameWithType: ObservableCollection<IRouteableView>
+  fullName: System.Collections.ObjectModel.ObservableCollection<Routeables.Abstraction.IRouteableView>
+  nameWithType.vb: ObservableCollection(Of IRouteableView)
+  fullName.vb: System.Collections.ObjectModel.ObservableCollection(Of Routeables.Abstraction.IRouteableView)
+  name.vb: ObservableCollection(Of IRouteableView)
+  spec.csharp:
+  - uid: System.Collections.ObjectModel.ObservableCollection`1
+    name: ObservableCollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  - name: <
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.ObjectModel.ObservableCollection`1
+    name: ObservableCollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+- uid: System.Collections.ObjectModel.ObservableCollection`1
+  commentId: T:System.Collections.ObjectModel.ObservableCollection`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  name: ObservableCollection<T>
+  nameWithType: ObservableCollection<T>
+  fullName: System.Collections.ObjectModel.ObservableCollection<T>
+  nameWithType.vb: ObservableCollection(Of T)
+  fullName.vb: System.Collections.ObjectModel.ObservableCollection(Of T)
+  name.vb: ObservableCollection(Of T)
+  spec.csharp:
+  - uid: System.Collections.ObjectModel.ObservableCollection`1
+    name: ObservableCollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.ObjectModel.ObservableCollection`1
+    name: ObservableCollection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.observablecollection-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.ObjectModel
+  commentId: N:System.Collections.ObjectModel
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.ObjectModel
+  nameWithType: System.Collections.ObjectModel
+  fullName: System.Collections.ObjectModel
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.ObjectModel
+    name: ObjectModel
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.ObjectModel
+    name: ObjectModel
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.objectmodel
+- uid: Routeables.Abstraction.IMainRouteables.Routable*
+  commentId: Overload:Routeables.Abstraction.IMainRouteables.Routable
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Routable
+  name: Routable
+  nameWithType: IMainRouteables.Routable
+  fullName: Routeables.Abstraction.IMainRouteables.Routable
+- uid: Routeables.Abstraction.IRouteableView
+  commentId: T:Routeables.Abstraction.IRouteableView
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableView.html
+  name: IRouteableView
+  nameWithType: IRouteableView
+  fullName: Routeables.Abstraction.IRouteableView
+- uid: Routeables.Abstraction.IMainRouteables.CurrentView*
+  commentId: Overload:Routeables.Abstraction.IMainRouteables.CurrentView
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_CurrentView
+  name: CurrentView
+  nameWithType: IMainRouteables.CurrentView
+  fullName: Routeables.Abstraction.IMainRouteables.CurrentView
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction.IMainRouteables.CurrentViewChanged*
+  commentId: Overload:Routeables.Abstraction.IMainRouteables.CurrentViewChanged
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_CurrentViewChanged
+  name: CurrentViewChanged
+  nameWithType: IMainRouteables.CurrentViewChanged
+  fullName: Routeables.Abstraction.IMainRouteables.CurrentViewChanged
+- uid: System.EventHandler{System.Object}
+  commentId: T:System.EventHandler{System.Object}
+  parent: System
+  definition: System.EventHandler`1
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<object>
+  nameWithType: EventHandler<object>
+  fullName: System.EventHandler<object>
+  nameWithType.vb: EventHandler(Of Object)
+  fullName.vb: System.EventHandler(Of Object)
+  name.vb: EventHandler(Of Object)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.EventHandler`1
+  commentId: T:System.EventHandler`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<TEventArgs>
+  nameWithType: EventHandler<TEventArgs>
+  fullName: System.EventHandler<TEventArgs>
+  nameWithType.vb: EventHandler(Of TEventArgs)
+  fullName.vb: System.EventHandler(Of TEventArgs)
+  name.vb: EventHandler(Of TEventArgs)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - name: TEventArgs
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TEventArgs
+  - name: )
+- uid: Routeables.Abstraction.IMainRouteables.Lock
+  commentId: M:Routeables.Abstraction.IMainRouteables.Lock
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Lock
+  name: Lock()
+  nameWithType: IMainRouteables.Lock()
+  fullName: Routeables.Abstraction.IMainRouteables.Lock()
+  spec.csharp:
+  - uid: Routeables.Abstraction.IMainRouteables.Lock
+    name: Lock
+    href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Lock
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IMainRouteables.Lock
+    name: Lock
+    href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Lock
+  - name: (
+  - name: )
+- uid: Routeables.Abstraction.IMainRouteables.Unlock
+  commentId: M:Routeables.Abstraction.IMainRouteables.Unlock
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Unlock
+  name: Unlock()
+  nameWithType: IMainRouteables.Unlock()
+  fullName: Routeables.Abstraction.IMainRouteables.Unlock()
+  spec.csharp:
+  - uid: Routeables.Abstraction.IMainRouteables.Unlock
+    name: Unlock
+    href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Unlock
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IMainRouteables.Unlock
+    name: Unlock
+    href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Unlock
+  - name: (
+  - name: )
+- uid: Routeables.Abstraction.IMainRouteables.LockChanged*
+  commentId: Overload:Routeables.Abstraction.IMainRouteables.LockChanged
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_LockChanged
+  name: LockChanged
+  nameWithType: IMainRouteables.LockChanged
+  fullName: Routeables.Abstraction.IMainRouteables.LockChanged
+- uid: System.EventHandler
+  commentId: T:System.EventHandler
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler
+  name: EventHandler
+  nameWithType: EventHandler
+  fullName: System.EventHandler
+- uid: Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged*
+  commentId: Overload:Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_OnCurrentRoutableChanged_Routeables_Abstraction_IRouteableView_
+  name: OnCurrentRoutableChanged
+  nameWithType: IMainRouteables.OnCurrentRoutableChanged
+  fullName: Routeables.Abstraction.IMainRouteables.OnCurrentRoutableChanged
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: Routeables.Abstraction.IMainRouteables.SelectFirst*
+  commentId: Overload:Routeables.Abstraction.IMainRouteables.SelectFirst
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_SelectFirst
+  name: SelectFirst
+  nameWithType: IMainRouteables.SelectFirst
+  fullName: Routeables.Abstraction.IMainRouteables.SelectFirst
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: Routeables.Abstraction.IRouteableView.IsLock
+  commentId: P:Routeables.Abstraction.IRouteableView.IsLock
+  parent: Routeables.Abstraction.IRouteableView
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_IsLock
+  name: IsLock
+  nameWithType: IRouteableView.IsLock
+  fullName: Routeables.Abstraction.IRouteableView.IsLock
+- uid: Routeables.Abstraction.IMainRouteables.LockChanged
+  commentId: P:Routeables.Abstraction.IMainRouteables.LockChanged
+  parent: Routeables.Abstraction.IMainRouteables
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_LockChanged
+  name: LockChanged
+  nameWithType: IMainRouteables.LockChanged
+  fullName: Routeables.Abstraction.IMainRouteables.LockChanged
+- uid: Routeables.Abstraction.IMainRouteables.Lock*
+  commentId: Overload:Routeables.Abstraction.IMainRouteables.Lock
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Lock
+  name: Lock
+  nameWithType: IMainRouteables.Lock
+  fullName: Routeables.Abstraction.IMainRouteables.Lock
+- uid: Routeables.Abstraction.IMainRouteables.Unlock*
+  commentId: Overload:Routeables.Abstraction.IMainRouteables.Unlock
+  href: Routeables.Abstraction.IMainRouteables.html#Routeables_Abstraction_IMainRouteables_Unlock
+  name: Unlock
+  nameWithType: IMainRouteables.Unlock
+  fullName: Routeables.Abstraction.IMainRouteables.Unlock

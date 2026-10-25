@@ -1,0 +1,12 @@
+﻿@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@inherits RouteableFor<PetView, PetViewModel>
+
+@* The card of one adopted animal; the adoption zone puts them side by side. *@
+<article class="pet-card">
+    <img src="@ViewModel.Animal.PhotoUrl" onerror="if(this.dataset.retried){this.onerror=null;this.src='_content/XAnimals.Razor/placeholder.svg'}else{this.dataset.retried=1;this.src='@ViewModel.Animal.ImageUrl'}" alt="@ViewModel.Name" width="150" height="190" />
+    <strong>@ViewModel.Name</strong>
+    <span class="pet-location">@ViewModel.Location</span>
+    <span class="pet-glyph">@ViewModel.Glyph</span>
+</article>

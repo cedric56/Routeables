@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
+    xmlns:vm="clr-namespace:XAnimals.ViewModels;assembly=XAnimals.ViewModels"
+    x:Class="XAnimals.Maui.Views.FeaturesView"
+    x:DataType="vm:FeaturesViewModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource Paper}, Dark={StaticResource OffBlack}}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,32,20,40" Spacing="6" MaximumWidthRequest="640">
+            <Label Text="Guard and return" FontAttributes="Bold" Margin="0,14,0,0" TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
+            <Label Text="The Members page is for members. Signed out, opening it brings you here; sign in, then open it." />
+            <FlexLayout Wrap="Wrap" JustifyContent="Start">
+                <Button Margin="0,0,8,8" Text="Sign in" Command="{Binding SignInCommand}" IsEnabled="{Binding IsSignedOut}" />
+                <Button Margin="0,0,8,8" Text="Sign out" Command="{Binding SignOutCommand}" IsEnabled="{Binding IsSignedIn}" />
+                <Button Margin="0,0,8,8" Text="Open Members" Command="{Binding OpenMembersCommand}" />
+            </FlexLayout>
+
+            <Label Text="Link" FontAttributes="Bold" Margin="0,14,0,0" TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
+            <Label Text="An address from outside, followed through the router. On Android and iOS, a link to xanimals:// does the same." />
+            <FlexLayout Wrap="Wrap" JustifyContent="Start">
+                <Button Margin="0,0,8,8" Text="{Binding Link, StringFormat='Open {0}'}" Command="{Binding OpenLinkCommand}" />
+            </FlexLayout>
+
+            <Label IsVisible="{Binding IsMobile}" Text="Saved values" FontAttributes="Bold" Margin="0,14,0,0" TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
+            <Label IsVisible="{Binding IsMobile}" Text="Type a note: it comes back with the page if the system closes the application." />
+            <Entry IsVisible="{Binding IsMobile}" Text="{Binding Draft}" Placeholder="A note" />
+
+            <Label Text="Lock" FontAttributes="Bold" Margin="0,14,0,0" TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
+            <Label Text="The page publishes a lock message; the menu entries are disabled until it publishes the unlock one." />
+            <FlexLayout Wrap="Wrap" JustifyContent="Start">
+                <Button Margin="0,0,8,8" Text="Lock" Command="{Binding LockCommand}" IsEnabled="{Binding CanLock}" />
+                <Button Margin="0,0,8,8" Text="Unlock" Command="{Binding UnlockCommand}" IsEnabled="{Binding CanUnlock}" />
+                <Button Margin="0,0,8,8" Text="Lock for 5 seconds" Command="{Binding LockForCommand}" IsEnabled="{Binding CanLock}" />
+            </FlexLayout>
+            <Label Text="{Binding LockStatus}" />
+
+            <Label Text="Measures" FontAttributes="Bold" Margin="0,14,0,0" TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
+            <FlexLayout Wrap="Wrap" JustifyContent="Start">
+                <Button Margin="0,0,8,8" Text="Show the last route changes" Command="{Binding RefreshCommand}" />
+            </FlexLayout>
+            <Label Text="{Binding Measures}" />
+
+            <Label Text="{Binding Status}" Margin="0,14,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</routeables:RouteableFor>

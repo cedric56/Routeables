@@ -1,0 +1,9 @@
+﻿<routeables:DialogView xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:routeables="using:Routeables.Avalonia"
+             xmlns:vm="using:XAnimals.ViewModels"
+             x:Class="XAnimals.Avalonia.NoteView"
+             x:TypeArguments="vm:NoteViewModel,x:String"
+             x:DataType="vm:NoteViewModel">
+    <TextBox Text="{Binding Note, Mode=TwoWay}" PlaceholderText="Write a note" MinWidth="280" AcceptsReturn="False" />
+</routeables:DialogView>

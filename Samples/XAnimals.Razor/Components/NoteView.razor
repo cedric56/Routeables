@@ -1,0 +1,25 @@
+﻿@using Routeables.Abstraction
+@using Routeables.Razor
+@using Routeables.Razor.Services
+@using XAnimals.ViewModels
+@attribute [RouteableView(typeof(NoteViewModel))]
+@inherits RouteableModalFor<NoteView, NoteViewModel, string?>
+
+<div class="note-modal">
+    <input class="search-box" placeholder="Write a note" aria-label="Note"
+           @bind="ViewModel.Note" @bind:event="oninput" @onkeyup="OnKeyUp" />
+    <div class="actions">
+        @foreach (var command in ViewModel.Commands)
+        {
+            <button disabled="@(!command.Command.CanExecute(null))" @onclick="() => command.Command.Execute(null)">@command.Name</button>
+        }
+    </div>
+</div>
+
+@code {
+    private void OnKeyUp(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && ViewModel.Commands[0].Command.CanExecute(null))
+            ViewModel.Commands[0].Command.Execute(null);
+    }
+}

@@ -1,0 +1,65 @@
+@namespace Routeables.Razor.Services
+@using Microsoft.AspNetCore.Components.Web
+@using Routeables.Razor
+@implements IDisposable
+@inject RouteableDialogService Service
+
+@if (Service.Current is { } request)
+{
+    <div class="rt-backdrop" @onclick="Dismiss">
+        <div class="rt-dialog"
+             role="alertdialog"
+             aria-modal="true"
+             aria-labelledby="rt-dialog-title"
+             aria-describedby="rt-dialog-message"
+             tabindex="-1"
+             @ref="dialog"
+             @onclick:stopPropagation="true"
+             @onkeydown="OnKeyDown">
+            <h2 id="rt-dialog-title" class="rt-title">@request.Title</h2>
+            <p id="rt-dialog-message" class="rt-message">@request.Message</p>
+            <div class="rt-actions">
+                @foreach (var button in request.Buttons)
+                {
+                    var result = button.Result;
+                    <button type="button"
+                            class="rt-button @(button.IsPrimary ? "rt-primary" : string.Empty)"
+                            @onclick="() => Service.Complete(result)">@button.Text</button>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private ElementReference dialog;
+    private DialogRequest? focused;
+
+    protected override void OnInitialized() => Service.Changed += OnChanged;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Move the focus into a newly shown dialog so the keyboard (Escape, Tab, Enter) acts on it.
+        if (Service.Current is { } request && !ReferenceEquals(request, focused))
+        {
+            focused = request;
+            await dialog.FocusAsync();
+        }
+    }
+
+    private void OnChanged() => _ = InvokeAsync(StateHasChanged);
+
+    private void Dismiss()
+    {
+        if (Service.Current is { } request)
+            Service.Complete(request.DismissResult);
+    }
+
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+            Dismiss();
+    }
+
+    public void Dispose() => Service.Changed -= OnChanged;
+}

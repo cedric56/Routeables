@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- A Shell written in XAML: Shell keeps the structure, the flyout and the tabs; Routeables builds each page from its route
+     (the route "/cats" for Route="cats"). Used by App when UseXamlShell is true. -->
+<Shell x:Class="XAnimals.Maui.XamlShell"
+       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       FlyoutBehavior="Flyout">
+
+    <FlyoutItem Title="Animals" Route="animals">
+        <Tab Title="Domestic" Route="domestic">
+            <ShellContent Title="Cats" Route="cats" />
+            <ShellContent Title="Dogs" Route="dogs" />
+        </Tab>
+        <ShellContent Title="Monkeys" Route="monkeys" />
+        <ShellContent Title="Elephants" Route="elephants" />
+        <ShellContent Title="Bears" Route="bears" />
+    </FlyoutItem>
+
+    <ShellContent Title="About" Route="about" />
+</Shell>

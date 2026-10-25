@@ -1,0 +1,142 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.RouteableRequestedTheme
+  commentId: T:Routeables.Abstraction.RouteableRequestedTheme
+  id: RouteableRequestedTheme
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.RouteableRequestedTheme.Dark
+  - Routeables.Abstraction.RouteableRequestedTheme.Default
+  - Routeables.Abstraction.RouteableRequestedTheme.Light
+  langs:
+  - csharp
+  - vb
+  name: RouteableRequestedTheme
+  nameWithType: RouteableRequestedTheme
+  fullName: Routeables.Abstraction.RouteableRequestedTheme
+  type: Enum
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableRequestedThemeService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RouteableRequestedTheme
+    path: ../Routeables.Abstraction/Services/IRouteableRequestedThemeService.cs
+    startLine: 5
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The visual theme an app (or the OS) is set to use.
+  example: []
+  syntax:
+    content: public enum RouteableRequestedTheme
+    content.vb: Public Enum RouteableRequestedTheme
+- uid: Routeables.Abstraction.RouteableRequestedTheme.Default
+  commentId: F:Routeables.Abstraction.RouteableRequestedTheme.Default
+  id: Default
+  parent: Routeables.Abstraction.RouteableRequestedTheme
+  langs:
+  - csharp
+  - vb
+  name: Default
+  nameWithType: RouteableRequestedTheme.Default
+  fullName: Routeables.Abstraction.RouteableRequestedTheme.Default
+  type: Field
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableRequestedThemeService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Default
+    path: ../Routeables.Abstraction/Services/IRouteableRequestedThemeService.cs
+    startLine: 10
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Default, unknown or unspecified theme.
+  example: []
+  syntax:
+    content: Default = 0
+    return:
+      type: Routeables.Abstraction.RouteableRequestedTheme
+- uid: Routeables.Abstraction.RouteableRequestedTheme.Light
+  commentId: F:Routeables.Abstraction.RouteableRequestedTheme.Light
+  id: Light
+  parent: Routeables.Abstraction.RouteableRequestedTheme
+  langs:
+  - csharp
+  - vb
+  name: Light
+  nameWithType: RouteableRequestedTheme.Light
+  fullName: Routeables.Abstraction.RouteableRequestedTheme.Light
+  type: Field
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableRequestedThemeService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Light
+    path: ../Routeables.Abstraction/Services/IRouteableRequestedThemeService.cs
+    startLine: 15
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Light theme.
+  example: []
+  syntax:
+    content: Light = 1
+    return:
+      type: Routeables.Abstraction.RouteableRequestedTheme
+- uid: Routeables.Abstraction.RouteableRequestedTheme.Dark
+  commentId: F:Routeables.Abstraction.RouteableRequestedTheme.Dark
+  id: Dark
+  parent: Routeables.Abstraction.RouteableRequestedTheme
+  langs:
+  - csharp
+  - vb
+  name: Dark
+  nameWithType: RouteableRequestedTheme.Dark
+  fullName: Routeables.Abstraction.RouteableRequestedTheme.Dark
+  type: Field
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableRequestedThemeService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Dark
+    path: ../Routeables.Abstraction/Services/IRouteableRequestedThemeService.cs
+    startLine: 20
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Dark theme.
+  example: []
+  syntax:
+    content: Dark = 2
+    return:
+      type: Routeables.Abstraction.RouteableRequestedTheme
+references:
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.RouteableRequestedTheme
+  commentId: T:Routeables.Abstraction.RouteableRequestedTheme
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.RouteableRequestedTheme.html
+  name: RouteableRequestedTheme
+  nameWithType: RouteableRequestedTheme
+  fullName: Routeables.Abstraction.RouteableRequestedTheme

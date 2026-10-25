@@ -1,0 +1,45 @@
+﻿@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@inherits RouteableFor<AdoptView, AdoptViewModel>
+
+<PageTitle>Adopt a pet</PageTitle>
+
+<div class="about-page">
+    @* One button per animal: adopting it routes its card into the region "adopt". *@
+    <section class="about-group adopt-choices">
+        @foreach (var choice in ViewModel.Choices)
+        {
+            <button type="button" class="adopt-choice" @onclick="() => choice.AdoptCommand.Execute(null)">@choice.Title</button>
+        }
+    </section>
+
+    <section class="about-group adopt-bar">
+        <p class="nav-status" role="status">@ViewModel.Status</p>
+        <button type="button" class="adopt-choice" @onclick="() => ViewModel.ReleaseCommand.Execute(null)">Release the last</button>
+        <button type="button" class="adopt-choice" @onclick="() => ViewModel.ReleaseAllCommand.Execute(null)">Release all</button>
+    </section>
+
+    @* Not one view but all of them: the region "adopt" holds a history, this component renders every page of it, in rows and columns.
+       Nothing assigns a view to the component. *@
+    <RouteableRegionItems Region="adopt" Class="adopt-zone" />
+</div>
+
+@code {
+    protected override void OnSubscribe()
+    {
+        ViewModel.PropertyChanged += OnViewModelChanged;
+        base.OnSubscribe();
+    }
+
+    private async void OnViewModelChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnUnsubscribe()
+    {
+        ViewModel.PropertyChanged -= OnViewModelChanged;
+        base.OnUnsubscribe();
+    }
+}

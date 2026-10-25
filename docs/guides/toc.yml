@@ -1,0 +1,22 @@
+- name: Routes and templates
+  href: routes.md
+- name: Typed routing methods
+  href: typed-routes.md
+- name: Passing arguments
+  href: arguments.md
+- name: Lifecycle, guards and events
+  href: lifecycle.md
+- name: History
+  href: history.md
+- name: Back, deep links, guards and diagnostics
+  href: system-integration.md
+- name: Regions
+  href: regions.md
+- name: Hosts, services and samples
+  href: hosts.md
+- name: Native AOT and trimming
+  href: aot.md
+- name: Diagnostics reference
+  href: diagnostics.md
+- name: Migrating from Prism
+  href: migrating-from-prism.md

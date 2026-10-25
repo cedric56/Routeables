@@ -1,0 +1,95 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Razor.Components
+  commentId: N:Routeables.Razor.Components
+  id: Routeables.Razor.Components
+  children:
+  - Routeables.Razor.Components.AvaeForm
+  - Routeables.Razor.Components.ContentDialog
+  - Routeables.Razor.Components.MainLayout
+  - Routeables.Razor.Components.NotFound
+  - Routeables.Razor.Components.NotFoundContent
+  - Routeables.Razor.Components.TaskDialog
+  langs:
+  - csharp
+  - vb
+  name: Routeables.Razor.Components
+  nameWithType: Routeables.Razor.Components
+  fullName: Routeables.Razor.Components
+  type: Namespace
+  assemblies:
+  - Routeables.Razor
+references:
+- uid: Routeables.Razor.Components.ContentDialog
+  commentId: T:Routeables.Razor.Components.ContentDialog
+  isExternal: true
+  href: Routeables.Razor.Components.ContentDialog.html
+  name: ContentDialog
+  nameWithType: ContentDialog
+  fullName: Routeables.Razor.Components.ContentDialog
+- uid: Routeables.Razor.Components.NotFound
+  commentId: T:Routeables.Razor.Components.NotFound
+  isExternal: true
+  href: Routeables.Razor.Components.NotFound.html
+  name: NotFound
+  nameWithType: NotFound
+  fullName: Routeables.Razor.Components.NotFound
+- uid: Routeables.Razor.Components.NotFoundContent
+  commentId: T:Routeables.Razor.Components.NotFoundContent
+  isExternal: true
+  href: Routeables.Razor.Components.NotFoundContent.html
+  name: NotFoundContent
+  nameWithType: NotFoundContent
+  fullName: Routeables.Razor.Components.NotFoundContent
+- uid: Routeables.Razor.Components.TaskDialog
+  commentId: T:Routeables.Razor.Components.TaskDialog
+  isExternal: true
+  href: Routeables.Razor.Components.TaskDialog.html
+  name: TaskDialog
+  nameWithType: TaskDialog
+  fullName: Routeables.Razor.Components.TaskDialog
+- uid: Routeables.Razor.Components.AvaeForm
+  commentId: T:Routeables.Razor.Components.AvaeForm
+  isExternal: true
+  href: Routeables.Razor.Components.AvaeForm.html
+  name: AvaeForm
+  nameWithType: AvaeForm
+  fullName: Routeables.Razor.Components.AvaeForm
+- uid: Routeables.Razor.Components.MainLayout
+  commentId: T:Routeables.Razor.Components.MainLayout
+  parent: Routeables.Razor.Components
+  isExternal: true
+  href: Routeables.Razor.Components.MainLayout.html
+  name: MainLayout
+  nameWithType: MainLayout
+  fullName: Routeables.Razor.Components.MainLayout
+- uid: Routeables.Razor.Components
+  commentId: N:Routeables.Razor.Components
+  isExternal: true
+  name: Routeables.Razor.Components
+  nameWithType: Routeables.Razor.Components
+  fullName: Routeables.Razor.Components
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+    isExternal: true
+  - name: .
+  - uid: Routeables.Razor
+    name: Razor
+    isExternal: true
+  - name: .
+  - uid: Routeables.Razor.Components
+    name: Components
+    isExternal: true
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+    isExternal: true
+  - name: .
+  - uid: Routeables.Razor
+    name: Razor
+    isExternal: true
+  - name: .
+  - uid: Routeables.Razor.Components
+    name: Components
+    isExternal: true

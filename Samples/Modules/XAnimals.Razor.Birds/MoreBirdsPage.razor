@@ -1,0 +1,9 @@
+@namespace XAnimals.Razor.Components.Animals
+@using Routeables.Razor
+@using XAnimals.Birds
+@inherits RouteableFor<MoreBirdsPage, MoreBirdsViewModel>
+
+<PageTitle>More birds</PageTitle>
+
+@* No [RouteableView]: this page is registered by AddRazorMoreBirdsModule, when the module is loaded. *@
+<AnimalList ViewModel="ViewModel" NoResultsText="No birds found." />

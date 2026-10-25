@@ -1,0 +1,48 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:XAnimals.ViewModels"
+             x:Class="XAnimals.Avalonia.FeaturesView"
+             x:DataType="vm:FeaturesViewModel"
+             Background="{DynamicResource AnPaper}">
+
+    <ScrollViewer>
+        <StackPanel Margin="20,32,20,40" Spacing="6" MaxWidth="640">            
+            <TextBlock Text="Guard and return" Margin="0,14,0,0" FontWeight="SemiBold" Foreground="{DynamicResource AnMuted}" />
+            <TextBlock Text="The Members page is for members. Signed out, opening it brings you here; sign in, then open it."
+                       TextWrapping="Wrap" Foreground="{DynamicResource AnInk}" />
+            <WrapPanel>
+                <Button Margin="0,0,8,8" Content="Sign in" Classes="an" Command="{Binding SignInCommand}" IsEnabled="{Binding IsSignedOut}" />
+                <Button Margin="0,0,8,8" Content="Sign out" Classes="an" Command="{Binding SignOutCommand}" IsEnabled="{Binding IsSignedIn}" />
+                <Button Margin="0,0,8,8" Content="Open Members" Classes="an" Command="{Binding OpenMembersCommand}" />
+            </WrapPanel>
+
+            <TextBlock Text="Link" Margin="0,14,0,0" FontWeight="SemiBold" Foreground="{DynamicResource AnMuted}" />
+            <TextBlock Text="An address from outside, followed through the router. On Android, a link to xanimals:// does the same."
+                       TextWrapping="Wrap" Foreground="{DynamicResource AnInk}" />
+            <WrapPanel>
+                <Button Margin="0,0,8,8" Content="{Binding Link, StringFormat='Open {0}'}" Classes="an" Command="{Binding OpenLinkCommand}" />
+            </WrapPanel>
+
+            <TextBlock IsVisible="{Binding IsMobile}" Text="Saved values" Margin="0,14,0,0" FontWeight="SemiBold" Foreground="{DynamicResource AnMuted}" />
+            <TextBlock IsVisible="{Binding IsMobile}" Text="Type a note: it comes back with the page if the system closes the application."
+                       TextWrapping="Wrap" Foreground="{DynamicResource AnInk}" />
+            <TextBox IsVisible="{Binding IsMobile}" Text="{Binding Draft}" PlaceholderText="A note" />
+
+            <TextBlock Text="Lock" Margin="0,14,0,0" FontWeight="SemiBold" Foreground="{DynamicResource AnMuted}" />
+            <TextBlock Text="The page publishes a lock message; the menu entries are disabled until it publishes the unlock one."
+                       TextWrapping="Wrap" Foreground="{DynamicResource AnInk}" />
+            <WrapPanel>
+                <Button Margin="0,0,8,8" Content="Lock" Classes="an" Command="{Binding LockCommand}" IsEnabled="{Binding CanLock}" />
+                <Button Margin="0,0,8,8" Content="Unlock" Classes="an" Command="{Binding UnlockCommand}" IsEnabled="{Binding CanUnlock}" />
+                <Button Margin="0,0,8,8" Content="Lock for 5 seconds" Classes="an" Command="{Binding LockForCommand}" IsEnabled="{Binding CanLock}" />
+            </WrapPanel>
+            <TextBlock Text="{Binding LockStatus}" TextWrapping="Wrap" Foreground="{DynamicResource AnInk}" />
+
+            <TextBlock Text="Measures" Margin="0,14,0,0" FontWeight="SemiBold" Foreground="{DynamicResource AnMuted}" />
+            <Button Margin="0,0,8,8" Content="Show the last route changes" Classes="an" Command="{Binding RefreshCommand}" />
+            <TextBlock Text="{Binding Measures}" TextWrapping="Wrap" Foreground="{DynamicResource AnInk}" />
+
+            <TextBlock Text="{Binding Status}" Margin="0,14,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AnInk}" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

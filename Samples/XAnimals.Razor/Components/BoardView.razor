@@ -1,0 +1,45 @@
+﻿@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@inherits RouteableFor<BoardView, BoardViewModel>
+
+<PageTitle>Board</PageTitle>
+
+<div class="about-page">
+    @* One button per animal: it routes that page into the region "board". *@
+    <section class="about-group board-choices">
+        @foreach (var choice in ViewModel.Choices)
+        {
+            <button type="button" class="board-choice" @onclick="() => choice.AddCommand.Execute(null)">@choice.Glyph @choice.Name</button>
+        }
+    </section>
+
+    <section class="about-group board-bar">
+        <p class="nav-status" role="status">@ViewModel.Status</p>
+        <button type="button" class="board-choice" @onclick="() => ViewModel.RemoveCommand.Execute(null)">Remove the last</button>
+        <button type="button" class="board-choice" @onclick="() => ViewModel.ClearCommand.Execute(null)">Clear</button>
+    </section>
+
+    @* Not one view but all of them: the region "board" holds a history, this component renders every page of it, side by side.
+       Nothing assigns a view to the component. *@
+    <RouteableRegionItems Region="board" />
+</div>
+
+@code {
+    protected override void OnSubscribe()
+    {
+        ViewModel.PropertyChanged += OnViewModelChanged;
+        base.OnSubscribe();
+    }
+
+    private async void OnViewModelChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnUnsubscribe()
+    {
+        ViewModel.PropertyChanged -= OnViewModelChanged;
+        base.OnUnsubscribe();
+    }
+}

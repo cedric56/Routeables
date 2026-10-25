@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:XAnimals.ViewModels"
+             x:Class="XAnimals.Avalonia.LayoutMenuView"
+             x:DataType="vm:LayoutMenuViewModel">
+
+    <StackPanel Margin="10" Spacing="4">
+        <UniformGrid Columns="2" Margin="0,0,0,6">
+            <Button Content="◀ Back" Classes="an" Command="{Binding BackCommand}" IsEnabled="{Binding CanGoBack}" Margin="0,0,3,0" HorizontalAlignment="Stretch" />
+            <Button Content="Forward ▶" Classes="an" Command="{Binding ForwardCommand}" IsEnabled="{Binding CanGoForward}" Margin="3,0,0,0" HorizontalAlignment="Stretch" />
+        </UniformGrid>
+        <ItemsControl ItemsSource="{Binding Items}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:LayoutMenuItem">
+                    <Button Classes="item" Classes.current="{Binding IsCurrent}" Command="{Binding Select}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="{Binding Glyph}" FontSize="20" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

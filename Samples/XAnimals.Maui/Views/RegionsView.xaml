@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
+    xmlns:vm="clr-namespace:XAnimals.ViewModels;assembly=XAnimals.ViewModels"
+    x:Class="XAnimals.Maui.Views.RegionsView"
+    x:DataType="vm:RegionsViewModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource Paper}, Dark={StaticResource OffBlack}}">
+
+    <!-- An application of its own: four zones, four routers. Each zone only has a name, and receives whatever the router of that
+         region displays. Every page in it navigates its own region: nothing here assigns a view to a zone. -->
+    <Grid x:Name="LayoutGrid" RowDefinitions="Auto,*,Auto" ColumnDefinitions="190,*">
+        <routeables:RouteableRegion Grid.ColumnSpan="2" Region="shell-header" />
+        <Grid Grid.Row="1" RowDefinitions="Auto,*,Auto" BackgroundColor="{AppThemeBinding Light={StaticResource Lichen}, Dark={StaticResource Moss}}">
+            <Button x:Name="CollapseButton" Margin="6" Padding="10,0" HorizontalOptions="End" HeightRequest="34" Text="«" Clicked="OnCollapseClicked"
+                    BackgroundColor="Transparent" BorderWidth="2" CornerRadius="17" BorderColor="{StaticResource Primary}"
+                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark=White}"
+                    SemanticProperties.Description="Reduce the panel" />
+            <ScrollView x:Name="LeftScroll" Grid.Row="1">
+                <routeables:RouteableRegion Region="shell-left" />
+            </ScrollView>
+            <!-- One navigation made of segments: the logo in the content, the author in the footer, the copyright in the left panel. -->
+            <Button x:Name="CreditsButton" Grid.Row="2" Margin="10" Text="{Binding CreditsText}" Command="{Binding CreditsCommand}"
+                    BackgroundColor="Transparent" BorderWidth="2" CornerRadius="20"
+                    BorderColor="{StaticResource Primary}" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark=White}" />
+        </Grid>
+        <routeables:RouteableRegion Grid.Row="1" Grid.Column="1" Region="shell-content" />
+        <routeables:RouteableRegion Grid.Row="2" Grid.ColumnSpan="2" Region="shell-footer" />
+    </Grid>
+</routeables:RouteableFor>

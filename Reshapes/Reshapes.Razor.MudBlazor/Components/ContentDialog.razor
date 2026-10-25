@@ -1,0 +1,77 @@
+﻿@using System.Windows.Input
+@using MudBlazor
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using global::MudBlazor
+@using Routeables.Services
+@implements IDisposable
+
+<MudDialog>
+    <TitleContent>
+        @if (!string.IsNullOrWhiteSpace(Parameters.Title))
+        {
+            <MudText Typo="Typo.h6">@Parameters.Title</MudText>
+        }
+    </TitleContent>
+    <DialogContent>
+        @if (Parameters.Content is RouteableFor routeable)
+        {
+            @routeable.Render()
+        }
+        else
+        {
+            @Parameters.Content
+        }
+    </DialogContent>
+    <DialogActions>
+        @* Order matters: WinUI's default/secondary action sits on the LEFT, the accented primary action on the RIGHT *@
+        @foreach (var button in Session.Buttons)
+        {
+            var current = button;
+            <MudButton class="dialog-action"
+                       disabled="@(!CanPress(current))"
+                       OnClick="@(() => Press(current))">
+                @current.Text
+            </MudButton>
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    /// <summary>What the buttons do and when the dialog may close, the same on every host.</summary>
+    private RouteableContentDialogSession Session { get; set; } = default!;
+
+    /// <summary>Gets or sets the cascading MudBlazor dialog instance used to control and close the dialog.</summary>
+    [CascadingParameter]
+    public required IMudDialogInstance Instance { get; set; }
+
+    /// <summary>Gets or sets the parameters governing the content dialog's title, buttons, commands, and content view.</summary>
+    [Parameter]
+    public required RouteableContentDialog Parameters { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        Session = new RouteableContentDialogSession(Parameters, () => Instance.Close(Session.Result));
+        Session.AllowCloseFromCode(close => _ = InvokeAsync(close));
+        Session.Opening();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+            Session.Opened();
+    }
+
+    // A button with a command is pressed only while the command can execute.
+    private static bool CanPress(RouteableDialogButton button) =>
+        button.IsEnabled && (button.Command is null || button.Command.CanExecute(button.CommandParameter));
+
+    private static void Press(RouteableDialogButton button) => button.Press();
+
+    /// <summary>The dialog is closed and removed: the caller can no longer close it from code, and Closed is told.</summary>
+    public void Dispose() => Session?.Release();
+}

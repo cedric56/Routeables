@@ -1,0 +1,131 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.IRouteableFor
+  commentId: T:Routeables.Abstraction.IRouteableFor
+  id: IRouteableFor
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.IRouteableFor.Context
+  langs:
+  - csharp
+  - vb
+  name: IRouteableFor
+  nameWithType: IRouteableFor
+  fullName: Routeables.Abstraction.IRouteableFor
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableFor.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IRouteableFor
+    path: ../Routeables.Abstraction/Interfaces/IRouteableFor.cs
+    startLine: 6
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    A view that is bound to its view model by the router: it gets the view model as its <xref href="Routeables.Abstraction.IRouteableFor.Context" data-throw-if-not-resolved="false"></xref> when it is shown.
+
+    The base types of each host (<code>RouteableFor</code>) implement it.
+  example: []
+  syntax:
+    content: public interface IRouteableFor
+    content.vb: Public Interface IRouteableFor
+  derivedClasses:
+  - Routeables.Avalonia.DialogView`2
+  - Routeables.Avalonia.RouteableFor`1
+  - Routeables.Maui.RouteableFor
+  - Routeables.Maui.RouteableModalFor`2
+  - Routeables.Razor.RouteableCenteredFor`2
+  - Routeables.Razor.RouteableContentFor`1
+  - Routeables.Razor.RouteableFor
+  - Routeables.Razor.RouteableFor`2
+  - Routeables.Razor.RouteableModalFor`3
+- uid: Routeables.Abstraction.IRouteableFor.Context
+  commentId: P:Routeables.Abstraction.IRouteableFor.Context
+  id: Context
+  parent: Routeables.Abstraction.IRouteableFor
+  langs:
+  - csharp
+  - vb
+  name: Context
+  nameWithType: IRouteableFor.Context
+  fullName: Routeables.Abstraction.IRouteableFor.Context
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Interfaces/IRouteableFor.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Context
+    path: ../Routeables.Abstraction/Interfaces/IRouteableFor.cs
+    startLine: 9
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The view model of this view, set by the router before the view is shown (a data context, a binding context).
+  example: []
+  syntax:
+    content: object? Context { get; set; }
+    parameters: []
+    return:
+      type: System.Object
+    content.vb: Property Context As Object
+  overload: Routeables.Abstraction.IRouteableFor.Context*
+references:
+- uid: Routeables.Abstraction.IRouteableFor.Context
+  commentId: P:Routeables.Abstraction.IRouteableFor.Context
+  parent: Routeables.Abstraction.IRouteableFor
+  href: Routeables.Abstraction.IRouteableFor.html#Routeables_Abstraction_IRouteableFor_Context
+  name: Context
+  nameWithType: IRouteableFor.Context
+  fullName: Routeables.Abstraction.IRouteableFor.Context
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.IRouteableFor
+  commentId: T:Routeables.Abstraction.IRouteableFor
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableFor.html
+  name: IRouteableFor
+  nameWithType: IRouteableFor
+  fullName: Routeables.Abstraction.IRouteableFor
+- uid: Routeables.Abstraction.IRouteableFor.Context*
+  commentId: Overload:Routeables.Abstraction.IRouteableFor.Context
+  href: Routeables.Abstraction.IRouteableFor.html#Routeables_Abstraction_IRouteableFor_Context
+  name: Context
+  nameWithType: IRouteableFor.Context
+  fullName: Routeables.Abstraction.IRouteableFor.Context
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System

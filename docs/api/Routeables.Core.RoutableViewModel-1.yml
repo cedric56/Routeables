@@ -1,0 +1,3623 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Core.RoutableViewModel`1
+  commentId: T:Routeables.Core.RoutableViewModel`1
+  id: RoutableViewModel`1
+  parent: Routeables.Core
+  children:
+  - Routeables.Core.RoutableViewModel`1.#ctor(Routeables.Abstraction.IRouter,System.Boolean)
+  - Routeables.Core.RoutableViewModel`1.CloseCommand
+  - Routeables.Core.RoutableViewModel`1.GoBack
+  - Routeables.Core.RoutableViewModel`1.GoBackCommand
+  - Routeables.Core.RoutableViewModel`1.GoForward
+  - Routeables.Core.RoutableViewModel`1.GoForwardCommand
+  - Routeables.Core.RoutableViewModel`1.NotifyPropertyChanged(System.String)
+  - Routeables.Core.RoutableViewModel`1.OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs)
+  - Routeables.Core.RoutableViewModel`1.OnPropertyChanged(System.String)
+  - Routeables.Core.RoutableViewModel`1.PropertyChanged
+  - Routeables.Core.RoutableViewModel`1.RaiseCanExecutesChanged
+  - Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel{`0}.TaskNotifier@,System.Threading.Tasks.Task,System.Action{System.Threading.Tasks.Task},System.String)
+  - Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel{`0}.TaskNotifier@,System.Threading.Tasks.Task,System.String)
+  - Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion``1(Routeables.Core.RoutableViewModel{`0}.TaskNotifier{``0}@,System.Threading.Tasks.Task{``0},System.Action{System.Threading.Tasks.Task{``0}},System.String)
+  - Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion``1(Routeables.Core.RoutableViewModel{`0}.TaskNotifier{``0}@,System.Threading.Tasks.Task{``0},System.String)
+  - Routeables.Core.RoutableViewModel`1.SetProperty``1(``0,``0,System.Action{``0},System.String)
+  - Routeables.Core.RoutableViewModel`1.SetProperty``1(``0,``0,System.Collections.Generic.IEqualityComparer{``0},System.Action{``0},System.String)
+  - Routeables.Core.RoutableViewModel`1.SetProperty``1(``0@,``0,System.Collections.Generic.IEqualityComparer{``0},System.String)
+  - Routeables.Core.RoutableViewModel`1.SetProperty``1(``0@,``0,System.String)
+  - Routeables.Core.RoutableViewModel`1.SetProperty``2(``1,``1,System.Collections.Generic.IEqualityComparer{``1},``0,System.Action{``0,``1},System.String)
+  - Routeables.Core.RoutableViewModel`1.SetProperty``2(``1,``1,``0,System.Action{``0,``1},System.String)
+  langs:
+  - csharp
+  - vb
+  name: RoutableViewModel<TResult>
+  nameWithType: RoutableViewModel<TResult>
+  fullName: Routeables.Core.RoutableViewModel<TResult>
+  type: Class
+  source:
+    remote:
+      path: Routeables.Core/Community/RoutableViewModel.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: RoutableViewModel
+    path: ../Routeables.Core/Community/RoutableViewModel.cs
+    startLine: 80
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Represents an abstract base view model combining routing navigation capabilities with close operations and result returns.
+  example: []
+  syntax:
+    content: >-
+      [INotifyPropertyChanged]
+
+      public abstract class RoutableViewModel<TResult> : RoutableViewModelBase<TResult>, IDisposable, IRouteable, IMainRouteables, ICloseableViewModel<TResult>, INotifyPropertyChanged
+    typeParameters:
+    - id: TResult
+      description: The type of result returned when closing.
+    content.vb: >-
+      <INotifyPropertyChanged>
+
+      Public MustInherit Class RoutableViewModel(Of TResult) Inherits RoutableViewModelBase(Of TResult) Implements IDisposable, IRouteable, IMainRouteables, ICloseableViewModel(Of TResult), INotifyPropertyChanged
+  inheritance:
+  - System.Object
+  - Routeables.Core.RouterViewModelBase
+  - Routeables.Core.RoutableViewModelBase
+  - Routeables.Core.RoutableViewModelBase{{TResult}}
+  implements:
+  - System.IDisposable
+  - Routeables.Abstraction.IRouteable
+  - Routeables.Abstraction.IMainRouteables
+  - Routeables.Abstraction.ICloseableViewModel{{TResult}}
+  - System.ComponentModel.INotifyPropertyChanged
+  inheritedMembers:
+  - Routeables.Core.RoutableViewModelBase{{TResult}}.CloseRequested
+  - Routeables.Core.RoutableViewModelBase{{TResult}}.Title
+  - Routeables.Core.RoutableViewModelBase{{TResult}}.CanClose
+  - Routeables.Core.RoutableViewModelBase{{TResult}}.Commands
+  - Routeables.Core.RoutableViewModelBase{{TResult}}.Close({TResult})
+  - Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+  - Routeables.Core.RoutableViewModelBase.LockChanged
+  - Routeables.Core.RoutableViewModelBase.OnViewModelChanged(System.Object)
+  - Routeables.Core.RoutableViewModelBase.CurrentView
+  - Routeables.Core.RoutableViewModelBase.Routable
+  - Routeables.Core.RoutableViewModelBase.OnNavigationFailed(System.Exception)
+  - Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+  - Routeables.Core.RoutableViewModelBase.Routeables
+  - Routeables.Core.RoutableViewModelBase.GetRoutables
+  - Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView,System.Int32)
+  - Routeables.Core.RoutableViewModelBase.GetView(Routeables.Abstraction.IRouteableView)
+  - Routeables.Core.RoutableViewModelBase.Dispose
+  - Routeables.Core.RoutableViewModelBase.CanNavigateAsync(System.Threading.CancellationToken)
+  - Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  - Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  - Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableArgs)
+  - Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  - Routeables.Core.RouterViewModelBase._router
+  - Routeables.Core.RouterViewModelBase.CanGoBack
+  - Routeables.Core.RouterViewModelBase.CanGoForward
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+  attributes:
+  - type: CommunityToolkit.Mvvm.ComponentModel.INotifyPropertyChangedAttribute
+    ctor: CommunityToolkit.Mvvm.ComponentModel.INotifyPropertyChangedAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult)
+  name.vb: RoutableViewModel(Of TResult)
+- uid: Routeables.Core.RoutableViewModel`1.#ctor(Routeables.Abstraction.IRouter,System.Boolean)
+  commentId: M:Routeables.Core.RoutableViewModel`1.#ctor(Routeables.Abstraction.IRouter,System.Boolean)
+  id: '#ctor(Routeables.Abstraction.IRouter,System.Boolean)'
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: RoutableViewModel(IRouter, bool)
+  nameWithType: RoutableViewModel<TResult>.RoutableViewModel(IRouter, bool)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.RoutableViewModel(Routeables.Abstraction.IRouter, bool)
+  type: Constructor
+  source:
+    remote:
+      path: Routeables.Core/Community/RoutableViewModel.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: .ctor
+    path: ../Routeables.Core/Community/RoutableViewModel.cs
+    startLine: 80
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Represents an abstract base view model combining routing navigation capabilities with close operations and result returns.
+  example: []
+  syntax:
+    content: protected RoutableViewModel(IRouter router, bool initialize = true)
+    parameters:
+    - id: router
+      type: Routeables.Abstraction.IRouter
+      description: The router managing navigation state and history.
+    - id: initialize
+      type: System.Boolean
+      description: A value indicating whether the view model should initialize immediately upon construction.
+    content.vb: Protected Sub New(router As IRouter, initialize As Boolean = True)
+  overload: Routeables.Core.RoutableViewModel`1.#ctor*
+  nameWithType.vb: RoutableViewModel(Of TResult).New(IRouter, Boolean)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).New(Routeables.Abstraction.IRouter, Boolean)
+  name.vb: New(IRouter, Boolean)
+- uid: Routeables.Core.RoutableViewModel`1.CloseCommand
+  commentId: P:Routeables.Core.RoutableViewModel`1.CloseCommand
+  id: CloseCommand
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: CloseCommand
+  nameWithType: RoutableViewModel<TResult>.CloseCommand
+  fullName: Routeables.Core.RoutableViewModel<TResult>.CloseCommand
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Community/RoutableViewModel.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: CloseCommand
+    path: ../Routeables.Core/Community/RoutableViewModel.cs
+    startLine: 89
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets the command executed to attempt closing the view model, subject to validation.
+  example: []
+  syntax:
+    content: public override ICommand CloseCommand { get; }
+    parameters: []
+    return:
+      type: System.Windows.Input.ICommand
+    content.vb: Public Overrides ReadOnly Property CloseCommand As ICommand
+  overridden: Routeables.Core.RoutableViewModelBase{{TResult}}.CloseCommand
+  overload: Routeables.Core.RoutableViewModel`1.CloseCommand*
+  nameWithType.vb: RoutableViewModel(Of TResult).CloseCommand
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).CloseCommand
+- uid: Routeables.Core.RoutableViewModel`1.GoBack
+  commentId: M:Routeables.Core.RoutableViewModel`1.GoBack
+  id: GoBack
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: GoBack()
+  nameWithType: RoutableViewModel<TResult>.GoBack()
+  fullName: Routeables.Core.RoutableViewModel<TResult>.GoBack()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Community/RoutableViewModel.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: GoBack
+    path: ../Routeables.Core/Community/RoutableViewModel.cs
+    startLine: 98
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Navigates backward in the navigation history asynchronously.
+  example: []
+  syntax:
+    content: >-
+      [RelayCommand]
+
+      public override Task GoBack()
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: >-
+      <RelayCommand>
+
+      Public Overrides Function GoBack() As Task
+  overridden: Routeables.Core.RouterViewModelBase.GoBack
+  overload: Routeables.Core.RoutableViewModel`1.GoBack*
+  attributes:
+  - type: CommunityToolkit.Mvvm.Input.RelayCommandAttribute
+    ctor: CommunityToolkit.Mvvm.Input.RelayCommandAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).GoBack()
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).GoBack()
+- uid: Routeables.Core.RoutableViewModel`1.GoForward
+  commentId: M:Routeables.Core.RoutableViewModel`1.GoForward
+  id: GoForward
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: GoForward()
+  nameWithType: RoutableViewModel<TResult>.GoForward()
+  fullName: Routeables.Core.RoutableViewModel<TResult>.GoForward()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Community/RoutableViewModel.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: GoForward
+    path: ../Routeables.Core/Community/RoutableViewModel.cs
+    startLine: 107
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Navigates forward in the navigation history asynchronously.
+  example: []
+  syntax:
+    content: >-
+      [RelayCommand]
+
+      public override Task GoForward()
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: >-
+      <RelayCommand>
+
+      Public Overrides Function GoForward() As Task
+  overridden: Routeables.Core.RouterViewModelBase.GoForward
+  overload: Routeables.Core.RoutableViewModel`1.GoForward*
+  attributes:
+  - type: CommunityToolkit.Mvvm.Input.RelayCommandAttribute
+    ctor: CommunityToolkit.Mvvm.Input.RelayCommandAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).GoForward()
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).GoForward()
+- uid: Routeables.Core.RoutableViewModel`1.RaiseCanExecutesChanged
+  commentId: M:Routeables.Core.RoutableViewModel`1.RaiseCanExecutesChanged
+  id: RaiseCanExecutesChanged
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: RaiseCanExecutesChanged()
+  nameWithType: RoutableViewModel<TResult>.RaiseCanExecutesChanged()
+  fullName: Routeables.Core.RoutableViewModel<TResult>.RaiseCanExecutesChanged()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Community/RoutableViewModel.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: RaiseCanExecutesChanged
+    path: ../Routeables.Core/Community/RoutableViewModel.cs
+    startLine: 116
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Notifies command execution state changes for navigation commands.
+  example: []
+  syntax:
+    content: protected override void RaiseCanExecutesChanged()
+    content.vb: Protected Overrides Sub RaiseCanExecutesChanged()
+  overridden: Routeables.Core.RouterViewModelBase.RaiseCanExecutesChanged
+  overload: Routeables.Core.RoutableViewModel`1.RaiseCanExecutesChanged*
+  nameWithType.vb: RoutableViewModel(Of TResult).RaiseCanExecutesChanged()
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).RaiseCanExecutesChanged()
+- uid: Routeables.Core.RoutableViewModel`1.NotifyPropertyChanged(System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.NotifyPropertyChanged(System.String)
+  id: NotifyPropertyChanged(System.String)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: NotifyPropertyChanged(string)
+  nameWithType: RoutableViewModel<TResult>.NotifyPropertyChanged(string)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.NotifyPropertyChanged(string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Community/RoutableViewModel.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: NotifyPropertyChanged
+    path: ../Routeables.Core/Community/RoutableViewModel.cs
+    startLine: 126
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Raises property change notifications for the specified property name.
+  example: []
+  syntax:
+    content: protected override void NotifyPropertyChanged(string propertyName)
+    parameters:
+    - id: propertyName
+      type: System.String
+      description: The name of the property that changed.
+    content.vb: Protected Overrides Sub NotifyPropertyChanged(propertyName As String)
+  overridden: Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged(System.String)
+  overload: Routeables.Core.RoutableViewModel`1.NotifyPropertyChanged*
+  nameWithType.vb: RoutableViewModel(Of TResult).NotifyPropertyChanged(String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).NotifyPropertyChanged(String)
+  name.vb: NotifyPropertyChanged(String)
+- uid: Routeables.Core.RoutableViewModel`1.GoBackCommand
+  commentId: P:Routeables.Core.RoutableViewModel`1.GoBackCommand
+  id: GoBackCommand
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: GoBackCommand
+  nameWithType: RoutableViewModel<TResult>.GoBackCommand
+  fullName: Routeables.Core.RoutableViewModel<TResult>.GoBackCommand
+  type: Property
+  source:
+    id: GoBackCommand
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.RelayCommandGenerator\Routeables.Core.RoutableViewModel`1.GoBack.g.cs
+    startLine: 12
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets an <xref href="CommunityToolkit.Mvvm.Input.IAsyncRelayCommand" data-throw-if-not-resolved="false"></xref> instance wrapping <xref href="Routeables.Core.RoutableViewModel%601.GoBack" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      public IAsyncRelayCommand GoBackCommand { get; }
+    parameters: []
+    return:
+      type: CommunityToolkit.Mvvm.Input.IAsyncRelayCommand
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Public ReadOnly Property GoBackCommand As IAsyncRelayCommand
+  overload: Routeables.Core.RoutableViewModel`1.GoBackCommand*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).GoBackCommand
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).GoBackCommand
+- uid: Routeables.Core.RoutableViewModel`1.GoForwardCommand
+  commentId: P:Routeables.Core.RoutableViewModel`1.GoForwardCommand
+  id: GoForwardCommand
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: GoForwardCommand
+  nameWithType: RoutableViewModel<TResult>.GoForwardCommand
+  fullName: Routeables.Core.RoutableViewModel<TResult>.GoForwardCommand
+  type: Property
+  source:
+    id: GoForwardCommand
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.RelayCommandGenerator\Routeables.Core.RoutableViewModel`1.GoForward.g.cs
+    startLine: 12
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets an <xref href="CommunityToolkit.Mvvm.Input.IAsyncRelayCommand" data-throw-if-not-resolved="false"></xref> instance wrapping <xref href="Routeables.Core.RoutableViewModel%601.GoForward" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      public IAsyncRelayCommand GoForwardCommand { get; }
+    parameters: []
+    return:
+      type: CommunityToolkit.Mvvm.Input.IAsyncRelayCommand
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Public ReadOnly Property GoForwardCommand As IAsyncRelayCommand
+  overload: Routeables.Core.RoutableViewModel`1.GoForwardCommand*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).GoForwardCommand
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).GoForwardCommand
+- uid: Routeables.Core.RoutableViewModel`1.PropertyChanged
+  commentId: E:Routeables.Core.RoutableViewModel`1.PropertyChanged
+  id: PropertyChanged
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: PropertyChanged
+  nameWithType: RoutableViewModel<TResult>.PropertyChanged
+  fullName: Routeables.Core.RoutableViewModel<TResult>.PropertyChanged
+  type: Event
+  source:
+    id: PropertyChanged
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 11
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Occurs when a property value changes.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      public event PropertyChangedEventHandler? PropertyChanged
+    return:
+      type: System.ComponentModel.PropertyChangedEventHandler
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Public Event PropertyChanged As PropertyChangedEventHandler
+  implements:
+  - System.ComponentModel.INotifyPropertyChanged.PropertyChanged
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).PropertyChanged
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).PropertyChanged
+- uid: Routeables.Core.RoutableViewModel`1.OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs)
+  commentId: M:Routeables.Core.RoutableViewModel`1.OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs)
+  id: OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: OnPropertyChanged(PropertyChangedEventArgs)
+  nameWithType: RoutableViewModel<TResult>.OnPropertyChanged(PropertyChangedEventArgs)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs)
+  type: Method
+  source:
+    id: OnPropertyChanged
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 16
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Raises the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+    parameters:
+    - id: e
+      type: System.ComponentModel.PropertyChangedEventArgs
+      description: The input <xref href="System.ComponentModel.PropertyChangedEventArgs" data-throw-if-not-resolved="false"></xref> instance.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected Overridable Sub OnPropertyChanged(e As PropertyChangedEventArgs)
+  overload: Routeables.Core.RoutableViewModel`1.OnPropertyChanged*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).OnPropertyChanged(PropertyChangedEventArgs)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs)
+- uid: Routeables.Core.RoutableViewModel`1.OnPropertyChanged(System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.OnPropertyChanged(System.String)
+  id: OnPropertyChanged(System.String)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: OnPropertyChanged(string?)
+  nameWithType: RoutableViewModel<TResult>.OnPropertyChanged(string?)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.OnPropertyChanged(string?)
+  type: Method
+  source:
+    id: OnPropertyChanged
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 28
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Raises the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected void OnPropertyChanged(string? propertyName = null)
+    parameters:
+    - id: propertyName
+      type: System.String
+      description: (optional) The name of the property that changed.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected Sub OnPropertyChanged(propertyName As String = Nothing)
+  overload: Routeables.Core.RoutableViewModel`1.OnPropertyChanged*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).OnPropertyChanged(String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).OnPropertyChanged(String)
+  name.vb: OnPropertyChanged(String)
+- uid: Routeables.Core.RoutableViewModel`1.SetProperty``1(``0@,``0,System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetProperty``1(``0@,``0,System.String)
+  id: SetProperty``1(``0@,``0,System.String)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: SetProperty<T>(ref T, T, string?)
+  nameWithType: RoutableViewModel<TResult>.SetProperty<T>(ref T, T, string?)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetProperty<T>(ref T, T, string?)
+  type: Method
+  source:
+    id: SetProperty
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 48
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Compares the current and new values for a given property. If the value has changed, updates
+
+    the property with the new value, then raises the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event.
+  remarks: The <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event is not raised if the current and new value for the target property are the same.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected bool SetProperty<T>(ref T field, T newValue, string? propertyName = null)
+    parameters:
+    - id: field
+      type: '{T}'
+      description: The field storing the property's value.
+      attributes:
+      - type: System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute
+        ctor: System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute.#ctor(System.String)
+        arguments:
+        - type: System.String
+          value: newValue
+    - id: newValue
+      type: '{T}'
+      description: The property's value after the change occurred.
+    - id: propertyName
+      type: System.String
+      description: (optional) The name of the property that changed.
+    typeParameters:
+    - id: T
+      description: The type of the property that changed.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the property was changed, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> otherwise.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected Function SetProperty(Of T)(field As T, newValue As T, propertyName As String = Nothing) As Boolean
+  overload: Routeables.Core.RoutableViewModel`1.SetProperty*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).SetProperty(Of T)(T, T, String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetProperty(Of T)(T, T, String)
+  name.vb: SetProperty(Of T)(T, T, String)
+- uid: Routeables.Core.RoutableViewModel`1.SetProperty``1(``0@,``0,System.Collections.Generic.IEqualityComparer{``0},System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetProperty``1(``0@,``0,System.Collections.Generic.IEqualityComparer{``0},System.String)
+  id: SetProperty``1(``0@,``0,System.Collections.Generic.IEqualityComparer{``0},System.String)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: SetProperty<T>(ref T, T, IEqualityComparer<T>, string?)
+  nameWithType: RoutableViewModel<TResult>.SetProperty<T>(ref T, T, IEqualityComparer<T>, string?)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetProperty<T>(ref T, T, System.Collections.Generic.IEqualityComparer<T>, string?)
+  type: Method
+  source:
+    id: SetProperty
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 74
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Compares the current and new values for a given property. If the value has changed, updates
+
+    the property with the new value, then raises the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event.
+
+    See additional notes about this overload in <xref href="Routeables.Core.RoutableViewModel%601.SetProperty%60%601(%60%600%40%2c%60%600%2cSystem.String)" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected bool SetProperty<T>(ref T field, T newValue, IEqualityComparer<T> comparer, string? propertyName = null)
+    parameters:
+    - id: field
+      type: '{T}'
+      description: The field storing the property's value.
+      attributes:
+      - type: System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute
+        ctor: System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute.#ctor(System.String)
+        arguments:
+        - type: System.String
+          value: newValue
+    - id: newValue
+      type: '{T}'
+      description: The property's value after the change occurred.
+    - id: comparer
+      type: System.Collections.Generic.IEqualityComparer{{T}}
+      description: The <xref href="System.Collections.Generic.IEqualityComparer%601" data-throw-if-not-resolved="false"></xref> instance to use to compare the input values.
+    - id: propertyName
+      type: System.String
+      description: (optional) The name of the property that changed.
+    typeParameters:
+    - id: T
+      description: The type of the property that changed.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the property was changed, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> otherwise.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected Function SetProperty(Of T)(field As T, newValue As T, comparer As IEqualityComparer(Of T), propertyName As String = Nothing) As Boolean
+  overload: Routeables.Core.RoutableViewModel`1.SetProperty*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).SetProperty(Of T)(T, T, IEqualityComparer(Of T), String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetProperty(Of T)(T, T, System.Collections.Generic.IEqualityComparer(Of T), String)
+  name.vb: SetProperty(Of T)(T, T, IEqualityComparer(Of T), String)
+- uid: Routeables.Core.RoutableViewModel`1.SetProperty``1(``0,``0,System.Action{``0},System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetProperty``1(``0,``0,System.Action{``0},System.String)
+  id: SetProperty``1(``0,``0,System.Action{``0},System.String)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: SetProperty<T>(T, T, Action<T>, string?)
+  nameWithType: RoutableViewModel<TResult>.SetProperty<T>(T, T, Action<T>, string?)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetProperty<T>(T, T, System.Action<T>, string?)
+  type: Method
+  source:
+    id: SetProperty
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 110
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Compares the current and new values for a given property. If the value has changed, updates
+
+    the property with the new value, then raises the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event.
+
+    This overload is much less efficient than <xref href="Routeables.Core.RoutableViewModel%601.SetProperty%60%601(%60%600%40%2c%60%600%2cSystem.String)" data-throw-if-not-resolved="false"></xref> and it
+
+    should only be used when the former is not viable (eg. when the target property being
+
+    updated does not directly expose a backing field that can be passed by reference).
+
+    For performance reasons, it is recommended to use a stateful callback if possible through
+
+    the <xref href="Routeables.Core.RoutableViewModel%601.SetProperty%60%602(%60%601%2c%60%601%2c%60%600%2cSystem.Action%7b%60%600%2c%60%601%7d%2cSystem.String)" data-throw-if-not-resolved="false"></xref> whenever possible
+
+    instead of this overload, as that will allow the C# compiler to cache the input callback and
+
+    reduce the memory allocations. More info on that overload are available in the related XML
+
+    docs. This overload is here for completeness and in cases where that is not applicable.
+  remarks: The <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event is not raised if the current and new value for the target property are the same.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected bool SetProperty<T>(T oldValue, T newValue, Action<T> callback, string? propertyName = null)
+    parameters:
+    - id: oldValue
+      type: '{T}'
+      description: The current property value.
+    - id: newValue
+      type: '{T}'
+      description: The property's value after the change occurred.
+    - id: callback
+      type: System.Action{{T}}
+      description: A callback to invoke to update the property value.
+    - id: propertyName
+      type: System.String
+      description: (optional) The name of the property that changed.
+    typeParameters:
+    - id: T
+      description: The type of the property that changed.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the property was changed, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> otherwise.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected Function SetProperty(Of T)(oldValue As T, newValue As T, callback As Action(Of T), propertyName As String = Nothing) As Boolean
+  overload: Routeables.Core.RoutableViewModel`1.SetProperty*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).SetProperty(Of T)(T, T, Action(Of T), String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetProperty(Of T)(T, T, System.Action(Of T), String)
+  name.vb: SetProperty(Of T)(T, T, Action(Of T), String)
+- uid: Routeables.Core.RoutableViewModel`1.SetProperty``1(``0,``0,System.Collections.Generic.IEqualityComparer{``0},System.Action{``0},System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetProperty``1(``0,``0,System.Collections.Generic.IEqualityComparer{``0},System.Action{``0},System.String)
+  id: SetProperty``1(``0,``0,System.Collections.Generic.IEqualityComparer{``0},System.Action{``0},System.String)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: SetProperty<T>(T, T, IEqualityComparer<T>, Action<T>, string?)
+  nameWithType: RoutableViewModel<TResult>.SetProperty<T>(T, T, IEqualityComparer<T>, Action<T>, string?)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetProperty<T>(T, T, System.Collections.Generic.IEqualityComparer<T>, System.Action<T>, string?)
+  type: Method
+  source:
+    id: SetProperty
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 137
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Compares the current and new values for a given property. If the value has changed, updates
+
+    the property with the new value, then raises the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event.
+
+    See additional notes about this overload in <xref href="Routeables.Core.RoutableViewModel%601.SetProperty%60%601(%60%600%2c%60%600%2cSystem.Action%7b%60%600%7d%2cSystem.String)" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected bool SetProperty<T>(T oldValue, T newValue, IEqualityComparer<T> comparer, Action<T> callback, string? propertyName = null)
+    parameters:
+    - id: oldValue
+      type: '{T}'
+      description: The current property value.
+    - id: newValue
+      type: '{T}'
+      description: The property's value after the change occurred.
+    - id: comparer
+      type: System.Collections.Generic.IEqualityComparer{{T}}
+      description: The <xref href="System.Collections.Generic.IEqualityComparer%601" data-throw-if-not-resolved="false"></xref> instance to use to compare the input values.
+    - id: callback
+      type: System.Action{{T}}
+      description: A callback to invoke to update the property value.
+    - id: propertyName
+      type: System.String
+      description: (optional) The name of the property that changed.
+    typeParameters:
+    - id: T
+      description: The type of the property that changed.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the property was changed, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> otherwise.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected Function SetProperty(Of T)(oldValue As T, newValue As T, comparer As IEqualityComparer(Of T), callback As Action(Of T), propertyName As String = Nothing) As Boolean
+  overload: Routeables.Core.RoutableViewModel`1.SetProperty*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).SetProperty(Of T)(T, T, IEqualityComparer(Of T), Action(Of T), String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetProperty(Of T)(T, T, System.Collections.Generic.IEqualityComparer(Of T), System.Action(Of T), String)
+  name.vb: SetProperty(Of T)(T, T, IEqualityComparer(Of T), Action(Of T), String)
+- uid: Routeables.Core.RoutableViewModel`1.SetProperty``2(``1,``1,``0,System.Action{``0,``1},System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetProperty``2(``1,``1,``0,System.Action{``0,``1},System.String)
+  id: SetProperty``2(``1,``1,``0,System.Action{``0,``1},System.String)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: SetProperty<TModel, T>(T, T, TModel, Action<TModel, T>, string?)
+  nameWithType: RoutableViewModel<TResult>.SetProperty<TModel, T>(T, T, TModel, Action<TModel, T>, string?)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetProperty<TModel, T>(T, T, TModel, System.Action<TModel, T>, string?)
+  type: Method
+  source:
+    id: SetProperty
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 204
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Compares the current and new values for a given nested property. If the value has changed,
+
+    updates the property and then raises the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event.
+
+    The behavior mirrors that of <xref href="Routeables.Core.RoutableViewModel%601.SetProperty%60%601(%60%600%40%2c%60%600%2cSystem.String)" data-throw-if-not-resolved="false"></xref>,
+
+    with the difference being that this method is used to relay properties from a wrapped model in the
+
+    current instance. This type is useful when creating wrapping, bindable objects that operate over
+
+    models that lack support for notification (eg. for CRUD operations).
+
+    Suppose we have this model (eg. for a database row in a table):
+
+
+    <pre><code class="lang-csharp">public class Person
+
+    {
+        public string Name { get; set; }
+    }</code></pre>
+
+
+    We can then use a property to wrap instances of this type into our observable model (which supports
+
+    notifications), injecting the notification to the properties of that model, like so:
+
+
+    <pre><code class="lang-csharp">[INotifyPropertyChanged]
+
+    public partial class BindablePerson
+
+    {
+        public Model { get; }
+
+        public BindablePerson(Person model)
+        {
+            Model = model;
+        }
+
+        public string Name
+        {
+            get =&gt; Model.Name;
+            set =&gt; Set(Model.Name, value, Model, (model, name) =&gt; model.Name = name);
+        }
+    }</code></pre>
+
+
+    This way we can then use the wrapping object in our application, and all those "proxy" properties will
+
+    also raise notifications when changed. Note that this method is not meant to be a replacement for
+
+    <xref href="Routeables.Core.RoutableViewModel%601.SetProperty%60%601(%60%600%40%2c%60%600%2cSystem.String)" data-throw-if-not-resolved="false"></xref>, and it should only be used when relaying properties to a model that
+
+    doesn't support notifications, and only if you can't implement notifications to that model directly (eg. by having
+
+    it implement <xref href="System.ComponentModel.INotifyPropertyChanged" data-throw-if-not-resolved="false"></xref>). The syntax relies on passing the target model and a stateless callback
+
+    to allow the C# compiler to cache the function, which results in much better performance and no memory usage.
+  remarks: The <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event is not raised if the current and new value for the target property are the same.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected bool SetProperty<TModel, T>(T oldValue, T newValue, TModel model, Action<TModel, T> callback, string? propertyName = null) where TModel : class
+    parameters:
+    - id: oldValue
+      type: '{T}'
+      description: The current property value.
+    - id: newValue
+      type: '{T}'
+      description: The property's value after the change occurred.
+    - id: model
+      type: '{TModel}'
+      description: The model containing the property being updated.
+    - id: callback
+      type: System.Action{{TModel},{T}}
+      description: The callback to invoke to set the target property value, if a change has occurred.
+    - id: propertyName
+      type: System.String
+      description: (optional) The name of the property that changed.
+    typeParameters:
+    - id: TModel
+      description: The type of model whose property (or field) to set.
+    - id: T
+      description: The type of property (or field) to set.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the property was changed, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> otherwise.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected Function SetProperty(Of TModel As Class, T)(oldValue As T, newValue As T, model As TModel, callback As Action(Of TModel, T), propertyName As String = Nothing) As Boolean
+  overload: Routeables.Core.RoutableViewModel`1.SetProperty*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).SetProperty(Of TModel, T)(T, T, TModel, Action(Of TModel, T), String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetProperty(Of TModel, T)(T, T, TModel, System.Action(Of TModel, T), String)
+  name.vb: SetProperty(Of TModel, T)(T, T, TModel, Action(Of TModel, T), String)
+- uid: Routeables.Core.RoutableViewModel`1.SetProperty``2(``1,``1,System.Collections.Generic.IEqualityComparer{``1},``0,System.Action{``0,``1},System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetProperty``2(``1,``1,System.Collections.Generic.IEqualityComparer{``1},``0,System.Action{``0,``1},System.String)
+  id: SetProperty``2(``1,``1,System.Collections.Generic.IEqualityComparer{``1},``0,System.Action{``0,``1},System.String)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: SetProperty<TModel, T>(T, T, IEqualityComparer<T>, TModel, Action<TModel, T>, string?)
+  nameWithType: RoutableViewModel<TResult>.SetProperty<TModel, T>(T, T, IEqualityComparer<T>, TModel, Action<TModel, T>, string?)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetProperty<TModel, T>(T, T, System.Collections.Generic.IEqualityComparer<T>, TModel, System.Action<TModel, T>, string?)
+  type: Method
+  source:
+    id: SetProperty
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 236
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Compares the current and new values for a given nested property. If the value has changed,
+
+    updates the property and then raises the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event.
+
+    The behavior mirrors that of <xref href="Routeables.Core.RoutableViewModel%601.SetProperty%60%601(%60%600%40%2c%60%600%2cSystem.String)" data-throw-if-not-resolved="false"></xref>,
+
+    with the difference being that this method is used to relay properties from a wrapped model in the
+
+    current instance. See additional notes about this overload in <xref href="Routeables.Core.RoutableViewModel%601.SetProperty%60%602(%60%601%2c%60%601%2c%60%600%2cSystem.Action%7b%60%600%2c%60%601%7d%2cSystem.String)" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected bool SetProperty<TModel, T>(T oldValue, T newValue, IEqualityComparer<T> comparer, TModel model, Action<TModel, T> callback, string? propertyName = null) where TModel : class
+    parameters:
+    - id: oldValue
+      type: '{T}'
+      description: The current property value.
+    - id: newValue
+      type: '{T}'
+      description: The property's value after the change occurred.
+    - id: comparer
+      type: System.Collections.Generic.IEqualityComparer{{T}}
+      description: The <xref href="System.Collections.Generic.IEqualityComparer%601" data-throw-if-not-resolved="false"></xref> instance to use to compare the input values.
+    - id: model
+      type: '{TModel}'
+      description: The model containing the property being updated.
+    - id: callback
+      type: System.Action{{TModel},{T}}
+      description: The callback to invoke to set the target property value, if a change has occurred.
+    - id: propertyName
+      type: System.String
+      description: (optional) The name of the property that changed.
+    typeParameters:
+    - id: TModel
+      description: The type of model whose property (or field) to set.
+    - id: T
+      description: The type of property (or field) to set.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the property was changed, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> otherwise.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected Function SetProperty(Of TModel As Class, T)(oldValue As T, newValue As T, comparer As IEqualityComparer(Of T), model As TModel, callback As Action(Of TModel, T), propertyName As String = Nothing) As Boolean
+  overload: Routeables.Core.RoutableViewModel`1.SetProperty*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).SetProperty(Of TModel, T)(T, T, IEqualityComparer(Of T), TModel, Action(Of TModel, T), String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetProperty(Of TModel, T)(T, T, System.Collections.Generic.IEqualityComparer(Of T), TModel, System.Action(Of TModel, T), String)
+  name.vb: SetProperty(Of TModel, T)(T, T, IEqualityComparer(Of T), TModel, Action(Of TModel, T), String)
+- uid: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel{`0}.TaskNotifier@,System.Threading.Tasks.Task,System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel{`0}.TaskNotifier@,System.Threading.Tasks.Task,System.String)
+  id: SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel{`0}.TaskNotifier@,System.Threading.Tasks.Task,System.String)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: SetPropertyAndNotifyOnCompletion(ref TaskNotifier?, Task?, string?)
+  nameWithType: RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion(ref RoutableViewModel<TResult>.TaskNotifier?, Task?, string?)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion(ref Routeables.Core.RoutableViewModel<TResult>.TaskNotifier?, System.Threading.Tasks.Task?, string?)
+  type: Method
+  source:
+    id: SetPropertyAndNotifyOnCompletion
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 284
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Compares the current and new values for a given field (which should be the backing field for a property).
+
+    If the value has changed, updates the field and then raises the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event.
+
+    The behavior mirrors that of <xref href="Routeables.Core.RoutableViewModel%601.SetProperty%60%601(%60%600%40%2c%60%600%2cSystem.String)" data-throw-if-not-resolved="false"></xref>, with the difference being that
+
+    this method will also monitor the new value of the property (a generic <xref href="System.Threading.Tasks.Task" data-throw-if-not-resolved="false"></xref>) and will also
+
+    raise the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> again for the target property when it completes.
+
+    This can be used to update bindings observing that <xref href="System.Threading.Tasks.Task" data-throw-if-not-resolved="false"></xref> or any of its properties.
+
+    This method and its overload specifically rely on the <xref href="Routeables.Core.RoutableViewModel%601.TaskNotifier" data-throw-if-not-resolved="false"></xref> type, which needs
+
+    to be used in the backing field for the target <xref href="System.Threading.Tasks.Task" data-throw-if-not-resolved="false"></xref> property. The field doesn't need to be
+
+    initialized, as this method will take care of doing that automatically. The <xref href="Routeables.Core.RoutableViewModel%601.TaskNotifier" data-throw-if-not-resolved="false"></xref>
+
+    type also includes an implicit operator, so it can be assigned to any <xref href="System.Threading.Tasks.Task" data-throw-if-not-resolved="false"></xref> instance directly.
+
+    Here is a sample property declaration using this method:
+
+
+    <pre><code class="lang-csharp">private TaskNotifier myTask;
+
+
+    public Task MyTask
+
+    {
+        get =&gt; myTask;
+        private set =&gt; SetAndNotifyOnCompletion(ref myTask, value);
+    }</code></pre>
+  remarks: >-
+    The <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event is not raised if the current and new value for the target property are
+
+    the same. The return value being <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> only indicates that the new value being assigned to
+
+    <code class="paramref">taskNotifier</code> is different than the previous one, and it does not mean the new
+
+    <xref href="System.Threading.Tasks.Task" data-throw-if-not-resolved="false"></xref> instance passed as argument is in any particular state.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected bool SetPropertyAndNotifyOnCompletion(ref RoutableViewModel<TResult>.TaskNotifier? taskNotifier, Task? newValue, string? propertyName = null)
+    parameters:
+    - id: taskNotifier
+      type: Routeables.Core.RoutableViewModel`1.TaskNotifier
+      description: The field notifier to modify.
+      attributes:
+      - type: System.Diagnostics.CodeAnalysis.NotNullAttribute
+        ctor: System.Diagnostics.CodeAnalysis.NotNullAttribute.#ctor
+        arguments: []
+    - id: newValue
+      type: System.Threading.Tasks.Task
+      description: The property's value after the change occurred.
+    - id: propertyName
+      type: System.String
+      description: (optional) The name of the property that changed.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the property was changed, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> otherwise.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected Function SetPropertyAndNotifyOnCompletion(taskNotifier As RoutableViewModel(Of TResult).TaskNotifier, newValue As Task, propertyName As String = Nothing) As Boolean
+  overload: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion(RoutableViewModel(Of TResult).TaskNotifier, Task, String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel(Of TResult).TaskNotifier, System.Threading.Tasks.Task, String)
+  name.vb: SetPropertyAndNotifyOnCompletion(TaskNotifier, Task, String)
+- uid: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel{`0}.TaskNotifier@,System.Threading.Tasks.Task,System.Action{System.Threading.Tasks.Task},System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel{`0}.TaskNotifier@,System.Threading.Tasks.Task,System.Action{System.Threading.Tasks.Task},System.String)
+  id: SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel{`0}.TaskNotifier@,System.Threading.Tasks.Task,System.Action{System.Threading.Tasks.Task},System.String)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: SetPropertyAndNotifyOnCompletion(ref TaskNotifier?, Task?, Action<Task?>, string?)
+  nameWithType: RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion(ref RoutableViewModel<TResult>.TaskNotifier?, Task?, Action<Task?>, string?)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion(ref Routeables.Core.RoutableViewModel<TResult>.TaskNotifier?, System.Threading.Tasks.Task?, System.Action<System.Threading.Tasks.Task?>, string?)
+  type: Method
+  source:
+    id: SetPropertyAndNotifyOnCompletion
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 307
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Compares the current and new values for a given field (which should be the backing field for a property).
+
+    If the value has changed, updates the field and then raises the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event.
+
+    This method is just like <xref href="Routeables.Core.RoutableViewModel%601.SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel%7b%600%7d.TaskNotifier%40%2cSystem.Threading.Tasks.Task%2cSystem.String)" data-throw-if-not-resolved="false"></xref>,
+
+    with the difference being an extra <xref href="System.Action%601" data-throw-if-not-resolved="false"></xref> parameter with a callback being invoked
+
+    either immediately, if the new task has already completed or is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, or upon completion.
+  remarks: The <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event is not raised if the current and new value for the target property are the same.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected bool SetPropertyAndNotifyOnCompletion(ref RoutableViewModel<TResult>.TaskNotifier? taskNotifier, Task? newValue, Action<Task?> callback, string? propertyName = null)
+    parameters:
+    - id: taskNotifier
+      type: Routeables.Core.RoutableViewModel`1.TaskNotifier
+      description: The field notifier to modify.
+      attributes:
+      - type: System.Diagnostics.CodeAnalysis.NotNullAttribute
+        ctor: System.Diagnostics.CodeAnalysis.NotNullAttribute.#ctor
+        arguments: []
+    - id: newValue
+      type: System.Threading.Tasks.Task
+      description: The property's value after the change occurred.
+    - id: callback
+      type: System.Action{System.Threading.Tasks.Task}
+      description: A callback to invoke to update the property value.
+    - id: propertyName
+      type: System.String
+      description: (optional) The name of the property that changed.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the property was changed, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> otherwise.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected Function SetPropertyAndNotifyOnCompletion(taskNotifier As RoutableViewModel(Of TResult).TaskNotifier, newValue As Task, callback As Action(Of Task), propertyName As String = Nothing) As Boolean
+  overload: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion(RoutableViewModel(Of TResult).TaskNotifier, Task, Action(Of Task), String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel(Of TResult).TaskNotifier, System.Threading.Tasks.Task, System.Action(Of System.Threading.Tasks.Task), String)
+  name.vb: SetPropertyAndNotifyOnCompletion(TaskNotifier, Task, Action(Of Task), String)
+- uid: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion``1(Routeables.Core.RoutableViewModel{`0}.TaskNotifier{``0}@,System.Threading.Tasks.Task{``0},System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion``1(Routeables.Core.RoutableViewModel{`0}.TaskNotifier{``0}@,System.Threading.Tasks.Task{``0},System.String)
+  id: SetPropertyAndNotifyOnCompletion``1(Routeables.Core.RoutableViewModel{`0}.TaskNotifier{``0}@,System.Threading.Tasks.Task{``0},System.String)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: SetPropertyAndNotifyOnCompletion<T>(ref TaskNotifier<T>?, Task<T>?, string?)
+  nameWithType: RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion<T>(ref RoutableViewModel<TResult>.TaskNotifier<T>?, Task<T>?, string?)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion<T>(ref Routeables.Core.RoutableViewModel<TResult>.TaskNotifier<T>?, System.Threading.Tasks.Task<T>?, string?)
+  type: Method
+  source:
+    id: SetPropertyAndNotifyOnCompletion
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 348
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Compares the current and new values for a given field (which should be the backing field for a property).
+
+    If the value has changed, updates the field and then raises the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event.
+
+    The behavior mirrors that of <xref href="Routeables.Core.RoutableViewModel%601.SetProperty%60%601(%60%600%40%2c%60%600%2cSystem.String)" data-throw-if-not-resolved="false"></xref>, with the difference being that
+
+    this method will also monitor the new value of the property (a generic <xref href="System.Threading.Tasks.Task" data-throw-if-not-resolved="false"></xref>) and will also
+
+    raise the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> again for the target property when it completes.
+
+    This can be used to update bindings observing that <xref href="System.Threading.Tasks.Task" data-throw-if-not-resolved="false"></xref> or any of its properties.
+
+    This method and its overload specifically rely on the <xref href="Routeables.Core.RoutableViewModel%601.TaskNotifier%601" data-throw-if-not-resolved="false"></xref> type, which needs
+
+    to be used in the backing field for the target <xref href="System.Threading.Tasks.Task" data-throw-if-not-resolved="false"></xref> property. The field doesn't need to be
+
+    initialized, as this method will take care of doing that automatically. The <xref href="Routeables.Core.RoutableViewModel%601.TaskNotifier%601" data-throw-if-not-resolved="false"></xref>
+
+    type also includes an implicit operator, so it can be assigned to any <xref href="System.Threading.Tasks.Task" data-throw-if-not-resolved="false"></xref> instance directly.
+
+    Here is a sample property declaration using this method:
+
+
+    <pre><code class="lang-csharp">private TaskNotifier&lt;int&gt; myTask;
+
+
+    public Task&lt;int&gt; MyTask
+
+    {
+        get =&gt; myTask;
+        private set =&gt; SetAndNotifyOnCompletion(ref myTask, value);
+    }</code></pre>
+  remarks: >-
+    The <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event is not raised if the current and new value for the target property are
+
+    the same. The return value being <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> only indicates that the new value being assigned to
+
+    <code class="paramref">taskNotifier</code> is different than the previous one, and it does not mean the new
+
+    <xref href="System.Threading.Tasks.Task%601" data-throw-if-not-resolved="false"></xref> instance passed as argument is in any particular state.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected bool SetPropertyAndNotifyOnCompletion<T>(ref RoutableViewModel<TResult>.TaskNotifier<T>? taskNotifier, Task<T>? newValue, string? propertyName = null)
+    parameters:
+    - id: taskNotifier
+      type: Routeables.Core.RoutableViewModel`1.TaskNotifier{{T}}
+      description: The field notifier to modify.
+      attributes:
+      - type: System.Diagnostics.CodeAnalysis.NotNullAttribute
+        ctor: System.Diagnostics.CodeAnalysis.NotNullAttribute.#ctor
+        arguments: []
+    - id: newValue
+      type: System.Threading.Tasks.Task{{T}}
+      description: The property's value after the change occurred.
+    - id: propertyName
+      type: System.String
+      description: (optional) The name of the property that changed.
+    typeParameters:
+    - id: T
+      description: The type of result for the <xref href="System.Threading.Tasks.Task%601" data-throw-if-not-resolved="false"></xref> to set and monitor.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the property was changed, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> otherwise.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected Function SetPropertyAndNotifyOnCompletion(Of T)(taskNotifier As RoutableViewModel(Of TResult).TaskNotifier(Of T), newValue As Task(Of T), propertyName As String = Nothing) As Boolean
+  overload: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion(Of T)(RoutableViewModel(Of TResult).TaskNotifier(Of T), Task(Of T), String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion(Of T)(Routeables.Core.RoutableViewModel(Of TResult).TaskNotifier(Of T), System.Threading.Tasks.Task(Of T), String)
+  name.vb: SetPropertyAndNotifyOnCompletion(Of T)(TaskNotifier(Of T), Task(Of T), String)
+- uid: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion``1(Routeables.Core.RoutableViewModel{`0}.TaskNotifier{``0}@,System.Threading.Tasks.Task{``0},System.Action{System.Threading.Tasks.Task{``0}},System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion``1(Routeables.Core.RoutableViewModel{`0}.TaskNotifier{``0}@,System.Threading.Tasks.Task{``0},System.Action{System.Threading.Tasks.Task{``0}},System.String)
+  id: SetPropertyAndNotifyOnCompletion``1(Routeables.Core.RoutableViewModel{`0}.TaskNotifier{``0}@,System.Threading.Tasks.Task{``0},System.Action{System.Threading.Tasks.Task{``0}},System.String)
+  parent: Routeables.Core.RoutableViewModel`1
+  langs:
+  - csharp
+  - vb
+  name: SetPropertyAndNotifyOnCompletion<T>(ref TaskNotifier<T>?, Task<T>?, Action<Task<T>?>, string?)
+  nameWithType: RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion<T>(ref RoutableViewModel<TResult>.TaskNotifier<T>?, Task<T>?, Action<Task<T>?>, string?)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion<T>(ref Routeables.Core.RoutableViewModel<TResult>.TaskNotifier<T>?, System.Threading.Tasks.Task<T>?, System.Action<System.Threading.Tasks.Task<T>?>, string?)
+  type: Method
+  source:
+    id: SetPropertyAndNotifyOnCompletion
+    path: C:\Users\cedri\source\repos\Routables\Routeables.Core\obj\Release\net10.0\CommunityToolkit.Mvvm.SourceGenerators\CommunityToolkit.Mvvm.SourceGenerators.INotifyPropertyChangedGenerator\Routeables.Core.RoutableViewModel`1.g.cs
+    startLine: 372
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: >-
+    Compares the current and new values for a given field (which should be the backing field for a property).
+
+    If the value has changed, updates the field and then raises the <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event.
+
+    This method is just like <xref href="Routeables.Core.RoutableViewModel%601.SetPropertyAndNotifyOnCompletion%60%601(Routeables.Core.RoutableViewModel%7b%600%7d.TaskNotifier%7b%60%600%7d%40%2cSystem.Threading.Tasks.Task%7b%60%600%7d%2cSystem.String)" data-throw-if-not-resolved="false"></xref>,
+
+    with the difference being an extra <xref href="System.Action%601" data-throw-if-not-resolved="false"></xref> parameter with a callback being invoked
+
+    either immediately, if the new task has already completed or is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, or upon completion.
+  remarks: The <xref href="Routeables.Core.RoutableViewModel%601.PropertyChanged" data-throw-if-not-resolved="false"></xref> event is not raised if the current and new value for the target property are the same.
+  example: []
+  syntax:
+    content: >-
+      [ExcludeFromCodeCoverage]
+
+      protected bool SetPropertyAndNotifyOnCompletion<T>(ref RoutableViewModel<TResult>.TaskNotifier<T>? taskNotifier, Task<T>? newValue, Action<Task<T>?> callback, string? propertyName = null)
+    parameters:
+    - id: taskNotifier
+      type: Routeables.Core.RoutableViewModel`1.TaskNotifier{{T}}
+      description: The field notifier to modify.
+      attributes:
+      - type: System.Diagnostics.CodeAnalysis.NotNullAttribute
+        ctor: System.Diagnostics.CodeAnalysis.NotNullAttribute.#ctor
+        arguments: []
+    - id: newValue
+      type: System.Threading.Tasks.Task{{T}}
+      description: The property's value after the change occurred.
+    - id: callback
+      type: System.Action{System.Threading.Tasks.Task{{T}}}
+      description: A callback to invoke to update the property value.
+    - id: propertyName
+      type: System.String
+      description: (optional) The name of the property that changed.
+    typeParameters:
+    - id: T
+      description: The type of result for the <xref href="System.Threading.Tasks.Task%601" data-throw-if-not-resolved="false"></xref> to set and monitor.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the property was changed, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> otherwise.
+    content.vb: >-
+      <ExcludeFromCodeCoverage>
+
+      Protected Function SetPropertyAndNotifyOnCompletion(Of T)(taskNotifier As RoutableViewModel(Of TResult).TaskNotifier(Of T), newValue As Task(Of T), callback As Action(Of Task(Of T)), propertyName As String = Nothing) As Boolean
+  overload: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion*
+  attributes:
+  - type: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+    ctor: System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute.#ctor
+    arguments: []
+  nameWithType.vb: RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion(Of T)(RoutableViewModel(Of TResult).TaskNotifier(Of T), Task(Of T), Action(Of Task(Of T)), String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion(Of T)(Routeables.Core.RoutableViewModel(Of TResult).TaskNotifier(Of T), System.Threading.Tasks.Task(Of T), System.Action(Of System.Threading.Tasks.Task(Of T)), String)
+  name.vb: SetPropertyAndNotifyOnCompletion(Of T)(TaskNotifier(Of T), Task(Of T), Action(Of Task(Of T)), String)
+references:
+- uid: Routeables.Core
+  commentId: N:Routeables.Core
+  name: Routeables.Core
+  nameWithType: Routeables.Core
+  fullName: Routeables.Core
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Routeables.Core.RouterViewModelBase
+  commentId: T:Routeables.Core.RouterViewModelBase
+  parent: Routeables.Core
+  href: Routeables.Core.RouterViewModelBase.html
+  name: RouterViewModelBase
+  nameWithType: RouterViewModelBase
+  fullName: Routeables.Core.RouterViewModelBase
+- uid: Routeables.Core.RoutableViewModelBase
+  commentId: T:Routeables.Core.RoutableViewModelBase
+  parent: Routeables.Core
+  href: Routeables.Core.RoutableViewModelBase.html
+  name: RoutableViewModelBase
+  nameWithType: RoutableViewModelBase
+  fullName: Routeables.Core.RoutableViewModelBase
+- uid: Routeables.Core.RoutableViewModelBase{{TResult}}
+  commentId: T:Routeables.Core.RoutableViewModelBase{`0}
+  parent: Routeables.Core
+  definition: Routeables.Core.RoutableViewModelBase`1
+  href: Routeables.Core.RoutableViewModelBase-1.html
+  name: RoutableViewModelBase<TResult>
+  nameWithType: RoutableViewModelBase<TResult>
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>
+  nameWithType.vb: RoutableViewModelBase(Of TResult)
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult)
+  name.vb: RoutableViewModelBase(Of TResult)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase`1
+    name: RoutableViewModelBase
+    href: Routeables.Core.RoutableViewModelBase-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase`1
+    name: RoutableViewModelBase
+    href: Routeables.Core.RoutableViewModelBase-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.IDisposable
+  commentId: T:System.IDisposable
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.idisposable
+  name: IDisposable
+  nameWithType: IDisposable
+  fullName: System.IDisposable
+- uid: Routeables.Abstraction.IRouteable
+  commentId: T:Routeables.Abstraction.IRouteable
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteable.html
+  name: IRouteable
+  nameWithType: IRouteable
+  fullName: Routeables.Abstraction.IRouteable
+- uid: Routeables.Abstraction.IMainRouteables
+  commentId: T:Routeables.Abstraction.IMainRouteables
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IMainRouteables.html
+  name: IMainRouteables
+  nameWithType: IMainRouteables
+  fullName: Routeables.Abstraction.IMainRouteables
+- uid: Routeables.Abstraction.ICloseableViewModel{{TResult}}
+  commentId: T:Routeables.Abstraction.ICloseableViewModel{`0}
+  parent: Routeables.Abstraction
+  definition: Routeables.Abstraction.ICloseableViewModel`1
+  href: Routeables.Abstraction.ICloseableViewModel-1.html
+  name: ICloseableViewModel<TResult>
+  nameWithType: ICloseableViewModel<TResult>
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>
+  nameWithType.vb: ICloseableViewModel(Of TResult)
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult)
+  name.vb: ICloseableViewModel(Of TResult)
+  spec.csharp:
+  - uid: Routeables.Abstraction.ICloseableViewModel`1
+    name: ICloseableViewModel
+    href: Routeables.Abstraction.ICloseableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Abstraction.ICloseableViewModel`1
+    name: ICloseableViewModel
+    href: Routeables.Abstraction.ICloseableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.ComponentModel.INotifyPropertyChanged
+  commentId: T:System.ComponentModel.INotifyPropertyChanged
+  parent: System.ComponentModel
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged
+  name: INotifyPropertyChanged
+  nameWithType: INotifyPropertyChanged
+  fullName: System.ComponentModel.INotifyPropertyChanged
+- uid: Routeables.Core.RoutableViewModelBase{{TResult}}.CloseRequested
+  commentId: E:Routeables.Core.RoutableViewModelBase{`0}.CloseRequested
+  parent: Routeables.Core.RoutableViewModelBase{{TResult}}
+  definition: Routeables.Core.RoutableViewModelBase`1.CloseRequested
+  href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_CloseRequested
+  name: CloseRequested
+  nameWithType: RoutableViewModelBase<TResult>.CloseRequested
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>.CloseRequested
+  nameWithType.vb: RoutableViewModelBase(Of TResult).CloseRequested
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult).CloseRequested
+- uid: Routeables.Core.RoutableViewModelBase{{TResult}}.Title
+  commentId: P:Routeables.Core.RoutableViewModelBase{`0}.Title
+  parent: Routeables.Core.RoutableViewModelBase{{TResult}}
+  definition: Routeables.Core.RoutableViewModelBase`1.Title
+  href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_Title
+  name: Title
+  nameWithType: RoutableViewModelBase<TResult>.Title
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>.Title
+  nameWithType.vb: RoutableViewModelBase(Of TResult).Title
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult).Title
+- uid: Routeables.Core.RoutableViewModelBase{{TResult}}.CanClose
+  commentId: M:Routeables.Core.RoutableViewModelBase{`0}.CanClose
+  parent: Routeables.Core.RoutableViewModelBase{{TResult}}
+  definition: Routeables.Core.RoutableViewModelBase`1.CanClose
+  href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_CanClose
+  name: CanClose()
+  nameWithType: RoutableViewModelBase<TResult>.CanClose()
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>.CanClose()
+  nameWithType.vb: RoutableViewModelBase(Of TResult).CanClose()
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult).CanClose()
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase{`0}.CanClose
+    name: CanClose
+    href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_CanClose
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase{`0}.CanClose
+    name: CanClose
+    href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_CanClose
+  - name: (
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase{{TResult}}.Commands
+  commentId: P:Routeables.Core.RoutableViewModelBase{`0}.Commands
+  parent: Routeables.Core.RoutableViewModelBase{{TResult}}
+  definition: Routeables.Core.RoutableViewModelBase`1.Commands
+  href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_Commands
+  name: Commands
+  nameWithType: RoutableViewModelBase<TResult>.Commands
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>.Commands
+  nameWithType.vb: RoutableViewModelBase(Of TResult).Commands
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult).Commands
+- uid: Routeables.Core.RoutableViewModelBase{{TResult}}.Close({TResult})
+  commentId: M:Routeables.Core.RoutableViewModelBase{`0}.Close(`0)
+  parent: Routeables.Core.RoutableViewModelBase{{TResult}}
+  definition: Routeables.Core.RoutableViewModelBase`1.Close(`0)
+  href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_Close__0_
+  name: Close(TResult)
+  nameWithType: RoutableViewModelBase<TResult>.Close(TResult)
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>.Close(TResult)
+  nameWithType.vb: RoutableViewModelBase(Of TResult).Close(TResult)
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult).Close(TResult)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase{`0}.Close(`0)
+    name: Close
+    href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_Close__0_
+  - name: (
+  - name: TResult
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase{`0}.Close(`0)
+    name: Close
+    href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_Close__0_
+  - name: (
+  - name: TResult
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+  commentId: P:Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_CurrentViewChanged
+  name: CurrentViewChanged
+  nameWithType: RoutableViewModelBase.CurrentViewChanged
+  fullName: Routeables.Core.RoutableViewModelBase.CurrentViewChanged
+- uid: Routeables.Core.RoutableViewModelBase.LockChanged
+  commentId: P:Routeables.Core.RoutableViewModelBase.LockChanged
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_LockChanged
+  name: LockChanged
+  nameWithType: RoutableViewModelBase.LockChanged
+  fullName: Routeables.Core.RoutableViewModelBase.LockChanged
+- uid: Routeables.Core.RoutableViewModelBase.OnViewModelChanged(System.Object)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnViewModelChanged(System.Object)
+  parent: Routeables.Core.RoutableViewModelBase
+  isExternal: true
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnViewModelChanged_System_Object_
+  name: OnViewModelChanged(object)
+  nameWithType: RoutableViewModelBase.OnViewModelChanged(object)
+  fullName: Routeables.Core.RoutableViewModelBase.OnViewModelChanged(object)
+  nameWithType.vb: RoutableViewModelBase.OnViewModelChanged(Object)
+  fullName.vb: Routeables.Core.RoutableViewModelBase.OnViewModelChanged(Object)
+  name.vb: OnViewModelChanged(Object)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.OnViewModelChanged(System.Object)
+    name: OnViewModelChanged
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnViewModelChanged_System_Object_
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.OnViewModelChanged(System.Object)
+    name: OnViewModelChanged
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnViewModelChanged_System_Object_
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.CurrentView
+  commentId: P:Routeables.Core.RoutableViewModelBase.CurrentView
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_CurrentView
+  name: CurrentView
+  nameWithType: RoutableViewModelBase.CurrentView
+  fullName: Routeables.Core.RoutableViewModelBase.CurrentView
+- uid: Routeables.Core.RoutableViewModelBase.Routable
+  commentId: P:Routeables.Core.RoutableViewModelBase.Routable
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_Routable
+  name: Routable
+  nameWithType: RoutableViewModelBase.Routable
+  fullName: Routeables.Core.RoutableViewModelBase.Routable
+- uid: Routeables.Core.RoutableViewModelBase.OnNavigationFailed(System.Exception)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnNavigationFailed(System.Exception)
+  parent: Routeables.Core.RoutableViewModelBase
+  isExternal: true
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnNavigationFailed_System_Exception_
+  name: OnNavigationFailed(Exception)
+  nameWithType: RoutableViewModelBase.OnNavigationFailed(Exception)
+  fullName: Routeables.Core.RoutableViewModelBase.OnNavigationFailed(System.Exception)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.OnNavigationFailed(System.Exception)
+    name: OnNavigationFailed
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnNavigationFailed_System_Exception_
+  - name: (
+  - uid: System.Exception
+    name: Exception
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.exception
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.OnNavigationFailed(System.Exception)
+    name: OnNavigationFailed
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnNavigationFailed_System_Exception_
+  - name: (
+  - uid: System.Exception
+    name: Exception
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.exception
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+  commentId: M:Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_SelectAsync_Routeables_Abstraction_IRouteableView_Routeables_Abstraction_IRouteableView_
+  name: SelectAsync(IRouteableView, IRouteableView)
+  nameWithType: RoutableViewModelBase.SelectAsync(IRouteableView, IRouteableView)
+  fullName: Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView, Routeables.Abstraction.IRouteableView)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+    name: SelectAsync
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_SelectAsync_Routeables_Abstraction_IRouteableView_Routeables_Abstraction_IRouteableView_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.SelectAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView)
+    name: SelectAsync
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_SelectAsync_Routeables_Abstraction_IRouteableView_Routeables_Abstraction_IRouteableView_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.Routeables
+  commentId: P:Routeables.Core.RoutableViewModelBase.Routeables
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_Routeables
+  name: Routeables
+  nameWithType: RoutableViewModelBase.Routeables
+  fullName: Routeables.Core.RoutableViewModelBase.Routeables
+- uid: Routeables.Core.RoutableViewModelBase.GetRoutables
+  commentId: M:Routeables.Core.RoutableViewModelBase.GetRoutables
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_GetRoutables
+  name: GetRoutables()
+  nameWithType: RoutableViewModelBase.GetRoutables()
+  fullName: Routeables.Core.RoutableViewModelBase.GetRoutables()
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.GetRoutables
+    name: GetRoutables
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_GetRoutables
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.GetRoutables
+    name: GetRoutables
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_GetRoutables
+  - name: (
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView,System.Int32)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView,System.Int32)
+  parent: Routeables.Core.RoutableViewModelBase
+  isExternal: true
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnRoutableChangedAsync_Routeables_Abstraction_IRouteableView_Routeables_Abstraction_IRouteableView_System_Int32_
+  name: OnRoutableChangedAsync(IRouteableView, IRouteableView, int)
+  nameWithType: RoutableViewModelBase.OnRoutableChangedAsync(IRouteableView, IRouteableView, int)
+  fullName: Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView, Routeables.Abstraction.IRouteableView, int)
+  nameWithType.vb: RoutableViewModelBase.OnRoutableChangedAsync(IRouteableView, IRouteableView, Integer)
+  fullName.vb: Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView, Routeables.Abstraction.IRouteableView, Integer)
+  name.vb: OnRoutableChangedAsync(IRouteableView, IRouteableView, Integer)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView,System.Int32)
+    name: OnRoutableChangedAsync
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnRoutableChangedAsync_Routeables_Abstraction_IRouteableView_Routeables_Abstraction_IRouteableView_System_Int32_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.OnRoutableChangedAsync(Routeables.Abstraction.IRouteableView,Routeables.Abstraction.IRouteableView,System.Int32)
+    name: OnRoutableChangedAsync
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnRoutableChangedAsync_Routeables_Abstraction_IRouteableView_Routeables_Abstraction_IRouteableView_System_Int32_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.GetView(Routeables.Abstraction.IRouteableView)
+  commentId: M:Routeables.Core.RoutableViewModelBase.GetView(Routeables.Abstraction.IRouteableView)
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_GetView_Routeables_Abstraction_IRouteableView_
+  name: GetView(IRouteableView)
+  nameWithType: RoutableViewModelBase.GetView(IRouteableView)
+  fullName: Routeables.Core.RoutableViewModelBase.GetView(Routeables.Abstraction.IRouteableView)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.GetView(Routeables.Abstraction.IRouteableView)
+    name: GetView
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_GetView_Routeables_Abstraction_IRouteableView_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.GetView(Routeables.Abstraction.IRouteableView)
+    name: GetView
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_GetView_Routeables_Abstraction_IRouteableView_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.Dispose
+  commentId: M:Routeables.Core.RoutableViewModelBase.Dispose
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_Dispose
+  name: Dispose()
+  nameWithType: RoutableViewModelBase.Dispose()
+  fullName: Routeables.Core.RoutableViewModelBase.Dispose()
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.Dispose
+    name: Dispose
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_Dispose
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.Dispose
+    name: Dispose
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_Dispose
+  - name: (
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.CanNavigateAsync(System.Threading.CancellationToken)
+  commentId: M:Routeables.Core.RoutableViewModelBase.CanNavigateAsync(System.Threading.CancellationToken)
+  parent: Routeables.Core.RoutableViewModelBase
+  isExternal: true
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_CanNavigateAsync_System_Threading_CancellationToken_
+  name: CanNavigateAsync(CancellationToken)
+  nameWithType: RoutableViewModelBase.CanNavigateAsync(CancellationToken)
+  fullName: Routeables.Core.RoutableViewModelBase.CanNavigateAsync(System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.CanNavigateAsync(System.Threading.CancellationToken)
+    name: CanNavigateAsync
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_CanNavigateAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.CanNavigateAsync(System.Threading.CancellationToken)
+    name: CanNavigateAsync
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_CanNavigateAsync_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Core.RoutableViewModelBase
+  isExternal: true
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnNavigatingToAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: OnNavigatingToAsync(IRouteableArgs, CancellationToken)
+  nameWithType: RoutableViewModelBase.OnNavigatingToAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: OnNavigatingToAsync
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnNavigatingToAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.OnNavigatingToAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: OnNavigatingToAsync
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnNavigatingToAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  parent: Routeables.Core.RoutableViewModelBase
+  isExternal: true
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnNavigatingFromAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: OnNavigatingFromAsync(IRouteableArgs, CancellationToken)
+  nameWithType: RoutableViewModelBase.OnNavigatingFromAsync(IRouteableArgs, CancellationToken)
+  fullName: Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: OnNavigatingFromAsync
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnNavigatingFromAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.OnNavigatingFromAsync(Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: OnNavigatingFromAsync
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnNavigatingFromAsync_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableArgs)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableArgs)
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnCurrentRoutableChanged_Routeables_Abstraction_IRouteableArgs_
+  name: OnCurrentRoutableChanged(IRouteableArgs)
+  nameWithType: RoutableViewModelBase.OnCurrentRoutableChanged(IRouteableArgs)
+  fullName: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableArgs)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableArgs)
+    name: OnCurrentRoutableChanged
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnCurrentRoutableChanged_Routeables_Abstraction_IRouteableArgs_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableArgs)
+    name: OnCurrentRoutableChanged
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnCurrentRoutableChanged_Routeables_Abstraction_IRouteableArgs_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  commentId: M:Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  parent: Routeables.Core.RoutableViewModelBase
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnCurrentRoutableChanged_Routeables_Abstraction_IRouteableView_
+  name: OnCurrentRoutableChanged(IRouteableView)
+  nameWithType: RoutableViewModelBase.OnCurrentRoutableChanged(IRouteableView)
+  fullName: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+    name: OnCurrentRoutableChanged
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnCurrentRoutableChanged_Routeables_Abstraction_IRouteableView_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.OnCurrentRoutableChanged(Routeables.Abstraction.IRouteableView)
+    name: OnCurrentRoutableChanged
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_OnCurrentRoutableChanged_Routeables_Abstraction_IRouteableView_
+  - name: (
+  - uid: Routeables.Abstraction.IRouteableView
+    name: IRouteableView
+    href: Routeables.Abstraction.IRouteableView.html
+  - name: )
+- uid: Routeables.Core.RouterViewModelBase._router
+  commentId: F:Routeables.Core.RouterViewModelBase._router
+  parent: Routeables.Core.RouterViewModelBase
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase__router
+  name: _router
+  nameWithType: RouterViewModelBase._router
+  fullName: Routeables.Core.RouterViewModelBase._router
+- uid: Routeables.Core.RouterViewModelBase.CanGoBack
+  commentId: M:Routeables.Core.RouterViewModelBase.CanGoBack
+  parent: Routeables.Core.RouterViewModelBase
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_CanGoBack
+  name: CanGoBack()
+  nameWithType: RouterViewModelBase.CanGoBack()
+  fullName: Routeables.Core.RouterViewModelBase.CanGoBack()
+  spec.csharp:
+  - uid: Routeables.Core.RouterViewModelBase.CanGoBack
+    name: CanGoBack
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_CanGoBack
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RouterViewModelBase.CanGoBack
+    name: CanGoBack
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_CanGoBack
+  - name: (
+  - name: )
+- uid: Routeables.Core.RouterViewModelBase.CanGoForward
+  commentId: M:Routeables.Core.RouterViewModelBase.CanGoForward
+  parent: Routeables.Core.RouterViewModelBase
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_CanGoForward
+  name: CanGoForward()
+  nameWithType: RouterViewModelBase.CanGoForward()
+  fullName: Routeables.Core.RouterViewModelBase.CanGoForward()
+  spec.csharp:
+  - uid: Routeables.Core.RouterViewModelBase.CanGoForward
+    name: CanGoForward
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_CanGoForward
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RouterViewModelBase.CanGoForward
+    name: CanGoForward
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_CanGoForward
+  - name: (
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Core.RoutableViewModelBase`1
+  commentId: T:Routeables.Core.RoutableViewModelBase`1
+  href: Routeables.Core.RoutableViewModelBase-1.html
+  name: RoutableViewModelBase<TResult>
+  nameWithType: RoutableViewModelBase<TResult>
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>
+  nameWithType.vb: RoutableViewModelBase(Of TResult)
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult)
+  name.vb: RoutableViewModelBase(Of TResult)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase`1
+    name: RoutableViewModelBase
+    href: Routeables.Core.RoutableViewModelBase-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase`1
+    name: RoutableViewModelBase
+    href: Routeables.Core.RoutableViewModelBase-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.ICloseableViewModel`1
+  commentId: T:Routeables.Abstraction.ICloseableViewModel`1
+  href: Routeables.Abstraction.ICloseableViewModel-1.html
+  name: ICloseableViewModel<TResult>
+  nameWithType: ICloseableViewModel<TResult>
+  fullName: Routeables.Abstraction.ICloseableViewModel<TResult>
+  nameWithType.vb: ICloseableViewModel(Of TResult)
+  fullName.vb: Routeables.Abstraction.ICloseableViewModel(Of TResult)
+  name.vb: ICloseableViewModel(Of TResult)
+  spec.csharp:
+  - uid: Routeables.Abstraction.ICloseableViewModel`1
+    name: ICloseableViewModel
+    href: Routeables.Abstraction.ICloseableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Abstraction.ICloseableViewModel`1
+    name: ICloseableViewModel
+    href: Routeables.Abstraction.ICloseableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.ComponentModel
+  commentId: N:System.ComponentModel
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.ComponentModel
+  nameWithType: System.ComponentModel
+  fullName: System.ComponentModel
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.ComponentModel
+    name: ComponentModel
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.componentmodel
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.ComponentModel
+    name: ComponentModel
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.componentmodel
+- uid: Routeables.Core.RoutableViewModelBase`1.CloseRequested
+  commentId: E:Routeables.Core.RoutableViewModelBase`1.CloseRequested
+  href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_CloseRequested
+  name: CloseRequested
+  nameWithType: RoutableViewModelBase<TResult>.CloseRequested
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>.CloseRequested
+  nameWithType.vb: RoutableViewModelBase(Of TResult).CloseRequested
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult).CloseRequested
+- uid: Routeables.Core.RoutableViewModelBase`1.Title
+  commentId: P:Routeables.Core.RoutableViewModelBase`1.Title
+  href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_Title
+  name: Title
+  nameWithType: RoutableViewModelBase<TResult>.Title
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>.Title
+  nameWithType.vb: RoutableViewModelBase(Of TResult).Title
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult).Title
+- uid: Routeables.Core.RoutableViewModelBase`1.CanClose
+  commentId: M:Routeables.Core.RoutableViewModelBase`1.CanClose
+  href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_CanClose
+  name: CanClose()
+  nameWithType: RoutableViewModelBase<TResult>.CanClose()
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>.CanClose()
+  nameWithType.vb: RoutableViewModelBase(Of TResult).CanClose()
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult).CanClose()
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase`1.CanClose
+    name: CanClose
+    href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_CanClose
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase`1.CanClose
+    name: CanClose
+    href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_CanClose
+  - name: (
+  - name: )
+- uid: Routeables.Core.RoutableViewModelBase`1.Commands
+  commentId: P:Routeables.Core.RoutableViewModelBase`1.Commands
+  href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_Commands
+  name: Commands
+  nameWithType: RoutableViewModelBase<TResult>.Commands
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>.Commands
+  nameWithType.vb: RoutableViewModelBase(Of TResult).Commands
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult).Commands
+- uid: Routeables.Core.RoutableViewModelBase`1.Close(`0)
+  commentId: M:Routeables.Core.RoutableViewModelBase`1.Close(`0)
+  href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_Close__0_
+  name: Close(TResult)
+  nameWithType: RoutableViewModelBase<TResult>.Close(TResult)
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>.Close(TResult)
+  nameWithType.vb: RoutableViewModelBase(Of TResult).Close(TResult)
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult).Close(TResult)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase`1.Close(`0)
+    name: Close
+    href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_Close__0_
+  - name: (
+  - name: TResult
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase`1.Close(`0)
+    name: Close
+    href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_Close__0_
+  - name: (
+  - name: TResult
+  - name: )
+- uid: Routeables.Core.RoutableViewModel`1.#ctor*
+  commentId: Overload:Routeables.Core.RoutableViewModel`1.#ctor
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1__ctor_Routeables_Abstraction_IRouter_System_Boolean_
+  name: RoutableViewModel
+  nameWithType: RoutableViewModel<TResult>.RoutableViewModel
+  fullName: Routeables.Core.RoutableViewModel<TResult>.RoutableViewModel
+  nameWithType.vb: RoutableViewModel(Of TResult).New
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).New
+  name.vb: New
+- uid: Routeables.Abstraction.IRouter
+  commentId: T:Routeables.Abstraction.IRouter
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouter.html
+  name: IRouter
+  nameWithType: IRouter
+  fullName: Routeables.Abstraction.IRouter
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: Routeables.Core.RoutableViewModelBase{{TResult}}.CloseCommand
+  commentId: P:Routeables.Core.RoutableViewModelBase{`0}.CloseCommand
+  parent: Routeables.Core.RoutableViewModelBase{{TResult}}
+  definition: Routeables.Core.RoutableViewModelBase`1.CloseCommand
+  href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_CloseCommand
+  name: CloseCommand
+  nameWithType: RoutableViewModelBase<TResult>.CloseCommand
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>.CloseCommand
+  nameWithType.vb: RoutableViewModelBase(Of TResult).CloseCommand
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult).CloseCommand
+- uid: Routeables.Core.RoutableViewModel`1.CloseCommand*
+  commentId: Overload:Routeables.Core.RoutableViewModel`1.CloseCommand
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_CloseCommand
+  name: CloseCommand
+  nameWithType: RoutableViewModel<TResult>.CloseCommand
+  fullName: Routeables.Core.RoutableViewModel<TResult>.CloseCommand
+  nameWithType.vb: RoutableViewModel(Of TResult).CloseCommand
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).CloseCommand
+- uid: System.Windows.Input.ICommand
+  commentId: T:System.Windows.Input.ICommand
+  parent: System.Windows.Input
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.windows.input.icommand
+  name: ICommand
+  nameWithType: ICommand
+  fullName: System.Windows.Input.ICommand
+- uid: Routeables.Core.RoutableViewModelBase`1.CloseCommand
+  commentId: P:Routeables.Core.RoutableViewModelBase`1.CloseCommand
+  href: Routeables.Core.RoutableViewModelBase-1.html#Routeables_Core_RoutableViewModelBase_1_CloseCommand
+  name: CloseCommand
+  nameWithType: RoutableViewModelBase<TResult>.CloseCommand
+  fullName: Routeables.Core.RoutableViewModelBase<TResult>.CloseCommand
+  nameWithType.vb: RoutableViewModelBase(Of TResult).CloseCommand
+  fullName.vb: Routeables.Core.RoutableViewModelBase(Of TResult).CloseCommand
+- uid: System.Windows.Input
+  commentId: N:System.Windows.Input
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Windows.Input
+  nameWithType: System.Windows.Input
+  fullName: System.Windows.Input
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Windows
+    name: Windows
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.windows
+  - name: .
+  - uid: System.Windows.Input
+    name: Input
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.windows.input
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Windows
+    name: Windows
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.windows
+  - name: .
+  - uid: System.Windows.Input
+    name: Input
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.windows.input
+- uid: Routeables.Core.RouterViewModelBase.GoBack
+  commentId: M:Routeables.Core.RouterViewModelBase.GoBack
+  parent: Routeables.Core.RouterViewModelBase
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_GoBack
+  name: GoBack()
+  nameWithType: RouterViewModelBase.GoBack()
+  fullName: Routeables.Core.RouterViewModelBase.GoBack()
+  spec.csharp:
+  - uid: Routeables.Core.RouterViewModelBase.GoBack
+    name: GoBack
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_GoBack
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RouterViewModelBase.GoBack
+    name: GoBack
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_GoBack
+  - name: (
+  - name: )
+- uid: Routeables.Core.RoutableViewModel`1.GoBack*
+  commentId: Overload:Routeables.Core.RoutableViewModel`1.GoBack
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_GoBack
+  name: GoBack
+  nameWithType: RoutableViewModel<TResult>.GoBack
+  fullName: Routeables.Core.RoutableViewModel<TResult>.GoBack
+  nameWithType.vb: RoutableViewModel(Of TResult).GoBack
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).GoBack
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: Routeables.Core.RouterViewModelBase.GoForward
+  commentId: M:Routeables.Core.RouterViewModelBase.GoForward
+  parent: Routeables.Core.RouterViewModelBase
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_GoForward
+  name: GoForward()
+  nameWithType: RouterViewModelBase.GoForward()
+  fullName: Routeables.Core.RouterViewModelBase.GoForward()
+  spec.csharp:
+  - uid: Routeables.Core.RouterViewModelBase.GoForward
+    name: GoForward
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_GoForward
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RouterViewModelBase.GoForward
+    name: GoForward
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_GoForward
+  - name: (
+  - name: )
+- uid: Routeables.Core.RoutableViewModel`1.GoForward*
+  commentId: Overload:Routeables.Core.RoutableViewModel`1.GoForward
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_GoForward
+  name: GoForward
+  nameWithType: RoutableViewModel<TResult>.GoForward
+  fullName: Routeables.Core.RoutableViewModel<TResult>.GoForward
+  nameWithType.vb: RoutableViewModel(Of TResult).GoForward
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).GoForward
+- uid: Routeables.Core.RouterViewModelBase.RaiseCanExecutesChanged
+  commentId: M:Routeables.Core.RouterViewModelBase.RaiseCanExecutesChanged
+  parent: Routeables.Core.RouterViewModelBase
+  href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_RaiseCanExecutesChanged
+  name: RaiseCanExecutesChanged()
+  nameWithType: RouterViewModelBase.RaiseCanExecutesChanged()
+  fullName: Routeables.Core.RouterViewModelBase.RaiseCanExecutesChanged()
+  spec.csharp:
+  - uid: Routeables.Core.RouterViewModelBase.RaiseCanExecutesChanged
+    name: RaiseCanExecutesChanged
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_RaiseCanExecutesChanged
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RouterViewModelBase.RaiseCanExecutesChanged
+    name: RaiseCanExecutesChanged
+    href: Routeables.Core.RouterViewModelBase.html#Routeables_Core_RouterViewModelBase_RaiseCanExecutesChanged
+  - name: (
+  - name: )
+- uid: Routeables.Core.RoutableViewModel`1.RaiseCanExecutesChanged*
+  commentId: Overload:Routeables.Core.RoutableViewModel`1.RaiseCanExecutesChanged
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_RaiseCanExecutesChanged
+  name: RaiseCanExecutesChanged
+  nameWithType: RoutableViewModel<TResult>.RaiseCanExecutesChanged
+  fullName: Routeables.Core.RoutableViewModel<TResult>.RaiseCanExecutesChanged
+  nameWithType.vb: RoutableViewModel(Of TResult).RaiseCanExecutesChanged
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).RaiseCanExecutesChanged
+- uid: Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged(System.String)
+  commentId: M:Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged(System.String)
+  parent: Routeables.Core.RoutableViewModelBase
+  isExternal: true
+  href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_NotifyPropertyChanged_System_String_
+  name: NotifyPropertyChanged(string)
+  nameWithType: RoutableViewModelBase.NotifyPropertyChanged(string)
+  fullName: Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged(string)
+  nameWithType.vb: RoutableViewModelBase.NotifyPropertyChanged(String)
+  fullName.vb: Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged(String)
+  name.vb: NotifyPropertyChanged(String)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged(System.String)
+    name: NotifyPropertyChanged
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_NotifyPropertyChanged_System_String_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModelBase.NotifyPropertyChanged(System.String)
+    name: NotifyPropertyChanged
+    href: Routeables.Core.RoutableViewModelBase.html#Routeables_Core_RoutableViewModelBase_NotifyPropertyChanged_System_String_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: Routeables.Core.RoutableViewModel`1.NotifyPropertyChanged*
+  commentId: Overload:Routeables.Core.RoutableViewModel`1.NotifyPropertyChanged
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_NotifyPropertyChanged_System_String_
+  name: NotifyPropertyChanged
+  nameWithType: RoutableViewModel<TResult>.NotifyPropertyChanged
+  fullName: Routeables.Core.RoutableViewModel<TResult>.NotifyPropertyChanged
+  nameWithType.vb: RoutableViewModel(Of TResult).NotifyPropertyChanged
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).NotifyPropertyChanged
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: CommunityToolkit.Mvvm.Input.IAsyncRelayCommand
+  commentId: T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand
+  parent: CommunityToolkit.Mvvm.Input
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/communitytoolkit.mvvm.input.iasyncrelaycommand
+  name: IAsyncRelayCommand
+  nameWithType: IAsyncRelayCommand
+  fullName: CommunityToolkit.Mvvm.Input.IAsyncRelayCommand
+- uid: Routeables.Core.RoutableViewModel`1.GoBack
+  commentId: M:Routeables.Core.RoutableViewModel`1.GoBack
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_GoBack
+  name: GoBack()
+  nameWithType: RoutableViewModel<TResult>.GoBack()
+  fullName: Routeables.Core.RoutableViewModel<TResult>.GoBack()
+  nameWithType.vb: RoutableViewModel(Of TResult).GoBack()
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).GoBack()
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModel`1.GoBack
+    name: GoBack
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_GoBack
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModel`1.GoBack
+    name: GoBack
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_GoBack
+  - name: (
+  - name: )
+- uid: Routeables.Core.RoutableViewModel`1.GoBackCommand*
+  commentId: Overload:Routeables.Core.RoutableViewModel`1.GoBackCommand
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_GoBackCommand
+  name: GoBackCommand
+  nameWithType: RoutableViewModel<TResult>.GoBackCommand
+  fullName: Routeables.Core.RoutableViewModel<TResult>.GoBackCommand
+  nameWithType.vb: RoutableViewModel(Of TResult).GoBackCommand
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).GoBackCommand
+- uid: CommunityToolkit.Mvvm.Input
+  commentId: N:CommunityToolkit.Mvvm.Input
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/communitytoolkit
+  name: CommunityToolkit.Mvvm.Input
+  nameWithType: CommunityToolkit.Mvvm.Input
+  fullName: CommunityToolkit.Mvvm.Input
+  spec.csharp:
+  - uid: CommunityToolkit
+    name: CommunityToolkit
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/communitytoolkit
+  - name: .
+  - uid: CommunityToolkit.Mvvm
+    name: Mvvm
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/communitytoolkit.mvvm
+  - name: .
+  - uid: CommunityToolkit.Mvvm.Input
+    name: Input
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/communitytoolkit.mvvm.input
+  spec.vb:
+  - uid: CommunityToolkit
+    name: CommunityToolkit
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/communitytoolkit
+  - name: .
+  - uid: CommunityToolkit.Mvvm
+    name: Mvvm
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/communitytoolkit.mvvm
+  - name: .
+  - uid: CommunityToolkit.Mvvm.Input
+    name: Input
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/communitytoolkit.mvvm.input
+- uid: Routeables.Core.RoutableViewModel`1.GoForward
+  commentId: M:Routeables.Core.RoutableViewModel`1.GoForward
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_GoForward
+  name: GoForward()
+  nameWithType: RoutableViewModel<TResult>.GoForward()
+  fullName: Routeables.Core.RoutableViewModel<TResult>.GoForward()
+  nameWithType.vb: RoutableViewModel(Of TResult).GoForward()
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).GoForward()
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModel`1.GoForward
+    name: GoForward
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_GoForward
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModel`1.GoForward
+    name: GoForward
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_GoForward
+  - name: (
+  - name: )
+- uid: Routeables.Core.RoutableViewModel`1.GoForwardCommand*
+  commentId: Overload:Routeables.Core.RoutableViewModel`1.GoForwardCommand
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_GoForwardCommand
+  name: GoForwardCommand
+  nameWithType: RoutableViewModel<TResult>.GoForwardCommand
+  fullName: Routeables.Core.RoutableViewModel<TResult>.GoForwardCommand
+  nameWithType.vb: RoutableViewModel(Of TResult).GoForwardCommand
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).GoForwardCommand
+- uid: System.ComponentModel.INotifyPropertyChanged.PropertyChanged
+  commentId: E:System.ComponentModel.INotifyPropertyChanged.PropertyChanged
+  parent: System.ComponentModel.INotifyPropertyChanged
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged.propertychanged
+  name: PropertyChanged
+  nameWithType: INotifyPropertyChanged.PropertyChanged
+  fullName: System.ComponentModel.INotifyPropertyChanged.PropertyChanged
+- uid: System.ComponentModel.PropertyChangedEventHandler
+  commentId: T:System.ComponentModel.PropertyChangedEventHandler
+  parent: System.ComponentModel
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.componentmodel.propertychangedeventhandler
+  name: PropertyChangedEventHandler
+  nameWithType: PropertyChangedEventHandler
+  fullName: System.ComponentModel.PropertyChangedEventHandler
+- uid: Routeables.Core.RoutableViewModel`1.PropertyChanged
+  commentId: E:Routeables.Core.RoutableViewModel`1.PropertyChanged
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_PropertyChanged
+  name: PropertyChanged
+  nameWithType: RoutableViewModel<TResult>.PropertyChanged
+  fullName: Routeables.Core.RoutableViewModel<TResult>.PropertyChanged
+  nameWithType.vb: RoutableViewModel(Of TResult).PropertyChanged
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).PropertyChanged
+- uid: System.ComponentModel.PropertyChangedEventArgs
+  commentId: T:System.ComponentModel.PropertyChangedEventArgs
+  parent: System.ComponentModel
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.componentmodel.propertychangedeventargs
+  name: PropertyChangedEventArgs
+  nameWithType: PropertyChangedEventArgs
+  fullName: System.ComponentModel.PropertyChangedEventArgs
+- uid: Routeables.Core.RoutableViewModel`1.OnPropertyChanged*
+  commentId: Overload:Routeables.Core.RoutableViewModel`1.OnPropertyChanged
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_OnPropertyChanged_System_ComponentModel_PropertyChangedEventArgs_
+  name: OnPropertyChanged
+  nameWithType: RoutableViewModel<TResult>.OnPropertyChanged
+  fullName: Routeables.Core.RoutableViewModel<TResult>.OnPropertyChanged
+  nameWithType.vb: RoutableViewModel(Of TResult).OnPropertyChanged
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).OnPropertyChanged
+- uid: Routeables.Core.RoutableViewModel`1.SetProperty*
+  commentId: Overload:Routeables.Core.RoutableViewModel`1.SetProperty
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetProperty__1___0____0_System_String_
+  name: SetProperty
+  nameWithType: RoutableViewModel<TResult>.SetProperty
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetProperty
+  nameWithType.vb: RoutableViewModel(Of TResult).SetProperty
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetProperty
+- uid: '{T}'
+  commentId: '!:T'
+  definition: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: Routeables.Core.RoutableViewModel`1.SetProperty``1(``0@,``0,System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetProperty``1(``0@,``0,System.String)
+  isExternal: true
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetProperty__1___0____0_System_String_
+  name: SetProperty<T>(ref T, T, string)
+  nameWithType: RoutableViewModel<TResult>.SetProperty<T>(ref T, T, string)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetProperty<T>(ref T, T, string)
+  nameWithType.vb: RoutableViewModel(Of TResult).SetProperty(Of T)(T, T, String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetProperty(Of T)(T, T, String)
+  name.vb: SetProperty(Of T)(T, T, String)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModel`1.SetProperty``1(``0@,``0,System.String)
+    name: SetProperty
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetProperty__1___0____0_System_String_
+  - name: <
+  - name: T
+  - name: '>'
+  - name: (
+  - name: ref
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModel`1.SetProperty``1(``0@,``0,System.String)
+    name: SetProperty
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetProperty__1___0____0_System_String_
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: (
+  - name: T
+  - name: ','
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Collections.Generic.IEqualityComparer`1
+  commentId: T:System.Collections.Generic.IEqualityComparer`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.iequalitycomparer-1
+  name: IEqualityComparer<T>
+  nameWithType: IEqualityComparer<T>
+  fullName: System.Collections.Generic.IEqualityComparer<T>
+  nameWithType.vb: IEqualityComparer(Of T)
+  fullName.vb: System.Collections.Generic.IEqualityComparer(Of T)
+  name.vb: IEqualityComparer(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEqualityComparer`1
+    name: IEqualityComparer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.iequalitycomparer-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEqualityComparer`1
+    name: IEqualityComparer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.iequalitycomparer-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic.IEqualityComparer{{T}}
+  commentId: T:System.Collections.Generic.IEqualityComparer{``0}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IEqualityComparer`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.iequalitycomparer-1
+  name: IEqualityComparer<T>
+  nameWithType: IEqualityComparer<T>
+  fullName: System.Collections.Generic.IEqualityComparer<T>
+  nameWithType.vb: IEqualityComparer(Of T)
+  fullName.vb: System.Collections.Generic.IEqualityComparer(Of T)
+  name.vb: IEqualityComparer(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEqualityComparer`1
+    name: IEqualityComparer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.iequalitycomparer-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEqualityComparer`1
+    name: IEqualityComparer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.iequalitycomparer-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: Routeables.Core.RoutableViewModel`1.SetProperty``2(``1,``1,``0,System.Action{``0,``1},System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetProperty``2(``1,``1,``0,System.Action{``0,``1},System.String)
+  isExternal: true
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetProperty__2___1___1___0_System_Action___0___1__System_String_
+  name: SetProperty<TModel, T>(T, T, TModel, Action<TModel, T>, string)
+  nameWithType: RoutableViewModel<TResult>.SetProperty<TModel, T>(T, T, TModel, Action<TModel, T>, string)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetProperty<TModel, T>(T, T, TModel, System.Action<TModel, T>, string)
+  nameWithType.vb: RoutableViewModel(Of TResult).SetProperty(Of TModel, T)(T, T, TModel, Action(Of TModel, T), String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetProperty(Of TModel, T)(T, T, TModel, System.Action(Of TModel, T), String)
+  name.vb: SetProperty(Of TModel, T)(T, T, TModel, Action(Of TModel, T), String)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModel`1.SetProperty``2(``1,``1,``0,System.Action{``0,``1},System.String)
+    name: SetProperty
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetProperty__2___1___1___0_System_Action___0___1__System_String_
+  - name: <
+  - name: TModel
+  - name: ','
+  - name: " "
+  - name: T
+  - name: '>'
+  - name: (
+  - name: T
+  - name: ','
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - name: TModel
+  - name: ','
+  - name: " "
+  - uid: System.Action`2
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-2
+  - name: <
+  - name: TModel
+  - name: ','
+  - name: " "
+  - name: T
+  - name: '>'
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModel`1.SetProperty``2(``1,``1,``0,System.Action{``0,``1},System.String)
+    name: SetProperty
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetProperty__2___1___1___0_System_Action___0___1__System_String_
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TModel
+  - name: ','
+  - name: " "
+  - name: T
+  - name: )
+  - name: (
+  - name: T
+  - name: ','
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - name: TModel
+  - name: ','
+  - name: " "
+  - uid: System.Action`2
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TModel
+  - name: ','
+  - name: " "
+  - name: T
+  - name: )
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Action{{T}}
+  commentId: T:System.Action{``0}
+  parent: System
+  definition: System.Action`1
+  href: https://learn.microsoft.com/dotnet/api/system.action-1
+  name: Action<T>
+  nameWithType: Action<T>
+  fullName: System.Action<T>
+  nameWithType.vb: Action(Of T)
+  fullName.vb: System.Action(Of T)
+  name.vb: Action(Of T)
+  spec.csharp:
+  - uid: System.Action`1
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Action`1
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Action`1
+  commentId: T:System.Action`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.action-1
+  name: Action<T>
+  nameWithType: Action<T>
+  fullName: System.Action<T>
+  nameWithType.vb: Action(Of T)
+  fullName.vb: System.Action(Of T)
+  name.vb: Action(Of T)
+  spec.csharp:
+  - uid: System.Action`1
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Action`1
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: Routeables.Core.RoutableViewModel`1.SetProperty``1(``0,``0,System.Action{``0},System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetProperty``1(``0,``0,System.Action{``0},System.String)
+  isExternal: true
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetProperty__1___0___0_System_Action___0__System_String_
+  name: SetProperty<T>(T, T, Action<T>, string)
+  nameWithType: RoutableViewModel<TResult>.SetProperty<T>(T, T, Action<T>, string)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetProperty<T>(T, T, System.Action<T>, string)
+  nameWithType.vb: RoutableViewModel(Of TResult).SetProperty(Of T)(T, T, Action(Of T), String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetProperty(Of T)(T, T, System.Action(Of T), String)
+  name.vb: SetProperty(Of T)(T, T, Action(Of T), String)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModel`1.SetProperty``1(``0,``0,System.Action{``0},System.String)
+    name: SetProperty
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetProperty__1___0___0_System_Action___0__System_String_
+  - name: <
+  - name: T
+  - name: '>'
+  - name: (
+  - name: T
+  - name: ','
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - uid: System.Action`1
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-1
+  - name: <
+  - name: T
+  - name: '>'
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModel`1.SetProperty``1(``0,``0,System.Action{``0},System.String)
+    name: SetProperty
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetProperty__1___0___0_System_Action___0__System_String_
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: (
+  - name: T
+  - name: ','
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - uid: System.Action`1
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: '{TModel}'
+  commentId: '!:TModel'
+  definition: TModel
+  name: TModel
+  nameWithType: TModel
+  fullName: TModel
+- uid: System.Action{{TModel},{T}}
+  commentId: T:System.Action{``0,``1}
+  parent: System
+  definition: System.Action`2
+  href: https://learn.microsoft.com/dotnet/api/system.action-2
+  name: Action<TModel, T>
+  nameWithType: Action<TModel, T>
+  fullName: System.Action<TModel, T>
+  nameWithType.vb: Action(Of TModel, T)
+  fullName.vb: System.Action(Of TModel, T)
+  name.vb: Action(Of TModel, T)
+  spec.csharp:
+  - uid: System.Action`2
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-2
+  - name: <
+  - name: TModel
+  - name: ','
+  - name: " "
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Action`2
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TModel
+  - name: ','
+  - name: " "
+  - name: T
+  - name: )
+- uid: TModel
+  name: TModel
+  nameWithType: TModel
+  fullName: TModel
+- uid: System.Action`2
+  commentId: T:System.Action`2
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.action-2
+  name: Action<T1, T2>
+  nameWithType: Action<T1, T2>
+  fullName: System.Action<T1, T2>
+  nameWithType.vb: Action(Of T1, T2)
+  fullName.vb: System.Action(Of T1, T2)
+  name.vb: Action(Of T1, T2)
+  spec.csharp:
+  - uid: System.Action`2
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-2
+  - name: <
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: '>'
+  spec.vb:
+  - uid: System.Action`2
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: )
+- uid: Routeables.Core.RoutableViewModel`1.TaskNotifier
+  commentId: T:Routeables.Core.RoutableViewModel`1.TaskNotifier
+  parent: Routeables.Core
+  href: Routeables.Core.RoutableViewModel-1.html
+  name: RoutableViewModel<TResult>.TaskNotifier
+  nameWithType: RoutableViewModel<TResult>.TaskNotifier
+  fullName: Routeables.Core.RoutableViewModel<TResult>.TaskNotifier
+  nameWithType.vb: RoutableViewModel(Of TResult).TaskNotifier
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).TaskNotifier
+  name.vb: RoutableViewModel(Of TResult).TaskNotifier
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModel`1
+    name: RoutableViewModel
+    href: Routeables.Core.RoutableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  - name: .
+  - uid: Routeables.Core.RoutableViewModel`1.TaskNotifier
+    name: TaskNotifier
+    href: Routeables.Core.RoutableViewModel-1.TaskNotifier.html
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModel`1
+    name: RoutableViewModel
+    href: Routeables.Core.RoutableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+  - name: .
+  - uid: Routeables.Core.RoutableViewModel`1.TaskNotifier
+    name: TaskNotifier
+    href: Routeables.Core.RoutableViewModel-1.TaskNotifier.html
+- uid: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion*
+  commentId: Overload:Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetPropertyAndNotifyOnCompletion_Routeables_Core_RoutableViewModel__0__TaskNotifier__System_Threading_Tasks_Task_System_String_
+  name: SetPropertyAndNotifyOnCompletion
+  nameWithType: RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion
+  nameWithType.vb: RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion
+- uid: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel{`0}.TaskNotifier@,System.Threading.Tasks.Task,System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel{`0}.TaskNotifier@,System.Threading.Tasks.Task,System.String)
+  isExternal: true
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetPropertyAndNotifyOnCompletion_Routeables_Core_RoutableViewModel__0__TaskNotifier__System_Threading_Tasks_Task_System_String_
+  name: SetPropertyAndNotifyOnCompletion(ref TaskNotifier, Task, string)
+  nameWithType: RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion(ref RoutableViewModel<TResult>.TaskNotifier, Task, string)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion(ref Routeables.Core.RoutableViewModel<TResult>.TaskNotifier, System.Threading.Tasks.Task, string)
+  nameWithType.vb: RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion(RoutableViewModel(Of TResult).TaskNotifier, Task, String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel(Of TResult).TaskNotifier, System.Threading.Tasks.Task, String)
+  name.vb: SetPropertyAndNotifyOnCompletion(TaskNotifier, Task, String)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel{`0}.TaskNotifier@,System.Threading.Tasks.Task,System.String)
+    name: SetPropertyAndNotifyOnCompletion
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetPropertyAndNotifyOnCompletion_Routeables_Core_RoutableViewModel__0__TaskNotifier__System_Threading_Tasks_Task_System_String_
+  - name: (
+  - name: ref
+  - name: " "
+  - uid: Routeables.Core.RoutableViewModel`1.TaskNotifier
+    name: TaskNotifier
+    href: Routeables.Core.RoutableViewModel-1.TaskNotifier.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.Tasks.Task
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion(Routeables.Core.RoutableViewModel{`0}.TaskNotifier@,System.Threading.Tasks.Task,System.String)
+    name: SetPropertyAndNotifyOnCompletion
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetPropertyAndNotifyOnCompletion_Routeables_Core_RoutableViewModel__0__TaskNotifier__System_Threading_Tasks_Task_System_String_
+  - name: (
+  - uid: Routeables.Core.RoutableViewModel`1.TaskNotifier
+    name: TaskNotifier
+    href: Routeables.Core.RoutableViewModel-1.TaskNotifier.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.Tasks.Task
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Action{System.Threading.Tasks.Task}
+  commentId: T:System.Action{System.Threading.Tasks.Task}
+  parent: System
+  definition: System.Action`1
+  href: https://learn.microsoft.com/dotnet/api/system.action-1
+  name: Action<Task>
+  nameWithType: Action<Task>
+  fullName: System.Action<System.Threading.Tasks.Task>
+  nameWithType.vb: Action(Of Task)
+  fullName.vb: System.Action(Of System.Threading.Tasks.Task)
+  name.vb: Action(Of Task)
+  spec.csharp:
+  - uid: System.Action`1
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-1
+  - name: <
+  - uid: System.Threading.Tasks.Task
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  - name: '>'
+  spec.vb:
+  - uid: System.Action`1
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Threading.Tasks.Task
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  - name: )
+- uid: Routeables.Core.RoutableViewModel`1.TaskNotifier`1
+  commentId: T:Routeables.Core.RoutableViewModel`1.TaskNotifier`1
+  parent: Routeables.Core
+  href: Routeables.Core.RoutableViewModel-1.html
+  name: RoutableViewModel<TResult>.TaskNotifier<T>
+  nameWithType: RoutableViewModel<TResult>.TaskNotifier<T>
+  fullName: Routeables.Core.RoutableViewModel<TResult>.TaskNotifier<T>
+  nameWithType.vb: RoutableViewModel(Of TResult).TaskNotifier(Of T)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).TaskNotifier(Of T)
+  name.vb: RoutableViewModel(Of TResult).TaskNotifier(Of T)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModel`1
+    name: RoutableViewModel
+    href: Routeables.Core.RoutableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  - name: .
+  - uid: Routeables.Core.RoutableViewModel`1.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.RoutableViewModel-1.TaskNotifier-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModel`1
+    name: RoutableViewModel
+    href: Routeables.Core.RoutableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+  - name: .
+  - uid: Routeables.Core.RoutableViewModel`1.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.RoutableViewModel-1.TaskNotifier-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Core.RoutableViewModel`1.TaskNotifier{{T}}
+  commentId: T:Routeables.Core.RoutableViewModel`1.TaskNotifier{``0}
+  parent: Routeables.Core
+  definition: Routeables.Core.RoutableViewModel`1.TaskNotifier`1
+  href: Routeables.Core.RoutableViewModel-1.html
+  name: RoutableViewModel<TResult>.TaskNotifier<T>
+  nameWithType: RoutableViewModel<TResult>.TaskNotifier<T>
+  fullName: Routeables.Core.RoutableViewModel<TResult>.TaskNotifier<T>
+  nameWithType.vb: RoutableViewModel(Of TResult).TaskNotifier(Of T)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).TaskNotifier(Of T)
+  name.vb: RoutableViewModel(Of TResult).TaskNotifier(Of T)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModel`1
+    name: RoutableViewModel
+    href: Routeables.Core.RoutableViewModel-1.html
+  - name: <
+  - name: TResult
+  - name: '>'
+  - name: .
+  - uid: Routeables.Core.RoutableViewModel`1.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.RoutableViewModel-1.TaskNotifier-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModel`1
+    name: RoutableViewModel
+    href: Routeables.Core.RoutableViewModel-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+  - name: .
+  - uid: Routeables.Core.RoutableViewModel`1.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.RoutableViewModel-1.TaskNotifier-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Threading.Tasks.Task{{T}}
+  commentId: T:System.Threading.Tasks.Task{``0}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<T>
+  nameWithType: Task<T>
+  fullName: System.Threading.Tasks.Task<T>
+  nameWithType.vb: Task(Of T)
+  fullName.vb: System.Threading.Tasks.Task(Of T)
+  name.vb: Task(Of T)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion``1(Routeables.Core.RoutableViewModel{`0}.TaskNotifier{``0}@,System.Threading.Tasks.Task{``0},System.String)
+  commentId: M:Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion``1(Routeables.Core.RoutableViewModel{`0}.TaskNotifier{``0}@,System.Threading.Tasks.Task{``0},System.String)
+  isExternal: true
+  href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetPropertyAndNotifyOnCompletion__1_Routeables_Core_RoutableViewModel__0__TaskNotifier___0___System_Threading_Tasks_Task___0__System_String_
+  name: SetPropertyAndNotifyOnCompletion<T>(ref TaskNotifier<T>, Task<T>, string)
+  nameWithType: RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion<T>(ref RoutableViewModel<TResult>.TaskNotifier<T>, Task<T>, string)
+  fullName: Routeables.Core.RoutableViewModel<TResult>.SetPropertyAndNotifyOnCompletion<T>(ref Routeables.Core.RoutableViewModel<TResult>.TaskNotifier<T>, System.Threading.Tasks.Task<T>, string)
+  nameWithType.vb: RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion(Of T)(RoutableViewModel(Of TResult).TaskNotifier(Of T), Task(Of T), String)
+  fullName.vb: Routeables.Core.RoutableViewModel(Of TResult).SetPropertyAndNotifyOnCompletion(Of T)(Routeables.Core.RoutableViewModel(Of TResult).TaskNotifier(Of T), System.Threading.Tasks.Task(Of T), String)
+  name.vb: SetPropertyAndNotifyOnCompletion(Of T)(TaskNotifier(Of T), Task(Of T), String)
+  spec.csharp:
+  - uid: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion``1(Routeables.Core.RoutableViewModel{`0}.TaskNotifier{``0}@,System.Threading.Tasks.Task{``0},System.String)
+    name: SetPropertyAndNotifyOnCompletion
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetPropertyAndNotifyOnCompletion__1_Routeables_Core_RoutableViewModel__0__TaskNotifier___0___System_Threading_Tasks_Task___0__System_String_
+  - name: <
+  - name: T
+  - name: '>'
+  - name: (
+  - name: ref
+  - name: " "
+  - uid: Routeables.Core.RoutableViewModel`1.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.RoutableViewModel-1.TaskNotifier-1.html
+  - name: <
+  - name: T
+  - name: '>'
+  - name: ','
+  - name: " "
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: T
+  - name: '>'
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+  spec.vb:
+  - uid: Routeables.Core.RoutableViewModel`1.SetPropertyAndNotifyOnCompletion``1(Routeables.Core.RoutableViewModel{`0}.TaskNotifier{``0}@,System.Threading.Tasks.Task{``0},System.String)
+    name: SetPropertyAndNotifyOnCompletion
+    href: Routeables.Core.RoutableViewModel-1.html#Routeables_Core_RoutableViewModel_1_SetPropertyAndNotifyOnCompletion__1_Routeables_Core_RoutableViewModel__0__TaskNotifier___0___System_Threading_Tasks_Task___0__System_String_
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: (
+  - uid: Routeables.Core.RoutableViewModel`1.TaskNotifier`1
+    name: TaskNotifier
+    href: Routeables.Core.RoutableViewModel-1.TaskNotifier-1.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: ','
+  - name: " "
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Action{System.Threading.Tasks.Task{{T}}}
+  commentId: T:System.Action{System.Threading.Tasks.Task{``0}}
+  parent: System
+  definition: System.Action`1
+  href: https://learn.microsoft.com/dotnet/api/system.action-1
+  name: Action<Task<T>>
+  nameWithType: Action<Task<T>>
+  fullName: System.Action<System.Threading.Tasks.Task<T>>
+  nameWithType.vb: Action(Of Task(Of T))
+  fullName.vb: System.Action(Of System.Threading.Tasks.Task(Of T))
+  name.vb: Action(Of Task(Of T))
+  spec.csharp:
+  - uid: System.Action`1
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-1
+  - name: <
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: T
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Action`1
+    name: Action
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.action-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+  - name: )

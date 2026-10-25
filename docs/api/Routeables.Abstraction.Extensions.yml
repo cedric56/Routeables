@@ -1,0 +1,3041 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.Extensions
+  commentId: T:Routeables.Abstraction.Extensions
+  id: Extensions
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter,Routeables.Abstraction.IMainRouteables)
+  - Routeables.Abstraction.Extensions.EraseRegionsAsync(System.IServiceProvider,System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)
+  - Routeables.Abstraction.Extensions.GetContent(System.IServiceProvider,System.Object,System.Object)
+  - Routeables.Abstraction.Extensions.GetContextFor``1(System.IServiceProvider,Routeables.Abstraction.IRouteableArgs)
+  - Routeables.Abstraction.Extensions.GetCurrentViewModel``1(Routeables.Abstraction.IRouter)
+  - Routeables.Abstraction.Extensions.GetLockCoordinator(System.IServiceProvider,Routeables.Abstraction.IMainRouteables)
+  - Routeables.Abstraction.Extensions.GetModalFor``2(System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.String)
+  - Routeables.Abstraction.Extensions.GetRegion(System.IServiceProvider,System.String)
+  - Routeables.Abstraction.Extensions.GetRouter(System.IServiceProvider,System.String)
+  - Routeables.Abstraction.Extensions.GetViewModel(System.IServiceProvider,System.String,Routeables.Abstraction.IRouteableArgs)
+  - Routeables.Abstraction.Extensions.GetViewModel``1(System.IServiceProvider,System.String,Routeables.Abstraction.IRouteableArgs)
+  - Routeables.Abstraction.Extensions.GoToAsync(System.IServiceProvider,Routeables.Abstraction.IRouteableView,System.Threading.CancellationToken)
+  - Routeables.Abstraction.Extensions.GoToAsync(System.IServiceProvider,System.String,System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  - Routeables.Abstraction.Extensions.RegisterLockCoordinator``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  - Routeables.Abstraction.Extensions.RegisterMainRouteables``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  - Routeables.Abstraction.Extensions.RegisterRoute(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.Object},Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  - Routeables.Abstraction.Extensions.RegisterRoute``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  - Routeables.Abstraction.Extensions.RegisterRoute``2(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String,System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,``0})
+  - Routeables.Abstraction.Extensions.RegisterRoute``3(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String,System.Func{System.IServiceProvider,``2,``0})
+  - Routeables.Abstraction.Extensions.RegisterRoute``4(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  - Routeables.Abstraction.Extensions.RegisterRoute``5(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``4,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  - Routeables.Abstraction.Extensions.RegisterRoute``6(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``4,``5,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  - Routeables.Abstraction.Extensions.RegisterRoute``7(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``4,``5,``6,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  - Routeables.Abstraction.Extensions.RegisterRouteableArgsFactory(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{Routeables.Abstraction.IRouteableArgs})
+  - Routeables.Abstraction.Extensions.RouterFor(System.IServiceProvider,Routeables.Abstraction.IRouteableView)
+  - Routeables.Abstraction.Extensions.ShowModalAsync``2(System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.String)
+  langs:
+  - csharp
+  - vb
+  name: Extensions
+  nameWithType: Extensions
+  fullName: Routeables.Abstraction.Extensions
+  type: Class
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Extensions
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 14
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Registration and resolution helpers for the Routeables routing system: route/view/view-model
+
+    registration on <xref href="Microsoft.Extensions.DependencyInjection.IServiceCollection" data-throw-if-not-resolved="false"></xref>, and view/view-model/modal resolution
+
+    on <xref href="System.IServiceProvider" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public static class Extensions
+    content.vb: Public Module Extensions
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: Routeables.Abstraction.Extensions.RegisterRouteableArgsFactory(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{Routeables.Abstraction.IRouteableArgs})
+  commentId: M:Routeables.Abstraction.Extensions.RegisterRouteableArgsFactory(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{Routeables.Abstraction.IRouteableArgs})
+  id: RegisterRouteableArgsFactory(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{Routeables.Abstraction.IRouteableArgs})
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: RegisterRouteableArgsFactory(IServiceCollection, Func<IRouteableArgs>)
+  nameWithType: Extensions.RegisterRouteableArgsFactory(IServiceCollection, Func<IRouteableArgs>)
+  fullName: Routeables.Abstraction.Extensions.RegisterRouteableArgsFactory(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func<Routeables.Abstraction.IRouteableArgs>)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RegisterRouteableArgsFactory
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 24
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: public static void RegisterRouteableArgsFactory(this IServiceCollection services, Func<IRouteableArgs> factory)
+    parameters:
+    - id: services
+      type: Microsoft.Extensions.DependencyInjection.IServiceCollection
+    - id: factory
+      type: System.Func{Routeables.Abstraction.IRouteableArgs}
+    content.vb: Public Shared Sub RegisterRouteableArgsFactory(services As IServiceCollection, factory As Func(Of IRouteableArgs))
+  overload: Routeables.Abstraction.Extensions.RegisterRouteableArgsFactory*
+  nameWithType.vb: Extensions.RegisterRouteableArgsFactory(IServiceCollection, Func(Of IRouteableArgs))
+  fullName.vb: Routeables.Abstraction.Extensions.RegisterRouteableArgsFactory(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func(Of Routeables.Abstraction.IRouteableArgs))
+  name.vb: RegisterRouteableArgsFactory(IServiceCollection, Func(Of IRouteableArgs))
+- uid: Routeables.Abstraction.Extensions.RegisterMainRouteables``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  commentId: M:Routeables.Abstraction.Extensions.RegisterMainRouteables``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  id: RegisterMainRouteables``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: RegisterMainRouteables<TMain>(IServiceCollection, ServiceLifetime)
+  nameWithType: Extensions.RegisterMainRouteables<TMain>(IServiceCollection, ServiceLifetime)
+  fullName: Routeables.Abstraction.Extensions.RegisterMainRouteables<TMain>(Microsoft.Extensions.DependencyInjection.IServiceCollection, Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RegisterMainRouteables
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 40
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Registers the main view model of a host (the menu or tab bar), which is the <xref href="Routeables.Abstraction.IMainRouteables" data-throw-if-not-resolved="false"></xref> the views,
+
+    the lock coordinator and the start selection all refer to.
+  remarks: >-
+    The host decides the lifetime: <xref href="Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped" data-throw-if-not-resolved="false"></xref> for Blazor Server (one per circuit),
+
+    <xref href="Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" data-throw-if-not-resolved="false"></xref> for Avalonia and MAUI. A <xref href="Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient" data-throw-if-not-resolved="false"></xref> one is refused:
+
+    each resolution would be another instance, so the one the window displays would not be the one that is selected,
+
+    locked or subscribed.
+  example: []
+  syntax:
+    content: 'public static IServiceCollection RegisterMainRouteables<TMain>(this IServiceCollection services, ServiceLifetime lifetime) where TMain : class, IMainRouteables'
+    parameters:
+    - id: services
+      type: Microsoft.Extensions.DependencyInjection.IServiceCollection
+    - id: lifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+    typeParameters:
+    - id: TMain
+    return:
+      type: Microsoft.Extensions.DependencyInjection.IServiceCollection
+    content.vb: Public Shared Function RegisterMainRouteables(Of TMain As {Class, IMainRouteables})(services As IServiceCollection, lifetime As ServiceLifetime) As IServiceCollection
+  overload: Routeables.Abstraction.Extensions.RegisterMainRouteables*
+  exceptions:
+  - type: System.ArgumentException
+    commentId: T:System.ArgumentException
+    description: <code class="paramref">lifetime</code> is <xref href="Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient" data-throw-if-not-resolved="false"></xref>.
+  nameWithType.vb: Extensions.RegisterMainRouteables(Of TMain)(IServiceCollection, ServiceLifetime)
+  fullName.vb: Routeables.Abstraction.Extensions.RegisterMainRouteables(Of TMain)(Microsoft.Extensions.DependencyInjection.IServiceCollection, Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  name.vb: RegisterMainRouteables(Of TMain)(IServiceCollection, ServiceLifetime)
+- uid: Routeables.Abstraction.Extensions.RegisterLockCoordinator``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  commentId: M:Routeables.Abstraction.Extensions.RegisterLockCoordinator``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  id: RegisterLockCoordinator``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: RegisterLockCoordinator<TLockCoordinator>(IServiceCollection)
+  nameWithType: Extensions.RegisterLockCoordinator<TLockCoordinator>(IServiceCollection)
+  fullName: Routeables.Abstraction.Extensions.RegisterLockCoordinator<TLockCoordinator>(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RegisterLockCoordinator
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 53
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  syntax:
+    content: 'public static void RegisterLockCoordinator<TLockCoordinator>(this IServiceCollection services) where TLockCoordinator : ILockCoordinator'
+    parameters:
+    - id: services
+      type: Microsoft.Extensions.DependencyInjection.IServiceCollection
+    typeParameters:
+    - id: TLockCoordinator
+    content.vb: Public Shared Sub RegisterLockCoordinator(Of TLockCoordinator As ILockCoordinator)(services As IServiceCollection)
+  overload: Routeables.Abstraction.Extensions.RegisterLockCoordinator*
+  nameWithType.vb: Extensions.RegisterLockCoordinator(Of TLockCoordinator)(IServiceCollection)
+  fullName.vb: Routeables.Abstraction.Extensions.RegisterLockCoordinator(Of TLockCoordinator)(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  name.vb: RegisterLockCoordinator(Of TLockCoordinator)(IServiceCollection)
+- uid: Routeables.Abstraction.Extensions.GetLockCoordinator(System.IServiceProvider,Routeables.Abstraction.IMainRouteables)
+  commentId: M:Routeables.Abstraction.Extensions.GetLockCoordinator(System.IServiceProvider,Routeables.Abstraction.IMainRouteables)
+  id: GetLockCoordinator(System.IServiceProvider,Routeables.Abstraction.IMainRouteables)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: GetLockCoordinator(IServiceProvider, IMainRouteables)
+  nameWithType: Extensions.GetLockCoordinator(IServiceProvider, IMainRouteables)
+  fullName: Routeables.Abstraction.Extensions.GetLockCoordinator(System.IServiceProvider, Routeables.Abstraction.IMainRouteables)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetLockCoordinator
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 78
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Creates a <xref href="Routeables.Abstraction.ILockCoordinator" data-throw-if-not-resolved="false"></xref> bound to <code class="paramref">routables</code>
+  example: []
+  syntax:
+    content: public static ILockCoordinator GetLockCoordinator(this IServiceProvider provider, IMainRouteables routables)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+      description: The provider the factory is resolved from.
+    - id: routables
+      type: Routeables.Abstraction.IMainRouteables
+      description: The MVVM manager the coordinator will work with.
+    return:
+      type: Routeables.Abstraction.ILockCoordinator
+      description: A new <xref href="Routeables.Abstraction.ILockCoordinator" data-throw-if-not-resolved="false"></xref> instance (one per call).
+    content.vb: Public Shared Function GetLockCoordinator(provider As IServiceProvider, routables As IMainRouteables) As ILockCoordinator
+  overload: Routeables.Abstraction.Extensions.GetLockCoordinator*
+- uid: Routeables.Abstraction.Extensions.GetRegion(System.IServiceProvider,System.String)
+  commentId: M:Routeables.Abstraction.Extensions.GetRegion(System.IServiceProvider,System.String)
+  id: GetRegion(System.IServiceProvider,System.String)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: GetRegion(IServiceProvider, string)
+  nameWithType: Extensions.GetRegion(IServiceProvider, string)
+  fullName: Routeables.Abstraction.Extensions.GetRegion(System.IServiceProvider, string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetRegion
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 178
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Resolves the <xref href="Routeables.Abstraction.IRouter" data-throw-if-not-resolved="false"></xref> registered for <code class="paramref">region</code>
+  example: []
+  syntax:
+    content: public static IRouter GetRegion(this IServiceProvider provider, string region)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+      description: The provider (scope) to resolve from.
+    - id: region
+      type: System.String
+      description: The region's identifier/&gt;.
+    return:
+      type: Routeables.Abstraction.IRouter
+    content.vb: Public Shared Function GetRegion(provider As IServiceProvider, region As String) As IRouter
+  overload: Routeables.Abstraction.Extensions.GetRegion*
+  exceptions:
+  - type: System.InvalidOperationException
+    commentId: T:System.InvalidOperationException
+    description: No region is registered under <code class="paramref">region</code>.
+  nameWithType.vb: Extensions.GetRegion(IServiceProvider, String)
+  fullName.vb: Routeables.Abstraction.Extensions.GetRegion(System.IServiceProvider, String)
+  name.vb: GetRegion(IServiceProvider, String)
+- uid: Routeables.Abstraction.Extensions.GetRouter(System.IServiceProvider,System.String)
+  commentId: M:Routeables.Abstraction.Extensions.GetRouter(System.IServiceProvider,System.String)
+  id: GetRouter(System.IServiceProvider,System.String)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: GetRouter(IServiceProvider, string?)
+  nameWithType: Extensions.GetRouter(IServiceProvider, string?)
+  fullName: Routeables.Abstraction.Extensions.GetRouter(System.IServiceProvider, string?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetRouter
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 187
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    The router of a region: the one registered with <code>AddRegion</code> under <code class="paramref">region</code>, or the default
+
+    router when <code class="paramref">region</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> or blank.
+  example: []
+  syntax:
+    content: public static IRouter GetRouter(this IServiceProvider provider, string? region)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+      description: The provider (scope) to resolve from.
+    - id: region
+      type: System.String
+      description: The region's identifier; <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> for the default router.
+    return:
+      type: Routeables.Abstraction.IRouter
+    content.vb: Public Shared Function GetRouter(provider As IServiceProvider, region As String) As IRouter
+  overload: Routeables.Abstraction.Extensions.GetRouter*
+  nameWithType.vb: Extensions.GetRouter(IServiceProvider, String)
+  fullName.vb: Routeables.Abstraction.Extensions.GetRouter(System.IServiceProvider, String)
+  name.vb: GetRouter(IServiceProvider, String)
+- uid: Routeables.Abstraction.Extensions.EraseRegionsAsync(System.IServiceProvider,System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.Extensions.EraseRegionsAsync(System.IServiceProvider,System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)
+  id: EraseRegionsAsync(System.IServiceProvider,System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: EraseRegionsAsync(IServiceProvider, IEnumerable<string>, CancellationToken)
+  nameWithType: Extensions.EraseRegionsAsync(IServiceProvider, IEnumerable<string>, CancellationToken)
+  fullName: Routeables.Abstraction.Extensions.EraseRegionsAsync(System.IServiceProvider, System.Collections.Generic.IEnumerable<string>, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: EraseRegionsAsync
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 199
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Empties the histories of <code class="paramref">regions</code>: their pages are disposed and each region starts again from nothing.
+
+    Use it to leave an application made of several regions, or to start one over.
+  example: []
+  syntax:
+    content: public static Task EraseRegionsAsync(this IServiceProvider provider, IEnumerable<string> regions, CancellationToken cancellationToken = default)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+    - id: regions
+      type: System.Collections.Generic.IEnumerable{System.String}
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Shared Function EraseRegionsAsync(provider As IServiceProvider, regions As IEnumerable(Of String), cancellationToken As CancellationToken = Nothing) As Task
+  overload: Routeables.Abstraction.Extensions.EraseRegionsAsync*
+  nameWithType.vb: Extensions.EraseRegionsAsync(IServiceProvider, IEnumerable(Of String), CancellationToken)
+  fullName.vb: Routeables.Abstraction.Extensions.EraseRegionsAsync(System.IServiceProvider, System.Collections.Generic.IEnumerable(Of String), System.Threading.CancellationToken)
+  name.vb: EraseRegionsAsync(IServiceProvider, IEnumerable(Of String), CancellationToken)
+- uid: Routeables.Abstraction.Extensions.GoToAsync(System.IServiceProvider,System.String,System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.Extensions.GoToAsync(System.IServiceProvider,System.String,System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  id: GoToAsync(System.IServiceProvider,System.String,System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: GoToAsync(IServiceProvider, string, string?, IRouteableArgs?, CancellationToken)
+  nameWithType: Extensions.GoToAsync(IServiceProvider, string, string?, IRouteableArgs?, CancellationToken)
+  fullName: Routeables.Abstraction.Extensions.GoToAsync(System.IServiceProvider, string, string?, Routeables.Abstraction.IRouteableArgs?, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GoToAsync
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 212
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Navigates to a registered route by its address (<code>provider.GoToAsync("/orders/42")</code>), in the router of
+
+    <code class="paramref">region</code> (the default router when <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>). See <xref href="Routeables.Abstraction.IRouter.GoToAsync(System.String%2cRouteables.Abstraction.IRouteableArgs%2cSystem.Threading.CancellationToken)" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public static Task<RouteableResult> GoToAsync(this IServiceProvider provider, string url, string? region = null, IRouteableArgs? args = null, CancellationToken cancellationToken = default)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+    - id: url
+      type: System.String
+    - id: region
+      type: System.String
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+    content.vb: Public Shared Function GoToAsync(provider As IServiceProvider, url As String, region As String = Nothing, args As IRouteableArgs = Nothing, cancellationToken As CancellationToken = Nothing) As Task(Of RouteableResult)
+  overload: Routeables.Abstraction.Extensions.GoToAsync*
+  nameWithType.vb: Extensions.GoToAsync(IServiceProvider, String, String, IRouteableArgs, CancellationToken)
+  fullName.vb: Routeables.Abstraction.Extensions.GoToAsync(System.IServiceProvider, String, String, Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  name.vb: GoToAsync(IServiceProvider, String, String, IRouteableArgs, CancellationToken)
+- uid: Routeables.Abstraction.Extensions.GetCurrentViewModel``1(Routeables.Abstraction.IRouter)
+  commentId: M:Routeables.Abstraction.Extensions.GetCurrentViewModel``1(Routeables.Abstraction.IRouter)
+  id: GetCurrentViewModel``1(Routeables.Abstraction.IRouter)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: GetCurrentViewModel<T>(IRouter)
+  nameWithType: Extensions.GetCurrentViewModel<T>(IRouter)
+  fullName: Routeables.Abstraction.Extensions.GetCurrentViewModel<T>(Routeables.Abstraction.IRouter)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetCurrentViewModel
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 217
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The current view model as a <code class="typeparamref">T</code>, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when it is another type or none.
+  example: []
+  syntax:
+    content: 'public static T? GetCurrentViewModel<T>(this IRouter router) where T : class'
+    parameters:
+    - id: router
+      type: Routeables.Abstraction.IRouter
+    typeParameters:
+    - id: T
+    return:
+      type: '{T}'
+    content.vb: Public Shared Function GetCurrentViewModel(Of T As Class)(router As IRouter) As T
+  overload: Routeables.Abstraction.Extensions.GetCurrentViewModel*
+  nameWithType.vb: Extensions.GetCurrentViewModel(Of T)(IRouter)
+  fullName.vb: Routeables.Abstraction.Extensions.GetCurrentViewModel(Of T)(Routeables.Abstraction.IRouter)
+  name.vb: GetCurrentViewModel(Of T)(IRouter)
+- uid: Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter,Routeables.Abstraction.IMainRouteables)
+  commentId: M:Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter,Routeables.Abstraction.IMainRouteables)
+  id: CreateLockCoordinator(Routeables.Abstraction.IRouter,Routeables.Abstraction.IMainRouteables)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: CreateLockCoordinator(IRouter, IMainRouteables)
+  nameWithType: Extensions.CreateLockCoordinator(IRouter, IMainRouteables)
+  fullName: Routeables.Abstraction.Extensions.CreateLockCoordinator(Routeables.Abstraction.IRouter, Routeables.Abstraction.IMainRouteables)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: CreateLockCoordinator
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 221
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The coordinator that locks <code class="paramref">routables</code> while a page blocks leaving; <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when the router offers none.
+  example: []
+  syntax:
+    content: public static ILockCoordinator? CreateLockCoordinator(this IRouter router, IMainRouteables routables)
+    parameters:
+    - id: router
+      type: Routeables.Abstraction.IRouter
+    - id: routables
+      type: Routeables.Abstraction.IMainRouteables
+    return:
+      type: Routeables.Abstraction.ILockCoordinator
+    content.vb: Public Shared Function CreateLockCoordinator(router As IRouter, routables As IMainRouteables) As ILockCoordinator
+  overload: Routeables.Abstraction.Extensions.CreateLockCoordinator*
+- uid: Routeables.Abstraction.Extensions.RouterFor(System.IServiceProvider,Routeables.Abstraction.IRouteableView)
+  commentId: M:Routeables.Abstraction.Extensions.RouterFor(System.IServiceProvider,Routeables.Abstraction.IRouteableView)
+  id: RouterFor(System.IServiceProvider,Routeables.Abstraction.IRouteableView)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: RouterFor(IServiceProvider, IRouteableView)
+  nameWithType: Extensions.RouterFor(IServiceProvider, IRouteableView)
+  fullName: Routeables.Abstraction.Extensions.RouterFor(System.IServiceProvider, Routeables.Abstraction.IRouteableView)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RouterFor
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 225
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: 'The router that shows <code class="paramref">view</code>: the one of its <xref href="Routeables.Abstraction.IRouteableView.Region" data-throw-if-not-resolved="false"></xref>.'
+  example: []
+  syntax:
+    content: public static IRouter RouterFor(this IServiceProvider provider, IRouteableView view)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+    - id: view
+      type: Routeables.Abstraction.IRouteableView
+    return:
+      type: Routeables.Abstraction.IRouter
+    content.vb: Public Shared Function RouterFor(provider As IServiceProvider, view As IRouteableView) As IRouter
+  overload: Routeables.Abstraction.Extensions.RouterFor*
+- uid: Routeables.Abstraction.Extensions.GoToAsync(System.IServiceProvider,Routeables.Abstraction.IRouteableView,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.Extensions.GoToAsync(System.IServiceProvider,Routeables.Abstraction.IRouteableView,System.Threading.CancellationToken)
+  id: GoToAsync(System.IServiceProvider,Routeables.Abstraction.IRouteableView,System.Threading.CancellationToken)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: GoToAsync(IServiceProvider, IRouteableView, CancellationToken)
+  nameWithType: Extensions.GoToAsync(IServiceProvider, IRouteableView, CancellationToken)
+  fullName: Routeables.Abstraction.Extensions.GoToAsync(System.IServiceProvider, Routeables.Abstraction.IRouteableView, System.Threading.CancellationToken)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GoToAsync
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 235
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Shows <code class="paramref">view</code> in its region (the default router if it names none). A <code>RouteableRegion</code> given the
+
+    same name displays it: the call does not need to know where on screen that is.
+  example: []
+  syntax:
+    content: public static Task<RouteableResult> GoToAsync(this IServiceProvider provider, IRouteableView view, CancellationToken cancellationToken = default)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+    - id: view
+      type: Routeables.Abstraction.IRouteableView
+    - id: cancellationToken
+      type: System.Threading.CancellationToken
+    return:
+      type: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+    content.vb: Public Shared Function GoToAsync(provider As IServiceProvider, view As IRouteableView, cancellationToken As CancellationToken = Nothing) As Task(Of RouteableResult)
+  overload: Routeables.Abstraction.Extensions.GoToAsync*
+- uid: Routeables.Abstraction.Extensions.ShowModalAsync``2(System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.String)
+  commentId: M:Routeables.Abstraction.Extensions.ShowModalAsync``2(System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.String)
+  id: ShowModalAsync``2(System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.String)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: ShowModalAsync<TViewModel, TResult>(IServiceProvider, IRouteableArgs?, string?)
+  nameWithType: Extensions.ShowModalAsync<TViewModel, TResult>(IServiceProvider, IRouteableArgs?, string?)
+  fullName: Routeables.Abstraction.Extensions.ShowModalAsync<TViewModel, TResult>(System.IServiceProvider, Routeables.Abstraction.IRouteableArgs?, string?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ShowModalAsync
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 261
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Creates the view and view model registered for <code class="typeparamref">TViewModel</code>, binds them
+
+    together and shows the view modally.
+  example: []
+  syntax:
+    content: 'public static Task<TResult?> ShowModalAsync<TViewModel, TResult>(this IServiceProvider provider, IRouteableArgs? args = null, string? route = null) where TViewModel : class'
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+      description: The provider used to resolve the view and view model.
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+      description: Optional view / view-model parameters.
+    - id: route
+      type: System.String
+      description: Optional route override used to compute the registration keys.
+    typeParameters:
+    - id: TViewModel
+      description: The view model type; its view must implement <xref href="Routeables.Abstraction.IRouteableModalFor%602" data-throw-if-not-resolved="false"></xref>.
+    - id: TResult
+      description: The result type the modal returns; must match the view's declared result type.
+    return:
+      type: System.Threading.Tasks.Task{{TResult}}
+      description: A task completing with the modal's result (or <code>null</code>/default if dismissed).
+    content.vb: Public Shared Function ShowModalAsync(Of TViewModel As Class, TResult)(provider As IServiceProvider, args As IRouteableArgs = Nothing, route As String = Nothing) As Task(Of TResult)
+  overload: Routeables.Abstraction.Extensions.ShowModalAsync*
+  exceptions:
+  - type: System.InvalidOperationException
+    commentId: T:System.InvalidOperationException
+    description: No suitable view is registered, or it is not a modal for the requested types.
+  nameWithType.vb: Extensions.ShowModalAsync(Of TViewModel, TResult)(IServiceProvider, IRouteableArgs, String)
+  fullName.vb: Routeables.Abstraction.Extensions.ShowModalAsync(Of TViewModel, TResult)(System.IServiceProvider, Routeables.Abstraction.IRouteableArgs, String)
+  name.vb: ShowModalAsync(Of TViewModel, TResult)(IServiceProvider, IRouteableArgs, String)
+- uid: Routeables.Abstraction.Extensions.RegisterRoute(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.Object},Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  commentId: M:Routeables.Abstraction.Extensions.RegisterRoute(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.Object},Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  id: RegisterRoute(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.Object},Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: RegisterRoute(IServiceCollection, string, Func<IServiceProvider, IRouteableArgs, object>, ServiceLifetime)
+  nameWithType: Extensions.RegisterRoute(IServiceCollection, string, Func<IServiceProvider, IRouteableArgs, object>, ServiceLifetime)
+  fullName: Routeables.Abstraction.Extensions.RegisterRoute(Microsoft.Extensions.DependencyInjection.IServiceCollection, string, System.Func<System.IServiceProvider, Routeables.Abstraction.IRouteableArgs, object>, Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RegisterRoute
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 386
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Registers a route backed by a custom factory. Use when the view cannot be built by DI alone.
+  example: []
+  syntax:
+    content: public static void RegisterRoute(this IServiceCollection services, string route, Func<IServiceProvider, IRouteableArgs, object> factory, ServiceLifetime lifetime = ServiceLifetime.Transient)
+    parameters:
+    - id: services
+      type: Microsoft.Extensions.DependencyInjection.IServiceCollection
+      description: The service collection to add to.
+    - id: route
+      type: System.String
+      description: The route key.
+    - id: factory
+      type: System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.Object}
+      description: Creates the view from the provider and navigation arguments.
+    - id: lifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+      description: Instance lifetime (default <xref href="Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient" data-throw-if-not-resolved="false"></xref>).
+    content.vb: Public Shared Sub RegisterRoute(services As IServiceCollection, route As String, factory As Func(Of IServiceProvider, IRouteableArgs, Object), lifetime As ServiceLifetime = ServiceLifetime.Transient)
+  overload: Routeables.Abstraction.Extensions.RegisterRoute*
+  nameWithType.vb: Extensions.RegisterRoute(IServiceCollection, String, Func(Of IServiceProvider, IRouteableArgs, Object), ServiceLifetime)
+  fullName.vb: Routeables.Abstraction.Extensions.RegisterRoute(Microsoft.Extensions.DependencyInjection.IServiceCollection, String, System.Func(Of System.IServiceProvider, Routeables.Abstraction.IRouteableArgs, Object), Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  name.vb: RegisterRoute(IServiceCollection, String, Func(Of IServiceProvider, IRouteableArgs, Object), ServiceLifetime)
+- uid: Routeables.Abstraction.Extensions.RegisterRoute``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  commentId: M:Routeables.Abstraction.Extensions.RegisterRoute``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  id: RegisterRoute``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: RegisterRoute<TView>(IServiceCollection, string, ServiceLifetime)
+  nameWithType: Extensions.RegisterRoute<TView>(IServiceCollection, string, ServiceLifetime)
+  fullName: Routeables.Abstraction.Extensions.RegisterRoute<TView>(Microsoft.Extensions.DependencyInjection.IServiceCollection, string, Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RegisterRoute
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 402
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Registers a route for a view type only (no paired view model). The view is created with
+
+    <xref href="Microsoft.Extensions.DependencyInjection.ActivatorUtilities" data-throw-if-not-resolved="false"></xref> and then injected with the attribute parameters.
+  example: []
+  syntax:
+    content: 'public static void RegisterRoute<TView>(this IServiceCollection services, string route, ServiceLifetime lifetime = ServiceLifetime.Transient) where TView : class'
+    parameters:
+    - id: services
+      type: Microsoft.Extensions.DependencyInjection.IServiceCollection
+      description: The service collection to add to.
+    - id: route
+      type: System.String
+      description: The route key / template.
+    - id: lifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+      description: Instance lifetime (default <xref href="Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient" data-throw-if-not-resolved="false"></xref>).
+    typeParameters:
+    - id: TView
+      description: The view type.
+    content.vb: Public Shared Sub RegisterRoute(Of TView As Class)(services As IServiceCollection, route As String, lifetime As ServiceLifetime = ServiceLifetime.Transient)
+  overload: Routeables.Abstraction.Extensions.RegisterRoute*
+  nameWithType.vb: Extensions.RegisterRoute(Of TView)(IServiceCollection, String, ServiceLifetime)
+  fullName.vb: Routeables.Abstraction.Extensions.RegisterRoute(Of TView)(Microsoft.Extensions.DependencyInjection.IServiceCollection, String, Microsoft.Extensions.DependencyInjection.ServiceLifetime)
+  name.vb: RegisterRoute(Of TView)(IServiceCollection, String, ServiceLifetime)
+- uid: Routeables.Abstraction.Extensions.RegisterRoute``3(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String,System.Func{System.IServiceProvider,``2,``0})
+  commentId: M:Routeables.Abstraction.Extensions.RegisterRoute``3(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String,System.Func{System.IServiceProvider,``2,``0})
+  id: RegisterRoute``3(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String,System.Func{System.IServiceProvider,``2,``0})
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: RegisterRoute<TView, TViewModel, TArg1>(IServiceCollection, ServiceLifetime, ServiceLifetime, string?, Func<IServiceProvider, TArg1, TView>?)
+  nameWithType: Extensions.RegisterRoute<TView, TViewModel, TArg1>(IServiceCollection, ServiceLifetime, ServiceLifetime, string?, Func<IServiceProvider, TArg1, TView>?)
+  fullName: Routeables.Abstraction.Extensions.RegisterRoute<TView, TViewModel, TArg1>(Microsoft.Extensions.DependencyInjection.IServiceCollection, Microsoft.Extensions.DependencyInjection.ServiceLifetime, Microsoft.Extensions.DependencyInjection.ServiceLifetime, string?, System.Func<System.IServiceProvider, TArg1, TView>?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RegisterRoute
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 507
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Registers a view / view-model pair whose view takes one positional constructor argument.
+
+    The argument is read from the first view parameter (index 0); with <code class="paramref">func</code> the
+
+    view is built manually, otherwise by DI with the view parameters as extra constructor arguments.
+  remarks: Unlike the other positional overloads, <code class="paramref">func</code> comes last here.
+  example: []
+  syntax:
+    content: 'public static void RegisterRoute<TView, TViewModel, TArg1>(this IServiceCollection services, ServiceLifetime viewModelLifetime = ServiceLifetime.Transient, ServiceLifetime viewLifetime = ServiceLifetime.Transient, string? route = null, Func<IServiceProvider, TArg1, TView>? func = null) where TView : class where TViewModel : class'
+    parameters:
+    - id: services
+      type: Microsoft.Extensions.DependencyInjection.IServiceCollection
+      description: The service collection to add to.
+    - id: viewModelLifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+      description: Lifetime of the view model.
+    - id: viewLifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+      description: Lifetime of the view.
+    - id: route
+      type: System.String
+      description: Optional route override.
+    - id: func
+      type: System.Func{System.IServiceProvider,{TArg1},{TView}}
+      description: Optional custom view factory receiving the provider and the argument.
+    typeParameters:
+    - id: TView
+    - id: TViewModel
+    - id: TArg1
+    content.vb: Public Shared Sub RegisterRoute(Of TView As Class, TViewModel As Class, TArg1)(services As IServiceCollection, viewModelLifetime As ServiceLifetime = ServiceLifetime.Transient, viewLifetime As ServiceLifetime = ServiceLifetime.Transient, route As String = Nothing, func As Func(Of IServiceProvider, TArg1, TView) = Nothing)
+  overload: Routeables.Abstraction.Extensions.RegisterRoute*
+  nameWithType.vb: Extensions.RegisterRoute(Of TView, TViewModel, TArg1)(IServiceCollection, ServiceLifetime, ServiceLifetime, String, Func(Of IServiceProvider, TArg1, TView))
+  fullName.vb: Routeables.Abstraction.Extensions.RegisterRoute(Of TView, TViewModel, TArg1)(Microsoft.Extensions.DependencyInjection.IServiceCollection, Microsoft.Extensions.DependencyInjection.ServiceLifetime, Microsoft.Extensions.DependencyInjection.ServiceLifetime, String, System.Func(Of System.IServiceProvider, TArg1, TView))
+  name.vb: RegisterRoute(Of TView, TViewModel, TArg1)(IServiceCollection, ServiceLifetime, ServiceLifetime, String, Func(Of IServiceProvider, TArg1, TView))
+- uid: Routeables.Abstraction.Extensions.RegisterRoute``4(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  commentId: M:Routeables.Abstraction.Extensions.RegisterRoute``4(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  id: RegisterRoute``4(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: RegisterRoute<TView, TViewModel, TArg1, TArg2>(IServiceCollection, Func<IServiceProvider, TArg1, TArg2, TView>?, ServiceLifetime, ServiceLifetime, string?)
+  nameWithType: Extensions.RegisterRoute<TView, TViewModel, TArg1, TArg2>(IServiceCollection, Func<IServiceProvider, TArg1, TArg2, TView>?, ServiceLifetime, ServiceLifetime, string?)
+  fullName: Routeables.Abstraction.Extensions.RegisterRoute<TView, TViewModel, TArg1, TArg2>(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func<System.IServiceProvider, TArg1, TArg2, TView>?, Microsoft.Extensions.DependencyInjection.ServiceLifetime, Microsoft.Extensions.DependencyInjection.ServiceLifetime, string?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RegisterRoute
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 600
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Registers a view / view-model pair whose view takes two positional constructor arguments
+
+    (view parameters 0 and 1). See the single-argument overload for details.
+  example: []
+  syntax:
+    content: 'public static void RegisterRoute<TView, TViewModel, TArg1, TArg2>(this IServiceCollection services, Func<IServiceProvider, TArg1, TArg2, TView>? func = null, ServiceLifetime viewModelLifetime = ServiceLifetime.Transient, ServiceLifetime viewLifetime = ServiceLifetime.Transient, string? route = null) where TView : class where TViewModel : class'
+    parameters:
+    - id: services
+      type: Microsoft.Extensions.DependencyInjection.IServiceCollection
+    - id: func
+      type: System.Func{System.IServiceProvider,{TArg1},{TArg2},{TView}}
+    - id: viewModelLifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+    - id: viewLifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+    - id: route
+      type: System.String
+    typeParameters:
+    - id: TView
+    - id: TViewModel
+    - id: TArg1
+    - id: TArg2
+    content.vb: Public Shared Sub RegisterRoute(Of TView As Class, TViewModel As Class, TArg1, TArg2)(services As IServiceCollection, func As Func(Of IServiceProvider, TArg1, TArg2, TView) = Nothing, viewModelLifetime As ServiceLifetime = ServiceLifetime.Transient, viewLifetime As ServiceLifetime = ServiceLifetime.Transient, route As String = Nothing)
+  overload: Routeables.Abstraction.Extensions.RegisterRoute*
+  nameWithType.vb: Extensions.RegisterRoute(Of TView, TViewModel, TArg1, TArg2)(IServiceCollection, Func(Of IServiceProvider, TArg1, TArg2, TView), ServiceLifetime, ServiceLifetime, String)
+  fullName.vb: Routeables.Abstraction.Extensions.RegisterRoute(Of TView, TViewModel, TArg1, TArg2)(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func(Of System.IServiceProvider, TArg1, TArg2, TView), Microsoft.Extensions.DependencyInjection.ServiceLifetime, Microsoft.Extensions.DependencyInjection.ServiceLifetime, String)
+  name.vb: RegisterRoute(Of TView, TViewModel, TArg1, TArg2)(IServiceCollection, Func(Of IServiceProvider, TArg1, TArg2, TView), ServiceLifetime, ServiceLifetime, String)
+- uid: Routeables.Abstraction.Extensions.RegisterRoute``5(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``4,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  commentId: M:Routeables.Abstraction.Extensions.RegisterRoute``5(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``4,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  id: RegisterRoute``5(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``4,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: RegisterRoute<TView, TViewModel, TArg1, TArg2, TArg3>(IServiceCollection, Func<IServiceProvider, TArg1, TArg2, TArg3, TView>?, ServiceLifetime, ServiceLifetime, string?)
+  nameWithType: Extensions.RegisterRoute<TView, TViewModel, TArg1, TArg2, TArg3>(IServiceCollection, Func<IServiceProvider, TArg1, TArg2, TArg3, TView>?, ServiceLifetime, ServiceLifetime, string?)
+  fullName: Routeables.Abstraction.Extensions.RegisterRoute<TView, TViewModel, TArg1, TArg2, TArg3>(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func<System.IServiceProvider, TArg1, TArg2, TArg3, TView>?, Microsoft.Extensions.DependencyInjection.ServiceLifetime, Microsoft.Extensions.DependencyInjection.ServiceLifetime, string?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RegisterRoute
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 623
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Registers a view / view-model pair whose view takes three positional constructor arguments
+
+    (view parameters 0 to 2). See the single-argument overload for details.
+  example: []
+  syntax:
+    content: 'public static void RegisterRoute<TView, TViewModel, TArg1, TArg2, TArg3>(this IServiceCollection services, Func<IServiceProvider, TArg1, TArg2, TArg3, TView>? func = null, ServiceLifetime viewModelLifetime = ServiceLifetime.Transient, ServiceLifetime viewLifetime = ServiceLifetime.Transient, string? route = null) where TView : class where TViewModel : class'
+    parameters:
+    - id: services
+      type: Microsoft.Extensions.DependencyInjection.IServiceCollection
+    - id: func
+      type: System.Func{System.IServiceProvider,{TArg1},{TArg2},{TArg3},{TView}}
+    - id: viewModelLifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+    - id: viewLifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+    - id: route
+      type: System.String
+    typeParameters:
+    - id: TView
+    - id: TViewModel
+    - id: TArg1
+    - id: TArg2
+    - id: TArg3
+    content.vb: Public Shared Sub RegisterRoute(Of TView As Class, TViewModel As Class, TArg1, TArg2, TArg3)(services As IServiceCollection, func As Func(Of IServiceProvider, TArg1, TArg2, TArg3, TView) = Nothing, viewModelLifetime As ServiceLifetime = ServiceLifetime.Transient, viewLifetime As ServiceLifetime = ServiceLifetime.Transient, route As String = Nothing)
+  overload: Routeables.Abstraction.Extensions.RegisterRoute*
+  nameWithType.vb: Extensions.RegisterRoute(Of TView, TViewModel, TArg1, TArg2, TArg3)(IServiceCollection, Func(Of IServiceProvider, TArg1, TArg2, TArg3, TView), ServiceLifetime, ServiceLifetime, String)
+  fullName.vb: Routeables.Abstraction.Extensions.RegisterRoute(Of TView, TViewModel, TArg1, TArg2, TArg3)(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func(Of System.IServiceProvider, TArg1, TArg2, TArg3, TView), Microsoft.Extensions.DependencyInjection.ServiceLifetime, Microsoft.Extensions.DependencyInjection.ServiceLifetime, String)
+  name.vb: RegisterRoute(Of TView, TViewModel, TArg1, TArg2, TArg3)(IServiceCollection, Func(Of IServiceProvider, TArg1, TArg2, TArg3, TView), ServiceLifetime, ServiceLifetime, String)
+- uid: Routeables.Abstraction.Extensions.RegisterRoute``6(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``4,``5,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  commentId: M:Routeables.Abstraction.Extensions.RegisterRoute``6(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``4,``5,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  id: RegisterRoute``6(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``4,``5,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: RegisterRoute<TView, TViewModel, TArg1, TArg2, TArg3, TArg4>(IServiceCollection, Func<IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView>?, ServiceLifetime, ServiceLifetime, string?)
+  nameWithType: Extensions.RegisterRoute<TView, TViewModel, TArg1, TArg2, TArg3, TArg4>(IServiceCollection, Func<IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView>?, ServiceLifetime, ServiceLifetime, string?)
+  fullName: Routeables.Abstraction.Extensions.RegisterRoute<TView, TViewModel, TArg1, TArg2, TArg3, TArg4>(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func<System.IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView>?, Microsoft.Extensions.DependencyInjection.ServiceLifetime, Microsoft.Extensions.DependencyInjection.ServiceLifetime, string?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RegisterRoute
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 646
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Registers a view / view-model pair whose view takes four positional constructor arguments
+
+    (view parameters 0 to 3). See the single-argument overload for details.
+  example: []
+  syntax:
+    content: 'public static void RegisterRoute<TView, TViewModel, TArg1, TArg2, TArg3, TArg4>(this IServiceCollection services, Func<IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView>? func = null, ServiceLifetime viewModelLifetime = ServiceLifetime.Transient, ServiceLifetime viewLifetime = ServiceLifetime.Transient, string? route = null) where TView : class where TViewModel : class'
+    parameters:
+    - id: services
+      type: Microsoft.Extensions.DependencyInjection.IServiceCollection
+    - id: func
+      type: System.Func{System.IServiceProvider,{TArg1},{TArg2},{TArg3},{TArg4},{TView}}
+    - id: viewModelLifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+    - id: viewLifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+    - id: route
+      type: System.String
+    typeParameters:
+    - id: TView
+    - id: TViewModel
+    - id: TArg1
+    - id: TArg2
+    - id: TArg3
+    - id: TArg4
+    content.vb: Public Shared Sub RegisterRoute(Of TView As Class, TViewModel As Class, TArg1, TArg2, TArg3, TArg4)(services As IServiceCollection, func As Func(Of IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView) = Nothing, viewModelLifetime As ServiceLifetime = ServiceLifetime.Transient, viewLifetime As ServiceLifetime = ServiceLifetime.Transient, route As String = Nothing)
+  overload: Routeables.Abstraction.Extensions.RegisterRoute*
+  nameWithType.vb: Extensions.RegisterRoute(Of TView, TViewModel, TArg1, TArg2, TArg3, TArg4)(IServiceCollection, Func(Of IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView), ServiceLifetime, ServiceLifetime, String)
+  fullName.vb: Routeables.Abstraction.Extensions.RegisterRoute(Of TView, TViewModel, TArg1, TArg2, TArg3, TArg4)(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func(Of System.IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView), Microsoft.Extensions.DependencyInjection.ServiceLifetime, Microsoft.Extensions.DependencyInjection.ServiceLifetime, String)
+  name.vb: RegisterRoute(Of TView, TViewModel, TArg1, TArg2, TArg3, TArg4)(IServiceCollection, Func(Of IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView), ServiceLifetime, ServiceLifetime, String)
+- uid: Routeables.Abstraction.Extensions.RegisterRoute``7(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``4,``5,``6,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  commentId: M:Routeables.Abstraction.Extensions.RegisterRoute``7(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``4,``5,``6,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  id: RegisterRoute``7(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,``2,``3,``4,``5,``6,``0},Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: RegisterRoute<TView, TViewModel, TArg1, TArg2, TArg3, TArg4, TArg5>(IServiceCollection, Func<IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView>?, ServiceLifetime, ServiceLifetime, string?)
+  nameWithType: Extensions.RegisterRoute<TView, TViewModel, TArg1, TArg2, TArg3, TArg4, TArg5>(IServiceCollection, Func<IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView>?, ServiceLifetime, ServiceLifetime, string?)
+  fullName: Routeables.Abstraction.Extensions.RegisterRoute<TView, TViewModel, TArg1, TArg2, TArg3, TArg4, TArg5>(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func<System.IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView>?, Microsoft.Extensions.DependencyInjection.ServiceLifetime, Microsoft.Extensions.DependencyInjection.ServiceLifetime, string?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RegisterRoute
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 669
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Registers a view / view-model pair whose view takes five positional constructor arguments
+
+    (view parameters 0 to 4). See the single-argument overload for details.
+  example: []
+  syntax:
+    content: 'public static void RegisterRoute<TView, TViewModel, TArg1, TArg2, TArg3, TArg4, TArg5>(this IServiceCollection services, Func<IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView>? func = null, ServiceLifetime viewModelLifetime = ServiceLifetime.Transient, ServiceLifetime viewLifetime = ServiceLifetime.Transient, string? route = null) where TView : class where TViewModel : class'
+    parameters:
+    - id: services
+      type: Microsoft.Extensions.DependencyInjection.IServiceCollection
+    - id: func
+      type: System.Func{System.IServiceProvider,{TArg1},{TArg2},{TArg3},{TArg4},{TArg5},{TView}}
+    - id: viewModelLifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+    - id: viewLifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+    - id: route
+      type: System.String
+    typeParameters:
+    - id: TView
+    - id: TViewModel
+    - id: TArg1
+    - id: TArg2
+    - id: TArg3
+    - id: TArg4
+    - id: TArg5
+    content.vb: Public Shared Sub RegisterRoute(Of TView As Class, TViewModel As Class, TArg1, TArg2, TArg3, TArg4, TArg5)(services As IServiceCollection, func As Func(Of IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView) = Nothing, viewModelLifetime As ServiceLifetime = ServiceLifetime.Transient, viewLifetime As ServiceLifetime = ServiceLifetime.Transient, route As String = Nothing)
+  overload: Routeables.Abstraction.Extensions.RegisterRoute*
+  nameWithType.vb: Extensions.RegisterRoute(Of TView, TViewModel, TArg1, TArg2, TArg3, TArg4, TArg5)(IServiceCollection, Func(Of IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView), ServiceLifetime, ServiceLifetime, String)
+  fullName.vb: Routeables.Abstraction.Extensions.RegisterRoute(Of TView, TViewModel, TArg1, TArg2, TArg3, TArg4, TArg5)(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func(Of System.IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView), Microsoft.Extensions.DependencyInjection.ServiceLifetime, Microsoft.Extensions.DependencyInjection.ServiceLifetime, String)
+  name.vb: RegisterRoute(Of TView, TViewModel, TArg1, TArg2, TArg3, TArg4, TArg5)(IServiceCollection, Func(Of IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView), ServiceLifetime, ServiceLifetime, String)
+- uid: Routeables.Abstraction.Extensions.RegisterRoute``2(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String,System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,``0})
+  commentId: M:Routeables.Abstraction.Extensions.RegisterRoute``2(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String,System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,``0})
+  id: RegisterRoute``2(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.DependencyInjection.ServiceLifetime,Microsoft.Extensions.DependencyInjection.ServiceLifetime,System.String,System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,``0})
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: RegisterRoute<TView, TViewModel>(IServiceCollection, ServiceLifetime, ServiceLifetime, string?, Func<IServiceProvider, IRouteableArgs, TView>?)
+  nameWithType: Extensions.RegisterRoute<TView, TViewModel>(IServiceCollection, ServiceLifetime, ServiceLifetime, string?, Func<IServiceProvider, IRouteableArgs, TView>?)
+  fullName: Routeables.Abstraction.Extensions.RegisterRoute<TView, TViewModel>(Microsoft.Extensions.DependencyInjection.IServiceCollection, Microsoft.Extensions.DependencyInjection.ServiceLifetime, Microsoft.Extensions.DependencyInjection.ServiceLifetime, string?, System.Func<System.IServiceProvider, Routeables.Abstraction.IRouteableArgs, TView>?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RegisterRoute
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 698
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Registers a view / view-model pair with no positional arguments. The optional
+
+    <code class="paramref">func</code> receives the full <xref href="Routeables.Abstraction.IRouteableArgs" data-throw-if-not-resolved="false"></xref> and replaces the
+
+    default DI-based view creation.
+  example: []
+  syntax:
+    content: 'public static void RegisterRoute<TView, TViewModel>(this IServiceCollection services, ServiceLifetime viewModelLifetime = ServiceLifetime.Transient, ServiceLifetime viewLifetime = ServiceLifetime.Transient, string? route = null, Func<IServiceProvider, IRouteableArgs, TView>? func = null) where TView : class where TViewModel : class'
+    parameters:
+    - id: services
+      type: Microsoft.Extensions.DependencyInjection.IServiceCollection
+      description: The service collection to add to.
+    - id: viewModelLifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+      description: Lifetime of the view model.
+    - id: viewLifetime
+      type: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+      description: Lifetime of the view.
+    - id: route
+      type: System.String
+      description: Optional route override.
+    - id: func
+      type: System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,{TView}}
+      description: Optional custom view factory.
+    typeParameters:
+    - id: TView
+    - id: TViewModel
+    content.vb: Public Shared Sub RegisterRoute(Of TView As Class, TViewModel As Class)(services As IServiceCollection, viewModelLifetime As ServiceLifetime = ServiceLifetime.Transient, viewLifetime As ServiceLifetime = ServiceLifetime.Transient, route As String = Nothing, func As Func(Of IServiceProvider, IRouteableArgs, TView) = Nothing)
+  overload: Routeables.Abstraction.Extensions.RegisterRoute*
+  nameWithType.vb: Extensions.RegisterRoute(Of TView, TViewModel)(IServiceCollection, ServiceLifetime, ServiceLifetime, String, Func(Of IServiceProvider, IRouteableArgs, TView))
+  fullName.vb: Routeables.Abstraction.Extensions.RegisterRoute(Of TView, TViewModel)(Microsoft.Extensions.DependencyInjection.IServiceCollection, Microsoft.Extensions.DependencyInjection.ServiceLifetime, Microsoft.Extensions.DependencyInjection.ServiceLifetime, String, System.Func(Of System.IServiceProvider, Routeables.Abstraction.IRouteableArgs, TView))
+  name.vb: RegisterRoute(Of TView, TViewModel)(IServiceCollection, ServiceLifetime, ServiceLifetime, String, Func(Of IServiceProvider, IRouteableArgs, TView))
+- uid: Routeables.Abstraction.Extensions.GetViewModel``1(System.IServiceProvider,System.String,Routeables.Abstraction.IRouteableArgs)
+  commentId: M:Routeables.Abstraction.Extensions.GetViewModel``1(System.IServiceProvider,System.String,Routeables.Abstraction.IRouteableArgs)
+  id: GetViewModel``1(System.IServiceProvider,System.String,Routeables.Abstraction.IRouteableArgs)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: GetViewModel<T>(IServiceProvider, string, IRouteableArgs?)
+  nameWithType: Extensions.GetViewModel<T>(IServiceProvider, string, IRouteableArgs?)
+  fullName: Routeables.Abstraction.Extensions.GetViewModel<T>(System.IServiceProvider, string, Routeables.Abstraction.IRouteableArgs?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetViewModel
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 793
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Typed convenience wrapper over <xref href="Routeables.Abstraction.Extensions.GetViewModel(System.IServiceProvider%2cSystem.String%2cRouteables.Abstraction.IRouteableArgs)" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public static T? GetViewModel<T>(this IServiceProvider provider, string route, IRouteableArgs? args = null)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+    - id: route
+      type: System.String
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+    typeParameters:
+    - id: T
+      description: The expected view-model type.
+    return:
+      type: '{T}'
+    content.vb: Public Shared Function GetViewModel(Of T)(provider As IServiceProvider, route As String, args As IRouteableArgs = Nothing) As T
+  overload: Routeables.Abstraction.Extensions.GetViewModel*
+  exceptions:
+  - type: System.InvalidCastException
+    commentId: T:System.InvalidCastException
+    description: The resolved instance is not a <code class="typeparamref">T</code>.
+  nameWithType.vb: Extensions.GetViewModel(Of T)(IServiceProvider, String, IRouteableArgs)
+  fullName.vb: Routeables.Abstraction.Extensions.GetViewModel(Of T)(System.IServiceProvider, String, Routeables.Abstraction.IRouteableArgs)
+  name.vb: GetViewModel(Of T)(IServiceProvider, String, IRouteableArgs)
+- uid: Routeables.Abstraction.Extensions.GetViewModel(System.IServiceProvider,System.String,Routeables.Abstraction.IRouteableArgs)
+  commentId: M:Routeables.Abstraction.Extensions.GetViewModel(System.IServiceProvider,System.String,Routeables.Abstraction.IRouteableArgs)
+  id: GetViewModel(System.IServiceProvider,System.String,Routeables.Abstraction.IRouteableArgs)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: GetViewModel(IServiceProvider, string, IRouteableArgs?)
+  nameWithType: Extensions.GetViewModel(IServiceProvider, string, IRouteableArgs?)
+  fullName: Routeables.Abstraction.Extensions.GetViewModel(System.IServiceProvider, string, Routeables.Abstraction.IRouteableArgs?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetViewModel
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 814
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Resolves a view model through the keyed factory registered for <code class="paramref">route</code>
+
+    and tracks it for weak disposal.
+  example: []
+  syntax:
+    content: public static object? GetViewModel(this IServiceProvider provider, string route, IRouteableArgs? args = null)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+      description: The provider passed to the factory (determines scope).
+    - id: route
+      type: System.String
+      description: The view-model registration key.
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+      description: Arguments for the factory; a new empty <xref href="Routeables.Abstraction.IRouteableArgs" data-throw-if-not-resolved="false"></xref> when omitted.
+    return:
+      type: System.Object
+    content.vb: Public Shared Function GetViewModel(provider As IServiceProvider, route As String, args As IRouteableArgs = Nothing) As Object
+  overload: Routeables.Abstraction.Extensions.GetViewModel*
+  exceptions:
+  - type: System.InvalidOperationException
+    commentId: T:System.InvalidOperationException
+    description: Nothing is registered for the key, or the factory returned null.
+  nameWithType.vb: Extensions.GetViewModel(IServiceProvider, String, IRouteableArgs)
+  fullName.vb: Routeables.Abstraction.Extensions.GetViewModel(System.IServiceProvider, String, Routeables.Abstraction.IRouteableArgs)
+  name.vb: GetViewModel(IServiceProvider, String, IRouteableArgs)
+- uid: Routeables.Abstraction.Extensions.GetContextFor``1(System.IServiceProvider,Routeables.Abstraction.IRouteableArgs)
+  commentId: M:Routeables.Abstraction.Extensions.GetContextFor``1(System.IServiceProvider,Routeables.Abstraction.IRouteableArgs)
+  id: GetContextFor``1(System.IServiceProvider,Routeables.Abstraction.IRouteableArgs)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: GetContextFor<TViewModel>(IServiceProvider, IRouteableArgs?)
+  nameWithType: Extensions.GetContextFor<TViewModel>(IServiceProvider, IRouteableArgs?)
+  fullName: Routeables.Abstraction.Extensions.GetContextFor<TViewModel>(System.IServiceProvider, Routeables.Abstraction.IRouteableArgs?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetContextFor
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 854
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Resolves the view for <code class="typeparamref">TViewModel</code>, keyed by the view model's type name.
+  example: []
+  syntax:
+    content: public static IRouteableFor? GetContextFor<TViewModel>(this IServiceProvider provider, IRouteableArgs? args = null)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+    typeParameters:
+    - id: TViewModel
+    return:
+      type: Routeables.Abstraction.IRouteableFor
+    content.vb: Public Shared Function GetContextFor(Of TViewModel)(provider As IServiceProvider, args As IRouteableArgs = Nothing) As IRouteableFor
+  overload: Routeables.Abstraction.Extensions.GetContextFor*
+  nameWithType.vb: Extensions.GetContextFor(Of TViewModel)(IServiceProvider, IRouteableArgs)
+  fullName.vb: Routeables.Abstraction.Extensions.GetContextFor(Of TViewModel)(System.IServiceProvider, Routeables.Abstraction.IRouteableArgs)
+  name.vb: GetContextFor(Of TViewModel)(IServiceProvider, IRouteableArgs)
+- uid: Routeables.Abstraction.Extensions.GetContent(System.IServiceProvider,System.Object,System.Object)
+  commentId: M:Routeables.Abstraction.Extensions.GetContent(System.IServiceProvider,System.Object,System.Object)
+  id: GetContent(System.IServiceProvider,System.Object,System.Object)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: GetContent(IServiceProvider, object, object)
+  nameWithType: Extensions.GetContent(IServiceProvider, object, object)
+  fullName: Routeables.Abstraction.Extensions.GetContent(System.IServiceProvider, object, object)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetContent
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 869
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Creates the content registered under <code class="paramref">key</code>, passing
+
+    <code class="paramref">context</code> as the single view parameter (under <code>Constants.Key</code>).
+
+    Unlike <xref href="Routeables.Abstraction.Extensions.GetView(System.IServiceProvider%2cSystem.Object%2cRouteables.Abstraction.IRouteableArgs)" data-throw-if-not-resolved="false"></xref>, the result is not tracked for disposal.
+  example: []
+  syntax:
+    content: public static object GetContent(this IServiceProvider provider, object key, object context)
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+      description: The provider passed to the factory.
+    - id: key
+      type: System.Object
+      description: The registration key.
+    - id: context
+      type: System.Object
+      description: The context object handed to the factory.
+    return:
+      type: System.Object
+    content.vb: Public Shared Function GetContent(provider As IServiceProvider, key As Object, context As Object) As Object
+  overload: Routeables.Abstraction.Extensions.GetContent*
+  exceptions:
+  - type: System.InvalidOperationException
+    commentId: T:System.InvalidOperationException
+    description: No view is registered for the key, or the factory returned null.
+  nameWithType.vb: Extensions.GetContent(IServiceProvider, Object, Object)
+  fullName.vb: Routeables.Abstraction.Extensions.GetContent(System.IServiceProvider, Object, Object)
+  name.vb: GetContent(IServiceProvider, Object, Object)
+- uid: Routeables.Abstraction.Extensions.GetModalFor``2(System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.String)
+  commentId: M:Routeables.Abstraction.Extensions.GetModalFor``2(System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.String)
+  id: GetModalFor``2(System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.String)
+  isExtensionMethod: true
+  parent: Routeables.Abstraction.Extensions
+  langs:
+  - csharp
+  - vb
+  name: GetModalFor<TViewModel, TResult>(IServiceProvider, IRouteableArgs?, string?)
+  nameWithType: Extensions.GetModalFor<TViewModel, TResult>(IServiceProvider, IRouteableArgs?, string?)
+  fullName: Routeables.Abstraction.Extensions.GetModalFor<TViewModel, TResult>(System.IServiceProvider, Routeables.Abstraction.IRouteableArgs?, string?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Extensions.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetModalFor
+    path: ../Routeables.Abstraction/Routing/Extensions.cs
+    startLine: 888
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: >-
+    Resolves the view for <code class="typeparamref">TViewModel</code> as a modal returning
+
+    <code class="typeparamref">TResult</code>. A view that is not that modal (its result type is another one, say) throws an exception
+
+    that names the types.
+  example: []
+  syntax:
+    content: 'public static IRouteableModalFor<TViewModel, TResult>? GetModalFor<TViewModel, TResult>(this IServiceProvider provider, IRouteableArgs? args = null, string? route = null) where TViewModel : class'
+    parameters:
+    - id: provider
+      type: System.IServiceProvider
+      description: The provider used to resolve the view.
+    - id: args
+      type: Routeables.Abstraction.IRouteableArgs
+      description: Optional navigation arguments.
+    - id: route
+      type: System.String
+      description: Optional view key; defaults to the view model's type name.
+    typeParameters:
+    - id: TViewModel
+    - id: TResult
+    return:
+      type: Routeables.Abstraction.IRouteableModalFor{{TViewModel},{TResult}}
+    content.vb: Public Shared Function GetModalFor(Of TViewModel As Class, TResult)(provider As IServiceProvider, args As IRouteableArgs = Nothing, route As String = Nothing) As IRouteableModalFor(Of TViewModel, TResult)
+  overload: Routeables.Abstraction.Extensions.GetModalFor*
+  exceptions:
+  - type: System.InvalidOperationException
+    commentId: T:System.InvalidOperationException
+    description: The view's result type mismatches, or it is not a modal for these types.
+  nameWithType.vb: Extensions.GetModalFor(Of TViewModel, TResult)(IServiceProvider, IRouteableArgs, String)
+  fullName.vb: Routeables.Abstraction.Extensions.GetModalFor(Of TViewModel, TResult)(System.IServiceProvider, Routeables.Abstraction.IRouteableArgs, String)
+  name.vb: GetModalFor(Of TViewModel, TResult)(IServiceProvider, IRouteableArgs, String)
+references:
+- uid: Microsoft.Extensions.DependencyInjection.IServiceCollection
+  commentId: T:Microsoft.Extensions.DependencyInjection.IServiceCollection
+  parent: Microsoft.Extensions.DependencyInjection
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection
+  name: IServiceCollection
+  nameWithType: IServiceCollection
+  fullName: Microsoft.Extensions.DependencyInjection.IServiceCollection
+- uid: System.IServiceProvider
+  commentId: T:System.IServiceProvider
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  name: IServiceProvider
+  nameWithType: IServiceProvider
+  fullName: System.IServiceProvider
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: Microsoft.Extensions.DependencyInjection
+  commentId: N:Microsoft.Extensions.DependencyInjection
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Extensions.DependencyInjection
+  nameWithType: Microsoft.Extensions.DependencyInjection
+  fullName: Microsoft.Extensions.DependencyInjection
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.DependencyInjection
+    name: DependencyInjection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Extensions
+    name: Extensions
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions
+  - name: .
+  - uid: Microsoft.Extensions.DependencyInjection
+    name: DependencyInjection
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Routeables.Abstraction.Extensions.RegisterRouteableArgsFactory*
+  commentId: Overload:Routeables.Abstraction.Extensions.RegisterRouteableArgsFactory
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_RegisterRouteableArgsFactory_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_Routeables_Abstraction_IRouteableArgs__
+  name: RegisterRouteableArgsFactory
+  nameWithType: Extensions.RegisterRouteableArgsFactory
+  fullName: Routeables.Abstraction.Extensions.RegisterRouteableArgsFactory
+- uid: System.Func{Routeables.Abstraction.IRouteableArgs}
+  commentId: T:System.Func{Routeables.Abstraction.IRouteableArgs}
+  parent: System
+  definition: System.Func`1
+  href: https://learn.microsoft.com/dotnet/api/system.func-1
+  name: Func<IRouteableArgs>
+  nameWithType: Func<IRouteableArgs>
+  fullName: System.Func<Routeables.Abstraction.IRouteableArgs>
+  nameWithType.vb: Func(Of IRouteableArgs)
+  fullName.vb: System.Func(Of Routeables.Abstraction.IRouteableArgs)
+  name.vb: Func(Of IRouteableArgs)
+  spec.csharp:
+  - uid: System.Func`1
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-1
+  - name: <
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`1
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: )
+- uid: System.Func`1
+  commentId: T:System.Func`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.func-1
+  name: Func<TResult>
+  nameWithType: Func<TResult>
+  fullName: System.Func<TResult>
+  nameWithType.vb: Func(Of TResult)
+  fullName.vb: System.Func(Of TResult)
+  name.vb: Func(Of TResult)
+  spec.csharp:
+  - uid: System.Func`1
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`1
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Abstraction.IMainRouteables
+  commentId: T:Routeables.Abstraction.IMainRouteables
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IMainRouteables.html
+  name: IMainRouteables
+  nameWithType: IMainRouteables
+  fullName: Routeables.Abstraction.IMainRouteables
+- uid: Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped
+  commentId: F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.servicelifetime#microsoft-extensions-dependencyinjection-servicelifetime-scoped
+  name: Scoped
+  nameWithType: ServiceLifetime.Scoped
+  fullName: Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped
+- uid: Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton
+  commentId: F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.servicelifetime#microsoft-extensions-dependencyinjection-servicelifetime-singleton
+  name: Singleton
+  nameWithType: ServiceLifetime.Singleton
+  fullName: Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton
+- uid: Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient
+  commentId: F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.servicelifetime#microsoft-extensions-dependencyinjection-servicelifetime-transient
+  name: Transient
+  nameWithType: ServiceLifetime.Transient
+  fullName: Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient
+- uid: System.ArgumentException
+  commentId: T:System.ArgumentException
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.argumentexception
+  name: ArgumentException
+  nameWithType: ArgumentException
+  fullName: System.ArgumentException
+- uid: Routeables.Abstraction.Extensions.RegisterMainRouteables*
+  commentId: Overload:Routeables.Abstraction.Extensions.RegisterMainRouteables
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_RegisterMainRouteables__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_Microsoft_Extensions_DependencyInjection_ServiceLifetime_
+  name: RegisterMainRouteables
+  nameWithType: Extensions.RegisterMainRouteables
+  fullName: Routeables.Abstraction.Extensions.RegisterMainRouteables
+- uid: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+  commentId: T:Microsoft.Extensions.DependencyInjection.ServiceLifetime
+  parent: Microsoft.Extensions.DependencyInjection
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.servicelifetime
+  name: ServiceLifetime
+  nameWithType: ServiceLifetime
+  fullName: Microsoft.Extensions.DependencyInjection.ServiceLifetime
+- uid: Routeables.Abstraction.Extensions.RegisterLockCoordinator*
+  commentId: Overload:Routeables.Abstraction.Extensions.RegisterLockCoordinator
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_RegisterLockCoordinator__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_
+  name: RegisterLockCoordinator
+  nameWithType: Extensions.RegisterLockCoordinator
+  fullName: Routeables.Abstraction.Extensions.RegisterLockCoordinator
+- uid: Routeables.Abstraction.ILockCoordinator
+  commentId: T:Routeables.Abstraction.ILockCoordinator
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.ILockCoordinator.html
+  name: ILockCoordinator
+  nameWithType: ILockCoordinator
+  fullName: Routeables.Abstraction.ILockCoordinator
+- uid: Routeables.Abstraction.Extensions.GetLockCoordinator*
+  commentId: Overload:Routeables.Abstraction.Extensions.GetLockCoordinator
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetLockCoordinator_System_IServiceProvider_Routeables_Abstraction_IMainRouteables_
+  name: GetLockCoordinator
+  nameWithType: Extensions.GetLockCoordinator
+  fullName: Routeables.Abstraction.Extensions.GetLockCoordinator
+- uid: Routeables.Abstraction.IRouter
+  commentId: T:Routeables.Abstraction.IRouter
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouter.html
+  name: IRouter
+  nameWithType: IRouter
+  fullName: Routeables.Abstraction.IRouter
+- uid: System.InvalidOperationException
+  commentId: T:System.InvalidOperationException
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.invalidoperationexception
+  name: InvalidOperationException
+  nameWithType: InvalidOperationException
+  fullName: System.InvalidOperationException
+- uid: Routeables.Abstraction.Extensions.GetRegion*
+  commentId: Overload:Routeables.Abstraction.Extensions.GetRegion
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetRegion_System_IServiceProvider_System_String_
+  name: GetRegion
+  nameWithType: Extensions.GetRegion
+  fullName: Routeables.Abstraction.Extensions.GetRegion
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: Routeables.Abstraction.Extensions.GetRouter*
+  commentId: Overload:Routeables.Abstraction.Extensions.GetRouter
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetRouter_System_IServiceProvider_System_String_
+  name: GetRouter
+  nameWithType: Extensions.GetRouter
+  fullName: Routeables.Abstraction.Extensions.GetRouter
+- uid: Routeables.Abstraction.Extensions.EraseRegionsAsync*
+  commentId: Overload:Routeables.Abstraction.Extensions.EraseRegionsAsync
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_EraseRegionsAsync_System_IServiceProvider_System_Collections_Generic_IEnumerable_System_String__System_Threading_CancellationToken_
+  name: EraseRegionsAsync
+  nameWithType: Extensions.EraseRegionsAsync
+  fullName: Routeables.Abstraction.Extensions.EraseRegionsAsync
+- uid: System.Collections.Generic.IEnumerable{System.String}
+  commentId: T:System.Collections.Generic.IEnumerable{System.String}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IEnumerable`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<string>
+  nameWithType: IEnumerable<string>
+  fullName: System.Collections.Generic.IEnumerable<string>
+  nameWithType.vb: IEnumerable(Of String)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of String)
+  name.vb: IEnumerable(Of String)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Threading.CancellationToken
+  commentId: T:System.Threading.CancellationToken
+  parent: System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: CancellationToken
+  nameWithType: CancellationToken
+  fullName: System.Threading.CancellationToken
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System.Collections.Generic.IEnumerable`1
+  commentId: T:System.Collections.Generic.IEnumerable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  name: IEnumerable<T>
+  nameWithType: IEnumerable<T>
+  fullName: System.Collections.Generic.IEnumerable<T>
+  nameWithType.vb: IEnumerable(Of T)
+  fullName.vb: System.Collections.Generic.IEnumerable(Of T)
+  name.vb: IEnumerable(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IEnumerable`1
+    name: IEnumerable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: System.Threading
+  commentId: N:System.Threading
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading
+  nameWithType: System.Threading
+  fullName: System.Threading
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: Routeables.Abstraction.IRouter.GoToAsync(System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  commentId: M:Routeables.Abstraction.IRouter.GoToAsync(System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+  isExternal: true
+  href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_GoToAsync_System_String_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: GoToAsync(string, IRouteableArgs, CancellationToken)
+  nameWithType: IRouter.GoToAsync(string, IRouteableArgs, CancellationToken)
+  fullName: Routeables.Abstraction.IRouter.GoToAsync(string, Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  nameWithType.vb: IRouter.GoToAsync(String, IRouteableArgs, CancellationToken)
+  fullName.vb: Routeables.Abstraction.IRouter.GoToAsync(String, Routeables.Abstraction.IRouteableArgs, System.Threading.CancellationToken)
+  name.vb: GoToAsync(String, IRouteableArgs, CancellationToken)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouter.GoToAsync(System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: GoToAsync
+    href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_GoToAsync_System_String_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouter.GoToAsync(System.String,Routeables.Abstraction.IRouteableArgs,System.Threading.CancellationToken)
+    name: GoToAsync
+    href: Routeables.Abstraction.IRouter.html#Routeables_Abstraction_IRouter_GoToAsync_System_String_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  - name: (
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: Routeables.Abstraction.Extensions.GoToAsync*
+  commentId: Overload:Routeables.Abstraction.Extensions.GoToAsync
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GoToAsync_System_IServiceProvider_System_String_System_String_Routeables_Abstraction_IRouteableArgs_System_Threading_CancellationToken_
+  name: GoToAsync
+  nameWithType: Extensions.GoToAsync
+  fullName: Routeables.Abstraction.Extensions.GoToAsync
+- uid: Routeables.Abstraction.IRouteableArgs
+  commentId: T:Routeables.Abstraction.IRouteableArgs
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableArgs.html
+  name: IRouteableArgs
+  nameWithType: IRouteableArgs
+  fullName: Routeables.Abstraction.IRouteableArgs
+- uid: System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+  commentId: T:System.Threading.Tasks.Task{Routeables.Abstraction.RouteableResult}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<RouteableResult>
+  nameWithType: Task<RouteableResult>
+  fullName: System.Threading.Tasks.Task<Routeables.Abstraction.RouteableResult>
+  nameWithType.vb: Task(Of RouteableResult)
+  fullName.vb: System.Threading.Tasks.Task(Of Routeables.Abstraction.RouteableResult)
+  name.vb: Task(Of RouteableResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - uid: Routeables.Abstraction.RouteableResult
+    name: RouteableResult
+    href: Routeables.Abstraction.RouteableResult.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.RouteableResult
+    name: RouteableResult
+    href: Routeables.Abstraction.RouteableResult.html
+  - name: )
+- uid: System.Threading.Tasks.Task`1
+  commentId: T:System.Threading.Tasks.Task`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Abstraction.Extensions.GetCurrentViewModel*
+  commentId: Overload:Routeables.Abstraction.Extensions.GetCurrentViewModel
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetCurrentViewModel__1_Routeables_Abstraction_IRouter_
+  name: GetCurrentViewModel
+  nameWithType: Extensions.GetCurrentViewModel
+  fullName: Routeables.Abstraction.Extensions.GetCurrentViewModel
+- uid: '{T}'
+  commentId: '!:T'
+  definition: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: T
+  name: T
+  nameWithType: T
+  fullName: T
+- uid: Routeables.Abstraction.Extensions.CreateLockCoordinator*
+  commentId: Overload:Routeables.Abstraction.Extensions.CreateLockCoordinator
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_CreateLockCoordinator_Routeables_Abstraction_IRouter_Routeables_Abstraction_IMainRouteables_
+  name: CreateLockCoordinator
+  nameWithType: Extensions.CreateLockCoordinator
+  fullName: Routeables.Abstraction.Extensions.CreateLockCoordinator
+- uid: Routeables.Abstraction.IRouteableView.Region
+  commentId: P:Routeables.Abstraction.IRouteableView.Region
+  parent: Routeables.Abstraction.IRouteableView
+  href: Routeables.Abstraction.IRouteableView.html#Routeables_Abstraction_IRouteableView_Region
+  name: Region
+  nameWithType: IRouteableView.Region
+  fullName: Routeables.Abstraction.IRouteableView.Region
+- uid: Routeables.Abstraction.Extensions.RouterFor*
+  commentId: Overload:Routeables.Abstraction.Extensions.RouterFor
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_RouterFor_System_IServiceProvider_Routeables_Abstraction_IRouteableView_
+  name: RouterFor
+  nameWithType: Extensions.RouterFor
+  fullName: Routeables.Abstraction.Extensions.RouterFor
+- uid: Routeables.Abstraction.IRouteableView
+  commentId: T:Routeables.Abstraction.IRouteableView
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableView.html
+  name: IRouteableView
+  nameWithType: IRouteableView
+  fullName: Routeables.Abstraction.IRouteableView
+- uid: Routeables.Abstraction.IRouteableModalFor`2
+  commentId: T:Routeables.Abstraction.IRouteableModalFor`2
+  href: Routeables.Abstraction.IRouteableModalFor-2.html
+  name: IRouteableModalFor<T, TResult>
+  nameWithType: IRouteableModalFor<T, TResult>
+  fullName: Routeables.Abstraction.IRouteableModalFor<T, TResult>
+  nameWithType.vb: IRouteableModalFor(Of T, TResult)
+  fullName.vb: Routeables.Abstraction.IRouteableModalFor(Of T, TResult)
+  name.vb: IRouteableModalFor(Of T, TResult)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableModalFor`2
+    name: IRouteableModalFor
+    href: Routeables.Abstraction.IRouteableModalFor-2.html
+  - name: <
+  - name: T
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableModalFor`2
+    name: IRouteableModalFor
+    href: Routeables.Abstraction.IRouteableModalFor-2.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Abstraction.Extensions.ShowModalAsync*
+  commentId: Overload:Routeables.Abstraction.Extensions.ShowModalAsync
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_ShowModalAsync__2_System_IServiceProvider_Routeables_Abstraction_IRouteableArgs_System_String_
+  name: ShowModalAsync
+  nameWithType: Extensions.ShowModalAsync
+  fullName: Routeables.Abstraction.Extensions.ShowModalAsync
+- uid: System.Threading.Tasks.Task{{TResult}}
+  commentId: T:System.Threading.Tasks.Task{`1}
+  parent: System.Threading.Tasks
+  definition: System.Threading.Tasks.Task`1
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  name: Task<TResult>
+  nameWithType: Task<TResult>
+  fullName: System.Threading.Tasks.Task<TResult>
+  nameWithType.vb: Task(Of TResult)
+  fullName.vb: System.Threading.Tasks.Task(Of TResult)
+  name.vb: Task(Of TResult)
+  spec.csharp:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: <
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Threading.Tasks.Task`1
+    name: Task
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Abstraction.Extensions.RegisterRoute*
+  commentId: Overload:Routeables.Abstraction.Extensions.RegisterRoute
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_RegisterRoute_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_String_System_Func_System_IServiceProvider_Routeables_Abstraction_IRouteableArgs_System_Object__Microsoft_Extensions_DependencyInjection_ServiceLifetime_
+  name: RegisterRoute
+  nameWithType: Extensions.RegisterRoute
+  fullName: Routeables.Abstraction.Extensions.RegisterRoute
+- uid: System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.Object}
+  commentId: T:System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,System.Object}
+  parent: System
+  definition: System.Func`3
+  href: https://learn.microsoft.com/dotnet/api/system.func-3
+  name: Func<IServiceProvider, IRouteableArgs, object>
+  nameWithType: Func<IServiceProvider, IRouteableArgs, object>
+  fullName: System.Func<System.IServiceProvider, Routeables.Abstraction.IRouteableArgs, object>
+  nameWithType.vb: Func(Of IServiceProvider, IRouteableArgs, Object)
+  fullName.vb: System.Func(Of System.IServiceProvider, Routeables.Abstraction.IRouteableArgs, Object)
+  name.vb: Func(Of IServiceProvider, IRouteableArgs, Object)
+  spec.csharp:
+  - uid: System.Func`3
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-3
+  - name: <
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`3
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-3
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Func`3
+  commentId: T:System.Func`3
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.func-3
+  name: Func<T1, T2, TResult>
+  nameWithType: Func<T1, T2, TResult>
+  fullName: System.Func<T1, T2, TResult>
+  nameWithType.vb: Func(Of T1, T2, TResult)
+  fullName.vb: System.Func(Of T1, T2, TResult)
+  name.vb: Func(Of T1, T2, TResult)
+  spec.csharp:
+  - uid: System.Func`3
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-3
+  - name: <
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`3
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-3
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Microsoft.Extensions.DependencyInjection.ActivatorUtilities
+  commentId: T:Microsoft.Extensions.DependencyInjection.ActivatorUtilities
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.activatorutilities
+  name: ActivatorUtilities
+  nameWithType: ActivatorUtilities
+  fullName: Microsoft.Extensions.DependencyInjection.ActivatorUtilities
+- uid: System.Func{System.IServiceProvider,{TArg1},{TView}}
+  commentId: T:System.Func{System.IServiceProvider,``2,``0}
+  parent: System
+  definition: System.Func`3
+  href: https://learn.microsoft.com/dotnet/api/system.func-3
+  name: Func<IServiceProvider, TArg1, TView>
+  nameWithType: Func<IServiceProvider, TArg1, TView>
+  fullName: System.Func<System.IServiceProvider, TArg1, TView>
+  nameWithType.vb: Func(Of IServiceProvider, TArg1, TView)
+  fullName.vb: System.Func(Of System.IServiceProvider, TArg1, TView)
+  name.vb: Func(Of IServiceProvider, TArg1, TView)
+  spec.csharp:
+  - uid: System.Func`3
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-3
+  - name: <
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - name: TArg1
+  - name: ','
+  - name: " "
+  - name: TView
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`3
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-3
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - name: TArg1
+  - name: ','
+  - name: " "
+  - name: TView
+  - name: )
+- uid: System.Func{System.IServiceProvider,{TArg1},{TArg2},{TView}}
+  commentId: T:System.Func{System.IServiceProvider,``2,``3,``0}
+  parent: System
+  definition: System.Func`4
+  href: https://learn.microsoft.com/dotnet/api/system.func-4
+  name: Func<IServiceProvider, TArg1, TArg2, TView>
+  nameWithType: Func<IServiceProvider, TArg1, TArg2, TView>
+  fullName: System.Func<System.IServiceProvider, TArg1, TArg2, TView>
+  nameWithType.vb: Func(Of IServiceProvider, TArg1, TArg2, TView)
+  fullName.vb: System.Func(Of System.IServiceProvider, TArg1, TArg2, TView)
+  name.vb: Func(Of IServiceProvider, TArg1, TArg2, TView)
+  spec.csharp:
+  - uid: System.Func`4
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-4
+  - name: <
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - name: TArg1
+  - name: ','
+  - name: " "
+  - name: TArg2
+  - name: ','
+  - name: " "
+  - name: TView
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`4
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-4
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - name: TArg1
+  - name: ','
+  - name: " "
+  - name: TArg2
+  - name: ','
+  - name: " "
+  - name: TView
+  - name: )
+- uid: System.Func`4
+  commentId: T:System.Func`4
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.func-4
+  name: Func<T1, T2, T3, TResult>
+  nameWithType: Func<T1, T2, T3, TResult>
+  fullName: System.Func<T1, T2, T3, TResult>
+  nameWithType.vb: Func(Of T1, T2, T3, TResult)
+  fullName.vb: System.Func(Of T1, T2, T3, TResult)
+  name.vb: Func(Of T1, T2, T3, TResult)
+  spec.csharp:
+  - uid: System.Func`4
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-4
+  - name: <
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: ','
+  - name: " "
+  - name: T3
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`4
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-4
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: ','
+  - name: " "
+  - name: T3
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Func{System.IServiceProvider,{TArg1},{TArg2},{TArg3},{TView}}
+  commentId: T:System.Func{System.IServiceProvider,``2,``3,``4,``0}
+  parent: System
+  definition: System.Func`5
+  href: https://learn.microsoft.com/dotnet/api/system.func-5
+  name: Func<IServiceProvider, TArg1, TArg2, TArg3, TView>
+  nameWithType: Func<IServiceProvider, TArg1, TArg2, TArg3, TView>
+  fullName: System.Func<System.IServiceProvider, TArg1, TArg2, TArg3, TView>
+  nameWithType.vb: Func(Of IServiceProvider, TArg1, TArg2, TArg3, TView)
+  fullName.vb: System.Func(Of System.IServiceProvider, TArg1, TArg2, TArg3, TView)
+  name.vb: Func(Of IServiceProvider, TArg1, TArg2, TArg3, TView)
+  spec.csharp:
+  - uid: System.Func`5
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-5
+  - name: <
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - name: TArg1
+  - name: ','
+  - name: " "
+  - name: TArg2
+  - name: ','
+  - name: " "
+  - name: TArg3
+  - name: ','
+  - name: " "
+  - name: TView
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`5
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-5
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - name: TArg1
+  - name: ','
+  - name: " "
+  - name: TArg2
+  - name: ','
+  - name: " "
+  - name: TArg3
+  - name: ','
+  - name: " "
+  - name: TView
+  - name: )
+- uid: System.Func`5
+  commentId: T:System.Func`5
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.func-5
+  name: Func<T1, T2, T3, T4, TResult>
+  nameWithType: Func<T1, T2, T3, T4, TResult>
+  fullName: System.Func<T1, T2, T3, T4, TResult>
+  nameWithType.vb: Func(Of T1, T2, T3, T4, TResult)
+  fullName.vb: System.Func(Of T1, T2, T3, T4, TResult)
+  name.vb: Func(Of T1, T2, T3, T4, TResult)
+  spec.csharp:
+  - uid: System.Func`5
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-5
+  - name: <
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: ','
+  - name: " "
+  - name: T3
+  - name: ','
+  - name: " "
+  - name: T4
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`5
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-5
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: ','
+  - name: " "
+  - name: T3
+  - name: ','
+  - name: " "
+  - name: T4
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Func{System.IServiceProvider,{TArg1},{TArg2},{TArg3},{TArg4},{TView}}
+  commentId: T:System.Func{System.IServiceProvider,``2,``3,``4,``5,``0}
+  parent: System
+  definition: System.Func`6
+  href: https://learn.microsoft.com/dotnet/api/system.func-6
+  name: Func<IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView>
+  nameWithType: Func<IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView>
+  fullName: System.Func<System.IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView>
+  nameWithType.vb: Func(Of IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView)
+  fullName.vb: System.Func(Of System.IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView)
+  name.vb: Func(Of IServiceProvider, TArg1, TArg2, TArg3, TArg4, TView)
+  spec.csharp:
+  - uid: System.Func`6
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-6
+  - name: <
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - name: TArg1
+  - name: ','
+  - name: " "
+  - name: TArg2
+  - name: ','
+  - name: " "
+  - name: TArg3
+  - name: ','
+  - name: " "
+  - name: TArg4
+  - name: ','
+  - name: " "
+  - name: TView
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`6
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-6
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - name: TArg1
+  - name: ','
+  - name: " "
+  - name: TArg2
+  - name: ','
+  - name: " "
+  - name: TArg3
+  - name: ','
+  - name: " "
+  - name: TArg4
+  - name: ','
+  - name: " "
+  - name: TView
+  - name: )
+- uid: System.Func`6
+  commentId: T:System.Func`6
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.func-6
+  name: Func<T1, T2, T3, T4, T5, TResult>
+  nameWithType: Func<T1, T2, T3, T4, T5, TResult>
+  fullName: System.Func<T1, T2, T3, T4, T5, TResult>
+  nameWithType.vb: Func(Of T1, T2, T3, T4, T5, TResult)
+  fullName.vb: System.Func(Of T1, T2, T3, T4, T5, TResult)
+  name.vb: Func(Of T1, T2, T3, T4, T5, TResult)
+  spec.csharp:
+  - uid: System.Func`6
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-6
+  - name: <
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: ','
+  - name: " "
+  - name: T3
+  - name: ','
+  - name: " "
+  - name: T4
+  - name: ','
+  - name: " "
+  - name: T5
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`6
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-6
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: ','
+  - name: " "
+  - name: T3
+  - name: ','
+  - name: " "
+  - name: T4
+  - name: ','
+  - name: " "
+  - name: T5
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Func{System.IServiceProvider,{TArg1},{TArg2},{TArg3},{TArg4},{TArg5},{TView}}
+  commentId: T:System.Func{System.IServiceProvider,``2,``3,``4,``5,``6,``0}
+  parent: System
+  definition: System.Func`7
+  href: https://learn.microsoft.com/dotnet/api/system.func-7
+  name: Func<IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView>
+  nameWithType: Func<IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView>
+  fullName: System.Func<System.IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView>
+  nameWithType.vb: Func(Of IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView)
+  fullName.vb: System.Func(Of System.IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView)
+  name.vb: Func(Of IServiceProvider, TArg1, TArg2, TArg3, TArg4, TArg5, TView)
+  spec.csharp:
+  - uid: System.Func`7
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-7
+  - name: <
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - name: TArg1
+  - name: ','
+  - name: " "
+  - name: TArg2
+  - name: ','
+  - name: " "
+  - name: TArg3
+  - name: ','
+  - name: " "
+  - name: TArg4
+  - name: ','
+  - name: " "
+  - name: TArg5
+  - name: ','
+  - name: " "
+  - name: TView
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`7
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-7
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - name: TArg1
+  - name: ','
+  - name: " "
+  - name: TArg2
+  - name: ','
+  - name: " "
+  - name: TArg3
+  - name: ','
+  - name: " "
+  - name: TArg4
+  - name: ','
+  - name: " "
+  - name: TArg5
+  - name: ','
+  - name: " "
+  - name: TView
+  - name: )
+- uid: System.Func`7
+  commentId: T:System.Func`7
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.func-7
+  name: Func<T1, T2, T3, T4, T5, T6, TResult>
+  nameWithType: Func<T1, T2, T3, T4, T5, T6, TResult>
+  fullName: System.Func<T1, T2, T3, T4, T5, T6, TResult>
+  nameWithType.vb: Func(Of T1, T2, T3, T4, T5, T6, TResult)
+  fullName.vb: System.Func(Of T1, T2, T3, T4, T5, T6, TResult)
+  name.vb: Func(Of T1, T2, T3, T4, T5, T6, TResult)
+  spec.csharp:
+  - uid: System.Func`7
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-7
+  - name: <
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: ','
+  - name: " "
+  - name: T3
+  - name: ','
+  - name: " "
+  - name: T4
+  - name: ','
+  - name: " "
+  - name: T5
+  - name: ','
+  - name: " "
+  - name: T6
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`7
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-7
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T1
+  - name: ','
+  - name: " "
+  - name: T2
+  - name: ','
+  - name: " "
+  - name: T3
+  - name: ','
+  - name: " "
+  - name: T4
+  - name: ','
+  - name: " "
+  - name: T5
+  - name: ','
+  - name: " "
+  - name: T6
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,{TView}}
+  commentId: T:System.Func{System.IServiceProvider,Routeables.Abstraction.IRouteableArgs,``0}
+  parent: System
+  definition: System.Func`3
+  href: https://learn.microsoft.com/dotnet/api/system.func-3
+  name: Func<IServiceProvider, IRouteableArgs, TView>
+  nameWithType: Func<IServiceProvider, IRouteableArgs, TView>
+  fullName: System.Func<System.IServiceProvider, Routeables.Abstraction.IRouteableArgs, TView>
+  nameWithType.vb: Func(Of IServiceProvider, IRouteableArgs, TView)
+  fullName.vb: System.Func(Of System.IServiceProvider, Routeables.Abstraction.IRouteableArgs, TView)
+  name.vb: Func(Of IServiceProvider, IRouteableArgs, TView)
+  spec.csharp:
+  - uid: System.Func`3
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-3
+  - name: <
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - name: TView
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`3
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-3
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: ','
+  - name: " "
+  - name: TView
+  - name: )
+- uid: Routeables.Abstraction.Extensions.GetViewModel(System.IServiceProvider,System.String,Routeables.Abstraction.IRouteableArgs)
+  commentId: M:Routeables.Abstraction.Extensions.GetViewModel(System.IServiceProvider,System.String,Routeables.Abstraction.IRouteableArgs)
+  isExternal: true
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetViewModel_System_IServiceProvider_System_String_Routeables_Abstraction_IRouteableArgs_
+  name: GetViewModel(IServiceProvider, string, IRouteableArgs)
+  nameWithType: Extensions.GetViewModel(IServiceProvider, string, IRouteableArgs)
+  fullName: Routeables.Abstraction.Extensions.GetViewModel(System.IServiceProvider, string, Routeables.Abstraction.IRouteableArgs)
+  nameWithType.vb: Extensions.GetViewModel(IServiceProvider, String, IRouteableArgs)
+  fullName.vb: Routeables.Abstraction.Extensions.GetViewModel(System.IServiceProvider, String, Routeables.Abstraction.IRouteableArgs)
+  name.vb: GetViewModel(IServiceProvider, String, IRouteableArgs)
+  spec.csharp:
+  - uid: Routeables.Abstraction.Extensions.GetViewModel(System.IServiceProvider,System.String,Routeables.Abstraction.IRouteableArgs)
+    name: GetViewModel
+    href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetViewModel_System_IServiceProvider_System_String_Routeables_Abstraction_IRouteableArgs_
+  - name: (
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.Extensions.GetViewModel(System.IServiceProvider,System.String,Routeables.Abstraction.IRouteableArgs)
+    name: GetViewModel
+    href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetViewModel_System_IServiceProvider_System_String_Routeables_Abstraction_IRouteableArgs_
+  - name: (
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: )
+- uid: System.InvalidCastException
+  commentId: T:System.InvalidCastException
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.invalidcastexception
+  name: InvalidCastException
+  nameWithType: InvalidCastException
+  fullName: System.InvalidCastException
+- uid: Routeables.Abstraction.Extensions.GetViewModel*
+  commentId: Overload:Routeables.Abstraction.Extensions.GetViewModel
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetViewModel__1_System_IServiceProvider_System_String_Routeables_Abstraction_IRouteableArgs_
+  name: GetViewModel
+  nameWithType: Extensions.GetViewModel
+  fullName: Routeables.Abstraction.Extensions.GetViewModel
+- uid: Routeables.Abstraction.Extensions.GetContextFor*
+  commentId: Overload:Routeables.Abstraction.Extensions.GetContextFor
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetContextFor__1_System_IServiceProvider_Routeables_Abstraction_IRouteableArgs_
+  name: GetContextFor
+  nameWithType: Extensions.GetContextFor
+  fullName: Routeables.Abstraction.Extensions.GetContextFor
+- uid: Routeables.Abstraction.IRouteableFor
+  commentId: T:Routeables.Abstraction.IRouteableFor
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.IRouteableFor.html
+  name: IRouteableFor
+  nameWithType: IRouteableFor
+  fullName: Routeables.Abstraction.IRouteableFor
+- uid: Routeables.Abstraction.Extensions.GetView(System.IServiceProvider,System.Object,Routeables.Abstraction.IRouteableArgs)
+  commentId: M:Routeables.Abstraction.Extensions.GetView(System.IServiceProvider,System.Object,Routeables.Abstraction.IRouteableArgs)
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  name: GetView(IServiceProvider, object, IRouteableArgs)
+  nameWithType: Extensions.GetView(IServiceProvider, object, IRouteableArgs)
+  fullName: Routeables.Abstraction.Extensions.GetView(System.IServiceProvider, object, Routeables.Abstraction.IRouteableArgs)
+  nameWithType.vb: Extensions.GetView(IServiceProvider, Object, IRouteableArgs)
+  fullName.vb: Routeables.Abstraction.Extensions.GetView(System.IServiceProvider, Object, Routeables.Abstraction.IRouteableArgs)
+  name.vb: GetView(IServiceProvider, Object, IRouteableArgs)
+  spec.csharp:
+  - uid: Routeables.Abstraction.Extensions.GetView(System.IServiceProvider,System.Object,Routeables.Abstraction.IRouteableArgs)
+    name: GetView
+  - name: (
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: )
+  spec.vb:
+  - uid: Routeables.Abstraction.Extensions.GetView(System.IServiceProvider,System.Object,Routeables.Abstraction.IRouteableArgs)
+    name: GetView
+  - name: (
+  - uid: System.IServiceProvider
+    name: IServiceProvider
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iserviceprovider
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: Routeables.Abstraction.IRouteableArgs
+    name: IRouteableArgs
+    href: Routeables.Abstraction.IRouteableArgs.html
+  - name: )
+- uid: Routeables.Abstraction.Extensions.GetContent*
+  commentId: Overload:Routeables.Abstraction.Extensions.GetContent
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetContent_System_IServiceProvider_System_Object_System_Object_
+  name: GetContent
+  nameWithType: Extensions.GetContent
+  fullName: Routeables.Abstraction.Extensions.GetContent
+- uid: Routeables.Abstraction.Extensions.GetModalFor*
+  commentId: Overload:Routeables.Abstraction.Extensions.GetModalFor
+  href: Routeables.Abstraction.Extensions.html#Routeables_Abstraction_Extensions_GetModalFor__2_System_IServiceProvider_Routeables_Abstraction_IRouteableArgs_System_String_
+  name: GetModalFor
+  nameWithType: Extensions.GetModalFor
+  fullName: Routeables.Abstraction.Extensions.GetModalFor
+- uid: Routeables.Abstraction.IRouteableModalFor{{TViewModel},{TResult}}
+  commentId: T:Routeables.Abstraction.IRouteableModalFor{``0,``1}
+  parent: Routeables.Abstraction
+  definition: Routeables.Abstraction.IRouteableModalFor`2
+  href: Routeables.Abstraction.IRouteableModalFor-2.html
+  name: IRouteableModalFor<TViewModel, TResult>
+  nameWithType: IRouteableModalFor<TViewModel, TResult>
+  fullName: Routeables.Abstraction.IRouteableModalFor<TViewModel, TResult>
+  nameWithType.vb: IRouteableModalFor(Of TViewModel, TResult)
+  fullName.vb: Routeables.Abstraction.IRouteableModalFor(Of TViewModel, TResult)
+  name.vb: IRouteableModalFor(Of TViewModel, TResult)
+  spec.csharp:
+  - uid: Routeables.Abstraction.IRouteableModalFor`2
+    name: IRouteableModalFor
+    href: Routeables.Abstraction.IRouteableModalFor-2.html
+  - name: <
+  - name: TViewModel
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: Routeables.Abstraction.IRouteableModalFor`2
+    name: IRouteableModalFor
+    href: Routeables.Abstraction.IRouteableModalFor-2.html
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TViewModel
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: )

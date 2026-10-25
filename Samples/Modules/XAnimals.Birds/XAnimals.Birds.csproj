@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The shared part of the Birds module: data, view models and the menu entry (AddBirdsModule). The views are not here: each
+       platform has its own project that references this one (XAnimals.Razor.Birds, XAnimals.Avalonia.Birds, XAnimals.Maui.Birds,
+       XAnimals.Uno.Birds), and the application references the one of its platform. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Routeables.Core\Routeables.Core.csproj" />
+    <ProjectReference Include="..\..\..\Routeables.Routing\Routeables.Routing.csproj" />
+    <ProjectReference Include="..\..\Bases\XAnimals.Common\XAnimals.Common.csproj" />
+  </ItemGroup>
+
+</Project>

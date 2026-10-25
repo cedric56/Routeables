@@ -1,0 +1,24 @@
+﻿
+/*.form {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 2px
+}
+
+.split {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    height: 93vh;
+}*/
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.columns {
+    display: grid;
+    grid-template-columns: auto auto auto
+}
+

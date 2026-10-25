@@ -1,0 +1,47 @@
+﻿<routeables:RouteableFor
+    x:Class="XAnimals.Wpf.Views.FeaturesView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="clr-namespace:Routeables.Wpf;assembly=Routeables.Wpf">
+    <ScrollViewer>
+        <StackPanel Margin="20,12,20,40" MaxWidth="640" HorizontalAlignment="Left">
+            <TextBlock Text="Features" FontSize="28" FontWeight="SemiBold" />
+            <TextBlock Text="What the framework does around the route changes." TextWrapping="Wrap" Opacity="0.7" Margin="0,6,0,0" />
+
+            <TextBlock Text="Guard and return" Margin="0,18,0,6" FontWeight="SemiBold" Opacity="0.7" />
+            <TextBlock Text="The Members page is for members. Signed out, opening it brings you here; sign in, then open it." TextWrapping="Wrap" />
+            <WrapPanel Margin="0,6,0,0">
+                <Button Margin="0,0,8,8" Padding="12,4" Content="Sign in" Command="{Binding SignInCommand}" IsEnabled="{Binding IsSignedOut}" />
+                <Button Margin="0,0,8,8" Padding="12,4" Content="Sign out" Command="{Binding SignOutCommand}" IsEnabled="{Binding IsSignedIn}" />
+                <Button Margin="0,0,8,8" Padding="12,4" Content="Open Members" Command="{Binding OpenMembersCommand}" />
+            </WrapPanel>
+
+            <TextBlock Text="Link" Margin="0,18,0,6" FontWeight="SemiBold" Opacity="0.7" />
+            <TextBlock Text="An address from outside, followed through the router. The same address can be given on the command line." TextWrapping="Wrap" />
+            <WrapPanel Margin="0,6,0,0">
+                <Button Margin="0,0,8,8" Padding="12,4" Content="Open xanimals://dogs/Rex" Command="{Binding OpenLinkCommand}" />
+            </WrapPanel>
+
+            <TextBlock Visibility="{Binding IsMobile, Converter={StaticResource BoolToVisibility}}" Text="Saved values" Margin="0,18,0,6" FontWeight="SemiBold" Opacity="0.7" />
+            <TextBlock Visibility="{Binding IsMobile, Converter={StaticResource BoolToVisibility}}" Text="Type a note: it is kept with the page when the application saves its pages." TextWrapping="Wrap" />
+            <TextBox Visibility="{Binding IsMobile, Converter={StaticResource BoolToVisibility}}" Margin="0,6,0,0" Text="{Binding Draft, UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock Text="Lock" Margin="0,18,0,6" FontWeight="SemiBold" Opacity="0.7" />
+            <TextBlock Text="The page publishes a lock message; the menu entries are disabled until it publishes the unlock one." TextWrapping="Wrap" />
+            <WrapPanel>
+                <Button Margin="0,0,8,8" Padding="12,4" Content="Lock" Command="{Binding LockCommand}" IsEnabled="{Binding CanLock}" />
+                <Button Margin="0,0,8,8" Padding="12,4" Content="Unlock" Command="{Binding UnlockCommand}" IsEnabled="{Binding CanUnlock}" />
+                <Button Margin="0,0,8,8" Padding="12,4" Content="Lock for 5 seconds" Command="{Binding LockForCommand}" IsEnabled="{Binding CanLock}" />
+            </WrapPanel>
+            <TextBlock Text="{Binding LockStatus}" TextWrapping="Wrap" />
+
+            <TextBlock Text="Measures" Margin="0,18,0,6" FontWeight="SemiBold" Opacity="0.7" />
+            <WrapPanel>
+                <Button Margin="0,0,8,8" Padding="12,4" Content="Show the last route changes" Command="{Binding RefreshCommand}" />
+            </WrapPanel>
+            <TextBlock Text="{Binding Measures}" TextWrapping="Wrap" />
+
+            <TextBlock Text="{Binding Status}" Margin="0,18,0,0" TextWrapping="Wrap" />
+        </StackPanel>
+    </ScrollViewer>
+</routeables:RouteableFor>

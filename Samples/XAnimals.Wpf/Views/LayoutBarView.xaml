@@ -1,0 +1,16 @@
+<routeables:RouteableFor
+    x:Class="XAnimals.Wpf.Views.LayoutBarView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="clr-namespace:Routeables.Wpf;assembly=Routeables.Wpf">
+    <!-- One view for the header and the footer: the strong one is the header. -->
+    <Border Background="{Binding IsStrong, Converter={StaticResource StrongBarBrush}}" Padding="14,8">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Glyph}" FontSize="28" VerticalAlignment="Center" Margin="0,0,12,0" />
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="{Binding Title}" TextWrapping="Wrap" FontSize="17" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding Detail}" TextWrapping="Wrap" FontSize="12" Opacity="0.85" />
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</routeables:RouteableFor>

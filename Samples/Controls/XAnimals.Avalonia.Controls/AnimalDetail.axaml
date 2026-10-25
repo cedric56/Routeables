@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:XAnimals.Common;assembly=XAnimals.Common"
+             xmlns:models="using:XAminals.Models"
+             xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             x:Class="XAnimals.Avalonia.AnimalDetail"
+             x:DataType="vm:AnimalDetailViewModel"
+             Background="{DynamicResource AnPaper}">
+
+    <ScrollViewer>
+        <!-- The animal is the DataContext of the page: a detail that sets it in InitializeAsync has none when the view is first bound,
+             and a path through a null Animal would log a binding error for each property. -->
+        <StackPanel DataContext="{Binding Animal}" x:DataType="models:Animal"
+                    Margin="20,28,20,40" Spacing="6" MaxWidth="640" HorizontalAlignment="Center">
+            <Border x:Name="Hero" Classes="arch" CornerRadius="130,130,14,14">
+                <Image Stretch="UniformToFill"
+                       ail:ImageLoader.Source="{Binding PhotoUrl}" />
+            </Border>
+            <StackPanel Classes="settle" Spacing="6" Margin="0,14,0,0">
+                <TextBlock Text="{Binding Name}"
+                           FontFamily="{DynamicResource AnDisplayFont}"
+                           FontSize="36" FontWeight="SemiBold"
+                           Foreground="{DynamicResource AnInk}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Location}"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource AnSaffron}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Details}"
+                           Margin="0,12,0,18"
+                           LineHeight="24"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource AnInk}" />
+                <Button Classes="an"
+                        Content="Back"
+                        HorizontalAlignment="Center"
+                        Click="Button_Click" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

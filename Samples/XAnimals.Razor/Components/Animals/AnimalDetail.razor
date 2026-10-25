@@ -1,0 +1,25 @@
+@using XAnimals.Common
+
+@if (ViewModel.Animal is null)
+{
+    <div class="monkey-detail">
+        <p class="body-text">This animal was not found.</p>
+        <button class="back-btn" @onclick="ViewModel.GoBackAsync">Back</button>
+    </div>
+}
+else
+{
+    <div class="monkey-detail">
+        <h1 class="title">@ViewModel.Animal.Name</h1>
+        <p class="location">@ViewModel.Animal.Location</p>
+        <img src="@ViewModel.Animal.PhotoUrl" onerror="if(this.dataset.retried){this.onerror=null;this.src='_content/XAnimals.Razor/placeholder.svg'}else{this.dataset.retried=1;this.src='@ViewModel.Animal.ImageUrl'}" alt="@ViewModel.Animal.Name" width="260" height="330" />
+        <p class="body-text">@ViewModel.Animal.Details</p>
+        <button class="back-btn" @onclick="ViewModel.GoBackAsync">Back</button>
+    </div>
+}
+
+@code
+{
+    [Parameter, EditorRequired]
+    public AnimalDetailViewModel ViewModel { get; set; } = default!;
+}

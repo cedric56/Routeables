@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The Birds module for the Avalonia hosts (desktop, Android, iOS, browser): its two views, which draw with the controls of
+       XAnimals.Avalonia.Controls. The shared part (data, view models, the menu entry) is XAnimals.Birds. The head references this
+       project: its AddGeneratedRoutes() finds the views in the assembly. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
+    <ProjectReference Include="..\..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+    <ProjectReference Include="..\..\Controls\XAnimals.Avalonia.Controls\XAnimals.Avalonia.Controls.csproj" />
+    <ProjectReference Include="..\XAnimals.Birds\XAnimals.Birds.csproj" />
+  </ItemGroup>
+
+</Project>

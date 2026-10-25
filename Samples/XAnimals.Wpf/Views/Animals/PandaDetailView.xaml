@@ -1,0 +1,8 @@
+<routeables:RouteableFor
+    x:Class="XAnimals.Wpf.Views.PandaDetailView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="clr-namespace:Routeables.Wpf;assembly=Routeables.Wpf"
+    xmlns:local="clr-namespace:XAnimals.Wpf.Views;assembly=XAnimals.Wpf.Controls">
+    <local:AnimalDetail />
+</routeables:RouteableFor>

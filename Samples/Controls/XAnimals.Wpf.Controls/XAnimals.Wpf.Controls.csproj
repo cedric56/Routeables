@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The controls the animal pages of the WPF sample are made of (the list, the detail). They draw with the resources of the application (PlainCardBrush), found when they are shown. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Routeables.Wpf\Routeables.Wpf.csproj" />
+    <ProjectReference Include="..\..\Bases\XAnimals.Common\XAnimals.Common.csproj" />
+    <ProjectReference Include="..\..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

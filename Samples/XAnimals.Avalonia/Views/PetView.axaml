@@ -1,0 +1,21 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:XAnimals.ViewModels"
+             xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             x:Class="XAnimals.Avalonia.PetView"
+             x:DataType="vm:PetViewModel">
+
+    <!-- The card of one adopted animal; the adoption zone puts them side by side. -->
+    <Border Background="{DynamicResource AnLichen}" CornerRadius="16" Padding="14" VerticalAlignment="Top">
+        <StackPanel Spacing="6" HorizontalAlignment="Center">
+            <Border Width="150" Height="190" CornerRadius="75,75,12,12" ClipToBounds="True" Background="{DynamicResource AnPaper}">
+                <Image Stretch="UniformToFill" ail:ImageLoader.Source="{Binding Animal.PhotoUrl}" />
+            </Border>
+            <TextBlock Text="{Binding Name}" FontFamily="{DynamicResource AnDisplayFont}" FontSize="22" FontWeight="SemiBold"
+                       Foreground="{DynamicResource AnInk}" HorizontalAlignment="Center" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding Location}" FontWeight="SemiBold" Foreground="{DynamicResource AnSaffron}"
+                       HorizontalAlignment="Center" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding Glyph}" FontSize="22" HorizontalAlignment="Center" />
+        </StackPanel>
+    </Border>
+</UserControl>

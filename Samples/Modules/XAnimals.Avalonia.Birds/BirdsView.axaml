@@ -1,0 +1,15 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:XAnimals.Avalonia"
+             xmlns:birds="clr-namespace:XAnimals.Birds;assembly=XAnimals.Birds"
+             x:Class="XAnimals.Avalonia.BirdsView"
+             x:DataType="birds:BirdsViewModel">
+    <DockPanel>
+        <!-- Loads a module while the application runs: its entry appears in the menu without restarting. -->
+        <Button DockPanel.Dock="Top" Classes="an module"
+                IsEnabled="{Binding CanLoadMoreBirds}"
+                Click="OnLoadModule"
+                Content="Load Module" />
+        <local:AnimalList NoResultsText="No birds found." />
+    </DockPanel>
+</UserControl>

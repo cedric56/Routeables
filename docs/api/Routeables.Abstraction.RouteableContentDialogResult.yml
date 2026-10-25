@@ -1,0 +1,142 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.RouteableContentDialogResult
+  commentId: T:Routeables.Abstraction.RouteableContentDialogResult
+  id: RouteableContentDialogResult
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.RouteableContentDialogResult.None
+  - Routeables.Abstraction.RouteableContentDialogResult.Primary
+  - Routeables.Abstraction.RouteableContentDialogResult.Secondary
+  langs:
+  - csharp
+  - vb
+  name: RouteableContentDialogResult
+  nameWithType: RouteableContentDialogResult
+  fullName: Routeables.Abstraction.RouteableContentDialogResult
+  type: Enum
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableContentDialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: RouteableContentDialogResult
+    path: ../Routeables.Abstraction/Services/IRouteableContentDialogService.cs
+    startLine: 159
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Specifies identifiers to indicate the return value of a ContentDialog
+  example: []
+  syntax:
+    content: public enum RouteableContentDialogResult
+    content.vb: Public Enum RouteableContentDialogResult
+- uid: Routeables.Abstraction.RouteableContentDialogResult.None
+  commentId: F:Routeables.Abstraction.RouteableContentDialogResult.None
+  id: None
+  parent: Routeables.Abstraction.RouteableContentDialogResult
+  langs:
+  - csharp
+  - vb
+  name: None
+  nameWithType: RouteableContentDialogResult.None
+  fullName: Routeables.Abstraction.RouteableContentDialogResult.None
+  type: Field
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableContentDialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: None
+    path: ../Routeables.Abstraction/Services/IRouteableContentDialogService.cs
+    startLine: 164
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: No button was tapped.
+  example: []
+  syntax:
+    content: None = 0
+    return:
+      type: Routeables.Abstraction.RouteableContentDialogResult
+- uid: Routeables.Abstraction.RouteableContentDialogResult.Primary
+  commentId: F:Routeables.Abstraction.RouteableContentDialogResult.Primary
+  id: Primary
+  parent: Routeables.Abstraction.RouteableContentDialogResult
+  langs:
+  - csharp
+  - vb
+  name: Primary
+  nameWithType: RouteableContentDialogResult.Primary
+  fullName: Routeables.Abstraction.RouteableContentDialogResult.Primary
+  type: Field
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableContentDialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Primary
+    path: ../Routeables.Abstraction/Services/IRouteableContentDialogService.cs
+    startLine: 169
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The primary button was tapped by the user.
+  example: []
+  syntax:
+    content: Primary = 1
+    return:
+      type: Routeables.Abstraction.RouteableContentDialogResult
+- uid: Routeables.Abstraction.RouteableContentDialogResult.Secondary
+  commentId: F:Routeables.Abstraction.RouteableContentDialogResult.Secondary
+  id: Secondary
+  parent: Routeables.Abstraction.RouteableContentDialogResult
+  langs:
+  - csharp
+  - vb
+  name: Secondary
+  nameWithType: RouteableContentDialogResult.Secondary
+  fullName: Routeables.Abstraction.RouteableContentDialogResult.Secondary
+  type: Field
+  source:
+    remote:
+      path: Routeables.Abstraction/Services/IRouteableContentDialogService.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Secondary
+    path: ../Routeables.Abstraction/Services/IRouteableContentDialogService.cs
+    startLine: 174
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The secondary button was tapped by the user.
+  example: []
+  syntax:
+    content: Secondary = 2
+    return:
+      type: Routeables.Abstraction.RouteableContentDialogResult
+references:
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: Routeables.Abstraction.RouteableContentDialogResult
+  commentId: T:Routeables.Abstraction.RouteableContentDialogResult
+  parent: Routeables.Abstraction
+  href: Routeables.Abstraction.RouteableContentDialogResult.html
+  name: RouteableContentDialogResult
+  nameWithType: RouteableContentDialogResult
+  fullName: Routeables.Abstraction.RouteableContentDialogResult

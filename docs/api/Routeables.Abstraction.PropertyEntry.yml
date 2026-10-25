@@ -1,0 +1,571 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Abstraction.PropertyEntry
+  commentId: T:Routeables.Abstraction.PropertyEntry
+  id: PropertyEntry
+  parent: Routeables.Abstraction
+  children:
+  - Routeables.Abstraction.PropertyEntry.#ctor(System.Type,System.Func{System.Attribute,System.String})
+  - Routeables.Abstraction.PropertyEntry.Type
+  - Routeables.Abstraction.PropertyEntry.getName
+  langs:
+  - csharp
+  - vb
+  name: PropertyEntry
+  nameWithType: PropertyEntry
+  fullName: Routeables.Abstraction.PropertyEntry
+  type: Class
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Entries.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: PropertyEntry
+    path: ../Routeables.Abstraction/Routing/Entries.cs
+    startLine: 15
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Represents a property entry configuration containing a target type and an optional function to resolve its name from an attribute.
+  example: []
+  syntax:
+    content: 'public record PropertyEntry : IEquatable<PropertyEntry>'
+    content.vb: Public Class PropertyEntry Implements IEquatable(Of PropertyEntry)
+  inheritance:
+  - System.Object
+  implements:
+  - System.IEquatable{Routeables.Abstraction.PropertyEntry}
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: Routeables.Abstraction.PropertyEntry.#ctor(System.Type,System.Func{System.Attribute,System.String})
+  commentId: M:Routeables.Abstraction.PropertyEntry.#ctor(System.Type,System.Func{System.Attribute,System.String})
+  id: '#ctor(System.Type,System.Func{System.Attribute,System.String})'
+  parent: Routeables.Abstraction.PropertyEntry
+  langs:
+  - csharp
+  - vb
+  name: PropertyEntry(Type, Func<Attribute, string>?)
+  nameWithType: PropertyEntry.PropertyEntry(Type, Func<Attribute, string>?)
+  fullName: Routeables.Abstraction.PropertyEntry.PropertyEntry(System.Type, System.Func<System.Attribute, string>?)
+  type: Constructor
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Entries.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: .ctor
+    path: ../Routeables.Abstraction/Routing/Entries.cs
+    startLine: 15
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: Represents a property entry configuration containing a target type and an optional function to resolve its name from an attribute.
+  example: []
+  syntax:
+    content: public PropertyEntry(Type Type, Func<Attribute, string>? getName = null)
+    parameters:
+    - id: Type
+      type: System.Type
+      description: The target <xref href="System.Type" data-throw-if-not-resolved="false"></xref> of the property or attribute.
+    - id: getName
+      type: System.Func{System.Attribute,System.String}
+      description: An optional function to extract or generate a name string from the attribute instance.
+    content.vb: Public Sub New(Type As Type, getName As Func(Of Attribute, String) = Nothing)
+  overload: Routeables.Abstraction.PropertyEntry.#ctor*
+  nameWithType.vb: PropertyEntry.New(Type, Func(Of Attribute, String))
+  fullName.vb: Routeables.Abstraction.PropertyEntry.New(System.Type, System.Func(Of System.Attribute, String))
+  name.vb: New(Type, Func(Of Attribute, String))
+- uid: Routeables.Abstraction.PropertyEntry.Type
+  commentId: P:Routeables.Abstraction.PropertyEntry.Type
+  id: Type
+  parent: Routeables.Abstraction.PropertyEntry
+  langs:
+  - csharp
+  - vb
+  name: Type
+  nameWithType: PropertyEntry.Type
+  fullName: Routeables.Abstraction.PropertyEntry.Type
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Entries.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: Type
+    path: ../Routeables.Abstraction/Routing/Entries.cs
+    startLine: 15
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: The target <xref href="System.Type" data-throw-if-not-resolved="false"></xref> of the property or attribute.
+  example: []
+  syntax:
+    content: public Type Type { get; init; }
+    parameters: []
+    return:
+      type: System.Type
+    content.vb: Public Property Type As Type
+  overload: Routeables.Abstraction.PropertyEntry.Type*
+- uid: Routeables.Abstraction.PropertyEntry.getName
+  commentId: P:Routeables.Abstraction.PropertyEntry.getName
+  id: getName
+  parent: Routeables.Abstraction.PropertyEntry
+  langs:
+  - csharp
+  - vb
+  name: getName
+  nameWithType: PropertyEntry.getName
+  fullName: Routeables.Abstraction.PropertyEntry.getName
+  type: Property
+  source:
+    remote:
+      path: Routeables.Abstraction/Routing/Entries.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: getName
+    path: ../Routeables.Abstraction/Routing/Entries.cs
+    startLine: 15
+  assemblies:
+  - Routeables.Abstraction
+  namespace: Routeables.Abstraction
+  summary: An optional function to extract or generate a name string from the attribute instance.
+  example: []
+  syntax:
+    content: public Func<Attribute, string>? getName { get; init; }
+    parameters: []
+    return:
+      type: System.Func{System.Attribute,System.String}
+    content.vb: Public Property getName As Func(Of Attribute, String)
+  overload: Routeables.Abstraction.PropertyEntry.getName*
+references:
+- uid: System.Type
+  commentId: T:System.Type
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.type
+  name: Type
+  nameWithType: Type
+  fullName: System.Type
+- uid: Routeables.Abstraction
+  commentId: N:Routeables.Abstraction
+  name: Routeables.Abstraction
+  nameWithType: Routeables.Abstraction
+  fullName: Routeables.Abstraction
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Abstraction
+    name: Abstraction
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.IEquatable{Routeables.Abstraction.PropertyEntry}
+  commentId: T:System.IEquatable{Routeables.Abstraction.PropertyEntry}
+  parent: System
+  definition: System.IEquatable`1
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<PropertyEntry>
+  nameWithType: IEquatable<PropertyEntry>
+  fullName: System.IEquatable<Routeables.Abstraction.PropertyEntry>
+  nameWithType.vb: IEquatable(Of PropertyEntry)
+  fullName.vb: System.IEquatable(Of Routeables.Abstraction.PropertyEntry)
+  name.vb: IEquatable(Of PropertyEntry)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - uid: Routeables.Abstraction.PropertyEntry
+    name: PropertyEntry
+    href: Routeables.Abstraction.PropertyEntry.html
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Abstraction.PropertyEntry
+    name: PropertyEntry
+    href: Routeables.Abstraction.PropertyEntry.html
+  - name: )
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.IEquatable`1
+  commentId: T:System.IEquatable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<T>
+  nameWithType: IEquatable<T>
+  fullName: System.IEquatable<T>
+  nameWithType.vb: IEquatable(Of T)
+  fullName.vb: System.IEquatable(Of T)
+  name.vb: IEquatable(Of T)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: Routeables.Abstraction.PropertyEntry.#ctor*
+  commentId: Overload:Routeables.Abstraction.PropertyEntry.#ctor
+  href: Routeables.Abstraction.PropertyEntry.html#Routeables_Abstraction_PropertyEntry__ctor_System_Type_System_Func_System_Attribute_System_String__
+  name: PropertyEntry
+  nameWithType: PropertyEntry.PropertyEntry
+  fullName: Routeables.Abstraction.PropertyEntry.PropertyEntry
+  nameWithType.vb: PropertyEntry.New
+  fullName.vb: Routeables.Abstraction.PropertyEntry.New
+  name.vb: New
+- uid: System.Func{System.Attribute,System.String}
+  commentId: T:System.Func{System.Attribute,System.String}
+  parent: System
+  definition: System.Func`2
+  href: https://learn.microsoft.com/dotnet/api/system.func-2
+  name: Func<Attribute, string>
+  nameWithType: Func<Attribute, string>
+  fullName: System.Func<System.Attribute, string>
+  nameWithType.vb: Func(Of Attribute, String)
+  fullName.vb: System.Func(Of System.Attribute, String)
+  name.vb: Func(Of Attribute, String)
+  spec.csharp:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: <
+  - uid: System.Attribute
+    name: Attribute
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.attribute
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: string
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Attribute
+    name: Attribute
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.attribute
+  - name: ','
+  - name: " "
+  - uid: System.String
+    name: String
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.string
+  - name: )
+- uid: System.Func`2
+  commentId: T:System.Func`2
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.func-2
+  name: Func<T, TResult>
+  nameWithType: Func<T, TResult>
+  fullName: System.Func<T, TResult>
+  nameWithType.vb: Func(Of T, TResult)
+  fullName.vb: System.Func(Of T, TResult)
+  name.vb: Func(Of T, TResult)
+  spec.csharp:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: <
+  - name: T
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: '>'
+  spec.vb:
+  - uid: System.Func`2
+    name: Func
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.func-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: ','
+  - name: " "
+  - name: TResult
+  - name: )
+- uid: Routeables.Abstraction.PropertyEntry.Type*
+  commentId: Overload:Routeables.Abstraction.PropertyEntry.Type
+  href: Routeables.Abstraction.PropertyEntry.html#Routeables_Abstraction_PropertyEntry_Type
+  name: Type
+  nameWithType: PropertyEntry.Type
+  fullName: Routeables.Abstraction.PropertyEntry.Type
+- uid: Routeables.Abstraction.PropertyEntry.getName*
+  commentId: Overload:Routeables.Abstraction.PropertyEntry.getName
+  href: Routeables.Abstraction.PropertyEntry.html#Routeables_Abstraction_PropertyEntry_getName
+  name: getName
+  nameWithType: PropertyEntry.getName
+  fullName: Routeables.Abstraction.PropertyEntry.getName

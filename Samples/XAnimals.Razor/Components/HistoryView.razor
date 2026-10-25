@@ -1,0 +1,70 @@
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@inherits RouteableFor<HistoryView, HistoryViewModel>
+
+<PageTitle>History</PageTitle>
+
+<div class="about-page">    
+    <section class="about-group">
+        <div class="nav-track" role="list">
+            @foreach (var item in ViewModel.Entries)
+            {
+                <div class="nav-card @(item.IsCurrent ? "current" : item.IsAhead ? "ahead" : "behind")" role="listitem">
+                    <span class="nav-number">@item.Number</span>
+                    <span class="nav-badge">@item.Badge</span>
+                    <span class="nav-glyph">@item.Glyph</span>
+                    <span class="nav-name">@item.Name</span>
+                    <span class="nav-caption">@item.Caption</span>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section class="about-group">
+        <div class="nav-frame" inert>
+            @* The zone of the "history" region: nothing assigns the view, the component shows what the router of the region displays. *@
+            <RouteableRegion Region="history" />
+        </div>
+    </section>
+
+    <section class="about-group">
+        <div class="actions">
+            <button @onclick="ViewModel.PushAsync">＋ Push</button>
+            <button @onclick="ViewModel.BackAsync" disabled="@(!ViewModel.CanGoBack)">◀ Back</button>
+            <button @onclick="ViewModel.ForwardAsync" disabled="@(!ViewModel.CanGoForward)">Forward ▶</button>
+            <button @onclick="ViewModel.PopAsync" disabled="@(!ViewModel.CanGoBack)">↩ Pop</button>
+        </div>
+    </section>
+
+    <section class="about-group">
+        <h2>CanLeaveAsync</h2>
+        <label class="nav-check">
+            <input type="checkbox" checked="@ViewModel.BlockLeaving" @onchange="Toggle" />
+            <span>@ViewModel.GuardText</span>
+        </label>
+    </section>
+
+    <p class="about-result nav-status @(ViewModel.IsRefused ? "refused" : "")" role="status">@(ViewModel.IsRefused ? "🚫 " : "")@ViewModel.Status</p>
+</div>
+
+@code {
+    protected override void OnSubscribe()
+    {
+        ViewModel.PropertyChanged += OnViewModelChanged;
+        base.OnSubscribe();
+    }
+
+    private void Toggle() => ViewModel.BlockLeaving = !ViewModel.BlockLeaving;
+
+    private async void OnViewModelChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnUnsubscribe()
+    {
+        ViewModel.PropertyChanged -= OnViewModelChanged;
+        base.OnUnsubscribe();
+    }
+}

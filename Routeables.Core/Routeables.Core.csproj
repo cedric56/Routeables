@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAotCompatible>true</IsAotCompatible>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!--
+      This project is the "Routeables" package: it carries Abstraction, Routing, Core, Regions, Services, Locking, Segments and the source
+      generator. The files and the dependencies of the package are those of Routeables.nuspec (a project that references this one
+      depends on "Routeables"). The projects below are built before the pack, so that their assemblies exist.
+    -->
+    <PackageId>Routeables</PackageId>
+    <NuspecFile>Routeables.nuspec</NuspecFile>
+    <NuspecProperties>version=$(Version);configuration=$(Configuration)</NuspecProperties>
+    <!-- The symbols are the .pdb files listed in the nuspec. -->
+    <IncludeSymbols>false</IncludeSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Test" />
+    <InternalsVisibleTo Include="Routeables.Razor" />
+    <InternalsVisibleTo Include="Routeables.Maui" />
+    <InternalsVisibleTo Include="Routeables.Avalonia" />
+    <InternalsVisibleTo Include="Routeables.Uno" />
+    <InternalsVisibleTo Include="Routeables.Wpf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Community\**" />
+    <Compile Remove="Reactive\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Routing\Routeables.Routing.csproj" />
+    <ProjectReference Include="..\Routeables.Regions\Routeables.Regions.csproj" />
+    <ProjectReference Include="..\Routeables.Services\Routeables.Services.csproj" />
+    <ProjectReference Include="..\Routeables.Locking\Routeables.Locking.csproj" />
+    <ProjectReference Include="..\Routeables.Segments\Routeables.Segments.csproj" />
+    <!-- Only so that the generator is built before the pack: nothing of it is referenced. The nuspec puts it in analyzers/. -->
+    <ProjectReference Include="..\Routeables.Generated\Routeables.Generated.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>

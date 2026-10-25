@@ -1,0 +1,13 @@
+﻿@page "/"
+@page "/{*path}"
+
+@*
+    Not meant to be seen: this page only gives the Blazor router a route for "/" and for every other address, so that it does not
+    show NotFound. What the user sees is drawn by the layout (MainLayout) from the Routeables router; the layout does not render this body.
+    Do not remove it unless the application has its own page with these two routes.
+*@
+
+@code {
+    [Parameter]
+    public string? Path { get; set; }
+}

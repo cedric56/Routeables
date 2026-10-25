@@ -1,0 +1,14 @@
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="using:Routeables.Uno"
+    x:Class="XAnimals.Uno.Views.TabsView">
+    <!-- A NavigationView written here: each item names its route (RouteableItem.Route), AttachRouteables (see the code) lets the router build the page. -->
+    <NavigationView x:Name="Navigation" PaneDisplayMode="Top" IsSettingsVisible="False" IsBackButtonVisible="Collapsed">
+        <NavigationView.MenuItems>
+            <NavigationViewItem Content="Cats" routeables:RouteableItem.Route="cats" />
+            <NavigationViewItem Content="Dogs" routeables:RouteableItem.Route="dogs" />
+            <NavigationViewItem Content="Monkeys" routeables:RouteableItem.Route="monkeys" />
+        </NavigationView.MenuItems>
+    </NavigationView>
+</routeables:RouteableFor>

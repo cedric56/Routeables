@@ -1,0 +1,17 @@
+﻿<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="using:Routeables.Uno"
+    x:Class="XAnimals.Uno.Views.PetView">
+    <!-- The card of one adopted animal; the adoption zone puts them side by side. -->
+    <Border Background="{StaticResource PlainCardBrush}" CornerRadius="16" Padding="14" VerticalAlignment="Top">
+        <StackPanel Spacing="6" HorizontalAlignment="Center">
+            <Border Width="150" Height="190" CornerRadius="75,75,12,12">
+                <Image Stretch="UniformToFill" Source="{Binding Animal.PhotoUrl, Converter={StaticResource AnimalImage}}" />
+            </Border>
+            <TextBlock Text="{Binding Name}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding Location}" FontWeight="SemiBold" HorizontalAlignment="Center" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding Glyph}" FontSize="22" HorizontalAlignment="Center" />
+        </StackPanel>
+    </Border>
+</routeables:RouteableFor>

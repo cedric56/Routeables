@@ -1,0 +1,129 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Maui.IDialogWindowContext
+  commentId: T:Routeables.Maui.IDialogWindowContext
+  id: IDialogWindowContext
+  parent: Routeables.Maui
+  children:
+  - Routeables.Maui.IDialogWindowContext.CurrentPage
+  langs:
+  - csharp
+  - vb
+  name: IDialogWindowContext
+  nameWithType: IDialogWindowContext
+  fullName: Routeables.Maui.IDialogWindowContext
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Maui/Interfaces/IDialogWindowContext.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: IDialogWindowContext
+    path: ../Routeables.Maui/Interfaces/IDialogWindowContext.cs
+    startLine: 2
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  syntax:
+    content: public interface IDialogWindowContext
+    content.vb: Public Interface IDialogWindowContext
+  derivedClasses:
+  - Routeables.Maui.DialogWindowContext
+- uid: Routeables.Maui.IDialogWindowContext.CurrentPage
+  commentId: P:Routeables.Maui.IDialogWindowContext.CurrentPage
+  id: CurrentPage
+  parent: Routeables.Maui.IDialogWindowContext
+  langs:
+  - csharp
+  - vb
+  name: CurrentPage
+  nameWithType: IDialogWindowContext.CurrentPage
+  fullName: Routeables.Maui.IDialogWindowContext.CurrentPage
+  type: Property
+  source:
+    remote:
+      path: Routeables.Maui/Interfaces/IDialogWindowContext.cs
+      branch: master
+      repo: https://github.com/cedric56/Routables.git
+    id: CurrentPage
+    path: ../Routeables.Maui/Interfaces/IDialogWindowContext.cs
+    startLine: 4
+  assemblies:
+  - Routeables.Maui
+  namespace: Routeables.Maui
+  syntax:
+    content: Page? CurrentPage { get; }
+    parameters: []
+    return:
+      type: Microsoft.Maui.Controls.Page
+    content.vb: ReadOnly Property CurrentPage As Page
+  overload: Routeables.Maui.IDialogWindowContext.CurrentPage*
+references:
+- uid: Routeables.Maui
+  commentId: N:Routeables.Maui
+  name: Routeables.Maui
+  nameWithType: Routeables.Maui
+  fullName: Routeables.Maui
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Maui
+    name: Maui
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Maui
+    name: Maui
+- uid: Routeables.Maui.IDialogWindowContext.CurrentPage*
+  commentId: Overload:Routeables.Maui.IDialogWindowContext.CurrentPage
+  href: Routeables.Maui.IDialogWindowContext.html#Routeables_Maui_IDialogWindowContext_CurrentPage
+  name: CurrentPage
+  nameWithType: IDialogWindowContext.CurrentPage
+  fullName: Routeables.Maui.IDialogWindowContext.CurrentPage
+- uid: Microsoft.Maui.Controls.Page
+  commentId: T:Microsoft.Maui.Controls.Page
+  parent: Microsoft.Maui.Controls
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.page
+  name: Page
+  nameWithType: Page
+  fullName: Microsoft.Maui.Controls.Page
+- uid: Microsoft.Maui.Controls
+  commentId: N:Microsoft.Maui.Controls
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Maui.Controls
+  nameWithType: Microsoft.Maui.Controls
+  fullName: Microsoft.Maui.Controls
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Maui
+    name: Maui
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui
+  - name: .
+  - uid: Microsoft.Maui.Controls
+    name: Controls
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.controls
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Maui
+    name: Maui
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui
+  - name: .
+  - uid: Microsoft.Maui.Controls
+    name: Controls
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.controls

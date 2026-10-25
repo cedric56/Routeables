@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
+    xmlns:vm="clr-namespace:XAnimals.ViewModels;assembly=XAnimals.ViewModels"
+    x:Class="XAnimals.Maui.Views.AboutView"
+    x:DataType="vm:AboutViewModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource Paper}, Dark={StaticResource OffBlack}}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,32,20,40" Spacing="6" MaximumWidthRequest="640">
+            <Image Source="logo" HeightRequest="120" WidthRequest="120" HorizontalOptions="Start" Margin="0,0,0,12" SemanticProperties.Description="Routeables logo" />
+            <HorizontalStackLayout Spacing="6">
+                <Label Text="Routeables Animals" FontFamily="Lora" FontSize="28" />
+                <Label Text="1.0" FontSize="16" VerticalOptions="End" TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
+            </HorizontalStackLayout>
+
+            <Label Text="Links" FontAttributes="Bold" Margin="0,14,0,0" TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
+            <FlexLayout Wrap="Wrap" JustifyContent="Start">
+                <Button Margin="0,0,8,8" Text="Learn more" Clicked="OnLearnMoreClicked" />
+                <Button Margin="0,0,8,8" Text="Polar bears" Command="{Binding PolarBearsCommand}" />
+            </FlexLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</routeables:RouteableFor>

@@ -1,0 +1,35 @@
+.rt-backdrop {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.rt-modal {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-width: min(360px, 90vw);
+    max-width: 90vw;
+    max-height: 90vh;
+    padding: 24px;
+    border: 1px solid var(--rt-dialog-border, rgba(128, 128, 128, 0.25));
+    border-radius: 8px;
+    background: var(--rt-dialog-background, Canvas);
+    color: var(--rt-dialog-color, CanvasText);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    outline: none;
+}
+
+.rt-title {
+    margin: 0 0 12px;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.rt-body {
+    min-height: 0;
+    overflow: auto;
+}

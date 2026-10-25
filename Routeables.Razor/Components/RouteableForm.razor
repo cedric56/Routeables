@@ -1,0 +1,127 @@
+@using Microsoft.AspNetCore.Components.Web
+@using Routeables.Abstraction
+@using Routeables.Core
+@implements IDisposable
+
+<div class="split">
+    @if (IsBusy)
+    {
+        <div class="split-busy" role="status" aria-live="polite" aria-label="Loading">
+            <div class="split-spinner"></div>
+        </div>
+    }
+
+    <nav class="split-nav" aria-label="Pages">
+        @foreach (var item in ViewModel.Routeables)
+        {
+            var current = ReferenceEquals(item, ViewModel.Routeable);
+            <button type="button"
+                    class="split-nav-item @(current ? "split-nav-active" : string.Empty)"
+                    disabled="@item.IsLock"
+                    aria-current="@(current ? "page" : null)"
+                    @onclick="() => Select(item)">
+                @item.DisplayName
+            </button>
+        }
+    </nav>
+
+    <div class="form">
+        <div class="form-header">@ChildContent</div>
+        @if (ViewModel.CurrentView is RouteableFor routeable)
+        {
+            <div class="form-body @routeable.Class">
+                @routeable.Render()
+            </div>
+        }
+        <div class="form-footer">@Buttons</div>
+    </div>
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the header child content rendered inside the form header section.
+    /// </summary>
+    [Parameter]
+    [EditorRequired]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the footer buttons content rendered inside the form footer section.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Buttons { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether an overlay progress indicator should be displayed.
+    /// </summary>
+    [Parameter]
+    public bool IsBusy { get; set; }
+
+    /// <summary>
+    /// Gets or sets the view model managing the split route change state, pages, and current view.
+    /// </summary>
+    [Parameter]
+    public required IMainRouteables ViewModel { get; set; }
+
+    /// <summary>
+    /// Makes <paramref name="page"/> the active page.
+    /// </summary>
+    private void Select(IRouteableEntry page)
+    {
+        ViewModel.Routeable = page;
+    }
+
+    private IMainRouteables? _subscribed;
+
+    /// <summary>
+    /// Subscribes to the events of the view model, and moves the subscription when the parent passes another one.
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        if (ReferenceEquals(ViewModel, _subscribed))
+            return;
+
+        Unsubscribe();
+        _subscribed = ViewModel;
+        _subscribed.LockChanged += OnLockChanged;
+        _subscribed.CurrentViewChanged += OnViewChanged;
+    }
+
+    private void Unsubscribe()
+    {
+        if (_subscribed is null)
+            return;
+
+        _subscribed.LockChanged -= OnLockChanged;
+        _subscribed.CurrentViewChanged -= OnViewChanged;
+        _subscribed = null;
+    }
+
+    /// <summary>
+    /// Handles changes to the current active view by triggering a UI state refresh.
+    /// </summary>
+    private async void OnViewChanged(object? sender, object? view) => await RefreshAsync();
+
+    /// <summary>
+    /// Handles lock state changes on the view model by triggering a UI state refresh.
+    /// </summary>
+    private async void OnLockChanged(object? sender, EventArgs e) => await RefreshAsync();
+
+    // These are event handlers (async void): an exception would reach the circuit. A form removed between the event and
+    // the render is not an error.
+    private async Task RefreshAsync([System.Runtime.CompilerServices.CallerMemberName] string member = "")
+    {
+        try { await InvokeAsync(StateHasChanged); }
+        catch (ObjectDisposedException) { }
+        catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(RouteableForm), member: member); }
+    }
+
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources,
+    /// unsubscribing from view model events.
+    /// </summary>
+    public void Dispose()
+    {
+        Unsubscribe();
+    }
+}

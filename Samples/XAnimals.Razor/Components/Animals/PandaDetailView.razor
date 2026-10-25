@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@inherits RouteableFor<PandaDetailView, PandaDetailViewModel>
+
+<PageTitle>Panda Details</PageTitle>
+
+<AnimalDetail ViewModel="ViewModel" />
+
+@code {
+    /// <summary>The panda, from <c>{panda::}</c> in the address: an attribute parameter lands in this [Parameter].</summary>
+    [Parameter]
+    public string? Panda { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Panda is not null)
+            ViewModel.Name = Panda;
+        base.OnParametersSet();
+    }
+}

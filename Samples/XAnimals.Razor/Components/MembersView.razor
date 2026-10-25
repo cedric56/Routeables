@@ -1,0 +1,15 @@
+@using Routeables.Abstraction
+@using Routeables.Razor
+@using XAnimals.ViewModels
+@inherits RouteableFor<MembersView, MembersViewModel>
+
+<PageTitle>Members</PageTitle>
+
+<div class="about-page">
+    <section class="about-group">
+        <p>@ViewModel.Welcome</p>
+        <div class="actions">
+            <button @onclick="ViewModel.SignOutAsync">Sign out</button>
+        </div>
+    </section>
+</div>

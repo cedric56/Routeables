@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Proof of the AOT / trimming guarantee: this console app uses the libraries the way an application does (generated routes,
+    route parameters, segments, a region) and is published with PublishAot, then run by CI. Any trim or AOT warning from the
+    libraries fails the publish, and a route that only worked through reflection fails the run.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PublishAot>true</PublishAot>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Segments\Routeables.Segments.csproj" />
+    <ProjectReference Include="..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" />
+  </ItemGroup>
+
+</Project>

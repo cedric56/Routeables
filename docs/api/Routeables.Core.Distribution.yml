@@ -1,0 +1,1963 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Core.Distribution
+  commentId: T:Routeables.Core.Distribution
+  id: Distribution
+  parent: Routeables.Core
+  children:
+  - Routeables.Core.Distribution.Android10
+  - Routeables.Core.Distribution.Android11
+  - Routeables.Core.Distribution.Android12
+  - Routeables.Core.Distribution.Android12L
+  - Routeables.Core.Distribution.Android13
+  - Routeables.Core.Distribution.Android14
+  - Routeables.Core.Distribution.Android15
+  - Routeables.Core.Distribution.Android16
+  - Routeables.Core.Distribution.Android5
+  - Routeables.Core.Distribution.Android5_1
+  - Routeables.Core.Distribution.Android6
+  - Routeables.Core.Distribution.Android7
+  - Routeables.Core.Distribution.Android7_1
+  - Routeables.Core.Distribution.Android8
+  - Routeables.Core.Distribution.Android8_1
+  - Routeables.Core.Distribution.Android9
+  - Routeables.Core.Distribution.ArchLinux
+  - Routeables.Core.Distribution.Create(System.String)
+  - Routeables.Core.Distribution.Debian
+  - Routeables.Core.Distribution.Equals(Routeables.Core.Distribution)
+  - Routeables.Core.Distribution.Equals(System.Object)
+  - Routeables.Core.Distribution.Fedora
+  - Routeables.Core.Distribution.GetHashCode
+  - Routeables.Core.Distribution.LinuxMint
+  - Routeables.Core.Distribution.Manjaro
+  - Routeables.Core.Distribution.OpenSUSE
+  - Routeables.Core.Distribution.PopOS
+  - Routeables.Core.Distribution.ToString
+  - Routeables.Core.Distribution.Ubuntu
+  - Routeables.Core.Distribution.Unknown
+  - Routeables.Core.Distribution.Vista
+  - Routeables.Core.Distribution.Windows10
+  - Routeables.Core.Distribution.Windows11
+  - Routeables.Core.Distribution.Windows7
+  - Routeables.Core.Distribution.Windows8
+  - Routeables.Core.Distribution.Windows81
+  - Routeables.Core.Distribution.WindowsXP
+  - Routeables.Core.Distribution.op_Equality(Routeables.Core.Distribution,Routeables.Core.Distribution)
+  - Routeables.Core.Distribution.op_Inequality(Routeables.Core.Distribution,Routeables.Core.Distribution)
+  langs:
+  - csharp
+  - vb
+  name: Distribution
+  nameWithType: Distribution
+  fullName: Routeables.Core.Distribution
+  type: Struct
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Distribution
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 166
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Represents a strongly typed operating system distribution or version identifier.
+  example: []
+  syntax:
+    content: 'public readonly struct Distribution : IEquatable<Distribution>'
+    content.vb: Public Structure Distribution Implements IEquatable(Of Distribution)
+  implements:
+  - System.IEquatable{Routeables.Core.Distribution}
+  inheritedMembers:
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetType
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+- uid: Routeables.Core.Distribution.Ubuntu
+  commentId: P:Routeables.Core.Distribution.Ubuntu
+  id: Ubuntu
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Ubuntu
+  nameWithType: Distribution.Ubuntu
+  fullName: Routeables.Core.Distribution.Ubuntu
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Ubuntu
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 171
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Ubuntu.
+  example: []
+  syntax:
+    content: public static Distribution Ubuntu { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Ubuntu As Distribution
+  overload: Routeables.Core.Distribution.Ubuntu*
+- uid: Routeables.Core.Distribution.Fedora
+  commentId: P:Routeables.Core.Distribution.Fedora
+  id: Fedora
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Fedora
+  nameWithType: Distribution.Fedora
+  fullName: Routeables.Core.Distribution.Fedora
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Fedora
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 174
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Fedora.
+  example: []
+  syntax:
+    content: public static Distribution Fedora { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Fedora As Distribution
+  overload: Routeables.Core.Distribution.Fedora*
+- uid: Routeables.Core.Distribution.ArchLinux
+  commentId: P:Routeables.Core.Distribution.ArchLinux
+  id: ArchLinux
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: ArchLinux
+  nameWithType: Distribution.ArchLinux
+  fullName: Routeables.Core.Distribution.ArchLinux
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ArchLinux
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 177
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Arch Linux.
+  example: []
+  syntax:
+    content: public static Distribution ArchLinux { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property ArchLinux As Distribution
+  overload: Routeables.Core.Distribution.ArchLinux*
+- uid: Routeables.Core.Distribution.Debian
+  commentId: P:Routeables.Core.Distribution.Debian
+  id: Debian
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Debian
+  nameWithType: Distribution.Debian
+  fullName: Routeables.Core.Distribution.Debian
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Debian
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 180
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Debian.
+  example: []
+  syntax:
+    content: public static Distribution Debian { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Debian As Distribution
+  overload: Routeables.Core.Distribution.Debian*
+- uid: Routeables.Core.Distribution.OpenSUSE
+  commentId: P:Routeables.Core.Distribution.OpenSUSE
+  id: OpenSUSE
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: OpenSUSE
+  nameWithType: Distribution.OpenSUSE
+  fullName: Routeables.Core.Distribution.OpenSUSE
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: OpenSUSE
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 183
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing openSUSE.
+  example: []
+  syntax:
+    content: public static Distribution OpenSUSE { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property OpenSUSE As Distribution
+  overload: Routeables.Core.Distribution.OpenSUSE*
+- uid: Routeables.Core.Distribution.LinuxMint
+  commentId: P:Routeables.Core.Distribution.LinuxMint
+  id: LinuxMint
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: LinuxMint
+  nameWithType: Distribution.LinuxMint
+  fullName: Routeables.Core.Distribution.LinuxMint
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: LinuxMint
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 186
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Linux Mint.
+  example: []
+  syntax:
+    content: public static Distribution LinuxMint { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property LinuxMint As Distribution
+  overload: Routeables.Core.Distribution.LinuxMint*
+- uid: Routeables.Core.Distribution.Manjaro
+  commentId: P:Routeables.Core.Distribution.Manjaro
+  id: Manjaro
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Manjaro
+  nameWithType: Distribution.Manjaro
+  fullName: Routeables.Core.Distribution.Manjaro
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Manjaro
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 189
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Manjaro.
+  example: []
+  syntax:
+    content: public static Distribution Manjaro { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Manjaro As Distribution
+  overload: Routeables.Core.Distribution.Manjaro*
+- uid: Routeables.Core.Distribution.PopOS
+  commentId: P:Routeables.Core.Distribution.PopOS
+  id: PopOS
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: PopOS
+  nameWithType: Distribution.PopOS
+  fullName: Routeables.Core.Distribution.PopOS
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: PopOS
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 192
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Pop!_OS.
+  example: []
+  syntax:
+    content: public static Distribution PopOS { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property PopOS As Distribution
+  overload: Routeables.Core.Distribution.PopOS*
+- uid: Routeables.Core.Distribution.Unknown
+  commentId: P:Routeables.Core.Distribution.Unknown
+  id: Unknown
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Unknown
+  nameWithType: Distribution.Unknown
+  fullName: Routeables.Core.Distribution.Unknown
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Unknown
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 195
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing an unknown distribution.
+  example: []
+  syntax:
+    content: public static Distribution Unknown { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Unknown As Distribution
+  overload: Routeables.Core.Distribution.Unknown*
+- uid: Routeables.Core.Distribution.Windows11
+  commentId: P:Routeables.Core.Distribution.Windows11
+  id: Windows11
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Windows11
+  nameWithType: Distribution.Windows11
+  fullName: Routeables.Core.Distribution.Windows11
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Windows11
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 198
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Windows 11.
+  example: []
+  syntax:
+    content: public static Distribution Windows11 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Windows11 As Distribution
+  overload: Routeables.Core.Distribution.Windows11*
+- uid: Routeables.Core.Distribution.Windows10
+  commentId: P:Routeables.Core.Distribution.Windows10
+  id: Windows10
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Windows10
+  nameWithType: Distribution.Windows10
+  fullName: Routeables.Core.Distribution.Windows10
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Windows10
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 201
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Windows 10.
+  example: []
+  syntax:
+    content: public static Distribution Windows10 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Windows10 As Distribution
+  overload: Routeables.Core.Distribution.Windows10*
+- uid: Routeables.Core.Distribution.Vista
+  commentId: P:Routeables.Core.Distribution.Vista
+  id: Vista
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Vista
+  nameWithType: Distribution.Vista
+  fullName: Routeables.Core.Distribution.Vista
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Vista
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 204
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Windows Vista.
+  example: []
+  syntax:
+    content: public static Distribution Vista { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Vista As Distribution
+  overload: Routeables.Core.Distribution.Vista*
+- uid: Routeables.Core.Distribution.WindowsXP
+  commentId: P:Routeables.Core.Distribution.WindowsXP
+  id: WindowsXP
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: WindowsXP
+  nameWithType: Distribution.WindowsXP
+  fullName: Routeables.Core.Distribution.WindowsXP
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: WindowsXP
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 207
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Windows XP.
+  example: []
+  syntax:
+    content: public static Distribution WindowsXP { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property WindowsXP As Distribution
+  overload: Routeables.Core.Distribution.WindowsXP*
+- uid: Routeables.Core.Distribution.Windows81
+  commentId: P:Routeables.Core.Distribution.Windows81
+  id: Windows81
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Windows81
+  nameWithType: Distribution.Windows81
+  fullName: Routeables.Core.Distribution.Windows81
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Windows81
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 210
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Windows 8.1.
+  example: []
+  syntax:
+    content: public static Distribution Windows81 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Windows81 As Distribution
+  overload: Routeables.Core.Distribution.Windows81*
+- uid: Routeables.Core.Distribution.Windows8
+  commentId: P:Routeables.Core.Distribution.Windows8
+  id: Windows8
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Windows8
+  nameWithType: Distribution.Windows8
+  fullName: Routeables.Core.Distribution.Windows8
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Windows8
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 213
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Windows 8.
+  example: []
+  syntax:
+    content: public static Distribution Windows8 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Windows8 As Distribution
+  overload: Routeables.Core.Distribution.Windows8*
+- uid: Routeables.Core.Distribution.Windows7
+  commentId: P:Routeables.Core.Distribution.Windows7
+  id: Windows7
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Windows7
+  nameWithType: Distribution.Windows7
+  fullName: Routeables.Core.Distribution.Windows7
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Windows7
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 216
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Windows 7.
+  example: []
+  syntax:
+    content: public static Distribution Windows7 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Windows7 As Distribution
+  overload: Routeables.Core.Distribution.Windows7*
+- uid: Routeables.Core.Distribution.Android16
+  commentId: P:Routeables.Core.Distribution.Android16
+  id: Android16
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android16
+  nameWithType: Distribution.Android16
+  fullName: Routeables.Core.Distribution.Android16
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android16
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 219
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 16.
+  example: []
+  syntax:
+    content: public static Distribution Android16 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android16 As Distribution
+  overload: Routeables.Core.Distribution.Android16*
+- uid: Routeables.Core.Distribution.Android15
+  commentId: P:Routeables.Core.Distribution.Android15
+  id: Android15
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android15
+  nameWithType: Distribution.Android15
+  fullName: Routeables.Core.Distribution.Android15
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android15
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 222
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 15.
+  example: []
+  syntax:
+    content: public static Distribution Android15 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android15 As Distribution
+  overload: Routeables.Core.Distribution.Android15*
+- uid: Routeables.Core.Distribution.Android14
+  commentId: P:Routeables.Core.Distribution.Android14
+  id: Android14
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android14
+  nameWithType: Distribution.Android14
+  fullName: Routeables.Core.Distribution.Android14
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android14
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 225
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 14.
+  example: []
+  syntax:
+    content: public static Distribution Android14 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android14 As Distribution
+  overload: Routeables.Core.Distribution.Android14*
+- uid: Routeables.Core.Distribution.Android13
+  commentId: P:Routeables.Core.Distribution.Android13
+  id: Android13
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android13
+  nameWithType: Distribution.Android13
+  fullName: Routeables.Core.Distribution.Android13
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android13
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 228
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 13.
+  example: []
+  syntax:
+    content: public static Distribution Android13 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android13 As Distribution
+  overload: Routeables.Core.Distribution.Android13*
+- uid: Routeables.Core.Distribution.Android12L
+  commentId: P:Routeables.Core.Distribution.Android12L
+  id: Android12L
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android12L
+  nameWithType: Distribution.Android12L
+  fullName: Routeables.Core.Distribution.Android12L
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android12L
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 231
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 12L.
+  example: []
+  syntax:
+    content: public static Distribution Android12L { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android12L As Distribution
+  overload: Routeables.Core.Distribution.Android12L*
+- uid: Routeables.Core.Distribution.Android12
+  commentId: P:Routeables.Core.Distribution.Android12
+  id: Android12
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android12
+  nameWithType: Distribution.Android12
+  fullName: Routeables.Core.Distribution.Android12
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android12
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 234
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 12.
+  example: []
+  syntax:
+    content: public static Distribution Android12 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android12 As Distribution
+  overload: Routeables.Core.Distribution.Android12*
+- uid: Routeables.Core.Distribution.Android11
+  commentId: P:Routeables.Core.Distribution.Android11
+  id: Android11
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android11
+  nameWithType: Distribution.Android11
+  fullName: Routeables.Core.Distribution.Android11
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android11
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 237
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 11.
+  example: []
+  syntax:
+    content: public static Distribution Android11 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android11 As Distribution
+  overload: Routeables.Core.Distribution.Android11*
+- uid: Routeables.Core.Distribution.Android10
+  commentId: P:Routeables.Core.Distribution.Android10
+  id: Android10
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android10
+  nameWithType: Distribution.Android10
+  fullName: Routeables.Core.Distribution.Android10
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android10
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 240
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 10.
+  example: []
+  syntax:
+    content: public static Distribution Android10 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android10 As Distribution
+  overload: Routeables.Core.Distribution.Android10*
+- uid: Routeables.Core.Distribution.Android9
+  commentId: P:Routeables.Core.Distribution.Android9
+  id: Android9
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android9
+  nameWithType: Distribution.Android9
+  fullName: Routeables.Core.Distribution.Android9
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android9
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 243
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 9.
+  example: []
+  syntax:
+    content: public static Distribution Android9 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android9 As Distribution
+  overload: Routeables.Core.Distribution.Android9*
+- uid: Routeables.Core.Distribution.Android8_1
+  commentId: P:Routeables.Core.Distribution.Android8_1
+  id: Android8_1
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android8_1
+  nameWithType: Distribution.Android8_1
+  fullName: Routeables.Core.Distribution.Android8_1
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android8_1
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 246
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 8.1.
+  example: []
+  syntax:
+    content: public static Distribution Android8_1 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android8_1 As Distribution
+  overload: Routeables.Core.Distribution.Android8_1*
+- uid: Routeables.Core.Distribution.Android8
+  commentId: P:Routeables.Core.Distribution.Android8
+  id: Android8
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android8
+  nameWithType: Distribution.Android8
+  fullName: Routeables.Core.Distribution.Android8
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android8
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 249
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 8.
+  example: []
+  syntax:
+    content: public static Distribution Android8 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android8 As Distribution
+  overload: Routeables.Core.Distribution.Android8*
+- uid: Routeables.Core.Distribution.Android7_1
+  commentId: P:Routeables.Core.Distribution.Android7_1
+  id: Android7_1
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android7_1
+  nameWithType: Distribution.Android7_1
+  fullName: Routeables.Core.Distribution.Android7_1
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android7_1
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 252
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 7.1.
+  example: []
+  syntax:
+    content: public static Distribution Android7_1 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android7_1 As Distribution
+  overload: Routeables.Core.Distribution.Android7_1*
+- uid: Routeables.Core.Distribution.Android7
+  commentId: P:Routeables.Core.Distribution.Android7
+  id: Android7
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android7
+  nameWithType: Distribution.Android7
+  fullName: Routeables.Core.Distribution.Android7
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android7
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 255
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 7.
+  example: []
+  syntax:
+    content: public static Distribution Android7 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android7 As Distribution
+  overload: Routeables.Core.Distribution.Android7*
+- uid: Routeables.Core.Distribution.Android6
+  commentId: P:Routeables.Core.Distribution.Android6
+  id: Android6
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android6
+  nameWithType: Distribution.Android6
+  fullName: Routeables.Core.Distribution.Android6
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android6
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 258
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 6.
+  example: []
+  syntax:
+    content: public static Distribution Android6 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android6 As Distribution
+  overload: Routeables.Core.Distribution.Android6*
+- uid: Routeables.Core.Distribution.Android5_1
+  commentId: P:Routeables.Core.Distribution.Android5_1
+  id: Android5_1
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android5_1
+  nameWithType: Distribution.Android5_1
+  fullName: Routeables.Core.Distribution.Android5_1
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android5_1
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 261
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 5.1.
+  example: []
+  syntax:
+    content: public static Distribution Android5_1 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android5_1 As Distribution
+  overload: Routeables.Core.Distribution.Android5_1*
+- uid: Routeables.Core.Distribution.Android5
+  commentId: P:Routeables.Core.Distribution.Android5
+  id: Android5
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Android5
+  nameWithType: Distribution.Android5
+  fullName: Routeables.Core.Distribution.Android5
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Android5
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 264
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets a <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance representing Android 5.
+  example: []
+  syntax:
+    content: public static Distribution Android5 { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Distribution
+    content.vb: Public Shared ReadOnly Property Android5 As Distribution
+  overload: Routeables.Core.Distribution.Android5*
+- uid: Routeables.Core.Distribution.Create(System.String)
+  commentId: M:Routeables.Core.Distribution.Create(System.String)
+  id: Create(System.String)
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Create(string)
+  nameWithType: Distribution.Create(string)
+  fullName: Routeables.Core.Distribution.Create(string)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Create
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 288
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Creates a new device platform instance. This can be used to define custom platforms.
+  example: []
+  syntax:
+    content: public static Distribution Create(string distribution)
+    parameters:
+    - id: distribution
+      type: System.String
+      description: The device platform identifier.
+    return:
+      type: Routeables.Core.Distribution
+      description: A new instance of <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> with the specified platform identifier.
+    content.vb: Public Shared Function Create(distribution As String) As Distribution
+  overload: Routeables.Core.Distribution.Create*
+  nameWithType.vb: Distribution.Create(String)
+  fullName.vb: Routeables.Core.Distribution.Create(String)
+  name.vb: Create(String)
+- uid: Routeables.Core.Distribution.Equals(Routeables.Core.Distribution)
+  commentId: M:Routeables.Core.Distribution.Equals(Routeables.Core.Distribution)
+  id: Equals(Routeables.Core.Distribution)
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Equals(Distribution)
+  nameWithType: Distribution.Equals(Distribution)
+  fullName: Routeables.Core.Distribution.Equals(Routeables.Core.Distribution)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Equals
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 296
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Determines whether the current <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance is equal to another <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instance.
+  example: []
+  syntax:
+    content: public bool Equals(Distribution other)
+    parameters:
+    - id: other
+      type: Routeables.Core.Distribution
+      description: The <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> object to compare with.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if they are equal; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.
+    content.vb: Public Function Equals(other As Distribution) As Boolean
+  overload: Routeables.Core.Distribution.Equals*
+  implements:
+  - System.IEquatable{Routeables.Core.Distribution}.Equals(Routeables.Core.Distribution)
+- uid: Routeables.Core.Distribution.Equals(System.Object)
+  commentId: M:Routeables.Core.Distribution.Equals(System.Object)
+  id: Equals(System.Object)
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: Equals(object?)
+  nameWithType: Distribution.Equals(object?)
+  fullName: Routeables.Core.Distribution.Equals(object?)
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Equals
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 308
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Indicates whether the current object is equal to another object of the same type.
+  example: []
+  syntax:
+    content: public override bool Equals(object? obj)
+    parameters:
+    - id: obj
+      type: System.Object
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.
+    content.vb: Public Overrides Function Equals(obj As Object) As Boolean
+  overridden: System.ValueType.Equals(System.Object)
+  overload: Routeables.Core.Distribution.Equals*
+  nameWithType.vb: Distribution.Equals(Object)
+  fullName.vb: Routeables.Core.Distribution.Equals(Object)
+  name.vb: Equals(Object)
+- uid: Routeables.Core.Distribution.GetHashCode
+  commentId: M:Routeables.Core.Distribution.GetHashCode
+  id: GetHashCode
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: GetHashCode()
+  nameWithType: Distribution.GetHashCode()
+  fullName: Routeables.Core.Distribution.GetHashCode()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: GetHashCode
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 315
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets the hash code for this platform instance.
+  example: []
+  syntax:
+    content: public override int GetHashCode()
+    return:
+      type: System.Int32
+      description: The computed hash code for this device platform, or <code>0</code> when uninitialized.
+    content.vb: Public Overrides Function GetHashCode() As Integer
+  overridden: System.ValueType.GetHashCode
+  overload: Routeables.Core.Distribution.GetHashCode*
+- uid: Routeables.Core.Distribution.ToString
+  commentId: M:Routeables.Core.Distribution.ToString
+  id: ToString
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: ToString()
+  nameWithType: Distribution.ToString()
+  fullName: Routeables.Core.Distribution.ToString()
+  type: Method
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: ToString
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 326
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Returns a string representation of the current distribution platform identifier.
+  example: []
+  syntax:
+    content: public override string ToString()
+    return:
+      type: System.String
+      description: A string representation of this instance, or an empty string when not set.
+    content.vb: Public Overrides Function ToString() As String
+  overridden: System.ValueType.ToString
+  overload: Routeables.Core.Distribution.ToString*
+- uid: Routeables.Core.Distribution.op_Equality(Routeables.Core.Distribution,Routeables.Core.Distribution)
+  commentId: M:Routeables.Core.Distribution.op_Equality(Routeables.Core.Distribution,Routeables.Core.Distribution)
+  id: op_Equality(Routeables.Core.Distribution,Routeables.Core.Distribution)
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: operator ==(Distribution, Distribution)
+  nameWithType: Distribution.operator ==(Distribution, Distribution)
+  fullName: Routeables.Core.Distribution.operator ==(Routeables.Core.Distribution, Routeables.Core.Distribution)
+  type: Operator
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: op_Equality
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 335
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Determines whether two specified <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instances have the same value.
+  example: []
+  syntax:
+    content: public static bool operator ==(Distribution left, Distribution right)
+    parameters:
+    - id: left
+      type: Routeables.Core.Distribution
+      description: The first distribution instance to compare.
+    - id: right
+      type: Routeables.Core.Distribution
+      description: The second distribution instance to compare.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the objects are equal; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.
+    content.vb: Public Shared Operator =(left As Distribution, right As Distribution) As Boolean
+  overload: Routeables.Core.Distribution.op_Equality*
+  nameWithType.vb: Distribution.=(Distribution, Distribution)
+  fullName.vb: Routeables.Core.Distribution.=(Routeables.Core.Distribution, Routeables.Core.Distribution)
+  name.vb: =(Distribution, Distribution)
+- uid: Routeables.Core.Distribution.op_Inequality(Routeables.Core.Distribution,Routeables.Core.Distribution)
+  commentId: M:Routeables.Core.Distribution.op_Inequality(Routeables.Core.Distribution,Routeables.Core.Distribution)
+  id: op_Inequality(Routeables.Core.Distribution,Routeables.Core.Distribution)
+  parent: Routeables.Core.Distribution
+  langs:
+  - csharp
+  - vb
+  name: operator !=(Distribution, Distribution)
+  nameWithType: Distribution.operator !=(Distribution, Distribution)
+  fullName: Routeables.Core.Distribution.operator !=(Routeables.Core.Distribution, Routeables.Core.Distribution)
+  type: Operator
+  source:
+    remote:
+      path: Routeables.Core/Environments/Distribution.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: op_Inequality
+    path: ../Routeables.Core/Environments/Distribution.cs
+    startLine: 344
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Determines whether two specified <xref href="Routeables.Core.Distribution" data-throw-if-not-resolved="false"></xref> instances have different values.
+  example: []
+  syntax:
+    content: public static bool operator !=(Distribution left, Distribution right)
+    parameters:
+    - id: left
+      type: Routeables.Core.Distribution
+      description: The first distribution instance to compare.
+    - id: right
+      type: Routeables.Core.Distribution
+      description: The second distribution instance to compare.
+    return:
+      type: System.Boolean
+      description: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the objects are not equal; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.
+    content.vb: Public Shared Operator <>(left As Distribution, right As Distribution) As Boolean
+  overload: Routeables.Core.Distribution.op_Inequality*
+  nameWithType.vb: Distribution.<>(Distribution, Distribution)
+  fullName.vb: Routeables.Core.Distribution.<>(Routeables.Core.Distribution, Routeables.Core.Distribution)
+  name.vb: <>(Distribution, Distribution)
+references:
+- uid: Routeables.Core
+  commentId: N:Routeables.Core
+  name: Routeables.Core
+  nameWithType: Routeables.Core
+  fullName: Routeables.Core
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+- uid: System.IEquatable{Routeables.Core.Distribution}
+  commentId: T:System.IEquatable{Routeables.Core.Distribution}
+  parent: System
+  definition: System.IEquatable`1
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<Distribution>
+  nameWithType: IEquatable<Distribution>
+  fullName: System.IEquatable<Routeables.Core.Distribution>
+  nameWithType.vb: IEquatable(Of Distribution)
+  fullName.vb: System.IEquatable(Of Routeables.Core.Distribution)
+  name.vb: IEquatable(Of Distribution)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - uid: Routeables.Core.Distribution
+    name: Distribution
+    href: Routeables.Core.Distribution.html
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Routeables.Core.Distribution
+    name: Distribution
+    href: Routeables.Core.Distribution.html
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.IEquatable`1
+  commentId: T:System.IEquatable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  name: IEquatable<T>
+  nameWithType: IEquatable<T>
+  fullName: System.IEquatable<T>
+  nameWithType.vb: IEquatable(Of T)
+  fullName.vb: System.IEquatable(Of T)
+  name.vb: IEquatable(Of T)
+  spec.csharp:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.IEquatable`1
+    name: IEquatable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: Routeables.Core.Distribution
+  commentId: T:Routeables.Core.Distribution
+  parent: Routeables.Core
+  href: Routeables.Core.Distribution.html
+  name: Distribution
+  nameWithType: Distribution
+  fullName: Routeables.Core.Distribution
+- uid: Routeables.Core.Distribution.Ubuntu*
+  commentId: Overload:Routeables.Core.Distribution.Ubuntu
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Ubuntu
+  name: Ubuntu
+  nameWithType: Distribution.Ubuntu
+  fullName: Routeables.Core.Distribution.Ubuntu
+- uid: Routeables.Core.Distribution.Fedora*
+  commentId: Overload:Routeables.Core.Distribution.Fedora
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Fedora
+  name: Fedora
+  nameWithType: Distribution.Fedora
+  fullName: Routeables.Core.Distribution.Fedora
+- uid: Routeables.Core.Distribution.ArchLinux*
+  commentId: Overload:Routeables.Core.Distribution.ArchLinux
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_ArchLinux
+  name: ArchLinux
+  nameWithType: Distribution.ArchLinux
+  fullName: Routeables.Core.Distribution.ArchLinux
+- uid: Routeables.Core.Distribution.Debian*
+  commentId: Overload:Routeables.Core.Distribution.Debian
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Debian
+  name: Debian
+  nameWithType: Distribution.Debian
+  fullName: Routeables.Core.Distribution.Debian
+- uid: Routeables.Core.Distribution.OpenSUSE*
+  commentId: Overload:Routeables.Core.Distribution.OpenSUSE
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_OpenSUSE
+  name: OpenSUSE
+  nameWithType: Distribution.OpenSUSE
+  fullName: Routeables.Core.Distribution.OpenSUSE
+- uid: Routeables.Core.Distribution.LinuxMint*
+  commentId: Overload:Routeables.Core.Distribution.LinuxMint
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_LinuxMint
+  name: LinuxMint
+  nameWithType: Distribution.LinuxMint
+  fullName: Routeables.Core.Distribution.LinuxMint
+- uid: Routeables.Core.Distribution.Manjaro*
+  commentId: Overload:Routeables.Core.Distribution.Manjaro
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Manjaro
+  name: Manjaro
+  nameWithType: Distribution.Manjaro
+  fullName: Routeables.Core.Distribution.Manjaro
+- uid: Routeables.Core.Distribution.PopOS*
+  commentId: Overload:Routeables.Core.Distribution.PopOS
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_PopOS
+  name: PopOS
+  nameWithType: Distribution.PopOS
+  fullName: Routeables.Core.Distribution.PopOS
+- uid: Routeables.Core.Distribution.Unknown*
+  commentId: Overload:Routeables.Core.Distribution.Unknown
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Unknown
+  name: Unknown
+  nameWithType: Distribution.Unknown
+  fullName: Routeables.Core.Distribution.Unknown
+- uid: Routeables.Core.Distribution.Windows11*
+  commentId: Overload:Routeables.Core.Distribution.Windows11
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Windows11
+  name: Windows11
+  nameWithType: Distribution.Windows11
+  fullName: Routeables.Core.Distribution.Windows11
+- uid: Routeables.Core.Distribution.Windows10*
+  commentId: Overload:Routeables.Core.Distribution.Windows10
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Windows10
+  name: Windows10
+  nameWithType: Distribution.Windows10
+  fullName: Routeables.Core.Distribution.Windows10
+- uid: Routeables.Core.Distribution.Vista*
+  commentId: Overload:Routeables.Core.Distribution.Vista
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Vista
+  name: Vista
+  nameWithType: Distribution.Vista
+  fullName: Routeables.Core.Distribution.Vista
+- uid: Routeables.Core.Distribution.WindowsXP*
+  commentId: Overload:Routeables.Core.Distribution.WindowsXP
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_WindowsXP
+  name: WindowsXP
+  nameWithType: Distribution.WindowsXP
+  fullName: Routeables.Core.Distribution.WindowsXP
+- uid: Routeables.Core.Distribution.Windows81*
+  commentId: Overload:Routeables.Core.Distribution.Windows81
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Windows81
+  name: Windows81
+  nameWithType: Distribution.Windows81
+  fullName: Routeables.Core.Distribution.Windows81
+- uid: Routeables.Core.Distribution.Windows8*
+  commentId: Overload:Routeables.Core.Distribution.Windows8
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Windows8
+  name: Windows8
+  nameWithType: Distribution.Windows8
+  fullName: Routeables.Core.Distribution.Windows8
+- uid: Routeables.Core.Distribution.Windows7*
+  commentId: Overload:Routeables.Core.Distribution.Windows7
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Windows7
+  name: Windows7
+  nameWithType: Distribution.Windows7
+  fullName: Routeables.Core.Distribution.Windows7
+- uid: Routeables.Core.Distribution.Android16*
+  commentId: Overload:Routeables.Core.Distribution.Android16
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android16
+  name: Android16
+  nameWithType: Distribution.Android16
+  fullName: Routeables.Core.Distribution.Android16
+- uid: Routeables.Core.Distribution.Android15*
+  commentId: Overload:Routeables.Core.Distribution.Android15
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android15
+  name: Android15
+  nameWithType: Distribution.Android15
+  fullName: Routeables.Core.Distribution.Android15
+- uid: Routeables.Core.Distribution.Android14*
+  commentId: Overload:Routeables.Core.Distribution.Android14
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android14
+  name: Android14
+  nameWithType: Distribution.Android14
+  fullName: Routeables.Core.Distribution.Android14
+- uid: Routeables.Core.Distribution.Android13*
+  commentId: Overload:Routeables.Core.Distribution.Android13
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android13
+  name: Android13
+  nameWithType: Distribution.Android13
+  fullName: Routeables.Core.Distribution.Android13
+- uid: Routeables.Core.Distribution.Android12L*
+  commentId: Overload:Routeables.Core.Distribution.Android12L
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android12L
+  name: Android12L
+  nameWithType: Distribution.Android12L
+  fullName: Routeables.Core.Distribution.Android12L
+- uid: Routeables.Core.Distribution.Android12*
+  commentId: Overload:Routeables.Core.Distribution.Android12
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android12
+  name: Android12
+  nameWithType: Distribution.Android12
+  fullName: Routeables.Core.Distribution.Android12
+- uid: Routeables.Core.Distribution.Android11*
+  commentId: Overload:Routeables.Core.Distribution.Android11
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android11
+  name: Android11
+  nameWithType: Distribution.Android11
+  fullName: Routeables.Core.Distribution.Android11
+- uid: Routeables.Core.Distribution.Android10*
+  commentId: Overload:Routeables.Core.Distribution.Android10
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android10
+  name: Android10
+  nameWithType: Distribution.Android10
+  fullName: Routeables.Core.Distribution.Android10
+- uid: Routeables.Core.Distribution.Android9*
+  commentId: Overload:Routeables.Core.Distribution.Android9
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android9
+  name: Android9
+  nameWithType: Distribution.Android9
+  fullName: Routeables.Core.Distribution.Android9
+- uid: Routeables.Core.Distribution.Android8_1*
+  commentId: Overload:Routeables.Core.Distribution.Android8_1
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android8_1
+  name: Android8_1
+  nameWithType: Distribution.Android8_1
+  fullName: Routeables.Core.Distribution.Android8_1
+- uid: Routeables.Core.Distribution.Android8*
+  commentId: Overload:Routeables.Core.Distribution.Android8
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android8
+  name: Android8
+  nameWithType: Distribution.Android8
+  fullName: Routeables.Core.Distribution.Android8
+- uid: Routeables.Core.Distribution.Android7_1*
+  commentId: Overload:Routeables.Core.Distribution.Android7_1
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android7_1
+  name: Android7_1
+  nameWithType: Distribution.Android7_1
+  fullName: Routeables.Core.Distribution.Android7_1
+- uid: Routeables.Core.Distribution.Android7*
+  commentId: Overload:Routeables.Core.Distribution.Android7
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android7
+  name: Android7
+  nameWithType: Distribution.Android7
+  fullName: Routeables.Core.Distribution.Android7
+- uid: Routeables.Core.Distribution.Android6*
+  commentId: Overload:Routeables.Core.Distribution.Android6
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android6
+  name: Android6
+  nameWithType: Distribution.Android6
+  fullName: Routeables.Core.Distribution.Android6
+- uid: Routeables.Core.Distribution.Android5_1*
+  commentId: Overload:Routeables.Core.Distribution.Android5_1
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android5_1
+  name: Android5_1
+  nameWithType: Distribution.Android5_1
+  fullName: Routeables.Core.Distribution.Android5_1
+- uid: Routeables.Core.Distribution.Android5*
+  commentId: Overload:Routeables.Core.Distribution.Android5
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Android5
+  name: Android5
+  nameWithType: Distribution.Android5
+  fullName: Routeables.Core.Distribution.Android5
+- uid: Routeables.Core.Distribution.Create*
+  commentId: Overload:Routeables.Core.Distribution.Create
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Create_System_String_
+  name: Create
+  nameWithType: Distribution.Create
+  fullName: Routeables.Core.Distribution.Create
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: Routeables.Core.Distribution.Equals*
+  commentId: Overload:Routeables.Core.Distribution.Equals
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_Equals_Routeables_Core_Distribution_
+  name: Equals
+  nameWithType: Distribution.Equals
+  fullName: Routeables.Core.Distribution.Equals
+- uid: System.IEquatable{Routeables.Core.Distribution}.Equals(Routeables.Core.Distribution)
+  commentId: M:System.IEquatable{Routeables.Core.Distribution}.Equals(Routeables.Core.Distribution)
+  parent: System.IEquatable{Routeables.Core.Distribution}
+  definition: System.IEquatable`1.Equals(`0)
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1.equals
+  name: Equals(Distribution)
+  nameWithType: IEquatable<Distribution>.Equals(Distribution)
+  fullName: System.IEquatable<Routeables.Core.Distribution>.Equals(Routeables.Core.Distribution)
+  nameWithType.vb: IEquatable(Of Distribution).Equals(Distribution)
+  fullName.vb: System.IEquatable(Of Routeables.Core.Distribution).Equals(Routeables.Core.Distribution)
+  spec.csharp:
+  - uid: System.IEquatable{Routeables.Core.Distribution}.Equals(Routeables.Core.Distribution)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1.equals
+  - name: (
+  - uid: Routeables.Core.Distribution
+    name: Distribution
+    href: Routeables.Core.Distribution.html
+  - name: )
+  spec.vb:
+  - uid: System.IEquatable{Routeables.Core.Distribution}.Equals(Routeables.Core.Distribution)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1.equals
+  - name: (
+  - uid: Routeables.Core.Distribution
+    name: Distribution
+    href: Routeables.Core.Distribution.html
+  - name: )
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: System.IEquatable`1.Equals(`0)
+  commentId: M:System.IEquatable`1.Equals(`0)
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.iequatable-1.equals
+  name: Equals(T)
+  nameWithType: IEquatable<T>.Equals(T)
+  fullName: System.IEquatable<T>.Equals(T)
+  nameWithType.vb: IEquatable(Of T).Equals(T)
+  fullName.vb: System.IEquatable(Of T).Equals(T)
+  spec.csharp:
+  - uid: System.IEquatable`1.Equals(`0)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1.equals
+  - name: (
+  - name: T
+  - name: )
+  spec.vb:
+  - uid: System.IEquatable`1.Equals(`0)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.iequatable-1.equals
+  - name: (
+  - name: T
+  - name: )
+- uid: System.ValueType.Equals(System.Object)
+  commentId: M:System.ValueType.Equals(System.Object)
+  parent: System.ValueType
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.valuetype.equals
+  name: Equals(object)
+  nameWithType: ValueType.Equals(object)
+  fullName: System.ValueType.Equals(object)
+  nameWithType.vb: ValueType.Equals(Object)
+  fullName.vb: System.ValueType.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.ValueType.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.equals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.ValueType.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.equals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.ValueType
+  commentId: T:System.ValueType
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.valuetype
+  name: ValueType
+  nameWithType: ValueType
+  fullName: System.ValueType
+- uid: System.ValueType.GetHashCode
+  commentId: M:System.ValueType.GetHashCode
+  parent: System.ValueType
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode
+  name: GetHashCode()
+  nameWithType: ValueType.GetHashCode()
+  fullName: System.ValueType.GetHashCode()
+  spec.csharp:
+  - uid: System.ValueType.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.ValueType.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode
+  - name: (
+  - name: )
+- uid: Routeables.Core.Distribution.GetHashCode*
+  commentId: Overload:Routeables.Core.Distribution.GetHashCode
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_GetHashCode
+  name: GetHashCode
+  nameWithType: Distribution.GetHashCode
+  fullName: Routeables.Core.Distribution.GetHashCode
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: System.ValueType.ToString
+  commentId: M:System.ValueType.ToString
+  parent: System.ValueType
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.valuetype.tostring
+  name: ToString()
+  nameWithType: ValueType.ToString()
+  fullName: System.ValueType.ToString()
+  spec.csharp:
+  - uid: System.ValueType.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.ValueType.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.tostring
+  - name: (
+  - name: )
+- uid: Routeables.Core.Distribution.ToString*
+  commentId: Overload:Routeables.Core.Distribution.ToString
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_ToString
+  name: ToString
+  nameWithType: Distribution.ToString
+  fullName: Routeables.Core.Distribution.ToString
+- uid: Routeables.Core.Distribution.op_Equality*
+  commentId: Overload:Routeables.Core.Distribution.op_Equality
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_op_Equality_Routeables_Core_Distribution_Routeables_Core_Distribution_
+  name: operator ==
+  nameWithType: Distribution.operator ==
+  fullName: Routeables.Core.Distribution.operator ==
+  nameWithType.vb: Distribution.=
+  fullName.vb: Routeables.Core.Distribution.=
+  name.vb: =
+  spec.csharp:
+  - name: operator
+  - name: " "
+  - uid: Routeables.Core.Distribution.op_Equality*
+    name: ==
+    href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_op_Equality_Routeables_Core_Distribution_Routeables_Core_Distribution_
+- uid: Routeables.Core.Distribution.op_Inequality*
+  commentId: Overload:Routeables.Core.Distribution.op_Inequality
+  href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_op_Inequality_Routeables_Core_Distribution_Routeables_Core_Distribution_
+  name: operator !=
+  nameWithType: Distribution.operator !=
+  fullName: Routeables.Core.Distribution.operator !=
+  nameWithType.vb: Distribution.<>
+  fullName.vb: Routeables.Core.Distribution.<>
+  name.vb: <>
+  spec.csharp:
+  - name: operator
+  - name: " "
+  - uid: Routeables.Core.Distribution.op_Inequality*
+    name: '!='
+    href: Routeables.Core.Distribution.html#Routeables_Core_Distribution_op_Inequality_Routeables_Core_Distribution_Routeables_Core_Distribution_

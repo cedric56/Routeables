@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
+    xmlns:vm="clr-namespace:XAnimals.ViewModels;assembly=XAnimals.ViewModels"
+    x:Class="XAnimals.Maui.Views.BoardView"
+    x:DataType="vm:BoardViewModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource Paper}, Dark={StaticResource OffBlack}}">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="20" RowSpacing="8">
+        <!-- One button per animal: it routes that page into the region "board". -->
+        <FlexLayout Grid.Row="0" Wrap="Wrap" JustifyContent="Start" BindableLayout.ItemsSource="{Binding Choices}">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate x:DataType="vm:BoardChoice">
+                    <Button Text="{Binding Name}" Command="{Binding AddCommand}" Margin="0,0,6,6" Padding="12,0" HeightRequest="36" />
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </FlexLayout>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
+            <Label Text="{Binding Status}" VerticalOptions="Center" Opacity="0.75" />
+            <Button Grid.Column="1" Text="Remove the last" Command="{Binding RemoveCommand}" />
+            <Button Grid.Column="2" Text="Clear" Command="{Binding ClearCommand}" />
+        </Grid>
+
+        <!-- Not one view but all of them: the region "board" holds a history, this control lays out every page of it, side by side.
+             Nothing assigns a view to the control. -->
+        <routeables:RouteableRegionItems Grid.Row="2" Region="board" />
+    </Grid>
+</routeables:RouteableFor>

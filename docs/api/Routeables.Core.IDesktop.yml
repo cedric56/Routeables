@@ -1,0 +1,93 @@
+### YamlMime:ManagedReference
+items:
+- uid: Routeables.Core.IDesktop
+  commentId: T:Routeables.Core.IDesktop
+  id: IDesktop
+  parent: Routeables.Core
+  children:
+  - Routeables.Core.IDesktop.Current
+  langs:
+  - csharp
+  - vb
+  name: IDesktop
+  nameWithType: IDesktop
+  fullName: Routeables.Core.IDesktop
+  type: Interface
+  source:
+    remote:
+      path: Routeables.Core/Environments/Desktop.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: IDesktop
+    path: ../Routeables.Core/Environments/Desktop.cs
+    startLine: 5
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Provides access to information about the current desktop environment or operating system platform.
+  example: []
+  syntax:
+    content: public interface IDesktop
+    content.vb: Public Interface IDesktop
+- uid: Routeables.Core.IDesktop.Current
+  commentId: P:Routeables.Core.IDesktop.Current
+  id: Current
+  parent: Routeables.Core.IDesktop
+  langs:
+  - csharp
+  - vb
+  name: Current
+  nameWithType: IDesktop.Current
+  fullName: Routeables.Core.IDesktop.Current
+  type: Property
+  source:
+    remote:
+      path: Routeables.Core/Environments/Desktop.cs
+      branch: master
+      repo: https://github.com/cedric56/Routeables
+    id: Current
+    path: ../Routeables.Core/Environments/Desktop.cs
+    startLine: 10
+  assemblies:
+  - Routeables.Core
+  namespace: Routeables.Core
+  summary: Gets the current desktop environment or platform.
+  example: []
+  syntax:
+    content: Desktop Current { get; }
+    parameters: []
+    return:
+      type: Routeables.Core.Desktop
+    content.vb: ReadOnly Property Current As Desktop
+  overload: Routeables.Core.IDesktop.Current*
+references:
+- uid: Routeables.Core
+  commentId: N:Routeables.Core
+  name: Routeables.Core
+  nameWithType: Routeables.Core
+  fullName: Routeables.Core
+  spec.csharp:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+  spec.vb:
+  - uid: Routeables
+    name: Routeables
+  - name: .
+  - uid: Routeables.Core
+    name: Core
+- uid: Routeables.Core.IDesktop.Current*
+  commentId: Overload:Routeables.Core.IDesktop.Current
+  href: Routeables.Core.IDesktop.html#Routeables_Core_IDesktop_Current
+  name: Current
+  nameWithType: IDesktop.Current
+  fullName: Routeables.Core.IDesktop.Current
+- uid: Routeables.Core.Desktop
+  commentId: T:Routeables.Core.Desktop
+  parent: Routeables.Core
+  href: Routeables.Core.Desktop.html
+  name: Desktop
+  nameWithType: Desktop
+  fullName: Routeables.Core.Desktop

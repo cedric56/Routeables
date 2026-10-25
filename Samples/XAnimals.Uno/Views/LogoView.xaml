@@ -1,0 +1,9 @@
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="using:Routeables.Uno"
+    x:Class="XAnimals.Uno.Views.LogoView">
+    <Viewbox Margin="32" MaxWidth="460">
+        <Image Source="ms-appx:///Assets/logo.svg" />
+    </Viewbox>
+</routeables:RouteableFor>
