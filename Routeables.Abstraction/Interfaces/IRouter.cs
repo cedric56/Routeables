@@ -82,42 +82,11 @@ public interface IRouter
     Task<RouteableResult> GoAsync(object view, object viewModel, IRouteableArgs? args = null, CancellationToken cancellationToken = default);
     
     /// <summary>
-    /// Goes to <paramref name="route"/> with <typeparamref name="TViewModel"/> as the view model: <c>GoToRouteAsync&lt;MenuViewModel&gt;("MenuView")</c>.
-    /// The view is the one registered under the route, the view model is built from <typeparamref name="TViewModel"/>. The
-    /// <paramref name="template"/> is optional: without it, it is the one registered for the route (<c>RouteableTable</c>, then the
-    /// main routeables), or the route itself.
+    /// The one member behind the <c>GoToRouteAsync</c> methods: to a route with a view model type, or to a menu entry
+    /// (<see cref="RouteableRouteRequest"/>). Call those methods instead, they are extensions of <see cref="IRouter"/>:
+    /// <c>router.GoToRouteAsync&lt;MenuViewModel&gt;("MenuView")</c>, <c>router.GoToRouteAsync(entry)</c>.
     /// </summary>
-    /// <typeparam name="TViewModel">The type of the view model to build.</typeparam>
-    /// <param name="route">The route to go to, with its values (<c>"/orders/42"</c>).</param>
-    /// <param name="args">The arguments of the route change, or <see langword="null"/> for none.</param>
-    /// <param name="template">The registered template, when the route alone does not tell it.</param>
+    /// <param name="request">What to go to.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    /// <param name="viewKeys">Keys that tell views of the same type apart in the cache.</param>
-    Task<RouteableResult> GoToRouteAsync<TViewModel>(
-        string route,
-        IRouteableArgs? args = null,
-        string? template = null,
-        CancellationToken cancellationToken = default,
-        params string[] viewKeys)
-        where TViewModel : class;
-
-    /// <summary>Goes to a menu entry, with <typeparamref name="TViewModel"/> as the view model.</summary>
-    /// <typeparam name="TViewModel">The type of the view model to build.</typeparam>
-    /// <param name="routeableView">The entry to go to.</param>
-    /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    /// <param name="viewKeys">Keys that tell views of the same type apart in the cache.</param>
-    Task<RouteableResult> GoToRouteAsync<TViewModel>(
-        IRouteableEntry routeableView, 
-        CancellationToken cancellationToken = default,
-        params string[] viewKeys)
-        where TViewModel : class;
-
-    /// <summary>Goes to a menu entry, which knows its route, its template and its view model.</summary>
-    /// <param name="routeableView">The entry to go to.</param>
-    /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    /// <param name="viewKeys">Keys that tell views of the same type apart in the cache.</param>
-    Task<RouteableResult> GoToRouteAsync(
-        IRouteableEntry routeableView,
-        CancellationToken cancellationToken = default,
-        params string[] viewKeys);
+    Task<RouteableResult> GoToRouteAsync(RouteableRouteRequest request, CancellationToken cancellationToken = default);
 }

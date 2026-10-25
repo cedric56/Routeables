@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Routeables.Abstraction;
 using Routeables.Routing;
 
@@ -120,5 +121,27 @@ public class RouterGenericRouteTests
 
         await Assert.ThrowsAsync<ArgumentNullException>(() =>
             router.GoToRouteAsync<DetailVm>((string)null!, cancellationToken: TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public void The_extension_asks_the_router_for_one_request_with_the_route_the_view_model_and_the_view_keys()
+    {
+        var router = Substitute.For<IRouter>();
+
+        _ = router.GoToRouteAsync<DetailVm>("details/7", viewKeys: ["id"], cancellationToken: TestContext.Current.CancellationToken);
+
+        _ = router.Received(1).GoToRouteAsync(
+            Arg.Is<RouteableRouteRequest>(r => r.Route == "details/7" && r.ViewModelType == typeof(DetailVm)
+                && r.Entry == null && r.ViewKeys.SequenceEqual(new[] { "id" })),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task A_request_with_neither_an_entry_nor_a_route_is_refused()
+    {
+        var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
+
+        await Assert.ThrowsAsync<ArgumentException>(() =>
+            router.GoToRouteAsync(new RouteableRouteRequest { ViewModelType = typeof(DetailVm) }, TestContext.Current.CancellationToken));
     }
 }

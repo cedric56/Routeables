@@ -477,7 +477,7 @@ internal class Router(
         // A page of the menu, whose route has no parameter.
         static string Normal(string? route) => (route ?? string.Empty).Split('?')[0].Trim('/');
         if (provider.GetService<IMainRouteables>()?.Routeables.FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(url), StringComparison.OrdinalIgnoreCase)) is { } item)
-            return await GoToRouteAsync(item, cancellationToken);
+            return await GoToEntryAsync(item, cancellationToken, []);
 
         return RouteableResult.Fail(new InvalidOperationException($"No route matches '{url}'. Register it with an explicit route, for instance RegisterRoute<TView, TViewModel>(route: \"/orders/{{id:int}}\")."));
     }
@@ -489,7 +489,24 @@ internal class Router(
         return provider.GetService<Func<IMainRouteables, ILockCoordinator>>()?.Invoke(routeables);
     }
 
-    public Task<RouteableResult> GoToRouteAsync(IRouteableEntry routeableView, CancellationToken cancellationToken = default, params string[] viewKeys)
+    /// <inheritdoc />
+    public Task<RouteableResult> GoToRouteAsync(RouteableRouteRequest request, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var viewKeys = request.ViewKeys ?? [];
+
+        if (request.Entry is { } entry)
+            return request.ViewModelType is { } entryType
+                ? GoToEntryAsync(entry, entryType, cancellationToken, viewKeys)
+                : GoToEntryAsync(entry, cancellationToken, viewKeys);
+
+        if (string.IsNullOrWhiteSpace(request.Route) || request.ViewModelType is null)
+            throw new ArgumentException("A route request needs an entry, or a route and a view model type.", nameof(request));
+
+        return GoToTypedRouteAsync(request.ViewModelType, request.Route, request.Args, request.Template, cancellationToken, viewKeys);
+    }
+
+    private Task<RouteableResult> GoToEntryAsync(IRouteableEntry routeableView, CancellationToken cancellationToken, string[] viewKeys)
     {
         // A typed entry (RouteableEntry<TViewModel>) names the keys of its view model; any other is bound by its template alone.
         var type = GetRouteableEntryType(routeableView);
@@ -533,15 +550,14 @@ internal class Router(
     // The view model a typed menu entry (RouteableEntry<T>) is for; an entry of another kind is bound by its template alone.
     static Type? GetRouteableEntryType(IRouteableEntry view) => (view as RouteableEntry)?.ViewModelType;
 
-    /// <inheritdoc />
-    public Task<RouteableResult> GoToRouteAsync<TViewModel>(string route, IRouteableArgs? args = null, string? template = null, CancellationToken cancellationToken = default, params string[] viewKeys)
-        where TViewModel : class
+    private Task<RouteableResult> GoToTypedRouteAsync(
+        Type viewModelType, string route, IRouteableArgs? args, string? template, CancellationToken cancellationToken, string[] viewKeys)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(route);
         template ??= TemplateOf(route);
 
         // Routes are registered under their template (see RegisterRoute), so the keys come from the template.
-        var keys = RouteableKeys.GetKeys(typeof(TViewModel), template);
+        var keys = RouteableKeys.GetKeys(viewModelType, template);
 
         // RouteParser.TryMatch fills the instance it is given; without one the parsed route values would be lost.
         return GoToRouteAsync(
@@ -568,9 +584,9 @@ internal class Router(
         return item?.Template ?? route;
     }
 
-    public Task<RouteableResult> GoToRouteAsync<TViewModel>(IRouteableEntry routeableView, CancellationToken cancellationToken = default, params string[] viewKeys) where TViewModel : class
+    private Task<RouteableResult> GoToEntryAsync(IRouteableEntry routeableView, Type viewModelType, CancellationToken cancellationToken, string[] viewKeys)
     {
-        var keys = RouteableKeys.GetKeys(typeof(TViewModel), routeableView.Route);
+        var keys = RouteableKeys.GetKeys(viewModelType, routeableView.Route);
         return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys);
     }
 }

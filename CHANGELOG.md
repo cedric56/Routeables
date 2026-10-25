@@ -8,6 +8,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - The READMEs and the guides count five hosts (WPF was missing), show the one-call start of WPF, Avalonia and Uno, and describe the controls written in XAML: MAUI `Shell`, `TabControl` (WPF, Avalonia) and `NavigationView` (Uno), attached with `AttachRouteables`.
 
 ### Changed
+- `IRouter` is smaller (12 members instead of 14): the three `GoToRouteAsync` overloads (`<TViewModel>(route, ...)`, `<TViewModel>(entry, ...)` and `(entry, ...)`) are extension methods of `IRouter` (`RouterExtensions`, same namespace, so a call site does not change: `router.GoToRouteAsync<MenuViewModel>("MenuView")`, `router.GoToRouteAsync(entry)`). The interface keeps one member for them, `GoToRouteAsync(RouteableRouteRequest, CancellationToken)`, which only `Router` implements; `viewKeys` is kept and travels in the request. A double of `IRouter` that stubbed the old overloads stubs this member instead.
 - The samples: the *Lock* page is part of *Features* (its section *Lock*), one page less in the menu; `LockViewModel` and the five `LockView` are gone.
 - The samples: the *Saved values* section of the Features page is shown on a phone or tablet only (`IDesktop`), where the system can close the application.
 - The samples no longer show the page a guard turned away (*No page is waiting*) and no longer register `RouteableReturn`: the guard of *Members* only redirects to *Features*.
