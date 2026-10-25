@@ -89,6 +89,7 @@ Everything else is in the one `Routeables` package, which every host brings: the
 - [Getting started](docs/getting-started.md) and the [guides](docs/guides/routes.md): routes, typed routing, arguments, lifecycle, history, regions, modules, hosts.
 - [Samples](Samples): the same Animals app on Blazor, MAUI, Avalonia, Uno and WPF.
 - [Documentation site](https://cedric56.github.io/Routeables/) and API reference.
+- [Live demo](https://cedric56.github.io/Routeables/demo/avalonia/): the Animals sample running in your browser (Avalonia, WebAssembly).
 - [Contributing](CONTRIBUTING.md), [third-party notices](THIRD-PARTY-NOTICES.md).
 
 Released under the [MIT License](LICENSE.txt).
