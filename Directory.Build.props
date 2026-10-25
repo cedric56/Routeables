@@ -37,4 +37,12 @@
   <PropertyGroup Condition="'$(CiBuild)' == 'true'">
     <WarningsAsErrors>$(WarningsAsErrors);CS0618;ROUT201;IL2026;IL2067;IL2070;IL2072;IL2075;IL2087;IL2091;IL3050</WarningsAsErrors>
   </PropertyGroup>
+
+  <!-- The XML documentation of the libraries (IntelliSense in the IDE of the user): next to the .dll in a package, and in the
+       "Routeables" package through the nuspec. This is in the props, not in the targets: the SDK computes DocumentationFile from GenerateDocumentationFile before the targets are read. Not the tests, benchmarks, samples or the generator.
+       A missing or malformed comment (CS1570-CS1592) stays a warning, whatever TreatWarningsAsErrors says: it must not stop a build. -->
+  <PropertyGroup Condition="('$(MSBuildProjectName.StartsWith(`Routeables.`))' == 'true' And '$(MSBuildProjectName)' != 'Routeables.Test' And '$(MSBuildProjectName)' != 'Routeables.Benchmarks' And '$(MSBuildProjectName)' != 'Routeables.AotSmoke' And '$(MSBuildProjectName)' != 'Routeables.Generated') Or '$(MSBuildProjectName.StartsWith(`Reshapes.`))' == 'true'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);CS1570;CS1571;CS1572;CS1573;CS1574;CS1580;CS1581;CS1584;CS1587;CS1589;CS1590;CS1591;CS1592;CS1710;CS1711;CS1712</WarningsNotAsErrors>
+  </PropertyGroup>
 </Project>
