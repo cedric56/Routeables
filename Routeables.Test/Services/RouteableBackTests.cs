@@ -102,8 +102,8 @@ public class RouteableBackTests
         public IRouteableEntry? Routeable { get; set; }
         public object? CurrentView { get; set; }
         public string? CurrentTitle => null;
-        public EventHandler<object?>? CurrentViewChanged { get; set; }
-        public EventHandler? LockChanged { get; set; }
+        public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
+        public event EventHandler? LockChanged { add { } remove { } }
         public object? Moved { get; private set; }
         public void OnRouterMoved(object? viewModel) => Moved = viewModel;
     }

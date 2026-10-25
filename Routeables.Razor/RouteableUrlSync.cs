@@ -99,8 +99,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             // The page was not chosen in the menu: make the layout display it.
             if (result.Success && provider.GetService<IMainViewModel>() is { } shown)
             {
-                shown.CurrentView = router.CurrentView;
-                shown.CurrentViewChanged?.Invoke(shown, router.CurrentView);
+                shown.CurrentView = router.CurrentView;   // setting it raises CurrentViewChanged
             }
         }
         else

@@ -34,7 +34,7 @@ public class LockWatcherTests
         foreach (var entry in main.Routeables)
             entry.IsLock = locked;
 
-        main.LockChanged?.Invoke(main, EventArgs.Empty);
+        main.NotifyLockChanged();
     }
 
     [Fact]
@@ -90,6 +90,6 @@ public class LockWatcherTests
         Lock(main, true);
 
         Assert.Equal(0, count);
-        Assert.Null(main.LockChanged);
+        Assert.Equal(0, main.LockSubscribers);
     }
 }

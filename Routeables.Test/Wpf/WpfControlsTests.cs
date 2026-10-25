@@ -118,15 +118,15 @@ public class WpfControlsTests
             var first = view.IsLocked;
 
             ((RouteableEntry)main.Routeables[0]).IsLock = true;
-            main.LockChanged?.Invoke(main, EventArgs.Empty);
+            main.NotifyLockChanged();
             var second = view.IsLocked;
 
             ((RouteableEntry)main.Routeables[1]).IsLock = true;
-            main.LockChanged?.Invoke(main, EventArgs.Empty);
+            main.NotifyLockChanged();
             var third = view.IsLocked;
 
             ((RouteableEntry)main.Routeables[0]).IsLock = false;
-            main.LockChanged?.Invoke(main, EventArgs.Empty);
+            main.NotifyLockChanged();
             return (first, second, third, view.IsLocked);
         });
 
@@ -148,10 +148,10 @@ public class WpfControlsTests
             var view = new RouteableFor { Context = main };
             await view.InitializeAsync(args, ct);
             await view.InitializeAsync(args, ct);
-            Assert.Single(main.LockChanged!.GetInvocationList());
+            Assert.Equal(1, main.LockSubscribers);
 
             view.Dispose();
-            Assert.Null(main.LockChanged);
+            Assert.Equal(0, main.LockSubscribers);
         });
     }
 

@@ -64,7 +64,7 @@ public abstract class AnimalsViewModel(IRouter router, IServiceProvider provider
             : animals.Where(a => a.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
 
     public object? CurrentView { get => currentView; set { currentView = value; OnPropertyChanged(nameof(CurrentView)); } }
-    public EventHandler<object?>? CurrentViewChanged { get; set; }
+    public event EventHandler<object?>? CurrentViewChanged;
 
     /// <summary>Navigates to the detail view model of this list (the generated <c>GoTo…DetailAsync</c>).</summary>
     protected abstract Task<RouteableResult> GoToDetailAsync(Animal animal, Action back);

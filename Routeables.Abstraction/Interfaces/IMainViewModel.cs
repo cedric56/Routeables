@@ -18,14 +18,20 @@ public interface IMainViewModel
     /// <summary>The view the selected entry shows, or <see langword="null"/> when there is none.</summary>
     object? CurrentView { get; set; }
 
-    /// <summary>The title of the selected entry (its display name), for a title bar.</summary>
-    string? CurrentTitle { get; }
+    /// <summary>The title of the selected entry (its display name), for a title bar. Override it for another title.</summary>
+    string? CurrentTitle => Routeable?.DisplayName;
 
-    /// <summary>Raised when <see cref="CurrentView"/> changes; the argument is the new view.</summary>
-    EventHandler<object?>? CurrentViewChanged { get; set; }
+    /// <summary>Raised when <see cref="CurrentView"/> changes (setting it raises it); the argument is the new view.</summary>
+    event EventHandler<object?>? CurrentViewChanged;
 
     /// <summary>Raised after <see cref="Lock"/> or <see cref="Unlock"/> has changed the entries.</summary>
-    EventHandler? LockChanged { get; set; }
+    event EventHandler? LockChanged;
+
+    /// <summary>
+    /// Raises <see cref="LockChanged"/>. An interface cannot raise its own event, so <see cref="Lock"/> and <see cref="Unlock"/> call this:
+    /// a class that implements the interface by hand raises the event here (the base classes of Routeables.Core do it); the default does nothing.
+    /// </summary>
+    void NotifyLockChanged() { }
 
     /// <summary>
     /// The router moved by something other than a selection of the menu (the Back request of the system): show the page that is
@@ -48,21 +54,21 @@ public interface IMainViewModel
         return true;
     }
 
-    /// <summary>Locks every entry (<see cref="IRouteableEntry.IsLock"/>): the menu cannot leave the current page. Raises <see cref="LockChanged"/>.</summary>
+    /// <summary>Locks every entry (<see cref="IRouteableEntry.IsLock"/>): the menu cannot leave the current page. Raises <see cref="LockChanged"/> through <see cref="NotifyLockChanged"/>.</summary>
     void Lock()
     {
         foreach (var routeable in Routeables)
             routeable.IsLock = true;
 
-        LockChanged?.Invoke(this, EventArgs.Empty);
+        NotifyLockChanged();
     }
 
-    /// <summary>Unlocks every entry again. Raises <see cref="LockChanged"/>.</summary>
+    /// <summary>Unlocks every entry again. Raises <see cref="LockChanged"/> through <see cref="NotifyLockChanged"/>.</summary>
     void Unlock()
     {
         foreach (var routeable in Routeables)
             routeable.IsLock = false;
 
-        LockChanged?.Invoke(this, EventArgs.Empty);
+        NotifyLockChanged();
     }
 }

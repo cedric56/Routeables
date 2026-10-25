@@ -21,12 +21,15 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
     /// <summary>
     /// Occurs when the currently displayed view changes.
     /// </summary>
-    public EventHandler<object?>? CurrentViewChanged { get; set; }
+    public event EventHandler<object?>? CurrentViewChanged;
 
     /// <summary>
     /// Occurs when the lock state of the entries changes.
     /// </summary>
-    public EventHandler? LockChanged { get; set; }
+    public event EventHandler? LockChanged;
+
+    /// <inheritdoc />
+    public void NotifyLockChanged() => LockChanged?.Invoke(this, EventArgs.Empty);
 
     /// <summary>
     /// Follows the router: when a page is shown by something other than a selection, selects its entry

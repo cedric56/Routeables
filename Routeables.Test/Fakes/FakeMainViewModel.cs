@@ -9,8 +9,15 @@ public sealed class FakeMainViewModel : IMainViewModel
     public ObservableCollection<IRouteableEntry> Routeables { get; } = [];
     public IRouteableEntry? Routeable { get; set; }
     public object? CurrentView { get; set; }
-    public EventHandler<object?>? CurrentViewChanged { get; set; }
-    public EventHandler? LockChanged { get; set; }
+    public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
+
+    private EventHandler? _lockChanged;
+    public event EventHandler? LockChanged { add => _lockChanged += value; remove => _lockChanged -= value; }
+
+    /// <summary>How many handlers follow <see cref="LockChanged"/>.</summary>
+    public int LockSubscribers => _lockChanged?.GetInvocationList().Length ?? 0;
+
+    public void NotifyLockChanged() => _lockChanged?.Invoke(this, EventArgs.Empty);
 
     public string? CurrentTitle { get; }
 }
