@@ -4,11 +4,7 @@ The router of Routeables: its history, the one-at-a-time execution of route chan
 
 The router class is internal: an application resolves `IRouter` from the container.
 
-```xml
-<ItemGroup>
-  <ProjectReference Include="..\Routeables\Routeables.Routing\Routeables.Routing.csproj" />
-</ItemGroup>
-```
+It ships inside the [`Routeables`](../Routeables.Core/README.md) package, which every host package brings: `dotnet add package Routeables.Avalonia` (or the package of your host) is enough.
 
 A host's setup call (`UseRouteables`) registers the router already; call `RegisterRouting` yourself only for a host without one (tests, services).
 

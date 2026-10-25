@@ -4,13 +4,11 @@ The WPF host of Routeables (Windows, `net10.0-windows`): the setup call, a route
 
 The routing (`Routeables`) and the logic of the dialogs and notifications (`Routeables.Services`: what each button returns, vetoing a dismissal, the lifetime of a notification) are the ones of the other hosts. This package only draws them with WPF controls.
 
-```xml
-<ItemGroup>
-  <ProjectReference Include="..\Routeables\Routeables.Wpf\Routeables.Wpf.csproj" />
-  <ProjectReference Include="..\Routeables\Routeables.Generated\Routeables.Generated.csproj"
-                    OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-</ItemGroup>
+```bash
+dotnet add package Routeables.Wpf
 ```
+
+The package brings `Routeables` (routing, abstractions and the source generator): there is nothing else to add.
 
 ## Set up
 

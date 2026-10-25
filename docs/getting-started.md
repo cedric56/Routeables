@@ -2,25 +2,17 @@
 
 ## Installation
 
-The projects target **.NET 10** (`net10.0`), so you need a .NET 10 SDK. MAUI also needs the MAUI workload. For now, use the projects from source:
+The packages target **.NET 10** (`net10.0`), so you need a .NET 10 SDK. MAUI also needs the MAUI workload.
+
+Add the package of your host (`Routeables.Razor`, `Routeables.Maui`, `Routeables.Avalonia`, `Routeables.Uno` or `Routeables.Wpf`) to your application project:
 
 ```bash
-git clone https://github.com/cedric56/Routeables.git
+dotnet add package Routeables.Avalonia
 ```
 
-From NuGet, add the package of your host (`Routeables.Razor`, `Routeables.Maui`, `Routeables.Avalonia`, `Routeables.Uno` or `Routeables.Wpf`): it brings `Routeables`, which holds the routing, the abstractions and the source generator. From source, add a project reference to the host you need (it references `Routeables.Core`, which brings in routing and the abstractions), and the source generator as an analyzer:
+It brings `Routeables`, which holds the routing, the abstractions and the source generator: there is nothing else to add.
 
-```xml
-<ItemGroup>
-  <ProjectReference Include="..\Routeables\Routeables.Avalonia\Routeables.Avalonia.csproj" />
-  <!-- or Routeables.Razor / Routeables.Maui -->
-
-  <ProjectReference Include="..\Routeables\Routeables.Generated\Routeables.Generated.csproj"
-                    OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-</ItemGroup>
-```
-
-Adjust the relative paths to your layout. The generator must be referenced by **every project that contains attributes it should process**: the project with the views and, if you use `[RouteableViewModel]`, the project with the view models (see [Typed route methods](guides/typed-routes.md#typed-routing-methods-source-generator)).
+The generator must run in **every project that contains attributes it should process**: the project with the views and, if you use `[RouteableViewModel]`, the project with the view models. A project that is not a host (a class library with view models, a module) adds `dotnet add package Routeables` (see [Typed route methods](guides/typed-routes.md#typed-routing-methods-source-generator)).
 
 ## Quick start
 

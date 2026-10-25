@@ -60,16 +60,12 @@ The attribute accepts three optional named arguments:
 
 Constructor arguments are matched **by type, in order** when the view model is created, so avoid two constructor parameters of the same type that can be skipped. The generator warns about this case (`ROUT106`).
 
-### Reference the generator from the project with the view models
+### Add the package to the project with the view models
 
-The generator runs per project. Add it to the project that **contains the view models** and callers, not only to the application project:
+The generator runs per project. A host package brings it to the application project; the project that **contains the view models** and callers (a class library, say) gets it from the `Routeables` package, not only the application project:
 
-```xml
-<!-- XAnimals.ViewModels.csproj -->
-<ItemGroup>
-  <ProjectReference Include="..\..\Routeables.Generated\Routeables.Generated.csproj"
-                    OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-</ItemGroup>
+```bash
+dotnet add package Routeables
 ```
 
 The generated methods are `internal`, which is why the caller and the destination live in the same project.

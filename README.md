@@ -41,7 +41,7 @@ A route on the view model, the view with the matching name, one registration cal
 
 ## Start with your host
 
-Reference the host package, then start Routeables where your framework starts. From NuGet, the host package brings the `Routeables` package, which carries the generator: there is nothing else to add. From source, reference the generator as an analyzer too:
+Add the package of your host, then start Routeables where your framework starts. The host package brings the `Routeables` package, which carries the generator: there is nothing else to add.
 
 | Host | Package | Setup |
 | --- | --- | --- |
@@ -51,12 +51,8 @@ Reference the host package, then start Routeables where your framework starts. F
 | Uno Platform | [`Routeables.Uno`](Routeables.Uno/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
 | WPF | [`Routeables.Wpf`](Routeables.Wpf/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
 
-```xml
-<ItemGroup>
-  <ProjectReference Include="..\Routeables\Routeables.Avalonia\Routeables.Avalonia.csproj" />   <!-- your host -->
-  <ProjectReference Include="..\Routeables\Routeables.Generated\Routeables.Generated.csproj"
-                    OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-</ItemGroup>
+```bash
+dotnet add package Routeables.Avalonia   # or Routeables.Razor, .Maui, .Uno, .Wpf
 ```
 
 The call starts Routeables and registers your menu (the main view model). The block is for your own registrations, the same on every host:

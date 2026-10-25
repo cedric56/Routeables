@@ -2,13 +2,11 @@
 
 The [Avalonia](https://avaloniaui.net/) host of Routeables (desktop, Android, iOS, browser): the setup call, a routed view base, the region control and a list box for the menu. Targets **.NET 10**.
 
-```xml
-<ItemGroup>
-  <ProjectReference Include="..\Routeables\Routeables.Avalonia\Routeables.Avalonia.csproj" />
-  <ProjectReference Include="..\Routeables\Routeables.Generated\Routeables.Generated.csproj"
-                    OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-</ItemGroup>
+```bash
+dotnet add package Routeables.Avalonia
 ```
+
+The package brings `Routeables` (routing, abstractions and the source generator): there is nothing else to add.
 
 ## Set up
 

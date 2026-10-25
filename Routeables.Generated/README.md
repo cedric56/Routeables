@@ -1,15 +1,6 @@
 # Routeables.Generated
 
-The source generators of Routeables. From NuGet they are inside the `Routeables` package, which every host package brings: there is nothing to add. From source, reference them as an analyzer from every project that declares routes:
-
-```xml
-<ItemGroup>
-  <ProjectReference Include="..\Routeables\Routeables.Generated\Routeables.Generated.csproj"
-                    OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-</ItemGroup>
-```
-
-Mind the relative path: a wrong one makes `AddGeneratedRoutes` and `GoTo…Async` disappear.
+The source generators of Routeables. They are inside the `Routeables` package, which every host package brings: there is nothing to add. A project that only declares routes or view models (a class library, a module) adds `dotnet add package Routeables` to get them; without the package, `AddGeneratedRoutes` and `GoTo…Async` do not exist.
 
 ## What it does
 

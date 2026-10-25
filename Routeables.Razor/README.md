@@ -2,13 +2,11 @@
 
 The Blazor host of Routeables: Blazor Server, Blazor WebAssembly and MAUI Blazor Hybrid. It plugs the router into Razor components and keeps the browser address in step with it. Targets **.NET 10**.
 
-```xml
-<ItemGroup>
-  <ProjectReference Include="..\Routeables\Routeables.Razor\Routeables.Razor.csproj" />
-  <ProjectReference Include="..\Routeables\Routeables.Generated\Routeables.Generated.csproj"
-                    OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-</ItemGroup>
+```bash
+dotnet add package Routeables.Razor
 ```
+
+The package brings `Routeables` (routing, abstractions and the source generator): there is nothing else to add.
 
 ## Set up
 

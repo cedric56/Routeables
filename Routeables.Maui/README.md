@@ -2,13 +2,11 @@
 
 The .NET MAUI host of Routeables: the setup call, a routed `ContentView` base, a `Shell` driven by the main view model, and the region control. Targets `net10.0` and the Android, iOS, Mac Catalyst and Windows frameworks (the MAUI workload is required).
 
-```xml
-<ItemGroup>
-  <ProjectReference Include="..\Routeables\Routeables.Maui\Routeables.Maui.csproj" />
-  <ProjectReference Include="..\Routeables\Routeables.Generated\Routeables.Generated.csproj"
-                    OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-</ItemGroup>
+```bash
+dotnet add package Routeables.Maui
 ```
+
+The package brings `Routeables` (routing, abstractions and the source generator): there is nothing else to add.
 
 ## Set up
 

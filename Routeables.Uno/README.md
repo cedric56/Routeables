@@ -2,13 +2,11 @@
 
 The [Uno Platform](https://platform.uno/) host of Routeables (Windows, Linux, macOS, WebAssembly, Android, iOS): the setup call, a routed view base, the region control and a list view for the menu. Targets **.NET 10**. It contains no XAML of its own.
 
-```xml
-<ItemGroup>
-  <ProjectReference Include="..\Routeables\Routeables.Uno\Routeables.Uno.csproj" />
-  <ProjectReference Include="..\Routeables\Routeables.Generated\Routeables.Generated.csproj"
-                    OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-</ItemGroup>
+```bash
+dotnet add package Routeables.Uno
 ```
+
+The package brings `Routeables` (routing, abstractions and the source generator): there is nothing else to add.
 
 ## Set up
 
