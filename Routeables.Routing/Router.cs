@@ -476,17 +476,17 @@ internal class Router(
 
         // A page of the menu, whose route has no parameter.
         static string Normal(string? route) => (route ?? string.Empty).Split('?')[0].Trim('/');
-        if (provider.GetService<IMainRouteables>()?.Routeables.FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(url), StringComparison.OrdinalIgnoreCase)) is { } item)
+        if (provider.GetService<IMainViewModel>()?.Routeables.FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(url), StringComparison.OrdinalIgnoreCase)) is { } item)
             return await GoToEntryAsync(item, cancellationToken, []);
 
         return RouteableResult.Fail(new InvalidOperationException($"No route matches '{url}'. Register it with an explicit route, for instance RegisterRoute<TView, TViewModel>(route: \"/orders/{{id:int}}\")."));
     }
 
     /// <inheritdoc />
-    public ILockCoordinator? CreateLockCoordinator(IMainRouteables routeables)
+    public ILockCoordinator? CreateLockCoordinator(IMainViewModel routeables)
     {
         // Locking is optional: without a registered factory (AddLocking) there is nothing to lock.
-        return provider.GetService<Func<IMainRouteables, ILockCoordinator>>()?.Invoke(routeables);
+        return provider.GetService<Func<IMainViewModel, ILockCoordinator>>()?.Invoke(routeables);
     }
 
     /// <inheritdoc />
@@ -579,7 +579,7 @@ internal class Router(
         if (matching.Template is not null)
             return matching.Template;
 
-        var item = provider.GetService<IMainRouteables>()?.Routeables
+        var item = provider.GetService<IMainViewModel>()?.Routeables
             .FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(route), StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(r.Template));
         return item?.Template ?? route;
     }

@@ -18,6 +18,12 @@
     <PackageReference Include="SkiaSharp.NativeAssets.WebAssembly" Version="4.148.0" />
   </ItemGroup>
 
+  <!-- A browser has no system fonts for the WebAssembly app: the emoji of the menu (the glyphs of AnimalIcons) come from this font, used when
+       Inter has no glyph (see Program.cs). Noto Emoji, SIL Open Font License (licenses/NotoEmoji-OFL.txt). -->
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\Fonts\NotoEmoji.ttf" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\XAnimals.Avalonia\XAnimals.Avalonia.csproj" />
   </ItemGroup>

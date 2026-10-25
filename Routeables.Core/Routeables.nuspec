@@ -28,21 +28,28 @@
     <file src="README.md" target="" />
     <file src="../Images/icon.png" target="" />
 
-    <!-- The libraries, with their symbols. -->
+    <!-- The libraries, with their symbols and their XML documentation (what the IDE of the user shows). -->
     <file src="../Routeables.Abstraction/bin/$configuration$/net10.0/Routeables.Abstraction.dll" target="lib/net10.0" />
     <file src="../Routeables.Abstraction/bin/$configuration$/net10.0/Routeables.Abstraction.pdb" target="lib/net10.0" />
+    <file src="../Routeables.Abstraction/bin/$configuration$/net10.0/Routeables.Abstraction.xml" target="lib/net10.0" />
     <file src="../Routeables.Routing/bin/$configuration$/net10.0/Routeables.Routing.dll" target="lib/net10.0" />
     <file src="../Routeables.Routing/bin/$configuration$/net10.0/Routeables.Routing.pdb" target="lib/net10.0" />
+    <file src="../Routeables.Routing/bin/$configuration$/net10.0/Routeables.Routing.xml" target="lib/net10.0" />
     <file src="bin/$configuration$/net10.0/Routeables.Core.dll" target="lib/net10.0" />
     <file src="bin/$configuration$/net10.0/Routeables.Core.pdb" target="lib/net10.0" />
+    <file src="bin/$configuration$/net10.0/Routeables.Core.xml" target="lib/net10.0" />
     <file src="../Routeables.Regions/bin/$configuration$/net10.0/Routeables.Regions.dll" target="lib/net10.0" />
     <file src="../Routeables.Regions/bin/$configuration$/net10.0/Routeables.Regions.pdb" target="lib/net10.0" />
+    <file src="../Routeables.Regions/bin/$configuration$/net10.0/Routeables.Regions.xml" target="lib/net10.0" />
     <file src="../Routeables.Services/bin/$configuration$/net10.0/Routeables.Services.dll" target="lib/net10.0" />
     <file src="../Routeables.Services/bin/$configuration$/net10.0/Routeables.Services.pdb" target="lib/net10.0" />
+    <file src="../Routeables.Services/bin/$configuration$/net10.0/Routeables.Services.xml" target="lib/net10.0" />
     <file src="../Routeables.Locking/bin/$configuration$/net10.0/Routeables.Locking.dll" target="lib/net10.0" />
     <file src="../Routeables.Locking/bin/$configuration$/net10.0/Routeables.Locking.pdb" target="lib/net10.0" />
+    <file src="../Routeables.Locking/bin/$configuration$/net10.0/Routeables.Locking.xml" target="lib/net10.0" />
     <file src="../Routeables.Segments/bin/$configuration$/net10.0/Routeables.Segments.dll" target="lib/net10.0" />
     <file src="../Routeables.Segments/bin/$configuration$/net10.0/Routeables.Segments.pdb" target="lib/net10.0" />
+    <file src="../Routeables.Segments/bin/$configuration$/net10.0/Routeables.Segments.xml" target="lib/net10.0" />
 
     <!-- The source generator: an analyzer, it adds nothing to the references of the project. -->
     <file src="../Routeables.Generated/bin/$configuration$/netstandard2.0/Routeables.Generated.dll" target="analyzers/dotnet/cs" />

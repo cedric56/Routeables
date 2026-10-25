@@ -8,7 +8,7 @@ internal class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        // An address given on the command line (xanimals xanimals://dogs/Rex) is followed once the first page is shown.
+        // An address given on the command line (xanimals xanimals://dogs/Eurohound) is followed once the first page is shown.
         if (args.Length > 0 && Uri.TryCreate(args[0], UriKind.Absolute, out var link))
             LinkInbox.Instance.Push(link);
 

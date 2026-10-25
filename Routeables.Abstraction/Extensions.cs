@@ -14,13 +14,14 @@ namespace Routeables.Abstraction;
 /// </summary>
 public static class Extensions
 {
+    /// <summary>Replaces how the arguments of a route change are created: <paramref name="factory"/> returns a new <see cref="IRouteableArgs"/> each time. Without it the arguments are a <c>RouteableArgs</c>.</summary>
     public static void RegisterRouteableArgsFactory(this IServiceCollection services, Func<IRouteableArgs> factory)
     {
         services.AddSingleton<IRouteableArgsFactory>(sp => new RouteableArgsFactory(factory));
     }
 
     /// <summary>
-    /// Registers the main view model of a host (the menu or tab bar), which is the <see cref="IMainRouteables"/> the views,
+    /// Registers the main view model of a host (the menu or tab bar), which is the <see cref="IMainViewModel"/> the views,
     /// the lock coordinator and the start selection all refer to.
     /// </summary>
     /// <remarks>
@@ -33,9 +34,9 @@ public static class Extensions
     /// <param name="services">The service collection.</param>
     /// <param name="lifetime">The lifetime of the main view model; the one of the host when omitted.</param>
     /// <exception cref="ArgumentException"><paramref name="lifetime"/> is <see cref="ServiceLifetime.Transient"/>.</exception>
-    public static IServiceCollection RegisterMainRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
+    public static IServiceCollection RegisterMainViewModel<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
         this IServiceCollection services, ServiceLifetime? lifetime = null)
-        where TMain : class, IMainRouteables
+        where TMain : class, IMainViewModel
     {
         ArgumentNullException.ThrowIfNull(services);
         var chosen = lifetime ?? services.GetRouteableLifetime();
@@ -43,12 +44,12 @@ public static class Extensions
             throw new ArgumentException(
                 "The main routeables must be Scoped or Singleton: a Transient one gives each consumer another instance.", nameof(lifetime));
 
-        // The container builds TMain under a key, so that it can check its dependencies when it is built. TMain and IMainRouteables
+        // The container builds TMain under a key, so that it can check its dependencies when it is built. TMain and IMainViewModel
         // both give that instance once the entries of the modules (AddMenuEntries) have been added to its menu: whichever of the two
         // a consumer asks for, the menu is the same.
         services.Add(new ServiceDescriptor(typeof(TMain), MainKey, typeof(TMain), chosen));
         services.Add(new ServiceDescriptor(typeof(TMain), sp => WithModuleEntries(sp.GetRequiredKeyedService<TMain>(MainKey), sp), chosen));
-        services.Add(new ServiceDescriptor(typeof(IMainRouteables), sp => sp.GetRequiredService<TMain>(), chosen));
+        services.Add(new ServiceDescriptor(typeof(IMainViewModel), sp => sp.GetRequiredService<TMain>(), chosen));
 
         // The service that loads modules while the application runs; one for the application, whatever the main's lifetime.
         services.TryAddSingleton<RouteableModules>(sp => new RouteableModules(sp));
@@ -91,8 +92,8 @@ public static class Extensions
     /// </param>
     /// <remarks>
     /// By default the entries come after the ones of the main view model, in the order the modules were added. This works with
-    /// <see cref="RegisterMainRouteables{TMain}"/>, whether a consumer asks for <typeparamref name="TMain"/> or for
-    /// <see cref="IMainRouteables"/>. Adding the same module twice adds its entries once (the same <paramref name="entries"/> function);
+    /// <see cref="RegisterMainViewModel{TMain}"/>, whether a consumer asks for <typeparamref name="TMain"/> or for
+    /// <see cref="IMainViewModel"/>. Adding the same module twice adds its entries once (the same <paramref name="entries"/> function);
     /// a function that captures something different on each call counts as another module.
     /// </remarks>
     public static IServiceCollection AddMenuEntries(this IServiceCollection services, Func<IEnumerable<IRouteableEntry>> entries, int? index = null)
@@ -108,10 +109,10 @@ public static class Extensions
         return services;
     }
 
-    // The key under which the container builds the main view model; see RegisterMainRouteables.
-    private const string MainKey = "Routeables.MainRouteables";
+    // The key under which the container builds the main view model; see RegisterMainViewModel.
+    private const string MainKey = "Routeables.MainViewModel";
 
-    private static IMainRouteables WithModuleEntries(IMainRouteables main, IServiceProvider provider)
+    private static IMainViewModel WithModuleEntries(IMainViewModel main, IServiceProvider provider)
     {
         foreach (var module in provider.GetServices<MenuEntries>())
             module.AddTo(main);
@@ -133,8 +134,8 @@ public static class Extensions
     {
         // The factory captures the provider it is resolved from. Scoped, so that provider is the router's own scope.
         services.TryAdd(new ServiceDescriptor(
-            typeof(Func<IMainRouteables, ILockCoordinator>),
-            sp => (Func<IMainRouteables, ILockCoordinator>)(manager =>
+            typeof(Func<IMainViewModel, ILockCoordinator>),
+            sp => (Func<IMainViewModel, ILockCoordinator>)(manager =>
                 ActivatorUtilities.CreateInstance<TLockCoordinator>(sp, manager)),
             ServiceLifetime.Scoped));
     }
@@ -145,9 +146,9 @@ public static class Extensions
     /// <param name="provider">The provider the factory is resolved from.</param>
     /// <param name="routeables">The MVVM manager the coordinator will work with.</param>
     /// <returns>A new <see cref="ILockCoordinator"/> instance (one per call).</returns>
-    public static ILockCoordinator GetLockCoordinator(this IServiceProvider provider, IMainRouteables routeables)
+    public static ILockCoordinator GetLockCoordinator(this IServiceProvider provider, IMainViewModel routeables)
     {
-        var factory = provider.GetRequiredService<Func<IMainRouteables, ILockCoordinator>>();
+        var factory = provider.GetRequiredService<Func<IMainViewModel, ILockCoordinator>>();
         return factory.Invoke(routeables);
     }
 
@@ -278,7 +279,7 @@ public static class Extensions
         => router.CurrentViewModel as T;
 
     /// <summary>The coordinator that locks <paramref name="routeables"/> while a page blocks leaving; <see langword="null"/> when the router offers none.</summary>
-    public static ILockCoordinator? CreateLockCoordinator(this IRouter router, IMainRouteables routeables)
+    public static ILockCoordinator? CreateLockCoordinator(this IRouter router, IMainViewModel routeables)
         => (router as ILockCoordinatorFactory)?.CreateLockCoordinator(routeables);
 
     /// <summary>The router that shows <paramref name="view"/>: the one of its <see cref="IRouteableEntry.Region"/>.</summary>

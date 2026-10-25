@@ -1,7 +1,7 @@
 ﻿namespace Routeables.Abstraction;
 
 /// <summary>Read-only view of one history entry.</summary>
-public interface IRouterEntry
+public interface IHistoryEntry
 {
     /// <summary>The view model of this entry.</summary>
     object ViewModel { get; }
@@ -32,13 +32,13 @@ public interface IRouterHistory
     bool CanGoForward { get; }
 
     /// <summary>The first entry, or <see langword="null"/> when the history is empty.</summary>
-    IRouterEntry? Root { get; }
+    IHistoryEntry? Root { get; }
 
     /// <summary>The entry the cursor is on, or <see langword="null"/> when the history is empty.</summary>
-    IRouterEntry? Current { get; }
+    IHistoryEntry? Current { get; }
 
     /// <summary>Snapshot copy, oldest first. Safe to enumerate while routing continues.</summary>
-    IReadOnlyList<IRouterEntry> Entries { get; }
+    IReadOnlyList<IHistoryEntry> Entries { get; }
 
     /// <summary>
     /// Raised after any change (push, back, forward, root, replace, clear). Raised while the router

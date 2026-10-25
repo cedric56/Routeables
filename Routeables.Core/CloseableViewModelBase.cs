@@ -37,6 +37,7 @@ public abstract partial class CloseableViewModelBase<TResult> : ICloseableViewMo
     /// </summary>
     public abstract string Title { get; }
 
+    /// <summary>Whether the view model may close now. Always <see langword="true"/> here; override it to refuse, for instance while there are unsaved changes.</summary>
     public virtual Task<bool> CanCloseAsync() => Task.FromResult(true);
 
     /// <summary>

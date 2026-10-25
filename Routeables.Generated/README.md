@@ -13,7 +13,7 @@ Mind the relative path: a wrong one makes `AddGeneratedRoutes` and `GoTo…Async
 
 ## What it does
 
-- **Registers routes.** A `[Routeable("/path")]` view model is paired with the view of the same name (`OrderViewModel` → `OrderView`), or with `[RouteableView(typeof(OrderViewModel))]`. `services.AddGeneratedRoutes()` is generated in each project.
+- **Registers routes.** A `[Routeable("/path")]` view model is paired with the view of the same name (`DogDetailViewModel` → `DogDetailView`), or with `[RouteableView(typeof(NoteViewModel))]` on `NoteView`. `services.AddGeneratedRoutes()` is generated in each project.
 - **Types the routing methods.** `[RouteableViewModel(typeof(Caller))]` generates `GoTo{Name}Async(...)` on `Caller`, with the constructor parameters as arguments, checked at compile time.
 
 Works the same on Razor, MAUI, Avalonia, Uno and WPF. The warnings and errors (`ROUT101` to `ROUT301`) are explained in [Diagnostics](../docs/guides/diagnostics.md).

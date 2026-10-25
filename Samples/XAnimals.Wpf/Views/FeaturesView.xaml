@@ -19,7 +19,7 @@
             <TextBlock Text="Link" Margin="0,18,0,6" FontWeight="SemiBold" Opacity="0.7" />
             <TextBlock Text="An address from outside, followed through the router. The same address can be given on the command line." TextWrapping="Wrap" />
             <WrapPanel Margin="0,6,0,0">
-                <Button Margin="0,0,8,8" Padding="12,4" Content="Open xanimals://dogs/Rex" Command="{Binding OpenLinkCommand}" />
+                <Button Margin="0,0,8,8" Padding="12,4" Content="Open xanimals://dogs/Eurohound" Command="{Binding OpenLinkCommand}" />
             </WrapPanel>
 
             <TextBlock Visibility="{Binding IsMobile, Converter={StaticResource BoolToVisibility}}" Text="Saved values" Margin="0,18,0,6" FontWeight="SemiBold" Opacity="0.7" />

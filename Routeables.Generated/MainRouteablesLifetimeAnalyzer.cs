@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Routeables.Generated;
 
 /// <summary>
-/// ROUT301: <c>IMainRouteables</c> registered as transient. Each consumer (the window, the lock coordinator, the views)
+/// ROUT301: <c>IMainViewModel</c> registered as transient. Each consumer (the window, the lock coordinator, the views)
 /// would get another instance than the one that is displayed, so the selection, the locks and the subscriptions would
 /// land on an object nobody sees. <c>RegisterMainRouteables</c> refuses it at run time; this reports the direct
 /// <c>AddTransient</c> at build time.
@@ -18,8 +18,8 @@ public sealed class MainRouteablesLifetimeAnalyzer : DiagnosticAnalyzer
 
     private static readonly DiagnosticDescriptor TransientMain = new DiagnosticDescriptor(
         DiagnosticId,
-        "IMainRouteables registered as transient",
-        "IMainRouteables must be Scoped (Blazor Server) or Singleton (Avalonia, MAUI): a transient one gives each consumer another instance than the one that is displayed. Use RegisterMainRouteables<T>().",
+        "IMainViewModel registered as transient",
+        "IMainViewModel must be Scoped (Blazor Server) or Singleton (Avalonia, MAUI): a transient one gives each consumer another instance than the one that is displayed. Use RegisterMainRouteables<T>().",
         "Routeables",
         DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
@@ -32,7 +32,7 @@ public sealed class MainRouteablesLifetimeAnalyzer : DiagnosticAnalyzer
         context.EnableConcurrentExecution();
         context.RegisterCompilationStartAction(start =>
         {
-            var main = start.Compilation.GetTypeByMetadataName("Routeables.Abstraction.IMainRouteables");
+            var main = start.Compilation.GetTypeByMetadataName("Routeables.Abstraction.IMainViewModel");
             if (main is null)
                 return;
 
@@ -47,10 +47,10 @@ public sealed class MainRouteablesLifetimeAnalyzer : DiagnosticAnalyzer
         if (method.Name != "AddTransient" && method.Name != "TryAddTransient")
             return;
 
-        // AddTransient<IMainRouteables, MainViewModel>() / AddTransient<IMainRouteables>(factory)
+        // AddTransient<IMainViewModel, MainViewModel>() / AddTransient<IMainRouteables>(factory)
         var generic = method.TypeArguments.Length > 0 && SymbolEqualityComparer.Default.Equals(method.TypeArguments[0], main);
 
-        // AddTransient(typeof(IMainRouteables), typeof(MainViewModel))
+        // AddTransient(typeof(IMainViewModel), typeof(MainViewModel))
         var typeOf = false;
         foreach (var argument in invocation.Arguments)
         {

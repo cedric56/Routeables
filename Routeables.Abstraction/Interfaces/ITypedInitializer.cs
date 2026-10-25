@@ -4,7 +4,7 @@ namespace Routeables.Routing;
 
 /// <summary>
 /// Carries typed routing data from <c>GoToRouteAsync&lt;TViewModel, TData&gt;</c> to
-/// <see cref="RouterLifecycle.InitializeAsync"/> without reflection (AOT friendly): the generic
+/// <c>RouterLifecycle.InitializeAsync</c> without reflection (AOT friendly): the generic
 /// <see cref="TypedInitializer{TData}"/> knows <c>TData</c>, the lifecycle only sees this interface.
 /// </summary>
 internal interface ITypedInitializer

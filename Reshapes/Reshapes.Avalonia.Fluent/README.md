@@ -5,7 +5,7 @@
 ```csharp
 AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r =>
 {
-    r.UseFluentAvalonia("avares://MyApp/Assets/icon.ico");   // in place of UseRouteablesServices
+    r.UseFluentAvalonia("avares://XAnimals.Avalonia/Assets/icon.ico");   // in place of UseRouteablesServices
     r.AddGeneratedRoutes();
 });
 ```

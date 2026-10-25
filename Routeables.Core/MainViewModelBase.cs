@@ -5,7 +5,7 @@ namespace Routeables.Core;
 
 /// <summary>
 /// A main view model that works as it is: derive from it, return the entries of the menu, and register it with
-/// <c>services.RegisterMainRouteables&lt;T&gt;()</c>. It does not implement <see cref="INotifyPropertyChanged"/>: the class that derives from it does (see the remarks).
+/// <c>services.RegisterMainViewModel&lt;T&gt;()</c>. It does not implement <see cref="INotifyPropertyChanged"/>: the class that derives from it does (see the remarks).
 /// <code>
 /// public sealed class MainViewModel(IRouter router) : MainViewModelBase(router)
 /// {

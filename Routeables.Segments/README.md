@@ -1,13 +1,13 @@
 # Routeables.Segments
 
-Optional routing by segments, as in Prism: `Orders?status=open/Detail?id=5` runs the segments one after the other, each on its router with its own parameters. Plain `IRouter` use does not need it. Targets **.NET 10**.
+Optional routing by segments, as in Prism: `Orders?status=open/Detail?id=5` (in the samples, `/Bears?SearchText=polar`) runs the segments one after the other, each on its router with its own parameters. Plain `IRouter` use does not need it, and does not read segments: `router.GoToAsync("/dogs/Eurohound")` is one route matched against the template `/dogs/{name}`, whereas the same string given to `CoordinateAsync` is read as an absolute address of two segments, `dogs` and `Eurohound`. A path goes to the router, segments go to the coordinator. Targets **.NET 10**.
 
 ```csharp
 services.RegisterRouting();
 services.AddRouteCoordinator();
-services.RegisterSegment<OrdersViewModel>("Orders");
+services.RegisterSegment<BearsViewModel>("Bears", "/bears");   // Samples/Bases/XAnimals.ViewModels/Extensions.cs
 
-await coordinator.CoordinateAsync("Orders?status=open/Detail?id=5");
+await coordinator.CoordinateAsync("/Bears?SearchText=polar");   // MainViewModel.cs of the samples
 ```
 
 | Syntax | Meaning |

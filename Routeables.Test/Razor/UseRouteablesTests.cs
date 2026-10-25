@@ -24,10 +24,10 @@ public class UseRouteablesTests
         var services = new ServiceCollection();
         var blockRan = false;
 
-        services.UseRouteablesServer<Tests.Core.FakeMainRouteables>(r => blockRan = ReferenceEquals(r, services));
+        services.UseRouteablesServer<Tests.Core.FakeMainViewModel>(r => blockRan = ReferenceEquals(r, services));
 
         Assert.True(blockRan);
-        Assert.Equal(ServiceLifetime.Scoped, services.Last(d => d.ServiceType == typeof(IMainRouteables)).Lifetime);
+        Assert.Equal(ServiceLifetime.Scoped, services.Last(d => d.ServiceType == typeof(IMainViewModel)).Lifetime);
     }
 
     [Fact]
@@ -35,9 +35,9 @@ public class UseRouteablesTests
     {
         foreach (var (use, expected) in new (Action<IServiceCollection>, Runtime)[]
         {
-            (s => s.UseRouteablesServer<FakeMainRouteables>(), Runtime.BlazorServer),
-            (s => s.UseRouteablesWebAssembly<FakeMainRouteables>(), Runtime.BlazorWebAssembly),
-            (s => s.UseRouteablesHybrid<FakeMainRouteables>(), Runtime.MauiHybrid),
+            (s => s.UseRouteablesServer<FakeMainViewModel>(), Runtime.BlazorServer),
+            (s => s.UseRouteablesWebAssembly<FakeMainViewModel>(), Runtime.BlazorWebAssembly),
+            (s => s.UseRouteablesHybrid<FakeMainViewModel>(), Runtime.MauiHybrid),
         })
         {
             var services = new ServiceCollection();
@@ -51,9 +51,9 @@ public class UseRouteablesTests
     public void UseRouteablesServer_refuses_a_main_registered_as_singleton_before_it()
     {
         var services = new ServiceCollection();
-        services.RegisterMainRouteables<Tests.Core.FakeMainRouteables>();     // no host yet: Singleton
+        services.RegisterMainViewModel<Tests.Core.FakeMainViewModel>();     // no host yet: Singleton
 
-        Assert.Throws<InvalidOperationException>(() => services.UseRouteablesServer<FakeMainRouteables>());
+        Assert.Throws<InvalidOperationException>(() => services.UseRouteablesServer<FakeMainViewModel>());
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class UseRouteablesTests
         };
         services.AddSingleton<NavigationManager>(new TestNavigationManager());
 
-        services.UseRouteablesServer<FakeMainRouteables>(onCircuitProviderChanged: callback);
+        services.UseRouteablesServer<FakeMainViewModel>(onCircuitProviderChanged: callback);
         services.UseRouteablesServices();
         using var provider = services.BuildServiceProvider();
         using var firstScope = provider.CreateScope();
@@ -106,7 +106,7 @@ public class UseRouteablesTests
         var services = new ServiceCollection();
         services.AddSingleton<NavigationManager>(new TestNavigationManager());
 
-        services.UseRouteablesServer<FakeMainRouteables>();
+        services.UseRouteablesServer<FakeMainViewModel>();
         services.UseRouteablesServices(position: position, maxDispayments: 3);
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
@@ -127,7 +127,7 @@ public class UseRouteablesTests
         var services = new ServiceCollection();
         services.AddSingleton<NavigationManager>(new TestNavigationManager());
 
-        services.UseRouteablesServer<FakeMainRouteables>();
+        services.UseRouteablesServer<FakeMainViewModel>();
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
 
@@ -145,7 +145,7 @@ public class UseRouteablesTests
         var services = new ServiceCollection();
         services.AddSingleton<NavigationManager>(new TestNavigationManager());
 
-        services.UseRouteablesServer<FakeMainRouteables>();
+        services.UseRouteablesServer<FakeMainViewModel>();
         services.UseRouteablesServices(position: RouteableNotificationPosition.TopRight);
         services.UseRouteablesServices(position: RouteableNotificationPosition.BottomCenter);
 
@@ -164,7 +164,7 @@ public class UseRouteablesTests
         services.AddSingleton<NavigationManager>(new TestNavigationManager());
         var custom = new RouteableNotificationService(new RouteableNotificationOptions());
 
-        services.UseRouteablesServer<FakeMainRouteables>();
+        services.UseRouteablesServer<FakeMainViewModel>();
         services.UseRouteablesServices(routeableNotificationService: _ => custom);
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();

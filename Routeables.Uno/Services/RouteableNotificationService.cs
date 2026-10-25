@@ -79,8 +79,12 @@ internal class RouteableNotificationService(IMessageBoxService service) : IRoute
             };
 
             // A tap is the answer to the notification: it runs onClick, if any, and dismisses it.
-            bar.Tapped += (_, _) =>
+            // The close button of the bar is inside it: a tap on it only closes the notification, it is not the answer.
+            bar.Tapped += (_, e) =>
             {
+                if (IsInsideAButton(e.OriginalSource as DependencyObject, bar))
+                    return;
+
                 session.Click();
                 bar.IsOpen = false;
             };
@@ -112,6 +116,14 @@ internal class RouteableNotificationService(IMessageBoxService service) : IRoute
                 };
                 timer.Start();
             }
+        }
+
+        private static bool IsInsideAButton(DependencyObject? node, DependencyObject bar)
+        {
+            for (; node is not null && !ReferenceEquals(node, bar); node = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(node))
+                if (node is ButtonBase)
+                    return true;
+            return false;
         }
 
         private void Resize()

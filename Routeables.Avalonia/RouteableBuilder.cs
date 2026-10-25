@@ -47,13 +47,13 @@ public static class RouteableBuilder
         Action<IServiceProvider>? afterBuild = null,
         Action? onDispose = null,
         Func<IApplicationLifetime?, Control>? view = null)
-        where TMain : class, IMainRouteables
+        where TMain : class, IMainViewModel
     {
         ArgumentNullException.ThrowIfNull(builder);
 
         var provider = BuildProvider(services =>
         {
-            services.RegisterMainRouteables<TMain>();
+            services.RegisterMainViewModel<TMain>();
             services.UseRouteablesServices();
             configure?.Invoke(services);
         }, afterBuild);
@@ -90,7 +90,7 @@ public static class RouteableBuilder
         ArgumentNullException.ThrowIfNull(view);
 
         var provider = application.GetRouteableServices();
-        view.DataContext ??= provider.GetService<IMainRouteables>();
+        view.DataContext ??= provider.GetService<IMainViewModel>();
 
         switch (application.ApplicationLifetime)
         {
@@ -164,9 +164,9 @@ public static class RouteableBuilder
 
                         var topLevel = TopLevelStateManager.Default.GetActive(false);
 
-                        // The main view model is a singleton (RegisterMainRouteables refuses a transient one), so this is the
+                        // The main view model is a singleton (RegisterMainViewModel refuses a transient one), so this is the
                         // instance the window displays.
-                        try { provider.GetService<IMainRouteables>()?.SelectFirst(); }
+                        try { provider.GetService<IMainViewModel>()?.SelectFirst(); }
                         catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(RouteableBuilder)); }   // raised from an event: it must not end the application
 
                         topLevel?.Closed += OnClosed;

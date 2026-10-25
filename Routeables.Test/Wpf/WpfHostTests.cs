@@ -23,7 +23,7 @@ public class WpfHostTests
         IServiceProvider? provider = null;
         try
         {
-            await WpfHarness.Run(() => provider = Application.Current.UseRouteables<FakeMainRouteables>());
+            await WpfHarness.Run(() => provider = Application.Current.UseRouteables<FakeMainViewModel>());
             await test(provider!);
         }
         finally
@@ -39,7 +39,7 @@ public class WpfHostTests
         HostContract.ProvidesRouterAndInjection(provider);
         HostContract.MainViewModelIsOneInstance(provider);
         HostContract.ValueAttributesNeverComeFromTheContainer(provider);
-        Assert.IsType<FakeMainRouteables>(provider.GetRequiredService<IMainRouteables>());
+        Assert.IsType<FakeMainViewModel>(provider.GetRequiredService<IMainViewModel>());
         return Task.CompletedTask;
     });
 

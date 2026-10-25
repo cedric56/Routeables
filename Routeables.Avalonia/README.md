@@ -24,12 +24,13 @@ Or let the builder show it: `.UseRouteables<MainViewModel>(r => r.AddGeneratedRo
 ## A view
 
 ```csharp
-public partial class HomeView : RouteableFor<HomeViewModel> { public HomeView() => InitializeComponent(); }
+// Samples/XAnimals.Avalonia/Views/Animals/DogDetailView.axaml.cs
+public partial class DogDetailView : RouteableFor<DogDetailViewModel> { public DogDetailView() => InitializeComponent(); }
 ```
 
 ```xml
 <!-- xmlns:routeables="using:Routeables.Avalonia" -->
-<routeables:RouteableRegion Region="detail" />
+<routeables:RouteableRegion Region="shell-content" />
 ```
 
 `RouteableListBox` lists the entries of the main view model, selects the current one and disables locked ones.

@@ -6,8 +6,8 @@ using Routeables.Abstraction;
 namespace Routeables.Wpf;
 
 /// <summary>
-/// The menu of the application: one item per entry of the main view model (<see cref="IMainRouteables.Routeables"/>), the
-/// selected item is the current entry (<see cref="IMainRouteables.Routeable"/>). Its items are disabled while the menu is
+/// The menu of the application: one item per entry of the main view model (<see cref="IMainViewModel.Routeables"/>), the
+/// selected item is the current entry (<see cref="IMainViewModel.Routeable"/>). Its items are disabled while the menu is
 /// locked. Its data context must be the main view model.
 /// </summary>
 public class RouteableListBox : ListBox
@@ -15,8 +15,8 @@ public class RouteableListBox : ListBox
     /// <summary>Creates the menu.</summary>
     public RouteableListBox()
     {
-        SetBinding(ItemsSourceProperty, new Binding(nameof(IMainRouteables.Routeables)));
-        SetBinding(SelectedItemProperty, new Binding(nameof(IMainRouteables.Routeable)) { Mode = BindingMode.TwoWay });
+        SetBinding(ItemsSourceProperty, new Binding(nameof(IMainViewModel.Routeables)));
+        SetBinding(SelectedItemProperty, new Binding(nameof(IMainViewModel.Routeable)) { Mode = BindingMode.TwoWay });
 
         var name = new FrameworkElementFactory(typeof(TextBlock));
         name.SetBinding(TextBlock.TextProperty, new Binding(nameof(IRouteableEntry.DisplayName)));

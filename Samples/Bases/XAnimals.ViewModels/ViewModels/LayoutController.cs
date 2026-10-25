@@ -72,7 +72,7 @@ public sealed class LayoutController(IServiceProvider provider) : RegionLayout(p
     }
 
     // The entry of the content that holds an animal page: the list. Its details have no name of their own.
-    private static IRouterEntry? Section(IRouterHistory history)
+    private static IHistoryEntry? Section(IRouterHistory history)
     {
         for (var i = history.CurrentIndex; i >= 0; i--)
             if (RegionEntries.HasName(history.Entries[i]))

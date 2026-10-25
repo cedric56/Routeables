@@ -30,14 +30,15 @@ The window can be opened by the same call: `Services = this.UseRouteables<MainVi
 ## A view
 
 ```xml
-<routeables:RouteableFor x:Class="MyApp.Views.HelloView"
+<!-- Samples/XAnimals.Uno/Views/Animals/DogDetailView.xaml -->
+<routeables:RouteableFor x:Class="XAnimals.Uno.Views.DogDetailView"
     xmlns:routeables="using:Routeables.Uno" ...>
-    <TextBlock Text="{Binding Greeting}" />
+    <local:AnimalDetail />
 </routeables:RouteableFor>
 ```
 
 ```csharp
-public sealed partial class HelloView : RouteableFor { public HelloView() => InitializeComponent(); }
+public sealed partial class DogDetailView : RouteableFor { public DogDetailView() => InitializeComponent(); }
 ```
 
 A XAML root cannot be generic in WinUI, so XAML views use `RouteableFor`; views written in code can use `RouteableFor<TViewModel>`.

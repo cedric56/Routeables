@@ -22,6 +22,9 @@ public sealed class RegionItemsBinding : IDisposable
     private IReadOnlyList<object>? _shown;
     private bool _disposed;
 
+    /// <summary>Follows <paramref name="router"/> and calls <paramref name="show"/> with every view of its history, now and after each change.</summary>
+    /// <param name="router">The router of the region.</param>
+    /// <param name="show">Shows the views; called on the UI thread of the host.</param>
     public RegionItemsBinding(IRouter router, Action<IReadOnlyList<object>> show)
     {
         ArgumentNullException.ThrowIfNull(router);

@@ -61,7 +61,7 @@
     /// Gets or sets the view model managing the split route change state, pages, and current view.
     /// </summary>
     [Parameter]
-    public required IMainRouteables ViewModel { get; set; }
+    public required IMainViewModel ViewModel { get; set; }
 
     /// <summary>
     /// Makes <paramref name="page"/> the active page.
@@ -71,7 +71,7 @@
         ViewModel.Routeable = page;
     }
 
-    private IMainRouteables? _subscribed;
+    private IMainViewModel? _subscribed;
 
     /// <summary>
     /// Subscribes to the events of the view model, and moves the subscription when the parent passes another one.

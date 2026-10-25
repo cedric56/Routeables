@@ -15,7 +15,7 @@ internal static class RouteableMenu
     /// </summary>
     public static void Moved(IServiceProvider provider, IRouter router)
     {
-        if (!ReferenceEquals(router, provider.GetService<IRouter>()) || provider.GetService<IMainRouteables>() is not { } main)
+        if (!ReferenceEquals(router, provider.GetService<IRouter>()) || provider.GetService<IMainViewModel>() is not { } main)
             return;
 
         var viewModel = router.CurrentViewModel;

@@ -29,16 +29,19 @@ Adjust the relative paths to your layout. The generator must be referenced by **
 Put `[Routeable]` on the view model to give it a route. The view is the class named after it:
 
 ```csharp
+// Samples/Bases/XAnimals.ViewModels/ViewModels/Animals/DogDetailViewModel.cs
 using Routeables.Abstraction;
 
-[Routeable("/orders/{id:int}")]
-public sealed class OrderViewModel(IRouter router, int id) { }
+[Routeable("/dogs/{name}")]
+public class DogDetailViewModel(IRouter router, string name, Action? back = null)
+    : AnimalDetailViewModel(router, DogData.Dogs.FirstOrDefault(d => d.Name == name), back);
 
-public partial class OrderView : RouteableFor<OrderViewModel> { }   // Avalonia; use the host's base type
+// Samples/XAnimals.Avalonia/Views/Animals/DogDetailView.axaml.cs (use the host's base type)
+public partial class DogDetailView : RouteableFor<DogDetailViewModel> { }
 ```
 
-`OrderViewModel` is paired with `OrderView`, a routed view (it derives from the host's `RouteableFor`) found in the project or in the assemblies it references.
-Use `[RouteableView(typeof(OrderViewModel))]` on the view when the names do not follow that convention. Two views of the same name raise `ROUT202`.
+`DogDetailViewModel` is paired with `DogDetailView`, a routed view (it derives from the host's `RouteableFor`) found in the project or in the assemblies it references.
+Use `[RouteableView(typeof(DogDetailViewModel))]` on the view when the names do not follow that convention (`NoteView` of the samples does). Two views of the same name raise `ROUT202`.
 
 The source generator turns these attributes into registrations. Register them once at startup:
 
@@ -48,13 +51,13 @@ using Routeables.Generated;
 services.AddGeneratedRoutes();
 ```
 
-You can also register routes by hand with `services.RegisterRoute<OrderView, OrderViewModel>(...)`.
+You can also register routes by hand with `services.RegisterRoute<DogDetailView, DogDetailViewModel>(...)`.
 
 > [!NOTE]
 > `AddGeneratedRoutes()` is generated as an `internal` extension in **each project** that references the generator, so it must be called from the project that generated it (normally the application project). It collects the attributes of the current project and of the assemblies it references.
 
 > [!IMPORTANT]
-> **Blazor:** the generator cannot read `.razor` files of its own project (the Razor compiler is another generator, and generators do not see each other's output). A view written in Razor is found in two cases: its `[RouteableView(...)]` is on a C# `partial class` of the same name (`HelloView.razor.cs`), or the view is in a **referenced** project, and `AddGeneratedRoutes()` is called from the application project that references it. An `@attribute [RouteableView(...)]` inside the Razor file, in the project that calls `AddGeneratedRoutes()`, registers nothing.
+> **Blazor:** the generator cannot read `.razor` files of its own project (the Razor compiler is another generator, and generators do not see each other's output). A view written in Razor is found in two cases: its `[RouteableView(...)]` is on a C# `partial class` of the same name (`DogDetailView.razor.cs`), or the view is in a **referenced** project, and `AddGeneratedRoutes()` is called from the application project that references it. An `@attribute [RouteableView(...)]` inside the Razor file, in the project that calls `AddGeneratedRoutes()`, registers nothing.
 
 ### 2. Set up your host
 
@@ -97,14 +100,14 @@ A few names look alike. They are different things:
 | `RouteableFor<…>` | The **base class of a view** (page, user control) |
 | `IRouteable` | Optional **lifecycle hooks** (`CanLeaveAsync`, `OnEnteringAsync`…) of a view model or a view |
 | `IRouteableEntry`, `RouteableEntry<T>` | A **menu entry** (a title, an icon, a route) listed by the main view model |
-| `IMainRouteables`, `MainViewModelBase` | The **menu** (or tab bar): the list of entries and the selected one |
+| `IMainViewModel`, `MainViewModelBase` | The **menu** (or tab bar): the list of entries and the selected one |
 
 The verbs of the setup calls follow one rule:
 
 | Verb | Means | Examples |
 | --- | --- | --- |
 | `Use` | Starts Routeables on the host (once, at startup) | `UseRouteables`, `UseRouteablesServices` |
-| `Register` | Declares **one thing** of your application | `RegisterRoute`, `RegisterMainRouteables`, `RegisterSegment` |
+| `Register` | Declares **one thing** of your application | `RegisterRoute`, `RegisterMainViewModel`, `RegisterSegment` |
 | `Add` | Turns **a feature** on | `AddGeneratedRoutes`, `AddLocking`, `AddRegion`, `AddRouteCoordinator` |
 
 ### 3. Route from a view model
@@ -112,11 +115,11 @@ The verbs of the setup calls follow one rule:
 View models only need `IRouter`:
 
 ```csharp
-public sealed class HomeViewModel(IRouter router)
+public class DogsViewModel(IRouter router)
 {
-    public async Task OpenOrderAsync(int orderId)
+    public async Task OpenDogAsync(string name)
     {
-        RouteableResult result = await router.GoToAsync($"/orders/{orderId}");
+        RouteableResult result = await router.GoToAsync($"/dogs/{Uri.EscapeDataString(name)}");
 
         if (result.Cancelled)
             return; // for example, the current page vetoed leaving

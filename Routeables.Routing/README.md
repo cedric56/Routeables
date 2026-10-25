@@ -20,11 +20,11 @@ using Routeables.Routing;
 services.RegisterRouting();                         // one history for the application
 services.RegisterRouting(ServiceLifetime.Scoped);   // Blazor Server: one history per circuit
 
-services.RegisterRoute<HomeView, HomeViewModel>(route: "/");              // by hand,
-services.RegisterRoute<OrderView, OrderViewModel>(route: "/orders/{id:int}");   // or with AddGeneratedRoutes()
+// by hand (RazorBirdsModule.cs of the samples), or with AddGeneratedRoutes()
+services.RegisterRoute<MoreBirdsPage, MoreBirdsViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, MoreBirdsModule.Route);
 ```
 
-A `Transient` router is refused: every resolve would get its own history. For several independent histories use regions: `services.AddRegion("side")`, resolved with `provider.GetRouter("side")` ([regions](../docs/guides/regions.md)).
+A `Transient` router is refused: every resolve would get its own history. For several independent histories use regions: `services.AddRegion("adopt")`, resolved with `provider.GetRouter("adopt")` ([regions](../docs/guides/regions.md)).
 
 ## How it behaves
 

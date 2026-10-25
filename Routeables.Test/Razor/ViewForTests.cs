@@ -22,7 +22,7 @@ public class ViewForTests
         }
     }
 
-    private sealed class RouteablesViewModel : TestViewModel, IMainRouteables
+    private sealed class RouteablesViewModel : TestViewModel, IMainViewModel
     {
         public ObservableCollection<IRouteableEntry> Routeables { get; } = [];
         public EventHandler? LockChanged { get; set; }

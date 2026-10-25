@@ -78,7 +78,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             result = await router.ForwardAsync();
             Moved(result);
         }
-        else if (provider.GetService<IMainRouteables>() is { } main
+        else if (provider.GetService<IMainViewModel>() is { } main
                  && main.Routeables.FirstOrDefault(r => Same(r.Route, path)) is { } item)
         {
             main.Routeable = item;       // keeps the layout's selection (menu highlight) in step; it navigates the router
@@ -97,7 +97,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
                 result = RouteableResult.Fail(ex);
             }
             // The page was not chosen in the menu: make the layout display it.
-            if (result.Success && provider.GetService<IMainRouteables>() is { } shown)
+            if (result.Success && provider.GetService<IMainViewModel>() is { } shown)
             {
                 shown.CurrentView = router.CurrentView;
                 shown.CurrentViewChanged?.Invoke(shown, router.CurrentView);
@@ -117,7 +117,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     // The browser's Back and Forward moved the router, not the menu: it shows the page that is now current and selects its entry.
     private void Moved(RouteableResult result)
     {
-        if (result.Success && provider.GetService<IMainRouteables>() is { } main)
+        if (result.Success && provider.GetService<IMainViewModel>() is { } main)
             main.OnRouterMoved(router.CurrentViewModel);
     }
 
@@ -138,7 +138,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     }
 
     // The address of an entry: its route when the route is registered, "/" for a page that has no route of its own.
-    private string? AddressOf(IRouterEntry? entry)
+    private string? AddressOf(IHistoryEntry? entry)
         => entry is null ? null
            : entry.Args.Route is { } route && IsKnown(route) ? Url(route) : "/";
 

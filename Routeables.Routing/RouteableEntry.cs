@@ -10,6 +10,11 @@ namespace Routeables.Routing;
 /// </summary>
 public class RouteableEntry : IRouteableEntry, INotifyPropertyChanged
 {
+    /// <summary>Creates an entry.</summary>
+    /// <param name="route">The address of the entry (<c>/cats</c>).</param>
+    /// <param name="template">The template of the route (<c>/cats/{name}</c>).</param>
+    /// <param name="displayName">The name the menu shows.</param>
+    /// <param name="path">The path of the icon or image the menu shows, or <see langword="null"/>.</param>
     public RouteableEntry(string route, string template, string displayName, string? path = null)
     {
         Template = template;
@@ -97,8 +102,10 @@ public class RouteableEntry : IRouteableEntry, INotifyPropertyChanged
     /// </summary>
     public IRouteableArgs Arguments { get; set; } = new RouteableArgs();
 
+    /// <inheritdoc />
     public string Route { get; set; }
 
+    /// <inheritdoc />
     public string Template { get; set; }
 
     /// <summary>
@@ -122,10 +129,12 @@ public class RouteableEntry<T> : RouteableEntry
     /// Initializes a new instance of the <see cref="RouteableEntry{T}"/> class with no pre-existing view model.
     /// </summary>
     /// <param name="displayName">The display name shown for this page.</param>
-    /// <param name="template">The template.</param>
     /// <param name="icon">
     /// An optional path used to resolve the page's icon and source.
     /// </param>
+    /// <param name="route">The address of the entry; the one of the view model (<c>[Routeable]</c>) when <see langword="null"/>.</param>
+    /// <param name="template">The template; the one of the view model when <see langword="null"/>.</param>
+    /// <param name="description">A short sentence shown under the name (optional).</param>
     public RouteableEntry(string displayName, string? icon = null, string? route = null, string? template = null, string? description = null)
         : base(RouteableKeys.GetRoute(typeof(T), route), template ?? RouteableKeys.GetTemplate(typeof(T)), displayName, icon)
     {
@@ -137,10 +146,12 @@ public class RouteableEntry<T> : RouteableEntry
     /// </summary>
     /// <param name="viewModel">The existing view model instance to associate with this page.</param>
     /// <param name="displayName">The display name shown for this page.</param>
-    /// <param name="template">The template.</param>
     /// <param name="icon">
     /// An optional path used to resolve the page's icon and source.
     /// </param>
+    /// <param name="route">The address of the entry; the one of the view model (<c>[Routeable]</c>) when <see langword="null"/>.</param>
+    /// <param name="template">The template; the one of the view model when <see langword="null"/>.</param>
+    /// <param name="description">A short sentence shown under the name (optional).</param>
     public RouteableEntry(T viewModel, string displayName, string? icon = null, string? route = null, string? template = null, string? description = null)
         : base(RouteableKeys.GetRoute(typeof(T), route), template ?? RouteableKeys.GetTemplate(typeof(T)), displayName, icon)
     {

@@ -629,7 +629,9 @@ public class RouteRegistrationGeneratorTests
         return references.Concat([
             MetadataReference.CreateFromFile(typeof(RouteableAttribute).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Routeables.Routing.Extensions).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location)
+            MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location),
+            // BuildServiceProvider() is in this assembly: do not depend on what the process has loaded so far.
+            MetadataReference.CreateFromFile(typeof(ServiceCollectionContainerBuilderExtensions).Assembly.Location)
         ]).DistinctBy(reference => reference.Display);
     }
 }

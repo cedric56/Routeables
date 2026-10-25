@@ -5,9 +5,9 @@ namespace Routeables.Abstraction;
 /// <summary>
 /// The main view model of an application: the menu entries, the one that is selected and the view it shows. Each host binds its
 /// menu to <see cref="Routeables"/> and <see cref="Routeable"/>, and shows <see cref="CurrentView"/>. Register it with
-/// <c>RegisterMainRouteables</c>: one instance per host (a singleton on Avalonia, MAUI and Uno, scoped on Blazor).
+/// <c>RegisterMainViewModel</c>: one instance per host (a singleton on Avalonia, MAUI and Uno, scoped on Blazor).
 /// </summary>
-public interface IMainRouteables
+public interface IMainViewModel
 {
     /// <summary>The entries of the menu, in the order they are shown.</summary>
     ObservableCollection<IRouteableEntry> Routeables { get; }
@@ -18,6 +18,7 @@ public interface IMainRouteables
     /// <summary>The view the selected entry shows, or <see langword="null"/> when there is none.</summary>
     object? CurrentView { get; set; }
 
+    /// <summary>The title of the selected entry (its display name), for a title bar.</summary>
     string? CurrentTitle { get; }
 
     /// <summary>Raised when <see cref="CurrentView"/> changes; the argument is the new view.</summary>
@@ -64,17 +65,4 @@ public interface IMainRouteables
 
         LockChanged?.Invoke(this, EventArgs.Empty);
     }
-}
-
-/// <summary>
-/// A page that hosts a view of its own, such as a list that shows the detail of the animal it opened. It follows the same pattern as
-/// <see cref="IMainRouteables"/>, for one page instead of the whole menu.
-/// </summary>
-public interface IViewRouteables
-{
-    /// <summary>The hosted view, or <see langword="null"/> when none is shown.</summary>
-    object? CurrentView { get; set; }
-
-    /// <summary>Raised when <see cref="CurrentView"/> changes; the argument is the new view.</summary>
-    EventHandler<object?>? CurrentViewChanged { get; set; }
 }

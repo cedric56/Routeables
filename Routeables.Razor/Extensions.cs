@@ -31,7 +31,7 @@ public static class Extensions
     public static IServiceCollection UseRouteablesServer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(this IServiceCollection services,
         Action<IServiceCollection>? configure = null,
         Func<IServiceProvider, Task>? onCircuitProviderChanged = null)
-        where TMain : class, IMainRouteables
+        where TMain : class, IMainViewModel
         => services.UseRouteablesCore<TMain>(Runtime.BlazorServer, configure, onCircuitProviderChanged);
 
     /// <summary>
@@ -45,7 +45,7 @@ public static class Extensions
     /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
     public static IServiceCollection UseRouteablesWebAssembly<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(this IServiceCollection services,
         Action<IServiceCollection>? configure = null)
-        where TMain : class, IMainRouteables
+        where TMain : class, IMainViewModel
         => services.UseRouteablesCore<TMain>(Runtime.BlazorWebAssembly, configure, null);
 
     /// <summary>
@@ -59,20 +59,20 @@ public static class Extensions
     /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
     public static IServiceCollection UseRouteablesHybrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(this IServiceCollection services,
         Action<IServiceCollection>? configure = null)
-        where TMain : class, IMainRouteables
+        where TMain : class, IMainViewModel
         => services.UseRouteablesCore<TMain>(Runtime.MauiHybrid, configure, null);
 
     private static IServiceCollection UseRouteablesCore<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(this IServiceCollection services,
         Runtime runtime,
         Action<IServiceCollection>? configure,
         Func<IServiceProvider, Task>? onCircuitProviderChanged)
-        where TMain : class, IMainRouteables
+        where TMain : class, IMainViewModel
     {
         ArgumentNullException.ThrowIfNull(services);
         if (runtime == Runtime.BlazorServer
-            && services.Any(d => d.ServiceType == typeof(IMainRouteables) && d.Lifetime != ServiceLifetime.Scoped))
+            && services.Any(d => d.ServiceType == typeof(IMainViewModel) && d.Lifetime != ServiceLifetime.Scoped))
             throw new InvalidOperationException(
-                "RegisterMainRouteables ran before UseRouteablesServer and registered the main view model as a singleton, which Blazor Server shares between circuits. "
+                "RegisterMainViewModel ran before UseRouteablesServer and registered the main view model as a singleton, which Blazor Server shares between circuits. "
                 + "Remove it: UseRouteablesServer<TMain>() registers the main view model.");
         services.TryAddSingleton(new RouteableHostLifetime(ServiceLifetime.Scoped));
 
@@ -89,7 +89,7 @@ public static class Extensions
         services.RegisterEnvironments(runtime);
         services.AddScoped<IRouteableRequestedThemeService, RouteableRequestThemeService>();
         services.AddScoped<IRouteableDispatcher, RouteableDispatcher>();
-        services.RegisterMainRouteables<TMain>();
+        services.RegisterMainViewModel<TMain>();
         services.UseRouteablesServices();
         configure?.Invoke(services);
         return services;

@@ -30,14 +30,14 @@ public static class Extensions
     /// <returns>The same <paramref name="builder"/>, for chaining.</returns>
     public static MauiAppBuilder UseRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
         this MauiAppBuilder builder, Action<IServiceCollection>? configure = null)
-        where TMain : class, IMainRouteables
+        where TMain : class, IMainViewModel
     {
         ArgumentNullException.ThrowIfNull(builder);
         builder.Services.AddRouteableHost(Runtime.Maui,
             new RouteablePropertyEntry(typeof(QueryPropertyAttribute), a => ((QueryPropertyAttribute)a).Name, FromContainer: false));
         builder.Services.AddSingleton<IRouteableRequestedThemeService, RouteableRequestThemeService>();
         builder.Services.AddSingleton<IRouteableDispatcher, RouteableDispatcher>();
-        builder.Services.RegisterMainRouteables<TMain>();
+        builder.Services.RegisterMainViewModel<TMain>();
         builder.UseRouteablesServices();
         configure?.Invoke(builder.Services);
         return builder;

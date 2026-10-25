@@ -1,7 +1,12 @@
 ﻿namespace Routeables.Locking;
 
+/// <summary>A message of the <see cref="IRouteableBrokerService"/>: the topic says who receives it.</summary>
+/// <param name="Topic">The topic subscribers listen to.</param>
 public abstract record RouteableMessage(string Topic);
 
+/// <summary>Published when the lock of the menu changes.</summary>
+/// <param name="IsLocked">Whether a page refuses to be left.</param>
+/// <param name="IsAllLocked">Whether every entry of the menu is locked.</param>
 public record RouteableLockMessage(bool IsLocked, bool IsAllLocked) : RouteableMessage("LockChanged");
 
 /// <summary>

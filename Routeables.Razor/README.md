@@ -22,12 +22,13 @@ Everything is scoped, so each Blazor Server circuit has its own history, and so 
 ## A view
 
 ```razor
-@inherits RouteableFor<HomeView, HomeViewModel>
+@* Samples/XAnimals.Razor/Components/Animals/DogDetailView.razor *@
+@inherits RouteableFor<DogDetailView, DogDetailViewModel>
 
-<h1>@ViewModel.Title</h1>
+<AnimalDetail ViewModel="ViewModel" />
 ```
 
-`RouteableFor<TView, TViewModel>` gives the typed `ViewModel` and the lifecycle hooks. A zone that shows a region is `<RouteableRegion Region="detail" />`.
+`RouteableFor<TView, TViewModel>` gives the typed `ViewModel` and the lifecycle hooks. A zone that shows a region is `<RouteableRegion Region="shell-content" />`.
 
 ## The layout
 

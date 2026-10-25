@@ -7,7 +7,7 @@ using Routeables.Abstraction;
 namespace Routeables.Uno;
 
 /// <summary>
-/// A <see cref="Microsoft.UI.Xaml.Controls.ListView"/> that shows the entries of an <see cref="IMainRouteables"/> and selects the current one.
+/// A <see cref="Microsoft.UI.Xaml.Controls.ListView"/> that shows the entries of an <see cref="IMainViewModel"/> and selects the current one.
 /// Give it the main view model as <c>DataContext</c> directly or by inheritance:
 /// <code>
 /// &lt;routeables:RouteableListView /&gt;
@@ -19,8 +19,8 @@ public partial class RouteableListView : Microsoft.UI.Xaml.Controls.ListView
     /// <summary>Creates the list.</summary>
     public RouteableListView()
     {
-        SetBinding(ItemsSourceProperty, new Binding { Path = new PropertyPath(nameof(IMainRouteables.Routeables)) });
-        SetBinding(SelectedItemProperty, new Binding { Path = new PropertyPath(nameof(IMainRouteables.Routeable)), Mode = BindingMode.TwoWay });
+        SetBinding(ItemsSourceProperty, new Binding { Path = new PropertyPath(nameof(IMainViewModel.Routeables)) });
+        SetBinding(SelectedItemProperty, new Binding { Path = new PropertyPath(nameof(IMainViewModel.Routeable)), Mode = BindingMode.TwoWay });
         SelectionMode = ListViewSelectionMode.Single;
         ItemTemplate = (DataTemplate)XamlReader.Load(MenuItemTemplate);
     }

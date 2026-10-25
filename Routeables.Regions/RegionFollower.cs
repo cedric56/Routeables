@@ -25,6 +25,10 @@ public sealed class RegionFollower : IDisposable
     private Task _queue = Task.CompletedTask;
     private bool _disposed;
 
+    /// <summary>Runs <paramref name="update"/> each time the history of <paramref name="source"/> changes, one run after the other.</summary>
+    /// <param name="source">The router to follow.</param>
+    /// <param name="update">What to do after a change.</param>
+    /// <param name="scheduler">Where <paramref name="update"/> runs; the current scheduler when <see langword="null"/>.</param>
     public RegionFollower(IRouter source, Func<Task> update, TaskScheduler? scheduler = null)
     {
         ArgumentNullException.ThrowIfNull(source);

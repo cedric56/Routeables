@@ -5,17 +5,18 @@
 Use regions when the UI needs several independent routing stacks:
 
 ```csharp
-services.AddRegion("main");
-services.AddRegion("side");
+// Samples/Bases/XAnimals.ViewModels/Extensions.cs
+services.AddRegion(AdoptViewModel.Region);      // "adopt": the adoption zone of the Adopt a pet page
+services.AddRegion(TabsViewModel.Region);       // the tabs of the Tabs page
 ```
 
 Each region is a keyed `IRouter` with its own history, gate and lifecycle. Resolve one with `GetRouter`, or with the keyed-services API:
 
 ```csharp
-var side = provider.GetRouter("side");                          // or provider.GetRequiredKeyedService<IRouter>("side")
+var adopt = provider.GetRouter(AdoptViewModel.Region);          // or provider.GetRequiredKeyedService<IRouter>("adopt")
 ```
 
-A route can target a region from its attributes: `[Routeable("/inbox", region: "side")]` or `[RouteableView(typeof(InboxViewModel), region: "side")]`. A region is registered `Scoped` by default.
+A route can target a region from its attributes: `[Routeable("/pet", region: "adopt")]` or `[RouteableView(typeof(PetViewModel), region: "adopt")]`. A region is registered `Scoped` by default.
 
 ### Receiving a region: `RouteableRegion`
 
@@ -23,23 +24,25 @@ A region has no place on screen of its own. A view puts one down with a **region
 
 ```xml
 <!-- Avalonia: xmlns:routeables="using:Routeables.Avalonia" · Maui: xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui" -->
-<routeables:RouteableRegion Region="detail" />
+<!-- Samples/XAnimals.Avalonia/Views/RegionsView.axaml -->
+<routeables:RouteableRegion Region="shell-content" />
 ```
 
 ```razor
-<RouteableRegion Region="detail" />
+<RouteableRegion Region="shell-content" />
 ```
 
 A view can hold several hosts, each with its own name, and without a name a host shows the default router. Whoever routes only names the region; the host that carries that name shows the result:
 
 ```csharp
-services.AddRegion("list");
-services.AddRegion("detail");
+// AdoptViewModel.cs: an entry says which region shows it (null: the default router)...
+var entry = new RouteableEntry<PetViewModel>("Pet", null, route: "pet", template: "pet")
+{
+    Region = "adopt",
+    Arguments = RouteableArgs.Create().ForViewModel(pet)
+};
 
-// An entry says which region shows it (null: the default router)...
-var entry = new RouteableEntry<InboxViewModel>("Inbox", icon, route: "/inbox") { Region = "detail" };
-
-// ...and the provider sends it there. No view model needs to know where "detail" is on screen.
+// ...and the provider sends it there. No view model needs to know where "adopt" is on screen.
 await provider.GoToAsync(entry);
 ```
 
@@ -55,6 +58,7 @@ current view. Routing the region adds a view, `PopAsync` and `BackAsync` remove 
 not shown.
 
 ```xml
+<!-- Samples/XAnimals.Avalonia/Views/AdoptView.axaml -->
 <routeables:RouteableRegionItems Region="adopt">
     <routeables:RouteableRegionItems.ItemsPanel>
         <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
@@ -73,6 +77,7 @@ A page the user comes back from (a picker, a form, a confirmation) gives a value
 implements `IReturnsResult<T>`; the router needs nothing more.
 
 ```csharp
+// No sample page returns a result: this one is the shape. (The modals of the samples, NoteViewModel, use ICloseableViewModel.)
 // The caller
 var picked = await router.GoToForResultAsync<Color>("/colors");
 if (picked.Returned) Apply(picked.Value);                           // picked.OpenResult says whether the page opened
@@ -100,8 +105,9 @@ router. To make other regions follow one (a header that says what the content sh
 that caused them, and on the thread that created the follower (the UI thread when a view started the page).
 
 ```csharp
-var follower = new RegionFollower(provider.GetRouter("content"), async () =>
-    await provider.GoToAsync(Bar("header", provider.GetRouter("content").History.Current)));
+// What RegionLayout does for you in LayoutController.cs of the sample, written by hand:
+var follower = new RegionFollower(provider.GetRouter(LayoutController.Content), async () =>
+    await provider.GoToAsync(Bar(LayoutController.Header, provider.GetRouter(LayoutController.Content).History.Current)));
 
 await follower.SettledAsync();   // the header says what the content shows
 follower.Failed += (_, ex) => log(ex);
@@ -117,20 +123,19 @@ routes (the *primary*) and the ones that follow it, and write only what is yours
 followers show when the primary moves.
 
 ```csharp
-public sealed class AppLayout(IServiceProvider provider) : RegionLayout(provider, "content", "header", "menu")
+// LayoutController.cs of the sample (the Regions page)
+public sealed class LayoutController(IServiceProvider provider) : RegionLayout(provider, Content, Header, Footer, LeftPanel)
 {
     protected override async Task OnStartAsync(CancellationToken ct)
     {
-        await GoToAsync("menu", MenuEntry, ct);
-        await ShowAsync(FirstPage, ct);
+        await GoToAsync(LeftPanel, RegionEntries.Menu(LeftPanel), ct);
+        await ShowAsync(RegionEntries.Page(Pages[0], Content), ct);
     }
-
-    // After each move of the content; FollowAsync does nothing when the header would show the same thing.
-    protected override Task OnPrimaryChangedAsync()
-        => FollowAsync("header", PrimaryRouter.History.Current, () => HeaderFor(PrimaryRouter.History.Current));
+    // ...
 }
 
-services.AddRegionLayout<AppLayout>("content", "header", "menu");   // the regions and the layout, scoped
+// Extensions.cs: the regions and the layout, scoped
+services.AddRegionLayout<LayoutController>(LayoutController.Content, LayoutController.Header, LayoutController.Footer, LayoutController.LeftPanel);
 ```
 
 `StartAsync`, `ClearAsync`, `ShowAsync`, `BackAsync`, `ForwardAsync`, `CanGoBack`, `CanGoForward`, `SettledAsync` and `Changed` are

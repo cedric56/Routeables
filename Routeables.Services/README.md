@@ -12,9 +12,11 @@ The contracts of the optional UI services: dialogs, notifications and theme. Eac
 | `IRouteableDispatcher` | Runs work on the thread of the interface, from any thread (registered by the host) |
 
 ```csharp
-public sealed class OrderViewModel(IRouteableDialogService dialogs)
+// DialogsViewModel.cs of the XAnimals sample
+public async Task ShowYesNoAsync()
 {
-    public Task AskAsync() => dialogs.ShowYesNoAsync("Delete this order?", "Orders");
+    var yes = await _dialogs.ShowYesNoAsync("Add the polar bear to your favorites?", "Favorites");
+    // ...
 }
 ```
 

@@ -17,7 +17,7 @@ public class MainRouteablesLifetimeAnalyzerTests
         using Microsoft.Extensions.DependencyInjection.Extensions;
         using Routeables.Abstraction;
 
-        public class Main : IMainRouteables
+        public class Main : IMainViewModel
         {
             public ObservableCollection<IRouteableEntry> Routeables { get; } = new();
             public IRouteableEntry? Routeable { get; set; }
@@ -54,17 +54,17 @@ public class MainRouteablesLifetimeAnalyzerTests
     }
 
     [Theory]
-    [InlineData("services.AddTransient<IMainRouteables, Main>();")]
-    [InlineData("services.AddTransient<IMainRouteables>(sp => new Main());")]
-    [InlineData("services.AddTransient(typeof(IMainRouteables), typeof(Main));")]
-    [InlineData("services.TryAddTransient<IMainRouteables, Main>();")]
+    [InlineData("services.AddTransient<IMainViewModel, Main>();")]
+    [InlineData("services.AddTransient<IMainViewModel>(sp => new Main());")]
+    [InlineData("services.AddTransient(typeof(IMainViewModel), typeof(Main));")]
+    [InlineData("services.TryAddTransient<IMainViewModel, Main>();")]
     public async Task A_transient_IMainRouteables_is_reported(string statement)
         => Assert.Equal(["ROUT301"], await Analyze(statement));
 
     [Theory]
-    [InlineData("services.AddSingleton<IMainRouteables, Main>();")]
-    [InlineData("services.AddScoped<IMainRouteables, Main>();")]
-    [InlineData("services.RegisterMainRouteables<Main>(ServiceLifetime.Singleton);")]
+    [InlineData("services.AddSingleton<IMainViewModel, Main>();")]
+    [InlineData("services.AddScoped<IMainViewModel, Main>();")]
+    [InlineData("services.RegisterMainViewModel<Main>(ServiceLifetime.Singleton);")]
     [InlineData("services.AddTransient<Main>();")]
     public async Task Other_registrations_are_not_reported(string statement)
         => Assert.Empty(await Analyze(statement));
@@ -74,7 +74,7 @@ public class MainRouteablesLifetimeAnalyzerTests
             .Where(a => !a.IsDynamic && !string.IsNullOrWhiteSpace(a.Location))
             .Select(a => MetadataReference.CreateFromFile(a.Location))
             .Concat([
-                MetadataReference.CreateFromFile(typeof(IMainRouteables).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(IMainViewModel).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location)])
             .DistinctBy(r => r.Display);
 }

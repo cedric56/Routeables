@@ -16,7 +16,7 @@ namespace Routeables.Core;
 /// <see cref="NotifyPropertyChanged(string?)"/> to raise the event and <see cref="RouterViewModelBase.RaiseCanExecutesChanged"/> to refresh
 /// the commands. <c>RouteableViewModel</c> and <c>CloseableViewModel&lt;TResult&gt;</c> (the CommunityToolkit.Mvvm and ReactiveUI flavours) do it already.
 /// </remarks>
-public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDisposable, IRouteable, IMainRouteables
+public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDisposable, IRouteable, IMainViewModel
 {
     /// <summary>
     /// Occurs when the currently displayed view changes.
@@ -225,6 +225,7 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
     /// </summary>
     public ObservableCollection<IRouteableEntry> Routeables { get { return _routeables ??= GetRouteables(); } }
 
+    /// <inheritdoc />
     public virtual string? CurrentTitle { get => Routeable?.DisplayName ?? "Application"; }
 
     /// <summary>

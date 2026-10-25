@@ -103,12 +103,18 @@ What is saved is the **address** of the pages: the view model is built again fro
 A view model that implements `IRouteableState` writes the small values it wants back and reads them after the page is built:
 
 ```csharp
-public sealed class SearchViewModel : IRouteableState
+// FeaturesViewModel.cs of the XAnimals sample (the Features page keeps its draft)
+public class FeaturesViewModel : ViewModelBase, IRouteableState, IDisposable
 {
-    public string Text { get; set; } = "";
+    public string Draft { get; set; } = "";
 
-    public void SaveState(IDictionary<string, string> state) => state["text"] = Text;
-    public void LoadState(IReadOnlyDictionary<string, string> state) => Text = state["text"];
+    public void SaveState(IDictionary<string, string> state) => state["draft"] = Draft;
+
+    public void LoadState(IReadOnlyDictionary<string, string> state)
+    {
+        if (state.TryGetValue("draft", out var draft))
+            Draft = draft;
+    }
 }
 
 var text = RouteableState.Serialize(RouteableState.CaptureSnapshots(router));

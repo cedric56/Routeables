@@ -12,7 +12,7 @@ public sealed record RouteableModuleInfo(string Name, string? Assembly, IReadOnl
 
 /// <summary>
 /// Loads modules while the application runs. A module loaded this way adds its routes (they can be reached at once, by the router
-/// and from an address), its entries to the menu of every <see cref="IMainRouteables"/> alive, and its own services.
+/// and from an address), its entries to the menu of every <see cref="IMainViewModel"/> alive, and its own services.
 /// <para>
 /// A module can also be added at start (<c>services.AddOrdersModule()</c>): then it is part of the container and nothing here is needed.
 /// This service is for the module that is not known at start: a feature loaded when the user asks for it, or a DLL found in a folder.

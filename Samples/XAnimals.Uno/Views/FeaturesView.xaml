@@ -17,7 +17,7 @@
             <TextBlock Text="Link" Margin="0,14,0,0" FontWeight="SemiBold" Opacity="0.7" />
             <TextBlock Text="An address from outside, followed through the router. On Android, a link to xanimals:// does the same." TextWrapping="Wrap" />
             <local:WrapPanel>
-                <Button Margin="0,0,8,8" Content="Open xanimals://dogs/Rex" Command="{Binding OpenLinkCommand}" />
+                <Button Margin="0,0,8,8" Content="Open xanimals://dogs/Eurohound" Command="{Binding OpenLinkCommand}" />
             </local:WrapPanel>
 
             <TextBlock Visibility="{Binding IsMobile, Converter={StaticResource BoolToVisibility}}" Text="Saved values" Margin="0,14,0,0" FontWeight="SemiBold" Opacity="0.7" />

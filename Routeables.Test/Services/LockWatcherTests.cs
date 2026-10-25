@@ -18,9 +18,9 @@ public class LockWatcherTests
         public string? Path => null;
     }
 
-    private static FakeMainRouteables MainWith(params bool[] locked)
+    private static FakeMainViewModel MainWith(params bool[] locked)
     {
-        var main = new FakeMainRouteables();
+        var main = new FakeMainViewModel();
         foreach (var isLocked in locked)
         {
             main.Routeables.Add(new Entry(isLocked));
@@ -29,7 +29,7 @@ public class LockWatcherTests
         return main;
     }
 
-    private static void Lock(FakeMainRouteables main, bool locked)
+    private static void Lock(FakeMainViewModel main, bool locked)
     {
         foreach (var entry in main.Routeables)
             entry.IsLock = locked;

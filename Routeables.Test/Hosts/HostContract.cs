@@ -23,7 +23,7 @@ public static class HostContract
     }
 
     public static void MainViewModelIsOneInstance(IServiceProvider provider)
-        => Assert.Same(provider.GetRequiredService<IMainRouteables>(), provider.GetRequiredService<IMainRouteables>());
+        => Assert.Same(provider.GetRequiredService<IMainViewModel>(), provider.GetRequiredService<IMainViewModel>());
 
     public static void ValueAttributesNeverComeFromTheContainer(IServiceProvider provider)
     {

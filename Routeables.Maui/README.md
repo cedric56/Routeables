@@ -20,13 +20,14 @@ builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes
 ## A view
 
 ```xml
-<routeables:RouteableFor x:Class="MyApp.HomeView"
+<!-- Samples/XAnimals.Maui/Views/Animals/DogDetailView.xaml -->
+<routeables:RouteableFor x:Class="XAnimals.Maui.Views.DogDetailView"
     xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui" ...>
-    <Label Text="{Binding Title}" />
+    <views:AnimalDetail />
 </routeables:RouteableFor>
 ```
 
-`RouteableFor` maps the context to `BindingContext`. A zone that shows a region is `<routeables:RouteableRegion Region="detail" />`.
+`RouteableFor` maps the context to `BindingContext`. A zone that shows a region is `<routeables:RouteableRegion Region="shell-content" />`.
 
 ## The shell
 

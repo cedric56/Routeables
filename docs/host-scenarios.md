@@ -43,7 +43,7 @@ Record each run as: host, platform, version, scenario id, pass or fail, and what
 
 | Id | Scenario | Expected | Blazor | Avalonia | MAUI |
 |---|---|---|---|---|---|
-| D1 | Open `/orders/42` and a typed `GoToRouteAsync<TViewModel, TData>`. | The view model receives `42` / the data, typed, before it is shown. *auto* (core) | yes | yes | yes |
+| D1 | Open `/bears/Brown%20Bear` and a typed `GoToRouteAsync<TViewModel, TData>`. | The view model receives the bear (`AnimalSelection`), typed, before it is shown. *auto* (core) | yes | yes | yes |
 | D2 | Open with a query string (`?name=Tom`). | The property or constructor argument is filled; a missing one keeps its default. | yes | yes | yes |
 | D3 | Open a picker with `GoToForResultAsync`, choose a value, `PopAsync`. | The caller resumes with the value; leaving without choosing returns `Returned = false`. *auto* (core) | yes | yes | yes |
 | D4 | Open a picker and cancel the awaiting call. | The call ends with `Cancelled` and the application stays usable. | yes | yes | yes |

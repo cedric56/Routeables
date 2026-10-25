@@ -19,7 +19,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
     private readonly object _gate = new();
     private readonly List<ModuleEntry> _loaded = [];
     private readonly Dictionary<object, (Func<IServiceProvider, IRouteableArgs, object> Factory, ModuleServices Services)> _factories = [];
-    private readonly List<WeakReference<IMainRouteables>> _mains = [];
+    private readonly List<WeakReference<IMainViewModel>> _mains = [];
 
     private sealed record ModuleEntry(RouteableModuleInfo Info, IReadOnlyList<MenuEntries> Menus, ModuleServices Services, Action<IServiceCollection> Add);
 
@@ -41,7 +41,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
         ArgumentNullException.ThrowIfNull(add);
 
         RouteableModuleInfo info;
-        List<(IMainRouteables Main, IReadOnlyList<IRouteableEntry> Entries, MenuEntries Menu)> pending = [];
+        List<(IMainViewModel Main, IReadOnlyList<IRouteableEntry> Entries, MenuEntries Menu)> pending = [];
         lock (_gate)
         {
             var known = _loaded.FirstOrDefault(l => string.Equals(l.Info.Name, name, StringComparison.OrdinalIgnoreCase));
@@ -112,13 +112,13 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
     }
 
     /// <summary>Adds the entries of the modules already loaded to a main view model, and keeps it to add the ones of the next.</summary>
-    internal void Attach(IMainRouteables main)
+    internal void Attach(IMainViewModel main)
     {
         List<MenuEntries> menus;
         lock (_gate)
         {
             _mains.RemoveAll(m => !m.TryGetTarget(out _));
-            _mains.Add(new WeakReference<IMainRouteables>(main));
+            _mains.Add(new WeakReference<IMainViewModel>(main));
             menus = _loaded.SelectMany(l => l.Menus).ToList();
         }
 
@@ -126,10 +126,10 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
             menu.AddTo(main);
     }
 
-    private List<IMainRouteables> AliveMains()
+    private List<IMainViewModel> AliveMains()
     {
         _mains.RemoveAll(m => !m.TryGetTarget(out _));
-        return _mains.Select(m => m.TryGetTarget(out var main) ? main : null).OfType<IMainRouteables>().ToList();
+        return _mains.Select(m => m.TryGetTarget(out var main) ? main : null).OfType<IMainViewModel>().ToList();
     }
 
     [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Finds the methods of the module by reflection.")]

@@ -2,11 +2,11 @@
 
 /// <summary>
 /// An entry of the menu, and a destination of the router: a name, a route, the view and view model it shows, and an icon. The main
-/// view model (<see cref="IMainRouteables"/>) lists them; <c>RouteableEntry&lt;TViewModel&gt;</c> is the usual implementation.
+/// view model (<see cref="IMainViewModel"/>) lists them; <c>RouteableEntry&lt;TViewModel&gt;</c> is the usual implementation.
 /// </summary>
 public interface IRouteableEntry
 {
-    /// <summary>Whether the menu refuses to select this entry (see <see cref="IMainRouteables.Lock"/>).</summary>
+    /// <summary>Whether the menu refuses to select this entry (see <see cref="IMainViewModel.Lock"/>).</summary>
     bool IsLock { get; set; }
 
     /// <summary>The view model instance of the entry, when one has been assigned explicitly; <see langword="null"/> lets the router build it.</summary>

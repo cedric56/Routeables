@@ -24,6 +24,9 @@ public sealed class RegionBinding : IDisposable
     private bool _hasShown;
     private bool _disposed;
 
+    /// <summary>Follows <paramref name="router"/> and calls <paramref name="show"/> with its current view, now and after each change.</summary>
+    /// <param name="router">The router of the region.</param>
+    /// <param name="show">Shows the view; called on the UI thread of the host.</param>
     public RegionBinding(IRouter router, Action<object?> show)
     {
         ArgumentNullException.ThrowIfNull(router);

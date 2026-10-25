@@ -34,14 +34,15 @@ Leave `StartupUri` out of `App.xaml`: the container must exist before the first 
 ## A view
 
 ```xml
-<routeables:RouteableFor x:Class="MyApp.Views.HelloView"
+<!-- Samples/XAnimals.Wpf/Views/Animals/DogDetailView.xaml -->
+<routeables:RouteableFor x:Class="XAnimals.Wpf.Views.DogDetailView"
     xmlns:routeables="clr-namespace:Routeables.Wpf;assembly=Routeables.Wpf" ...>
-    <TextBlock Text="{Binding Greeting}" />
+    <local:AnimalDetail />
 </routeables:RouteableFor>
 ```
 
 ```csharp
-public partial class HelloView : RouteableFor { public HelloView() => InitializeComponent(); }
+public partial class DogDetailView : RouteableFor { public DogDetailView() => InitializeComponent(); }
 ```
 
 A XAML root cannot be generic, so XAML views use `RouteableFor`; views written in code can use `RouteableFor<TViewModel>`. `IsLocked` is a read-only dependency property that follows the lock of the main view model.

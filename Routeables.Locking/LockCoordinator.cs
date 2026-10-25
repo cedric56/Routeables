@@ -13,20 +13,20 @@ internal sealed class LockCoordinator : ILockCoordinator, IDisposable
     private readonly object _gate = new();
     private readonly IServiceProvider _provider;
     private readonly IRouteableBrokerService _broker;
-    private readonly IMainRouteables _routeables;
+    private readonly IMainViewModel _routeables;
     private IDisposable? _subscription;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LockCoordinator"/> class.
     /// </summary>
     /// <param name="provider">
-    /// The service provider used to resolve the other <see cref="IMainRouteables"/> instances. It is only used when a message
+    /// The service provider used to resolve the other <see cref="IMainViewModel"/> instances. It is only used when a message
     /// is addressed to all of them, never while the coordinator is created: resolving them here would build the main
     /// view model that is creating this coordinator again.
     /// </param>
     /// <param name="broker">The broker service used for subscribing to lock change messages.</param>
     /// <param name="manager">The primary routeable manager instance.</param>
-    public LockCoordinator(IServiceProvider provider, IRouteableBrokerService broker, IMainRouteables manager)
+    public LockCoordinator(IServiceProvider provider, IRouteableBrokerService broker, IMainViewModel manager)
     {
         _provider = provider;
         _broker = broker;
@@ -53,10 +53,10 @@ internal sealed class LockCoordinator : ILockCoordinator, IDisposable
         if (!m.IsAllLocked)
             return;
 
-        IEnumerable<IMainRouteables> all;
+        IEnumerable<IMainViewModel> all;
         try
         {
-            all = _provider.GetServices<IMainRouteables>().ToList();
+            all = _provider.GetServices<IMainViewModel>().ToList();
         }
         catch (ObjectDisposedException)
         {
@@ -71,7 +71,7 @@ internal sealed class LockCoordinator : ILockCoordinator, IDisposable
         }
     }
 
-    private static void Apply(IMainRouteables manager, bool isLocked)
+    private static void Apply(IMainViewModel manager, bool isLocked)
     {
         if (isLocked)
             manager.Lock();

@@ -36,7 +36,7 @@ public static class Extensions
         this Microsoft.UI.Xaml.Application application,
         Action<IServiceCollection>? configure = null,
         Action<IServiceProvider>? afterBuild = null)
-        where TMain : class, IMainRouteables
+        where TMain : class, IMainViewModel
     {
         ArgumentNullException.ThrowIfNull(application);
         return StartRouteables<TMain>(configure, afterBuild);
@@ -66,7 +66,7 @@ public static class Extensions
         Action<Window>? configureWindow = null,
         Action<IServiceProvider>? afterBuild = null,
         Action? onDispose = null)
-        where TMain : class, IMainRouteables
+        where TMain : class, IMainViewModel
     {
         ArgumentNullException.ThrowIfNull(application);
         ArgumentNullException.ThrowIfNull(configure);
@@ -85,10 +85,10 @@ public static class Extensions
     internal static IServiceProvider StartRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
         Action<IServiceCollection>? configure = null,
         Action<IServiceProvider>? afterBuild = null)
-        where TMain : class, IMainRouteables
+        where TMain : class, IMainViewModel
         => BuildProvider(services =>
         {
-            services.RegisterMainRouteables<TMain>();
+            services.RegisterMainViewModel<TMain>();
             services.UseRouteablesServices();
             configure?.Invoke(services);
         }, afterBuild);
@@ -128,7 +128,7 @@ public static class Extensions
 
         var provider = application.GetRouteableServices();
         if (content.DataContext is null)
-            content.DataContext = provider.GetService<IMainRouteables>();
+            content.DataContext = provider.GetService<IMainViewModel>();
 
         var window = new Window { Content = content };
         configure?.Invoke(window);
@@ -170,9 +170,9 @@ public static class Extensions
 
             selected = true;
 
-            // The main view model is a singleton (RegisterMainRouteables refuses a transient one), so this is the
+            // The main view model is a singleton (RegisterMainViewModel refuses a transient one), so this is the
             // instance the window displays.
-            try { provider.GetService<IMainRouteables>()?.SelectFirst(); }
+            try { provider.GetService<IMainViewModel>()?.SelectFirst(); }
             catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(Extensions)); }   // raised from an event: it must not end the application
         }
 

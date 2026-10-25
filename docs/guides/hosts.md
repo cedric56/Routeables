@@ -6,19 +6,18 @@
 
 - `RouterViewModelBase`: back/forward routing through the router's history.
 - `MainViewModelBase`: a ready-to-use main view model; you only return the entries.
-- `RouteableViewModelBase`: the abstract base under it; manages routing between a set of `IRouteableEntry` items (menus, tab bars), implements `IMainRouteables` and guards the change of the current item.
+- `RouteableViewModelBase`: the abstract base under it; manages routing between a set of `IRouteableEntry` items (menus, tab bars), implements `IMainViewModel` and guards the change of the current item.
 - `CloseableViewModelBase<TResult>`: a view model that can be closed and returns a result (dialogs).
 
-The CommunityToolkit.Mvvm and ReactiveUI flavours are opt-in sources: they are not in the assembly, and the application keeps the package and the version it chooses. Add the package, then declare the feature in your project file; `Routeables.targets` (in the `Routeables` package) adds the matching source files:
+The CommunityToolkit.Mvvm and ReactiveUI flavours are opt-in sources: they are not in the assembly. Declare the feature in your project file; `Routeables.targets` (in the `Routeables` package) adds the matching source files and the packages they use:
 
 ```xml
 <PropertyGroup>
-  <RouteablesFeatures>;CommunityToolkit;</RouteablesFeatures>   <!-- or ;ReactiveUI;, not both -->
+  <RouteablesFeatures>;CommunityToolkit;</RouteablesFeatures>   <!-- or ;ReactiveUI; (one of them) -->
 </PropertyGroup>
-<ItemGroup>
-  <PackageReference Include="CommunityToolkit.Mvvm" Version="..." />   <!-- or ReactiveUI and ReactiveUI.SourceGenerators -->
-</ItemGroup>
 ```
+
+`Routeables.targets` also adds the packages the flavour uses (`CommunityToolkit.Mvvm`; `ReactiveUI` and `ReactiveUI.SourceGenerators`), unless your project already references them: then your version wins. With central package management (`ManagePackageVersionsCentrally`) nothing is added: declare the packages in your `Directory.Packages.props`. To choose another version without referencing the package, set `RouteablesCommunityToolkitMvvmVersion`, `RouteablesReactiveUIVersion` or `RouteablesReactiveUISourceGeneratorsVersion`.
 
 ## Shared services
 

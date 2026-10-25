@@ -34,7 +34,7 @@ public class RouteableModulesTests
     private static ServiceProvider Application(ServiceLifetime main = ServiceLifetime.Singleton, Action<IServiceCollection>? more = null)
     {
         var services = new ServiceCollection();
-        services.RegisterMainRouteables<FakeMainRouteables>(main);
+        services.RegisterMainViewModel<FakeMainViewModel>(main);
         services.AddSingleton<AppClock>();
         services.RegisterRoute("/home", (_, _) => new object());                    // the application has a route of its own
         more?.Invoke(services);
@@ -95,7 +95,7 @@ public class RouteableModulesTests
     {
         using var provider = Application(ServiceLifetime.Scoped);
         using var early = provider.CreateScope();
-        var earlyMain = early.ServiceProvider.GetRequiredService<IMainRouteables>();
+        var earlyMain = early.ServiceProvider.GetRequiredService<IMainViewModel>();
         Assert.Empty(earlyMain.Routeables);
 
         provider.GetRequiredService<IRouteableModules>().Load("Orders", AddOrders);
@@ -103,7 +103,7 @@ public class RouteableModulesTests
         Assert.Equal(["orders"], earlyMain.Routeables.Select(e => e.DisplayName));        // added to the menu that was alive
 
         using var late = provider.CreateScope();
-        var lateMain = late.ServiceProvider.GetRequiredService<IMainRouteables>();
+        var lateMain = late.ServiceProvider.GetRequiredService<IMainViewModel>();
         Assert.Equal(["orders"], lateMain.Routeables.Select(e => e.DisplayName));         // and to the one built after
         Assert.NotSame(earlyMain.Routeables[0], lateMain.Routeables[0]);                 // each menu has entries of its own
     }
@@ -123,7 +123,7 @@ public class RouteableModulesTests
         Assert.Equal(["Orders"], raised);
         Assert.True(modules.IsLoaded("ORDERS"));
         Assert.Single(modules.Loaded);
-        Assert.Single(provider.GetRequiredService<IMainRouteables>().Routeables);
+        Assert.Single(provider.GetRequiredService<IMainViewModel>().Routeables);
     }
 
     [Fact]
@@ -146,7 +146,7 @@ public class RouteableModulesTests
         Assert.Contains(loaded, m => m.Name == "Reflected" && m.Assembly == "Routeables.Test");
         Assert.Contains(loaded, m => m.Name == nameof(ReflectedModule.AddWithAName));       // the method name when the attribute has none
         Assert.IsType<ReflectedPage>(provider.GetViewModel("/reflected", new RouteableArgs()));
-        Assert.Contains(provider.GetRequiredService<IMainRouteables>().Routeables, e => e.DisplayName == "Reflected");
+        Assert.Contains(provider.GetRequiredService<IMainViewModel>().Routeables, e => e.DisplayName == "Reflected");
     }
 
     [Fact]
@@ -181,7 +181,7 @@ public class RouteableModulesTests
     {
         using var provider = Application();
         var modules = provider.GetRequiredService<IRouteableModules>();
-        var main = provider.GetRequiredService<IMainRouteables>();
+        var main = provider.GetRequiredService<IMainViewModel>();
 
         Assert.Throws<InvalidOperationException>(() => modules.Load("Broken", services =>
         {
@@ -203,7 +203,7 @@ public class RouteableModulesTests
     {
         using var provider = Application();
         var modules = provider.GetRequiredService<IRouteableModules>();
-        var main = provider.GetRequiredService<IMainRouteables>();
+        var main = provider.GetRequiredService<IMainViewModel>();
 
         Assert.Throws<InvalidOperationException>(() => modules.Load("Broken", services =>
         {

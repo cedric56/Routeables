@@ -9,47 +9,66 @@ namespace Routeables.Avalonia.Services;
 
 internal class RouteableNotificationService(IMessageBoxService service) : IRouteableNotificationService
 {
-    private WindowNotificationManager? _manager;
+    // The manager of the window the notifications are shown in. It draws nothing until its template is applied: what is shown
+    // meanwhile waits in the slot, so two notifications asked in a row share one manager instead of creating a second one.
+    private sealed class Slot(WindowNotificationManager manager, TopLevel host)
+    {
+        public WindowNotificationManager Manager { get; } = manager;
+        public TopLevel Host { get; } = host;
+        public bool Ready { get; set; }
+        public List<Action> Waiting { get; } = [];
+    }
+
+    private Slot? _slot;
 
     public RouteableNotificationPosition Position => RouteableNotificationPosition.TopCenter;
 
     public void Show(string title, string message, RouteableNotificationType type = default,
                      TimeSpan? expiration = null, Action? onClick = null, Action? onClose = null)
     {
+        // Controls belong to the UI thread: the manager is created and used there.
+        if (!Dispatcher.UIThread.CheckAccess())
+        {
+            Dispatcher.UIThread.Post(() => Show(title, message, type, expiration, onClick, onClose));
+            return;
+        }
+
         var topLevel = TopLevelStateManager.Default.GetActive();
         if (topLevel == null)
             return;
 
-        // Always check and update manager
-        if (_manager == null || (TopLevel.GetTopLevel(_manager) != topLevel && service.IsDisplayable(topLevel)))
+        // A new manager only for another window (and only one the service can display in): the one of this window is kept, even
+        // before it is attached to the visual tree, which is when asking the manager for its top level gives nothing yet.
+        if (_slot is null || (!ReferenceEquals(_slot.Host, topLevel) && service.IsDisplayable(topLevel)))
         {
-            // The notification waits for the template of the manager it was created for. The handler removes itself,
-            // so a manager that is replaced before its template is applied does not keep this notification alive.
-            var manager = _manager = new WindowNotificationManager(topLevel);
+            var slot = _slot = new Slot(new WindowNotificationManager(topLevel), topLevel);
 
             void Ready(object? sender, TemplateAppliedEventArgs e)
             {
-                manager.TemplateApplied -= Ready;
-                Display(manager);
+                slot.Manager.TemplateApplied -= Ready;
+                slot.Ready = true;
+                var waiting = slot.Waiting.ToArray();
+                slot.Waiting.Clear();
+                foreach (var show in waiting)
+                    show();
             }
 
-            manager.TemplateApplied += Ready;
-        }
-        else
-        {
-            Display(_manager);
+            slot.Manager.TemplateApplied += Ready;
         }
 
-        void Display(WindowNotificationManager target)
+        var current = _slot;
+        void Display()
         {
-            Dispatcher.UIThread.Invoke(() =>
-            {
-                // Avalonia keeps a notification with a zero expiration until it is closed.
-                var session = new RouteableNotificationSession(title, message, type, expiration, onClick, onClose);
-                var notification = new Notification(session.Title, session.Message, (NotificationType)session.Type,
-                                                   session.AutoCloseAfter ?? TimeSpan.Zero, session.Click, () => session.NotifyClosed());
-                target.Show(notification);
-            });
+            // Avalonia keeps a notification with a zero expiration until it is closed.
+            var session = new RouteableNotificationSession(title, message, type, expiration, onClick, onClose);
+            var notification = new Notification(session.Title, session.Message, (NotificationType)session.Type,
+                                               session.AutoCloseAfter ?? TimeSpan.Zero, session.Click, () => session.NotifyClosed());
+            current.Manager.Show(notification);
         }
+
+        if (current.Ready)
+            Display();
+        else
+            current.Waiting.Add(Display);
     }
 }

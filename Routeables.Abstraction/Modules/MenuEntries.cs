@@ -6,10 +6,10 @@ namespace Routeables.Abstraction;
 internal sealed record MenuEntries(Func<IEnumerable<IRouteableEntry>> Build, int? Index = null)
 {
     /// <summary>Builds the entries and puts them in the menu of <paramref name="main"/>, at <see cref="Index"/> or at the end.</summary>
-    public void AddTo(IMainRouteables main) => AddTo(main, Build());
+    public void AddTo(IMainViewModel main) => AddTo(main, Build());
 
     /// <summary>Puts entries already built in the menu of <paramref name="main"/>, at <see cref="Index"/> or at the end.</summary>
-    public void AddTo(IMainRouteables main, IEnumerable<IRouteableEntry> entries)
+    public void AddTo(IMainViewModel main, IEnumerable<IRouteableEntry> entries)
     {
         var routeables = main.Routeables;
         var at = Index is { } index ? Math.Clamp(index, 0, routeables.Count) : routeables.Count;

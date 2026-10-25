@@ -29,7 +29,7 @@ public class RouteableFor<TViewModel> : RouteableFor, IRouteableFor, IRouteable,
         nameof(IsLocked),
         o => o.IsLocked);
 
-    public override bool IsLocked => RouteableLockWatcher.AllLocked(Context as IMainRouteables);
+    public override bool IsLocked => RouteableLockWatcher.AllLocked(Context as IMainViewModel);
 
     public virtual Task<bool> CanLeaveAsync(CancellationToken ct = default)
     {

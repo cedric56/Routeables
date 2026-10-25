@@ -18,16 +18,16 @@ One `IRouter` for Blazor, .NET MAUI, Avalonia, Uno Platform and WPF. Declare a r
 </div>
 
 </div>
-<div class="rt-code"><header>HelloViewModel.cs</header><pre><code><span class="c">// the route lives on the view model</span>
-<span class="k">[Routeable(</span><span class="s">"/hello/{name}"</span><span class="k">)]</span>
-public sealed class HelloViewModel(IRouter router, string name)
-{
-    public Task SayHelloAgainAsync()
-        =&gt; router.GoToAsync(<span class="s">"/hello/Ada"</span>);
-}
+<div class="rt-code"><header>DogDetailViewModel.cs</header><pre><code><span class="c">// the route lives on the view model</span>
+<span class="k">[Routeable(</span><span class="s">"/dogs/{name}"</span><span class="k">)]</span>
+public class DogDetailViewModel(IRouter router, string name, Action? back = null)
+    : AnimalDetailViewModel(router, DogData.Dogs.FirstOrDefault(d =&gt; d.Name == name), back);
+
+<span class="c">// going there, from DogsViewModel</span>
+await router.GoToAsync(<span class="s">"/dogs/Eurohound"</span>);
 
 <span class="c">// the view is found by its name</span>
-public partial class HelloView : RouteableFor&lt;HelloViewModel&gt; { }
+public partial class DogDetailView : RouteableFor&lt;DogDetailViewModel&gt; { }
 
 <span class="c">// once, at startup</span>
 services.AddGeneratedRoutes();
@@ -46,7 +46,7 @@ services.AddGeneratedRoutes();
 
 <div class="rt-grid">
 <div><h3>Routes from attributes</h3><p>Paired with views by name and registered by a source generator. Nothing scans assemblies at run time.</p></div>
-<div><h3>Typed routing</h3><p>A method generated from a constructor: <code>GoToOrderAsync(id)</code> instead of a string.</p></div>
+<div><h3>Typed routing</h3><p>A method generated from a constructor: <code>GoToMonkeyDetailAsync(router, name)</code> instead of a string.</p></div>
 <div><h3>History and guards</h3><p>Back, forward, pop, root. A page can veto leaving.</p></div>
 <div><h3>Regions and modules</h3><p>Several areas of the screen with their own history; a feature is one extension method.</p></div>
 <div><h3>AOT and trimming</h3><p>Compatible by design, on every host.</p></div>

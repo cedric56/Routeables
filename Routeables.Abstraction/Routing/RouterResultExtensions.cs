@@ -31,7 +31,7 @@ public static class RouterResultExtensions
         // The page is watched from the moment it opens, not once the route change call returns: by then it may already have been left
         // (popped by whoever saw it open), and History.Current would be another page.
         var before = router.History.Current;
-        IRouterEntry? entry = null;
+        IHistoryEntry? entry = null;
         RouteableResult? navigation = null;
 
         // The page is left when it is no longer between the first entry and the current one: popped, gone back from, cleared. A page
@@ -77,7 +77,7 @@ public static class RouterResultExtensions
         }
     }
 
-    private static RouteableResult<TResult> Read<TResult>(IRouterEntry entry, RouteableResult navigation)
+    private static RouteableResult<TResult> Read<TResult>(IHistoryEntry entry, RouteableResult navigation)
     {
         foreach (var target in new[] { entry.ViewModel, entry.View })
         {

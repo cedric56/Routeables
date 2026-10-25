@@ -10,6 +10,19 @@ public class RouteableDialogService(IServiceProvider provider, IRouteableDialogW
     private static readonly SemaphoreSlim WindowsDialogGate = new(1, 1);
 #endif
 
+    // WinUI shows one dialog at a time per window, and the alert of a Page is one: it waits for the one that is open (the content
+    // dialog of DisplayThreeButtonsAsync is behind the same gate). Elsewhere the platform queues or stacks them itself.
+    private static async Task<int> OneAtATimeAsync(Func<Task<int>> show)
+    {
+#if WINDOWS
+        await WindowsDialogGate.WaitAsync();
+        try { return await show(); }
+        finally { WindowsDialogGate.Release(); }
+#else
+        return await show();
+#endif
+    }
+
     /// <summary>
     /// Shows the platform's alert: one button for one word, an alert with an accept and a cancel button for two, and the
     /// native three-button dialog for three. The confirmations (<see cref="IRouteableDialogService"/>) are written once, in
@@ -29,10 +42,13 @@ public class RouteableDialogService(IServiceProvider provider, IRouteableDialogW
         {
             case 0:
             case 1:
-                await page.DisplayAlertAsync(title, message, words.Count == 0 ? "Ok" : words[0]);
-                return 0;
+                return await OneAtATimeAsync(async () =>
+                {
+                    await page.DisplayAlertAsync(title, message, words.Count == 0 ? "Ok" : words[0]);
+                    return 0;
+                });
             case 2:
-                return await page.DisplayAlertAsync(title, message, words[0], words[1]) ? 0 : 1;
+                return await OneAtATimeAsync(async () => await page.DisplayAlertAsync(title, message, words[0], words[1]) ? 0 : 1);
             default:
                 return await DisplayThreeButtonsAsync(title, message, words[0], words[1], words[2], 0, 1, 2);
         }

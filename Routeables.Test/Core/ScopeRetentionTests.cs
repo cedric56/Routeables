@@ -25,7 +25,7 @@ public class ScopeRetentionTests
         services.RegisterRouting(ServiceLifetime.Scoped);
         services.RegisterRouteableArgsFactory(() => new RouteableArgs());
         services.RegisterRoute("/page", (_, _) => new Page(), ServiceLifetime.Scoped);
-        services.AddScoped<IMainRouteables>(sp =>
+        services.AddScoped<IMainViewModel>(sp =>
         {
             var main = TestNavigableViewModel.Create(sp.GetRequiredService<IRouter>(), [], initialize: false);
             Mains.Add(new WeakReference(main));
@@ -41,7 +41,7 @@ public class ScopeRetentionTests
         for (var i = 0; i < count; i++)
         {
             await using var scope = root.CreateAsyncScope();
-            var main = scope.ServiceProvider.GetRequiredService<IMainRouteables>();
+            var main = scope.ServiceProvider.GetRequiredService<IMainViewModel>();
             var router = scope.ServiceProvider.GetRequiredService<IRouter>();
             for (var p = 0; p < 3; p++)
                 await router.GoToAsync("/page", template: "/page");

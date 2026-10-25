@@ -15,8 +15,8 @@ public class LockCoordinatorTests
         var other = new RouteablesProbe();
         var broker = new RouteableBrokerService();
         using var provider = new ServiceCollection()
-            .AddSingleton<IMainRouteables>(primary)
-            .AddSingleton<IMainRouteables>(other)
+            .AddSingleton<IMainViewModel>(primary)
+            .AddSingleton<IMainViewModel>(other)
             .BuildServiceProvider();
         var coordinator = new LockCoordinator(provider, broker, primary);
 
@@ -36,8 +36,8 @@ public class LockCoordinatorTests
         var other = new RouteablesProbe();
         var broker = new RouteableBrokerService();
         using var provider = new ServiceCollection()
-            .AddSingleton<IMainRouteables>(primary)
-            .AddSingleton<IMainRouteables>(other)
+            .AddSingleton<IMainViewModel>(primary)
+            .AddSingleton<IMainViewModel>(other)
             .BuildServiceProvider();
         using var coordinator = new LockCoordinator(provider, broker, primary);
 
@@ -57,7 +57,7 @@ public class LockCoordinatorTests
         var primary = new RouteablesProbe();
         var broker = new RouteableBrokerService();
         using var provider = new ServiceCollection()
-            .AddSingleton<IMainRouteables>(primary)
+            .AddSingleton<IMainViewModel>(primary)
             .BuildServiceProvider();
         var coordinator = new LockCoordinator(provider, broker, primary);
         coordinator.Subscribe();
@@ -127,7 +127,7 @@ public class LockCoordinatorTests
     {
         var primary = new RouteablesProbe();
         var broker = new RouteableBrokerService();
-        var provider = new ServiceCollection().AddSingleton<IMainRouteables>(primary).BuildServiceProvider();
+        var provider = new ServiceCollection().AddSingleton<IMainViewModel>(primary).BuildServiceProvider();
         var coordinator = new LockCoordinator(provider, broker, primary);
         coordinator.Subscribe();
         provider.Dispose();
@@ -144,13 +144,13 @@ public class LockCoordinatorTests
         public object? GetService(Type serviceType)
         {
             Requests++;
-            return Array.CreateInstance(typeof(IMainRouteables), 0);
+            return Array.CreateInstance(typeof(IMainViewModel), 0);
         }
     }
 
     private sealed record OtherMessage() : RouteableMessage("LockChanged");
 
-    private sealed class RouteablesProbe : IMainRouteables
+    private sealed class RouteablesProbe : IMainViewModel
     {
         public ObservableCollection<IRouteableEntry> Routeables { get; } = [];
         public IRouteableEntry? Routeable { get; set; }

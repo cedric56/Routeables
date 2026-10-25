@@ -6,7 +6,7 @@ Your view models depend on a single `IRouter` interface instead of framework-spe
 
 ## Features
 
-- **View-model-first routing**: route by route string with typed segments such as `/orders/{id:int}`, or by a view model's declared route.
+- **View-model-first routing**: route by route string with typed segments such as `/dogs/{name}`, or by a view model's declared route.
 - **Source-generated registration**: put `[Routeable("/path")]` on the view model (`[RouteableView]` on the view only when its name does not follow the convention) and call `AddGeneratedRoutes()`, with no manual wiring.
 - **Generated typed routing**: `[RouteableViewModel(typeof(Caller))]` generates `GoTo{Name}Async` on the caller only, with the destination's constructor parameters as arguments, checked at compile time.
 - **Back/forward history**: back, forward, pop, move to an entry, or return to the root.
@@ -25,7 +25,7 @@ Your view models depend on a single `IRouter` interface instead of framework-spe
 | [`Routeables.Services`](https://github.com/cedric56/Routeables/blob/master/Routeables.Services/README.md) | Optional UI service contracts: dialogs, content and task dialogs, notifications, theme |
 | [`Routeables.Locking`](https://github.com/cedric56/Routeables/blob/master/Routeables.Locking/README.md) | Optional: the broker and the locking of the main entries |
 | [`Routeables.Regions`](https://github.com/cedric56/Routeables/blob/master/Routeables.Regions/README.md) | Optional: `RegionBinding`, `RegionFollower`, `RegionLayout` |
-| [`Routeables.Segments`](https://github.com/cedric56/Routeables/blob/master/Routeables.Segments/README.md) | Optional: routing by segments (`Orders?id=5/Detail`) |
+| [`Routeables.Segments`](https://github.com/cedric56/Routeables/blob/master/Routeables.Segments/README.md) | Optional: routing by segments (`/Bears?SearchText=polar`) |
 | [`Routeables.Routing`](https://github.com/cedric56/Routeables/blob/master/Routeables.Routing/README.md) | The router, history, routing locking and DI registration |
 | [`Routeables.Core`](https://github.com/cedric56/Routeables/blob/master/Routeables.Core/README.md) | Routing-aware view-model bases and runtime/environment info |
 | [`Routeables.Generated`](https://github.com/cedric56/Routeables/tree/master/Routeables.Generated) | Roslyn source generators: route registration and typed routing methods |

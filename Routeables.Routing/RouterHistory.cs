@@ -53,9 +53,9 @@ internal sealed class RouterHistory : IRouterHistory
     /// </summary>
     public RouterEntry? Root => _entries.Count > 0 ? _entries[0] : null;
 
-    IRouterEntry? IRouterHistory.Current => Current;
-    IRouterEntry? IRouterHistory.Root => Root;
-    IReadOnlyList<IRouterEntry> IRouterHistory.Entries => _entries.ToArray();   // snapshot
+    IHistoryEntry? IRouterHistory.Current => Current;
+    IHistoryEntry? IRouterHistory.Root => Root;
+    IReadOnlyList<IHistoryEntry> IRouterHistory.Entries => _entries.ToArray();   // snapshot
 
     /// <summary>
     /// Pushes a new entry onto the history stack, discarding any forward history and enforcing the maximum capacity.

@@ -1,18 +1,33 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!-- The flavours are opt-in sources, next to this file whatever the target framework of the project (net10.0, net11.0, net10.0-android...):
-       RouteablesFeatures adds them to the project. The packages they use (CommunityToolkit.Mvvm;
-       ReactiveUI and ReactiveUI.SourceGenerators) are the application's own PackageReference, with the version it chooses. -->
+       RouteablesFeatures adds them to the project, with the packages they use (CommunityToolkit.Mvvm; ReactiveUI and
+       ReactiveUI.SourceGenerators). A package the application already references is left alone: its version wins.
+       To choose another version, reference the package, or set the properties below. With central package management
+       (ManagePackageVersionsCentrally) a PackageReference that carries a Version is an error (NU1008): nothing is added then,
+       and the application declares the packages in its Directory.Packages.props. -->
+  <PropertyGroup>
+    <RouteablesCommunityToolkitMvvmVersion Condition="'$(RouteablesCommunityToolkitMvvmVersion)' == ''">8.4.2</RouteablesCommunityToolkitMvvmVersion>
+    <RouteablesReactiveUIVersion Condition="'$(RouteablesReactiveUIVersion)' == ''">23.2.28</RouteablesReactiveUIVersion>
+    <RouteablesReactiveUISourceGeneratorsVersion Condition="'$(RouteablesReactiveUISourceGeneratorsVersion)' == ''">3.2.0</RouteablesReactiveUISourceGeneratorsVersion>
+  </PropertyGroup>
+
   <ItemGroup Condition="$(RouteablesFeatures.Contains(';CommunityToolkit;'))">
     <Compile Include="$(MSBuildThisFileDirectory)Community\**\*.cs">
       <Visible>false</Visible>
     </Compile>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="$(RouteablesCommunityToolkitMvvmVersion)"
+                      Condition="'$(ManagePackageVersionsCentrally)' != 'true' And '@(PackageReference->WithMetadataValue('Identity', 'CommunityToolkit.Mvvm'))' == ''" />
   </ItemGroup>
 
   <ItemGroup Condition="$(RouteablesFeatures.Contains(';ReactiveUI;'))">
     <Compile Include="$(MSBuildThisFileDirectory)Reactive\**\*.cs">
       <Visible>false</Visible>
     </Compile>
+    <PackageReference Include="ReactiveUI" Version="$(RouteablesReactiveUIVersion)"
+                      Condition="'$(ManagePackageVersionsCentrally)' != 'true' And '@(PackageReference->WithMetadataValue('Identity', 'ReactiveUI'))' == ''" />
+    <PackageReference Include="ReactiveUI.SourceGenerators" Version="$(RouteablesReactiveUISourceGeneratorsVersion)" PrivateAssets="all"
+                      Condition="'$(ManagePackageVersionsCentrally)' != 'true' And '@(PackageReference->WithMetadataValue('Identity', 'ReactiveUI.SourceGenerators'))' == ''" />
   </ItemGroup>
 
 </Project>

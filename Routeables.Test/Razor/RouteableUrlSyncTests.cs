@@ -55,7 +55,7 @@ public class RouteableUrlSyncTests
         public IRouter Router { get; }
         public RouteableUrlSync Sync { get; }
 
-        public Fixture(string uri = "http://localhost/", IMainRouteables? menu = null)
+        public Fixture(string uri = "http://localhost/", IMainViewModel? menu = null)
         {
             CustomerVm.Allow = true;
             var services = new ServiceCollection();
@@ -128,13 +128,13 @@ public class RouteableUrlSyncTests
     public async Task A_registered_route_typed_in_the_address_becomes_the_displayed_page()
     {
         CustomerVm.Allow = true;
-        var main = new FakeMainRouteables();
+        var main = new FakeMainViewModel();
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.RegisterRoute<CustomerView, CustomerVm>(route: "/customers/{id:int}");
         var routing = new TestNavigationManager("http://localhost/customers/7");
         services.AddSingleton<NavigationManager>(routing);
-        services.AddSingleton<IMainRouteables>(main);
+        services.AddSingleton<IMainViewModel>(main);
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
         using var sync = new RouteableUrlSync(routing, router, provider);
@@ -227,7 +227,7 @@ public class RouteableUrlSyncTests
         Assert.Equal(["about", "help"], provider.GetRequiredService<RouteableTable>().Entries.Select(e => e.Template).ToList());
     }
 
-    private sealed class RecordingMenu : IMainRouteables
+    private sealed class RecordingMenu : IMainViewModel
     {
         public System.Collections.ObjectModel.ObservableCollection<IRouteableEntry> Routeables { get; } = [];
         public IRouteableEntry? Routeable { get; set; }

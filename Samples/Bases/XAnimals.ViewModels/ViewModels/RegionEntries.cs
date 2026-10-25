@@ -29,7 +29,7 @@ public static class RegionEntries
 
     /// <summary>The animal pages of the main menu, in the order of the menu.</summary>
     public static IReadOnlyList<IRouteableEntry> Pages(IServiceProvider provider)
-        => provider.GetRequiredService<IMainRouteables>().Routeables
+        => provider.GetRequiredService<IMainViewModel>().Routeables
             .Where(entry => PageRoutes.Contains(entry.Route))
             .ToList();
 
@@ -66,19 +66,19 @@ public static class RegionEntries
         => new RouteableEntry<LayoutMenuViewModel>("Menu", null, route: "layout-menu", template: "layout-menu") { Region = region };
 
     /// <summary>Whether the entry was sent as an animal page (it carries its name), not opened from inside one (a detail).</summary>
-    public static bool HasName(IRouterEntry? entry) => ValueOf(entry, NameKey) is not null;
+    public static bool HasName(IHistoryEntry? entry) => ValueOf(entry, NameKey) is not null;
 
     /// <summary>The name of the page an entry of a region holds.</summary>
-    public static string? NameOf(IRouterEntry? entry)
+    public static string? NameOf(IHistoryEntry? entry)
         => ValueOf(entry, NameKey) ?? entry?.ViewModel.GetType().Name.Replace("ViewModel", string.Empty);
 
     /// <summary>The glyph of the page an entry of a region holds.</summary>
-    public static string GlyphOf(IRouterEntry? entry)
+    public static string GlyphOf(IHistoryEntry? entry)
         => AnimalIcons.GlyphOf(ValueOf(entry, IconKey) ?? string.Empty) is { Length: > 0 } glyph ? glyph : "📄";
 
     /// <summary>The first line of the description of the page an entry of a region holds.</summary>
-    public static string DescriptionOf(IRouterEntry? entry) => ValueOf(entry, DescriptionKey) ?? string.Empty;
+    public static string DescriptionOf(IHistoryEntry? entry) => ValueOf(entry, DescriptionKey) ?? string.Empty;
 
-    private static string? ValueOf(IRouterEntry? entry, string key)
+    private static string? ValueOf(IHistoryEntry? entry, string key)
         => entry?.Args.Values.FirstOrDefault(v => v.name == key)?.value as string;
 }

@@ -11,8 +11,8 @@ namespace Routeables.Routing;
 internal sealed record RouterEntry(
     object ViewModel,
     object View,
-    IRouteableArgs Args) : IRouterEntry
+    IRouteableArgs Args) : IHistoryEntry
 {
     /// <inheritdoc />
-    IRouteableArgs IRouterEntry.Args => Args;
+    IRouteableArgs IHistoryEntry.Args => Args;
 }

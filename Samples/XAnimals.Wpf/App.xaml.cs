@@ -41,7 +41,7 @@ public partial class App : Application
                 window.Height = 720;
             });
 
-        // An address given on the command line (xanimals.exe xanimals://dogs/Rex) is followed once the first page is shown.
+        // An address given on the command line (xanimals.exe xanimals://dogs/Eurohound) is followed once the first page is shown.
         if (e.Args.Length > 0 && Uri.TryCreate(e.Args[0], UriKind.Absolute, out var link))
         {
             Dispatcher.BeginInvoke(

@@ -13,7 +13,7 @@ namespace Routeables.Razor;
 public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
 {
     [Inject] protected IRouteableRequestedThemeService ThemeService { get; set; } = default!;
-    [Inject] protected IMainRouteables Main { get; set; } = default!;
+    [Inject] protected IMainViewModel Main { get; set; } = default!;
     [Inject] protected IServiceProvider Provider { get; set; } = default!;
     [Inject] protected Func<IServiceProvider, Task> Initialize { get; set; } = default!;
     [Inject] protected IJSRuntime JS { get; set; } = default!;

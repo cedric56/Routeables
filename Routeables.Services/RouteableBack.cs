@@ -19,7 +19,7 @@ public static class RouteableBack
     {
         ArgumentNullException.ThrowIfNull(provider);
 
-        if (provider.GetService<IMainRouteables>()?.Routeable?.Region is { Length: > 0 } region)
+        if (provider.GetService<IMainViewModel>()?.Routeable?.Region is { Length: > 0 } region)
         {
             IRouter? tab = null;
             try

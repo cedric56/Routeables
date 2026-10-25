@@ -42,6 +42,7 @@ public abstract class RegionLayout : IDisposable
         Regions = [primary, .. followers];
     }
 
+    /// <summary>The container the routers of the regions come from.</summary>
     protected IServiceProvider Provider { get; }
 
     /// <summary>The name of the region the user routes.</summary>
@@ -65,8 +66,10 @@ public abstract class RegionLayout : IDisposable
     /// <summary>Raised when <see cref="OnPrimaryChangedAsync"/> failed: a region that cannot follow does not break the primary one.</summary>
     public event EventHandler<Exception>? Failed;
 
+    /// <summary>Whether the primary region has an entry to go back to.</summary>
     public bool CanGoBack => PrimaryRouter.CanGoBack;
 
+    /// <summary>Whether the primary region has an entry to go forward to.</summary>
     public bool CanGoForward => PrimaryRouter.CanGoForward;
 
     /// <summary>Starts over: every region is emptied, the others follow the primary one, then <see cref="OnStartAsync"/> fills them.</summary>
@@ -98,6 +101,7 @@ public abstract class RegionLayout : IDisposable
         return result;
     }
 
+    /// <summary>Goes back in the primary region; the others follow it.</summary>
     public async Task<RouteableResult> BackAsync(CancellationToken cancellationToken = default)
     {
         var result = await PrimaryRouter.GoBackAsync(cancellationToken);
@@ -105,6 +109,7 @@ public abstract class RegionLayout : IDisposable
         return result;
     }
 
+    /// <summary>Goes forward in the primary region; the others follow it.</summary>
     public async Task<RouteableResult> ForwardAsync(CancellationToken cancellationToken = default)
     {
         var result = await PrimaryRouter.ForwardAsync(cancellationToken);
@@ -149,6 +154,7 @@ public abstract class RegionLayout : IDisposable
         return Following && PrimaryRouter.History.Count > 0 ? OnPrimaryChangedAsync() : Task.CompletedTask;
     }
 
+    /// <summary>Stops following the primary region.</summary>
     public void Dispose()
     {
         _follower?.Dispose();

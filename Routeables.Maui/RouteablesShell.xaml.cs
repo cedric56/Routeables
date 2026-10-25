@@ -4,14 +4,14 @@ using Routeables.Services;
 namespace Routeables.Maui;
 
 /// <summary>
-/// A <see cref="Shell"/> whose top-level items (tabs or flyout entries) come from <see cref="IMainRouteables.Routeables"/>.
+/// A <see cref="Shell"/> whose top-level items (tabs or flyout entries) come from <see cref="IMainViewModel.Routeables"/>.
 /// Shell owns the top-level structure; Routeables owns the route change inside each item, so pages managed
 /// by the router must not also be routed with <c>Shell.GoToAsync</c>.
 /// </summary>
 public partial class RouteablesShell : Shell
 {
     private readonly IServiceProvider services;
-    private readonly IMainRouteables vm;
+    private readonly IMainViewModel vm;
     private readonly List<ContentView> hosts = [];
     private bool started;
 
@@ -20,7 +20,7 @@ public partial class RouteablesShell : Shell
         InitializeComponent();
 
         services = provider;
-        vm = provider.GetRequiredService<IMainRouteables>();
+        vm = provider.GetRequiredService<IMainViewModel>();
         BindingContext = vm;
 
         foreach (var routeable in vm.Routeables)

@@ -14,7 +14,7 @@ namespace Routeables.Avalonia;
 
 /// <summary>
 /// Represents a specialized Avalonia <see cref="ListBox"/> designed to bind directly against 
-/// <see cref="IMainRouteables"/> collections and manage routeable view routing items.
+/// <see cref="IMainViewModel"/> collections and manage routeable view routing items.
 /// </summary>
 public class RouteableListBox : ListBox
 {
@@ -30,9 +30,9 @@ public class RouteableListBox : ListBox
     public RouteableListBox()
     {
         // Bindings against the DataContext
-        Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create<IMainRouteables, ObservableCollection<IRouteableEntry>>(r => r.Routeables));
+        Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create<IMainViewModel, ObservableCollection<IRouteableEntry>>(r => r.Routeables));
         Bind(SelectingItemsControl.SelectedItemProperty,
-            CompiledBinding.Create<IMainRouteables, IRouteableEntry?>(r => r.Routeable, mode: BindingMode.TwoWay));
+            CompiledBinding.Create<IMainViewModel, IRouteableEntry?>(r => r.Routeable, mode: BindingMode.TwoWay));
 
         // Item template (live bindings)
         ItemTemplate = new FuncDataTemplate<RouteableEntry>((_, _) =>

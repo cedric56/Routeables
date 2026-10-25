@@ -4,7 +4,7 @@ namespace Routeables.Services;
 
 /// <summary>
 /// What the base views of the hosts share to follow the lock of the main view model: a single subscription to
-/// <see cref="IMainRouteables.LockChanged"/>, however many times the view is initialized again, and the rule that decides
+/// <see cref="IMainViewModel.LockChanged"/>, however many times the view is initialized again, and the rule that decides
 /// whether the main view model is locked.
 /// </summary>
 /// <remarks>
@@ -15,11 +15,11 @@ namespace Routeables.Services;
 /// <param name="changed">Called with the new value whenever the lock of the main view model changes.</param>
 internal sealed class RouteableLockWatcher(Action<bool> changed) : IDisposable
 {
-    private IMainRouteables? _followed;
+    private IMainViewModel? _followed;
 
     /// <summary>Whether every entry of <paramref name="routeables"/> is locked (a page is blocking the route change); <see langword="false"/> without entries.</summary>
     /// <param name="routeables">The main view model, or <see langword="null"/>.</param>
-    public static bool AllLocked(IMainRouteables? routeables) =>
+    public static bool AllLocked(IMainViewModel? routeables) =>
         routeables?.Routeables is { Count: > 0 } entries && entries.All(entry => entry.IsLock);
 
     /// <summary>
@@ -32,7 +32,7 @@ internal sealed class RouteableLockWatcher(Action<bool> changed) : IDisposable
     {
         Dispose();
 
-        if (context is not IMainRouteables routeables)
+        if (context is not IMainViewModel routeables)
             return false;
 
         _followed = routeables;
@@ -51,7 +51,7 @@ internal sealed class RouteableLockWatcher(Action<bool> changed) : IDisposable
 
     private void OnLockChanged(object? sender, EventArgs e)
     {
-        if ((sender as IMainRouteables ?? _followed) is { } routeables)
+        if ((sender as IMainViewModel ?? _followed) is { } routeables)
             changed(AllLocked(routeables));
     }
 }

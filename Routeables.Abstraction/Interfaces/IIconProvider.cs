@@ -40,6 +40,7 @@ public sealed class IconResolverRegistry : IIconResolver
         return new Registration(this, provider);
     }
 
+    /// <inheritdoc />
     public object? GetIcon(string key)
     {
         foreach (var provider in Volatile.Read(ref _providers))
@@ -50,6 +51,7 @@ public sealed class IconResolverRegistry : IIconResolver
         return null;
     }
 
+    /// <inheritdoc />
     public object? GetSource(string key)
     {
         foreach (var provider in Volatile.Read(ref _providers))
@@ -91,7 +93,9 @@ public static class IconResolver
     /// <inheritdoc cref="IconResolverRegistry.Register"/>
     public static IDisposable Register(IIconResolver provider) => Default.Register(provider);
 
+    /// <inheritdoc cref="IconResolverRegistry.GetIcon"/>
     public static object? GetIcon(string key) => Default.GetIcon(key);
 
+    /// <inheritdoc cref="IconResolverRegistry.GetSource"/>
     public static object? GetSource(string key) => Default.GetSource(key);
 }

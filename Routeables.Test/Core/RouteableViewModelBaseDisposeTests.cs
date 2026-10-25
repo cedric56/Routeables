@@ -11,7 +11,7 @@ public class RouteableViewModelBaseDisposeTests
     {
         var coordinator = Substitute.For<ILockCoordinator>();
         var router = Substitute.For<IRouter, ILockCoordinatorFactory>();
-        ((ILockCoordinatorFactory)router).CreateLockCoordinator(Arg.Any<IMainRouteables>()).Returns(coordinator);
+        ((ILockCoordinatorFactory)router).CreateLockCoordinator(Arg.Any<IMainViewModel>()).Returns(coordinator);
 
         var viewModel = TestNavigableViewModel.Create(router, new ObservableCollection<IRouteableEntry>(), initialize: false);
         coordinator.Received(1).Subscribe();

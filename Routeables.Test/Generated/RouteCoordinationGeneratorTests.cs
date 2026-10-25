@@ -932,6 +932,9 @@ public class RouteCoordinationGeneratorTests
             MetadataReference.CreateFromFile(typeof(RouteableAttribute).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Routeables.Routing.Extensions).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location),
+            // BuildServiceProvider() is in this assembly, not in the one of IServiceCollection: the assemblies the test process has
+            // loaded so far are not enough, it depends on which tests ran before.
+            MetadataReference.CreateFromFile(typeof(ServiceCollectionContainerBuilderExtensions).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Microsoft.AspNetCore.Mvc.FromServicesAttribute).Assembly.Location)
         ]).DistinctBy(reference => reference.Display);
     }

@@ -17,19 +17,22 @@ A view model asks an `IRouter` to go somewhere. It never touches a page, a frame
 ## In one minute
 
 ```csharp
-[Routeable("/hello/{name}")]                         // the route is declared on the view model
-public sealed class HelloViewModel(IRouter router, string name)
-{
-    public Task SayHelloAgainAsync() => router.GoToAsync("/hello/World");
-}
+// DogDetailViewModel.cs of the XAnimals sample
+[Routeable("/dogs/{name}")]                          // the route is declared on the view model
+public class DogDetailViewModel(IRouter router, string name, Action? back = null)
+    : AnimalDetailViewModel(router, DogData.Dogs.FirstOrDefault(d => d.Name == name), back);
 
-public partial class HelloView : RouteableFor<HelloViewModel> { }   // the page: found by its name
+// DogsViewModel.cs: going there
+await router.GoToAsync("/dogs/Eurohound");
+
+// DogDetailView.axaml.cs: the page, found by its name
+public partial class DogDetailView : RouteableFor<DogDetailViewModel> { }
 
 services.AddGeneratedRoutes();                       // once, at startup
 ```
 
 ```xml
-<!-- MainView: the zone where the pages appear (Blazor: <RouteableRegion />) -->
+<!-- MainView: the zone where the pages appear (Blazor: <RouteableRegion />); see Samples/XAnimals.Avalonia/Views -->
 <routeables:RouteableRegion />
 ```
 
@@ -37,7 +40,7 @@ A route on the view model, the view with the matching name, one registration cal
 
 ### Several zones
 
-`RouteableRegion` without a name shows the default router. To have several zones, each with its own router and history (a side panel, a detail pane, a tab), name them: `services.AddRegion("detail")`, `<routeables:RouteableRegion Region="detail" />`, and `[Routeable("/hello/{name}", region: "detail")]` on the view model. A view model that asks for an `IRouter` receives the router of its region, so `Back` stays in the region. More in [Regions](docs/guides/regions.md).
+`RouteableRegion` without a name shows the default router. To have several zones, each with its own router and history (a side panel, a detail pane, a tab), name them: `services.AddRegion("adopt")`, `<routeables:RouteableRegion Region="adopt" />`, and `[Routeable("/pet", region: "adopt")]` on the view model (the Adopt a pet page of the samples). A view model that asks for an `IRouter` receives the router of its region, so `Back` stays in the region. More in [Regions](docs/guides/regions.md).
 
 ## Start with your host
 
@@ -70,7 +73,7 @@ Each host README has the complete setup. [Getting started](docs/getting-started.
 ## What you get
 
 - **Routes from attributes**, paired with views by name, registered by a source generator.
-- **Typed routing methods** generated from a view model's constructor: `GoToOrderAsync(id)` instead of a string.
+- **Typed routing methods** generated from a view model's constructor: `GoToMonkeyDetailAsync(router, name)` instead of a string.
 - **History**: back, forward, pop, return to the root; a page can veto leaving.
 - **Regions**: several areas of the screen, each with its own history.
 - **Modules**: a feature is one extension method, loaded at startup or on demand.
@@ -82,7 +85,7 @@ Routeables routes. It ships no commands, view-model locator or event aggregator:
 
 The host package already holds the dialogs, modals and notifications of its framework, registered by `UseRouteables`. For MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs, add a package of [`Reshapes`](Reshapes/README.md).
 
-Everything else is in the one `Routeables` package, which every host brings: the contracts ([`Abstraction`](Routeables.Abstraction/README.md)), the router ([`Routing`](Routeables.Routing/README.md)), the view-model bases ([`Core`](Routeables.Core/README.md)), [`Regions`](Routeables.Regions/README.md), [`Segments`](Routeables.Segments/README.md) (`Orders?id=5/Detail`), [`Locking`](Routeables.Locking/README.md) (pages that block leaving, a locked menu), the dialog and notification contracts ([`Services`](Routeables.Services/README.md)) and the source generator. They are separate projects of this repository and one package.
+Everything else is in the one `Routeables` package, which every host brings: the contracts ([`Abstraction`](Routeables.Abstraction/README.md)), the router ([`Routing`](Routeables.Routing/README.md)), the view-model bases ([`Core`](Routeables.Core/README.md)), [`Regions`](Routeables.Regions/README.md), [`Segments`](Routeables.Segments/README.md) (`/Bears?SearchText=polar`), [`Locking`](Routeables.Locking/README.md) (pages that block leaving, a locked menu), the dialog and notification contracts ([`Services`](Routeables.Services/README.md)) and the source generator. They are separate projects of this repository and one package.
 
 ## Learn more
 
