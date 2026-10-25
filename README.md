@@ -20,7 +20,7 @@ A view model asks an `IRouter` to go somewhere. It never touches a page, a frame
 [Routeable("/hello/{name}")]                         // the route is declared on the view model
 public sealed class HelloViewModel(IRouter router, string name)
 {
-    public Task SayHelloAgainAsync() => router.GoToAsync("/hello/Ada");
+    public Task SayHelloAgainAsync() => router.GoToAsync("/hello/World");
 }
 
 public partial class HelloView : RouteableFor<HelloViewModel> { }   // the page: found by its name
