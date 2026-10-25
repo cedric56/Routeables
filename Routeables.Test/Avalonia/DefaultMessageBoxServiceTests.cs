@@ -6,6 +6,8 @@ using Routeables.Tests.Core;
 
 namespace Routeables.Tests.Avalonia;
 
+// ServiceLocator.Services is one static for the process: the classes that read or set it must not run at the same time.
+[Collection("Avalonia ServiceLocator")]
 public class DefaultMessageBoxServiceTests
 {
     private sealed class TestApplication : AvaloniaApplication;
