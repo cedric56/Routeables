@@ -99,3 +99,34 @@ services.AddSingleton<IRouteableErrorSink>(sink);                // errors repor
 ```
 
 A sink registered in the container wins over `Default` for the errors that have a container.
+
+## Subscribing once in a view
+
+`InitializeAsync` of a view runs again each time its section is shown. Do not register a messenger or an event there: override `OnSubscribe` and `OnUnsubscribe` of `RouteableFor` (Avalonia, WPF, Uno, MAUI), as in Razor. `OnSubscribe` is called once for each view model the view shows (on the first `InitializeAsync`), and `OnUnsubscribe` when the view is disposed or gets another view model.
+
+```csharp
+public partial class HomeView : RouteableFor<HomeViewModel>
+{
+    protected override void OnSubscribe()
+        => WeakReferenceMessenger.Default.Register<HomeView, MyMessage>(this, (view, message) => view.Handle(message));
+
+    protected override void OnUnsubscribe()
+        => WeakReferenceMessenger.Default.UnregisterAll(this);
+}
+```
+
+If the view overrides `InitializeAsync`, call `base.InitializeAsync(args, ct)` so the hook runs.
+
+## Finding out why a route did not show
+
+`GoToRouteAsync` returns a `RouteableResult` (`Success`, `Cancelled`, `Exception`) instead of throwing. `MainViewModelBase` writes the reason to the debug output when an entry is not shown, and calls the virtual `OnRoutingFailed(entry, result)`: override it to log, or put a breakpoint in it.
+
+```csharp
+protected override void OnRoutingFailed(IRouteableEntry entry, RouteableResult result)
+{
+    base.OnRoutingFailed(entry, result);
+    logger.LogWarning(result.Exception, "Route {Route} not shown (cancelled: {Cancelled})", entry.Route, result.Cancelled);
+}
+```
+
+The `.pdb` files are inside the NuGet packages, with Source Link: in Visual Studio enable *Debug > Options > Enable Source Link support* and disable *Just My Code* to step into Routeables.

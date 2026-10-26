@@ -238,6 +238,17 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
     protected abstract ObservableCollection<IRouteableEntry> GetRouteables();
 
     /// <summary>
+    /// Called when the router did not show the entry (a guard refused it, the route was cancelled, or an exception was thrown):
+    /// the previous entry is selected again. Override it to log or display the reason; put a breakpoint here to see why.
+    /// The default writes the reason to the debug output.
+    /// </summary>
+    /// <param name="entry">The entry that was not shown.</param>
+    /// <param name="result">The outcome of the router: <see cref="RouteableResult.Cancelled"/> and <see cref="RouteableResult.Exception"/>.</param>
+    protected virtual void OnRoutingFailed(IRouteableEntry entry, RouteableResult result)
+        => System.Diagnostics.Debug.WriteLine(
+            $"Routeables: '{entry.Route}' was not shown ({(result.Cancelled ? "cancelled by a guard (CanLeaveAsync / CanEnter) or a newer route" : "failed")}){(result.Exception is null ? "" : ": " + result.Exception)}");
+
+    /// <summary>
     /// Shows the view of an entry through the router and updates <see cref="CurrentView"/>; the previous entry is selected again if that fails.
     /// </summary>
     /// <param name="value">The entry to show, or <see langword="null"/> for none.</param>
@@ -252,7 +263,8 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
             if (value == null)
                 return;
 
-            var result = (await _router.GoToRouteAsync(value)).Success;
+            var outcome = await _router.GoToRouteAsync(value);
+            var result = outcome.Success;
 
             // A newer selection replaced this one while the router was working: its result is the one to keep.
             if (version != 0 && version != _selectionVersion)
@@ -272,6 +284,7 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
             else
             {
                 _routeable = old;
+                OnRoutingFailed(value, outcome);
             }
         }
         catch

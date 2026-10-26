@@ -34,6 +34,10 @@ A region has no place on screen of its own. A view puts one down with a **region
 
 A view can hold several hosts, each with its own name, and without a name a host shows the default router. Whoever routes only names the region; the host that carries that name shows the result:
 
+A view has one parent, so a view of a region is shown by one host at a time. A host that has left the screen lets go of its view (on Avalonia, the next host that shows the region takes it back); two hosts that are on screen at once for the same region, or a host and a `ContentControl` bound to the same view, are refused with a message that names who holds the view.
+
+A region is one router for as long as its scope lives, which is the whole application on a desktop. View models that follow one another in the same region share its history: to start from an empty one, call `provider.EraseRegionsAsync(["detail"])` before opening the next.
+
 ```csharp
 // AdoptViewModel.cs: an entry says which region shows it (null: the default router)...
 var entry = new RouteableEntry<PetViewModel>("Pet", null, route: "pet", template: "pet")

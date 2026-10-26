@@ -44,9 +44,37 @@ public partial class RouteableFor : ContentView, IRouteableFor, IRouteable, IDis
         return Task.FromResult(result: true);
     }
 
+    private object? _subscribed;
+
+    /// <summary>Called once for each view model the view shows, unlike <c>InitializeAsync</c> which runs again each time the view is shown.
+    /// Register here what must be registered once (a messenger, an event).</summary>
+    protected virtual void OnSubscribe() { }
+
+    /// <summary>Called when the view is disposed or gets another view model: undo what <see cref="OnSubscribe"/> did.</summary>
+    protected virtual void OnUnsubscribe() { }
+
+    private void Subscribe()
+    {
+        var context = Context;
+        if (context is null || ReferenceEquals(context, _subscribed))
+            return;
+        Unsubscribe();
+        _subscribed = context;
+        OnSubscribe();
+    }
+
+    private void Unsubscribe()
+    {
+        if (_subscribed is null)
+            return;
+        _subscribed = null;
+        OnUnsubscribe();
+    }
+
     /// <inheritdoc />
     public virtual Task InitializeAsync(IRouteableArgs args, CancellationToken ct = default)
     {
+        Subscribe();
         // Initialize runs again when a cached view is shown again: one subscription, not one more each time.
         SetValue(IsLockedPropertyKey, Lock.Follow(Context));
 
@@ -66,7 +94,11 @@ public partial class RouteableFor : ContentView, IRouteableFor, IRouteable, IDis
     }
 
     /// <summary>Stops following the lock of the main view model.</summary>
-    public void Dispose() => _lock?.Dispose();
+    public void Dispose()
+    {
+        Unsubscribe();
+        _lock?.Dispose();
+    }
 }
 
 /// <summary>A <see cref="RouteableFor"/> with its view model typed.</summary>

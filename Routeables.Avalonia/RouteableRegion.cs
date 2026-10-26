@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Microsoft.Extensions.DependencyInjection;
@@ -108,12 +109,26 @@ public class RouteableRegion : TransitioningContentControl
         // A late post after the control was disconnected must not show a view again.
         if (!_active) return;
 
-        // A view has one parent. Say who holds it instead of the bare "already has a visual parent" of the framework.
-        if (view is Visual shown && shown.GetVisualParent() is { } holder && !this.IsVisualAncestorOf(shown))
+        // A view has one parent. A host that has left the screen can still hold the view of the router (its transition never ends, so
+        // its presenter keeps the page): that one is released. Any other holder is a real duplicate: say who it is instead of the
+        // bare "already has a visual parent" of the framework.
+        if (view is Visual shown && shown.GetVisualParent() is { } holder && !this.IsVisualAncestorOf(shown) && !ReleaseFromLeftHost(holder))
             throw new InvalidOperationException(
                 $"{view.GetType().Name} is already displayed by {holder.GetType().Name}, so region '{Region ?? "(default)"}' cannot show it too. " +
                 "A page shown by a region must not also host its own current view: let the region display it.");
 
         Content = view;
+    }
+
+    // The holder is the presenter of a RouteableRegion that is no longer connected (it left the visual tree): it is not showing the
+    // view any more, so the view is taken back from it. A host that is still connected keeps its view.
+    private static bool ReleaseFromLeftHost(Visual holder)
+    {
+        var other = holder as RouteableRegion ?? holder.FindAncestorOfType<RouteableRegion>();
+        if (other is null || other._active || holder is not ContentPresenter presenter)
+            return false;
+
+        presenter.Content = null;
+        return true;
     }
 }

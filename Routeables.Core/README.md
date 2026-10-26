@@ -41,6 +41,6 @@ The CommunityToolkit.Mvvm and ReactiveUI flavours are opt-in sources, not part o
 
 ## Runtime information
 
-`Runtime`, `Desktop` and `Distribution` describe the host, the operating-system family and the distribution. Each host registers them; by hand: `services.RegisterEnvironments(Runtime.Avalonia)`. The values are `Avalonia`, `Maui`, `MauiHybrid`, `BlazorServer`, `BlazorWebAssembly`, `Uno` and `Unknown`.
+`Runtime`, `Desktop` and `Distribution` describe the host, the operating-system family and the distribution. Each host registers them; by hand: `services.RegisterEnvironments(Runtime.Avalonia)`. The values are `Avalonia`, `Maui`, `MauiHybrid`, `BlazorServer`, `BlazorWebAssembly`, `Uno`, `Wpf` and `Unknown`.
 
 Related: [hosts](../docs/guides/hosts.md), [getting started](../docs/getting-started.md).
