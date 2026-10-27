@@ -214,3 +214,7 @@ button.adopt-choice:hover { background: var(--an-canopy); color: var(--an-paper)
 .pet-card img { width: 9.4rem; height: 11.9rem; object-fit: cover; border-radius: 4.7rem 4.7rem .75rem .75rem; background: var(--an-paper); }
 .pet-card .pet-location { font-weight: 600; color: var(--an-saffron); }
 .pet-card .pet-glyph { font-size: 1.4rem; }
+
+/* A custom transition: the name registered by the page, "Pop", is a CSS animation for .rt-enter.rt-pop (see Routeables.Razor/wwwroot/theme.css). */
+@keyframes rt-pop { from { opacity: 0; transform: scale(.85); } 60% { transform: scale(1.03); } to { opacity: 1; transform: none; } }
+.rt-enter.rt-pop { animation-name: rt-pop; }

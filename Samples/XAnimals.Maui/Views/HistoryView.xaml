@@ -77,7 +77,7 @@
                 </Border.StrokeShape>
                 <!-- The zone of the "history" region: nothing assigns the view, the control shows what the router of the region displays.
                      It takes all the room the frame has. -->
-                <routeables:RouteableRegion x:Name="HistoryFrame" Region="history" TransitionDuration="0:0:0.22"
+                <routeables:RouteableRegion x:Name="HistoryFrame" Region="history" TransitionDuration="0:0:0.22" Transition="{Binding Transition}"
                              HorizontalOptions="Fill" VerticalOptions="Fill" InputTransparent="True" />
             </Border>
 
@@ -88,6 +88,12 @@
                 <Button Margin="0,0,8,8" Text="Forward ▶" Command="{Binding ForwardCommand}" IsEnabled="{Binding CanGoForward}" />
                 <Button Margin="0,0,8,8" Text="↩ Pop" Command="{Binding PopCommand}" IsEnabled="{Binding CanGoBack}" />
             </FlexLayout>
+
+            <!-- The transition of the frame; "Push (SlideUp)" asks for its own, for that one navigation. -->
+            <HorizontalStackLayout Spacing="8" Margin="0,8,0,0">
+                <Label Text="Transition" VerticalOptions="Center" />
+                <Picker ItemsSource="{Binding Transitions}" SelectedItem="{Binding Transition}" WidthRequest="140" />
+            </HorizontalStackLayout>
 
             <Label Text="CanLeaveAsync" FontAttributes="Bold" Margin="0,14,0,0" TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
             <HorizontalStackLayout Spacing="4">

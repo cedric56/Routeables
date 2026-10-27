@@ -8,6 +8,10 @@ namespace Routeables.Wpf;
 /// <summary>
 /// Shows the current view of a region: a keyed router with its own history. Put it in a view and set <see cref="Region"/>;
 /// route to the region (<c>Region = "name"</c> on the entry) and the view appears here.
+/// <para>
+/// The view can come in with a transition: <see cref="Transition"/> for the region, or
+/// <c>RouteableArgs.Create().WithTransition(RouteTransition.Slide)</c> for one navigation, which wins. See <see cref="RouteTransitions"/>.
+/// </para>
 /// </summary>
 public class RouteableRegion : ContentControl
 {
@@ -20,8 +24,22 @@ public class RouteableRegion : ContentControl
     public static readonly DependencyProperty TransitionDurationProperty =
         DependencyProperty.Register(nameof(TransitionDuration), typeof(TimeSpan), typeof(RouteableRegion), new PropertyMetadata(TimeSpan.Zero));
 
+    /// <summary>Identifies <see cref="Transition"/>.</summary>
+    public static readonly DependencyProperty TransitionProperty =
+        DependencyProperty.Register(nameof(Transition), typeof(string), typeof(RouteableRegion), new PropertyMetadata(null));
+
     private RegionBinding? _binding;
     private bool _active;
+
+    /// <summary>
+    /// The name of the transition that brings in each view of this region (<c>None</c>, <c>Fade</c>, <c>Slide</c>, <c>SlideUp</c> or a name
+    /// registered with <see cref="RouteTransitions.Register"/>); a navigation can choose its own. Empty plays none (or the fade of <see cref="TransitionDuration"/>).
+    /// </summary>
+    public string? Transition
+    {
+        get => (string?)GetValue(TransitionProperty);
+        set => SetValue(TransitionProperty, value);
+    }
 
     /// <summary>
     /// Gets or sets the time the new view takes to fade in; zero (the default) shows it at once.
@@ -78,15 +96,15 @@ public class RouteableRegion : ContentControl
         Content = null;
     }
 
-    private void Show(object? view)
+    private void Show(object? view, RegionChange change)
     {
         if (Dispatcher.CheckAccess())
-            Apply(view);
+            Apply(view, change);
         else
-            Dispatcher.InvokeAsync(() => Apply(view));
+            Dispatcher.InvokeAsync(() => Apply(view, change));
     }
 
-    private void Apply(object? view)
+    private void Apply(object? view, RegionChange change)
     {
         // A late post after the control was disconnected must not show a view again.
         if (!_active) return;
@@ -99,8 +117,8 @@ public class RouteableRegion : ContentControl
 
         Content = view;
 
-        // The region fades from transparent to opaque; the animation is released when it ends so Opacity can be set again.
-        if (view is not null && TransitionDuration > TimeSpan.Zero)
-            BeginAnimation(OpacityProperty, new System.Windows.Media.Animation.DoubleAnimation(0, 1, TransitionDuration), System.Windows.Media.Animation.HandoffBehavior.SnapshotAndReplace);
+        // The transition of the navigation, else the one of the region, else the fade of TransitionDuration.
+        if (view is not null)
+            RouteTransitions.Play(this, change.Resolve(string.IsNullOrWhiteSpace(Transition) ? null : RouteTransition.Named(Transition), TransitionDuration));
     }
 }

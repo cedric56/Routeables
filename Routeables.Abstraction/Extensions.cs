@@ -245,12 +245,17 @@ public static class Extensions
     /// </summary>
     /// <param name="provider">The provider (scope) to resolve from.</param>
     /// <param name="region">The region's identifier; <see langword="null"/> for the default router.</param>
+    /// <exception cref="InvalidOperationException">No region of that name is registered (see <c>AddRegion</c>).</exception>
     public static IRouter GetRouter(this IServiceProvider provider, string? region)
     {
         ArgumentNullException.ThrowIfNull(provider);
-        return string.IsNullOrWhiteSpace(region)
-            ? provider.GetRequiredService<IRouter>()
-            : provider.GetRequiredKeyedService<IRouter>(region);
+        if (string.IsNullOrWhiteSpace(region))
+            return provider.GetRequiredService<IRouter>();
+
+        // The container's own message does not say which key is missing: name the region and how to register it.
+        return provider.GetKeyedService<IRouter>(region)
+            ?? throw new InvalidOperationException(
+                $"No region named '{region}' is registered. Register it with services.AddRegion(\"{region}\"), or use a region name that is registered.");
     }
 
     /// <summary>
@@ -268,11 +273,17 @@ public static class Extensions
 
     /// <summary>
     /// Goes to a registered route by its address (<c>provider.GoToAsync("/orders/42")</c>), in the router of
-    /// <paramref name="region"/> (the default router when <see langword="null"/>). See <see cref="IRouter.GoToAsync"/>.
+    /// <paramref name="region"/>, or else the <see cref="IRouteableArgs.Region"/> of <paramref name="args"/> (the default router when
+    /// neither is given). See <see cref="IRouter.GoToAsync"/>.
     /// </summary>
     public static Task<RouteableResult> GoToAsync(
         this IServiceProvider provider, string url, string? region = null, IRouteableArgs? args = null, string? template = null, CancellationToken cancellationToken = default)
-        => provider.GetRouter(region).GoToAsync(url, args, template, cancellationToken);
+        => provider.GetRouter(region ?? args?.Region).GoToAsync(url, args, template, cancellationToken);
+
+    /// <summary>Goes to a registered route by its address, in the region named by <paramref name="args"/> (<c>RouteableArgs.Create().WithRegion("Form")</c>).</summary>
+    public static Task<RouteableResult> GoToAsync(
+        this IServiceProvider provider, string url, IRouteableArgs args, string? template = null, CancellationToken cancellationToken = default)
+        => provider.GoToAsync(url, region: null, args, template, cancellationToken);
 
     /// <summary>The current view model as a <typeparamref name="T"/>, or <see langword="null"/> when it is another type or none.</summary>
     public static T? GetCurrentViewModel<T>(this IRouter router) where T : class

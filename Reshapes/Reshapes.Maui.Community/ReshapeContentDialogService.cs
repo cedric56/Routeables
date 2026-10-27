@@ -7,8 +7,10 @@ using Routeables.Services;
 
 namespace Reshapes.Maui.CommunityToolkit;
 
+/// <inheritdoc />
 public class ReshapeContentDialogService(IRouteableDialogWindowContext context) : IRouteableContentDialogService
 {
+    /// <inheritdoc />
     public async Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params)
     {
         ArgumentNullException.ThrowIfNull(@params);
@@ -46,8 +48,11 @@ public class ReshapeContentDialogService(IRouteableDialogWindowContext context) 
         }
     }
 
+    /// <inheritdoc />
+
     public sealed class ContentDialogPopup : Popup<RouteableContentDialogResult>
     {
+        /// <inheritdoc />
         public ContentDialogPopup(RouteableContentDialog p)
         {
             CanBeDismissedByTappingOutsideOfPopup = false;
@@ -58,6 +63,7 @@ public class ReshapeContentDialogService(IRouteableDialogWindowContext context) 
             Content = RouteableDialogContents.ForContentDialog(p, Session);
         }
 
+        /// <inheritdoc />
         public RouteableContentDialogSession Session { get; }
     }
 }

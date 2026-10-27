@@ -442,6 +442,8 @@ internal class Router(
             ViewParameters = [.. args.ViewParameters],
             Values = [.. args.Values],
             Router = args.Router,
+            Region = args.Region,
+            Transition = args.Transition,
         };
 
     /// <inheritdoc />

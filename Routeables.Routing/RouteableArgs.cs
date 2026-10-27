@@ -18,6 +18,12 @@ public class RouteableArgs : IRouteableArgs, IRouteableArgsFactory
     /// </summary>
     public string? Route { get; set; }
 
+    /// <summary>How the region brings in the view (see <see cref="IRouteableArgs.Transition"/>).</summary>
+    public RouteTransition? Transition { get; set; }
+
+    /// <summary>The region the route change is meant for (see <see cref="IRouteableArgs.Region"/>).</summary>
+    public string? Region { get; set; }
+
     /// <summary>The router that is routing (see <see cref="IRouteableArgs.Router"/>).</summary>
     public IRouter? Router { get; set; }
 

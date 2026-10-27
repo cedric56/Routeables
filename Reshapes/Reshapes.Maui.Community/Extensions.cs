@@ -3,6 +3,9 @@ using Routeables.Maui.Services;
 
 namespace Reshapes.Maui.CommunityToolkit;
 
+/// <summary>
+/// 
+/// </summary>
 public static class Extensions
 {
     /// <summary>

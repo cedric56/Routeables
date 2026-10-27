@@ -12,6 +12,8 @@
   href: system-integration.md
 - name: Regions
   href: regions.md
+- name: Transitions
+  href: transitions.md
 - name: Hosts, services and samples
   href: hosts.md
 - name: Native AOT and trimming

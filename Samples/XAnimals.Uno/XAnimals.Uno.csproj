@@ -1,4 +1,4 @@
-<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk">
 
   <PropertyGroup>
     <!-- The desktop (Skia) head. Add net10.0-android, net10.0-ios, net10.0-browserwasm... as needed, with their platform folders. -->
@@ -23,6 +23,10 @@
     <!-- Uno.Sdk and Uno.WinUI have their own version numbers. Routeables.Uno is built on Uno.WinUI 6.7.135: the head must not use an older one. -->
     <UnoVersion>6.7.135</UnoVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.13" />
+  </ItemGroup>
 
   <ItemGroup>
     <!-- Uno.Resizetizer turns these into the app icon and the splash screen of every head (the Android styles ask for uno_splash_color and uno_splash_image). -->

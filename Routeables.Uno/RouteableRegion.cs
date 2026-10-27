@@ -17,8 +17,12 @@ namespace Routeables.Uno;
 /// default router.
 /// </para>
 /// <code>
-/// &lt;routeables:RouteableRegion Region="detail" /&gt;
+/// &lt;routeables:RouteableRegion Region="detail" Transition="Slide" /&gt;
 /// </code>
+/// <para>
+/// The view can come in with a transition: <see cref="Transition"/> for the region, or
+/// <c>RouteableArgs.Create().WithTransition(RouteTransition.Slide)</c> for one navigation, which wins. See <see cref="RouteTransitions"/>.
+/// </para>
 /// </summary>
 public partial class RouteableRegion : ContentControl
 {
@@ -27,10 +31,14 @@ public partial class RouteableRegion : ContentControl
         DependencyProperty.Register(nameof(Region), typeof(string), typeof(RouteableRegion),
             new PropertyMetadata(null, (d, _) => ((RouteableRegion)d).Reconnect()));
 
-    /// <summary>Identifies <see cref="TransitionDuration"/>.</summary>
-    public static readonly DependencyProperty TransitionDurationProperty =
-        DependencyProperty.Register(nameof(TransitionDuration), typeof(TimeSpan), typeof(RouteableRegion),
-            new PropertyMetadata(TimeSpan.Zero, (d, _) => ((RouteableRegion)d).UpdateTransitions()));
+    /// <summary>Identifies <see cref="RouteTransitionDuration"/>.</summary>
+    public static readonly DependencyProperty RouteTransitionDurationProperty =
+        DependencyProperty.Register(nameof(RouteTransitionDuration), typeof(TimeSpan), typeof(RouteableRegion),
+            new PropertyMetadata(TimeSpan.Zero));
+
+    /// <summary>Identifies <see cref="Transition"/>.</summary>
+    public static readonly DependencyProperty RouteTransitionProperty =
+        DependencyProperty.Register(nameof(Transition), typeof(string), typeof(RouteableRegion), new PropertyMetadata(null));
 
     private RegionBinding? _binding;
     private bool _active;
@@ -39,14 +47,21 @@ public partial class RouteableRegion : ContentControl
     /// Gets or sets whether the new view comes in with the theme transition of the platform: any value above zero turns it on, zero (the
     /// default) shows the view at once. The platform chooses the length of the animation.
     /// </summary>
-    public TimeSpan TransitionDuration
+    public TimeSpan RouteTransitionDuration
     {
-        get => (TimeSpan)GetValue(TransitionDurationProperty);
-        set => SetValue(TransitionDurationProperty, value);
+        get => (TimeSpan)GetValue(RouteTransitionDurationProperty);
+        set => SetValue(RouteTransitionDurationProperty, value);
     }
 
-    private void UpdateTransitions()
-        => ContentTransitions = TransitionDuration > TimeSpan.Zero ? new TransitionCollection { new ContentThemeTransition() } : null;
+    /// <summary>
+    /// The name of the transition that brings in each view of this region (<c>None</c>, <c>Fade</c>, <c>Slide</c>, <c>SlideUp</c> or a name
+    /// registered with <see cref="RouteTransitions.Register"/>); a navigation can choose its own. Empty plays none (or the fade of <see cref="RouteTransitionDuration"/>).
+    /// </summary>
+    public string? RouteTransition
+    {
+        get => (string?)GetValue(RouteTransitionProperty);
+        set => SetValue(RouteTransitionProperty, value);
+    }
 
     /// <summary>Creates the region.</summary>
     public RouteableRegion()
@@ -102,15 +117,15 @@ public partial class RouteableRegion : ContentControl
         Content = null;
     }
 
-    private void Show(object? view)
+    private void Show(object? view, RegionChange change)
     {
         if (DispatcherQueue.HasThreadAccess)
-            Apply(view);
+            Apply(view, change);
         else
-            DispatcherQueue.TryEnqueue(() => Apply(view));
+            DispatcherQueue.TryEnqueue(() => Apply(view, change));
     }
 
-    private void Apply(object? view)
+    private void Apply(object? view, RegionChange change)
     {
         // A late post after the control was disconnected must not show a view again.
         if (!_active) return;
@@ -121,6 +136,10 @@ public partial class RouteableRegion : ContentControl
                 $"{view.GetType().Name} is already displayed by {holder.GetType().Name}, so region '{Region ?? "(default)"}' cannot show it too. " +
                 "A page shown by a region must not also host its own current view: let the region display it.");
 
+        // The transition of the navigation, else the one of the region, else the theme transition of TransitionDuration: set before the
+        // content changes, which is what plays it.
+        ContentTransitions = RouteTransitions.Create(
+            change.Resolve(Abstraction.RouteTransition.Named(RouteTransition), RouteTransitionDuration), ActualWidth, ActualHeight);
         Content = view;
     }
 

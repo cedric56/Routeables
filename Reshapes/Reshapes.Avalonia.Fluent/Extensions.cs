@@ -3,6 +3,9 @@ using Routeables.Avalonia.Services;
 
 namespace Reshapes.Avalonia.Fluent;
 
+/// <summary>
+/// 
+/// </summary>
 public static class Extensions
 {
     /// <summary>

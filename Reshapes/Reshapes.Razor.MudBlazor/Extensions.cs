@@ -9,6 +9,9 @@ using Routeables.Services;
 
 namespace Reshapes.Razor.MudBlazor;
 
+/// <summary>
+/// 
+/// </summary>
 public static class Extensions
 {
     /// <summary>

@@ -14,8 +14,12 @@ namespace Routeables.Maui;
 /// default router.
 /// </para>
 /// <code>
-/// &lt;routeables:RouteableRegion Region="detail" /&gt;
+/// &lt;routeables:RouteableRegion Region="detail" Transition="Slide" /&gt;
 /// </code>
+/// <para>
+/// The view can come in with a transition: <see cref="Transition"/> for the region, or
+/// <c>RouteableArgs.Create().WithTransition(RouteTransition.Slide)</c> for one navigation, which wins. See <see cref="RouteTransitions"/>.
+/// </para>
 /// </summary>
 public class RouteableRegion : ContentView
 {
@@ -28,8 +32,22 @@ public class RouteableRegion : ContentView
     public static readonly BindableProperty TransitionDurationProperty =
         BindableProperty.Create(nameof(TransitionDuration), typeof(TimeSpan), typeof(RouteableRegion), TimeSpan.Zero);
 
+    /// <summary>The <see cref="Transition"/> property.</summary>
+    public static readonly BindableProperty TransitionProperty =
+        BindableProperty.Create(nameof(Transition), typeof(string), typeof(RouteableRegion), null);
+
     private RegionBinding? _binding;
     private bool _active;
+
+    /// <summary>
+    /// The name of the transition that brings in each view of this region (<c>None</c>, <c>Fade</c>, <c>Slide</c>, <c>SlideUp</c> or a name
+    /// registered with <see cref="RouteTransitions.Register"/>); a navigation can choose its own. Empty plays none (or the fade of <see cref="TransitionDuration"/>).
+    /// </summary>
+    public string? Transition
+    {
+        get => (string?)GetValue(TransitionProperty);
+        set => SetValue(TransitionProperty, value);
+    }
 
     /// <summary>The time the new view takes to fade in; zero (the default) shows it at once.</summary>
     public TimeSpan TransitionDuration
@@ -83,15 +101,15 @@ public class RouteableRegion : ContentView
         Content = null;
     }
 
-    private void Show(object? view)
+    private void Show(object? view, RegionChange change)
     {
         if (Dispatcher.IsDispatchRequired)
-            Dispatcher.Dispatch(() => Apply(view));
+            Dispatcher.Dispatch(() => Apply(view, change));
         else
-            Apply(view);
+            Apply(view, change);
     }
 
-    private void Apply(object? view)
+    private void Apply(object? view, RegionChange change)
     {
         if (!_active)
             return;
@@ -100,11 +118,9 @@ public class RouteableRegion : ContentView
         Release(shown);
         Content = shown;
 
-        if (Content is not null && TransitionDuration > TimeSpan.Zero)
-        {
-            Opacity = 0;
-            _ = FadeInAsync();
-        }
+        // The transition of the navigation, else the one of the region, else the fade of TransitionDuration.
+        if (Content is not null)
+            _ = RouteTransitions.PlayAsync(this, change.Resolve(string.IsNullOrWhiteSpace(Transition) ? null : RouteTransition.Named(Transition), TransitionDuration));
     }
 
     // Another region bound to the same router (the pages of a Shell written in XAML) can still hold the view: a view has one parent,
@@ -119,18 +135,6 @@ public class RouteableRegion : ContentView
             case Layout layout:
                 layout.Remove(view);
                 break;
-        }
-    }
-
-    private async Task FadeInAsync()
-    {
-        try
-        {
-            await this.FadeToAsync(1, (uint)TransitionDuration.TotalMilliseconds);
-        }
-        catch (Exception)
-        {
-            Opacity = 1;   // an animation that cannot run (the control left the page) must not leave the region invisible
         }
     }
 }

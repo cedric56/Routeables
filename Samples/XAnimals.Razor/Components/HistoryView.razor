@@ -1,4 +1,3 @@
-@using Routeables.Abstraction
 @using Routeables.Razor
 @using XAnimals.ViewModels
 @inherits RouteableFor<HistoryView, HistoryViewModel>
@@ -24,7 +23,7 @@
     <section class="about-group">
         <div class="nav-frame" inert>
             @* The zone of the "history" region: nothing assigns the view, the component shows what the router of the region displays. *@
-            <RouteableRegion Region="history" />
+            <RouteableRegion Region="history" Transition="@ViewModel.Transition" />
         </div>
     </section>
 
@@ -35,6 +34,17 @@
             <button @onclick="ViewModel.ForwardAsync" disabled="@(!ViewModel.CanGoForward)">Forward ▶</button>
             <button @onclick="ViewModel.PopAsync" disabled="@(!ViewModel.CanGoBack)">↩ Pop</button>
         </div>
+    </section>
+
+    <section class="about-group">
+        <h2>Transition</h2>
+        @* The transition of the frame; "Push (SlideUp)" asks for its own, for that one navigation. "Pop" is a CSS animation of the sample (animals.css). *@
+        <select value="@ViewModel.Transition" @onchange="ChangeTransition">
+            @foreach (var name in ViewModel.Transitions)
+            {
+                <option value="@name">@name</option>
+            }
+        </select>
     </section>
 
     <section class="about-group">
@@ -54,6 +64,8 @@
         ViewModel.PropertyChanged += OnViewModelChanged;
         base.OnSubscribe();
     }
+
+    private void ChangeTransition(ChangeEventArgs e) => ViewModel.Transition = e.Value?.ToString() ?? "None";
 
     private void Toggle() => ViewModel.BlockLeaving = !ViewModel.BlockLeaving;
 

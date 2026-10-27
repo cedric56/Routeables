@@ -6,6 +6,7 @@ using Routeables.Services;
 
 namespace Reshapes.Maui.CommunityToolkit;
 
+/// <inheritdoc />
 public class ReshapeTaskDialogService(IRouteableDialogWindowContext context) : IRouteableTaskDialogService
 {
     /// <summary>
@@ -53,6 +54,7 @@ public class ReshapeTaskDialogService(IRouteableDialogWindowContext context) : I
     /// <summary>The task dialog (see <see cref="RouteableDialogContents.ForTaskDialog"/>) in a CommunityToolkit popup.</summary>
     public sealed class TaskDialogPopup : Popup<RouteableTaskDialogResult>
     {
+        /// <inheritdoc />
         public TaskDialogPopup(RouteableTaskDialog p, RouteableTaskDialogResult[] results)
         {
             CanBeDismissedByTappingOutsideOfPopup = false;
@@ -63,6 +65,7 @@ public class ReshapeTaskDialogService(IRouteableDialogWindowContext context) : I
             Content = RouteableDialogContents.ForTaskDialog(p, Session);
         }
 
+        /// <inheritdoc />
         public RouteableTaskDialogSession Session { get; }
     }
 }

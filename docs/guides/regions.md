@@ -145,3 +145,14 @@ services.AddRegionLayout<LayoutController>(LayoutController.Content, LayoutContr
 `StartAsync`, `ClearAsync`, `ShowAsync`, `BackAsync`, `ForwardAsync`, `CanGoBack`, `CanGoForward`, `SettledAsync` and `Changed` are
 there already, and the followers run one after the other on the thread that started the layout. Set `Following = false` while
 the followers show something else (a credits page), back to `true` to follow again.
+
+
+### Choosing the region in the arguments
+
+Give the region to the arguments, and let the provider pick the router of that region:
+
+```csharp
+await provider.GoToAsync("/form", RouteableArgs.Create().WithRegion("Form").WithViewModel("id", 42));
+```
+
+`provider.GoToAsync(url, region: "Form")` does the same. A router obtained by hand (`router.GoToAsync`) is already one region's router: it ignores `Region`.

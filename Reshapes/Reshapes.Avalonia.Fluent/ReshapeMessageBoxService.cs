@@ -10,13 +10,17 @@ using Routeables.Services;
 
 namespace Reshapes.Avalonia.Fluent;
 
+/// <inheritdoc />
+
 public class ReshapeMessageBoxService : IMessageBoxService
-{
+{    
+    /// <inheritdoc />
     public bool IsDisplayable(TopLevel topLevel)
     {
         return topLevel is not FAAppWindow;
     }
 
+    /// <inheritdoc />
     public async Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params, TopLevel? topLevel = null)
     {
         var dialog = GetContentDialog(@params);
@@ -76,6 +80,7 @@ public class ReshapeMessageBoxService : IMessageBoxService
         }
     }
 
+    /// <inheritdoc />
     public async Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, TopLevel? topLevel = null, params RouteableTaskDialogResult[] results)
     {
         TypedEventHandler<FATaskDialog, EventArgs>? opening = null;

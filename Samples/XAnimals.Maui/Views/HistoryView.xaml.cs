@@ -6,6 +6,16 @@ namespace XAnimals.Maui.Views;
 
 public partial class HistoryView : RouteableFor
 {
+    // A custom transition: registered once under a name, then chosen by name like the built-in ones (Transition="Pop").
+    static HistoryView() =>
+        RouteTransitions.Register("Pop", async (region, direction, duration) =>
+        {
+            var ms = (uint)duration.TotalMilliseconds;
+            region.Scale = 0.85;
+            region.Opacity = 0;
+            await Task.WhenAll(region.ScaleToAsync(1, ms, Easing.SpringOut), region.FadeToAsync(1, ms));
+        });
+
     public HistoryView()
     {
         InitializeComponent();

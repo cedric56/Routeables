@@ -36,6 +36,29 @@ public interface IRouteableArgs
     /// </summary>
     IRouter? Router { get => null; set { } }
 
+    /// <summary>
+    /// The region the route change is meant for (the name given to <c>AddRegion</c>); <see langword="null"/> for the default router.
+    /// Read by <c>provider.GoToAsync(url, args)</c>, which picks the router of that region. A router given directly
+    /// (<c>router.GoToAsync</c>) is already one region's router and ignores it.
+    /// </summary>
+    string? Region { get => null; set { } }
+
+    /// <summary>Sets the region of these arguments (see <see cref="Region"/>).</summary>
+    /// <param name="region">The region name, or <see langword="null"/> for the default router.</param>
+    /// <returns>These arguments, to chain.</returns>
+    IRouteableArgs WithRegion(string? region) { Region = region; return this; }
+
+    /// <summary>
+    /// How the region brings in the view of this route change (<c>RouteTransition.Slide</c>); <see langword="null"/> leaves it to the
+    /// region. Read by the hosts (<c>RouteableRegion</c>), which play the animation.
+    /// </summary>
+    RouteTransition? Transition { get => null; set { } }
+
+    /// <summary>Sets the transition of these arguments (see <see cref="Transition"/>): <c>WithTransition(RouteTransition.Slide)</c> or <c>WithTransition("Slide")</c>.</summary>
+    /// <param name="transition">The transition, or <see langword="null"/> to leave it to the region.</param>
+    /// <returns>These arguments, to chain.</returns>
+    IRouteableArgs WithTransition(RouteTransition? transition) { Transition = transition; return this; }
+
     /// <summary>Adds entries the view model is built with.</summary>
     /// <param name="entries">The entries, each with its value and optionally its name.</param>
     /// <returns>These arguments, to chain.</returns>

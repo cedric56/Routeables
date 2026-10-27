@@ -22,3 +22,26 @@
     grid-template-columns: auto auto auto
 }
 
+/* Transitions of a RouteableRegion: the element gets rt-enter rt-{name} rt-{forward|back|none} and --rt-duration. A custom transition is
+   an animation of yours: .rt-enter.rt-yourname { animation-name: yours; } */
+.rt-enter {
+    animation-duration: var(--rt-duration, 250ms);
+    animation-timing-function: cubic-bezier(.2, .8, .2, 1);
+    animation-fill-mode: both;
+}
+
+@keyframes rt-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rt-slide-forward { from { opacity: 0; transform: translateX(2rem); } to { opacity: 1; transform: none; } }
+@keyframes rt-slide-back { from { opacity: 0; transform: translateX(-2rem); } to { opacity: 1; transform: none; } }
+@keyframes rt-slideup-forward { from { opacity: 0; transform: translateY(2rem); } to { opacity: 1; transform: none; } }
+@keyframes rt-slideup-back { from { opacity: 0; transform: translateY(-2rem); } to { opacity: 1; transform: none; } }
+
+.rt-enter.rt-fade { animation-name: rt-fade; }
+.rt-enter.rt-slide { animation-name: rt-slide-forward; }
+.rt-enter.rt-slide.rt-back { animation-name: rt-slide-back; }
+.rt-enter.rt-slideup { animation-name: rt-slideup-forward; }
+.rt-enter.rt-slideup.rt-back { animation-name: rt-slideup-back; }
+
+@media (prefers-reduced-motion: reduce) {
+    .rt-enter { animation: none; }
+}

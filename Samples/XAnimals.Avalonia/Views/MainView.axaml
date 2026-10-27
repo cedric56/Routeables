@@ -11,7 +11,7 @@
         <vm:MainViewModel />
       </Design.DataContext>
 
-	<DrawerPage Content="{Binding CurrentView}">
+	<DrawerPage>
 		 <DrawerPage.Header>
 			 <Grid ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch">
 				 <TextBlock Text="{Binding CurrentTitle}" VerticalAlignment="Center" />
@@ -22,5 +22,6 @@
 		 <DrawerPage.Drawer>
 		    <routeables:RouteableListBox/>
 		</DrawerPage.Drawer>
+		<routeables:RouteableRegion/>
 	</DrawerPage>
 </UserControl>

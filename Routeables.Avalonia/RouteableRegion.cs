@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Threading;
@@ -23,6 +24,11 @@ namespace Routeables.Avalonia;
 ///     &lt;routeables:RouteableRegion.PageTransition&gt;&lt;CrossFade Duration="0:0:0.2" /&gt;&lt;/routeables:RouteableRegion.PageTransition&gt;
 /// &lt;/routeables:RouteableRegion&gt;
 /// </code>
+/// <para>
+/// A transition can be chosen for the region (<c>Transition="Slide"</c>) or for one navigation
+/// (<c>RouteableArgs.Create().WithTransition(RouteTransition.Fade)</c>, which wins): see <see cref="RouteTransitions"/>. Without
+/// either, the <c>PageTransition</c> set on the control plays as before.
+/// </para>
 /// </summary>
 public class RouteableRegion : TransitioningContentControl
 {
@@ -30,8 +36,24 @@ public class RouteableRegion : TransitioningContentControl
     public static readonly StyledProperty<string?> RegionProperty =
         AvaloniaProperty.Register<RouteableRegion, string?>(nameof(Region));
 
+    /// <summary>The <see cref="Transition"/> property.</summary>
+    public static readonly StyledProperty<string?> TransitionProperty =
+        AvaloniaProperty.Register<RouteableRegion, string?>(nameof(Transition));
+
     private RegionBinding? _binding;
     private bool _active;
+    private IPageTransition? _userTransition;
+    private bool _overridden;
+
+    /// <summary>
+    /// The name of the transition that brings in each view of this region (<c>None</c>, <c>Fade</c>, <c>Slide</c>, <c>SlideUp</c> or a name
+    /// registered with <see cref="RouteTransitions.Register"/>); a navigation can choose its own. Empty keeps <c>PageTransition</c>.
+    /// </summary>
+    public string? Transition
+    {
+        get => GetValue(TransitionProperty);
+        set => SetValue(TransitionProperty, value);
+    }
 
     /// <summary>The name given to <c>AddRegion</c>; <see langword="null"/> shows the default router.</summary>
     public string? Region
@@ -96,15 +118,50 @@ public class RouteableRegion : TransitioningContentControl
         Content = null;
     }
 
-    private void Show(object? view)
+    private void Show(object? view, RegionChange change)
     {
         if (Dispatcher.UIThread.CheckAccess())
-            Apply(view);
+            Apply(view, change);
         else
-            Dispatcher.UIThread.Post(() => Apply(view));
+            Dispatcher.UIThread.Post(() => Apply(view, change));
     }
 
-    private void Apply(object? view)
+    // The transition of the navigation, else the one of the region, else the PageTransition set on the control.
+    // A custom one is an IPageTransition for the control; a built-in one is played on the view (see RouteTransitions.AnimateIn), and the
+    // control then swaps the content at once. Returns whether a built-in transition has to be played on the view.
+    private bool ApplyTransition(RegionChange change, out RegionTransition transition)
+    {
+        var declared = string.IsNullOrWhiteSpace(Transition) ? null : RouteTransition.Named(Transition);
+        transition = change.Resolve(declared, TimeSpan.Zero);
+        if (!transition.Declared)
+        {
+            if (_overridden)
+            {
+                PageTransition = _userTransition;
+                IsTransitionReversed = false;
+                _overridden = false;
+            }
+
+            return false;
+        }
+
+        if (!_overridden)
+        {
+            _userTransition = PageTransition;
+            _overridden = true;
+        }
+
+        var custom = RouteTransitions.CreateCustom(transition);
+        if (!ReferenceEquals(PageTransition, custom))
+            PageTransition = custom;
+        var reversed = custom is not null && transition.Direction == NavigationDirection.Back;
+        if (IsTransitionReversed != reversed)
+            IsTransitionReversed = reversed;
+
+        return custom is null && !transition.IsNone;
+    }
+
+    private void Apply(object? view, RegionChange change)
     {
         // A late post after the control was disconnected must not show a view again.
         if (!_active) return;
@@ -117,7 +174,10 @@ public class RouteableRegion : TransitioningContentControl
                 $"{view.GetType().Name} is already displayed by {holder.GetType().Name}, so region '{Region ?? "(default)"}' cannot show it too. " +
                 "A page shown by a region must not also host its own current view: let the region display it.");
 
+        var animate = ApplyTransition(change, out var transition);
         Content = view;
+        if (animate && view is Visual visual)
+            RouteTransitions.AnimateIn(visual, transition, Bounds.Size);
     }
 
     // The holder is the presenter of a RouteableRegion that is no longer connected (it left the visual tree): it is not showing the

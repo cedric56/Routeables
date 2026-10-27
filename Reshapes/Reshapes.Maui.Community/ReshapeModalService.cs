@@ -6,8 +6,10 @@ using Routeables.Maui.Services;
 
 namespace Reshapes.Maui.CommunityToolkit;
 
+/// <inheritdoc />
 public class ReshapeModalService(IRouteableDialogWindowContext context) : IRouteableModalService
 {
+    /// <inheritdoc />
     public async Task<TResult?> ShowModalAsync<TViewModel, TResult>(
     TViewModel viewModel,
     Func<View> viewFactory)

@@ -57,10 +57,10 @@ It works for an address opened from outside too, since that goes through the rou
 `RouteableDeepLinks` turns an address into a route and goes to it through the router, so guards apply.
 
 ```csharp
-await RouteableDeepLinks.GoToAsync(provider, new Uri("xanimals://dogs/Rex"), schemes: ["xanimals", "https"]);
+await RouteableDeepLinks.GoToAsync(provider, new Uri("xanimals://dogs/Eurohound"), schemes: ["xanimals", "https"]);
 ```
 
-- `https://example.com/dogs/Rex?x=1` and `xanimals://dogs/Rex?x=1` both give `/dogs/Rex?x=1`. The fragment is dropped.
+- `https://example.com/dogs/Eurohound?x=1` and `xanimals://dogs/Eurohound?x=1` both give `/dogs/Eurohound?x=1`. The fragment is dropped.
 - An address with another scheme, no path (`xanimals://`) or no registered route is a failed result, not an exception: the address was typed by someone else.
 - The host receives the address its own way and passes it on to a `RouteableLinkInbox`. The inbox is a field of the application, because the platform often delivers the link before the container exists. It keeps what it receives, and once you give it the container (`Attach`) and the first page is shown, it follows the addresses on the thread of the interface, one after the other.
 
@@ -68,7 +68,7 @@ await RouteableDeepLinks.GoToAsync(provider, new Uri("xanimals://dogs/Rex"), sch
 public static class LinkInbox { public static RouteableLinkInbox Instance { get; } = new(["xanimals"]); }
 
 LinkInbox.Instance.Attach(provider);                     // once the container is built
-LinkInbox.Instance.Push(new Uri("xanimals://dogs/Rex")); // from the platform code
+LinkInbox.Instance.Push(new Uri("xanimals://dogs/Eurohound")); // from the platform code
 ```
 
 | Sample | Where the address comes from |
@@ -142,7 +142,7 @@ Every sample (Avalonia, MAUI, MAUI Hybrid, Uno, WPF, Blazor Server, Blazor WebAs
 | Feature | On the page |
 | --- | --- |
 | Route guard and return | the Members page is for members (`MembersGuard`); signed out, opening it brings you to Features, *Sign in* only signs in, and *Open Members* goes there |
-| Address from outside | *Open xanimals://dogs/Rex* follows it through `RouteableDeepLinks`; on Android, iOS and the WPF and Uno desktop heads the platform code gives the same kind of address to `RouteableLinkInbox` |
+| Address from outside | *Open xanimals://dogs/Eurohound* follows it through `RouteableDeepLinks`; on Android, iOS and the WPF and Uno desktop heads the platform code gives the same kind of address to `RouteableLinkInbox` |
 | Saved values (phone and tablet only) | the note is kept by `IRouteableState` and comes back with the page after the process was killed (Android) |
 | Measures | the last route changes, read with a `MeterListener` (`RouteMetrics`) |
 | Back of the system | the Back button of Android, the mouse button and Alt+Left on a desktop, the browser Back in Blazor |
@@ -164,5 +164,7 @@ These two are patterns, not features of the router, and the framework does not a
 | MAUI | `TransitionDuration="0:0:0.2"`: the new view fades in |
 | Uno | `TransitionDuration="0:0:0.2"` turns on the theme transition of the platform (any value above zero; the platform chooses the length) |
 | Blazor | CSS on the element that holds the view |
+
+See [Transitions](transitions.md) for the built-in set (`None`, `Fade`, `Slide`, `SlideUp`), the choice per navigation (`RouteableArgs.WithTransition`) and custom transitions.
 
 Zero, the default, shows the view at once. The region of a module's page and the main zone of the shell use the same control, so a transition set there applies to every page.

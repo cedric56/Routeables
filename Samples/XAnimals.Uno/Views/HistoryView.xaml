@@ -43,7 +43,7 @@
 
         <Border Grid.Row="1" BorderBrush="{StaticResource BarStrongBrush}" BorderThickness="2" CornerRadius="18" Margin="0,4,0,0">
             <!-- The zone of the "history" region: nothing assigns the view, the control shows what the router of the region displays. -->
-            <routeables:RouteableRegion Region="history" Margin="5" TransitionDuration="0:0:0.22"
+            <routeables:RouteableRegion Region="history" Margin="5" TransitionDuration="0:0:0.22" Transition="{Binding Transition}"
                                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                                         IsHitTestVisible="False" />
         </Border>
@@ -55,6 +55,11 @@
                 <Button Margin="0,0,8,8" Content="Forward ▶" Command="{Binding ForwardCommand}" IsEnabled="{Binding CanGoForward}" />
                 <Button Margin="0,0,8,8" Content="↩ Pop" Command="{Binding PopCommand}" IsEnabled="{Binding CanGoBack}" />
             </local:WrapPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+                <TextBlock Text="Transition" VerticalAlignment="Center" />
+                <ComboBox ItemsSource="{Binding Transitions}" SelectedItem="{Binding Transition, Mode=TwoWay}" MinWidth="120" />
+            </StackPanel>
 
             <CheckBox IsChecked="{Binding BlockLeaving, Mode=TwoWay}" HorizontalAlignment="Left">
                 <TextBlock Text="{Binding GuardText}" FontSize="13" TextWrapping="Wrap" MaxWidth="460" />

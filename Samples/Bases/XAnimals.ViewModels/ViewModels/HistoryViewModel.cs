@@ -34,6 +34,11 @@ public sealed record HistoryItem(int Number, string Name, string Glyph, string C
 /// <b>Pop</b> goes back and forgets the page it left. <b>Block leaving</b> makes <see cref="AnimalsViewModel.CanLeaveAsync"/> of the
 /// current page answer <see langword="false"/>: every call is then refused until the box is cleared.
 /// </para>
+/// <para>
+/// <b>Transition</b> is the transition the frame (the <c>RouteableRegion</c>) plays for every page it shows, Back and Forward included.
+/// <b>Push (SlideUp)</b> asks for one transition for that one navigation, which wins over the one of the frame. <c>Pop</c> is a custom
+/// transition each host registers (<c>RouteTransitions.Register</c>), see the code-behind of the page.
+/// </para>
 /// </summary>
 [Routeable("history")]
 public class HistoryViewModel : ViewModelBase, IRouteable, IDisposable
@@ -49,6 +54,7 @@ public class HistoryViewModel : ViewModelBase, IRouteable, IDisposable
     private bool _isRefused;
     private bool _listening;
     private string _status = Hint;
+    private RouteTransition _transition = RouteTransition.None;
 
     public HistoryViewModel(IServiceProvider provider)
     {
@@ -64,6 +70,22 @@ public class HistoryViewModel : ViewModelBase, IRouteable, IDisposable
     public ICommand ForwardCommand { get; }
     public ICommand PopCommand { get; }
     public ICommand PushCommand { get; }
+
+    /// <summary>The names the frame can play: the built-in transitions, and <c>Pop</c>, registered by each host.</summary>
+    public IReadOnlyList<RouteTransition> Transitions { get; } =
+        [RouteTransition.None, RouteTransition.Fade, RouteTransition.Slide, RouteTransition.SlideUp, "Pop"];
+
+    /// <summary>The transition of the frame (<c>RouteableRegion.Transition</c>): every page it shows comes in with it.</summary>
+    public RouteTransition Transition
+    {
+        get => _transition;
+        set
+        {
+            if (_transition == value) return;
+            _transition = value;
+            OnPropertyChanged();
+        }
+    }
 
     /// <summary>The history of the region, oldest first, as cards: behind the cursor, the page on screen, and the pages Forward can reach.</summary>
     public IReadOnlyList<HistoryItem> Entries
@@ -141,13 +163,20 @@ public class HistoryViewModel : ViewModelBase, IRouteable, IDisposable
     public Task PopAsync() => RunAsync("Pop", _region.PopAsync());
 
     /// <summary>Adds the next page after the current one (the entries after the current one are forgotten).</summary>
-    public Task PushAsync()
+    public Task PushAsync() => PushWithAsync(null);
+
+    /// <summary>Adds the next page with a transition of its own: the navigation chooses it, whatever the frame plays.</summary>
+    /// <param name="transition">The transition of this navigation; <see langword="null"/> leaves it to the frame.</param>
+    public Task PushWithAsync(RouteTransition? transition)
     {
         var menu = RegionEntries.Pages(_provider);
         var source = menu[(_region.History.CurrentIndex + 1) % menu.Count];
+        var page = RegionEntries.Page(source, Region);
+        if (transition is not null)
+            page.Arguments.WithTransition(transition);
 
         // The entry names its region; the RouteableRegion of the page with that name shows the result. Nothing here says where.
-        return RunAsync("Push", _provider.GoToAsync(RegionEntries.Page(source, Region)));
+        return RunAsync("Push", _provider.GoToAsync(page));
     }
 
     private async Task RunAsync(string action, Task<RouteableResult> navigation)
