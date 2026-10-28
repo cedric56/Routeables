@@ -12,8 +12,7 @@
   <a href="https://www.nuget.org/packages/Routeables.Razor"><img src="https://img.shields.io/nuget/v/Routeables.Razor?label=Routeables.Razor" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Maui"><img src="https://img.shields.io/nuget/v/Routeables.Maui?label=Routeables.Maui" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Uno"><img src="https://img.shields.io/nuget/v/Routeables.Uno?label=Routeables.Uno" alt="NuGet"></a>
-  <a href="https://www.nuget.org/packages/Routeables.Wpf"><img src="https://img.shields.io/nuget/v/Routeables.Wpf?label=Routeables.Wpf" alt="NuGet"></a>
-  <a href="https://cedric56.github.io/Routeables/demo/avalonia/">The Animals sample running in your browser (Avalonia, WebAssembly).</a>
+  <a href="https://www.nuget.org/packages/Routeables.Wpf"><img src="https://img.shields.io/nuget/v/Routeables.Wpf?label=Routeables.Wpf" alt="NuGet"></a>  
 </p>
 
 # Routeables
@@ -21,6 +20,9 @@
 **Routing from your view models, for Blazor, .NET MAUI, Avalonia, Uno Platform and WPF.**
 
 A view model asks an `IRouter` to go somewhere. It never touches a page, a frame or a navigation API of the framework, so the same code runs on every host.
+
+Try it 
+<a href="https://cedric56.github.io/Routeables/demo/avalonia/">The Animals sample running in your browser (Avalonia, WebAssembly).</a>
 
 ## In one minute
 
