@@ -22,11 +22,10 @@ public static class RouteParser
     /// Teaches the parser to read <c>{name:typeName}</c> parameters as <paramref name="info"/>'s type (trim-safe JSON, no reflection).
     /// A later registration under the same name replaces the earlier one.
     /// </summary>
-    public static void RegisterSerializer(string typeName, JsonTypeInfo info)
+    public static void RegisterSerializer<T>(JsonTypeInfo info)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(typeName);
         ArgumentNullException.ThrowIfNull(info);
-        SerializationInfos[typeName] = info;
+        SerializationInfos[typeof(T).Name] = info;
     }
 
     // {Id:int}  {Tab?}  {Tab::?}  {animate::bool}  {person:Person}
