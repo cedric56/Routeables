@@ -66,10 +66,10 @@ public class DialogViewTests
         public Task<string?> ShowMessageBoxAsync(string title, string message, string buttons, global::Avalonia.Controls.TopLevel? topLevel = null) =>
             Task.FromResult<string?>(null);
 
-        public Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params, global::Avalonia.Controls.TopLevel? topLevel = null) =>
+        public Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params, global::Avalonia.Controls.TopLevel? topLevel = null) =>
             show(@params);
 
-        public Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, global::Avalonia.Controls.TopLevel? topLevel = null, params RouteableTaskDialogResult[] results) =>
+        public Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, global::Avalonia.Controls.TopLevel? topLevel = null, params RouteableTaskDialogResult[] results) =>
             Task.FromResult(RouteableTaskDialogResult.None);
     }
 

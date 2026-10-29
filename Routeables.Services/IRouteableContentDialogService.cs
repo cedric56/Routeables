@@ -2,25 +2,25 @@
 
 namespace Routeables.Services;
 
-/// <summary>
-/// Displays modal content-dialogs (a WinUI/Fluent-style "ContentDialog") in a
-/// platform-agnostic way, so ViewModels can request a dialog without knowing
-/// whether the app is running on Avalonia, MAUI, or Blazor.
-/// </summary>
-public interface IRouteableContentDialogService
-{
-    /// <summary>
-    /// Begins an asynchronous operation to show the dialog.
-    /// </summary>
-    /// <param name="params">The content, buttons, and callbacks to show.</param>
-    /// <returns>
-    /// A task that completes with the <see cref="RouteableContentDialogResult"/>
-    /// corresponding to whichever button the user tapped (or
-    /// <see cref="RouteableContentDialogResult.None"/> if the dialog was dismissed
-    /// without tapping a button, e.g. by pressing Escape or tapping outside).
-    /// </returns>
-    Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params);
-}
+///// <summary>
+///// Displays modal content-dialogs (a WinUI/Fluent-style "ContentDialog") in a
+///// platform-agnostic way, so ViewModels can request a dialog without knowing
+///// whether the app is running on Avalonia, MAUI, or Blazor.
+///// </summary>
+//public interface IRouteableContentDialogService
+//{
+//    /// <summary>
+//    /// Begins an asynchronous operation to show the dialog.
+//    /// </summary>
+//    /// <param name="params">The content, buttons, and callbacks to show.</param>
+//    /// <returns>
+//    /// A task that completes with the <see cref="RouteableContentDialogResult"/>
+//    /// corresponding to whichever button the user tapped (or
+//    /// <see cref="RouteableContentDialogResult.None"/> if the dialog was dismissed
+//    /// without tapping a button, e.g. by pressing Escape or tapping outside).
+//    /// </returns>
+//    Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params);
+//}
 
 /// <summary>
 /// Describes the content, buttons, and lifecycle callbacks for a single

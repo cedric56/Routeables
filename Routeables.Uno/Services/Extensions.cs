@@ -16,8 +16,7 @@ namespace Routeables.Uno.Services;
 public static class Extensions
 {
     /// <summary>
-    /// Registers <see cref="IRouteableDialogService"/>, <see cref="IRouteableContentDialogService"/>,
-    /// <see cref="IRouteableTaskDialogService"/>, <see cref="IRouteableNotificationService"/> and the <see cref="IMessageBoxService"/>
+    /// Registers <see cref="IRouteableDialogService"/>, <see cref="IRouteableNotificationService"/> and the <see cref="IMessageBoxService"/>
     /// that draws them. <c>UseRouteables</c> already calls it; call it again from its <c>configure</c> callback to give another message box
     /// service. A second call replaces the first.
     /// <code>
@@ -35,14 +34,10 @@ public static class Extensions
 
         services.RemoveAll<IMessageBoxService>();
         services.RemoveAll<IRouteableNotificationService>();
-        services.RemoveAll<IRouteableContentDialogService>();
-        services.RemoveAll<IRouteableTaskDialogService>();
         services.RemoveAll<IRouteableDialogService>();
 
         services.AddSingleton(messageBoxService ?? new DefaultMessageBoxService());
         services.AddSingleton<IRouteableNotificationService>(sp => new RouteableNotificationService(sp.GetRequiredService<IMessageBoxService>()));
-        services.AddSingleton<IRouteableContentDialogService>(sp => new RouteableContentDialogService(sp.GetRequiredService<IMessageBoxService>()));
-        services.AddSingleton<IRouteableTaskDialogService>(sp => new RouteableTaskDialogService(sp.GetRequiredService<IMessageBoxService>()));
         services.AddSingleton<IRouteableDialogService>(sp => new RouteableDialogService(sp.GetRequiredService<IMessageBoxService>()));
         return services;
     }

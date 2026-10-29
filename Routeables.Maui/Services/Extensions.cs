@@ -20,15 +20,11 @@ public static class Extensions
     /// </remarks>
     /// <param name="builder">The MAUI app builder to configure.</param>
     /// <param name="modalService">Factory of the <see cref="IRouteableModalService"/>; null keeps Routeables' own.</param>
-    /// <param name="contentDialogService">Factory of the <see cref="IRouteableContentDialogService"/>; null keeps Routeables' own.</param>
-    /// <param name="taskDialogService">Factory of the <see cref="IRouteableTaskDialogService"/>; null keeps Routeables' own.</param>
     /// <param name="notificationService">Factory of the <see cref="IRouteableNotificationService"/>; null keeps Routeables' own.</param>
     /// <returns>The same <paramref name="builder"/>, for chaining.</returns>
     public static MauiAppBuilder UseRouteablesServices(
         this MauiAppBuilder builder,
         Func<IServiceProvider, IRouteableModalService>? modalService = null,
-        Func<IServiceProvider, IRouteableContentDialogService>? contentDialogService = null,
-        Func<IServiceProvider, IRouteableTaskDialogService>? taskDialogService = null,
         Func<IServiceProvider, IRouteableNotificationService>? notificationService = null)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -40,8 +36,6 @@ public static class Extensions
         builder.Services.AddSingleton<RouteableDialogService>(sp => (RouteableDialogService)sp.GetRequiredService<IRouteableDialogService>());
         RegisterOrDefault<IRouteableModalService, RouteableModalService>(builder.Services, modalService);
         builder.Services.AddSingleton<IRouteableDialogWindowContext, RouteableDialogWindowContext>();
-        RegisterOrDefault<IRouteableContentDialogService, RouteableContentDialogService>(builder.Services, contentDialogService);
-        RegisterOrDefault<IRouteableTaskDialogService, RouteableTaskDialogService>(builder.Services, taskDialogService);
         RegisterOrDefault<IRouteableNotificationService, RouteableNotificationService>(builder.Services, notificationService);
         return builder;
     }

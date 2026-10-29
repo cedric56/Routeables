@@ -79,8 +79,6 @@ public class UseRouteablesTests
         Assert.NotSame(firstRouter, secondScope.ServiceProvider.GetRequiredService<IRouter>());
         Assert.IsType<RouteableRequestThemeService>(firstScope.ServiceProvider.GetRequiredService<IRouteableRequestedThemeService>());
         Assert.NotNull(firstScope.ServiceProvider.GetRequiredService<IRouteableNotificationService>());
-        Assert.NotNull(firstScope.ServiceProvider.GetRequiredService<IRouteableContentDialogService>());
-        Assert.NotNull(firstScope.ServiceProvider.GetRequiredService<IRouteableTaskDialogService>());
 
         var registeredCallback = firstScope.ServiceProvider.GetRequiredService<Func<IServiceProvider, Task>>();
         Assert.Same(callback, registeredCallback);
@@ -134,8 +132,6 @@ public class UseRouteablesTests
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouter>());
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouteableRequestedThemeService>());
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouteableDialogService>());
-        Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouteableContentDialogService>());
-        Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouteableTaskDialogService>());
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouteableNotificationService>());
     }
 

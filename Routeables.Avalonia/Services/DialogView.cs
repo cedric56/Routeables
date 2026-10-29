@@ -62,7 +62,7 @@ public class DialogView<TViewModel, TResult> : DialogViewBase,
                 "No IMessageBoxService is available. Add Routeables to the application with AppBuilder.UseRouteables(services => services.UseRouteablesServices(icon)).");
 
         using var session = new RouteableModalSession<TResult>(viewModel, this);
-        await service.ShowAsync(session.Dialog);
+        await service.ShowContentDialogAsync(session.Dialog);
 
         await OnValidateAsync(session.Result);
         return session.Result;

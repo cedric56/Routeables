@@ -42,4 +42,8 @@ public abstract class RouteableDialogServiceBase : IRouteableDialogService
     /// <inheritdoc />
     public Task<int> ShowYesNoAbortAsync(string message, string title = "Title")
         => ShowMessageAsync(message, title, "YesNoAbort");
+    /// <inheritdoc />
+    public abstract Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params);
+    /// <inheritdoc />
+    public abstract Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, params RouteableTaskDialogResult[] results);
 }

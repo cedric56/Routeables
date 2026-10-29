@@ -4,7 +4,7 @@
 @using Routeables.Razor
 @using Routeables.Services
 @implements IDisposable
-@inject RouteableContentDialogService Service
+@inject RouteableContentDialogQueue Service
 
 @if (Service.Current is { } request)
 {

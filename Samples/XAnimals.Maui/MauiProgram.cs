@@ -1,6 +1,4 @@
-using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
-using Reshapes.Maui.CommunityToolkit;
 using Routeables.Generated;
 using Routeables.Maui;
 using XAnimals.Common;
@@ -15,9 +13,9 @@ namespace XAnimals.Maui
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
-                .UseMauiCommunityToolkit()
+                //.UseMauiCommunityToolkit()
                 .UseRouteables<MainViewModel>()
-                .UseCommunityToolkit()
+                //.UseCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("Inter-Regular.otf", "InterRegular");

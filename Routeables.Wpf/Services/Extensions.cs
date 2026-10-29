@@ -22,14 +22,10 @@ public static class Extensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.RemoveAll<IRouteableNotificationService>();
-        services.RemoveAll<IRouteableContentDialogService>();
-        services.RemoveAll<IRouteableTaskDialogService>();
         services.RemoveAll<IRouteableDialogService>();
         services.RemoveAll<IMessageBoxService>();
 
         services.AddTransient<IRouteableNotificationService, RouteableNotificationService>(sp => new RouteableNotificationService(sp.GetRequiredService<IMessageBoxService>()));
-        services.AddSingleton<IRouteableContentDialogService, RouteableContentDialogService>(sp => new RouteableContentDialogService(sp.GetRequiredService<IMessageBoxService>()));
-        services.AddSingleton<IRouteableTaskDialogService, RouteableTaskDialogService>(sp => new RouteableTaskDialogService(sp.GetRequiredService<IMessageBoxService>()));
         services.AddSingleton<IRouteableDialogService, RouteableDialogService>(sp => new RouteableDialogService(sp.GetRequiredService<IMessageBoxService>()));
         services.AddSingleton(messageBoxService ?? new DefaultMessageBoxService(icon));
         return services;

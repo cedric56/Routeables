@@ -1,13 +1,14 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Routeables.Abstraction;
-using Routeables.Services;
+﻿using Routeables.Services;
 
 namespace Routeables.Maui.Services;
 
 /// <summary>Message boxes of .NET MAUI (<c>DisplayAlert</c>, <c>DisplayActionSheet</c>), shown over the current page of the window. On Windows one dialog is open at a time.</summary>
-/// <param name="provider">The container of the application.</param>
 /// <param name="windowContext">Where the page to show the dialog over is found.</param>
-public class RouteableDialogService(IServiceProvider provider, IRouteableDialogWindowContext windowContext) : RouteableDialogServiceBase
+public class RouteableDialogService(
+    #if ANDROID || WINDOWS || IOS || MACCATALYST    
+    IServiceProvider provider, 
+#endif
+    IRouteableDialogWindowContext windowContext) : RouteableDialogServiceBase
 {
 #if WINDOWS
     private static readonly SemaphoreSlim WindowsDialogGate = new(1, 1);
@@ -273,7 +274,7 @@ public class RouteableDialogService(IServiceProvider provider, IRouteableDialogW
                 CloseButtonText = closeButtonText
             };
 
-            var result = await provider.GetRequiredService<IRouteableContentDialogService>().ShowAsync(dialog);
+            var result = await ShowContentDialogAsync(dialog);
             return result switch
             {
                 RouteableContentDialogResult.Primary => primaryResult,
@@ -288,5 +289,82 @@ public class RouteableDialogService(IServiceProvider provider, IRouteableDialogW
             // disconnected.
             hosted?.Handler?.DisconnectHandler();
         }
+    }
+
+    public override async Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params)
+    {
+        ArgumentNullException.ThrowIfNull(@params);
+
+        var page = windowContext.CurrentPage
+            ?? throw new InvalidOperationException(
+                "No active Page to host the content dialog popup.");
+
+        var popup = new ContentDialogPopup(@params);
+
+        // The popup closes itself on the main thread, whichever thread asks.
+        popup.Session.AllowCloseFromCode(close => close());
+        popup.FirstAppearing += (_, _) => popup.Session.Opened();
+
+        popup.Session.Opening();
+        try
+        {
+            return await popup.ShowAsync(page);
+        }
+        finally
+        {
+            popup.Session.Release();
+        }
+    }
+
+    private sealed class ContentDialogPopup : RouteablePopupPage<RouteableContentDialogResult>
+    {
+        public ContentDialogPopup(RouteableContentDialog p)
+        {
+            // The dialog is closed with the result its session decided.
+            Session = new RouteableContentDialogSession(p, () => _ = CloseAsync(Session!.Result));
+            Dialog = RouteableDialogContents.ForContentDialog(p, Session);
+        }
+
+        public RouteableContentDialogSession Session { get; }
+    }
+
+    /// <summary>
+    /// Displays a task dialog assembled from header, subheader, content, progress bar, and footer
+    /// sections, and awaits the user's button selection.
+    /// </summary>
+    /// <param name="params">The task dialog's configuration, including header, content, and footer.</param>
+    /// <param name="results">Up to three result values corresponding to the primary, secondary, and close buttons.</param>
+    /// <returns>The result value associated with the button the user selected.</returns>
+    public override async Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, params RouteableTaskDialogResult[] results)
+    {
+        ArgumentNullException.ThrowIfNull(@params);
+
+        var page = windowContext.CurrentPage
+            ?? throw new InvalidOperationException("No active Page to host the task dialog.");
+
+        var popup = new TaskDialogPopup(@params, results);
+        popup.FirstAppearing += (_, _) => popup.Session.Opened();
+
+        popup.Session.Opening();
+        try
+        {
+            return await popup.ShowAsync(page);
+        }
+        finally
+        {
+            popup.Session.Release();
+        }
+    }
+
+    private sealed class TaskDialogPopup : RouteablePopupPage<RouteableTaskDialogResult>
+    {
+        public TaskDialogPopup(RouteableTaskDialog p, RouteableTaskDialogResult[] results)
+        {
+            // The dialog is closed with the result its session decided; without results it offers Close.
+            Session = new RouteableTaskDialogSession(p, results, () => _ = CloseAsync(Session!.Result));
+            Dialog = RouteableDialogContents.ForTaskDialog(p, Session);
+        }
+
+        public RouteableTaskDialogSession Session { get; }
     }
 }

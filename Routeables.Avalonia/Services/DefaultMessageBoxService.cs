@@ -43,7 +43,7 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
     }
 
     /// <inheritdoc />
-    public async Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params, TopLevel? topLevel = null)
+    public async Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params, TopLevel? topLevel = null)
     {
         ArgumentNullException.ThrowIfNull(@params);
 
@@ -91,7 +91,7 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
     }
 
     /// <inheritdoc />
-    public async Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, TopLevel? topLevel = null, params RouteableTaskDialogResult[] results)
+    public async Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, TopLevel? topLevel = null, params RouteableTaskDialogResult[] results)
     {
         ArgumentNullException.ThrowIfNull(@params);
 

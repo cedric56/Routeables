@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using Routeables.Services;
-using Routeables.Avalonia;
 
 namespace Routeables.Avalonia.Services;
 
@@ -23,14 +22,14 @@ public interface IMessageBoxService
     /// <param name="params">What the dialog shows and how its buttons behave.</param>
     /// <param name="topLevel">The window that owns the dialog, or <see langword="null"/> for the active one.</param>
     /// <returns>The button that closed the dialog.</returns>
-    Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params, TopLevel? topLevel = null);
+    Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params, TopLevel? topLevel = null);
 
     /// <summary>Shows a task dialog (a message with commands and optional details) and waits for it to close.</summary>
     /// <param name="params">What the dialog shows.</param>
     /// <param name="topLevel">The window that owns the dialog, or <see langword="null"/> for the active one.</param>
     /// <param name="results">The results the dialog may return: they decide which buttons it shows.</param>
     /// <returns>The result that closed the dialog.</returns>
-    Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, TopLevel? topLevel = null, params RouteableTaskDialogResult[] results);
+    Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, TopLevel? topLevel = null, params RouteableTaskDialogResult[] results);
 
     /// <summary>Whether this service can show a dialog on <paramref name="topLevel"/>; when not, the host tries another window.</summary>
     /// <param name="topLevel">The window to test.</param>

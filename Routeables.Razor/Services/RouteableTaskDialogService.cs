@@ -22,10 +22,10 @@ internal sealed class TaskDialogRequest : IDialogRequest<RouteableTaskDialogResu
 }
 
 /// <summary>
-/// Implements <see cref="IRouteableTaskDialogService"/> without any UI library. Dialogs are queued and shown one at a
+/// Dialogs are queued and shown one at a
 /// time by a <see cref="RouteableTaskDialogHost"/> placed once in the application's layout.
 /// </summary>
-internal sealed class RouteableTaskDialogService : DialogQueue<TaskDialogRequest, RouteableTaskDialogResult>, IRouteableTaskDialogService
+internal sealed class RouteableTaskDialogQueue : DialogQueue<TaskDialogRequest, RouteableTaskDialogResult>
 {
     protected override RouteableTaskDialogResult ResultWhenDisposed(TaskDialogRequest request) => RouteableTaskDialogResult.None;
 

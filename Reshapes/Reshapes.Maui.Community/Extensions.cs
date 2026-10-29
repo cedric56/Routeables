@@ -1,5 +1,4 @@
-﻿using Routeables.Maui;
-using Routeables.Maui.Services;
+﻿using Routeables.Maui.Services;
 
 namespace Reshapes.Maui.CommunityToolkit;
 
@@ -22,8 +21,6 @@ public static class Extensions
     {
         return builder.UseRouteablesServices(
             modalService: sp => new ReshapeModalService(sp.GetRequiredService<IRouteableDialogWindowContext>()),
-            contentDialogService: sp => new ReshapeContentDialogService(sp.GetRequiredService<IRouteableDialogWindowContext>()),
-            taskDialogService: sp => new ReshapeTaskDialogService(sp.GetRequiredService<IRouteableDialogWindowContext>()),
             notificationService: sp => new ReshapeNotificationService(sp.GetRequiredService<IRouteableDialogWindowContext>()));
     }
 }

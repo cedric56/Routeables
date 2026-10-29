@@ -1,30 +1,30 @@
 ﻿namespace Routeables.Services;
 
-/// <summary>
-/// Displays a WinUI-style TaskDialog — a richer dialog than
-/// <see cref="IRouteableContentDialogService"/>, supporting a header/sub-header,
-/// an icon, an optional progress bar, and an expandable footer — in a
-/// platform-agnostic way.
-/// </summary>
-public interface IRouteableTaskDialogService
-{
-    /// <summary>
-    /// Shows the dialog and awaits the user's response.
-    /// </summary>
-    /// <param name="params">The content, header, icon, and callbacks to show.</param>
-    /// <param name="results">
-    /// The set of standard results (e.g. OK/Cancel, Yes/No) the dialog
-    /// should offer as buttons. The platform adapter renders one button
-    /// per value supplied here.
-    /// </param>
-    /// <returns>
-    /// The <see cref="RouteableTaskDialogResult"/> corresponding to
-    /// whichever button the user tapped, or
-    /// <see cref="RouteableTaskDialogResult.None"/> if the dialog was
-    /// dismissed without tapping a button.
-    /// </returns>
-    Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, params RouteableTaskDialogResult[] results);
-}
+///// <summary>
+///// Displays a WinUI-style TaskDialog — a richer dialog than
+///// <see cref="IRouteableContentDialogService"/>, supporting a header/sub-header,
+///// an icon, an optional progress bar, and an expandable footer — in a
+///// platform-agnostic way.
+///// </summary>
+//public interface IRouteableTaskDialogService
+//{
+//    /// <summary>
+//    /// Shows the dialog and awaits the user's response.
+//    /// </summary>
+//    /// <param name="params">The content, header, icon, and callbacks to show.</param>
+//    /// <param name="results">
+//    /// The set of standard results (e.g. OK/Cancel, Yes/No) the dialog
+//    /// should offer as buttons. The platform adapter renders one button
+//    /// per value supplied here.
+//    /// </param>
+//    /// <returns>
+//    /// The <see cref="RouteableTaskDialogResult"/> corresponding to
+//    /// whichever button the user tapped, or
+//    /// <see cref="RouteableTaskDialogResult.None"/> if the dialog was
+//    /// dismissed without tapping a button.
+//    /// </returns>
+//    Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, params RouteableTaskDialogResult[] results);
+//}
 
 /// <summary>
 /// Describes the content, header, icon, and lifecycle callbacks for a

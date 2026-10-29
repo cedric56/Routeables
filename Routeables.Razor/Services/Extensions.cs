@@ -26,8 +26,8 @@ public static class Extensions
     /// <param name="maxDispayments">The maximum number of notifications displayed at once, 5 by default.</param>
     public static IServiceCollection UseRouteablesServices(this IServiceCollection services,
         Func<IServiceProvider, IRouteableDialogService>? routeableDialogService = null,
-        Func<IServiceProvider, IRouteableContentDialogService>? routeableContentDialogService = null,
-        Func<IServiceProvider, IRouteableTaskDialogService>? routeableTaskDialogService = null,
+        //Func<IServiceProvider, IRouteableContentDialogService>? routeableContentDialogService = null,
+        //Func<IServiceProvider, IRouteableTaskDialogService>? routeableTaskDialogService = null,
         Func<IServiceProvider, IRouteableNotificationService>? routeableNotificationService = null,
         RouteableNotificationPosition position = RouteableNotificationPosition.BottomLeft,
         int maxDispayments = 5)
@@ -37,9 +37,13 @@ public static class Extensions
         services.RemoveAll<RouteableModalService>();
         services.RemoveAll<RouteableNotificationOptions>();
         services.AddScoped<RouteableModalService>();
-        services.RegisterServices<IRouteableDialogService, RouteableDialogService>(routeableDialogService);
-        services.RegisterServices<IRouteableContentDialogService, RouteableContentDialogService>(routeableContentDialogService);
-        services.RegisterServices<IRouteableTaskDialogService, RouteableTaskDialogService>(routeableTaskDialogService);
+        services.RegisterServices<IRouteableDialogService, RouteableDialogService>(
+            sp => new RouteableDialogService(sp),
+            routeableDialogService);
+        services.AddScoped<RouteableContentDialogQueue>();
+        services.AddScoped<RouteableTaskDialogQueue>();
+        //services.RegisterServices<IRouteableContentDialogService, RouteableContentDialogService>(routeableContentDialogService);
+        //services.RegisterServices<IRouteableTaskDialogService, RouteableTaskDialogService>(routeableTaskDialogService);
         services.AddSingleton(new RouteableNotificationOptions
         {
             Position = position,

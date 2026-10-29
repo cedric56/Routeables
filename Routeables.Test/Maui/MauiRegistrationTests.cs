@@ -25,8 +25,6 @@ public class MauiRegistrationTests
         Assert.Same(provider.GetRequiredService<IRouteableDialogService>(), provider.GetRequiredService<RouteableDialogService>());
         Assert.NotNull(provider.GetRequiredService<IRouteableModalService>());
         Assert.IsType<RouteableDialogWindowContext>(provider.GetRequiredService<IRouteableDialogWindowContext>());
-        Assert.NotNull(provider.GetRequiredService<IRouteableContentDialogService>());
-        Assert.NotNull(provider.GetRequiredService<IRouteableTaskDialogService>());
         Assert.NotNull(provider.GetRequiredService<IRouteableNotificationService>());
         Assert.NotNull(provider.GetRequiredService<IRouteableRequestedThemeService>());
     }
@@ -43,8 +41,6 @@ public class MauiRegistrationTests
         Assert.NotNull(provider.GetRequiredService<IRouteableRequestedThemeService>());
         Assert.NotNull(provider.GetRequiredService<IRouteableDialogService>());
         Assert.NotNull(provider.GetRequiredService<IRouteableModalService>());
-        Assert.NotNull(provider.GetRequiredService<IRouteableContentDialogService>());
-        Assert.NotNull(provider.GetRequiredService<IRouteableTaskDialogService>());
         Assert.NotNull(provider.GetRequiredService<IRouteableNotificationService>());
     }
 

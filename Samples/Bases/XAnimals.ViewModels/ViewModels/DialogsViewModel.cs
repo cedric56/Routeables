@@ -14,22 +14,16 @@ namespace XAnimals.ViewModels;
 public class DialogsViewModel : ViewModelBase
 {
     private readonly IRouteableDialogService _dialogs;
-    private readonly IRouteableContentDialogService _contentDialogs;
-    private readonly IRouteableTaskDialogService _taskDialogs;
     private readonly IRouteableNotificationService _notifications;
     private readonly IServiceProvider _provider;
     private string _result = string.Empty;
 
     public DialogsViewModel(
         IRouteableDialogService dialogs,
-        IRouteableContentDialogService contentDialogs,
-        IRouteableTaskDialogService taskDialogs,
         IRouteableNotificationService notifications,
         IServiceProvider provider)
     {
         _dialogs = dialogs;
-        _contentDialogs = contentDialogs;
-        _taskDialogs = taskDialogs;
         _notifications = notifications;
         _provider = provider;
 
@@ -133,7 +127,7 @@ public class DialogsViewModel : ViewModelBase
 
     public async Task ShowContentDialogAsync()
     {
-        var result = await _contentDialogs.ShowAsync(new RouteableContentDialog
+        var result = await _dialogs.ShowContentDialogAsync(new RouteableContentDialog
         {
             Title = "Share this animal",
             Content = "Send the link to a friend?",
@@ -155,7 +149,7 @@ public class DialogsViewModel : ViewModelBase
 
     public async Task ShowTaskDialogAsync()
     {
-        var result = await _taskDialogs.ShowAsync(
+        var result = await _dialogs.ShowTaskDialogAsync(
             new RouteableTaskDialog
             {
                 Title = "Photos",
@@ -172,7 +166,7 @@ public class DialogsViewModel : ViewModelBase
 
     public async Task ShowProgressDialogAsync()
     {
-        var result = await _taskDialogs.ShowAsync(
+        var result = await _dialogs.ShowTaskDialogAsync(
             new RouteableTaskDialog
             {
                 Title = "Photos",

@@ -32,7 +32,7 @@ internal abstract class DialogQueue<TRequest, TResult> : IDisposable
     /// <param name="request">What to show.</param>
     /// <param name="host">The component that shows it (<c>RouteableDialogHost</c>), named in the error when it is missing.</param>
     /// <param name="kind">What it shows (<c>dialogs</c>, <c>task dialogs</c>), for the same error.</param>
-    protected Task<TResult> EnqueueAsync(TRequest request, string host, string kind)
+    public Task<TResult> EnqueueAsync(TRequest request, string host, string kind)
     {
         if (Changed is null)
             throw new InvalidOperationException(
@@ -52,7 +52,7 @@ internal abstract class DialogQueue<TRequest, TResult> : IDisposable
     /// Completes <paramref name="request"/> with <paramref name="result"/> and shows the next one, unless it is no longer the
     /// current one (already closed). <paramref name="closed"/> runs first, and the dialog is completed even if it throws.
     /// </summary>
-    protected void Finish(TRequest request, TResult result, Action? closed = null)
+    public void Finish(TRequest request, TResult result, Action? closed = null)
     {
         lock (gate)
         {

@@ -1,6 +1,4 @@
-﻿using Routeables.Abstraction;
-using System.Windows.Input;
-using Routeables.Services;
+﻿using Routeables.Services;
 
 namespace Routeables.Razor.Services;
 
@@ -23,10 +21,10 @@ internal sealed class ContentDialogRequest : IDialogRequest<RouteableContentDial
 }
 
 /// <summary>
-/// Implements <see cref="IRouteableContentDialogService"/> without any UI library. Dialogs are queued and shown one
+/// Dialogs are queued and shown one
 /// at a time by a <see cref="RouteableContentDialogHost"/> placed once in the application's layout.
 /// </summary>
-internal sealed class RouteableContentDialogService : DialogQueue<ContentDialogRequest, RouteableContentDialogResult>, IRouteableContentDialogService
+internal sealed class RouteableContentDialogQueue : DialogQueue<ContentDialogRequest, RouteableContentDialogResult>
 {
     protected override RouteableContentDialogResult ResultWhenDisposed(ContentDialogRequest request) => RouteableContentDialogResult.None;
 

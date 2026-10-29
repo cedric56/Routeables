@@ -25,4 +25,27 @@ public class RouteableDialogService(IMessageBoxService service) : RouteableDialo
                 return i;
         return -1;
     }
+
+    /// <inheritdoc />
+    public override async Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params)
+    {
+        return await Dispatcher.UIThread.Invoke(async () =>
+        {
+            return await service.ShowContentDialogAsync(@params, TopLevelStateManager.Default.GetActive());
+        });
+    }
+
+    /// <inheritdoc />
+    public override async Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, params RouteableTaskDialogResult[] results)
+    {
+        if (@params != null)
+        {
+            return await Dispatcher.UIThread.Invoke(async () =>
+            {
+                return await service.ShowTaskDialogAsync(@params, TopLevelStateManager.Default.GetActive(throwOnNull: true), results);
+            });
+        }
+
+        return RouteableTaskDialogResult.None;
+    }
 }

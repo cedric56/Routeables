@@ -8,6 +8,35 @@
 public interface IRouteableDialogService
 {
     /// <summary>
+    /// Begins an asynchronous operation to show the dialog.
+    /// </summary>
+    /// <param name="params">The content, buttons, and callbacks to show.</param>
+    /// <returns>
+    /// A task that completes with the <see cref="RouteableContentDialogResult"/>
+    /// corresponding to whichever button the user tapped (or
+    /// <see cref="RouteableContentDialogResult.None"/> if the dialog was dismissed
+    /// without tapping a button, e.g. by pressing Escape or tapping outside).
+    /// </returns>
+    Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params);
+
+    /// <summary>
+    /// Shows the dialog and awaits the user's response.
+    /// </summary>
+    /// <param name="params">The content, header, icon, and callbacks to show.</param>
+    /// <param name="results">
+    /// The set of standard results (e.g. OK/Cancel, Yes/No) the dialog
+    /// should offer as buttons. The platform adapter renders one button
+    /// per value supplied here.
+    /// </param>
+    /// <returns>
+    /// The <see cref="RouteableTaskDialogResult"/> corresponding to
+    /// whichever button the user tapped, or
+    /// <see cref="RouteableTaskDialogResult.None"/> if the dialog was
+    /// dismissed without tapping a button.
+    /// </returns>
+    Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, params RouteableTaskDialogResult[] results);
+
+    /// <summary>
     /// Shows an error dialog presenting the given exception's message
     /// (and, depending on the platform adapter, optionally its stack trace)
     /// with a single acknowledgement button.

@@ -52,9 +52,10 @@ public static class Extensions
 
 
         return services.UseRouteablesServices(
-            sp => new ReshapeDialogService(sp.GetRequiredService<IDialogService>()),
-            sp => new ReshapeContentDialogService(sp.GetRequiredService<IDialogService>()),
-            sp => new ReshapeTaskDialogService(sp.GetRequiredService<IDialogService>()),
+            sp => null!,
+            //sp => new ReshapeDialogService(sp.GetRequiredService<IDialogService>()),
+            //sp => new ReshapeContentDialogService(sp.GetRequiredService<IDialogService>()),
+            //sp => new ReshapeTaskDialogService(sp.GetRequiredService<IDialogService>()),
             sp => new ReshapeNotificationService(sp.GetRequiredService<ISnackbar>()),
             position,
             maxDispayments);

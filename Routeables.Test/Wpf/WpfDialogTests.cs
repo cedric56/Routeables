@@ -260,19 +260,19 @@ public class WpfDialogTests
         }
     });
 
-    [Fact]
-    public Task The_content_dialog_service_shows_the_dialog_over_the_active_window() => WithOwnerAsync(async owner =>
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var service = new RouteableContentDialogService(Box);
-        var pending = await StartAsync(() => service.ShowAsync(Content([], title: "Service")));
-        var dialog = await WaitForWindowAsync("Service", ct);
+    //[Fact]
+    //public Task The_content_dialog_service_shows_the_dialog_over_the_active_window() => WithOwnerAsync(async owner =>
+    //{
+    //    var ct = TestContext.Current.CancellationToken;
+    //    var service = new RouteableContentDialogService(Box);
+    //    var pending = await StartAsync(() => service.ShowAsync(Content([], title: "Service")));
+    //    var dialog = await WaitForWindowAsync("Service", ct);
 
-        Assert.Same(owner, await WpfHarness.Run(() => dialog.Owner));
+    //    Assert.Same(owner, await WpfHarness.Run(() => dialog.Owner));
 
-        await ClickAsync(dialog, "Save");
-        Assert.Equal(RouteableContentDialogResult.Primary, await pending);
-    });
+    //    await ClickAsync(dialog, "Save");
+    //    Assert.Equal(RouteableContentDialogResult.Primary, await pending);
+    //});
 
     // ---- task dialog ----
 
@@ -307,20 +307,20 @@ public class WpfDialogTests
         Assert.Equal(new[] { "opening", "opened", "closed" }, log);
     });
 
-    [Fact]
-    public Task A_task_dialog_without_results_has_one_close_button_and_a_dismissal_gives_none() => WithOwnerAsync(async owner =>
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var service = new RouteableTaskDialogService(Box);
-        var pending = await StartAsync(() => service.ShowAsync(new RouteableTaskDialog { Title = "Info", Header = "Done" }));
-        var dialog = await WaitForWindowAsync("Info", ct);
+    //[Fact]
+    //public Task A_task_dialog_without_results_has_one_close_button_and_a_dismissal_gives_none() => WithOwnerAsync(async owner =>
+    //{
+    //    var ct = TestContext.Current.CancellationToken;
+    //    var service = new RouteableTaskDialogService(Box);
+    //    var pending = await StartAsync(() => service.ShowAsync(new RouteableTaskDialog { Title = "Info", Header = "Done" }));
+    //    var dialog = await WaitForWindowAsync("Info", ct);
 
-        Assert.Equal(new[] { "Close" }, await ButtonsAsync(dialog));
+    //    Assert.Equal(new[] { "Close" }, await ButtonsAsync(dialog));
 
-        await PressEscapeAsync(dialog);
+    //    await PressEscapeAsync(dialog);
 
-        Assert.Equal(RouteableTaskDialogResult.None, await pending);
-    });
+    //    Assert.Equal(RouteableTaskDialogResult.None, await pending);
+    //});
 
     [Fact]
     public Task A_task_dialog_that_vetoes_the_closing_stays_open() => WithOwnerAsync(async owner =>

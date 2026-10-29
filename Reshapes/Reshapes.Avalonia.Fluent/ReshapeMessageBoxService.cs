@@ -21,7 +21,7 @@ public class ReshapeMessageBoxService : IMessageBoxService
     }
 
     /// <inheritdoc />
-    public async Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params, TopLevel? topLevel = null)
+    public async Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params, TopLevel? topLevel = null)
     {
         var dialog = GetContentDialog(@params);
         var result = await dialog.ShowAsync(topLevel);
@@ -81,7 +81,7 @@ public class ReshapeMessageBoxService : IMessageBoxService
     }
 
     /// <inheritdoc />
-    public async Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, TopLevel? topLevel = null, params RouteableTaskDialogResult[] results)
+    public async Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, TopLevel? topLevel = null, params RouteableTaskDialogResult[] results)
     {
         TypedEventHandler<FATaskDialog, EventArgs>? opening = null;
         TypedEventHandler<FATaskDialog, EventArgs>? opened = null;
@@ -181,7 +181,7 @@ public class ReshapeMessageBoxService : IMessageBoxService
             }
         }
 
-        var result = await ShowAsync(dialog, topLevel);
+        var result = await ShowContentDialogAsync(dialog, topLevel);
 
         return result switch
         {

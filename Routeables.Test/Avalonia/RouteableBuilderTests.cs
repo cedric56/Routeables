@@ -16,10 +16,10 @@ public class RouteableBuilderTests
     {
         public bool IsDisplayable(TopLevel topLevel) => throw new NotImplementedException();
 
-        public Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params, TopLevel? topLevel = null)
+        public Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params, TopLevel? topLevel = null)
             => throw new NotImplementedException();
 
-        public Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, TopLevel? topLevel = null, params RouteableTaskDialogResult[] results)
+        public Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, TopLevel? topLevel = null, params RouteableTaskDialogResult[] results)
             => throw new NotImplementedException();
 
         public Task<string?> ShowMessageBoxAsync(string title, string message, string buttons, TopLevel? topLevel = null)
@@ -46,8 +46,6 @@ public class RouteableBuilderTests
         var serviceProvider = Build(new MessageBoxService());
         using (serviceProvider as IDisposable)
         {
-            Assert.IsType<RouteableContentDialogService>(serviceProvider.GetRequiredService<IRouteableContentDialogService>());
-            Assert.IsType<RouteableTaskDialogService>(serviceProvider.GetRequiredService<IRouteableTaskDialogService>());
             Assert.IsType<RouteableRequestThemeService>(serviceProvider.GetRequiredService<IRouteableRequestedThemeService>());
             Assert.NotNull(serviceProvider.GetRequiredService<IRouteableNotificationService>());
             Assert.NotNull(serviceProvider.GetRequiredService<IRouter>());
@@ -128,8 +126,6 @@ public class RouteableBuilderTests
             Assert.IsType<RouteableRequestThemeService>(provider!.GetRequiredService<IRouteableRequestedThemeService>());
             Assert.IsType<DefaultMessageBoxService>(provider!.GetRequiredService<IMessageBoxService>());
             Assert.NotNull(provider!.GetRequiredService<IRouteableDialogService>());
-            Assert.NotNull(provider!.GetRequiredService<IRouteableContentDialogService>());
-            Assert.NotNull(provider!.GetRequiredService<IRouteableTaskDialogService>());
             Assert.NotNull(provider!.GetRequiredService<IRouteableNotificationService>());
         }
     }
