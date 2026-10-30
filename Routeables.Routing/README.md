@@ -26,7 +26,7 @@ A `Transient` router is refused: every resolve would get its own history. For se
 
 - Calls on one router run one after the other, even when several are requested at once.
 - Guards and lifecycle callbacks run before the history changes. A refused or failed route change commits nothing and the previous page is restored.
-- The history keeps 20 entries (`RouterHistory.MaxSize`); entries that leave it are disposed.
+- The history has no limit: it keeps one entry per route change until `PopAsync` or `EraseHistoryAsync` removes them; entries that leave it are disposed. A long-lived application that never goes back should call `EraseHistoryAsync` (or `GoBackToRootAsync`) now and then.
 - `Routing` and `Routed` are raised for each route change. A handler that throws never fails the route change: the error goes to your `IRouteableErrorSink`, or to `Trace`.
 - Measured with BenchmarkDotNet: about 4 to 7.5 µs and 7.5 to 12 KB per route change ([benchmarks](../docs/benchmarks.md)).
 

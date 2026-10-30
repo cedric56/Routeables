@@ -43,7 +43,7 @@
 
         <Border Grid.Row="1" BorderBrush="{StaticResource BarStrongBrush}" BorderThickness="2" CornerRadius="18" Margin="0,4,0,0">
             <!-- The zone of the "history" region: nothing assigns the view, the control shows what the router of the region displays. -->
-            <routeables:RouteableRegion Region="history" Margin="5" RouteTransitionDuration="0:0:0.22" RouteTransition="{Binding Transition}"
+            <routeables:RouteableRegion Region="history" Margin="5" RouteTransitionDuration="0:0:0.22" RouteTransition="{Binding Transition.Name}"
                                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                                         IsHitTestVisible="False" />
         </Border>

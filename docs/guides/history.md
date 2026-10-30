@@ -6,7 +6,7 @@ Each router keeps a history of entries (view model, view and arguments):
 
 | Operation | Effect |
 | --- | --- |
-| `GoToAsync` (or `GoToRouteAsync`) | Pushes a new entry. Forward entries are cut off, and the oldest entry is dropped beyond `History.MaxSize` |
+| `GoToAsync` (or `GoToRouteAsync`) | Pushes a new entry. Forward entries are cut off. The history has no limit: it grows until entries are popped or erased |
 | `GoBackAsync` / `ForwardAsync` | Moves the cursor. Nothing is removed, so a page you went back from stays alive for `Forward` |
 | `MoveToAsync(index)` | Moves the cursor to an entry |
 | `PopAsync` | Goes back and removes the entry you left |

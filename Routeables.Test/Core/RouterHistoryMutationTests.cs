@@ -43,15 +43,15 @@ public class RouterHistoryMutationTests
     }
 
     [Fact]
-    public void Push_ReturnsTheOldestEntry_WhenTheHistoryOverflows()
+    public void Push_RemovesNothingWhenTheCursorIsAtTheEnd_HoweverLongTheHistoryIs()
     {
-        var history = With(Enumerable.Range(0, RouterHistory.MaxSize).Select(i => $"e{i}").ToArray());
+        var history = With(Enumerable.Range(0, 100).Select(i => $"e{i}").ToArray());
 
         var removed = history.Push(Entry("extra"));
 
-        Assert.Equal(["e0"], Names(removed));
-        Assert.Equal(RouterHistory.MaxSize, history.Count);
-        Assert.Equal("e1", history.Root!.ViewModel);
+        Assert.Empty(removed);
+        Assert.Equal(101, history.Count);
+        Assert.Equal("e0", history.Root!.ViewModel);
         Assert.Equal("extra", history.Current!.ViewModel);
     }
 

@@ -288,6 +288,5 @@ public class RouterEventsTests
         Assert.Equal(3, router.History.Count);
         Assert.Equal(2, router.History.CurrentIndex);
         Assert.Same(pages[0].ViewModel, router.History.Root!.ViewModel);
-        Assert.Equal(20, router.History.MaxSize);
     }
 }

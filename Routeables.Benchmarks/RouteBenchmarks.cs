@@ -5,7 +5,7 @@ using Routeables.Routing;
 
 namespace Routeables.Benchmarks;
 
-/// <summary>The history operations of one router, with a short history (2 entries) and with a full one (the history keeps 20 entries).</summary>
+/// <summary>The history operations of one router, with a short history (2 entries) and with a long one (20 entries).</summary>
 [MemoryDiagnoser]
 public class RouteBenchmarks
 {
@@ -86,10 +86,12 @@ public class RouteBenchmarks
     }
 }
 
-/// <summary>Filling a history up to its limit, then emptying it: creation of 20 pages and the disposal of all of them.</summary>
+/// <summary>Filling a history with 20 pages, then emptying it: creation of 20 pages and the disposal of all of them.</summary>
 [MemoryDiagnoser]
 public class HistoryLifecycleBenchmarks
 {
+    private const int HistoryEntries = 20;
+
     private ServiceProvider provider = null!;
     private IRouter router = null!;
 
@@ -106,14 +108,14 @@ public class HistoryLifecycleBenchmarks
     [Benchmark]
     public async Task Fill20_ThenErase()
     {
-        await Bench.FillAsync(router, RouterHistory.MaxSize);
+        await Bench.FillAsync(router, HistoryEntries);
         await router.EraseHistoryAsync();
     }
 
     [Benchmark]
     public async Task Fill20_ThenBackToRoot()
     {
-        await Bench.FillAsync(router, RouterHistory.MaxSize);
+        await Bench.FillAsync(router, HistoryEntries);
         Bench.Ok(await router.GoBackToRootAsync());
         await router.EraseHistoryAsync();
     }

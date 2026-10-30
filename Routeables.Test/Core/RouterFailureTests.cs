@@ -76,7 +76,7 @@ public class RouterFailureTests
             .WaitAsync(TimeSpan.FromSeconds(20), Ct);
 
         Assert.True(results.All(r => r.Success));
-        Assert.Equal(Math.Min(50, router.History.MaxSize), router.History.Count);   // the oldest entries beyond MaxSize are dropped
+        Assert.Equal(50, router.History.Count);
         Assert.Contains(router.CurrentViewModel, viewModels);
 
         // Each page left exactly once, in a sequence: 49 of them were left for the next one.

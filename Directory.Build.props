@@ -17,7 +17,7 @@
     <PackageProjectUrl>https://github.com/cedric56/Routeables</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cedric56/Routeables.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>routing;mvvm;viewmodel;blazor;maui;avalonia;uno;wpf</PackageTags>
+    <PackageTags>routing;navigation;mvvm;viewmodel;blazor;maui;avalonia;uno;wpf</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
     <!-- The .pdb is inside the package, next to the .dll (no separate .snupkg to publish), with Source Link: a consumer can step into the library from the debugger. -->
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>

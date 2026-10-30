@@ -48,7 +48,7 @@ If you come from Prism and started another request from `OnNavigatedTo`, move th
 
 There is no dedicated cleanup interface: use the standard .NET ones. When an entry leaves the history, the router disposes its view model and its view with `DisposeAsync()` if they implement `IAsyncDisposable`, otherwise with `Dispose()` if they implement `IDisposable`. An exception thrown while disposing is swallowed, so cleanup never fails a route change.
 
-Entries leave the history on `PopAsync`, when a new route cuts off the forward entries, when the oldest entry is dropped beyond `History.MaxSize`, and on `EraseHistoryAsync`. `GoBackAsync`, `ForwardAsync` and `MoveToAsync` only move the cursor, so they dispose nothing.
+Entries leave the history on `PopAsync`, when a new route cuts off the forward entries, and on `EraseHistoryAsync` (the history has no limit). `GoBackAsync`, `ForwardAsync` and `MoveToAsync` only move the cursor, so they dispose nothing.
 
 A view and a view model that are the same object, or an instance shared with an entry that stays in the history, are initialized and disposed once and are never disposed while still in use.
 

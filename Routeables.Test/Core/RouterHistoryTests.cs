@@ -84,18 +84,21 @@ public class RouterHistoryTests
     }
 
     [Fact]
-    public void The_oldest_entries_are_dropped_beyond_MaxSize()
+    public void The_history_has_no_limit()
     {
         var history = new RouterHistory();
-        for (var i = 0; i < RouterHistory.MaxSize + 5; i++)
-            history.Push(Entry(i.ToString()));
+        for (var i = 0; i < 500; i++)
+            Assert.Empty(history.Push(Entry(i.ToString())));
+
+        Assert.Equal(500, history.Count);
+        Assert.Equal("0", history.Root!.ViewModel);
 
         var steps = 0;
         while (history.MoveBack() is not null)
             steps++;
 
-        Assert.Equal(RouterHistory.MaxSize - 1, steps);
-        Assert.Equal("5", history.Current!.ViewModel);
+        Assert.Equal(499, steps);
+        Assert.Equal("0", history.Current!.ViewModel);
     }
 
     [Fact]

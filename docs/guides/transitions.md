@@ -80,4 +80,4 @@ Animation is native to each host, so a custom transition is registered per host 
 
 ## Sample
 
-The **History** page of every sample (Avalonia, WPF, Uno, MAUI, Blazor) has a *Transition* list that sets the transition of its frame (`Transition="{Binding Transition}"` on the `RouteableRegion`), a *Push (SlideUp)* button that asks for its own transition for that one navigation (`WithTransition(RouteTransition.SlideUp)`), and a custom transition, *Pop*, registered in the code-behind of the page (a CSS animation in the Blazor sample).
+The **History** page of every sample (Avalonia, WPF, Uno, MAUI, Blazor) has a *Transition* list that sets the transition of its frame (`Transition="{Binding Transition}"` on the `RouteableRegion`; on MAUI and Uno the property is a string, so bind the name: `{Binding Transition.Name}`), a *Push (SlideUp)* button that asks for its own transition for that one navigation (`WithTransition(RouteTransition.SlideUp)`), and a custom transition, *Pop*, registered in the code-behind of the page (a CSS animation in the Blazor sample).

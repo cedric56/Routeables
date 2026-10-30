@@ -16,7 +16,9 @@
 
 # Routeables
 
-**Routing from your view models, for Blazor, .NET MAUI, Avalonia, Uno Platform and WPF.**
+**View-model-first routing and navigation for Blazor, .NET MAUI, Avalonia, Uno Platform and WPF.**
+
+Coming from Prism? Start with [Migrating from Prism](docs/guides/migrating-from-prism.md).
 
 A view model asks an `IRouter` to go somewhere. It never touches a page, a frame or a navigation API of the framework, so the same code runs on every host.
 
@@ -72,16 +74,30 @@ r => r.AddGeneratedRoutes()
 
 Each host README has the complete setup. [Getting started](docs/getting-started.md) walks through it. To start, create a project with the template of your framework (`dotnet new avalonia.app`, `dotnet new maui`, `dotnet new blazor`, or the Uno one) and add the host package.
 
-## What you get
+## Features
 
-- **Routes from attributes**, paired with views by name, registered by a source generator.
-- **Typed routing methods** generated from a view model's constructor: `GoToMonkeyDetailAsync(router, name)` instead of a string.
-- **History**: back, forward, pop, return to the root; a page can veto leaving.
-- **Regions**: several areas of the screen, each with its own history.
-- **Modules**: a feature is one extension method, loaded at startup or on demand.
-- **Native AOT and trimming** compatible; nothing scans assemblies at run time.
+| Area | What Routeables offers | Guide |
+| --- | --- | --- |
+| Routes | `[Routeable("/path/{id:int}")]` on the view model; view paired by name; constraints; most specific template wins; query strings | [Routes](docs/guides/routes.md) |
+| Typed routing | `GoToMonkeyDetailAsync(router, name)` generated from the constructor | [Typed routes](docs/guides/typed-routes.md) |
+| Arguments | Route values, query values and objects passed to the target | [Arguments](docs/guides/arguments.md) |
+| History | Back, forward, pop, back to root, move to an entry, erase; no size limit | [History](docs/guides/history.md) |
+| Regions | Several zones, each with its own router and history | [Regions](docs/guides/regions.md) |
+| Lifecycle | Initialize, entering, leaving, `CanLeaveAsync` veto, `OnSubscribe`/`OnUnsubscribe`, destroy | [Lifecycle](docs/guides/lifecycle.md) |
+| Guards | `IRouteGuard` with an order; allow, redirect or cancel a route change | [Routes](docs/guides/routes.md) |
+| Transitions | 15 built-in transitions, custom ones registered per host | [Transitions](docs/guides/transitions.md) |
+| Dialogs and notifications | One dialog service and one notification service on every host, replaceable at startup, system notifications | [System integration](docs/guides/system-integration.md) |
+| Deep links | Open a route from a URL or a system activation | [System integration](docs/guides/system-integration.md) |
+| Modules | A feature is one extension method, loaded at startup or on demand | [Hosts](docs/guides/hosts.md) |
+| Locking | Pages that block leaving, a locked menu | [Locking](Routeables.Locking/README.md) |
+| Menu | `RouteableMenu` on Avalonia and WPF, items bound to routes | [Hosts](docs/guides/hosts.md) |
+| Errors and safe async | `RouteableResult`, error sink, `AsyncHelper` (fire and forget, run sync) | [Lifecycle](docs/guides/lifecycle.md) |
+| Diagnostics | Tracing and metrics for route changes | [Diagnostics](docs/guides/diagnostics.md) |
+| Native AOT | Source generated; nothing scans assemblies at run time | [AOT](docs/guides/aot.md) |
+| Hosts | Blazor, .NET MAUI, Avalonia, Uno Platform, WPF | [Hosts](docs/guides/hosts.md) |
+| Dialog libraries | MudBlazor, CommunityToolkit.Maui, FluentAvalonia | [Reshapes](Reshapes/README.md) |
 
-Routeables routes. It ships no commands, view-model locator or event aggregator: use CommunityToolkit.Mvvm, ReactiveUI or plain C#. Coming from Prism? Read [Migrating from Prism](docs/guides/migrating-from-prism.md).
+Routeables routes. It ships no commands, view-model locator or event aggregator: use CommunityToolkit.Mvvm, ReactiveUI or plain C#.
 
 ## Add what you need
 

@@ -3,16 +3,11 @@
 namespace Routeables.Routing;
 
 /// <summary>
-/// Manages the route change history stack with a fixed maximum size, tracking the active index
+/// Manages the route change history stack (it has no limit: it grows with the route changes until an entry is popped or the history is erased), tracking the active index
 /// and providing stack manipulation methods such as pushing, popping, traversing, and clearing.
 /// </summary>
 internal sealed class RouterHistory : IRouterHistory
 {
-    /// <summary>
-    /// Gets the maximum allowed number of entries in the history stack.
-    /// </summary>
-    public const int MaxSize = 20;
-
     private readonly List<RouterEntry> _entries = [];
     private int _currentIndex = -1;
 
@@ -20,8 +15,6 @@ internal sealed class RouterHistory : IRouterHistory
     /// Occurs when the history stack state or current index changes.
     /// </summary>
     public event EventHandler? Changed;
-
-    int IRouterHistory.MaxSize => MaxSize;
 
     /// <summary>
     /// Gets the total number of entries currently in the history stack.
@@ -58,10 +51,10 @@ internal sealed class RouterHistory : IRouterHistory
     IReadOnlyList<IHistoryEntry> IRouterHistory.Entries => _entries.ToArray();   // snapshot
 
     /// <summary>
-    /// Pushes a new entry onto the history stack, discarding any forward history and enforcing the maximum capacity.
+    /// Pushes a new entry onto the history stack, discarding any forward history.
     /// </summary>
     /// <param name="entry">The router entry to push.</param>
-    /// <returns>A list of entries that were removed or evicted as a result of the push operation.</returns>
+    /// <returns>A list of entries that were removed (the forward entries) as a result of the push operation.</returns>
     public IReadOnlyList<RouterEntry> Push(RouterEntry entry)
     {
         var removed = new List<RouterEntry>();
@@ -74,12 +67,6 @@ internal sealed class RouterHistory : IRouterHistory
         }
 
         _entries.Add(entry);
-        if (_entries.Count > MaxSize)
-        {
-            removed.Add(_entries[0]);
-            _entries.RemoveAt(0);
-        }
-
         _currentIndex = _entries.Count - 1;
         OnChanged();
         return removed;

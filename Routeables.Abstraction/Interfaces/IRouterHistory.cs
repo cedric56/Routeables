@@ -16,9 +16,6 @@ public interface IHistoryEntry
 /// <summary>Read-only view of a router's routing history.</summary>
 public interface IRouterHistory
 {
-    /// <summary>Maximum number of entries kept; the oldest is dropped beyond this.</summary>
-    int MaxSize { get; }
-
     /// <summary>Number of entries currently stored.</summary>
     int Count { get; }
 

@@ -6,7 +6,7 @@ using Routeables.Routing;
 namespace Routeables.Benchmarks;
 
 /// <summary>
-/// Not a timing: checks over many route_changes that the history stays bounded, that the pages the router lets go can be
+/// Not a timing: checks over many route_changes that the history grows by one entry for each, that the pages the router lets go (erased) can be
 /// collected, and that disposable view models are disposed. Run with <c>--leak</c>; the exit code is 0 only if all pass.
 /// </summary>
 internal static class LeakCheck
@@ -22,17 +22,16 @@ internal static class LeakCheck
             if (!ok) failures++;
         }
 
-        // 1. The history never exceeds its limit, whatever the number of route_changes.
+        // 1. The history has no limit: one entry for each route change, and none left once it is erased.
         using (var provider = Bench.Build(factories: true))
         {
             var router = provider.GetRequiredService<IRouter>();
-            var largest = 0;
             for (var i = 0; i < RouteChanges; i++)
-            {
                 Bench.Ok(await router.GoToAsync(i % 2 == 0 ? "/a" : "/b"));
-                largest = Math.Max(largest, router.History.Count);
-            }
-            Report("history is bounded", largest <= RouterHistory.MaxSize, $"largest history {largest} (limit {RouterHistory.MaxSize}) after {RouteChanges} route_changes");
+            var grown = router.History.Count;
+            await router.EraseHistoryAsync();
+            Report("history grows by one entry per route change, and erases", grown == RouteChanges && router.History.Count == 0,
+                $"{grown} entries after {RouteChanges} route_changes, {router.History.Count} once erased");
         }
 
         // 2. View models dropped from the history can be collected.
@@ -40,6 +39,7 @@ internal static class LeakCheck
         {
             var router = provider.GetRequiredService<IRouter>();
             var weak = await GoTo(router, RouteChanges, track: 200);
+            await router.EraseHistoryAsync();   // the history keeps every page until it is erased
             Collect();
             var alive = weak.Count(w => w.IsAlive);
             Report("dropped view models are collectable", alive == 0, $"{alive} of the first {weak.Count} view models are still alive");
@@ -62,9 +62,11 @@ internal static class LeakCheck
         {
             var router = provider.GetRequiredService<IRouter>();
             await Churn(router, 1_000);
+            await router.EraseHistoryAsync();
             Collect();
             var before = GC.GetTotalMemory(true);
             await Churn(router, RouteChanges);
+            await router.EraseHistoryAsync();   // the history keeps every page until it is erased
             Collect();
             var growth = GC.GetTotalMemory(true) - before;
             Report("heap does not grow", growth < 1_000_000, $"{growth / 1024.0:F0} KiB more after {RouteChanges} route_changes");

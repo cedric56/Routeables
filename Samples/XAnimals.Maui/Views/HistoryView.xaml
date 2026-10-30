@@ -77,7 +77,7 @@
                 </Border.StrokeShape>
                 <!-- The zone of the "history" region: nothing assigns the view, the control shows what the router of the region displays.
                      It takes all the room the frame has. -->
-                <routeables:RouteableRegion x:Name="HistoryFrame" Region="history" TransitionDuration="0:0:0.22" Transition="{Binding Transition}"
+                <routeables:RouteableRegion x:Name="HistoryFrame" Region="history" TransitionDuration="0:0:0.22" Transition="{Binding Transition.Name}"
                              HorizontalOptions="Fill" VerticalOptions="Fill" InputTransparent="True" />
             </Border>
 

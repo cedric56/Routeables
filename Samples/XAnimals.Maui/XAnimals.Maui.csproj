@@ -52,7 +52,7 @@
     <!-- App Icon -->
     <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#4A22C8" />
     <!-- The logo of the About page: an image (MauiImage), not an app icon. -->
-    <!--<MauiImage Include="Resources\Images\logo.svg" BaseSize="128,128" />-->
+    
 
     <!-- Splash Screen -->
     <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#4A22C8" BaseSize="128,128" />
@@ -80,7 +80,7 @@
     <MauiImage Include="Resources\Images\icon_monkey.png" />
     <MauiImage Include="Resources\Images\icon_panda.png" />
     <MauiImage Include="Resources\Images\icon_regions.png" />
-    <MauiImage Include="Resources\Images\logo.svg" />
+    <MauiImage Include="Resources\Images\logo.svg" BaseSize="128,128" />
   </ItemGroup>
 
   <ItemGroup>
