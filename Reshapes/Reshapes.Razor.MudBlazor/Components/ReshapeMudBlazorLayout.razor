@@ -17,7 +17,7 @@
         </MudAppBar>
         <MudDrawer @bind-Open="@_drawerOpen">
             <MudNavMenu>
-                @foreach (var item in Main.Routeables)
+                @foreach (var item in MainViewModel.Routeables)
                 {
                     <MudNavLink Disabled="@item.IsLock" OnClick="@(() => OnNavClick(item))">
                         @item.DisplayName
@@ -27,7 +27,7 @@
         </MudDrawer>
    
         <MudMainContent>
-            @if (Main.CurrentView is RouteableFor view)
+        @if (MainViewModel.CurrentView is RouteableFor view)
             {
                 @view.Render()
             }
