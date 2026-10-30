@@ -9,7 +9,7 @@
     <!-- Trim / AOT findings are reported but do not stop the build until the first CI run has shown what the UI packages raise. -->
     <WarningsNotAsErrors>$(WarningsNotAsErrors);IL2026;IL2067;IL2070;IL2072;IL2075;IL2087;IL2091;IL3050</WarningsNotAsErrors>
     <PackageId>Reshapes.Avalonia.Fluent</PackageId>
-    <Authors>Cedric</Authors>
+    <Authors>Cédric Boutin</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>FluentAvalonia dialogs for Routeables: message boxes, content dialogs and task dialogs drawn with FluentAvalonia.</Description>

@@ -13,7 +13,7 @@
     <!-- Trim / AOT findings are reported but do not stop the build until the first CI run has shown what the UI packages raise. -->
     <WarningsNotAsErrors>$(WarningsNotAsErrors);IL2026;IL2067;IL2070;IL2072;IL2075;IL2087;IL2091;IL3050</WarningsNotAsErrors>
     <PackageId>Reshapes.Maui.Community</PackageId>
-    <Authors>Cedric</Authors>
+    <Authors>Cédric Boutin</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>CommunityToolkit.Maui popups for Routeables: content dialogs, task dialogs and modals drawn with CommunityToolkit popups.</Description>

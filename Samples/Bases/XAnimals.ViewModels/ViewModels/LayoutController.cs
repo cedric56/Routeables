@@ -62,8 +62,8 @@ public sealed class LayoutController(IServiceProvider provider) : RegionLayout(p
             .Absolute()
             .Segment(BarSegment, Bar(LayoutBarInfo.Empty), LeftPanel)
             .Segment(LogoSegment, Content)
-            .Segment(BarSegment, Bar(new LayoutBarInfo("©", "© 2026 Cedric", "Released under the MIT License", Strong: true)), Header)
-            .Segment(BarSegment, Bar(new LayoutBarInfo("✍️", "Cedric", "Author of Routeables")), Footer)
+            .Segment(BarSegment, Bar(new LayoutBarInfo("©", "© 2026 Cédric Boutin", "Released under the MIT License", Strong: true)), Header)
+            .Segment(BarSegment, Bar(new LayoutBarInfo("✍️", "Cédric Boutin", "Author of Routeables")), Footer)
             .Build();
 
         var result = await coordinator.CoordinateAsync(credits, ct);

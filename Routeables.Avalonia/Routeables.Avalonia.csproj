@@ -7,7 +7,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <IsAotCompatible>true</IsAotCompatible>
     <PackageId>Routeables.Avalonia</PackageId>
-    <Authors>Cedric</Authors>
+    <Authors>Cédric Boutin</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Routeables for Avalonia: view-model-first routing, routed views, regions, dialogs and notifications.</Description>

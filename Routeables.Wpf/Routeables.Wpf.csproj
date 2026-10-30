@@ -9,7 +9,7 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PackageId>Routeables.Wpf</PackageId>
-    <Authors>Cedric</Authors>
+    <Authors>Cédric Boutin</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Routeables for WPF: view-model-first routing, routed views, regions, dialogs and notifications.</Description>

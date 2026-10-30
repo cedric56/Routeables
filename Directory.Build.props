@@ -15,7 +15,7 @@
 
   <!-- What every package of the repository shares. Id, authors, readme and license are set in each project. -->
   <PropertyGroup>
-    <Copyright>Copyright (c) 2026 Cedric</Copyright>
+    <Copyright>Copyright (c) 2026 Cédric Boutin</Copyright>
     <PackageProjectUrl>https://github.com/cedric56/Routeables</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cedric56/Routeables.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
