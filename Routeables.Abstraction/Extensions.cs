@@ -112,15 +112,15 @@ public static class Extensions
     // The key under which the container builds the main view model; see RegisterMainViewModel.
     private const string MainKey = "Routeables.MainViewModel";
 
-    private static IMainViewModel WithModuleEntries(IMainViewModel main, IServiceProvider provider)
+    private static IMainViewModel WithModuleEntries(IMainViewModel mainViewModel, IServiceProvider provider)
     {
         foreach (var module in provider.GetServices<MenuEntries>())
-            module.AddTo(main);
+            module.AddTo(mainViewModel);
 
         // The modules loaded while running: the ones already loaded add their entries now, the next ones when they are loaded.
-        provider.GetService<RouteableModules>()?.Attach(main);
+        provider.GetService<RouteableModules>()?.Attach(mainViewModel);
 
-        return main;
+        return mainViewModel;
     }
 
     /// <summary>
@@ -289,9 +289,9 @@ public static class Extensions
     public static T? GetCurrentViewModel<T>(this IRouter router) where T : class
         => router.CurrentViewModel as T;
 
-    /// <summary>The coordinator that locks <paramref name="routeables"/> while a page blocks leaving; <see langword="null"/> when the router offers none.</summary>
-    public static ILockCoordinator? CreateLockCoordinator(this IRouter router, IMainViewModel routeables)
-        => (router as ILockCoordinatorFactory)?.CreateLockCoordinator(routeables);
+    /// <summary>The coordinator that locks <paramref name="mainViewModel"/> while a page blocks leaving; <see langword="null"/> when the router offers none.</summary>
+    public static ILockCoordinator? CreateLockCoordinator(this IRouter router, IMainViewModel mainViewModel)
+        => (router as ILockCoordinatorFactory)?.CreateLockCoordinator(mainViewModel);
 
     /// <summary>The router that shows <paramref name="view"/>: the one of its <see cref="IRouteableEntry.Region"/>.</summary>
     public static IRouter RouterFor(this IServiceProvider provider, IRouteableEntry view)

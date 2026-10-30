@@ -92,8 +92,8 @@ public partial class RouteableFor<[DynamicallyAccessedMembers(DynamicallyAccesse
         _subscribed = vm;
         if (vm is not null)
         {
-            if (vm is IMainViewModel routeables)
-                routeables.LockChanged += OnLockChanged;
+            if (vm is IMainViewModel mainViewModel)
+                mainViewModel.LockChanged += OnLockChanged;
 
             OnSubscribe();
         }

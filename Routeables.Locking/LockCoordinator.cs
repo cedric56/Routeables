@@ -71,12 +71,12 @@ internal sealed class LockCoordinator : ILockCoordinator, IDisposable
         }
     }
 
-    private static void Apply(IMainViewModel manager, bool isLocked)
+    private static void Apply(IMainViewModel mainViewModel, bool isLocked)
     {
         if (isLocked)
-            manager.Lock();
+            mainViewModel.Lock();
         else
-            manager.Unlock();
+            mainViewModel.Unlock();
     }
 
     /// <summary>

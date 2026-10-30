@@ -27,12 +27,12 @@ else
         </header>
 
         <nav class="rt-drawer @(_drawerOpen ? "" : "rt-drawer-closed")" aria-label="Menu">
-            @foreach (var item in Main.Routeables)
+            @foreach (var item in MainViewModel.Routeables)
             {
                 <button type="button"
-                class="rt-nav-link @(ReferenceEquals(item, Main.Routeable) ? "rt-active" : "")"
+                        class="rt-nav-link @(ReferenceEquals(item, MainViewModel.Routeable) ? "rt-active" : "")"
                 disabled="@item.IsLock"
-                aria-current="@(ReferenceEquals(item, Main.Routeable) ? "page" : null)"
+                        aria-current="@(ReferenceEquals(item, MainViewModel.Routeable) ? "page" : null)"
                 @onclick="() => OnNavClick(item)">
                     @if (item.Icon is string glyph)
                     {
@@ -50,7 +50,7 @@ else
         </nav>
 
         <main class="rt-content">
-            @if (Main.CurrentView is RouteableFor routeable)
+            @if (MainViewModel.CurrentView is RouteableFor routeable)
             {
                 @routeable.Render()
             }

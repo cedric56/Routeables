@@ -15,7 +15,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     /// <summary>The service that applies the theme a view model asked for.</summary>
     [Inject] protected IRouteableRequestedThemeService ThemeService { get; set; } = default!;
     /// <summary>The main view model: the menu entries and the selected one.</summary>
-    [Inject] protected IMainViewModel Main { get; set; } = default!;
+    [Inject] protected IMainViewModel MainViewModel { get; set; } = default!;
     /// <summary>The container of the circuit.</summary>
     [Inject] protected IServiceProvider Provider { get; set; } = default!;
     /// <summary>Starts Routeables for the circuit (registered by <c>UseRouteablesServer</c>).</summary>
@@ -47,7 +47,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     /// Handles routing link clicks, updating the active routeable item in the manager.
     /// </summary>
     /// <param name="item">The routeable view item selected.</param>
-    public void OnNavClick(IRouteableEntry item) => Main.Routeable = item;
+    public void OnNavClick(IRouteableEntry item) => MainViewModel.Routeable = item;
 
     /// <summary>
     /// Gets the concrete theme service implementation instance.
@@ -61,9 +61,9 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Main.LockChanged += LockChanged;
-        Main.CurrentViewChanged += CurrentViewChanged;
-        Main.Routeables.CollectionChanged += RouteablesChanged;
+        MainViewModel.LockChanged += LockChanged;
+        MainViewModel.CurrentViewChanged += CurrentViewChanged;
+        MainViewModel.Routeables.CollectionChanged += RouteablesChanged;
         Service.RequestedThemeChanged += ThemeChanged;
     }
 
@@ -76,7 +76,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     private async void CurrentViewChanged(object? sender, object? view)
     {
         await RefreshAsync("MainLayout.CurrentViewChanged");
-        Title = Main.CurrentTitle ?? "Application";
+        Title = MainViewModel.CurrentTitle ?? "Application";
     }
 
     // These are event handlers (async void): an exception would reach the circuit. A layout removed between the event
@@ -99,7 +99,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
             // The default page only when the address did not already choose one (a link to /elephants/Mammoth).
             // Through Routeable: it is what selects the entry in the menu, and it shows the page.
             if (!addressChosen)
-                Main.SelectFirst();
+                MainViewModel.SelectFirst();
         }
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -132,9 +132,9 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     /// </summary>
     public void Dispose()
     {
-        Main.LockChanged -= LockChanged;
-        Main.CurrentViewChanged -= CurrentViewChanged;
-        Main.Routeables.CollectionChanged -= RouteablesChanged;
+        MainViewModel.LockChanged -= LockChanged;
+        MainViewModel.CurrentViewChanged -= CurrentViewChanged;
+        MainViewModel.Routeables.CollectionChanged -= RouteablesChanged;
         Service.RequestedThemeChanged -= ThemeChanged;
     }
 }
