@@ -4,12 +4,12 @@
 @using Routeables.Razor
 @using Routeables.Services
 @implements IDisposable
-@inject RouteableTaskDialogQueue Service
+@inject RouteableTaskDialogQueue Queue
 
-@if (Service.Current is { } request)
+@if (Queue.Current is { } request)
 {
     var dialog = request.Parameters;
-    <div class="rt-backdrop" @onclick="Service.Dismiss">
+    <div class="rt-backdrop" @onclick="Queue.Dismiss">
         <div class="rt-dialog"
              role="dialog"
              aria-modal="true"
@@ -91,14 +91,14 @@
 
     protected override void OnInitialized()
     {
-        Service.Changed += OnChanged;
+        Queue.Changed += OnChanged;
         ResetFooter();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         // A newly displayed dialog: announce it, then move the focus inside so the keyboard acts on it.
-        if (Service.Current is { } request && !ReferenceEquals(request, shown))
+        if (Queue.Current is { } request && !ReferenceEquals(request, shown))
         {
             shown = request;
             request.Session.Opening();
@@ -116,7 +116,7 @@
     // The footer starts expanded when it is always visible or when the dialog asks for it.
     private void ResetFooter()
     {
-        if (Service.Current is { } request && !ReferenceEquals(request, footerOwner))
+        if (Queue.Current is { } request && !ReferenceEquals(request, footerOwner))
         {
             footerOwner = request;
             footerExpanded = request.Parameters.FooterStartsExpanded;
@@ -126,10 +126,10 @@
     private void OnKeyDown(KeyboardEventArgs e)
     {
         if (e.Key == "Escape")
-            Service.Dismiss();
+            Queue.Dismiss();
     }
 
     private static void Press(RouteableDialogButton button) => button.Press();
 
-    public void Dispose() => Service.Changed -= OnChanged;
+    public void Dispose() => Queue.Changed -= OnChanged;
 }

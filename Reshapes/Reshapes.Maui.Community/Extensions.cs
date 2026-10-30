@@ -1,4 +1,5 @@
-﻿using Routeables.Maui.Services;
+﻿using Reshapes.Maui.Community;
+using Routeables.Maui.Services;
 
 namespace Reshapes.Maui.CommunityToolkit;
 
@@ -20,7 +21,7 @@ public static class Extensions
     public static MauiAppBuilder UseCommunityToolkit(this MauiAppBuilder builder)
     {
         return builder.UseRouteablesServices(
-            modalService: sp => new ReshapeModalService(sp.GetRequiredService<IRouteableDialogWindowContext>()),
+            messageBoxService: sp => new ReshapeMessageBoxService(sp.GetRequiredService<IRouteableDialogWindowContext>()),
             notificationService: sp => new ReshapeNotificationService(sp.GetRequiredService<IRouteableDialogWindowContext>()));
     }
 }

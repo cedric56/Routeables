@@ -10,8 +10,9 @@ namespace Routeables.Maui.Services;
 public static class Extensions
 {
     /// <summary>
-    /// Registers <see cref="IRouteableDialogService"/>, <see cref="IRouteableModalService"/>, <see cref="IRouteableContentDialogService"/>,
-    /// <see cref="IRouteableTaskDialogService"/>, <see cref="IRouteableNotificationService"/> and the
+    /// Registers 
+    /// <see cref="IRouteableDialogService"/>,
+    /// <see cref="IRouteableNotificationService"/> and the
     /// <see cref="IRouteableDialogWindowContext"/> they draw on.
     /// </summary>
     /// <remarks>
@@ -19,12 +20,12 @@ public static class Extensions
     /// <c>UseCommunityToolkit()</c> (Reshapes.Maui.CommunityToolkit) to use CommunityToolkit.Maui popups and snackbars instead.
     /// </remarks>
     /// <param name="builder">The MAUI app builder to configure.</param>
-    /// <param name="modalService">Factory of the <see cref="IRouteableModalService"/>; null keeps Routeables' own.</param>
+    /// <param name="messageBoxService">Factory of the <see cref="IMessageBoxService"/>; null keeps Routeables' own.</param>
     /// <param name="notificationService">Factory of the <see cref="IRouteableNotificationService"/>; null keeps Routeables' own.</param>
     /// <returns>The same <paramref name="builder"/>, for chaining.</returns>
     public static MauiAppBuilder UseRouteablesServices(
         this MauiAppBuilder builder,
-        Func<IServiceProvider, IRouteableModalService>? modalService = null,
+        Func<IServiceProvider, IMessageBoxService>? messageBoxService = null,
         Func<IServiceProvider, IRouteableNotificationService>? notificationService = null)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -32,9 +33,13 @@ public static class Extensions
         builder.Services.RemoveAll<IRouteableDialogService>();
         builder.Services.RemoveAll<RouteableDialogService>();
         builder.Services.RemoveAll<IRouteableDialogWindowContext>();
-        builder.Services.AddSingleton<IRouteableDialogService, RouteableDialogService>();
+        builder.Services.AddSingleton<IRouteableDialogService>(sp => new RouteableDialogService(
+#if ANDROID || WINDOWS || IOS || MACCATALYST
+            sp.GetRequiredService<IServiceProvider>(),
+#endif
+            sp.GetRequiredService<IRouteableDialogWindowContext>(),
+            messageBoxService?.Invoke(sp)));
         builder.Services.AddSingleton<RouteableDialogService>(sp => (RouteableDialogService)sp.GetRequiredService<IRouteableDialogService>());
-        RegisterOrDefault<IRouteableModalService, RouteableModalService>(builder.Services, modalService);
         builder.Services.AddSingleton<IRouteableDialogWindowContext, RouteableDialogWindowContext>();
         RegisterOrDefault<IRouteableNotificationService, RouteableNotificationService>(builder.Services, notificationService);
         return builder;

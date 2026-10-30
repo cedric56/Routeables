@@ -4,12 +4,12 @@
 @using Routeables.Razor
 @using Routeables.Services
 @implements IDisposable
-@inject RouteableContentDialogQueue Service
+@inject RouteableContentDialogQueue Queue
 
-@if (Service.Current is { } request)
+@if (Queue.Current is { } request)
 {
     var dialog = request.Parameters;
-    <div class="rt-backdrop" @onclick="Service.Dismiss">
+    <div class="rt-backdrop" @onclick="Queue.Dismiss">
         <div class="rt-dialog @(dialog.FullSizeDesired ? "rt-full" : string.Empty)"
              role="dialog"
              aria-modal="true"
@@ -55,19 +55,19 @@
 
     private static bool HasTitle(RouteableContentDialog dialog) => !string.IsNullOrWhiteSpace(dialog.Title);
 
-    protected override void OnInitialized() => Service.Changed += OnChanged;
+    protected override void OnInitialized() => Queue.Changed += OnChanged;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         // A newly displayed dialog: announce it, then move the focus inside so the keyboard acts on it.
-        if (Service.Current is { } request && !ReferenceEquals(request, shown))
+        if (Queue.Current is { } request && !ReferenceEquals(request, shown))
         {
             shown = request;
             request.Session.Opening();
             await dialogElement.FocusAsync();
             request.Session.Opened();
         }
-        else if (Service.Current is null)
+        else if (Queue.Current is null)
         {
             // Nothing is shown any more: do not keep the last dialog (its content and callbacks) alive until the next one.
             shown = null;
@@ -85,8 +85,8 @@
     private void OnKeyDown(KeyboardEventArgs e)
     {
         if (e.Key == "Escape")
-            Service.Dismiss();
+            Queue.Dismiss();
     }
 
-    public void Dispose() => Service.Changed -= OnChanged;
+    public void Dispose() => Queue.Changed -= OnChanged;
 }

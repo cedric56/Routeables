@@ -1,14 +1,19 @@
-﻿using Routeables.Services;
+﻿using Routeables.Abstraction;
+using Routeables.Services;
 
 namespace Routeables.Maui.Services;
 
 /// <summary>Message boxes of .NET MAUI (<c>DisplayAlert</c>, <c>DisplayActionSheet</c>), shown over the current page of the window. On Windows one dialog is open at a time.</summary>
 /// <param name="windowContext">Where the page to show the dialog over is found.</param>
+/// <param name="messageBoxService"></param>
 public class RouteableDialogService(
-    #if ANDROID || WINDOWS || IOS || MACCATALYST    
+#if ANDROID || WINDOWS || IOS || MACCATALYST    
     IServiceProvider provider, 
-#endif
-    IRouteableDialogWindowContext windowContext) : RouteableDialogServiceBase
+#endif    
+    IRouteableDialogWindowContext windowContext,
+    IMessageBoxService? messageBoxService = null) : 
+    RouteableDialogServiceBase,
+    IRouteableDialogService
 {
 #if WINDOWS
     private static readonly SemaphoreSlim WindowsDialogGate = new(1, 1);
@@ -38,6 +43,9 @@ public class RouteableDialogService(
     /// <returns>The index of the button chosen: 0 for the first.</returns>
     public override async Task<int> ShowMessageAsync(string message, string title, string buttonText)
     {
+        if (messageBoxService != null)
+            return await messageBoxService.ShowMessageAsync(title, message, buttonText);
+
         var page = windowContext.CurrentPage ?? throw new InvalidOperationException(
             "No active Page to host the content dialog popup.");
 
@@ -291,9 +299,13 @@ public class RouteableDialogService(
         }
     }
 
+    /// <inheritdoc />
     public override async Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params)
     {
         ArgumentNullException.ThrowIfNull(@params);
+
+        if (messageBoxService != null)
+            return await messageBoxService.ShowContentDialogAsync(@params);
 
         var page = windowContext.CurrentPage
             ?? throw new InvalidOperationException(
@@ -328,16 +340,13 @@ public class RouteableDialogService(
         public RouteableContentDialogSession Session { get; }
     }
 
-    /// <summary>
-    /// Displays a task dialog assembled from header, subheader, content, progress bar, and footer
-    /// sections, and awaits the user's button selection.
-    /// </summary>
-    /// <param name="params">The task dialog's configuration, including header, content, and footer.</param>
-    /// <param name="results">Up to three result values corresponding to the primary, secondary, and close buttons.</param>
-    /// <returns>The result value associated with the button the user selected.</returns>
+    /// <inheritdoc />
     public override async Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, params RouteableTaskDialogResult[] results)
     {
         ArgumentNullException.ThrowIfNull(@params);
+
+        if (messageBoxService != null)
+            return await messageBoxService.ShowTaskDialogAsync(@params);
 
         var page = windowContext.CurrentPage
             ?? throw new InvalidOperationException("No active Page to host the task dialog.");
@@ -353,6 +362,57 @@ public class RouteableDialogService(
         finally
         {
             popup.Session.Release();
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<TResult?> ShowModalAsync<TViewModel, TResult>(
+    TViewModel viewModel,
+    Func<View> viewFactory)
+    where TViewModel : ICloseableViewModel<TResult>
+    {
+        ArgumentNullException.ThrowIfNull(viewModel);
+        ArgumentNullException.ThrowIfNull(viewFactory);
+
+        var page = windowContext.CurrentPage
+            ?? throw new InvalidOperationException(
+                "No active Page to host the modal popup.");
+
+        var view = viewFactory()
+            ?? throw new InvalidOperationException(
+                "The modal view factory returned null.");
+
+        var popup = new ModalPopup<TResult>(viewModel, view);
+
+        return await popup.ShowAsync(page);
+    }
+
+    private sealed class ModalPopup<TResult> : RouteablePopupPage<TResult>
+    {
+        private readonly ICloseableViewModel<TResult> _viewModel;
+
+        public ModalPopup(ICloseableViewModel<TResult> viewModel, View view)
+        {
+            _viewModel = viewModel;
+            _viewModel.CloseRequested += OnCloseRequested;
+
+            // Dressed like the platform's own dialog; the first command is the primary button.
+            Dialog = RouteableDialogContents.ForModal(viewModel, view);
+        }
+
+        private async void OnCloseRequested(object? sender, TResult? result)
+        {
+            _viewModel.CloseRequested -= OnCloseRequested;
+            try { await CloseAsync(result); }
+            catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(RouteableDialogService)); }   // async void: an exception would end the application
+        }
+
+        // The page went away by other means than the view model closing it: stop listening to the view model.
+        protected override void OnHandlerChanging(HandlerChangingEventArgs args)
+        {
+            base.OnHandlerChanging(args);
+            if (args.NewHandler is null)
+                _viewModel.CloseRequested -= OnCloseRequested;
         }
     }
 

@@ -1,12 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Routeables.Abstraction;
-using Routeables.Maui;
+﻿using Routeables.Abstraction;
 
 namespace Routeables.Maui.Services;
 
 /// <summary>
 /// Base view for a modal backed by a closeable view model. The view is shown in a popup by the
-/// <see cref="IRouteableModalService"/>; the buttons come from the view model's <see cref="ICloseableViewModel{TResult}.Commands"/>.
+/// <see cref="IMessageBoxService"/>; the buttons come from the view model's <see cref="ICloseableViewModel{TResult}.Commands"/>.
 /// </summary>
 /// <typeparam name="TViewModel">The closeable view model type driving this modal.</typeparam>
 /// <typeparam name="TResult">The result type produced when the modal closes.</typeparam>
@@ -25,6 +23,6 @@ public class RouteableModalFor<TViewModel, TResult> : RouteableFor, IRouteableMo
         var services = Handler?.MauiContext?.Services ?? IPlatformApplication.Current?.Services
             ?? throw new InvalidOperationException("No service provider is available to show the modal.");
 
-        return services.GetRequiredService<IRouteableModalService>().ShowModalAsync<TViewModel, TResult>(viewModel, () => this);
+        return services.GetRequiredService<IMessageBoxService>().ShowModalAsync<TViewModel, TResult>(viewModel, () => this);
     }
 }
