@@ -19,15 +19,11 @@ public static class Extensions
     /// </summary>
     /// <param name="services">The service collection to add services to.</param>
     /// <param name="routeableDialogService">Factory of the <see cref="IRouteableDialogService"/>; null keeps Routeables' own.</param>
-    /// <param name="routeableContentDialogService">Factory of the <see cref="IRouteableContentDialogService"/>; null keeps Routeables' own.</param>
-    /// <param name="routeableTaskDialogService">Factory of the <see cref="IRouteableTaskDialogService"/>; null keeps Routeables' own.</param>
     /// <param name="routeableNotificationService">Factory of the <see cref="IRouteableNotificationService"/>; null keeps Routeables' own.</param>
     /// <param name="position">The screen position where toast notifications appear, bottom-left by default.</param>
     /// <param name="maxDispayments">The maximum number of notifications displayed at once, 5 by default.</param>
     public static IServiceCollection UseRouteablesServices(this IServiceCollection services,
         Func<IServiceProvider, IRouteableDialogService>? routeableDialogService = null,
-        //Func<IServiceProvider, IRouteableContentDialogService>? routeableContentDialogService = null,
-        //Func<IServiceProvider, IRouteableTaskDialogService>? routeableTaskDialogService = null,
         Func<IServiceProvider, IRouteableNotificationService>? routeableNotificationService = null,
         RouteableNotificationPosition position = RouteableNotificationPosition.BottomLeft,
         int maxDispayments = 5)
@@ -42,8 +38,6 @@ public static class Extensions
             routeableDialogService);
         services.AddScoped<RouteableContentDialogQueue>();
         services.AddScoped<RouteableTaskDialogQueue>();
-        //services.RegisterServices<IRouteableContentDialogService, RouteableContentDialogService>(routeableContentDialogService);
-        //services.RegisterServices<IRouteableTaskDialogService, RouteableTaskDialogService>(routeableTaskDialogService);
         services.AddSingleton(new RouteableNotificationOptions
         {
             Position = position,
