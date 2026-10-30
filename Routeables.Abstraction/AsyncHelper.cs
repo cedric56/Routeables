@@ -85,42 +85,4 @@ public static class AsyncHelper
         try { onError(exception); }
         catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(AsyncHelper), detail, "FireAndForget.onError"); }
     }
-
-    /// <summary>
-    /// Runs an asynchronous method and waits for its result, from synchronous code (a constructor, a property, an interface that cannot be
-    /// asynchronous). It runs on the thread pool, so it cannot deadlock on the UI thread's context, and it keeps the culture of the caller.
-    /// An exception is thrown as it is (not wrapped in an <see cref="AggregateException"/>). Prefer <c>await</c> wherever you can.
-    /// </summary>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <param name="func">The asynchronous method.</param>
-    /// <returns>Its result.</returns>
-    public static TResult RunSync<TResult>(Func<Task<TResult>> func)
-    {
-        ArgumentNullException.ThrowIfNull(func);
-
-        var culture = CultureInfo.CurrentCulture;
-        var uiCulture = CultureInfo.CurrentUICulture;
-        return Factory.StartNew(() =>
-        {
-            CultureInfo.CurrentCulture = culture;
-            CultureInfo.CurrentUICulture = uiCulture;
-            return func();
-        }).Unwrap().GetAwaiter().GetResult();
-    }
-
-    /// <summary><see cref="RunSync{TResult}(Func{Task{TResult}})"/> for a method without a result.</summary>
-    /// <param name="func">The asynchronous method.</param>
-    public static void RunSync(Func<Task> func)
-    {
-        ArgumentNullException.ThrowIfNull(func);
-
-        var culture = CultureInfo.CurrentCulture;
-        var uiCulture = CultureInfo.CurrentUICulture;
-        Factory.StartNew(() =>
-        {
-            CultureInfo.CurrentCulture = culture;
-            CultureInfo.CurrentUICulture = uiCulture;
-            return func();
-        }).Unwrap().GetAwaiter().GetResult();
-    }
 }

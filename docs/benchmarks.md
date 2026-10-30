@@ -17,7 +17,7 @@ Always run in `Release`, on a machine that is doing nothing else. Compare number
 | Class | Question it answers |
 |---|---|
 | `RouteCreationBenchmarks` | What does declaring a route cost, and the cold start (new container + first route change)? What does creating a page cost for a plain view model, one with a constructor dependency, one with an address parameter? Each is run with `Factories = true` (what the source generator emits for a `[Routeable]` route) and `false` (a hand-made `RegisterRoute<TView, TViewModel>()`, cached reflection). |
-| `NavigationBenchmarks` | Cost of `GoToAsync`, of the typed `GoToRouteAsync(view)`, of a page with a guard and a callback, of `Back`/`Forward`, `Push`/`Pop`, `MoveTo`, and of 8 route changes requested at once on one router. Run with a short history and a full one (the history keeps 20 entries, so a push on a full history also drops and disposes the oldest). |
+| `NavigationBenchmarks` | Cost of `GoToAsync`, of the typed `GoToRouteAsync(view)`, of a page with a guard and a callback, of `Back`/`Forward`, `Push`/`Pop`, `MoveTo`, and of 8 route changes requested at once on one router. Run with a short history and a full one (the history has no limit, so a push on a long history costs the same as on a short one). |
 | `HistoryLifecycleBenchmarks` | Filling a history with 20 pages and emptying it: creation and disposal of 20 pages. |
 | `RegionBenchmarks` | Routing in 1, 4 and 16 independent regions, one after the other and all at once; looking a region up; cold start of N regions. One invocation is `Regions` route changes. |
 
@@ -38,7 +38,7 @@ routing; the partner is the same in every row.
 
 Not timings: pass or fail, over 5 000 route changes each.
 
-1. The history never exceeds its limit.
+1. The history has one entry per route change, and none once it is erased.
 2. View models dropped from the history can be collected (weak references).
 3. Disposable view models are all disposed (created = disposed once the history is erased).
 4. The managed heap does not grow with the number of route changes.

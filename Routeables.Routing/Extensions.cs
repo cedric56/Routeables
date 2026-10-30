@@ -40,7 +40,7 @@ public static class Extensions
                 "A Transient router is not supported: each resolve would get a separate history use Regions instead.");
 
         // Router collaborators share the router's lifetime so they live and die together.
-        services.Add(new ServiceDescriptor(typeof(RouterHistory), _ => new RouterHistory(), lifetime));
+        services.Add(new ServiceDescriptor(typeof(RouterHistory), sp => new RouterHistory(sp.GetService<HistoryLimits>()?.For(null)), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterGate), _ => new RouterGate(), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterLifecycle), sp => new RouterLifecycle(sp), lifetime));
         services.Add(new ServiceDescriptor(typeof(IRouter), sp =>
@@ -71,7 +71,7 @@ public static class Extensions
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(route);
-        services.Add(new ServiceDescriptor(typeof(RouterHistory), route, (sp, k) => new RouterHistory(), lifetime));
+        services.Add(new ServiceDescriptor(typeof(RouterHistory), route, (sp, k) => new RouterHistory(sp.GetService<HistoryLimits>()?.For((string)k!)), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterGate), route, (sp, k) => new RouterGate(), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterLifecycle), route, (sp, k) => new RouterLifecycle(sp), lifetime));
         services.Add(new ServiceDescriptor(typeof(IRouter), route, (sp, k) =>
@@ -82,6 +82,29 @@ public static class Extensions
                 sp),
             lifetime));
 
+        return services;
+    }
+
+    /// <summary>
+    /// Limits the history of a router: when a push goes beyond <paramref name="maxSize"/> entries, the oldest entry is
+    /// dropped (and destroyed like a popped one). Without this call a history has no limit. Call it at startup, before or
+    /// after <see cref="RegisterRouting"/> / <see cref="AddRegion"/>.
+    /// </summary>
+    /// <param name="services">The service collection to add to.</param>
+    /// <param name="maxSize">The most entries kept, at least 1.</param>
+    /// <param name="region">The region whose history is limited; the default router when <see langword="null"/>.</param>
+    /// <returns>The same <paramref name="services"/> instance, for chaining.</returns>
+    public static IServiceCollection LimitHistory(this IServiceCollection services, int maxSize, string? region = null)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentOutOfRangeException.ThrowIfLessThan(maxSize, 1);
+        var limits = (HistoryLimits?)services.FirstOrDefault(d => d.ServiceType == typeof(HistoryLimits))?.ImplementationInstance;
+        if (limits is null)
+        {
+            limits = new HistoryLimits();
+            services.AddSingleton(limits);
+        }
+        limits.Set(region, maxSize);
         return services;
     }
 }

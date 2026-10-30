@@ -48,7 +48,7 @@ If you come from Prism and started another request from `OnNavigatedTo`, move th
 
 There is no dedicated cleanup interface: use the standard .NET ones. When an entry leaves the history, the router disposes its view model and its view with `DisposeAsync()` if they implement `IAsyncDisposable`, otherwise with `Dispose()` if they implement `IDisposable`. An exception thrown while disposing is swallowed, so cleanup never fails a route change.
 
-Entries leave the history on `PopAsync`, when a new route cuts off the forward entries, and on `EraseHistoryAsync` (the history has no limit). `GoBackAsync`, `ForwardAsync` and `MoveToAsync` only move the cursor, so they dispose nothing.
+Entries leave the history on `PopAsync`, when a new route cuts off the forward entries, and on `EraseHistoryAsync` (the history has no limit unless you set one, see [History](history.md)). `GoBackAsync`, `ForwardAsync` and `MoveToAsync` only move the cursor, so they dispose nothing.
 
 A view and a view model that are the same object, or an instance shared with an entry that stays in the history, are initialized and disposed once and are never disposed while still in use.
 
@@ -123,21 +123,7 @@ If the view overrides `InitializeAsync`, call `base.InitializeAsync(args, ct)` s
 
 ## Work that is not awaited
 
-`_ = Task.Run(...)` in `OnEnteringAsync` loses the exception of the task. `AsyncHelper.FireAndForget` starts the work without waiting for it and reports its exception to the `IRouteableErrorSink` (a cancellation is not an error); `onError` shows it in the view:
-
-```csharp
-public override Task OnEnteringAsync(IRouteableArgs args, CancellationToken ct = default)
-{
-    AsyncHelper.FireAndForget(async () =>
-    {
-        await cache.LoadAsync();                 // what follows the await is back on the UI context
-        Persons = new(cache.Entities);
-    }, provider, "persons", onError: ex => Error = ex.Message);
-    return Task.CompletedTask;
-}
-```
-
-`task.Forget(provider)` does the same for a task you already have. From synchronous code that must wait (a constructor, a property), `AsyncHelper.RunSync(() => LoadAsync())` runs the method on the thread pool, so it cannot deadlock on the UI context, keeps the culture of the caller and throws the original exception.
+`_ = Task.Run(...)` in `OnEnteringAsync` loses the exception of the task. Routeables ships no helper for it: catch the exception inside the task and report it where your application reports errors.
 
 ## Finding out why a route did not show
 

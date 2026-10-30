@@ -19,6 +19,9 @@ public interface IRouterHistory
     /// <summary>Number of entries currently stored.</summary>
     int Count { get; }
 
+    /// <summary>The most entries the history keeps, or <see langword="null"/> when it has no limit (the default).</summary>
+    int? MaxSize { get; }
+
     /// <summary>Index of <see cref="Current"/>, or -1 when empty.</summary>
     int CurrentIndex { get; }
 

@@ -1,4 +1,5 @@
-﻿using Routeables.Abstraction;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Routeables.Abstraction;
 using Routeables.Routing;
 using Routeables.Test.Abstraction;
 
@@ -113,5 +114,46 @@ public class RouterHistoryTests
         Assert.Null(history.Current);
         Assert.False(history.CanGoBack);
         Assert.False(history.CanGoForward);
+    }
+
+    [Fact]
+    public void A_limited_history_drops_the_oldest_entry_and_returns_it()
+    {
+        var history = new RouterHistory(3);
+        history.Push(Entry("a"));
+        history.Push(Entry("b"));
+        history.Push(Entry("c"));
+
+        var removed = history.Push(Entry("d"));
+
+        Assert.Equal(["a"], removed.Select(e => (string)e.ViewModel));
+        Assert.Equal(3, history.Count);
+        Assert.Equal("b", history.Root!.ViewModel);
+        Assert.Equal("d", history.Current!.ViewModel);
+        Assert.Equal(2, history.CurrentIndex);
+    }
+
+    [Fact]
+    public void A_history_without_a_limit_reports_no_MaxSize_and_a_limit_below_one_is_refused()
+    {
+        Assert.Null(new RouterHistory().MaxSize);
+        Assert.Equal(5, new RouterHistory(5).MaxSize);
+        Assert.Throws<ArgumentOutOfRangeException>(() => new RouterHistory(0));
+    }
+
+    [Fact]
+    public void LimitHistory_sets_the_limit_of_the_default_router_and_of_a_region_only()
+    {
+        var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+        services.LimitHistory(4);
+        services.LimitHistory(2, "detail");
+        services.RegisterRouting();
+        services.AddRegion("detail", Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton);
+        services.AddRegion("other", Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton);
+        using var provider = services.BuildServiceProvider();
+
+        Assert.Equal(4, provider.GetRequiredService<IRouter>().History.MaxSize);
+        Assert.Equal(2, provider.GetRequiredKeyedService<IRouter>("detail").History.MaxSize);
+        Assert.Null(provider.GetRequiredKeyedService<IRouter>("other").History.MaxSize);
     }
 }

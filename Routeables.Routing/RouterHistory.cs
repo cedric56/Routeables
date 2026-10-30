@@ -3,12 +3,24 @@
 namespace Routeables.Routing;
 
 /// <summary>
-/// Manages the route change history stack (it has no limit: it grows with the route changes until an entry is popped or the history is erased), tracking the active index
+/// Manages the route change history stack, tracking the active index
 /// and providing stack manipulation methods such as pushing, popping, traversing, and clearing.
+/// Without a limit the stack grows with the route changes until an entry is popped or the history is erased;
+/// with a <c>maxSize</c> the oldest entry is dropped when a push goes beyond it.
 /// </summary>
 internal sealed class RouterHistory : IRouterHistory
 {
     private readonly List<RouterEntry> _entries = [];
+
+    /// <summary>Creates a history; <paramref name="maxSize"/> is the most entries it keeps, or <see langword="null"/> for no limit.</summary>
+    public RouterHistory(int? maxSize = null)
+    {
+        if (maxSize is < 1) throw new ArgumentOutOfRangeException(nameof(maxSize), maxSize, "The limit must be at least 1.");
+        MaxSize = maxSize;
+    }
+
+    /// <summary>The most entries the history keeps, or <see langword="null"/> when it has no limit.</summary>
+    public int? MaxSize { get; }
     private int _currentIndex = -1;
 
     /// <summary>
@@ -51,10 +63,10 @@ internal sealed class RouterHistory : IRouterHistory
     IReadOnlyList<IHistoryEntry> IRouterHistory.Entries => _entries.ToArray();   // snapshot
 
     /// <summary>
-    /// Pushes a new entry onto the history stack, discarding any forward history.
+    /// Pushes a new entry onto the history stack, discarding any forward history and, beyond <see cref="MaxSize"/>, the oldest entry.
     /// </summary>
     /// <param name="entry">The router entry to push.</param>
-    /// <returns>A list of entries that were removed (the forward entries) as a result of the push operation.</returns>
+    /// <returns>A list of entries that were removed (the forward entries, and the evicted oldest one) as a result of the push operation.</returns>
     public IReadOnlyList<RouterEntry> Push(RouterEntry entry)
     {
         var removed = new List<RouterEntry>();
@@ -67,6 +79,12 @@ internal sealed class RouterHistory : IRouterHistory
         }
 
         _entries.Add(entry);
+        if (MaxSize is { } max && _entries.Count > max)
+        {
+            removed.Add(_entries[0]);
+            _entries.RemoveAt(0);
+        }
+
         _currentIndex = _entries.Count - 1;
         OnChanged();
         return removed;

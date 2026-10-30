@@ -81,7 +81,7 @@ Each host README has the complete setup. [Getting started](docs/getting-started.
 | Routes | `[Routeable("/path/{id:int}")]` on the view model; view paired by name; constraints; most specific template wins; query strings | [Routes](docs/guides/routes.md) |
 | Typed routing | `GoToMonkeyDetailAsync(router, name)` generated from the constructor | [Typed routes](docs/guides/typed-routes.md) |
 | Arguments | Route values, query values and objects passed to the target | [Arguments](docs/guides/arguments.md) |
-| History | Back, forward, pop, back to root, move to an entry, erase; no size limit | [History](docs/guides/history.md) |
+| History | Back, forward, pop, back to root, move to an entry, erase; no limit by default, `LimitHistory` to set one | [History](docs/guides/history.md) |
 | Regions | Several zones, each with its own router and history | [Regions](docs/guides/regions.md) |
 | Lifecycle | Initialize, entering, leaving, `CanLeaveAsync` veto, `OnSubscribe`/`OnUnsubscribe`, destroy | [Lifecycle](docs/guides/lifecycle.md) |
 | Guards | `IRouteGuard` with an order; allow, redirect or cancel a route change | [Routes](docs/guides/routes.md) |
@@ -91,7 +91,7 @@ Each host README has the complete setup. [Getting started](docs/getting-started.
 | Modules | A feature is one extension method, loaded at startup or on demand | [Hosts](docs/guides/hosts.md) |
 | Locking | Pages that block leaving, a locked menu | [Locking](Routeables.Locking/README.md) |
 | Menu | `RouteableMenu` on Avalonia and WPF, items bound to routes | [Hosts](docs/guides/hosts.md) |
-| Errors and safe async | `RouteableResult`, error sink, `AsyncHelper` (fire and forget, run sync) | [Lifecycle](docs/guides/lifecycle.md) |
+| Errors | `RouteableResult`, `IRouteableErrorSink` | [Lifecycle](docs/guides/lifecycle.md) |
 | Diagnostics | Tracing and metrics for route changes | [Diagnostics](docs/guides/diagnostics.md) |
 | Native AOT | Source generated; nothing scans assemblies at run time | [AOT](docs/guides/aot.md) |
 | Hosts | Blazor, .NET MAUI, Avalonia, Uno Platform, WPF | [Hosts](docs/guides/hosts.md) |
