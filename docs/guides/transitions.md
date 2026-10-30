@@ -66,14 +66,14 @@ Animation is native to each host, so a custom transition is registered per host 
 | Avalonia | `RouteTransitions.Register("Spin", (direction, duration) => new Rotate3DTransition(duration))` returns an `IPageTransition` |
 | WPF | `RouteTransitions.Register("Grow", (region, direction, duration) => ...)` starts a storyboard on the region |
 | MAUI | `RouteTransitions.Register("Grow", async (region, direction, duration) => await region.ScaleToAsync(...))` |
-| Uno | `RouteTransitions.Register("Pop", direction => new TransitionCollection { new PopupThemeTransition() })` returns the transitions the region plays |
+| Uno | `RouteTransitions.Register("Pop", direction => new TransitionCollection { new EntranceThemeTransition { FromVerticalOffset = 30 } })` returns the transitions the region plays |
 | Blazor | a CSS animation of yours: `.rt-enter.rt-spin { animation-name: spin; }` |
 
 ## What each host does
 
 - **Avalonia** animates the opacity and the `RenderTransform` of the new view (the built-in ones), so that view should not rely on a `RenderTransform` of its own. A custom transition is an `IPageTransition` given to the `PageTransition` of the control (going back reverses it with `IsTransitionReversed`).
 - **WPF, MAUI** animate the new view (opacity, scale, rotation, translation). WPF plays nothing when Windows has animations turned off, and leaves the view alone when the region has a `RenderTransform` of its own (it fades in).
-- **Uno** uses the theme transitions of the platform (`ContentThemeTransition`, `EntranceThemeTransition`, `PopupThemeTransition`), which decide how long they last: the effects it cannot reproduce become the platform's pop. Register a name to play your own animation.
+- **Uno** uses the theme transitions of the platform (`ContentThemeTransition`, `EntranceThemeTransition`), which decide how long they last: the effects it cannot reproduce become a short rise from below (Uno does not implement `PopupThemeTransition`). Register a name to play your own animation.
 - **Blazor** gives the element the classes `rt-enter rt-{name} rt-{forward|back|none}` and the variable `--rt-duration`; the animations of the built-in names are in `theme.css`, and `prefers-reduced-motion` turns them off.
 
 `RouteableRegionItems` and the controls that do not show a router's current view (menus, tabs) play no transition.

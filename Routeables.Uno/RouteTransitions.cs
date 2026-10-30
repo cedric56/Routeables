@@ -11,8 +11,8 @@ namespace Routeables.Uno;
 /// (<see cref="RouteTransition.BuiltIn"/>) and the custom ones registered here. They are the theme transitions of the platform, which
 /// chooses how long they last, so the built-in ones are the closest of them: <c>Fade</c>, <c>Blur</c> and <c>Spotlight</c> are a
 /// <see cref="ContentThemeTransition"/>; <c>Slide</c>, <c>SlideFade</c> and <c>Swipe</c> an <see cref="EntranceThemeTransition"/> from the side;
-/// <c>SlideUp</c> and <c>Lift</c> one from below; <c>Pop</c>, <c>Scale</c>, <c>Flip</c>, <c>Rotate</c>, <c>Reveal</c> and <c>Curtain</c> a
-/// <see cref="PopupThemeTransition"/>. Register a name to play your own animation.
+/// <c>SlideUp</c> and <c>Lift</c> one from below; <c>Pop</c>, <c>Scale</c>, <c>Flip</c>, <c>Rotate</c>, <c>Reveal</c> and <c>Curtain</c> a short one from below
+/// (Uno does not implement <c>PopupThemeTransition</c>). Register a name to play your own animation.
 /// </summary>
 public static class RouteTransitions
 {
@@ -53,10 +53,10 @@ public static class RouteTransitions
         if (from.TranslateY != 0)
             return new TransitionCollection { new EntranceThemeTransition { FromVerticalOffset = from.TranslateY * Math.Max(40, height) } };
 
-        // A size or an angle: the platform's pop. A blur is not drawn, so a view that only settles fades in.
-        //return name.Equals("Blur", StringComparison.OrdinalIgnoreCase) || name.Equals("Spotlight", StringComparison.OrdinalIgnoreCase) || !from.Moves
-        //    ? new TransitionCollection { new ContentThemeTransition() }
-        //    : new TransitionCollection { new PopupThemeTransition() };
-        return new TransitionCollection { new ContentThemeTransition() };
+        // A size or an angle: Uno does not implement PopupThemeTransition (Uno0001), so the view rises a little. A blur is not drawn,
+        // so a view that only settles fades in.
+        return name.Equals("Blur", StringComparison.OrdinalIgnoreCase) || name.Equals("Spotlight", StringComparison.OrdinalIgnoreCase) || !from.Moves
+            ? new TransitionCollection { new ContentThemeTransition() }
+            : new TransitionCollection { new EntranceThemeTransition { FromVerticalOffset = 24 } };
     }
 }
