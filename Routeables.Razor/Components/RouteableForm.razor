@@ -12,9 +12,9 @@
     }
 
     <nav class="split-nav" aria-label="Pages">
-        @foreach (var item in ViewModel.Routeables)
+        @foreach (var item in MainViewModel.Routeables)
         {
-            var current = ReferenceEquals(item, ViewModel.Routeable);
+            var current = ReferenceEquals(item, MainViewModel.Routeable);
             <button type="button"
                     class="split-nav-item @(current ? "split-nav-active" : string.Empty)"
                     disabled="@item.IsLock"
@@ -27,7 +27,7 @@
 
     <div class="form">
         <div class="form-header">@ChildContent</div>
-        @if (ViewModel.CurrentView is RouteableFor routeable)
+        @if (MainViewModel.CurrentView is RouteableFor routeable)
         {
             <div class="form-body @routeable.Class">
                 @routeable.Render()
@@ -61,14 +61,14 @@
     /// Gets or sets the view model managing the split route change state, pages, and current view.
     /// </summary>
     [Parameter]
-    public required IMainViewModel ViewModel { get; set; }
+    public required IMainViewModel MainViewModel { get; set; }
 
     /// <summary>
     /// Makes <paramref name="page"/> the active page.
     /// </summary>
     private void Select(IRouteableEntry page)
     {
-        ViewModel.Routeable = page;
+        MainViewModel.Routeable = page;
     }
 
     private IMainViewModel? _subscribed;
@@ -78,11 +78,11 @@
     /// </summary>
     protected override void OnParametersSet()
     {
-        if (ReferenceEquals(ViewModel, _subscribed))
+        if (ReferenceEquals(MainViewModel, _subscribed))
             return;
 
         Unsubscribe();
-        _subscribed = ViewModel;
+        _subscribed = MainViewModel;
         _subscribed.LockChanged += OnLockChanged;
         _subscribed.CurrentViewChanged += OnViewChanged;
     }

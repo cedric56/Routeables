@@ -141,15 +141,15 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Creates a <see cref="ILockCoordinator"/> bound to <paramref name="routeables"/>
+    /// Creates a <see cref="ILockCoordinator"/> bound to <paramref name="mainViewModel"/>
     /// </summary>
     /// <param name="provider">The provider the factory is resolved from.</param>
-    /// <param name="routeables">The MVVM manager the coordinator will work with.</param>
+    /// <param name="mainViewModel">The MVVM manager the coordinator will work with.</param>
     /// <returns>A new <see cref="ILockCoordinator"/> instance (one per call).</returns>
-    public static ILockCoordinator GetLockCoordinator(this IServiceProvider provider, IMainViewModel routeables)
+    public static ILockCoordinator GetLockCoordinator(this IServiceProvider provider, IMainViewModel mainViewModel)
     {
         var factory = provider.GetRequiredService<Func<IMainViewModel, ILockCoordinator>>();
-        return factory.Invoke(routeables);
+        return factory.Invoke(mainViewModel);
     }
 
     /// <summary>

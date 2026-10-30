@@ -112,24 +112,24 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
     }
 
     /// <summary>Adds the entries of the modules already loaded to a main view model, and keeps it to add the ones of the next.</summary>
-    internal void Attach(IMainViewModel main)
+    internal void Attach(IMainViewModel mainViewModel)
     {
         List<MenuEntries> menus;
         lock (_gate)
         {
             _mains.RemoveAll(m => !m.TryGetTarget(out _));
-            _mains.Add(new WeakReference<IMainViewModel>(main));
+            _mains.Add(new WeakReference<IMainViewModel>(mainViewModel));
             menus = _loaded.SelectMany(l => l.Menus).ToList();
         }
 
         foreach (var menu in menus)
-            menu.AddTo(main);
+            menu.AddTo(mainViewModel);
     }
 
     private List<IMainViewModel> AliveMains()
     {
         _mains.RemoveAll(m => !m.TryGetTarget(out _));
-        return _mains.Select(m => m.TryGetTarget(out var main) ? main : null).OfType<IMainViewModel>().ToList();
+        return _mains.Select(m => m.TryGetTarget(out var mainViewModel) ? mainViewModel : null).OfType<IMainViewModel>().ToList();
     }
 
     [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Finds the methods of the module by reflection.")]

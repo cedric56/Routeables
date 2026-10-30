@@ -485,10 +485,10 @@ internal class Router(
     }
 
     /// <inheritdoc />
-    public ILockCoordinator? CreateLockCoordinator(IMainViewModel routeables)
+    public ILockCoordinator? CreateLockCoordinator(IMainViewModel mainViewModel)
     {
         // Locking is optional: without a registered factory (AddLocking) there is nothing to lock.
-        return provider.GetService<Func<IMainViewModel, ILockCoordinator>>()?.Invoke(routeables);
+        return provider.GetService<Func<IMainViewModel, ILockCoordinator>>()?.Invoke(mainViewModel);
     }
 
     /// <inheritdoc />

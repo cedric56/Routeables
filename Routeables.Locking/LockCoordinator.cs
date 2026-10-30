@@ -13,7 +13,7 @@ internal sealed class LockCoordinator : ILockCoordinator, IDisposable
     private readonly object _gate = new();
     private readonly IServiceProvider _provider;
     private readonly IRouteableBrokerService _broker;
-    private readonly IMainViewModel _routeables;
+    private readonly IMainViewModel _mainViewModel;
     private IDisposable? _subscription;
 
     /// <summary>
@@ -30,7 +30,7 @@ internal sealed class LockCoordinator : ILockCoordinator, IDisposable
     {
         _provider = provider;
         _broker = broker;
-        _routeables = manager;
+        _mainViewModel = manager;
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ internal sealed class LockCoordinator : ILockCoordinator, IDisposable
         if (message is not RouteableLockMessage m)
             return;
 
-        Apply(_routeables, m.IsLocked);
+        Apply(_mainViewModel, m.IsLocked);
 
         if (!m.IsAllLocked)
             return;
@@ -66,7 +66,7 @@ internal sealed class LockCoordinator : ILockCoordinator, IDisposable
 
         foreach (var manager in all)
         {
-            if (!ReferenceEquals(manager, _routeables))
+            if (!ReferenceEquals(manager, _mainViewModel))
                 Apply(manager, m.IsLocked);
         }
     }

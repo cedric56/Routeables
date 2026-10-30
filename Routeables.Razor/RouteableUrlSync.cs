@@ -78,10 +78,10 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             result = await router.ForwardAsync();
             Moved(result);
         }
-        else if (provider.GetService<IMainViewModel>() is { } main
-                 && main.Routeables.FirstOrDefault(r => Same(r.Route, path)) is { } item)
+        else if (provider.GetService<IMainViewModel>() is { } mainViewModel
+                 && mainViewModel.Routeables.FirstOrDefault(r => Same(r.Route, path)) is { } item)
         {
-            main.Routeable = item;       // keeps the layout's selection (menu highlight) in step; it navigates the router
+            mainViewModel.Routeable = item;       // keeps the layout's selection (menu highlight) in step; it navigates the router
             return true;
         }
         else if (provider.GetService<RouteableTable>()?.Entries

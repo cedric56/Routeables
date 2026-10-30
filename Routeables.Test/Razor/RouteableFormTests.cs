@@ -37,7 +37,7 @@ public class RouteableFormTests
         {
             var root = await renderer.RenderComponentAsync<RouteableForm>(ParameterView.FromDictionary(new Dictionary<string, object?>
             {
-                [nameof(RouteableForm.ViewModel)] = vm,
+                [nameof(RouteableForm.MainViewModel)] = vm,
                 [nameof(RouteableForm.IsBusy)] = busy,
                 [nameof(RouteableForm.ChildContent)] = (RenderFragment)(b => b.AddContent(0, "HEADER")),
             }));

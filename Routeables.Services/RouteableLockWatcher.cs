@@ -17,10 +17,10 @@ internal sealed class RouteableLockWatcher(Action<bool> changed) : IDisposable
 {
     private IMainViewModel? _followed;
 
-    /// <summary>Whether every entry of <paramref name="routeables"/> is locked (a page is blocking the route change); <see langword="false"/> without entries.</summary>
-    /// <param name="routeables">The main view model, or <see langword="null"/>.</param>
-    public static bool AllLocked(IMainViewModel? routeables) =>
-        routeables?.Routeables is { Count: > 0 } entries && entries.All(entry => entry.IsLock);
+    /// <summary>Whether every entry of <paramref name="mainViewModel"/> is locked (a page is blocking the route change); <see langword="false"/> without entries.</summary>
+    /// <param name="mainViewModel">The main view model, or <see langword="null"/>.</param>
+    public static bool AllLocked(IMainViewModel? mainViewModel) =>
+        mainViewModel?.Routeables is { Count: > 0 } entries && entries.All(entry => entry.IsLock);
 
     /// <summary>
     /// Follows the lock of <paramref name="context"/> when it is a main view model, and stops following the previous one.
@@ -32,12 +32,12 @@ internal sealed class RouteableLockWatcher(Action<bool> changed) : IDisposable
     {
         Dispose();
 
-        if (context is not IMainViewModel routeables)
+        if (context is not IMainViewModel mainViewModel)
             return false;
 
-        _followed = routeables;
-        routeables.LockChanged += OnLockChanged;
-        return AllLocked(routeables);
+        _followed = mainViewModel;
+        mainViewModel.LockChanged += OnLockChanged;
+        return AllLocked(mainViewModel);
     }
 
     /// <summary>Stops following the lock of the main view model.</summary>
@@ -51,7 +51,7 @@ internal sealed class RouteableLockWatcher(Action<bool> changed) : IDisposable
 
     private void OnLockChanged(object? sender, EventArgs e)
     {
-        if ((sender as IMainViewModel ?? _followed) is { } routeables)
-            changed(AllLocked(routeables));
+        if ((sender as IMainViewModel ?? _followed) is { } mainViewModel)
+            changed(AllLocked(mainViewModel));
     }
 }

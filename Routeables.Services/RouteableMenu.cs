@@ -15,13 +15,13 @@ internal static class RouteableMenu
     /// </summary>
     public static void Moved(IServiceProvider provider, IRouter router)
     {
-        if (!ReferenceEquals(router, provider.GetService<IRouter>()) || provider.GetService<IMainViewModel>() is not { } main)
+        if (!ReferenceEquals(router, provider.GetService<IRouter>()) || provider.GetService<IMainViewModel>() is not { } mainViewModel)
             return;
 
         var viewModel = router.CurrentViewModel;
         if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
-            dispatcher.Post(() => main.OnRouterMoved(viewModel));
+            dispatcher.Post(() => mainViewModel.OnRouterMoved(viewModel));
         else
-            main.OnRouterMoved(viewModel);
+            mainViewModel.OnRouterMoved(viewModel);
     }
 }
