@@ -31,7 +31,7 @@ public sealed class SignedInGuard(ISession session) : IRouteGuard
 services.AddSingleton<IRouteGuard, SignedInGuard>();
 ```
 
-- Every registered guard is asked, in registration order, before the route change starts. The first one that does not allow decides.
+- Every registered guard is asked before the route change starts, by `IRouteGuard.Order` (lowest first, `0` by default), then in registration order. The first one that does not allow decides. A router resolves its guards once, the first time it needs them: a `Transient` or `Scoped` guard lives as long as the router.
 - `Cancel` leaves the user where they are (`result.Cancelled` is `true`). `Redirect(route)` goes to another route instead; it is followed only for a `Push` (for a back, a forward or a pop it is a cancel), and at most 8 redirects are chained, so two guards that send the user to each other end instead of looping.
 - A guard that throws makes the route change fail with that exception.
 - The redirect is a normal route change: the guards apply to it too.

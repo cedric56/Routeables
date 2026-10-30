@@ -3,7 +3,8 @@
 /// <summary>
 /// A rule that applies to every route change of a router, whatever the page: the user must be signed in, a feature is switched
 /// off, an update is required. Register it with <c>services.AddSingleton&lt;IRouteGuard, MyGuard&gt;()</c>; every guard that is
-/// registered is asked, in the order of registration, before the route change starts.
+/// registered is asked, in the order of <see cref="Order"/> (then of registration), before the route change starts. A router resolves its
+/// guards once, the first time it needs them: a guard registered as <c>Transient</c> or <c>Scoped</c> lives as long as the router.
 /// </summary>
 /// <remarks>
 /// <para>A guard is asked once the page that is entered is known (<see cref="RouteableRoutingEventArgs.To"/>: its view model, its
@@ -16,6 +17,12 @@
 /// </remarks>
 public interface IRouteGuard
 {
+    /// <summary>
+    /// Where this guard stands among the others: the lowest value is asked first, guards with the same value in the order of
+    /// registration. <c>0</c> by default.
+    /// </summary>
+    int Order => 0;
+
     /// <summary>Decides whether the route change goes on.</summary>
     Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default);
 }

@@ -135,10 +135,17 @@ internal class Router(
         }
     }
 
-    // Every registered guard, in the order of registration, until one refuses.
+    // The guards are resolved once, when the first route change needs them, and kept sorted by IRouteGuard.Order (a stable sort: guards
+    // of the same order stay in the order of registration).
+    private IRouteGuard[]? _guards;
+
+    private IRouteGuard[] Guards => _guards ??= [.. provider.GetServices<IRouteGuard>().Select((guard, index) => (guard, index))
+        .OrderBy(x => x.guard.Order).ThenBy(x => x.index).Select(x => x.guard)];
+
+    // Every registered guard, in the order of IRouteGuard.Order, until one refuses.
     private async Task<RouteGuardDecision> AskGuardsAsync(RouteableKind kind, RouterEntry? from, RouterEntry to, CancellationToken ct)
     {
-        var guards = provider.GetServices<IRouteGuard>().ToArray();
+        var guards = Guards;
         if (guards.Length == 0)
             return RouteGuardDecision.Allow;
 
@@ -454,15 +461,10 @@ internal class Router(
 
         // A route registered with an explicit template (RegisterRoute(route: "/orders/{id:int}"), [Routeable]): the template
         // reads the parameters from the address. Given a template, it is the registered route with that template.
-        var found = default((string Template, Type? ViewModelType));
-        foreach (var entry in provider.GetService<RouteableTable>()?.Entries ?? [])
-        {
-            if (template is null ? RouteParser.TryMatch(entry.Template, url) : string.Equals(entry.Template, template, StringComparison.OrdinalIgnoreCase))
-            {
-                found = entry;
-                break;
-            }
-        }
+        var entries = provider.GetService<RouteableTable>()?.Entries ?? [];
+        var found = template is null
+            ? RouteParser.BestMatch(entries, url)   // several templates may match: the most specific one
+            : entries.FirstOrDefault(e => string.Equals(e.Template, template, StringComparison.OrdinalIgnoreCase));
         if (found.Template is not null)
         {
             var keys = found.ViewModelType is null
@@ -577,7 +579,7 @@ internal class Router(
         if (exact.Template is not null)
             return exact.Template;
 
-        var matching = entries.FirstOrDefault(e => RouteParser.TryMatch(e.Template, route));
+        var matching = RouteParser.BestMatch(entries, route);
         if (matching.Template is not null)
             return matching.Template;
 

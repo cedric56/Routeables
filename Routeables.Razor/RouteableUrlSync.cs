@@ -84,8 +84,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             mainViewModel.Routeable = item;       // keeps the layout's selection (menu highlight) in step; it navigates the router
             return true;
         }
-        else if (provider.GetService<RouteableTable>()?.Entries
-                     .Where(e => RouteParser.TryMatch(e.Template, path)).Select(e => e.Template).FirstOrDefault() is { } template)
+        else if (RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], path).Template is { } template)
         {
             try
             {

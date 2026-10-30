@@ -119,6 +119,11 @@ public static class RouteParser
         var attribute = m.Groups["attribute"].Success;
         var optional = m.Groups["opt"].Success;
 
+        // A constraint that is neither built in nor registered is a mistake in the template: it never matches, and says so (instead of throwing
+        // while the router looks for a route).
+        if (!IsKnownConstraint(type))
+            return $"the constraint \"{type}\" of {{{name}}} is unknown (built in: {string.Join(", ", BuiltInConstraints)}; or register a serializer with RouteParser.RegisterSerializer)";
+
         if (string.IsNullOrEmpty(raw))
         {
             // a missing optional value is skipped, a missing required one is a mismatch
@@ -145,6 +150,13 @@ public static class RouteParser
             args.ForViewModel(new RouteableArgument(value, name, attribute ?? false));
     }
 
+    private static readonly string[] BuiltInConstraints = ["string", "int", "long", "bool", "guid", "decimal", "double"];
+
+    private static bool IsKnownConstraint(string type)
+        => type is "" or "?"
+           || SerializationInfos.ContainsKey(type)
+           || Array.Exists(BuiltInConstraints, c => string.Equals(c, type, StringComparison.OrdinalIgnoreCase));
+
     /// <summary>
     /// Converts a raw string parameter value into the specified target type constraint.
     /// </summary>
@@ -170,8 +182,58 @@ public static class RouteParser
             case "decimal": { var ok = decimal.TryParse(raw, NumberStyles.Number, inv, out var v); value = v; return ok; }
             case "double": { var ok = double.TryParse(raw, NumberStyles.Float, inv, out var v); value = v; return ok; }
             default:
-                throw new NotSupportedException($"Unsupported route constraint '{type}'.");
+                value = null;
+                return false;   // not reached: Bind refuses an unknown constraint first
         }
+    }
+
+    /// <summary>
+    /// The registered route that opens <paramref name="uri"/>. When several templates match, the most specific wins, whatever their
+    /// registration order: segment by segment from the left, a literal beats a typed parameter (<c>{id:int}</c>, a registered type),
+    /// which beats an untyped one (<c>{id}</c>), which beats an optional one (<c>{tab?}</c>). <c>/bears/new</c> is therefore
+    /// <c>bears/new</c>, not <c>bears/{id}</c>. Equally specific templates keep the order of registration.
+    /// </summary>
+    /// <returns>The entry, or one whose <c>Template</c> is <see langword="null"/> when no template matches.</returns>
+    internal static (string Template, Type? ViewModelType) BestMatch(
+        IEnumerable<(string Template, Type? ViewModelType)> entries, string uri)
+    {
+        var best = default((string Template, Type? ViewModelType));
+        int[]? bestRank = null;
+        foreach (var entry in entries)
+        {
+            if (!TryMatch(entry.Template, uri))
+                continue;
+
+            var rank = Specificity(entry.Template);
+            if (bestRank is null || CompareRanks(rank, bestRank) > 0)
+            {
+                best = entry;
+                bestRank = rank;
+            }
+        }
+
+        return best;
+    }
+
+    private static int[] Specificity(string template)
+    {
+        var (path, _) = Split(template);
+        return [.. path.Split('/', StringSplitOptions.RemoveEmptyEntries).Select(segment =>
+        {
+            var m = Param.Match(segment);
+            if (!m.Success) return 3;                                   // literal
+            if (m.Groups["opt"].Success) return 0;                      // optional
+            var type = m.Groups["type"].Value;
+            return type is "" or "?" or "string" ? 1 : 2;               // untyped, or typed
+        })];
+    }
+
+    private static int CompareRanks(int[] a, int[] b)
+    {
+        for (var i = 0; i < Math.Min(a.Length, b.Length); i++)
+            if (a[i] != b[i])
+                return a[i].CompareTo(b[i]);
+        return 0;
     }
 
     /// <summary>

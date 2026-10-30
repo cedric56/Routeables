@@ -12,6 +12,19 @@ A **route** is the concrete string you go to (`/dogs/Eurohound`). A **template**
 | `{panda::}` | Segment bound to the **view** instead of the view model (`/pandas/{panda::}`, see [Arguments](arguments.md)) |
 | `?{tab}` / `?{tab?}` | Query-string value, required / optional |
 
+A type that is not in the table is a registered one (`RouteParser.RegisterSerializer`, trim-safe JSON). A template with any other type never matches, and the reason says so (`the constraint "foo" of {id} is unknown`): it does not throw while the router looks for a route.
+
+### Which route wins
+
+When several templates match a route, the **most specific** one wins, whatever the order they were registered in. Segments are compared from the left: a literal (`new`) beats a typed placeholder (`{id:int}`, a registered type), which beats an untyped one (`{id}`), which beats an optional one (`{tab?}`). With `/bears/{id}`, `/bears/{id:int}` and `/bears/new` registered, `/bears/new` opens the third, `/bears/12` the second and `/bears/polar` the first. Templates that are equally specific keep the order of registration. There is no catch-all placeholder (`{**path}`).
+
+Details of the matching:
+
+- The route is split into segments before it is decoded, so `files/a%2Fb` is the one segment `a/b`; an escape sequence that is not valid (`100%zz`) is kept as it is.
+- Literal segments are compared without regard to case.
+- An optional placeholder (`{tab?}`) is for the last segment of the path; one in the middle does not skip a segment.
+- When a query name is repeated (`?tag=a&tag=b`), the last value wins.
+
 Query values that are not declared in the template are kept as neutral values (`IRouteableArgs.Values`, read by the lifecycle hooks): they are never given to the constructor or injected into a property, so a link with `?utm_source=mail` still opens the page, and nobody can fill a constructor parameter from the address.
 
 `[Routeable]` takes a path, an optional region and a service lifetime. It can be repeated on the same class to give a view model several routes:

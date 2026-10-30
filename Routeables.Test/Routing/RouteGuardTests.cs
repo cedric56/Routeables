@@ -252,4 +252,44 @@ public class RouteGuardTests
         Assert.Null(entry.View);
         Assert.Null(entry.ViewModel);
     }
+
+    private sealed class OrderedGuard(string name, int order, List<string> asked) : IRouteGuard
+    {
+        public int Order => order;
+
+        public Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
+        {
+            asked.Add(name);
+            return Task.FromResult(RouteGuardDecision.Allow);
+        }
+    }
+
+    [Fact]
+    public async Task Guards_are_asked_by_Order_then_by_registration()
+    {
+        var asked = new List<string>();
+        using var provider = Build(
+            new OrderedGuard("late", 10, asked),
+            new OrderedGuard("first registered", 0, asked),
+            new OrderedGuard("early", -5, asked),
+            new OrderedGuard("second registered", 0, asked));
+        var router = provider.GetRequiredService<IRouter>();
+
+        await router.GoToAsync("/guard-home", cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.Equal(new[] { "early", "first registered", "second registered", "late" }, asked);
+    }
+
+    [Fact]
+    public async Task The_same_guards_are_asked_on_every_route_change()
+    {
+        var asked = new List<string>();
+        using var provider = Build(new OrderedGuard("g", 0, asked));
+        var router = provider.GetRequiredService<IRouter>();
+
+        await router.GoToAsync("/guard-home", cancellationToken: TestContext.Current.CancellationToken);
+        await router.GoToAsync("/guard-admin", cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.Equal(new[] { "g", "g" }, asked);
+    }
 }
