@@ -115,3 +115,14 @@ public partial class BoardView { }
 Without the generator, `services.RegisterRoute<TView, TViewModel>(viewModelLifetime:, viewLifetime:, route)` takes the same two lifetimes.
 
 A `Scoped` or `Singleton` instance is cached by its route and built once, with the arguments of the first route change: later route changes to the same route do not pass theirs again. Keep pages that receive a different argument each time (a detail page) `Transient`.
+
+## Going to a route from XAML
+
+A button can go to a route with no code in the view model. `RouteableLink.Route` is an attached property of the button on Avalonia, WPF, Uno and MAUI (the host namespace is the one of `RouteableRegion`):
+
+```xml
+<Button Content="Hello" routeables:RouteableLink.Route="/hello/World" />
+<Button Content="Details" routeables:RouteableLink.Route="/dogs/Eurohound" routeables:RouteableLink.Region="detail" />
+```
+
+The click goes to the route in the router of `RouteableLink.Region` (the default router without it), like `provider.GoToAsync(route, region)`. The route is a fixed address: for one that depends on the view model, bind a command that calls the typed routing method. A failed or refused route change is reported to the `IRouteableErrorSink`, as the other errors that have no caller to throw to; the button does not need `CanExecute` because a guard decides. On Blazor, an `<a href="/hello/World">` already does this through the URL.

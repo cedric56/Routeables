@@ -79,6 +79,7 @@ Each host README has the complete setup. [Getting started](docs/getting-started.
 | Area | What Routeables offers | Guide |
 | --- | --- | --- |
 | Routes | `[Routeable("/path/{id:int}")]` on the view model; view paired by name; constraints; most specific template wins; query strings | [Routes](docs/guides/routes.md) |
+| Declarative navigation | `routeables:RouteableLink.Route="/hello/World"` on a button, in XAML, no code in the view model (Avalonia, WPF, Uno, MAUI) | [Routes](docs/guides/routes.md) |
 | Typed routing | `GoToMonkeyDetailAsync(router, name)` generated from the constructor | [Typed routes](docs/guides/typed-routes.md) |
 | Arguments | Route values, query values and objects passed to the target | [Arguments](docs/guides/arguments.md) |
 | History | Back, forward, pop, back to root, move to an entry, erase; no limit by default, `LimitHistory` to set one | [History](docs/guides/history.md) |
