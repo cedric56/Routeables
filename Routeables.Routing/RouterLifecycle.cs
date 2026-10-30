@@ -63,6 +63,28 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
         if (entry.View is IRouteable v) await v.OnLeavingAsync(entry.Args, ct);
     }
 
+    // The instances OnSubscribe was called on. Weak: it must not keep the pages alive.
+    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<object, object> _subscribed = new();
+
+    // OnSubscribe, once per instance, before the first OnEntering (the view model, then the view; one call when they are the same instance).
+    private void Subscribe(RouterEntry entry)
+    {
+        foreach (var target in entry.ViewModel is not null && ReferenceEquals(entry.ViewModel, entry.View)
+                     ? new[] { entry.ViewModel }
+                     : new[] { entry.ViewModel, entry.View })
+        {
+            if (target is IRouteable routeable && _subscribed.TryAdd(target, target))
+                routeable.OnSubscribe();
+        }
+    }
+
+    // OnUnsubscribe, for an instance that was subscribed, just before the router disposes it.
+    private void Unsubscribe(object target)
+    {
+        if (target is IRouteable routeable && _subscribed.Remove(target))
+            routeable.OnUnsubscribe();
+    }
+
     /// <summary>
     /// Notifies the view model and view of an entry that route change is entering them.
     /// </summary>
@@ -70,6 +92,7 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
     /// <param name="ct">A token to observe for cancellation.</param>
     internal async Task EnterAsync(RouterEntry entry, CancellationToken ct = default)
     {
+        Subscribe(entry);
         if (entry.ViewModel is IRouteable vm) await vm.OnEnteringAsync(entry.Args, ct);
         if (entry.View is IRouteable v) await v.OnEnteringAsync(entry.Args, ct);
     }
@@ -162,6 +185,9 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
             foreach (var target in new[] { e.ViewModel, e.View })
             {
                 if (alive.Contains(target) || !done.Add(target) || caches.Any(c => c.Owns(target))) continue;
+                try { Unsubscribe(target); }
+                catch (Exception ex) { RouteableErrors.Report<RouterLifecycle>(provider, ex); }   // and the page is still disposed
+
                 try
                 {
                     if (target is IAsyncDisposable ad) { _destroyed.TryAdd(target, target); await ad.DisposeAsync(); }

@@ -73,4 +73,75 @@ public class RouteTransitionTests
         await provider.GetRouter("left").GoBackAsync(TestContext.Current.CancellationToken);
         Assert.Equal(NavigationDirection.Back, changes[3].Direction);
     }
+
+    [Fact]
+    public void The_built_in_set_has_fifteen_distinct_names_and_each_one_is_found_by_its_name()
+    {
+        Assert.Equal(15, RouteTransition.BuiltIn.Count);
+        Assert.Equal(15, RouteTransition.BuiltIn.Select(t => t.Name).Distinct(StringComparer.OrdinalIgnoreCase).Count());
+        foreach (var transition in RouteTransition.BuiltIn)
+        {
+            Assert.Same(transition, RouteTransition.Named(transition.Name.ToLowerInvariant()));
+            Assert.True(transition.IsBuiltIn);
+        }
+
+        Assert.False(RouteTransition.Named("Grow").IsBuiltIn);
+        Assert.True(RouteTransition.Slide.WithDuration(TimeSpan.FromSeconds(1)).IsBuiltIn);
+    }
+
+    [Fact]
+    public void None_and_a_custom_transition_have_no_start_state_and_every_other_one_has_one()
+    {
+        Assert.Null(RouteTransition.None.Start(NavigationDirection.Forward));
+        Assert.Null(RouteTransition.Named("Grow").Start(NavigationDirection.Forward));
+
+        foreach (var transition in RouteTransition.BuiltIn.Where(t => !t.IsNone))
+            Assert.NotNull(transition.Start(NavigationDirection.Forward));
+    }
+
+    [Theory]
+    [InlineData("Slide")]
+    [InlineData("SlideFade")]
+    [InlineData("Swipe")]
+    public void A_slide_starts_on_the_side_the_history_moves_from(string name)
+    {
+        var forward = RouteTransition.Named(name).Start(NavigationDirection.Forward)!;
+        var back = RouteTransition.Named(name).Start(NavigationDirection.Back)!;
+
+        Assert.True(forward.TranslateX > 0);
+        Assert.Equal(-forward.TranslateX, back.TranslateX);
+    }
+
+    [Fact]
+    public void SlideUp_moves_vertically_and_Swipe_does_not_fade()
+    {
+        Assert.True(RouteTransition.SlideUp.Start(NavigationDirection.Forward)!.TranslateY > 0);
+        Assert.True(RouteTransition.SlideUp.Start(NavigationDirection.Back)!.TranslateY < 0);
+        Assert.Equal(1, RouteTransition.Swipe.Start(NavigationDirection.Forward)!.Opacity);
+        Assert.Equal(0, RouteTransition.Fade.Start(NavigationDirection.Forward)!.Opacity);
+    }
+
+    [Fact]
+    public void Pop_overshoots_and_Reveal_and_Curtain_grow_from_opposite_edges()
+    {
+        Assert.True(RouteTransition.Pop.Start(NavigationDirection.Forward)!.Overshoot);
+        Assert.False(RouteTransition.Scale.Start(NavigationDirection.Forward)!.Overshoot);
+
+        var reveal = RouteTransition.Reveal.Start(NavigationDirection.Forward)!;
+        var curtain = RouteTransition.Curtain.Start(NavigationDirection.Forward)!;
+        Assert.Equal(1, reveal.OriginY);
+        Assert.Equal(0, curtain.OriginY);
+        Assert.True(reveal.EffectiveScaleY < 0.1 && curtain.EffectiveScaleY < 0.1);
+    }
+
+    [Fact]
+    public void Fade_only_changes_the_opacity()
+        => Assert.False(RouteTransition.Fade.Start(NavigationDirection.Forward)!.Moves);
+
+    [Fact]
+    public void A_start_state_that_is_scaled_translated_or_turned_moves()
+    {
+        foreach (var name in new[] { "Slide", "SlideUp", "Pop", "Scale", "Lift", "Flip", "Rotate", "Reveal", "Curtain", "Spotlight", "Blur", "Swipe", "SlideFade" })
+            Assert.True(RouteTransition.Named(name).Start(NavigationDirection.Forward)!.Moves, name);
+    }
 }

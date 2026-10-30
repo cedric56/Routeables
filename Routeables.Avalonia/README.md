@@ -31,7 +31,7 @@ public partial class DogDetailView : RouteableFor<DogDetailViewModel> { public D
 <routeables:RouteableRegion Region="shell-content" />
 ```
 
-`RouteableListBox` lists the entries of the main view model, selects the current one and disables locked ones.
+`RouteableMenu` lists the entries of the main view model, selects the current one and disables locked ones.
 
 ## Tabs
 

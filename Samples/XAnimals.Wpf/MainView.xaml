@@ -25,7 +25,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <routeables:RouteableListBox x:Name="Menu" Grid.Column="0" />
+            <routeables:RouteableMenu x:Name="Menu" Grid.Column="0" />
 
             <ContentControl Grid.Column="1" Content="{Binding CurrentView}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </Grid>

@@ -27,7 +27,7 @@ public class WpfControlsTests
     // A list that is not in a window: its items are made when it is measured.
     private static ListBox Shown(FakeMainViewModel main)
     {
-        var list = new RouteableListBox { DataContext = main };
+        var list = new RouteableMenu { DataContext = main };
         list.Measure(new Size(400, 600));
         list.Arrange(new Rect(0, 0, 400, 600));
         list.UpdateLayout();
@@ -62,7 +62,7 @@ public class WpfControlsTests
         // The items of a list are made once it is shown: a window that is not activated holds it.
         var (before, locked, unlocked) = await WpfHarness.Run(() =>
         {
-            var list = new RouteableListBox { DataContext = main };
+            var list = new RouteableMenu { DataContext = main };
             var window = new Window { Content = list, Width = 400, Height = 600, ShowActivated = false };
             try
             {

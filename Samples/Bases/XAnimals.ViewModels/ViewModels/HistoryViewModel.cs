@@ -36,7 +36,7 @@ public sealed record HistoryItem(int Number, string Name, string Glyph, string C
 /// </para>
 /// <para>
 /// <b>Transition</b> is the transition the frame (the <c>RouteableRegion</c>) plays for every page it shows, Back and Forward included.
-/// <b>Push (SlideUp)</b> asks for one transition for that one navigation, which wins over the one of the frame. <c>Pop</c> is a custom
+/// <b>Push (SlideUp)</b> asks for one transition for that one navigation, which wins over the one of the frame. <c>Grow</c> is a custom
 /// transition each host registers (<c>RouteTransitions.Register</c>), see the code-behind of the page.
 /// </para>
 /// </summary>
@@ -71,9 +71,8 @@ public class HistoryViewModel : ViewModelBase, IRouteable, IDisposable
     public ICommand PopCommand { get; }
     public ICommand PushCommand { get; }
 
-    /// <summary>The names the frame can play: the built-in transitions, and <c>Pop</c>, registered by each host.</summary>
-    public IReadOnlyList<RouteTransition> Transitions { get; } =
-        [RouteTransition.None, RouteTransition.Fade, RouteTransition.Slide, RouteTransition.SlideUp, "Pop"];
+    /// <summary>The names the frame can play: the built-in transitions, and <c>Grow</c>, a custom one registered by each host.</summary>
+    public IReadOnlyList<RouteTransition> Transitions { get; } = [.. RouteTransition.BuiltIn, "Grow"];
 
     /// <summary>The transition of the frame (<c>RouteableRegion.Transition</c>): every page it shows comes in with it.</summary>
     public RouteTransition Transition

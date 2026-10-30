@@ -5,6 +5,9 @@
     <WasmBuildNative>true</WasmBuildNative>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- The WebAssembly SDK switches System.Diagnostics.Metrics off to make the download smaller: without this, the router publishes
+         no measure and the "Show the last route changes" button of the Features page has nothing to show. -->
+    <MetricsSupport>true</MetricsSupport>
   </PropertyGroup>
 
   <!-- Release only: the code runs compiled (AOT) instead of interpreted, which is much faster in the browser. Needs the wasm-tools workload

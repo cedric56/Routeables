@@ -42,6 +42,34 @@
 .rt-enter.rt-slideup { animation-name: rt-slideup-forward; }
 .rt-enter.rt-slideup.rt-back { animation-name: rt-slideup-back; }
 
+@keyframes rt-slidefade-forward { from { opacity: 0; transform: translateX(.75rem); } to { opacity: 1; transform: none; } }
+@keyframes rt-slidefade-back { from { opacity: 0; transform: translateX(-.75rem); } to { opacity: 1; transform: none; } }
+@keyframes rt-swipe-forward { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes rt-swipe-back { from { transform: translateX(-100%); } to { transform: none; } }
+@keyframes rt-pop { from { opacity: 0; transform: scale(.85); } 60% { opacity: 1; transform: scale(1.04); } to { opacity: 1; transform: none; } }
+@keyframes rt-scale { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: none; } }
+@keyframes rt-lift { from { opacity: 0; transform: translateY(1rem) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes rt-blur { from { opacity: 0; filter: blur(12px); } to { opacity: 1; filter: blur(0); } }
+@keyframes rt-spotlight { from { opacity: 0; filter: brightness(.4) blur(6px); transform: scale(1.06); } to { opacity: 1; filter: none; transform: none; } }
+@keyframes rt-flip { from { opacity: 0; transform: perspective(900px) rotateY(-90deg); } to { opacity: 1; transform: none; } }
+@keyframes rt-rotate { from { opacity: 0; transform: rotate(-90deg) scale(.7); } to { opacity: 1; transform: none; } }
+@keyframes rt-reveal { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0); } }
+@keyframes rt-curtain { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+
+.rt-enter.rt-slidefade { animation-name: rt-slidefade-forward; }
+.rt-enter.rt-slidefade.rt-back { animation-name: rt-slidefade-back; }
+.rt-enter.rt-swipe { animation-name: rt-swipe-forward; }
+.rt-enter.rt-swipe.rt-back { animation-name: rt-swipe-back; }
+.rt-enter.rt-pop { animation-name: rt-pop; animation-timing-function: cubic-bezier(.34, 1.56, .64, 1); }
+.rt-enter.rt-scale { animation-name: rt-scale; }
+.rt-enter.rt-lift { animation-name: rt-lift; }
+.rt-enter.rt-blur { animation-name: rt-blur; }
+.rt-enter.rt-spotlight { animation-name: rt-spotlight; }
+.rt-enter.rt-flip { animation-name: rt-flip; transform-origin: center; }
+.rt-enter.rt-rotate { animation-name: rt-rotate; transform-origin: center; }
+.rt-enter.rt-reveal { animation-name: rt-reveal; }
+.rt-enter.rt-curtain { animation-name: rt-curtain; }
+
 @media (prefers-reduced-motion: reduce) {
     .rt-enter { animation: none; }
 }

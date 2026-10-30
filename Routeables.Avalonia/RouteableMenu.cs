@@ -16,7 +16,7 @@ namespace Routeables.Avalonia;
 /// Represents a specialized Avalonia <see cref="ListBox"/> designed to bind directly against 
 /// <see cref="IMainViewModel"/> collections and manage routeable view routing items.
 /// </summary>
-public class RouteableListBox : ListBox
+public class RouteableMenu : ListBox
 {
     /// <summary>
     /// Gets the style key override to preserve the default <see cref="ListBox"/> theme styling.
@@ -24,10 +24,10 @@ public class RouteableListBox : ListBox
     protected override Type StyleKeyOverride => typeof(ListBox);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RouteableListBox"/> class, configuring 
+    /// Initializes a new instance of the <see cref="RouteableMenu"/> class, configuring 
     /// items source bindings, selection bindings, item templates, and container styles.
     /// </summary>
-    public RouteableListBox()
+    public RouteableMenu()
     {
         // Bindings against the DataContext
         Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create<IMainViewModel, ObservableCollection<IRouteableEntry>>(r => r.Routeables));

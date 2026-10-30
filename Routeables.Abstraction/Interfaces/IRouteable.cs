@@ -4,10 +4,24 @@
 /// The lifecycle of a page, all of it optional: a view model implements the members it needs, and the router calls them around a
 /// routing. In order: <see cref="CanLeaveAsync"/> on the page being left (it may refuse), then <see cref="OnLeavingAsync"/>
 /// and <see cref="OnEnteringAsync"/> before the change, and <see cref="OnLeftAsync"/> and <see cref="OnEnteredAsync"/>
-/// once it is committed to the history.
+/// once it is committed to the history. <see cref="OnSubscribe"/> and <see cref="OnUnsubscribe"/> frame the whole life of the page in the history.
 /// </summary>
 public interface IRouteable
 {
+    /// <summary>
+    /// Called once for each instance of a page, the first time the router enters it (before <see cref="OnEnteringAsync"/>), unlike
+    /// <see cref="OnEnteringAsync"/> which runs again each time the page is shown again (back, forward). Register here what must be
+    /// registered once: a messenger, an event. An exception here fails the route change.
+    /// </summary>
+    void OnSubscribe() { }
+
+    /// <summary>
+    /// Called once, when the router disposes the page because it left the history: undo what <see cref="OnSubscribe"/> did. A page that
+    /// the container owns (a singleton, a scoped page) is not disposed by the router, so this is not called for it. An exception is
+    /// reported (<see cref="RouteableErrors"/>), it never fails the route change.
+    /// </summary>
+    void OnUnsubscribe() { }
+
     /// <summary>The guard: asked of the page that is being left. Return <see langword="false"/> to refuse, and the route change is cancelled.</summary>
     /// <param name="ct">A token to observe for cancellation.</param>
     Task<bool> CanLeaveAsync(CancellationToken ct = default) => Task.FromResult(true);

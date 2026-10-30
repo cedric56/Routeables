@@ -113,9 +113,9 @@ public class AvaloniaHelpersTests
     }
 
     [Fact]
-    public void RouteableListBox_binds_to_routeables_and_selects_the_current_routeable_two_way()
+    public void RouteableMenu_binds_to_routeables_and_selects_the_current_routeable_two_way()
     {
-        var list = new RouteableListBox();
+        var list = new RouteableMenu();
         var itemsBinding = BindingOperations.GetBindingExpressionBase(list, ItemsControl.ItemsSourceProperty);
         var selectedBinding = BindingOperations.GetBindingExpressionBase(list, SelectingItemsControl.SelectedItemProperty);
 

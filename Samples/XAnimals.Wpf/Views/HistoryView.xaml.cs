@@ -7,9 +7,9 @@ namespace XAnimals.Wpf.Views;
 
 public partial class HistoryView : RouteableFor
 {
-    // A custom transition: registered once under a name, then chosen by name like the built-in ones (Transition="Pop").
+    // A custom transition: registered once under a name, then chosen by name like the built-in ones (Transition="Grow").
     static HistoryView() =>
-        RouteTransitions.Register("Pop", (region, direction, duration) =>
+        RouteTransitions.Register("Grow", (region, direction, duration) =>
         {
             var scale = new ScaleTransform(0.85, 0.85);
             region.RenderTransformOrigin = new Point(0.5, 0.5);

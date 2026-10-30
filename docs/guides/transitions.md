@@ -10,6 +10,27 @@ A **transition** is how a region brings in the view of a route change. It is cho
 | `RouteTransition.Fade` | fades in |
 | `RouteTransition.Slide` | comes in from the right when going forward, from the left when going back, fading in |
 | `RouteTransition.SlideUp` | comes in from below when going forward, from above when going back, fading in |
+| `RouteTransition.SlideFade` | like `Slide` over a short distance: a light movement, fading in |
+| `RouteTransition.Swipe` | crosses the whole region, from the right when going forward, from the left when going back |
+| `RouteTransition.Pop` | grows from a smaller size with a small overshoot, fading in |
+| `RouteTransition.Scale` | grows from a smaller size, fading in |
+| `RouteTransition.Lift` | rises a little, from slightly smaller, fading in: a card that is put down |
+| `RouteTransition.Blur` | goes from blurred to sharp, fading in |
+| `RouteTransition.Spotlight` | goes from dim and blurred to clear, settling from slightly larger |
+| `RouteTransition.Flip` | turns around its vertical axis, like a card being flipped |
+| `RouteTransition.Rotate` | turns in around its centre, growing, fading in |
+| `RouteTransition.Reveal` | is uncovered from the bottom to the top |
+| `RouteTransition.Curtain` | is uncovered from the top to the bottom |
+
+`RouteTransition.BuiltIn` lists them. The names and the idea of the effects follow the set of the Blazor routers (Blazouter); the animations are Routeables' own, written for each host. They all start from the same description, `RouteTransition.Start(direction)` (opacity, size, offset, angle, the point it turns around), so they look alike on every host; what a host cannot draw, it leaves out:
+
+| | Avalonia, WPF, MAUI | Uno | Blazor |
+| --- | --- | --- | --- |
+| `Blur`, `Spotlight` | fade in and settle (no blur) | fade in | blur and brightness (CSS `filter`) |
+| `Flip` | the width grows from a sliver (no 3D) | the platform's pop | 3D rotation (`perspective`) |
+| `Reveal`, `Curtain` | the height grows from the bottom / the top | the platform's pop | `clip-path` |
+| `Pop`, `Scale`, `Rotate` | as described | the platform's pop | as described |
+| `Slide`, `SlideUp`, `SlideFade`, `Swipe`, `Lift` | as described | an entrance transition of the platform (offset in the right direction) | as described |
 
 *Forward* is a new page or `ForwardAsync`; *back* is `GoBackAsync`, `PopAsync` or `GoBackToRootAsync`; `MoveToAsync` goes the way of the index.
 
@@ -38,7 +59,7 @@ Without `Transition`, a region keeps what it did before: `PageTransition` on Ava
 
 ## Custom transitions
 
-Animation is native to each host, so a custom transition is registered per host under a name, then used like a built-in one (`WithTransition("Spin")`, `Transition="Spin"`). A name that is a built-in one replaces it. A name nobody registered shows the view at once and says so in the debug output.
+Animation is native to each host, so a custom transition is registered per host under a name, then used like a built-in one (`WithTransition("Spin")`, `Transition="Spin"`). A name that is a built-in one replaces it (register `Pop` and your animation is played instead of the built-in one). A name nobody registered shows the view at once and says so in the debug output.
 
 | Host | Register |
 | --- | --- |
@@ -51,8 +72,8 @@ Animation is native to each host, so a custom transition is registered per host 
 ## What each host does
 
 - **Avalonia** animates the opacity and the `RenderTransform` of the new view (the built-in ones), so that view should not rely on a `RenderTransform` of its own. A custom transition is an `IPageTransition` given to the `PageTransition` of the control (going back reverses it with `IsTransitionReversed`).
-- **WPF, MAUI** animate the new view (opacity, translation). WPF plays nothing when Windows has animations turned off.
-- **Uno** uses the theme transitions of the platform (`ContentThemeTransition`, `EntranceThemeTransition`), which decide how long they last.
+- **WPF, MAUI** animate the new view (opacity, scale, rotation, translation). WPF plays nothing when Windows has animations turned off, and leaves the view alone when the region has a `RenderTransform` of its own (it fades in).
+- **Uno** uses the theme transitions of the platform (`ContentThemeTransition`, `EntranceThemeTransition`, `PopupThemeTransition`), which decide how long they last: the effects it cannot reproduce become the platform's pop. Register a name to play your own animation.
 - **Blazor** gives the element the classes `rt-enter rt-{name} rt-{forward|back|none}` and the variable `--rt-duration`; the animations of the built-in names are in `theme.css`, and `prefers-reduced-motion` turns them off.
 
 `RouteableRegionItems` and the controls that do not show a router's current view (menus, tabs) play no transition.

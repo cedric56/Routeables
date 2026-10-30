@@ -117,6 +117,28 @@ public partial class HomeView : RouteableFor<HomeViewModel>
 
 If the view overrides `InitializeAsync`, call `base.InitializeAsync(args, ct)` so the hook runs.
 
+### Subscribing once in a view model
+
+`IRouteable` has the same pair for a view model (or any page that implements it): `OnSubscribe()` is called by the router once for each instance, the first time it enters it, before `OnEnteringAsync` (which runs again on every back and forward); `OnUnsubscribe()` is called when the router disposes the page because it left the history. A page the container owns (a singleton, a scoped page) is not disposed by the router, so `OnUnsubscribe` is not called for it. An exception in `OnSubscribe` fails the route change; one in `OnUnsubscribe` is reported to the `IRouteableErrorSink` and the page is still disposed.
+
+## Work that is not awaited
+
+`_ = Task.Run(...)` in `OnEnteringAsync` loses the exception of the task. `AsyncHelper.FireAndForget` starts the work without waiting for it and reports its exception to the `IRouteableErrorSink` (a cancellation is not an error); `onError` shows it in the view:
+
+```csharp
+public override Task OnEnteringAsync(IRouteableArgs args, CancellationToken ct = default)
+{
+    AsyncHelper.FireAndForget(async () =>
+    {
+        await cache.LoadAsync();                 // what follows the await is back on the UI context
+        Persons = new(cache.Entities);
+    }, provider, "persons", onError: ex => Error = ex.Message);
+    return Task.CompletedTask;
+}
+```
+
+`task.Forget(provider)` does the same for a task you already have. From synchronous code that must wait (a constructor, a property), `AsyncHelper.RunSync(() => LoadAsync())` runs the method on the thread pool, so it cannot deadlock on the UI context, keeps the culture of the caller and throws the original exception.
+
 ## Finding out why a route did not show
 
 `GoToRouteAsync` returns a `RouteableResult` (`Success`, `Cancelled`, `Exception`) instead of throwing. `MainViewModelBase` writes the reason to the debug output when an entry is not shown, and calls the virtual `OnRoutingFailed(entry, result)`: override it to log, or put a breakpoint in it.

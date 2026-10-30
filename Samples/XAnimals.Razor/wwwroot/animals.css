@@ -215,6 +215,6 @@ button.adopt-choice:hover { background: var(--an-canopy); color: var(--an-paper)
 .pet-card .pet-location { font-weight: 600; color: var(--an-saffron); }
 .pet-card .pet-glyph { font-size: 1.4rem; }
 
-/* A custom transition: the name registered by the page, "Pop", is a CSS animation for .rt-enter.rt-pop (see Routeables.Razor/wwwroot/theme.css). */
-@keyframes rt-pop { from { opacity: 0; transform: scale(.85); } 60% { transform: scale(1.03); } to { opacity: 1; transform: none; } }
-.rt-enter.rt-pop { animation-name: rt-pop; }
+/* A custom transition: the name registered by the page, "Grow", is a CSS animation for .rt-enter.rt-grow (see Routeables.Razor/wwwroot/theme.css). */
+@keyframes rt-grow { from { opacity: 0; transform: scale(.85); } 60% { transform: scale(1.03); } to { opacity: 1; transform: none; } }
+.rt-enter.rt-grow { animation-name: rt-grow; }

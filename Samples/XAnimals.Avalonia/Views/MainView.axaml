@@ -20,7 +20,7 @@
 			 </Grid>
 		 </DrawerPage.Header>
 		 <DrawerPage.Drawer>
-		    <routeables:RouteableListBox/>
+		    <routeables:RouteableMenu/>
 		</DrawerPage.Drawer>
 		<routeables:RouteableRegion/>
 	</DrawerPage>

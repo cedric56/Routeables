@@ -10,10 +10,10 @@ namespace Routeables.Wpf;
 /// selected item is the current entry (<see cref="IMainViewModel.Routeable"/>). Its items are disabled while the menu is
 /// locked. Its data context must be the main view model.
 /// </summary>
-public class RouteableListBox : ListBox
+public class RouteableMenu : ListBox
 {
     /// <summary>Creates the menu.</summary>
-    public RouteableListBox()
+    public RouteableMenu()
     {
         SetBinding(ItemsSourceProperty, new Binding(nameof(IMainViewModel.Routeables)));
         SetBinding(SelectedItemProperty, new Binding(nameof(IMainViewModel.Routeable)) { Mode = BindingMode.TwoWay });

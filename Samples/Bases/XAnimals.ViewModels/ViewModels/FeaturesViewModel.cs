@@ -269,7 +269,13 @@ public class FeaturesViewModel : ViewModelBase, IRouteableState, IDisposable
     private static string Describe()
     {
         var lines = RouteMetrics.Last();
-        return lines.Count == 0 ? "No route change measured yet." : string.Join(Environment.NewLine, lines);
+        if (lines.Count > 0)
+            return string.Join(Environment.NewLine, lines);
+
+        // A trimmed application (the browser, by default) can have metrics switched off: nothing is ever measured there.
+        return AppContext.TryGetSwitch("System.Diagnostics.Metrics.Meter.IsSupported", out var supported) && !supported
+            ? "Metrics are switched off in this build (MetricsSupport=false), so no route change is measured."
+            : "No route change measured yet.";
     }
 
     public void SaveState(IDictionary<string, string> state) => state["draft"] = Draft;

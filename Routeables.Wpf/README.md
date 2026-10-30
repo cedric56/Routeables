@@ -45,7 +45,7 @@ public partial class DogDetailView : RouteableFor { public DogDetailView() => In
 
 A XAML root cannot be generic, so XAML views use `RouteableFor`; views written in code can use `RouteableFor<TViewModel>`. `IsLocked` is a read-only dependency property that follows the lock of the main view model.
 
-The menu is a `MainViewModelBase` and `<routeables:RouteableListBox />` (its items are disabled while the menu is locked); the current view is `<ContentControl Content="{Binding CurrentView}" />`.
+The menu is a `MainViewModelBase` and `<routeables:RouteableMenu />` (its items are disabled while the menu is locked); the current view is `<ContentControl Content="{Binding CurrentView}" />`.
 
 ## Regions
 

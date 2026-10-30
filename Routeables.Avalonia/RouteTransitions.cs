@@ -13,7 +13,7 @@ namespace Routeables.Avalonia;
 
 /// <summary>
 /// The transitions a <see cref="RouteableRegion"/> plays for a name (<see cref="RouteTransition"/>): the built-in ones
-/// (<c>Fade</c>, <c>Slide</c>, <c>SlideUp</c>) and the custom ones registered here. A built-in transition animates the opacity and the
+/// (<see cref="RouteTransition.BuiltIn"/>: <c>Fade</c>, <c>Slide</c>, <c>Pop</c>, <c>Flip</c>...) and the custom ones registered here. A blur is not drawn: <c>Blur</c> and <c>Spotlight</c> fade in and settle. A built-in transition animates the opacity and the
 /// <c>RenderTransform</c> of the view that comes in, so the view must not rely on its own <c>RenderTransform</c>.
 /// </summary>
 public static class RouteTransitions
@@ -40,31 +40,32 @@ public static class RouteTransitions
 
     internal static bool IsCustom(string name) => Custom.ContainsKey(name);
 
-    // The built-in transitions animate the view that comes in (opacity, and a translation), not the two presenters of the
+    // The built-in transitions animate the view that comes in (opacity, and a transform that goes to rest), not the two presenters of the
     // TransitioningContentControl: the control swaps the content at once, and the view is brought to rest by the transitions of Avalonia.
-    // The view starts transparent and off to the side; the next frame sets it to rest, which the transitions animate.
+    // The view starts at the state the transition describes (RouteTransition.Start); the next frame sets it to rest, which the transitions animate.
     internal static void AnimateIn(Visual view, RegionTransition transition, Size bounds)
     {
         var name = transition.Transition.Name;
-        var fade = name.Equals("Fade", StringComparison.OrdinalIgnoreCase);
-        var slide = name.Equals("Slide", StringComparison.OrdinalIgnoreCase);
-        var slideUp = name.Equals("SlideUp", StringComparison.OrdinalIgnoreCase);
-        if (!fade && !slide && !slideUp)
+        if (transition.Transition.Start(transition.Direction) is not { } from)
         {
             // An unknown name must not stop the view from being shown.
             System.Diagnostics.Debug.WriteLine($"Routeables: no transition named '{name}' (register it with RouteTransitions.Register); the view appears at once.");
             return;
         }
 
-        var sign = transition.Direction == NavigationDirection.Back ? -1 : 1;
+        // A view that is scaled to nothing cannot be interpolated: the smallest size is a sliver.
         string? start = null;
-        if (slide)
-            start = FormattableString.Invariant($"translateX({sign * Math.Max(24, bounds.Width * 0.25):0}px)");
-        else if (slideUp)
-            start = FormattableString.Invariant($"translateY({sign * Math.Max(24, bounds.Height * 0.25):0}px)");
+        if (from.Moves)
+        {
+            var x = from.TranslateX == 0 ? 0 : from.TranslateX * Math.Max(24, bounds.Width);
+            var y = from.TranslateY == 0 ? 0 : from.TranslateY * Math.Max(24, bounds.Height);
+            start = FormattableString.Invariant(
+                $"translate({x:0.##}px, {y:0.##}px) scale({Math.Max(from.EffectiveScaleX, 0.01):0.###}, {Math.Max(from.EffectiveScaleY, 0.01):0.###}) rotate({from.Rotate:0.##}deg)");
+        }
 
         view.Transitions = null;
-        view.Opacity = 0;
+        view.Opacity = from.Opacity;
+        view.RenderTransformOrigin = new RelativePoint(from.OriginX, from.OriginY, RelativeUnit.Relative);
         if (start is not null)
             view.RenderTransform = TransformOperations.Parse(start);
 
@@ -76,7 +77,14 @@ public static class RouteTransitions
                 new DoubleTransition { Property = Visual.OpacityProperty, Duration = transition.Duration }
             };
             if (start is not null)
-                transitions.Add(new TransformOperationsTransition { Property = Visual.RenderTransformProperty, Duration = transition.Duration, Easing = new CubicEaseOut() });
+            {
+                transitions.Add(new TransformOperationsTransition
+                {
+                    Property = Visual.RenderTransformProperty,
+                    Duration = transition.Duration,
+                    Easing = from.Overshoot ? new BackEaseOut() : new CubicEaseOut()
+                });
+            }
 
             view.Transitions = transitions;
             view.Opacity = 1;

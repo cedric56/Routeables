@@ -10,9 +10,9 @@ namespace XAnimals.Avalonia;
 
 public partial class HistoryView : RouteableFor<HistoryViewModel>
 {
-    // A custom transition: registered once under a name, then chosen by name like the built-in ones (Transition="Pop").
+    // A custom transition: registered once under a name, then chosen by name like the built-in ones (Transition="Grow").
     static HistoryView() =>
-        RouteTransitions.Register("Pop", (direction, duration) => new CompositePageTransition
+        RouteTransitions.Register("Grow", (direction, duration) => new CompositePageTransition
         {
             PageTransitions = [new CrossFade(duration), new PageSlide(duration, PageSlide.SlideAxis.Vertical)]
         });
