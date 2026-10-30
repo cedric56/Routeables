@@ -32,7 +32,7 @@ public partial class App : Application
            configure: services =>
            {
                if (messageBoxService is not null)
-                   services.AddSingleton(messageBoxService);   // the head chooses how the dialogs are drawn
+                   services.UseRouteablesServices(_ => messageBoxService);   // the head chooses how the dialogs are drawn
                services.AddGeneratedRoutes();
                AnimalIcons.Register();
                services.RegisterViewModels();

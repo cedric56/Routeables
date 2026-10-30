@@ -13,7 +13,8 @@ public class RouteableDialogService(
     IRouteableDialogWindowContext windowContext,
     IMessageBoxService? messageBoxService = null) : 
     RouteableDialogServiceBase,
-    IRouteableDialogService
+    IRouteableDialogService,
+    IMessageBoxService
 {
 #if WINDOWS
     private static readonly SemaphoreSlim WindowsDialogGate = new(1, 1);
@@ -31,6 +32,9 @@ public class RouteableDialogService(
         return await show();
 #endif
     }
+
+    // The native implementation of IMessageBoxService: the interface's order is (title, message, buttons).
+    Task<int> IMessageBoxService.ShowMessageAsync(string title, string message, string buttons) => ShowMessageAsync(message, title, buttons);
 
     /// <summary>
     /// Shows the platform's alert: one button for one word, an alert with an accept and a cancel button for two, and the
@@ -346,7 +350,7 @@ public class RouteableDialogService(
         ArgumentNullException.ThrowIfNull(@params);
 
         if (messageBoxService != null)
-            return await messageBoxService.ShowTaskDialogAsync(@params);
+            return await messageBoxService.ShowTaskDialogAsync(@params, results);
 
         var page = windowContext.CurrentPage
             ?? throw new InvalidOperationException("No active Page to host the task dialog.");
@@ -373,6 +377,9 @@ public class RouteableDialogService(
     {
         ArgumentNullException.ThrowIfNull(viewModel);
         ArgumentNullException.ThrowIfNull(viewFactory);
+
+        if (messageBoxService != null)
+            return await messageBoxService.ShowModalAsync<TViewModel, TResult>(viewModel, viewFactory);
 
         var page = windowContext.CurrentPage
             ?? throw new InvalidOperationException(

@@ -4,9 +4,7 @@ The contracts of the optional UI services: dialogs, notifications and theme. Eac
 
 | Inject | For |
 | --- | --- |
-| `IRouteableDialogService` | Message boxes |
-| `IRouteableContentDialogService` | A dialog that hosts a view and its view model |
-| `IRouteableTaskDialogService` | Dialogs with a header, buttons and progress |
+| `IRouteableDialogService` | Message boxes, content dialogs (a dialog that hosts a view and its view model) and task dialogs (a header, buttons and progress) |
 | `IRouteableNotificationService` | Toast notifications |
 | `IRouteableRequestedThemeService` | Light, dark or system theme (registered by the host) |
 | `IRouteableDispatcher` | Runs work on the thread of the interface, from any thread (registered by the host) |

@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Routeables.Razor
 @implements IDisposable
-@inject RouteableDialogService Service
+@inject RouteableMessageQueue Service
 
 @if (Service.Current is { } request)
 {

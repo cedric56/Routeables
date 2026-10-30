@@ -62,12 +62,12 @@ Without `region`, the items follow the main history.
 
 ## Dialogs and notifications
 
-In the `Routeables.Uno.Services` namespace. `UseRouteables` already registers them; call `UseRouteablesServices(messageBoxService)` yourself only to draw them another way.
+In the `Routeables.Uno.Services` namespace. `UseRouteables` already registers them; call `UseRouteablesServices(sp => new MyMessageBoxService())` yourself only to draw them another way.
 
 - Dialogs, content dialogs and task dialogs, drawn as `ContentDialog`s in the window the user last worked in. A window shows one at a time; a second waits for the first.
 - Notifications: `InfoBar`s stacked at the top of the active window, closed after five seconds or by the user.
 - `DialogView<TViewModel, TResult>`: the base of a modal view backed by a closeable view model, written in code (a WinUI XAML root cannot be generic). See `NoteView` in `Samples/XAnimals.Uno`.
-- `IMessageBoxService` (`DefaultMessageBoxService`): pass your own to `UseRouteablesServices(messageBoxService)` to draw them another way.
+- `IMessageBoxService` (`DefaultMessageBoxService`): give a factory to `UseRouteablesServices(sp => new MyMessageBoxService())` to draw them another way.
 
 Calling a service before a window has content throws an `InvalidOperationException` that says so. Contracts: [`Routeables.Services`](../Routeables.Services/README.md).
 

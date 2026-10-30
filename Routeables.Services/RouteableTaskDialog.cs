@@ -93,7 +93,7 @@ public class RouteableTaskDialog
     /// <remarks>
     /// Return <see langword="true"/> to cancel the close and keep the
     /// dialog open; return <see langword="false"/> to allow it to proceed.
-    /// Unlike <see cref="IRouteableContentDialogService"/>'s <c>Closing</c> callback,
+    /// Unlike the <c>Closing</c> callback of <see cref="RouteableContentDialog"/>,
     /// this one isn't told which result triggered the close.
     /// </remarks>
     public Func<bool>? Closing;

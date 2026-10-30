@@ -18,6 +18,7 @@ public static class Extensions
     /// <param name="services">The service collection to add services to.</param>
     /// <param name="icon">The icon of the windows that are drawn.</param>
     public static IServiceCollection UseFluentAvalonia(this IServiceCollection services, string icon)
-        => services.UseRouteablesServices(icon, 
-            new ReshapeMessageBoxService());
+        => services.UseRouteablesServices(
+            _ => new ReshapeMessageBoxService(),
+            icon: icon);
 }

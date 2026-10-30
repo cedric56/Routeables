@@ -123,7 +123,7 @@ public class DialogsViewModel : ViewModelBase
 
     private static string Name(int answer, string third) => answer switch { 0 => "Yes", 1 => "No", 2 => third, _ => "none" };
 
-    // ---------------------------------------------------------------- IRouteableContentDialogService
+    // ---------------------------------------------------------------- IRouteableDialogService.ShowContentDialogAsync
 
     public async Task ShowContentDialogAsync()
     {
@@ -145,7 +145,7 @@ public class DialogsViewModel : ViewModelBase
         };
     }
 
-    // ---------------------------------------------------------------- IRouteableTaskDialogService
+    // ---------------------------------------------------------------- IRouteableDialogService.ShowTaskDialogAsync
 
     public async Task ShowTaskDialogAsync()
     {
@@ -199,7 +199,6 @@ public class DialogsViewModel : ViewModelBase
             RouteableNotificationType.Error => ("Download failed", "The photos could not be downloaded."),
             _ => ("Tip", "Search a list to find an animal faster.")
         };
-
         _notifications.Show(
             title, message, type,
             expiration: TimeSpan.FromSeconds(6),

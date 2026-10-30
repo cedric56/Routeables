@@ -18,7 +18,7 @@ public static class Extensions
     /// <summary>
     /// Starts Routeables in a Blazor Server application: registers the router, the property injection, the address synchronization,
     /// the environment information and the theme, and <typeparamref name="TMain"/> as the main view model (the menu), scoped: one per circuit.
-    /// It registers the dialogs, content dialogs, task dialogs, modals and notifications too (<c>UseRouteablesServices()</c> of
+    /// It registers the dialogs (message boxes, content dialogs and task dialogs), modals and notifications too (<c>UseRouteablesServices()</c> of
     /// <c>Routeables.Razor.Services</c>); call that one again only to replace a service or to move the notifications.
     /// <code>
     /// services.UseRouteablesServer&lt;MainViewModel&gt;(r => r.AddGeneratedRoutes());

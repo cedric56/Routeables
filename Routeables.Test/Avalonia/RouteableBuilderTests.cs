@@ -33,7 +33,7 @@ public class RouteableBuilderTests
         IServiceProvider? provider = null;
 
         var builder = global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMainViewModel>(
-            configure: services => services.UseRouteablesServices(string.Empty, messageBoxService),
+            configure: services => services.UseRouteablesServices(messageBoxService is null ? null : _ => messageBoxService, icon: string.Empty),
             afterBuild: services => provider = services);
 
         Assert.NotNull(builder);
@@ -80,7 +80,7 @@ public class RouteableBuilderTests
 
         var builder = global::Avalonia.AppBuilder.Configure<TestApplication>()
             .UseRouteables<FakeMainViewModel>(
-                configure: services => services.UseRouteablesServices(string.Empty),
+                configure: services => services.UseRouteablesServices(icon: string.Empty),
                 afterBuild: services => provider = services);
 
         Assert.NotNull(builder);
@@ -101,7 +101,7 @@ public class RouteableBuilderTests
             configure: services =>
             {
                 services.AddSingleton<Marker>();
-                services.UseRouteablesServices(string.Empty, custom);
+                services.UseRouteablesServices(_ => custom, icon: string.Empty);
             },
             afterBuild: services => provider = services);
 

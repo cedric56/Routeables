@@ -3,7 +3,7 @@
 namespace Routeables.Services;
 
 /// <summary>Helpers shared by the hosts that draw their message boxes themselves.</summary>
-internal static partial class RouteableButtons
+public static partial class RouteableButtons
 {
     /// <summary>
     /// Splits buttons written together, one word per capital letter: <c>"YesNoCancel"</c> gives Yes, No and Cancel.

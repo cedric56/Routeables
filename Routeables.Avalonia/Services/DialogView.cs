@@ -59,7 +59,7 @@ public class DialogView<TViewModel, TResult> : DialogViewBase,
 
         var service = ServiceLocator.Services?.GetService<IMessageBoxService>()
             ?? throw new InvalidOperationException(
-                "No IMessageBoxService is available. Add Routeables to the application with AppBuilder.UseRouteables(services => services.UseRouteablesServices(icon)).");
+                "No IMessageBoxService is available. Add Routeables to the application with AppBuilder.UseRouteables(services => services.UseRouteablesServices()).");
 
         using var session = new RouteableModalSession<TResult>(viewModel, this);
         await service.ShowContentDialogAsync(session.Dialog);

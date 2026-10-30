@@ -47,7 +47,7 @@ public enum RouteableNotificationPosition
 }
 
 /// <summary>
-/// Displays lightweight, non-modal notifications (toasts/banners) in a
+/// Displays lightweight, non-modal notifications (toasts/banners), and optionally system ones, in a
 /// platform-agnostic way, so ViewModels can surface transient feedback
 /// without knowing whether the app is running on Avalonia, MAUI, or Blazor.
 /// </summary>
@@ -83,4 +83,50 @@ public interface IRouteableNotificationService
         TimeSpan? expiration = null,
         Action? onClick = null,
         Action? onClose = null);
+
+    // ---- system (OS notification-center) notifications -------------------------------------------------------------
+    // Optional: no host implements them yet. The defaults below say so (nothing active, nothing created), so an implementation
+    // of the toasts above is complete without them.
+
+    /// <summary>
+    /// Gets the system-level (OS notification-center) notifications currently active (shown and not yet closed),
+    /// keyed by <see cref="IRouteableSystemNotification.Id"/>. Empty when the host has no system notifications.
+    /// </summary>
+    IReadOnlyDictionary<uint, IRouteableSystemNotification> ActiveNotifications()
+        => new Dictionary<uint, IRouteableSystemNotification>();
+
+    /// <summary>
+    /// Creates a new, not-yet-shown system notification. Call <see cref="IRouteableSystemNotification.ShowAsync"/> on the result to display it.
+    /// </summary>
+    /// <param name="category">
+    /// The category to create the notification under. If <see langword="null"/>, the implementation uses a default category;
+    /// otherwise the category must already be defined at app launch.
+    /// </param>
+    /// <returns>
+    /// The new notification, or <see langword="null"/> if it couldn't be created (an unrecognized <paramref name="category"/>,
+    /// the platform denies notification permission, or the host has no system notifications, which is the default).
+    /// </returns>
+    Task<IRouteableSystemNotification?> CreateNotificationAsync(string? category)
+        => Task.FromResult<IRouteableSystemNotification?>(null);
+
+    /// <summary>Closes every currently active system notification. A no-op by default.</summary>
+    void CloseAll()
+    {
+    }
+
+    /// <summary>
+    /// Raised when the user interacts with or dismisses a system notification — see <see cref="RouteableSystemNotificationEventArgs"/>
+    /// for what triggered it. Never raised by default.
+    /// </summary>
+    event EventHandler<RouteableSystemNotificationEventArgs>? NotificationCompleted
+    {
+        add { }
+        remove { }
+    }
+
+    /// <summary>
+    /// Performs any platform-specific setup needed before system notifications can be created (requesting OS permission,
+    /// registering categories). A no-op by default.
+    /// </summary>
+    Task InitializeAsync() => Task.CompletedTask;
 }

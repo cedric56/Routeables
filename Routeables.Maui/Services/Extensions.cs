@@ -38,8 +38,14 @@ public static class Extensions
             sp.GetRequiredService<IServiceProvider>(),
 #endif
             sp.GetRequiredService<IRouteableDialogWindowContext>(),
-            messageBoxService?.Invoke(sp)));
+            messageBoxService is null ? null : sp.GetRequiredService<IMessageBoxService>()));
         builder.Services.AddSingleton<RouteableDialogService>(sp => (RouteableDialogService)sp.GetRequiredService<IRouteableDialogService>());
+        // The message box service is the caller's, or Routeables' own native one (the dialog service itself), which also shows the modals.
+        builder.Services.RemoveAll<IMessageBoxService>();
+        if (messageBoxService is null)
+            builder.Services.AddSingleton<IMessageBoxService>(sp => sp.GetRequiredService<RouteableDialogService>());
+        else
+            builder.Services.AddSingleton(messageBoxService);
         builder.Services.AddSingleton<IRouteableDialogWindowContext, RouteableDialogWindowContext>();
         RegisterOrDefault<IRouteableNotificationService, RouteableNotificationService>(builder.Services, notificationService);
         return builder;

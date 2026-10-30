@@ -25,9 +25,7 @@ These interfaces live in `Routeables.Services` (namespace `Routeables.Services`)
 
 | Interface | Purpose |
 | --- | --- |
-| `IRouteableDialogService` | Message boxes and simple dialogs |
-| `IRouteableContentDialogService` | Dialogs that host a view and a view model |
-| `IRouteableTaskDialogService` | Multi-step / button-rich task dialogs |
+| `IRouteableDialogService` | Message boxes, content dialogs (they host a view and a view model) and task dialogs (multi-step, button-rich). Each host draws them through its own `IMessageBoxService`, which `UseRouteablesServices(messageBoxService: sp => ...)` replaces |
 | `IRouteableNotificationService` | In-app toast notifications |
 | `IRouteableRequestedThemeService` | Light/dark theme switching |
 | `IRouteableDispatcher` | Runs work on the thread of the interface (`Post`, `InvokeAsync`, `CheckAccess`), from any thread |

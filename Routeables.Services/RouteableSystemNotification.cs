@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+
 namespace Routeables.Services;
 
 /// <summary>
@@ -23,7 +24,7 @@ public record RouteableSystemNotificationAction(string caption, string tag)
 
 /// <summary>
 /// Event data raised when a user interacts with (or dismisses) a system
-/// notification — see <see cref="IRouteableSystemNotificationService.NotificationCompleted"/>.
+/// notification — see <see cref="IRouteableNotificationService.NotificationCompleted"/>.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 public class RouteableSystemNotificationEventArgs : EventArgs
@@ -65,7 +66,7 @@ public class RouteableSystemNotificationEventArgs : EventArgs
 
 /// <summary>
 /// A single system-level (OS notification-center) notification, created via
-/// <see cref="IRouteableSystemNotificationService.CreateNotificationAsync"/>. Mutate the
+/// <see cref="IRouteableNotificationService.CreateNotificationAsync"/>. Mutate the
 /// properties then call <see cref="ShowAsync"/> to display or update it.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
@@ -73,7 +74,7 @@ public interface IRouteableSystemNotification
 {
     /// <summary>
     /// Gets the unique identifier for this notification instance, as tracked
-    /// by <see cref="IRouteableSystemNotificationService.ActiveNotifications"/>.
+    /// by <see cref="IRouteableNotificationService.ActiveNotifications"/>.
     /// </summary>
     uint Id { get; }
 
@@ -145,57 +146,4 @@ public interface IRouteableSystemNotification
     /// Closes/dismisses the notification if it's currently shown.
     /// </summary>
     Task CloseAsync();
-}
-
-/// <summary>
-/// Creates and tracks system-level (OS notification-center) notifications,
-/// in a platform-agnostic way, so ViewModels can raise OS notifications
-/// without knowing whether the app is running on Avalonia, MAUI, or Blazor.
-/// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
-public interface IRouteableSystemNotificationService
-{
-    /// <summary>
-    /// Gets the notifications currently active (shown and not yet closed),
-    /// keyed by <see cref="IRouteableSystemNotification.Id"/>.
-    /// </summary>
-    IReadOnlyDictionary<uint, IRouteableSystemNotification> ActiveNotifications();
-
-    /// <summary>
-    /// Creates a new, not-yet-shown notification. Call
-    /// <see cref="IRouteableSystemNotification.ShowAsync"/> on the result to display it.
-    /// </summary>
-    /// <param name="category">
-    /// The category to create the notification under. If
-    /// <see langword="null"/>, the implementation uses a default category;
-    /// otherwise the category must already be defined at app launch.
-    /// </param>
-    /// <returns>
-    /// The new notification, or <see langword="null"/> if it couldn't be
-    /// created (e.g. an unrecognized <paramref name="category"/>, or the
-    /// platform denies notification permission).
-    /// </returns>
-    Task<IRouteableSystemNotification?> CreateNotificationAsync(string? category);
-
-    /// <summary>
-    /// Closes every currently active notification.
-    /// </summary>
-    void CloseAll();
-
-    /// <summary>
-    /// Raised when the user interacts with or dismisses a notification —
-    /// see <see cref="RouteableSystemNotificationEventArgs"/> for what triggered it.
-    /// </summary>
-    event EventHandler<RouteableSystemNotificationEventArgs>? NotificationCompleted;
-
-    /// <summary>
-    /// Performs any platform-specific setup needed before notifications can
-    /// be created (e.g. requesting OS permission, registering categories).
-    /// Default implementation is a no-op; platform adapters that need setup
-    /// should override this.
-    /// </summary>
-    Task InitializeAsync()
-    {
-        return Task.CompletedTask;
-    }
 }

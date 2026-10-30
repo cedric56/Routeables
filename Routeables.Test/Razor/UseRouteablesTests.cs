@@ -161,7 +161,7 @@ public class UseRouteablesTests
         var custom = new RouteableNotificationService(new RouteableNotificationOptions());
 
         services.UseRouteablesServer<FakeMainViewModel>();
-        services.UseRouteablesServices(routeableNotificationService: _ => custom);
+        services.UseRouteablesServices(notificationService: _ => custom);
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
 

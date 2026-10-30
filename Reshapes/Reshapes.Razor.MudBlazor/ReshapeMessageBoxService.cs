@@ -38,14 +38,20 @@ namespace Reshapes.Razor.MudBlazor
             return result?.Data is RouteableContentDialogResult cdr ? cdr : RouteableContentDialogResult.None;
         }
 
+        /// <summary>
+        /// Shows a message box whose buttons are the words of <paramref name="buttons"/> ("Ok", "YesNo", "YesNoCancel"...), at most three: MudBlazor
+        /// draws them as its Yes, No and Cancel buttons.
+        /// </summary>
+        /// <returns>The index of the button chosen; the last one when the dialog was dismissed.</returns>
         public async Task<int> ShowMessageAsync(string title, string message, string buttons)
         {
+            var words = Words(buttons);
             var result = await MudDialogService.ShowMessageBoxAsync(
                 title,
-                 SanitizeMessage(message),
-                yesText: "Yes",
-                noText: "No",
-                cancelText: "Abort",
+                SanitizeMessage(message),
+                yesText: words[0],
+                noText: words.Count > 1 ? words[1] : null,
+                cancelText: words.Count > 2 ? words[2] : null,
                 options: new DialogOptions
                 {
                     BackdropClick = true,
@@ -55,14 +61,24 @@ namespace Reshapes.Razor.MudBlazor
             {
                 true => 0,
                 false => 1,
-                _ => 2
+                _ => words.Count - 1
             };
         }
 
-        public Task<TResult?> ShowModalAsync<TViewModel, TResult>(TViewModel viewModel) where TViewModel : ICloseableViewModel<TResult>
+        // "YesNoCancel" is Yes, No, Cancel: one word for each capital. Nothing is "OK" but "Ok".
+        private static IReadOnlyList<string> Words(string? buttons)
         {
-            throw new NotImplementedException();
+            var words = string.IsNullOrEmpty(buttons)
+                ? []
+                : System.Text.RegularExpressions.Regex.Matches(buttons, @"\p{Lu}\p{Ll}*").Select(m => m.Value == "Ok" ? "OK" : m.Value).Take(3).ToList();
+            return words.Count == 0 ? ["OK"] : words;
         }
+
+        /// <summary>A modal is shown by its own component, <c>RouteableModalFor&lt;TView, TViewModel, TResult&gt;.ShowModalAsync()</c>.</summary>
+        /// <exception cref="NotSupportedException">Always: a view model alone does not say which component draws it.</exception>
+        public Task<TResult?> ShowModalAsync<TViewModel, TResult>(TViewModel viewModel) where TViewModel : ICloseableViewModel<TResult>
+            => throw new NotSupportedException(
+                "A modal needs its component: derive it from RouteableModalFor<TView, TViewModel, TResult> and call ShowModalAsync() on it.");
 
         /// <summary>
         /// Displays a task dialog asynchronously with the specified parameters and available result choices.

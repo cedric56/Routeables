@@ -73,7 +73,7 @@ Without `region`, the tabs follow the main history.
 
 ## Dialogs and notifications
 
-In the `Routeables.Wpf.Services` namespace. `UseRouteables` already registers them; call `UseRouteablesServices(icon, messageBoxService)` yourself only to give an icon or to draw them another way.
+In the `Routeables.Wpf.Services` namespace. `UseRouteables` already registers them; call `UseRouteablesServices(messageBoxService, icon)` yourself only to give an icon or to draw them another way.
 
 - Dialogs, content dialogs and task dialogs are windows owned by the window the user last worked in, shown with `ShowDialog` (modal). A dialog opened over another one is owned by it.
 - Notifications are small windows at the top centre of the active window, stacked, closed after five seconds, when clicked, or with the window. WPF has no notification control, and Routeables does not use the Windows toast API.

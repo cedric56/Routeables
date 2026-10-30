@@ -22,7 +22,7 @@ public static class Extensions
     /// model (the menu), and keeps it for the views.
     /// Call it once, from the constructor of the <see cref="Microsoft.UI.Xaml.Application"/>: the container is then ready when
     /// <c>OnLaunched</c> creates the window. The dialogs, content dialogs, task dialogs and notifications are registered too;
-    /// call <c>UseRouteablesServices(messageBoxService)</c> in <paramref name="configure"/> only to draw them another way.
+    /// call <c>UseRouteablesServices(sp => new MyMessageBoxService())</c> in <paramref name="configure"/> only to draw them another way.
     /// <code>
     /// Services = this.UseRouteables&lt;MainViewModel&gt;(services => services.AddGeneratedRoutes());
     /// </code>

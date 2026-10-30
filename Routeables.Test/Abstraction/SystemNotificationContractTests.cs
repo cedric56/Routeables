@@ -33,4 +33,27 @@ public class SystemNotificationContractTests
         Assert.True(args.IsActivated);
         Assert.False(args.IsCancelled);
     }
+
+    private sealed class ToastsOnly : IRouteableNotificationService
+    {
+        public void Show(string title, string message, RouteableNotificationType type = RouteableNotificationType.Information,
+            TimeSpan? expiration = null, Action? onClick = null, Action? onClose = null)
+        {
+        }
+    }
+
+    [Fact]
+    public async Task A_notification_service_without_system_notifications_has_harmless_defaults()
+    {
+        IRouteableNotificationService service = new ToastsOnly();
+        var raised = false;
+        service.NotificationCompleted += (_, _) => raised = true;
+
+        await service.InitializeAsync();
+        service.CloseAll();
+
+        Assert.Empty(service.ActiveNotifications());
+        Assert.Null(await service.CreateNotificationAsync(null));
+        Assert.False(raised);
+    }
 }

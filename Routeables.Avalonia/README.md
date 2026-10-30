@@ -52,19 +52,19 @@ Without `region`, the tabs follow the main history.
 
 ## Dialogs and notifications
 
-Drawn with Avalonia controls (`Routeables.Avalonia.Services` namespace). `UseRouteables` already registers them, and the dialog windows take the icon of the window that opens them. To draw them another way, register your own `IMessageBoxService` in the block (such as the FluentAvalonia one of [`Reshapes`](../Reshapes/README.md)):
+Drawn with Avalonia controls (`Routeables.Avalonia.Services` namespace). `UseRouteables` already registers them, and the dialog windows take the icon of the window that opens them. To draw them another way, give your own `IMessageBoxService` to `UseRouteablesServices` in the block (such as the FluentAvalonia one of [`Reshapes`](../Reshapes/README.md)):
 
 ```csharp
 AppBuilder.Configure<App>()
     .UseRouteables<MainViewModel>(services =>
     {
-        services.AddSingleton<IMessageBoxService>(new MyMessageBoxService());   // optional
+        services.UseRouteablesServices(sp => new MyMessageBoxService());   // optional
         services.AddGeneratedRoutes();
     })
     .UsePlatformDetect();
 ```
 
-`UseRouteablesServices(icon)` is only for a dialog icon other than the one of the main window.
+`UseRouteablesServices(icon: ...)` is only for a dialog icon other than the one of the main window.
 
 - Dialogs, content dialogs, task dialogs and notifications, through `IMessageBoxService` (`DefaultMessageBoxService`): modal windows on desktop, an overlay on single-view platforms (Android, iOS, browser).
 - `DialogView<TViewModel, TResult>`: the base of a modal view backed by a closeable view model.

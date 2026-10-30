@@ -79,15 +79,15 @@ public class WpfHostTests
         Assert.Contains("UseRouteables", error.Message);
     }
 
-    //[Fact]
-    //public void UseRouteablesServices_twice_leaves_one_service_of_each_kind()
-    //{
-    //    var services = new ServiceCollection();
-    //    services.UseRouteablesServices().UseRouteablesServices();
+    [Fact]
+    public void UseRouteablesServices_twice_leaves_one_service_of_each_kind()
+    {
+        var services = new ServiceCollection();
+        services.UseRouteablesServices().UseRouteablesServices();
 
-    //    foreach (var type in new[] { typeof(IRouteableDialogService), typeof(IRouteableContentDialogService), typeof(IRouteableTaskDialogService), typeof(IRouteableNotificationService), typeof(IMessageBoxService) })
-    //        Assert.Single(services, descriptor => descriptor.ServiceType == type);
-    //}
+        foreach (var type in new[] { typeof(IRouteableDialogService), typeof(IRouteableNotificationService), typeof(IMessageBoxService) })
+            Assert.Single(services, descriptor => descriptor.ServiceType == type);
+    }
 
     [Fact]
     public Task The_last_window_to_close_takes_the_container_with_it() => WithHostAsync(async provider =>

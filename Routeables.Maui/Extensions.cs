@@ -21,7 +21,7 @@ public static class Extensions
     /// </code>
     /// </summary>
     /// <remarks>
-    /// It registers the modal, content dialog, task dialog, dialog and notification services too (<c>UseRouteablesServices()</c> of
+    /// It registers the dialog (message boxes, content dialogs and task dialogs), modal and notification services too (<c>UseRouteablesServices()</c> of
     /// <c>Routeables.Maui.Services</c>); call that one again only to replace a service.
     /// </remarks>
     /// <typeparam name="TMain">The main view model.</typeparam>

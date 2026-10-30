@@ -30,7 +30,7 @@ public partial class App : Application
                 services.AddGeneratedRoutes();      // the routes declared by attributes on the view models, paired with the views of this project and of the modules it references
                 AnimalIcons.Register();             // the glyph of each page of the menu
                 services.RegisterViewModels();      // shared with the Avalonia, MAUI, Uno and Blazor samples
-                services.UseRouteablesServices(IconUri);   // the icon of the dialogs
+                services.UseRouteablesServices(icon: IconUri);   // the icon of the dialogs
             },
             () => new MainView(),
             window =>

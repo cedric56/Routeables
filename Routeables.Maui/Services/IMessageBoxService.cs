@@ -4,9 +4,9 @@ using Routeables.Services;
 namespace Routeables.Maui.Services;
 
 /// <summary>
-/// Where the dialogs of the Avalonia host are drawn. <c>DefaultMessageBoxService</c> draws them itself; a Reshape (such as
-/// <c>ReshapeMessageBoxService</c> for FluentAvalonia) replaces it to draw them with a UI library. Pass yours to
-/// <c>AppBuilder.UseRouteables(messageBoxService: ...)</c>.
+/// Where the dialogs of the MAUI host are drawn. <see cref="RouteableDialogService"/> draws them with the native dialogs; a Reshape (such as
+/// <c>ReshapeMessageBoxService</c> for CommunityToolkit) replaces it to draw them with a UI library. Pass yours to
+/// <c>MauiAppBuilder.UseRouteablesServices(messageBoxService: ...)</c>.
 /// </summary>
 public interface IMessageBoxService
 {
@@ -14,12 +14,8 @@ public interface IMessageBoxService
     /// <param name="title">The title of the dialog.</param>
     /// <param name="message">The text of the dialog.</param>
     /// <param name="buttons">The labels of the buttons, written together in PascalCase (<c>"YesNo"</c> gives Yes and No); Ok when empty.</param>
-    /// <returns>The label of the button that was chosen, or <see langword="null"/> when the dialog was dismissed.</returns>
-    Task<int> ShowMessageAsync(string title, string message, string buttons)
-    {
-        return ServiceLocator.RouteableDialogService?.ShowMessageAsync(title, message, buttons) ??
-            throw new InvalidOperationException();
-    }
+    /// <returns>The index of the button that was chosen (0 for the first), or the index of the last button when the dialog was dismissed.</returns>
+    Task<int> ShowMessageAsync(string title, string message, string buttons);
 
     /// <summary>Shows a content dialog (a title, a content and up to three buttons) and waits for it to close.</summary>
     /// <param name="params">What the dialog shows and how its buttons behave.</param>

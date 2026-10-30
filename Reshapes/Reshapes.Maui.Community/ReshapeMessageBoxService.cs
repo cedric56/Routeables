@@ -10,6 +10,28 @@ namespace Reshapes.Maui.Community;
 internal class ReshapeMessageBoxService(IRouteableDialogWindowContext context) : IMessageBoxService
 {
     /// <inheritdoc />
+    public async Task<int> ShowMessageAsync(string title, string message, string buttons)
+    {
+        var page = context.CurrentPage
+            ?? throw new InvalidOperationException("No active Page to host the message box.");
+
+        var words = RouteableButtons.Split(buttons);
+        switch (words.Count)
+        {
+            case 0:
+            case 1:
+                await page.DisplayAlertAsync(title, message, words.Count == 0 ? "Ok" : words[0]);
+                return 0;
+            case 2:
+                return await page.DisplayAlertAsync(title, message, words[0], words[1]) ? 0 : 1;
+            default:
+                var chosen = await page.DisplayActionSheetAsync(title, words[^1], null, words.ToArray());
+                var index = chosen is null ? -1 : words.ToList().IndexOf(chosen);
+                return index < 0 ? words.Count - 1 : index;
+        }
+    }
+
+    /// <inheritdoc />
     public async Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params)
     {
         ArgumentNullException.ThrowIfNull(@params);

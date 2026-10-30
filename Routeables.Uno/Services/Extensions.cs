@@ -20,15 +20,17 @@ public static class Extensions
     /// that draws them. <c>UseRouteables</c> already calls it; call it again from its <c>configure</c> callback to give another message box
     /// service. A second call replaces the first.
     /// <code>
-    /// Services = this.UseRouteables&lt;MainViewModel&gt;(services => services.UseRouteablesServices(new MyMessageBoxService()));
+    /// Services = this.UseRouteables&lt;MainViewModel&gt;(services => services.UseRouteablesServices(sp => new MyMessageBoxService()));
     /// </code>
     /// </summary>
     /// <param name="services">The service collection to add services to.</param>
-    /// <param name="messageBoxService">Optional replacement of <see cref="DefaultMessageBoxService"/>.</param>
+    /// <param name="messageBoxService">Builds the <see cref="IMessageBoxService"/> that draws the dialogs and the notifications; <see cref="DefaultMessageBoxService"/> when not set.</param>
+    /// <param name="notificationService">Builds the <see cref="IRouteableNotificationService"/>; Routeables' own when not set.</param>
     /// <returns>The same <paramref name="services"/>, for chaining.</returns>
     public static IServiceCollection UseRouteablesServices(
         this IServiceCollection services,
-        IMessageBoxService? messageBoxService = null)
+        Func<IServiceProvider, IMessageBoxService>? messageBoxService = null,
+        Func<IServiceProvider, IRouteableNotificationService>? notificationService = null)
     {
         ArgumentNullException.ThrowIfNull(services);
 
@@ -36,8 +38,8 @@ public static class Extensions
         services.RemoveAll<IRouteableNotificationService>();
         services.RemoveAll<IRouteableDialogService>();
 
-        services.AddSingleton(messageBoxService ?? new DefaultMessageBoxService());
-        services.AddSingleton<IRouteableNotificationService>(sp => new RouteableNotificationService(sp.GetRequiredService<IMessageBoxService>()));
+        services.AddSingleton<IMessageBoxService>(messageBoxService ?? (_ => new DefaultMessageBoxService()));
+        services.AddSingleton(notificationService ?? (sp => new RouteableNotificationService(sp.GetRequiredService<IMessageBoxService>())));
         services.AddSingleton<IRouteableDialogService>(sp => new RouteableDialogService(sp.GetRequiredService<IMessageBoxService>()));
         return services;
     }

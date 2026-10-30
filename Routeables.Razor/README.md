@@ -38,14 +38,14 @@ Who decides the route: Routeables. The package ships `Main.razor`, whose two `@p
 
 ## Dialogs, modals and notifications
 
-Drawn with plain Razor (`Routeables.Razor.Services` namespace). `UseRouteablesServer` (and `UseRouteablesWebAssembly`, `UseRouteablesHybrid`) already registers them; call `UseRouteablesServices` yourself only to move the notifications or replace a service:
+Drawn with plain Razor (`Routeables.Razor.Services` namespace). `UseRouteablesServer` (and `UseRouteablesWebAssembly`, `UseRouteablesHybrid`) already registers them; call `UseRouteablesServices` yourself only to move the notifications, to replace a service or to draw the dialogs with another `IMessageBoxService`:
 
 ```csharp
 services.UseRouteablesServer<MainViewModel>();
 services.UseRouteablesServices(position: RouteableNotificationPosition.TopRight, maxDispayments: 3);   // optional
 ```
 
-Everything is scoped. Each service has an optional factory to replace it; [`Reshapes.Razor.MudBlazor`](../Reshapes/README.md) passes the MudBlazor ones.
+Everything is scoped. There is one `IRouteableDialogService` (message boxes, content dialogs and task dialogs): it asks an `IMessageBoxService` to draw them, `DefaultMessageBoxService` (plain Razor, shown by the hosts) unless `UseRouteablesServices(messageBoxService: sp => ...)` gives another one; [`Reshapes.Razor.MudBlazor`](../Reshapes/README.md) gives the MudBlazor one. The notification service has an optional factory too.
 
 - The hosts that draw the services: `RouteableDialogHost`, `RouteableContentDialogHost`, `RouteableTaskDialogHost`, `RouteableModalHost`, `RouteableNotificationHost`. The default `MainLayout` already contains them; a layout of your own inherits `MainLayoutBase` and adds them.
 - `RouteableModalFor<TView, TViewModel, TResult>`: shows a view in a modal and returns a typed result when its view model closes.
