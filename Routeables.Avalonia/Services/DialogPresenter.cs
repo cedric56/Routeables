@@ -57,6 +57,11 @@ internal static class DialogPresenter
             WindowStartupLocation = WindowStartupLocation.CenterOwner
         };
 
+        // SizeToContent is applied after the window is shown, so the window would first appear in a corner and then jump to the centre.
+        var offscreen = parent.Bounds.Width > 0 && parent.Bounds.Height > 0;
+        if (offscreen)
+            PlaceOffscreen(dialog);
+
         handle.CloseSurface = dialog.Close;
 
         // The window's own close button and Escape are dismissals that the dialog may veto.
@@ -73,7 +78,12 @@ internal static class DialogPresenter
                 handle.RequestDismiss();
             }
         };
-        dialog.Opened += (_, _) => handle.NotifyOpened();
+        dialog.Opened += (_, _) =>
+        {
+            handle.NotifyOpened();
+            if (offscreen)
+                Dispatcher.UIThread.Post(() => CenterOnOwner(dialog, parent), DispatcherPriority.Loaded);
+        };
 
         OpenWindows.Add(dialog);
         try
@@ -84,6 +94,33 @@ internal static class DialogPresenter
         {
             OpenWindows.Remove(dialog);
         }
+    }
+
+    // The window sizes itself to its content (as it always did), but only after it is shown, and an estimate of the size is wrong for
+    // a content that is not in the tree yet (a view with a template). So the window opens far outside the screen, where nobody sees
+    // it, and is centred on its owner once its real size is known.
+    private static void PlaceOffscreen(Window dialog)
+    {
+        dialog.WindowStartupLocation = WindowStartupLocation.Manual;
+        dialog.Position = new PixelPoint(-32000, -32000);
+    }
+
+    private static void CenterOnOwner(Window dialog, Window parent)
+    {
+        var scale = dialog.RenderScaling;
+        var width = (int)Math.Round(dialog.Bounds.Width * scale);
+        var height = (int)Math.Round(dialog.Bounds.Height * scale);
+        var parentWidth = (int)Math.Round(parent.Bounds.Width * parent.RenderScaling);
+        var parentHeight = (int)Math.Round(parent.Bounds.Height * parent.RenderScaling);
+        if (width <= 0 || height <= 0 || parentWidth <= 0 || parentHeight <= 0)
+        {
+            dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            return;
+        }
+
+        dialog.Position = new PixelPoint(
+            parent.Position.X + (parentWidth - width) / 2,
+            parent.Position.Y + (parentHeight - height) / 2);
     }
 
     // Whether `window` is `root` or is owned, directly or not, by it.
