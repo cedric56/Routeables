@@ -53,7 +53,7 @@ public static class Extensions
 
         return services.UseRouteablesServices(
             sp => new ReshapeMessageBoxService(sp.GetRequiredService<IDialogService>()),
-            sp => new ReshapeNotificationService(sp.GetRequiredService<ISnackbar>()),
+            sp => new ReshapeNotificationService(sp.GetRequiredService<ISnackbar>(), sp.GetService<RouteableSystemNotifications>()),
             position,
             maxDispayments);
     }

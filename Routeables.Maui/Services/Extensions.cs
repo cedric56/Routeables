@@ -1,5 +1,8 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Services;
+#if ANDROID
+using Microsoft.Maui.LifecycleEvents;
+#endif
 
 namespace Routeables.Maui.Services;
 
@@ -47,6 +50,8 @@ public static class Extensions
         else
             builder.Services.AddSingleton(messageBoxService);
         builder.Services.AddSingleton<IRouteableDialogWindowContext, RouteableDialogWindowContext>();
+        builder.Services.RemoveAll<RouteableSystemNotifications>();
+        builder.Services.AddSingleton(new RouteableSystemNotifications());
         RegisterOrDefault<IRouteableNotificationService, RouteableNotificationService>(builder.Services, notificationService);
         return builder;
     }
@@ -63,5 +68,27 @@ public static class Extensions
             services.AddSingleton<TService, TImplementation>();
         else
             services.AddSingleton(factory);
+    }
+
+    /// <summary>
+    /// Turns on the system notifications of <see cref="IRouteableNotificationService"/> (<c>CreateNotificationAsync</c>, <c>ActiveNotifications</c>,
+    /// <c>CloseAll</c>, <c>NotificationCompleted</c>, <c>InitializeAsync</c>): Android, iOS, Mac Catalyst and Windows use their notification center.
+    /// It is the counterpart of <c>WithAppNotifications</c> of Avalonia.Labs.Notifications, and separate from <c>UseRouteables</c>: without this call the
+    /// service creates none. On Android it also registers the lifecycle events that bring a tap on a notification back.
+    /// </summary>
+    /// <param name="builder">The MAUI app builder to configure.</param>
+    /// <param name="options">The <see cref="AppNotificationOptions"/>; the defaults when <see langword="null"/>.</param>
+    /// <returns>The same <paramref name="builder"/>, for chaining.</returns>
+    public static MauiAppBuilder WithAppNotifications(this MauiAppBuilder builder, AppNotificationOptions? options = null)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        SystemNotificationCenter.Current.Configure(options ?? new AppNotificationOptions());
+#if ANDROID
+        // A tap on a system notification starts or comes back to the activity with the id of the notification as an extra.
+        builder.ConfigureLifecycleEvents(events => events.AddAndroid(android => android
+            .OnCreate((activity, _) => SystemNotificationCenter.HandleIntent(activity.Intent))
+            .OnNewIntent((_, intent) => SystemNotificationCenter.HandleIntent(intent))));
+#endif
+        return builder;
     }
 }

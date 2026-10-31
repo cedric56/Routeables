@@ -85,7 +85,7 @@ public interface IRouteableNotificationService
         Action? onClose = null);
 
     // ---- system (OS notification-center) notifications -------------------------------------------------------------
-    // Optional: only Avalonia implements them (Avalonia.Labs.Notifications). The defaults below say so (nothing active, nothing created), so an implementation
+    // Optional: Avalonia (Avalonia.Labs.Notifications), Blazor (the browser) and .NET MAUI (the platform APIs) implement them. The defaults below say so (nothing active, nothing created), so an implementation
     // of the toasts above is complete without them.
 
     /// <summary>

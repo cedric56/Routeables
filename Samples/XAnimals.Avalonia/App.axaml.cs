@@ -47,13 +47,7 @@ public partial class App : Application
            },
            onDispose: onAppDispose,
            // The window on a desktop, the view on a single-view platform; both get the menu as their DataContext.
-           view: lifetime => lifetime is IClassicDesktopStyleApplicationLifetime ? new MainWindow() : new MainView())
-            .WithAppNotifications(new AppNotificationOptions()
-            {
-                //AppIcon = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName) + "/avalonia-32.png",
-                //AppName = "Avalonia.Labs",
-                //AppUserModelId = "com.Avalonia.Labs.Catalog",
-            });
+           view: lifetime => lifetime is IClassicDesktopStyleApplicationLifetime ? new MainWindow() : new MainView());
     }
 
     public override void Initialize()

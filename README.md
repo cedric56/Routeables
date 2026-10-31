@@ -87,7 +87,7 @@ Each host README has the complete setup. [Getting started](docs/getting-started.
 | Lifecycle | Initialize, entering, leaving, `CanLeaveAsync` veto, `OnSubscribe`/`OnUnsubscribe`, destroy | [Lifecycle](docs/guides/lifecycle.md) |
 | Guards | `IRouteGuard` with an order; allow, redirect or cancel a route change | [Routes](docs/guides/routes.md) |
 | Transitions | 15 built-in transitions, custom ones registered per host | [Transitions](docs/guides/transitions.md) |
-| Dialogs and notifications | One dialog service and one notification service on every host, replaceable at startup, system notifications (Avalonia) | [System integration](docs/guides/system-integration.md) |
+| Dialogs and notifications | One dialog service and one notification service on every host, replaceable at startup, system notifications (Avalonia, Blazor, MAUI) | [System integration](docs/guides/system-integration.md) |
 | Deep links | Open a route from a URL or a system activation | [System integration](docs/guides/system-integration.md) |
 | Modules | A feature is one extension method, loaded at startup or on demand | [Hosts](docs/guides/hosts.md) |
 | Locking | Pages that block leaving, a locked menu | [Locking](Routeables.Locking/README.md) |

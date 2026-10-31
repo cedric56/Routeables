@@ -8,7 +8,7 @@ namespace Reshapes.Maui.CommunityToolkit;
 /// <summary>
 /// https://github.com/gurrenm3/Toast-Notifications-with-.Net-Maui
 /// </summary>
-public class ReshapeNotificationService(IRouteableDialogWindowContext context) : IRouteableNotificationService
+public class ReshapeNotificationService(IRouteableDialogWindowContext context, RouteableSystemNotifications? system = null) : RouteableNotificationServiceBase(system)
 {
     /// <summary>
     /// Displays a transient popup notification with a type-colored icon, optionally auto-dismissing
@@ -20,18 +20,33 @@ public class ReshapeNotificationService(IRouteableDialogWindowContext context) :
     /// <param name="expiration">Optional duration after which the notification is automatically dismissed if not already closed.</param>
     /// <param name="onClick">Optional callback invoked when the notification is tapped.</param>
     /// <param name="onClose">Optional callback invoked once the notification has been dismissed.</param>
-    public void Show(string title, string message, RouteableNotificationType type = RouteableNotificationType.Information, TimeSpan? expiration = null, Action? onClick = null, Action? onClose = null)
+    public override void Show(string title, string message, RouteableNotificationType type = RouteableNotificationType.Information, TimeSpan? expiration = null, Action? onClick = null, Action? onClose = null)
     {
-        var page = context.CurrentPage
-           ?? throw new InvalidOperationException(
-               "No active Page to host the content dialog popup.");
-        _ = DisplayAsync(page, message, onClick, expiration);
+        // No page to host the snackbar: Routeables' own notification is shown instead.
+        if (context.CurrentPage is not { } page)
+        {
+            ShowDefault(title, message, type, expiration, onClick, onClose);
+            return;
+        }
+
+        _ = DisplayAsync(page, title, message, type, expiration, onClick, onClose);
     }
 
-    // Not async void: a snackbar that cannot be shown must not end the application.
-    private static async Task DisplayAsync(Page page, string message, Action? onClick, TimeSpan? expiration)
+    // Not async void: a snackbar that cannot be shown must not end the application. It is reported, and the notification
+    // of Routeables takes its place, so the user still sees it.
+    private async Task DisplayAsync(Page page, string title, string message, RouteableNotificationType type, TimeSpan? expiration, Action? onClick, Action? onClose)
     {
         try { await page.DisplaySnackbar(message, onClick, duration: expiration); }
+        catch (Exception ex)
+        {
+            RouteableErrors.Report<ReshapeNotificationService>(null, ex);
+            page.Dispatcher.Dispatch(() => ShowDefault(title, message, type, expiration, onClick, onClose));
+        }
+    }
+
+    private void ShowDefault(string title, string message, RouteableNotificationType type, TimeSpan? expiration, Action? onClick, Action? onClose)
+    {
+        try { RouteableDefaultNotifications.Show(context, title, message, type, expiration, onClick, onClose); }
         catch (Exception ex) { RouteableErrors.Report<ReshapeNotificationService>(null, ex); }
     }
 }

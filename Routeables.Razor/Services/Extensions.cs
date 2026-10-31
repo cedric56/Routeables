@@ -53,6 +53,8 @@ public static class Extensions
         services.AddScoped<IMessageBoxService>(messageBoxService ?? (sp => sp.GetRequiredService<DefaultMessageBoxService>()));
         services.AddScoped<IRouteableDialogService>(sp => new RouteableDialogService(sp.GetRequiredService<IMessageBoxService>()));
 
+        services.RemoveAll<RouteableSystemNotifications>();
+        services.AddScoped(sp => new RouteableSystemNotifications(sp.GetService<BrowserSystemNotifications>()));
         services.AddSingleton(new RouteableNotificationOptions
         {
             Position = position,
@@ -86,6 +88,11 @@ public static class Extensions
             sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>(), sp.GetRequiredService<AppNotificationOptions>()));
         return services;
     }
+
+    private static void RegisterServices<TInterface, TImplementation>(this IServiceCollection services, Func<IServiceProvider, TInterface>? factory = null)
+        where TImplementation : class, TInterface, new()
+        where TInterface : class
+        => services.RegisterServices<TInterface, TImplementation>(_ => new TImplementation(), factory);
 
     private static void RegisterServices<TInterface, TImplementation>(this IServiceCollection services,
         Func<IServiceProvider, TImplementation> implementationFactory,

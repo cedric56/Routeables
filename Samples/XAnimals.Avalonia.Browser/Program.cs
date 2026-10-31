@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Browser;
+using Avalonia.Labs.Notifications;
 using Avalonia.Media;
 using Avalonia.Media.Fonts;
 using System;
@@ -22,5 +23,6 @@ internal sealed partial class Program
             .StartBrowserAppAsync("out");
 
     public static AppBuilder BuildAvaloniaApp()
-        => App.CreateApp();
+        => App.CreateApp()
+              .WithAppNotifications();
 }

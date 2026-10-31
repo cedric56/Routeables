@@ -5,9 +5,10 @@ using Android.OS;
 using Android.Runtime;
 using Avalonia;
 using Avalonia.Android;
-using Application = Avalonia.Application;
-using XAnimals.Avalonia;
+using Avalonia.Labs.Notifications;
 using System;
+using XAnimals.Avalonia;
+using Application = Avalonia.Application;
 
 namespace XAnimals.Avalonia.Android;
 
@@ -26,9 +27,13 @@ public class MainActivity : AvaloniaMainActivity
 {
     private const string State = "routeables.history";
 
+    public event EventHandler<Intent?>? OnActivityIntent;
+
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
+
+        NativeNotificationManager.Current?.SetPermissionActivity(this);
 
         // The pages the system killed with the process come back, then the link that started the application (if any) is followed.
         LinkInbox.Instance.Restore(savedInstanceState?.GetString(State));
@@ -38,6 +43,7 @@ public class MainActivity : AvaloniaMainActivity
     protected override void OnNewIntent(Intent? intent)
     {
         base.OnNewIntent(intent);
+        OnActivityIntent?.Invoke(this, intent);
         LinkInbox.Instance.Push(intent?.Data is { } data ? new Uri(data.ToString()!) : null);
     }
 
@@ -58,6 +64,7 @@ public class MainApplication : AvaloniaAndroidApplication<Application>
     protected override AppBuilder CreateAppBuilder()
     {
         return App.CreateApp()
-            .UseAndroid();
+            .UseAndroid()
+            .WithAppNotifications(this);
     }
 }

@@ -22,6 +22,6 @@ public static class Extensions
     {
         return builder.UseRouteablesServices(
             messageBoxService: sp => new ReshapeMessageBoxService(sp.GetRequiredService<IRouteableDialogWindowContext>()),
-            notificationService: sp => new ReshapeNotificationService(sp.GetRequiredService<IRouteableDialogWindowContext>()));
+            notificationService: sp => new ReshapeNotificationService(sp.GetRequiredService<IRouteableDialogWindowContext>(), sp.GetService<RouteableSystemNotifications>()));
     }
 }

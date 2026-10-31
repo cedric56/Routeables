@@ -11,7 +11,7 @@ internal class RouteableNotificationService(
 #if !WINDOWS && !ANDROID && !IOS && !MACCATALYST
     IRouteableDialogWindowContext context
 #endif
-    ) : IRouteableNotificationService
+    ) : RouteableNotificationServiceBase(new RouteableSystemNotifications())
 {
     /// <summary>
     /// Displays a transient notification with a type-colored icon, optionally auto-dismissing
@@ -23,16 +23,12 @@ internal class RouteableNotificationService(
     /// <param name="expiration">Optional duration after which the notification is automatically dismissed if not already closed.</param>
     /// <param name="onClick">Optional callback invoked when the notification is tapped.</param>
     /// <param name="onClose">Optional callback invoked once the notification has been dismissed.</param>
-    public void Show(string title, string message, RouteableNotificationType type = RouteableNotificationType.Information, TimeSpan? expiration = null, Action? onClick = null, Action? onClose = null)
+    public override void Show(string title, string message, RouteableNotificationType type = RouteableNotificationType.Information, TimeSpan? expiration = null, Action? onClick = null, Action? onClose = null)
     {
 #if WINDOWS || ANDROID || IOS || MACCATALYST
-        RouteableToastHelper.Show(title, message, type, expiration, onClick, onClose);
+        RouteableDefaultNotifications.Show(null!, title, message, type, expiration, onClick, onClose);   // the platform's own toast needs no page
 #else
-        var page = context.CurrentPage
-           ?? throw new InvalidOperationException(
-               "No active Page to host the notification.");
-
-        page.Dispatcher.Dispatch(() => RouteableToastOverlay.Show(page, title, message, type, expiration, onClick, onClose));
+        RouteableDefaultNotifications.Show(context, title, message, type, expiration, onClick, onClose);
 #endif
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Net;
+using Routeables.Razor.Services;
 using Routeables.Services;
 
 namespace Reshapes.Razor.MudBlazor;
@@ -11,7 +12,7 @@ namespace Reshapes.Razor.MudBlazor;
 /// to display toast notifications with sanitized titles, messages, severity levels, and interaction event handlers.
 /// </summary>
 /// <param name="SnackbarService">The underlying MudBlazor snackbar service.</param>
-internal class ReshapeNotificationService(ISnackbar SnackbarService) : IRouteableNotificationService
+internal class ReshapeNotificationService(ISnackbar SnackbarService, RouteableSystemNotifications? system = null) : RouteableNotificationServiceBase(system)
 {
     /// <summary>
     /// Displays a toast notification with the specified title, message, type, expiration duration, and interaction handlers.
@@ -22,7 +23,7 @@ internal class ReshapeNotificationService(ISnackbar SnackbarService) : IRouteabl
     /// <param name="expiration">Optional duration before the notification automatically dismisses; if null, user interaction is required.</param>
     /// <param name="onClick">Optional callback invoked when the notification is clicked.</param>
     /// <param name="onClose">Optional callback invoked when the notification is closed or dismissed.</param>
-    public void Show(string title, string message, RouteableNotificationType type = RouteableNotificationType.Information, TimeSpan? expiration = null, Action? onClick = null, Action? onClose = null)
+    public override void Show(string title, string message, RouteableNotificationType type = RouteableNotificationType.Information, TimeSpan? expiration = null, Action? onClick = null, Action? onClose = null)
     {
         // Encode untrusted values BEFORE building markup.
         var safeTitle = WebUtility.HtmlEncode(title ?? string.Empty);

@@ -2,6 +2,7 @@ using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using Routeables.Generated;
 using Routeables.Maui;
+using Routeables.Maui.Services;
 using XAnimals.Common;
 using XAnimals.ViewModels;
 using Reshapes.Maui.CommunityToolkit;
@@ -17,6 +18,7 @@ public static class MauiProgram
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
             .UseRouteables<MainViewModel>()
+            .WithAppNotifications()
             .UseCommunityToolkit()
             .ConfigureFonts(fonts =>
             {
