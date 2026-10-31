@@ -33,6 +33,7 @@
                 <Button Margin="0,0,8,8" Text="Success" Command="{Binding SuccessCommand}" />
                 <Button Margin="0,0,8,8" Text="Warning" Command="{Binding WarningCommand}" />
                 <Button Margin="0,0,8,8" Text="Error" Command="{Binding NotificationErrorCommand}" />
+                <Button Margin="0,0,8,8" Text="System" Command="{Binding SystemNotificationCommand}" />
             </FlexLayout>
 
             <Label Text="{Binding Result}" IsVisible="{Binding HasResult}" Margin="0,10,0,0" />

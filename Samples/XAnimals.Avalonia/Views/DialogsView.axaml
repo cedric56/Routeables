@@ -30,6 +30,7 @@
                 <Button Margin="0,0,8,8" Content="Success" Classes="an" Command="{Binding SuccessCommand}" />
                 <Button Margin="0,0,8,8" Content="Warning" Classes="an" Command="{Binding WarningCommand}" />
                 <Button Margin="0,0,8,8" Content="Error" Classes="an" Command="{Binding NotificationErrorCommand}" />
+                <Button Margin="0,0,8,8" Content="System" Classes="an" Command="{Binding SystemNotificationCommand}" />
             </WrapPanel>
 
             <TextBlock Text="{Binding Result}" IsVisible="{Binding HasResult}" Margin="0,10,0,0"

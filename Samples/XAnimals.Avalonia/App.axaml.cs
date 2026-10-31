@@ -3,6 +3,7 @@ using AsyncImageLoader.Core.Caching;
 using AsyncImageLoader.Core.Pipeline;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Labs.Notifications;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
@@ -46,7 +47,13 @@ public partial class App : Application
            },
            onDispose: onAppDispose,
            // The window on a desktop, the view on a single-view platform; both get the menu as their DataContext.
-           view: lifetime => lifetime is IClassicDesktopStyleApplicationLifetime ? new MainWindow() : new MainView());
+           view: lifetime => lifetime is IClassicDesktopStyleApplicationLifetime ? new MainWindow() : new MainView())
+            .WithAppNotifications(new AppNotificationOptions()
+            {
+                //AppIcon = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName) + "/avalonia-32.png",
+                //AppName = "Avalonia.Labs",
+                //AppUserModelId = "com.Avalonia.Labs.Catalog",
+            });
     }
 
     public override void Initialize()

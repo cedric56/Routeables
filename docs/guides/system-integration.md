@@ -168,3 +168,21 @@ These two are patterns, not features of the router, and the framework does not a
 See [Transitions](transitions.md) for the built-in set (`None`, `Fade`, `Slide`, `SlideUp`), the choice per navigation (`RouteableArgs.WithTransition`) and custom transitions.
 
 Zero, the default, shows the view at once. The region of a module's page and the main zone of the shell use the same control, so a transition set there applies to every page.
+
+## System notifications (Avalonia)
+
+`IRouteableNotificationService.Show` draws a toast inside the window. The same service can also use the notification center of the operating system, through the members `CreateNotificationAsync`, `ActiveNotifications`, `CloseAll`, `NotificationCompleted` and `InitializeAsync`. Only the Avalonia and Blazor hosts implement them. Avalonia uses [Avalonia.Labs.Notifications](https://www.nuget.org/packages/Avalonia.Labs.Notifications). The other hosts, and Avalonia in the browser, return `null` from `CreateNotificationAsync` and nothing from the others.
+
+```csharp
+var notification = await notifications.CreateNotificationAsync("animals");
+if (notification is null) return;                // no system notification on this host
+notification.Title = "New animal";
+notification.Message = "A polar bear was added to the adoption list.";
+await notification.ShowAsync();
+```
+
+On Blazor, `services.WithAppNotifications(new AppNotificationOptions { ... })` (namespace `Routeables.Razor.Services`, options optional like those of `WithAppNotifications` on Avalonia) turns them on with the notification center of the browser. `CreateNotificationAsync` asks for the permission when it was not asked yet, which a browser only accepts after a click, and returns `null` when it is denied or while the page is prerendered. The options are `DefaultIcon`, `ClearOnAppClose`, `RequestPermissionOnInitialize` and `ServiceWorkerUrl`.
+
+Action buttons and a reply field need a service worker: copy `routeables-notifications-worker.js` (in the `wwwroot` of the Routeables.Razor sources, `_content/Routeables.Razor/` once built) to the **root** of your site, because a worker only controls the pages under its own path, and serve the site over HTTPS (or localhost). The page registers it at `ServiceWorkerUrl`. It reports the click, the close and the reply to the page as `HandleNotificationClick`, `HandleNotificationClose` and `HandleNotificationReply`, which come back as `NotificationCompleted`: `ActionTag` is the button, `UserData` the text of a reply (a reply field, `ReplyActionTag`, is supported by some mobile browsers only). Without the worker, or when it cannot be registered, the page notifies by itself: no buttons, and only the click and the close are reported. The samples copy the worker into their `wwwroot` at build time.
+
+The Dialogs page of every sample has a *System* button that does this and says so when the host has none. On Windows, system notifications need a packaged application, and on Linux the application id must be registered (see the documentation of the package).

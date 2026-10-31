@@ -29,6 +29,7 @@
                 <Button Margin="0,0,8,8" Content="Success" Command="{Binding SuccessCommand}" />
                 <Button Margin="0,0,8,8" Content="Warning" Command="{Binding WarningCommand}" />
                 <Button Margin="0,0,8,8" Content="Error" Command="{Binding NotificationErrorCommand}" />
+                <Button Margin="0,0,8,8" Content="System" Command="{Binding SystemNotificationCommand}" />
             </local:WrapPanel>
 
             <TextBlock Text="{Binding Result}" Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}"

@@ -7,7 +7,7 @@ using Routeables.Avalonia;
 
 namespace Routeables.Avalonia.Services;
 
-internal class RouteableNotificationService(IMessageBoxService service) : IRouteableNotificationService
+internal partial class RouteableNotificationService(IMessageBoxService service) : IRouteableNotificationService
 {
     // The manager of the window the notifications are shown in. It draws nothing until its template is applied: what is shown
     // meanwhile waits in the slot, so two notifications asked in a row share one manager instead of creating a second one.

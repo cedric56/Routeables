@@ -457,3 +457,7 @@ $RECYCLE.BIN/
 docs/_site/
 docs/api/*.yml
 docs/api/.manifest
+Samples/XAnimals.Avalonia.Browser/wwwroot/notifications-service-worker.js
+Samples/Xanimals.BlazorApp/wwwroot/routeables-notifications-worker.js
+Samples/XAnimals.BlazorWebAssembly/wwwroot/routeables-notifications-worker.js
+Samples/XAnimals.MauiHybrid/wwwroot/routeables-notifications-worker.js

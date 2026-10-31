@@ -1,5 +1,6 @@
 using Routeables.Generated;
 using Routeables.Razor;
+using Routeables.Razor.Services;
 using Xanimals.BlazorApp.Components;
 using Xanimals.Razor;
 using XAnimals.ViewModels;
@@ -11,6 +12,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.UseRouteablesServer<MainViewModel>();
+builder.Services.WithAppNotifications();
 builder.Services.AddGeneratedRoutes();   // here, not in XAnimals.Razor: the Razor views of that library are seen as referenced assemblies
 builder.Services.UseSharedLibrary();
 

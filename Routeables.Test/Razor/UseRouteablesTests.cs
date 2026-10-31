@@ -168,4 +168,35 @@ public class UseRouteablesTests
         Assert.Same(custom, scope.ServiceProvider.GetRequiredService<IRouteableNotificationService>());
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRouteableDialogService>());
     }
+
+    [Fact]
+    public async Task Without_WithAppNotifications_the_service_creates_no_system_notification()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<NavigationManager>(new TestNavigationManager());
+        services.UseRouteablesServer<FakeMainViewModel>();
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var notifications = scope.ServiceProvider.GetRequiredService<IRouteableNotificationService>();
+
+        Assert.Null(await notifications.CreateNotificationAsync("animals"));
+        Assert.Empty(notifications.ActiveNotifications());
+    }
+
+    [Fact]
+    public void WithAppNotifications_registers_the_options_it_is_given()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<NavigationManager>(new TestNavigationManager());
+        services.UseRouteablesServer<FakeMainViewModel>();
+        services.WithAppNotifications(new AppNotificationOptions { DefaultIcon = "/icon.png", ClearOnAppClose = true });
+        using var provider = services.BuildServiceProvider();
+
+        var options = provider.GetRequiredService<AppNotificationOptions>();
+
+        Assert.Equal("/icon.png", options.DefaultIcon);
+        Assert.True(options.ClearOnAppClose);
+        Assert.True(options.RequestPermissionOnInitialize);
+        Assert.Single(services, d => d.ServiceType == typeof(BrowserSystemNotifications));
+    }
 }

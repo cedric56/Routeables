@@ -7,7 +7,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <IsAotCompatible>true</IsAotCompatible>
     <PackageId>Routeables.Avalonia</PackageId>
-    <Authors>Cédric Boutin</Authors>
+    <Authors>Cedric</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Routeables for Avalonia: view-model-first routing, routed views, regions, dialogs and notifications.</Description>
@@ -18,7 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.0.0" />
+    <PackageReference Include="Avalonia" Version="12.0.1" />
+    <PackageReference Include="Avalonia.Labs.Notifications" Version="12.1.0" />
   </ItemGroup>
 
   <ItemGroup>

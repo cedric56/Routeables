@@ -59,15 +59,33 @@ public static class Extensions
             MaxDisplayed = maxDispayments
         });
         services.RegisterServices<IRouteableNotificationService, RouteableNotificationService>(
-            sp => new RouteableNotificationService(sp.GetRequiredService<RouteableNotificationOptions>()),
+            sp => new RouteableNotificationService(sp.GetRequiredService<RouteableNotificationOptions>(), sp.GetService<BrowserSystemNotifications>()),
             notificationService);
         return services;
     }
 
-    private static void RegisterServices<TInterface, TImplementation>(this IServiceCollection services, Func<IServiceProvider, TInterface>? factory = null)
-        where TImplementation : class, TInterface, new()
-        where TInterface : class
-        => services.RegisterServices<TInterface, TImplementation>(_ => new TImplementation(), factory);
+    /// <summary>
+    /// Turns on the system notifications of <see cref="IRouteableNotificationService"/> (<c>CreateNotificationAsync</c>, <c>ActiveNotifications</c>,
+    /// <c>CloseAll</c>, <c>NotificationCompleted</c>, <c>InitializeAsync</c>): the notification center of the browser, through its Notification API.
+    /// It is the counterpart of <c>WithAppNotifications</c> of Avalonia.Labs.Notifications, and separate from <c>UseRouteables*</c>: without this
+    /// call the service creates none. Call it once at startup, before or after <see cref="UseRouteablesServices"/>.
+    /// The user must grant the permission: <c>CreateNotificationAsync</c> asks for it when it was not asked yet (from a click) and returns
+    /// <see langword="null"/> when it is denied, when the browser has no Notification API, or while the page is prerendered.
+    /// </summary>
+    /// <param name="services">The service collection to add services to.</param>
+    /// <param name="options">The <see cref="AppNotificationOptions"/>; the defaults when <see langword="null"/>.</param>
+    public static IServiceCollection WithAppNotifications(this IServiceCollection services, AppNotificationOptions? options = null)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        options ??= new AppNotificationOptions();
+        services.RemoveAll<AppNotificationOptions>();
+        services.RemoveAll<BrowserSystemNotifications>();
+        services.AddSingleton(options);
+        services.AddScoped(sp => new BrowserSystemNotifications(
+            sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>(), sp.GetRequiredService<AppNotificationOptions>()));
+        return services;
+    }
 
     private static void RegisterServices<TInterface, TImplementation>(this IServiceCollection services,
         Func<IServiceProvider, TImplementation> implementationFactory,

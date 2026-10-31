@@ -43,6 +43,7 @@ public class DialogsViewModel : ViewModelBase
         SuccessCommand = new AsyncCommand(() => NotifyAsync(RouteableNotificationType.Success));
         WarningCommand = new AsyncCommand(() => NotifyAsync(RouteableNotificationType.Warning));
         NotificationErrorCommand = new AsyncCommand(() => NotifyAsync(RouteableNotificationType.Error));
+        SystemNotificationCommand = new AsyncCommand(ShowSystemNotificationAsync);
     }
 
     /// <summary>What the user answered last; empty until a dialog or notification was used.</summary>
@@ -75,6 +76,7 @@ public class DialogsViewModel : ViewModelBase
     public ICommand SuccessCommand { get; }
     public ICommand WarningCommand { get; }
     public ICommand NotificationErrorCommand { get; }
+    public ICommand SystemNotificationCommand { get; }
 
     // ---------------------------------------------------------------- IRouteableDialogService
 
@@ -205,5 +207,21 @@ public class DialogsViewModel : ViewModelBase
             onClick: () => Result = $"Clicked the {type.ToString().ToLowerInvariant()} notification.",
             onClose: () => Result = $"Closed the {type.ToString().ToLowerInvariant()} notification.");
         return Task.CompletedTask;
+    }
+
+    // The notification center of the operating system, where the host offers it (Avalonia on the desktop); the other hosts create none.
+    private async Task ShowSystemNotificationAsync()
+    {
+        var notification = await _notifications.CreateNotificationAsync("animals");
+        if (notification is null)
+        {
+            Result = "System notifications are not available on this host.";
+            return;
+        }
+
+        notification.Title = "New animal";
+        notification.Message = "A polar bear was added to the adoption list.";
+        await notification.ShowAsync();
+        Result = "System notification sent.";
     }
 }

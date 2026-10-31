@@ -33,7 +33,7 @@ internal sealed class ToastNotification(RouteableNotificationSession session)
 /// that a <see cref="RouteableNotificationHost"/> placed once in the application's layout displays.
 /// Without a host, notifications are simply not visible.
 /// </summary>
-internal sealed class RouteableNotificationService(RouteableNotificationOptions options) : IRouteableNotificationService, IDisposable
+internal sealed partial class RouteableNotificationService(RouteableNotificationOptions options, BrowserSystemNotifications? system = null) : IRouteableNotificationService, IDisposable
 {
     private readonly List<ToastNotification> items = [];
     private readonly object gate = new();
@@ -105,6 +105,29 @@ internal sealed class RouteableNotificationService(RouteableNotificationOptions 
         toast.Expiration?.Dispose();
         toast.Session.NotifyClosed();
     }
+
+    // ---- system notifications: the notification center of the browser, when WithAppNotifications was called ----------------
+
+    /// <inheritdoc />
+    public IReadOnlyDictionary<uint, IRouteableSystemNotification> ActiveNotifications()
+        => system?.ActiveNotifications() ?? new Dictionary<uint, IRouteableSystemNotification>();
+
+    /// <inheritdoc />
+    public Task<IRouteableSystemNotification?> CreateNotificationAsync(string? category)
+        => system?.CreateNotificationAsync(category) ?? Task.FromResult<IRouteableSystemNotification?>(null);
+
+    /// <inheritdoc />
+    public void CloseAll() => system?.CloseAll();
+
+    /// <inheritdoc />
+    public event EventHandler<RouteableSystemNotificationEventArgs>? NotificationCompleted
+    {
+        add { if (system is not null) system.NotificationCompleted += value; }
+        remove { if (system is not null) system.NotificationCompleted -= value; }
+    }
+
+    /// <inheritdoc />
+    public Task InitializeAsync() => system?.InitializeAsync() ?? Task.CompletedTask;
 
     /// <inheritdoc />
     public void Dispose()
