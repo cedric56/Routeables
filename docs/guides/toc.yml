@@ -14,6 +14,8 @@
   href: regions.md
 - name: Transitions
   href: transitions.md
+- name: Routeables for Blazor developers
+  href: blazor.md
 - name: Hosts, services and samples
   href: hosts.md
 - name: Native AOT and trimming

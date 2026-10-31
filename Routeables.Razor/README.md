@@ -61,4 +61,4 @@ Contracts: [`Routeables.Services`](../Routeables.Services/README.md).
 
 ## Next
 
-[Hosts guide](../docs/guides/hosts.md), samples `Samples/XAnimals.Razor` and the Blazor Server and WebAssembly heads.
+[Routeables for Blazor developers](../docs/guides/blazor.md), [hosts guide](../docs/guides/hosts.md), samples `Samples/XAnimals.Razor` and the Blazor Server and WebAssembly heads.
