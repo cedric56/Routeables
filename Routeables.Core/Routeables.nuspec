@@ -56,7 +56,9 @@
 
     <!-- The opt-in flavours (RouteablesFeatures): Routeables.targets adds these sources to the project that asks for them. They are not compiled in Routeables.Core.dll. -->
     <file src="build/Routeables.targets" target="buildTransitive" />
-    <file src="Community/**" target="buildTransitive/Community" />
-    <file src="Reactive/**" target="buildTransitive/Reactive" />
+    <!-- One file each, not Community/**: on Windows the wildcard also kept the folder name (buildTransitive/Community/Community/...), on Linux it did not.
+         A flavour that gets a second file is added here; Routeables.targets compiles everything under its folder. -->
+    <file src="Community/RouteableViewModel.cs" target="buildTransitive/Community" />
+    <file src="Reactive/RouteableViewModel.cs" target="buildTransitive/Reactive" />
   </files>
 </package>

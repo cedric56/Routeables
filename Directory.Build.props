@@ -5,9 +5,8 @@
 
   <!-- The version of every package of the repository, in one place: VersionSuffix is empty for a release. -->
   <PropertyGroup>
-    <VersionPrefix>1.0.0</VersionPrefix>
-    <!-- API still moving: a preview. Empty the suffix for the 1.0.0 release. -->
-    <VersionSuffix Condition="'$(VersionSuffix)' == ''">preview.2</VersionSuffix>
+    <VersionPrefix>2.0.0</VersionPrefix>
+    <!-- A stable release has no suffix. A preview is built with -p:VersionSuffix=preview.1, nothing to edit here. -->
     <!-- The SDK computes Version later than the body of a project, where Routeables.Core.csproj hands it to its nuspec: set it here. -->
     <Version Condition="'$(VersionSuffix)' == ''">$(VersionPrefix)</Version>
     <Version Condition="'$(VersionSuffix)' != ''">$(VersionPrefix)-$(VersionSuffix)</Version>

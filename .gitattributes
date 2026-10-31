@@ -3,6 +3,9 @@
 ###############################################################################
 * text=auto
 
+# Shell scripts keep LF on every machine: bash refuses a CRLF script ("set: pipefail: invalid option name").
+*.sh text eol=lf
+
 ###############################################################################
 # Set default behavior for command prompt diff.
 #
