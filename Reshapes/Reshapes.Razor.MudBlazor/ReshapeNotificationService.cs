@@ -29,20 +29,30 @@ internal class ReshapeNotificationService(ISnackbar SnackbarService, RouteableSy
         var safeTitle = WebUtility.HtmlEncode(title ?? string.Empty);
         var safeMessage = WebUtility.HtmlEncode(message ?? string.Empty);
 
-        var snack = SnackbarService.Add(
-            new MarkupString($"<h5>{safeTitle}</h5>{safeMessage}"),
-            GetSeverity(type),
-            config =>
-            {
-                config.RequireInteraction = expiration is null;
-                if (expiration.HasValue)
-                    config.VisibleStateDuration = (int)expiration.Value.TotalMilliseconds;
-                config.OnClick = snackbar =>
+        Snackbar? snack;
+        try
+        {
+            snack = SnackbarService.Add(
+                new MarkupString($"<h5>{safeTitle}</h5>{safeMessage}"),
+                GetSeverity(type),
+                config =>
                 {
-                    RouteableErrors.Guard(null, RouteableCallbackSources.ToastOnClick, onClick);
-                    return Task.CompletedTask;
-                };
-            });
+                    config.RequireInteraction = expiration is null;
+                    if (expiration.HasValue)
+                        config.VisibleStateDuration = (int)expiration.Value.TotalMilliseconds;
+                    config.OnClick = snackbar =>
+                    {
+                        RouteableErrors.Guard(null, RouteableCallbackSources.ToastOnClick, onClick);
+                        return Task.CompletedTask;
+                    };
+                });
+        }
+        catch (Exception ex)
+        {
+            // A snackbar that cannot be added must not break the caller (a ViewModel that notifies): it is reported, like the other callbacks.
+            RouteableErrors.Report<ReshapeNotificationService>(null, ex);
+            return;
+        }
 
         if (snack is not null)
         {
