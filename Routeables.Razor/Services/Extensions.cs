@@ -89,11 +89,6 @@ public static class Extensions
         return services;
     }
 
-    private static void RegisterServices<TInterface, TImplementation>(this IServiceCollection services, Func<IServiceProvider, TInterface>? factory = null)
-        where TImplementation : class, TInterface, new()
-        where TInterface : class
-        => services.RegisterServices<TInterface, TImplementation>(_ => new TImplementation(), factory);
-
     private static void RegisterServices<TInterface, TImplementation>(this IServiceCollection services,
         Func<IServiceProvider, TImplementation> implementationFactory,
         Func<IServiceProvider, TInterface>? factory = null)

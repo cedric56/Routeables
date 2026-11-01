@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Reshapes.Razor.MudBlazor;
+using Routeables.Generated;
 using Routeables.Razor;
 using Routeables.Razor.Services;
-using Routeables.Core;
-using Routeables.Generated;
 using Xanimals.Razor;
 using XAnimals.ViewModels;
 
@@ -23,7 +22,7 @@ namespace XAnimals.MauiHybrid
 
             builder.Services.UseRouteablesHybrid<MainViewModel>();
             builder.Services.WithAppNotifications();
-            builder.Services.UseMudBlazor();
+            builder.Services.UseReshapeMudBlazor();
             builder.Services.AddGeneratedRoutes();   // here, not in XAnimals.Razor: the Razor views of that library are seen as referenced assemblies
             builder.Services.UseSharedLibrary();
             builder.Services.AddMauiBlazorWebView();

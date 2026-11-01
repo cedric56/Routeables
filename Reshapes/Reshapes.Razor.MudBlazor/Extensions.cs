@@ -25,7 +25,7 @@ public static class Extensions
     /// <param name="services">The service collection to add services to.</param>
     /// <param name="position">The screen position where toast notifications should appear, defaulting to bottom-left.</param>
     /// <param name="maxDispayments">The maximum number of simultaneous notifications displayed, defaulting to 5.</param>
-    public static IServiceCollection UseMudBlazor(this IServiceCollection services,
+    public static IServiceCollection UseReshapeMudBlazor(this IServiceCollection services,
         RouteableNotificationPosition position = RouteableNotificationPosition.BottomLeft,
         int maxDispayments = 5)
     {
