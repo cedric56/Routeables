@@ -8,17 +8,10 @@
              Background="{DynamicResource AnPaper}">
 
     <Grid>
-        <!-- The detail view, once the router has navigated to it: it fades in over 220 ms. -->
-        <TransitioningContentControl Content="{Binding CurrentView}"
-                                     IsVisible="{Binding CurrentView, Converter={x:Static ObjectConverters.IsNotNull}}">
-            <TransitioningContentControl.PageTransition>
-                <CrossFade Duration="0:0:0.22" />
-            </TransitioningContentControl.PageTransition>
-        </TransitioningContentControl>
+        <!-- The detail is not drawn here: the page is shown by a RouteableRegion (the main view), which displays the current view of the
+             router, and a view has one parent. -->
 
-        <!-- The list, while no detail is shown. -->
-        <DockPanel Margin="20,24,20,16"
-                   IsVisible="{Binding CurrentView, Converter={x:Static ObjectConverters.IsNull}}">
+        <DockPanel Margin="20,24,20,16">
 
             <TextBox Classes="an"
                      DockPanel.Dock="Top"

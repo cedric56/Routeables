@@ -169,15 +169,30 @@ public class RouteableRegion : TransitioningContentControl
         // A view has one parent. A host that has left the screen can still hold the view of the router (its transition never ends, so
         // its presenter keeps the page): that one is released. Any other holder is a real duplicate: say who it is instead of the
         // bare "already has a visual parent" of the framework.
-        if (view is Visual shown && shown.GetVisualParent() is { } holder && !this.IsVisualAncestorOf(shown) && !ReleaseFromLeftHost(holder))
-            throw new InvalidOperationException(
-                $"{view.GetType().Name} is already displayed by {holder.GetType().Name}, so region '{Region ?? "(default)"}' cannot show it too. " +
-                "A page shown by a region must not also host its own current view: let the region display it.");
+        if (view is Visual shown && shown.GetVisualParent() is { } holder)
+        {
+            if (this.IsVisualAncestorOf(shown))
+                ReleaseFromTransition(holder, view);
+            else if (!ReleaseFromLeftHost(holder))
+                throw new InvalidOperationException(
+                    $"{view.GetType().Name} is already displayed by {holder.GetType().Name}, so region '{Region ?? "(default)"}' cannot show it too. " +
+                    "A page shown by a region must not also host its own current view: let the region display it.");
+        }
 
         var animate = ApplyTransition(change, out var transition);
         Content = view;
         if (animate && view is Visual visual)
             RouteTransitions.AnimateIn(visual, transition, Bounds.Size);
+    }
+
+    // A page that is shown again while the transition that took it out is still playing (Back right after a push, a quick Forward): the control
+    // keeps the page it is leaving in its second presenter until the animation ends, and cannot add it to the first one at the same time.
+    // That page is going to be the current one again, so the second presenter lets it go. The binding of the first presenter is not touched
+    // (SetCurrentValue), and the transition goes on over an empty presenter.
+    private void ReleaseFromTransition(Visual holder, object view)
+    {
+        if (!ReferenceEquals(Content, view) && holder is ContentPresenter presenter)
+            presenter.SetCurrentValue(ContentPresenter.ContentProperty, null);
     }
 
     // The holder is the presenter of a RouteableRegion that is no longer connected (it left the visual tree): it is not showing the

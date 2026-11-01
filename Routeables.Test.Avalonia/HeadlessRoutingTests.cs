@@ -1,3 +1,4 @@
+using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Interactivity;
@@ -102,6 +103,22 @@ public sealed class HeadlessRoutingTests(HeadlessApp app)
         ((PageAViewModel)((PageAView)screen.Main.Content!).DataContext!).CanLeave = true;
         Assert.True((await provider.GoToAsync("/b")).Success);
         await UntilAsync(() => screen.Main.Content is PageBView);
+    });
+
+    [Fact]
+    public Task A_page_shown_again_while_its_transition_out_is_still_playing_is_released() => RunAsync(async (provider, screen) =>
+    {
+        // The control keeps the page it leaves in a second presenter until the animation ends: Back right away asks it to hold that page twice.
+        screen.Main.PageTransition = new CrossFade(TimeSpan.FromSeconds(3));
+        await provider.GoToAsync("/a");
+        await UntilAsync(() => screen.Main.Content is PageAView);
+        await provider.GoToAsync("/b");
+        await UntilAsync(() => screen.Main.Content is PageBView);
+
+        var back = await provider.GetRouter(null).GoBackAsync();
+
+        Assert.True(back.Success);
+        await UntilAsync(() => screen.Main.Content is PageAView);
     });
 
     [Fact]

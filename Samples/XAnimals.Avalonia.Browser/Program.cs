@@ -23,6 +23,5 @@ internal sealed partial class Program
             .StartBrowserAppAsync("out");
 
     public static AppBuilder BuildAvaloniaApp()
-        => App.CreateApp()
-              .WithAppNotifications();
+        => App.CreateApp().WithAppNotifications();
 }
