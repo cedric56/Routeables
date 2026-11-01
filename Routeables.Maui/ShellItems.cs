@@ -79,8 +79,11 @@ public static class ShellItems
     }
 
     // A route that the XAML wrote, not the one Shell invents for an item that has none ("IMPL_" followed by its title).
+    // A route nobody wrote is one Shell made up: "IMPL_" for an item it wrapped, "D_FAULT_" for the one it gives to what has none.
     private static bool IsDeclared(string? route)
-        => !string.IsNullOrWhiteSpace(route) && !route.StartsWith("IMPL_", StringComparison.Ordinal);
+        => !string.IsNullOrWhiteSpace(route)
+           && !route.StartsWith("IMPL_", StringComparison.Ordinal)
+           && !route.StartsWith("D_FAULT_", StringComparison.Ordinal);
 
     // The name of a tab is the name of a region when one is registered under it; the default router otherwise.
     private static string? RegionOf(IServiceProvider provider, string? route)

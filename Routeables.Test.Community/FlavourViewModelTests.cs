@@ -11,7 +11,7 @@ namespace Routeables.Test.Flavour;
 /// </summary>
 public class FlavourViewModelTests
 {
-    private sealed class Modal(IRouter router) : RouteableViewModel<int>(router, initialize: false)
+    private sealed class Modal(IRouter router) : RouteableViewModel<string>(router, initialize: false)
     {
         public override string Title => "A modal";
         public int Validated { get; private set; }
@@ -96,25 +96,25 @@ public class FlavourViewModelTests
     public async Task Closing_with_a_value_asks_the_service_to_close_with_that_value()
     {
         var modal = Create();
-        var received = new List<int?>();
+        var received = new List<string?>();
         modal.CloseRequested += (_, value) => received.Add(value);
 
-        await modal.CloseAsync(7);
+        await modal.CloseAsync("done");
 
-        Assert.Equal([7], received);
+        Assert.Equal(["done"], received);
     }
 
     [Fact]
     public async Task Cancel_closes_with_no_result()
     {
         var modal = Create();
-        var received = new List<int?>();
+        var received = new List<string?>();
         modal.CloseRequested += (_, value) => received.Add(value);
 
         Run(modal.Commands.Single(c => c.Name == "Cancel"));
 
         await UntilAsync(() => received.Count == 1);
-        Assert.Equal([default(int?)], received);
+        Assert.Equal([(string?)null], received);
     }
 
     [Fact]
@@ -135,13 +135,13 @@ public class FlavourViewModelTests
     public async Task Close_closes_with_no_result_when_the_modal_allows_it()
     {
         var modal = Create();
-        var received = new List<int?>();
+        var received = new List<string?>();
         modal.CloseRequested += (_, value) => received.Add(value);
 
         Run(modal.Commands.Single(c => c.Name == "Close"));
 
         await UntilAsync(() => received.Count == 1);
-        Assert.Equal([default(int?)], received);
+        Assert.Equal([(string?)null], received);
     }
 
     [Fact]

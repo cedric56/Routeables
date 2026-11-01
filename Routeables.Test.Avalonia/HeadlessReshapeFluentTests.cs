@@ -1,4 +1,3 @@
-using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Reshapes.Avalonia.Fluent;
 using Routeables.Avalonia.Services;
@@ -7,9 +6,9 @@ using Xunit;
 
 namespace Routeables.Test.Avalonia;
 
-/// <summary>The FluentAvalonia Reshape: how it registers itself, the windows it draws over (a FAAppWindow cannot be created headless: its platform window is not the headless one), and the message boxes it refuses.</summary>
+/// <summary>The FluentAvalonia Reshape: how it registers itself, and the message boxes it refuses (IsDisplayable needs a window, which the headless platform of this version of Avalonia cannot create next to FluentAvalonia).</summary>
 [Collection("Avalonia headless")]
-public sealed class HeadlessReshapeFluentTests(HeadlessApp app)
+public sealed class HeadlessReshapeFluentTests
 {
     [Fact]
     public void UseFluentAvalonia_replaces_the_message_box_service_with_the_Fluent_one()
@@ -22,15 +21,6 @@ public sealed class HeadlessReshapeFluentTests(HeadlessApp app)
         using var provider = services.BuildServiceProvider();
         Assert.IsType<ReshapeMessageBoxService>(provider.GetRequiredService<IMessageBoxService>());
     }
-
-    [Fact]
-    public Task A_plain_window_is_displayable() => app.RunAsync(() =>
-    {
-        var service = new ReshapeMessageBoxService();
-
-        Assert.True(service.IsDisplayable(new Window()));
-        return Task.CompletedTask;
-    });
 
     [Theory]
     [InlineData("YesNoCancelRetry")]
