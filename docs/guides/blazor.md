@@ -66,6 +66,17 @@ public class DogDetailViewModel(IRouter router, string name, Action? back = null
 
 Do not also give the component an `@page`: a page of your own with an `@page` is rendered by Blazor, outside the router, and neither its history nor its guards apply to it.
 
+## One instance of the view
+
+The router creates the view, runs `InitializeAsync` and `OnEnteringAsync` on it and keeps it in its history. `RouteableComponentActivator`, which `UseRouteablesServer`, `UseRouteablesWebAssembly` and `UseRouteablesHybrid` register as the `IComponentActivator` of the application, gives that same instance to Blazor the first time it is rendered. The hooks written in the view (`CanLeaveAsync` that reads a field of a form, say) therefore run on the component that is on screen, and only one component is built.
+
+A component can be attached to a renderer only once. When a page comes back from the history (Back, Forward), Blazor builds another instance of the component and the router keeps calling the hooks of the first one. For that reason:
+
+- keep the state that a hook reads in the **view model**, which is the same whichever instance is displayed;
+- do not rely on a field of the view in `CanLeaveAsync` for a page the user can reach again with Back.
+
+If the application registers its own `IComponentActivator` before Routeables, Routeables keeps it and the views are built by Blazor as before: the router's instance is then never the displayed one. Call it from your activator, or register it after `UseRouteables...` with a `RemoveAll`, if you need both.
+
 ## Navigate
 
 From a view model:
@@ -114,7 +125,7 @@ public sealed class SignedInGuard(ISession session) : IRouteGuard
 
 - **Routes are on view models,** not on components. A team that likes seeing the address next to the markup will miss `@page`.
 - **There is no catch-all placeholder** (`{**path}`) in a Routeables template. `Main.razor` has the one that Blazor needs.
-- **A component must be safe to dispose twice:** the router disposes the pages that leave its history, and Blazor disposes what it renders.
+- **A component must be safe to dispose twice:** the router disposes the pages that leave its history, and Blazor disposes what it renders (see [One instance of the view](#one-instance-of-the-view)).
 - **A `Transient` `IDisposable` service** injected into a page lives until the circuit ends: register it `Scoped` or `Singleton` ([lifecycle](lifecycle.md)).
 - **Render modes:** the samples run in interactive Server, WebAssembly and MAUI Hybrid. Prerendering and the other render modes of .NET 8 and later are not covered by the tests of this repository.
 - **Targets:** `Routeables.Razor` is `net10.0`.

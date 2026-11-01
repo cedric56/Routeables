@@ -56,6 +56,7 @@ Contracts: [`Routeables.Services`](../Routeables.Services/README.md).
 ## Good to know
 
 - A component must be safe to dispose twice: the router disposes pages that leave its history, and Blazor disposes what it renders.
+- The first time a page is shown, Blazor renders the very instance the router created, so the hooks of the view run on the displayed component. When the page comes back from the history, Blazor builds another instance: keep the state that a hook reads in the view model. See the [Blazor guide](../docs/guides/blazor.md).
 - A `Transient` service that is `IDisposable` lives until the circuit ends: register it `Scoped` or `Singleton`. See [lifecycle](../docs/guides/lifecycle.md).
 - MudBlazor flavour: [`Reshapes`](../Reshapes/README.md).
 
