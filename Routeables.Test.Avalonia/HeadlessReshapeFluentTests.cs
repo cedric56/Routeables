@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using FluentAvalonia.UI.Windowing;
 using Microsoft.Extensions.DependencyInjection;
 using Reshapes.Avalonia.Fluent;
+using Routeables.Avalonia.Services;
 using Routeables.Services;
 using Xunit;
 

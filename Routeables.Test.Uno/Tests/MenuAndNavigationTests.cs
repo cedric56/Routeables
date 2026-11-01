@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Routeables.Abstraction;
+using Routeables.Routing;
 using Routeables.Uno;
 using Uno.UI.RuntimeTests;
 

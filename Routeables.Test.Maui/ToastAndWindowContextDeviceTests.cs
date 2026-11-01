@@ -42,7 +42,14 @@ public class ToastAndWindowContextDeviceTests
 
     private static Border Card(ContentPage page) => Stack(page).Children.OfType<Border>().Last();
 
-    private static void Tap(Border card) => ((ITapGestureController)card.GestureRecognizers.OfType<TapGestureRecognizer>().Single()).SendTapped(card);
+    // ITapGestureController is internal to MAUI: the recognizer's Tapped event is raised through its backing field instead.
+    private static void Tap(Border card)
+    {
+        var recognizer = card.GestureRecognizers.OfType<TapGestureRecognizer>().Single();
+        var field = typeof(TapGestureRecognizer).GetField(nameof(TapGestureRecognizer.Tapped), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("The Tapped event of TapGestureRecognizer has no backing field to raise it with.");
+        ((EventHandler<TappedEventArgs>?)field.GetValue(recognizer))?.Invoke(recognizer, new TappedEventArgs(null));
+    }
 
     // ------------------------------------------------------------------------------------------------ the toast
 
