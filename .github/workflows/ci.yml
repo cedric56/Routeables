@@ -556,8 +556,14 @@ jobs:
       - name: Install MAUI workloads
         run: dotnet workload install maui ios --skip-manifest-update
 
+      # The download sometimes fails with "Unable to connect to simulator" (CoreSimulator not up yet): ask again, a few times.
       - name: Install the iOS runtime of Xcode 26.0
-        run: sudo xcodebuild -downloadPlatform iOS
+        run: |
+          for attempt in 1 2 3; do
+            sudo xcodebuild -downloadPlatform iOS && exit 0
+            echo "Attempt $attempt failed"; sleep 20
+          done
+          exit 1
 
       - name: Test, Mac Catalyst
         run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-maccatalyst -p:Configuration=Debug
@@ -588,6 +594,10 @@ jobs:
           echo "Simulator $udid"
           xcrun simctl boot "$udid"
           xcrun simctl bootstatus "$udid" -b
+          echo "DEVICERUNNERS_SIMULATOR=$udid" >> "$GITHUB_ENV"
 
+      # The simulator is named to the DeviceRunners CLI (DeviceRunnersDevice): it looked for a booted one and found none, though this one was.
       - name: Test, iOS simulator
-        run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-ios -p:Configuration=Debug
+        run: |
+          xcrun simctl list devices booted
+          dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-ios -p:Configuration=Debug -p:DeviceRunnersDevice="$DEVICERUNNERS_SIMULATOR"
