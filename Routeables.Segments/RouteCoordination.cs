@@ -78,7 +78,7 @@ public sealed record RouteCoordination(IReadOnlyList<RouteSegment> Segments, boo
             var name = Uri.UnescapeDataString(head);
             if (name.Length == 0)
             {
-                error = new Exception($"Segment '{piece}' has no name.");
+                error = new FormatException($"Segment '{piece}' has no name.");
                 return false;
             }
 

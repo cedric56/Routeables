@@ -1,14 +1,12 @@
 using Avalonia.Controls;
-using FluentAvalonia.UI.Windowing;
 using Microsoft.Extensions.DependencyInjection;
 using Reshapes.Avalonia.Fluent;
-using Routeables.Avalonia.Services;
 using Routeables.Services;
 using Xunit;
 
 namespace Routeables.Test.Avalonia;
 
-/// <summary>The FluentAvalonia Reshape: how it registers itself, the windows it draws over, and the message boxes it refuses.</summary>
+/// <summary>The FluentAvalonia Reshape: how it registers itself, the windows it draws over (a FAAppWindow cannot be created headless: its platform window is not the headless one), and the message boxes it refuses.</summary>
 [Collection("Avalonia headless")]
 public sealed class HeadlessReshapeFluentTests(HeadlessApp app)
 {
@@ -25,12 +23,11 @@ public sealed class HeadlessReshapeFluentTests(HeadlessApp app)
     }
 
     [Fact]
-    public Task A_plain_window_is_displayable_but_a_FluentAvalonia_window_is_not() => app.RunAsync(() =>
+    public Task A_plain_window_is_displayable() => app.RunAsync(() =>
     {
         var service = new ReshapeMessageBoxService();
 
         Assert.True(service.IsDisplayable(new Window()));
-        Assert.False(service.IsDisplayable(new FAAppWindow()));
         return Task.CompletedTask;
     });
 
