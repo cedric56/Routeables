@@ -77,6 +77,9 @@ public static class Extensions
         services.TryAddSingleton(new RouteableHostLifetime(ServiceLifetime.Scoped));
 
         services.AddScoped<RouteableUrlSync>();
+        // One activator for the circuit: Blazor asks it for the components it renders, and the views of the router get it injected.
+        services.AddScoped<RouteableComponentActivator>();
+        services.TryAddScoped<Microsoft.AspNetCore.Components.IComponentActivator>(sp => sp.GetRequiredService<RouteableComponentActivator>());
         services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());
 
         services.AddSingleton<IInjection>(

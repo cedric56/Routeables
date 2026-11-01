@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Routeables.Abstraction;
+using System.ComponentModel;
 
 namespace Routeables.Razor;
 
@@ -16,6 +17,14 @@ public abstract class RouteableFor : ComponentBase, IRouteableFor
     /// <param name="builder">The <see cref="RenderTreeBuilder"/> used to build the component.</param>
     /// <exception cref="NotImplementedException">Thrown if not overridden in a derived class.</exception>
     protected abstract void OpenComponent(RenderTreeBuilder builder);
+
+    /// <summary>The activator that hands this view to Blazor; set by the injection of the router, then by Blazor.</summary>
+    [Inject]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public RouteableComponentActivator? ComponentActivator { get; set; }
+
+    /// <summary>Whether Blazor already rendered this very instance (it cannot be rendered a second time).</summary>
+    internal bool Claimed { get; set; }
 
     /// <summary>
     /// Gets or sets a dictionary of additional parameters passed dynamically to the component.
@@ -43,6 +52,8 @@ public abstract class RouteableFor : ComponentBase, IRouteableFor
     {
         return builder =>
         {
+            // The router created this view: Blazor is asked to render it, not to build another one (see RouteableComponentActivator).
+            ComponentActivator?.Offer(this);
             OpenComponent(builder);
             builder.AddAttribute(1, nameof(Context), Context);
             foreach (var parameter in DictionaryParameters)

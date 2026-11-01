@@ -143,7 +143,11 @@ public partial class RouteableFor<[DynamicallyAccessedMembers(DynamicallyAccesse
     /// <summary>
     /// Disposes the component by tearing down any active event subscriptions.
     /// </summary>
-    public void Dispose() => Unsubscribe();
+    public void Dispose()
+    {
+        ComponentActivator?.Withdraw(this);   // a view that never reached the screen must not wait for a component that will not come
+        Unsubscribe();
+    }
 
     /// <inheritdoc />
     protected override void OpenComponent(RenderTreeBuilder builder)
