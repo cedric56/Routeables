@@ -476,4 +476,96 @@ public class ShellDeviceTests
         Assert.Null(own.ContentTemplate);
         Assert.Null(unrouted.ContentTemplate);
     }
+
+    // ------------------------------------------------------------------------------------------------ Shell.GoToAsync reaching the router
+
+    /// <summary>
+    /// What Shell raises when it is asked for an address. Shell raises it itself, from <c>GoToAsync</c>, and a shell that is not in a window
+    /// does not: the event is raised by hand, with the arguments Shell would give, and the answer is read from them.
+    /// </summary>
+    private static ShellNavigatingEventArgs Navigate(Shell shell, string target, ShellNavigationSource source = ShellNavigationSource.ShellSectionChanged, bool canCancel = true)
+    {
+        var args = new ShellNavigatingEventArgs(new ShellNavigationState("//start"), new ShellNavigationState(target), source, canCancel);
+        var field = typeof(Shell).GetField("Navigating", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Shell no longer keeps its Navigating event in a field.");
+        ((EventHandler<ShellNavigatingEventArgs>?)field.GetValue(shell))?.Invoke(shell, args);
+        return args;
+    }
+
+    [UIFact]
+    public async Task An_address_of_the_router_is_routed_and_the_navigation_of_shell_is_cancelled()
+    {
+        await Device.ResetAsync();
+        var shell = new Shell();
+        using var follow = shell.UseShellRoutes(Device.Services);
+
+        var args = Navigate(shell, "//a");
+
+        await Device.UntilAsync(() => args.Cancelled);
+        Assert.IsType<PageAView>(Device.Router().CurrentView);
+    }
+
+    [UIFact]
+    public async Task An_address_the_router_does_not_know_is_left_to_shell()
+    {
+        await Device.ResetAsync();
+        var shell = new Shell();
+        using var follow = shell.UseShellRoutes(Device.Services);
+
+        var args = Navigate(shell, "//nowhere");
+
+        // Nothing to wait for: the router answers that it has no such route, and Shell is not told to stop.
+        await Task.Delay(500, TestContext.Current.CancellationToken);
+        Assert.False(args.Cancelled);
+        Assert.Null(Device.Router().CurrentView);
+    }
+
+    [UIFact]
+    public async Task A_guard_that_refuses_the_address_cancels_the_navigation_of_shell_too()
+    {
+        await Device.ResetAsync();
+        await Device.Services.GoToAsync("/a");
+        ((PageAViewModel)((PageAView)Device.Router().CurrentView!).BindingContext).CanLeave = false;
+        var shell = new Shell();
+        using var follow = shell.UseShellRoutes(Device.Services);
+
+        var args = Navigate(shell, "//b");
+
+        // Refused is an answer: Shell must not go on to look for the address in its own routes.
+        await Device.UntilAsync(() => args.Cancelled);
+        Assert.IsType<PageAView>(Device.Router().CurrentView);
+    }
+
+    [UIFact]
+    public async Task A_pop_and_a_navigation_that_cannot_be_cancelled_are_left_to_shell()
+    {
+        await Device.ResetAsync();
+        var shell = new Shell();
+        using var follow = shell.UseShellRoutes(Device.Services);
+
+        var pop = Navigate(shell, "//a", ShellNavigationSource.Pop);
+        var popToRoot = Navigate(shell, "//a", ShellNavigationSource.PopToRoot);
+        var fixedNavigation = Navigate(shell, "//a", canCancel: false);
+
+        await Task.Delay(500, TestContext.Current.CancellationToken);
+        Assert.False(pop.Cancelled);
+        Assert.False(popToRoot.Cancelled);
+        Assert.False(fixedNavigation.Cancelled);
+        Assert.Null(Device.Router().CurrentView);
+    }
+
+    [UIFact]
+    public async Task Once_disposed_the_shell_is_no_longer_followed()
+    {
+        await Device.ResetAsync();
+        var shell = new Shell();
+        var follow = shell.UseShellRoutes(Device.Services);
+        follow.Dispose();
+
+        var args = Navigate(shell, "//a");
+
+        await Task.Delay(500, TestContext.Current.CancellationToken);
+        Assert.False(args.Cancelled);
+        Assert.Null(Device.Router().CurrentView);
+    }
 }

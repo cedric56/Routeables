@@ -59,6 +59,17 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
+        // A [Routeable] view model of a project that has views of its own, and none called after it: most often a name that does not
+        // follow the convention. Information only: a view model with no view is a legitimate route (a redirect, a headless one).
+        // Switch it off with .editorconfig (dotnet_diagnostic.ROUT205.severity = none) or #pragma warning disable ROUT205.
+        private static readonly DiagnosticDescriptor ConventionViewNotFound = new DiagnosticDescriptor(
+            "ROUT205",
+            "No view found for a view model",
+            "{0}",
+            "Routeables",
+            DiagnosticSeverity.Info,
+            isEnabledByDefault: true);
+
         private static readonly System.Text.RegularExpressions.Regex RazorViewAttribute = new System.Text.RegularExpressions.Regex(
             @"^[ \t]*@attribute[ \t]*\[[ \t]*(?:Routeables\.Abstraction\.)?RouteableView(?:Attribute)?\b",
             System.Text.RegularExpressions.RegexOptions.Multiline | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
@@ -408,7 +419,8 @@ namespace Routeables.Generated
                 Region: region,
                 //Contract: contract,
                 Lifetime: lifetime,
-                Build: RouteBuilds.Analyze(compilation, symbol));
+                Build: RouteBuilds.Analyze(compilation, symbol),
+                IsLocal: SymbolEqualityComparer.Default.Equals(symbol.ContainingAssembly, compilation.Assembly));
         }
 
         // ------------------------------------------------------------------ emit
@@ -478,6 +490,9 @@ namespace Routeables.Generated
             if (candidates.Count == 0)
                 return;
 
+            // Only a project that has views of its own can have forgotten one: a library of view models, whose views are in the
+            // projects of each host, has nothing to report.
+            var hasLocalViews = candidates.Any(c => c.IsLocal);
             var named = new HashSet<string>(views.Select(v => v.ViewModelFullName), StringComparer.Ordinal);
             foreach (var group in routes.GroupBy(r => r.TypeName, StringComparer.Ordinal).OrderBy(g => g.Key, StringComparer.Ordinal))
             {
@@ -504,6 +519,13 @@ namespace Routeables.Generated
                         ViewLifetime: ServiceLifetime.Transient,
                         ViewBuild: chosen[0].Build,
                         ViewModelBuild: first.Build));
+                }
+                else if (chosen.Count == 0 && hasLocalViews && first.IsLocal)
+                {
+                    spc.ReportDiagnostic(Diagnostic.Create(
+                        ConventionViewNotFound,
+                        Location.None,
+                        group.Key + " is registered without a view: no class is called " + viewName + ", and no [RouteableView(typeof(" + group.Key + "))] names one. Rename the view, or put [RouteableView] on it; ignore this if the route has no view."));
                 }
                 else if (chosen.Count > 1)
                 {
@@ -729,7 +751,8 @@ namespace Routeables.Generated
             string? Region,
             //string? Contract,
             ServiceLifetime Lifetime,
-            RouteBuilds.BuildInfo? Build = null);
+            RouteBuilds.BuildInfo? Build = null,
+            bool IsLocal = false);
     }
 }
 

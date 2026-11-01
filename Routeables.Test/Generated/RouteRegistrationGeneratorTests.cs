@@ -465,6 +465,59 @@ public class RouteRegistrationGeneratorTests
     }
 
     [Fact]
+    public void Generator_informs_when_a_view_model_has_no_view_in_a_project_that_has_views()
+    {
+        var result = RunGenerator("""
+            using Routeables.Abstraction;
+
+            [Routeable("/dogs")]
+            public class DogDetailsViewModel { }
+
+            [Routeable("/cats")]
+            public class CatViewModel { }
+
+            public class CatView : IRouteable { }
+            """);
+
+        var info = Assert.Single(result.Diagnostics, d => d.Id == "ROUT205");
+        Assert.Equal(DiagnosticSeverity.Info, info.Severity);
+        Assert.Contains("DogDetailsViewModel", info.GetMessage());
+        Assert.Contains("DogDetailsView", info.GetMessage());
+        Assert.DoesNotContain(result.Diagnostics, d => d.Id == "ROUT205" && d.GetMessage().Contains("CatViewModel"));
+    }
+
+    [Fact]
+    public void Generator_does_not_inform_about_a_missing_view_in_a_project_without_views()
+    {
+        var result = RunGenerator("""
+            using Routeables.Abstraction;
+
+            [Routeable("/dogs")]
+            public class DogDetailViewModel { }
+            """);
+
+        Assert.DoesNotContain(result.Diagnostics, d => d.Id == "ROUT205");
+    }
+
+    [Fact]
+    public void Generator_does_not_inform_when_a_view_names_the_view_model()
+    {
+        var result = RunGenerator("""
+            using Routeables.Abstraction;
+
+            [Routeable("/orders")]
+            public class OrderViewModel { }
+
+            [RouteableView(typeof(OrderViewModel))]
+            public class ListOfOrders : IRouteable { }
+
+            public class OtherView : IRouteable { }
+            """);
+
+        Assert.DoesNotContain(result.Diagnostics, d => d.Id == "ROUT205");
+    }
+
+    [Fact]
     public void Generator_warns_when_two_views_are_registered_for_the_same_view_model_and_route()
     {
         var result = RunGenerator("""
