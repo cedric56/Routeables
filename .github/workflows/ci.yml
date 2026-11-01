@@ -507,6 +507,15 @@ jobs:
           target: google_apis
           script: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-android -p:Configuration=Debug
 
+      # The logcat of the run (test-results/logcat.txt) says why an application that started sent no result: keep it, whatever the outcome.
+      - name: Keep the logcat and the results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maui-android-test-results
+          path: Routeables.Test.Maui/test-results
+          if-no-files-found: ignore
+
   device-windows:
     name: Device tests (MAUI, Windows)
     runs-on: windows-latest
@@ -552,6 +561,33 @@ jobs:
 
       - name: Test, Mac Catalyst
         run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-maccatalyst -p:Configuration=Debug
+
+      # DeviceRunners runs the application on a simulator that is already booted ("No booted iOS simulator found" otherwise): boot an iPhone
+      # of the runtime that was downloaded, creating one when the runner has none.
+      - name: Boot an iPhone simulator
+        run: |
+          udid=$(xcrun simctl list devices available -j | python3 -c "
+          import json, sys
+          for runtime, devices in json.load(sys.stdin)['devices'].items():
+              if 'iOS' in runtime:
+                  for device in devices:
+                      if 'iPhone' in device['name']:
+                          print(device['udid']); raise SystemExit
+          ")
+          if [ -z "$udid" ]; then
+            runtime=$(xcrun simctl list runtimes available -j | python3 -c "
+          import json, sys
+          print([r['identifier'] for r in json.load(sys.stdin)['runtimes'] if r['identifier'].startswith('com.apple.CoreSimulator.SimRuntime.iOS')][-1])
+          ")
+            devicetype=$(xcrun simctl list devicetypes -j | python3 -c "
+          import json, sys
+          print([d['identifier'] for d in json.load(sys.stdin)['devicetypes'] if 'iPhone' in d['name']][-1])
+          ")
+            udid=$(xcrun simctl create "Routeables iPhone" "$devicetype" "$runtime")
+          fi
+          echo "Simulator $udid"
+          xcrun simctl boot "$udid"
+          xcrun simctl bootstatus "$udid" -b
 
       - name: Test, iOS simulator
         run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-ios -p:Configuration=Debug
