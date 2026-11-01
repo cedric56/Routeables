@@ -75,8 +75,9 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
 
     private async void CurrentViewChanged(object? sender, object? view)
     {
-        await RefreshAsync("MainLayout.CurrentViewChanged");
+        // The title first: the render the refresh asks for must show the title of this view, not the one of the previous view.
         Title = MainViewModel.CurrentTitle ?? "Application";
+        await RefreshAsync("MainLayout.CurrentViewChanged");
     }
 
     // These are event handlers (async void): an exception would reach the circuit. A layout removed between the event

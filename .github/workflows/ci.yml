@@ -417,3 +417,135 @@ jobs:
 
       - name: Test
         run: dotnet test --project Routeables.Test.Playwright/Routeables.Test.Playwright.csproj --no-build -c ${{ env.CONFIGURATION }}
+
+  ui-uno:
+    name: UI tests (Uno, desktop)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-uno-test-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-uno-test-
+
+      - name: Screen and fonts for the Skia head
+        run: sudo apt-get update && sudo apt-get install -y xvfb libfontconfig1 libx11-6 libxkbcommon0 libice6 libsm6
+
+      - name: Build
+        run: dotnet build Routeables.Test.Uno/Routeables.Test.Uno.csproj -c ${{ env.CONFIGURATION }}
+
+      # The application runs its tests on start when these are set, writes the results and exits.
+      - name: Test
+        env:
+          UNO_RUNTIME_TESTS_RUN_TESTS: '{}'
+          UNO_RUNTIME_TESTS_OUTPUT_PATH: ${{ github.workspace }}/uno-results.xml
+        run: xvfb-run -a dotnet Routeables.Test.Uno/bin/${{ env.CONFIGURATION }}/net10.0-desktop/Routeables.Test.Uno.dll
+
+      - name: Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uno-results
+          path: uno-results.xml
+          if-no-files-found: warn
+
+  # ---------------------------------------------------------------------------------------------------------------------------
+  # Device tests of the MAUI host (Routeables.Test.Maui): the application runs the tests on the platform. `dotnet msbuild -t:VSTest`
+  # starts it on a device, reads the results and stops it. global.json turns on the Microsoft.Testing.Platform runner for the whole repository, which `dotnet test` of
+  # a MAUI device project does not use: the VSTest target of DeviceRunners is called directly. One job per kind of device; none blocks the build while they are new.
+  # ---------------------------------------------------------------------------------------------------------------------------
+
+  device-android:
+    name: Device tests (MAUI, Android emulator)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android --skip-manifest-update
+
+      # The emulator needs hardware acceleration.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Test on the emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          script: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:TargetFramework=net10.0-android -p:Configuration=Debug
+
+  device-windows:
+    name: Device tests (MAUI, Windows)
+    runs-on: windows-latest
+    timeout-minutes: 45
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install MAUI workload
+        run: dotnet workload install maui --skip-manifest-update
+
+      - name: Test
+        run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:TargetFramework=net10.0-windows10.0.19041.0 -p:Configuration=Debug
+
+  device-apple:
+    name: Device tests (MAUI, Mac Catalyst and iOS simulator)
+    runs-on: macos-latest
+    timeout-minutes: 60
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Select Xcode 26.0
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.0'
+
+      - name: Install MAUI workloads
+        run: dotnet workload install maui ios --skip-manifest-update
+
+      - name: Install the iOS runtime of Xcode 26.0
+        run: sudo xcodebuild -downloadPlatform iOS
+
+      - name: Test, Mac Catalyst
+        run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:TargetFramework=net10.0-maccatalyst -p:Configuration=Debug
+
+      - name: Test, iOS simulator
+        run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:TargetFramework=net10.0-ios -p:Configuration=Debug

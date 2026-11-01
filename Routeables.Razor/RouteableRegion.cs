@@ -78,7 +78,7 @@ public class RouteableRegion : ComponentBase, IDisposable
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        var transition = _view is null ? default : _change.Resolve(string.IsNullOrWhiteSpace(Transition?.Name) ? null : RouteTransition.Named(Transition.Name), TransitionDuration);
+        var transition = _view is null ? default : _change.Resolve(string.IsNullOrWhiteSpace(Transition?.Name) ? null : Transition, TransitionDuration);
         var animated = _view is not null && !transition.IsNone;
 
         builder.OpenElement(0, "div");

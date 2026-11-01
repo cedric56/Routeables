@@ -1,0 +1,29 @@
+using Routeables.Abstraction;
+using Routeables.Routing;
+using Routeables.Uno;
+
+namespace Routeables.Test.Uno;
+
+public partial class App : Application
+{
+    /// <summary>The name of the second region of the test application.</summary>
+    public const string Side = "side";
+
+    public App()
+    {
+        InitializeComponent();
+
+        // The container is built now, the window is opened as the application runs: the page is the runner above a zone the tests fill.
+        Services = this.UseRouteables<TestMain>(
+            services =>
+            {
+                services.RegisterRoute<PageAView, PageAViewModel>(route: "/a");
+                services.RegisterRoute<PageBView, PageBViewModel>(route: "/b");
+                services.AddRegion(Side);
+            },
+            () => new MainPage(),
+            window => window.Title = "Routeables.Test.Uno");
+    }
+
+    public IServiceProvider Services { get; }
+}

@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Routeables.Test" />
+    <InternalsVisibleTo Include="Routeables.Test.Maui" />
   </ItemGroup>
 
   <ItemGroup>
