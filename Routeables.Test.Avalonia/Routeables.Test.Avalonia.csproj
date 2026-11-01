@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    UI tests of the Avalonia host without a screen: Avalonia.Headless runs a real Application, a real Window and the real controls of
+    Routeables.Avalonia (RouteableRegion, RouteableLink) with no window system and no drawing, so it runs on any machine and in CI.
+    They check what the unit tests of Routeables.Test cannot: that the controls show what the routers display.
+
+    Run: dotnet test, with the option project set to Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj, in the Release configuration.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <!-- The pages are written in code: no XAML to compile. -->
+    <EnableAvaloniaXamlCompilation>false</EnableAvaloniaXamlCompilation>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Headless" Version="12.0.1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageReference Include="xunit.v3" Version="4.0.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
+  </ItemGroup>
+
+</Project>

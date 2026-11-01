@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    UI tests of the Blazor host: a real browser (Playwright, Chromium) drives the sample Samples/Xanimals.BlazorApp (Blazor Server), which
+    the tests start on a free port. They check what the unit tests cannot: that the address, the menu, the guards, the dialogs and the
+    regions of Routeables.Razor behave in a browser.
+
+    First run on a machine: install the browser once, from the folder of the project after a build:
+        pwsh bin/Release/net10.0/playwright.ps1 install chromium
+    Run: dotnet test, with the option project set to Routeables.Test.Playwright/Routeables.Test.Playwright.csproj, in the Release configuration.
+    Watch the browser: set ROUTEABLES_HEADED=1.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageReference Include="Microsoft.Playwright" Version="1.55.0" />
+    <PackageReference Include="xunit.v3" Version="4.0.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Built before the tests, but not referenced: the tests start it as a program. -->
+    <ProjectReference Include="..\Samples\Xanimals.BlazorApp\Xanimals.BlazorApp.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>

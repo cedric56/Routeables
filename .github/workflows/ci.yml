@@ -371,3 +371,49 @@ jobs:
         run: |
           dotnet build Samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-ios -r ios-arm64 -p:EnableCodeSigning=false
           dotnet build Samples/XAnimals.Avalonia.iOS/XAnimals.Avalonia.iOS.csproj -c Debug -r ios-arm64 -p:EnableCodeSigning=false
+  # ---------------------------------------------------------------------------------------------------------------------------
+  # UI tests. They do not block the build while they are new (continue-on-error): a failure shows as a red step in the run, not as a
+  # failed check. Remove continue-on-error once they have been green for a while.
+  # ---------------------------------------------------------------------------------------------------------------------------
+
+  ui-avalonia:
+    name: UI tests (Avalonia headless)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build
+        run: dotnet build Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+
+      - name: Test
+        run: dotnet test --project Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+
+  ui-playwright:
+    name: UI tests (Playwright, Blazor)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      # Builds the project and the Blazor sample it starts (a project reference).
+      - name: Build
+        run: dotnet build Routeables.Test.Playwright/Routeables.Test.Playwright.csproj -c ${{ env.CONFIGURATION }}
+
+      - name: Install Chromium
+        run: pwsh Routeables.Test.Playwright/bin/${{ env.CONFIGURATION }}/net10.0/playwright.ps1 install --with-deps chromium
+
+      - name: Test
+        run: dotnet test --project Routeables.Test.Playwright/Routeables.Test.Playwright.csproj --no-build -c ${{ env.CONFIGURATION }}
