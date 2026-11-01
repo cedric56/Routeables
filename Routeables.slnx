@@ -66,8 +66,10 @@
   <Project Path="Routeables.Segments/Routeables.Segments.csproj" />
   <Project Path="Routeables.Services/Routeables.Services.csproj" />
   <Project Path="Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj" />
+  <Project Path="Routeables.Test.Community/Routeables.Test.Community.csproj" />
   <Project Path="Routeables.Test.Maui/Routeables.Test.Maui.csproj" />
   <Project Path="Routeables.Test.Playwright/Routeables.Test.Playwright.csproj" />
+  <Project Path="Routeables.Test.Reactive/Routeables.Test.Reactive.csproj" />
   <Project Path="Routeables.Test.Uno/Routeables.Test.Uno.csproj" />
   <Project Path="Routeables.Test/Routeables.Test.csproj" Id="19b50f73-16a6-45b8-b30b-1b4d16ca42df" />
   <Project Path="Routeables.Uno/Routeables.Uno.csproj" />

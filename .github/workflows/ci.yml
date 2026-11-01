@@ -62,6 +62,12 @@ jobs:
       - name: Test
         run: dotnet test --project Routeables.Test/Routeables.Test.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
+      # The two flavours of the modal view model are shipped as source: these projects compile them with their packages and test them.
+      - name: Flavours (CommunityToolkit.Mvvm and ReactiveUI)
+        run: |
+          dotnet test --project Routeables.Test.Community/Routeables.Test.Community.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+          dotnet test --project Routeables.Test.Reactive/Routeables.Test.Reactive.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+
   # ---------------------------------------------------------------------------------------------------------------------------
   # Compile every project of the solution, so that an error in a sample or a Reshape no longer waits for a local build.
   # The libraries and the tests are built above with CiBuild (Release, strict analyzers); the samples are built here in

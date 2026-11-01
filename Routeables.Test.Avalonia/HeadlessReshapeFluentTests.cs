@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Reshapes.Avalonia.Fluent;
+using Routeables.Avalonia.Services;
 using Routeables.Services;
 using Xunit;
 

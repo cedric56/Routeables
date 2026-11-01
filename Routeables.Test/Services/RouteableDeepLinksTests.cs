@@ -228,4 +228,119 @@ public class RouteableDeepLinksTests
             await Task.Delay(10, TestContext.Current.CancellationToken);
         Assert.IsType<LinkSecondVm>(router.CurrentViewModel);
     }
+
+    // ------------------------------------------------------------------------------------------------ the inbox: save, restore, filter
+
+    private static async Task UntilAsync(Func<bool> condition)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(5);
+        while (!condition())
+        {
+            if (DateTime.UtcNow > deadline) throw new TimeoutException("The condition was not met in 5 seconds.");
+            await Task.Delay(10, TestContext.Current.CancellationToken);
+        }
+    }
+
+    [Fact]
+    public void An_inbox_that_has_no_container_has_nothing_to_save()
+    {
+        Assert.Null(new RouteableLinkInbox().Save());
+    }
+
+    [Fact]
+    public async Task The_pages_shown_are_saved_as_a_string_the_inbox_can_restore()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        var ct = TestContext.Current.CancellationToken;
+        await router.GoToAsync("/link-first", cancellationToken: ct);
+        await router.GoToAsync("/link-second", cancellationToken: ct);
+        var inbox = new RouteableLinkInbox(provider);
+
+        var saved = inbox.Save();
+
+        Assert.Equal(["/link-first", "/link-second"], RouteableState.Deserialize(saved));
+    }
+
+    [Fact]
+    public async Task Restored_pages_are_put_back_once_the_first_page_is_shown()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        var ct = TestContext.Current.CancellationToken;
+        var inbox = new RouteableLinkInbox(provider);
+        await router.GoToAsync("/link-first", cancellationToken: ct);
+
+        inbox.Restore(RouteableState.Serialize(["/link-first", "/link-second"]));
+
+        await UntilAsync(() => router.CurrentViewModel is LinkSecondVm);
+        Assert.Equal(2, router.History.Count);
+    }
+
+    [Fact]
+    public async Task Nothing_to_restore_changes_nothing()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        var inbox = new RouteableLinkInbox(provider);
+        await router.GoToAsync("/link-first", cancellationToken: TestContext.Current.CancellationToken);
+
+        inbox.Restore(null);
+        inbox.Restore("");
+        await Task.Delay(150, TestContext.Current.CancellationToken);
+
+        Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
+        Assert.Equal(1, router.History.Count);
+    }
+
+    [Fact]
+    public async Task Saved_pages_are_put_back_before_the_addresses_are_followed()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        var inbox = new RouteableLinkInbox(["myapp"]);
+        inbox.Restore(RouteableState.Serialize(["/link-second"]));
+        inbox.Push(new Uri("myapp://link-first"));
+        await router.GoToAsync("/link-first", cancellationToken: TestContext.Current.CancellationToken);
+
+        inbox.Attach(provider);
+
+        await UntilAsync(() => router.History.Count == 2 && router.CurrentViewModel is LinkFirstVm);
+        Assert.IsType<LinkSecondVm>(router.History.Entries[0].ViewModel);
+    }
+
+    [Fact]
+    public async Task A_missing_address_and_an_address_of_another_scheme_are_ignored()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        var inbox = new RouteableLinkInbox(provider, ["myapp"]);
+        await router.GoToAsync("/link-first", cancellationToken: TestContext.Current.CancellationToken);
+
+        inbox.Push(null);
+        inbox.Push(new Uri("other://link-second"));
+        await Task.Delay(300, TestContext.Current.CancellationToken);
+
+        Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
+    }
+
+    [Fact]
+    public async Task An_inbox_given_its_container_follows_the_addresses_it_receives_afterwards()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        var inbox = new RouteableLinkInbox(provider, ["myapp"]);
+        await router.GoToAsync("/link-first", cancellationToken: TestContext.Current.CancellationToken);
+
+        inbox.Push(new Uri("myapp://link-second"));
+
+        await UntilAsync(() => router.CurrentViewModel is LinkSecondVm);
+    }
+
+    [Fact]
+    public void An_inbox_refuses_a_missing_container()
+    {
+        Assert.Throws<ArgumentNullException>(() => new RouteableLinkInbox((IServiceProvider)null!));
+        Assert.Throws<ArgumentNullException>(() => new RouteableLinkInbox().Attach(null!));
+    }
 }

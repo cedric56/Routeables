@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The CommunityToolkit.Mvvm flavour of the view models (Routeables.Core/Community) is shipped as source and compiled in the application:
+    nothing compiles it in the library. This project compiles it, with the package it uses, and runs the tests that Routeables.Test.Reactive
+    runs on the ReactiveUI flavour (the same file, linked): both flavours do the same.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <!-- The source of the flavours is compiled here for the first time: its warnings are reported, not fatal, until a CI run has shown them. -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageReference Include="NSubstitute" Version="6.2.0" />
+    <PackageReference Include="xunit.v3" Version="4.0.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" />
+    <ProjectReference Include="..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Routeables.Core\Community\RouteableViewModel.cs" Link="Flavour\RouteableViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

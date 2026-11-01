@@ -148,21 +148,31 @@ public class DialogContentsDeviceTests
         Assert.True(ButtonOf(content, "Cancel").IsEnabled);
     }
 
+    // A button is drawn once: it is enabled when its command can execute at the moment the dialog opens.
     [UIFact]
-    public void A_button_follows_its_command()
+    public void A_button_is_enabled_when_its_command_can_execute_as_the_dialog_opens()
     {
-        var command = new FlagCommand(false);
+        var content = Opened(new FlagCommand(true));
+
+        Assert.True(ButtonOf(content, "Save").IsEnabled);
+    }
+
+    [UIFact]
+    public void A_button_is_disabled_when_its_command_cannot_execute_as_the_dialog_opens()
+    {
+        var content = Opened(new FlagCommand(false));
+
+        Assert.False(ButtonOf(content, "Save").IsEnabled);
+        Assert.True(ButtonOf(content, "Cancel").IsEnabled);
+    }
+
+    private static Border Opened(ICommand command)
+    {
         var parameters = new RouteableContentDialog
         {
             Title = "t", PrimaryButtonText = "Save", IsPrimaryButtonEnabled = true, PrimaryButtonCommand = command, CloseButtonText = "Cancel"
         };
-        var content = RouteableDialogContents.ForContentDialog(parameters, new RouteableContentDialogSession(parameters, () => { }));
-        var save = ButtonOf(content, "Save");
-        Assert.False(save.Command!.CanExecute(null));
-
-        command.Set(true);
-
-        Assert.True(save.Command.CanExecute(null));
+        return RouteableDialogContents.ForContentDialog(parameters, new RouteableContentDialogSession(parameters, () => { }));
     }
 
     [UIFact]

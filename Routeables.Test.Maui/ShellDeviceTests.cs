@@ -461,9 +461,14 @@ public class ShellDeviceTests
         var routed = new ShellContent { Title = "A", Route = "a" };
         var own = new ShellContent { Title = "Own", Route = "own", Content = new ContentPage() };
         var unrouted = new ShellContent { Title = "None" };
-        shell.Items.Add(routed);
-        shell.Items.Add(own);
-        shell.Items.Add(unrouted);
+        // The hierarchy is written out: adding a ShellContent straight to the shell wraps it in items that Shell names itself.
+        var section = new ShellSection { Title = "Section", Route = "section" };
+        section.Items.Add(routed);
+        section.Items.Add(own);
+        section.Items.Add(unrouted);
+        var item = new ShellItem { Title = "Item", Route = "item" };
+        item.Items.Add(section);
+        shell.Items.Add(item);
 
         using var attached = shell.AttachRouteables(Device.Services);
 

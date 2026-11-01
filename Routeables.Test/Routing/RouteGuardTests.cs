@@ -253,6 +253,37 @@ public class RouteGuardTests
         Assert.Null(entry.ViewModel);
     }
 
+    [Fact]
+    public async Task A_redirect_made_by_a_guard_is_counted_with_the_route_it_sent_the_user_to()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var redirects = new List<(long Value, object? Route)>();
+        using var meterListener = new MeterListener
+        {
+            InstrumentPublished = (instrument, listener) =>
+            {
+                if (instrument.Meter.Name == RouteableDiagnostics.Name && instrument.Name == "routeables.route.redirects")
+                    listener.EnableMeasurementEvents(instrument);
+            }
+        };
+        meterListener.SetMeasurementEventCallback<long>((_, value, tags, _) =>
+        {
+            lock (redirects) redirects.Add((value, tags.ToArray().Single(t => t.Key == "routeables.route").Value));
+        });
+        meterListener.Start();
+        using var provider = Build(new Guard(c => IsAdmin(c) ? RouteGuardDecision.Redirect("/guard-login") : RouteGuardDecision.Allow));
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/guard-home", cancellationToken: ct);
+
+        await router.GoToAsync("/guard-admin", cancellationToken: ct);
+
+        lock (redirects)
+        {
+            // Other tests redirect too: only the one to this page counts.
+            Assert.Contains(redirects, r => r.Value == 1 && Equals(r.Route, "/guard-login"));
+        }
+    }
+
     private sealed class OrderedGuard(string name, int order, List<string> asked) : IRouteGuard
     {
         public int Order => order;
