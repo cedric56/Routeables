@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
+    <ProjectReference Include="..\Reshapes\Reshapes.Avalonia.Fluent\Reshapes.Avalonia.Fluent.csproj" />
   </ItemGroup>
 
 </Project>

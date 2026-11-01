@@ -442,7 +442,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y xvfb libfontconfig1 libx11-6 libxkbcommon0 libice6 libsm6
 
       - name: Build
-        run: dotnet build Routeables.Test.Uno/Routeables.Test.Uno.csproj -c ${{ env.CONFIGURATION }}
+        run: dotnet build Routeables.Test.Uno/Routeables.Test.Uno.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
       # The application runs its tests on start when these are set, writes the results and exits.
       - name: Test
@@ -499,7 +499,7 @@ jobs:
           api-level: 34
           arch: x86_64
           target: google_apis
-          script: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:TargetFramework=net10.0-android -p:Configuration=Debug
+          script: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-android -p:Configuration=Debug
 
   device-windows:
     name: Device tests (MAUI, Windows)
@@ -518,7 +518,7 @@ jobs:
         run: dotnet workload install maui --skip-manifest-update
 
       - name: Test
-        run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:TargetFramework=net10.0-windows10.0.19041.0 -p:Configuration=Debug
+        run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-windows10.0.19041.0 -p:Configuration=Debug
 
   device-apple:
     name: Device tests (MAUI, Mac Catalyst and iOS simulator)
@@ -545,7 +545,7 @@ jobs:
         run: sudo xcodebuild -downloadPlatform iOS
 
       - name: Test, Mac Catalyst
-        run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:TargetFramework=net10.0-maccatalyst -p:Configuration=Debug
+        run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-maccatalyst -p:Configuration=Debug
 
       - name: Test, iOS simulator
-        run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:TargetFramework=net10.0-ios -p:Configuration=Debug
+        run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-ios -p:Configuration=Debug

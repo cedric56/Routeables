@@ -20,6 +20,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Test.Maui" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Maui" Version="15.0.1" />
   </ItemGroup>
 
