@@ -72,11 +72,27 @@ internal abstract class RouteablePopupPage<TResult> : ContentPage
             await (_dispatcher ?? Dispatcher).DispatchAsync(async () =>
             {
                 // Popping removes the top modal: wait until this one is it.
-                while (Navigation.ModalStack.Contains(this) && !ReferenceEquals(Navigation.ModalStack.LastOrDefault(), this))
-                    await Task.Delay(50);
+                while (Navigation.ModalStack.Contains(this))
+                {
+                    while (Navigation.ModalStack.Contains(this) && !ReferenceEquals(Navigation.ModalStack.LastOrDefault(), this))
+                        await Task.Delay(50);
 
-                if (Navigation.ModalStack.Contains(this))
-                    await Navigation.PopModalAsync(animated: false);
+                    // The stack drops a modal as soon as its dismissal starts, while the platform is still dismissing it: the one below
+                    // must not start its own then (UIKit does not dismiss two view controllers at once). One dismissal at a time.
+                    await PopupDismissals.Gate.WaitAsync();
+                    try
+                    {
+                        if (Navigation.ModalStack.Contains(this) && ReferenceEquals(Navigation.ModalStack.LastOrDefault(), this))
+                        {
+                            await Navigation.PopModalAsync(animated: false);
+                            break;
+                        }
+                    }
+                    finally
+                    {
+                        PopupDismissals.Gate.Release();
+                    }
+                }
             });
         }
         catch (Exception ex)
@@ -112,4 +128,10 @@ internal abstract class RouteablePopupPage<TResult> : ContentPage
     }
 
     protected override bool OnBackButtonPressed() => true;
+}
+
+/// <summary>One gate for every kind of popup: a static field of the generic page would be one per result type.</summary>
+internal static class PopupDismissals
+{
+    public static readonly SemaphoreSlim Gate = new(1, 1);
 }
