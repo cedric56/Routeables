@@ -74,6 +74,10 @@ r => r.AddGeneratedRoutes()
 
 Each host README has the complete setup. [Getting started](docs/getting-started.md) walks through it. To start, create a project with the template of your framework (`dotnet new avalonia.app`, `dotnet new maui`, `dotnet new blazor`, or the Uno one) and add the host package.
 
+## Status
+
+Routeables is young: the first commit is from October 2026 and it has one maintainer. What is documented works as described, and CI tests it on every host. The API is not settled yet, so expect a few breaking changes in the next versions, as applications start to use it. Each one is named in the release notes of its version; pin the version you use and read the notes before you update. If you need a router with years behind it, [compare it with the others](docs/guides/comparison.md) first.
+
 ## Features
 
 | Area | What Routeables offers | Guide |
@@ -109,6 +113,7 @@ Everything else is in the one `Routeables` package, which every host brings: the
 ## Learn more
 
 - [Getting started](docs/getting-started.md) and the [guides](docs/guides/routes.md): routes, typed routing, arguments, lifecycle, history, regions, modules, hosts.
+- [Compared with other routers](docs/guides/comparison.md): Prism, ReactiveUI, MAUI Shell, Uno.Extensions and the Blazor router, and when not to choose Routeables.
 - [Samples](Samples): the same Animals app on Blazor, MAUI, Avalonia, Uno and WPF.
 - [Documentation site](https://cedric56.github.io/Routeables/) and API reference.
 - [Contributing](CONTRIBUTING.md), [third-party notices](THIRD-PARTY-NOTICES.md).

@@ -24,3 +24,5 @@
   href: diagnostics.md
 - name: Migrating from Prism
   href: migrating-from-prism.md
+- name: Compared with other routers
+  href: comparison.md
