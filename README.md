@@ -76,7 +76,7 @@ Each host README has the complete setup. [Getting started](docs/getting-started.
 
 ## Status
 
-Routeables is young: the first commit is from October 2026 and it has one maintainer. What is documented works as described, and CI tests it on every host. The API is not settled yet, so expect a few breaking changes in the next versions, as applications start to use it. Each one is named in the release notes of its version; pin the version you use and read the notes before you update. If you need a router with years behind it, [compare it with the others](docs/guides/comparison.md) first.
+Routeables is young: the first commit is from October 2026, it has one maintainer, and the API is still evolving, so a few breaking changes can come with the next versions. They are named in the release notes of each version: pin the version you use and read the notes before you update. What is documented works as described, and CI tests it on every host.
 
 ## Features
 
@@ -102,7 +102,7 @@ Routeables is young: the first commit is from October 2026 and it has one mainta
 | Hosts | Blazor, .NET MAUI, Avalonia, Uno Platform, WPF | [Hosts](docs/guides/hosts.md) |
 | Dialog libraries | MudBlazor, CommunityToolkit.Maui, FluentAvalonia | [Reshapes](Reshapes/README.md) |
 
-Routeables routes. It ships no commands, view-model locator or event aggregator: use CommunityToolkit.Mvvm, ReactiveUI or plain C#.
+Routeables is the navigation layer, dialogs and notifications included. It ships no commands, view-model locator or event aggregator: use CommunityToolkit.Mvvm, ReactiveUI or plain C#.
 
 ## Add what you need
 
@@ -113,7 +113,7 @@ Everything else is in the one `Routeables` package, which every host brings: the
 ## Learn more
 
 - [Getting started](docs/getting-started.md) and the [guides](docs/guides/routes.md): routes, typed routing, arguments, lifecycle, history, regions, modules, hosts.
-- [Compared with other routers](docs/guides/comparison.md): Prism, ReactiveUI, MAUI Shell, Uno.Extensions and the Blazor router, and when not to choose Routeables.
+- [Compared with other routers](docs/guides/comparison.md): Prism, ReactiveUI, MAUI Shell, Uno.Extensions and the Blazor router, and where each one fits.
 - [Samples](Samples): the same Animals app on Blazor, MAUI, Avalonia, Uno and WPF.
 - [Documentation site](https://cedric56.github.io/Routeables/) and API reference.
 - [Contributing](CONTRIBUTING.md), [third-party notices](THIRD-PARTY-NOTICES.md).
