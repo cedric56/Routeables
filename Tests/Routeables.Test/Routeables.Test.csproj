@@ -38,23 +38,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Routeables.Locking\Routeables.Locking.csproj" />
-    <ProjectReference Include="..\Routeables.Regions\Routeables.Regions.csproj" />
-    <ProjectReference Include="..\Routeables.Segments\Routeables.Segments.csproj" />
-    <ProjectReference Include="..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
-    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" />
-    <ProjectReference Include="..\Routeables.Generated\Routeables.Generated.csproj" />
-    <ProjectReference Include="..\Routeables.Routing\Routeables.Routing.csproj" />
-    <ProjectReference Include="..\Routeables.Services\Routeables.Services.csproj" />
-    <ProjectReference Include="..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
-    <ProjectReference Include="..\Routeables.Maui\Routeables.Maui.csproj" />
-    <ProjectReference Include="..\Routeables.Razor\Routeables.Razor.csproj" />
-    <ProjectReference Include="..\Routeables.Uno\Routeables.Uno.csproj" />
-    <ProjectReference Include="..\Reshapes\Reshapes.Razor.MudBlazor\Reshapes.Razor.MudBlazor.csproj" />
+    <ProjectReference Include="..\..\Routeables.Locking\Routeables.Locking.csproj" />
+    <ProjectReference Include="..\..\Routeables.Regions\Routeables.Regions.csproj" />
+    <ProjectReference Include="..\..\Routeables.Segments\Routeables.Segments.csproj" />
+    <ProjectReference Include="..\..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
+    <ProjectReference Include="..\..\Routeables.Core\Routeables.Core.csproj" />
+    <ProjectReference Include="..\..\Routeables.Generated\Routeables.Generated.csproj" />
+    <ProjectReference Include="..\..\Routeables.Routing\Routeables.Routing.csproj" />
+    <ProjectReference Include="..\..\Routeables.Services\Routeables.Services.csproj" />
+    <ProjectReference Include="..\..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Routeables.Maui\Routeables.Maui.csproj" />
+    <ProjectReference Include="..\..\Routeables.Razor\Routeables.Razor.csproj" />
+    <ProjectReference Include="..\..\Routeables.Uno\Routeables.Uno.csproj" />
+    <ProjectReference Include="..\..\Reshapes\Reshapes.Razor.MudBlazor\Reshapes.Razor.MudBlazor.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
-    <ProjectReference Include="..\Routeables.Wpf\Routeables.Wpf.csproj" />
+    <ProjectReference Include="..\..\Routeables.Wpf\Routeables.Wpf.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net10.0-windows'">

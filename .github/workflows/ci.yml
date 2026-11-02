@@ -52,21 +52,21 @@ jobs:
           restore-keys: nuget-${{ runner.os }}-
 
       - name: Restore
-        run: dotnet restore Routeables.Test/Routeables.Test.csproj ${{ env.CI_PROPS }}
+        run: dotnet restore Tests/Routeables.Test/Routeables.Test.csproj ${{ env.CI_PROPS }}
 
       - name: Build
-        run: dotnet build Routeables.Test/Routeables.Test.csproj --no-restore -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+        run: dotnet build Tests/Routeables.Test/Routeables.Test.csproj --no-restore -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
       # .NET 10 SDK: `dotnet test` runs xunit.v3 through Microsoft.Testing.Platform,
       # enabled by global.json. The project is passed with --project.
       - name: Test
-        run: dotnet test --project Routeables.Test/Routeables.Test.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+        run: dotnet test --project Tests/Routeables.Test/Routeables.Test.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
       # The two flavours of the modal view model are shipped as source: these projects compile them with their packages and test them.
       - name: Flavours (CommunityToolkit.Mvvm and ReactiveUI)
         run: |
-          dotnet test --project Routeables.Test.Community/Routeables.Test.Community.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
-          dotnet test --project Routeables.Test.Reactive/Routeables.Test.Reactive.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+          dotnet test --project Tests/Routeables.Test.Community/Routeables.Test.Community.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+          dotnet test --project Tests/Routeables.Test.Reactive/Routeables.Test.Reactive.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
   # ---------------------------------------------------------------------------------------------------------------------------
   # Compile every project of the solution, so that an error in a sample or a Reshape no longer waits for a local build.
@@ -396,10 +396,10 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Build
-        run: dotnet build Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+        run: dotnet build Tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
       - name: Test
-        run: dotnet test --project Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+        run: dotnet test --project Tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
   ui-playwright:
     name: UI tests (Playwright, Blazor)
@@ -416,13 +416,13 @@ jobs:
 
       # Builds the project and the Blazor sample it starts (a project reference).
       - name: Build
-        run: dotnet build Routeables.Test.Playwright/Routeables.Test.Playwright.csproj -c ${{ env.CONFIGURATION }}
+        run: dotnet build Tests/Routeables.Test.Playwright/Routeables.Test.Playwright.csproj -c ${{ env.CONFIGURATION }}
 
       - name: Install Chromium
-        run: pwsh Routeables.Test.Playwright/bin/${{ env.CONFIGURATION }}/net10.0/playwright.ps1 install --with-deps chromium
+        run: pwsh Tests/Routeables.Test.Playwright/bin/${{ env.CONFIGURATION }}/net10.0/playwright.ps1 install --with-deps chromium
 
       - name: Test
-        run: dotnet test --project Routeables.Test.Playwright/Routeables.Test.Playwright.csproj --no-build -c ${{ env.CONFIGURATION }}
+        run: dotnet test --project Tests/Routeables.Test.Playwright/Routeables.Test.Playwright.csproj --no-build -c ${{ env.CONFIGURATION }}
 
   ui-uno:
     name: UI tests (Uno, desktop)
@@ -448,14 +448,14 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y xvfb libfontconfig1 libx11-6 libxkbcommon0 libice6 libsm6
 
       - name: Build
-        run: dotnet build Routeables.Test.Uno/Routeables.Test.Uno.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+        run: dotnet build Tests/Routeables.Test.Uno/Routeables.Test.Uno.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
       # The application runs its tests on start when these are set, writes the results and exits.
       - name: Test
         env:
           UNO_RUNTIME_TESTS_RUN_TESTS: '{}'
           UNO_RUNTIME_TESTS_OUTPUT_PATH: ${{ github.workspace }}/uno-results.xml
-        run: xvfb-run -a dotnet Routeables.Test.Uno/bin/${{ env.CONFIGURATION }}/net10.0-desktop/Routeables.Test.Uno.dll
+        run: xvfb-run -a dotnet Tests/Routeables.Test.Uno/bin/${{ env.CONFIGURATION }}/net10.0-desktop/Routeables.Test.Uno.dll
 
       - name: Results
         if: always()
@@ -505,7 +505,9 @@ jobs:
           api-level: 34
           arch: x86_64
           target: google_apis
-          script: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-android -p:Configuration=Debug
+          # MAUI plays no animation when the system has them off: it jumps to the end, and the tests of where a transition starts see nothing.
+          disable-animations: false
+          script: dotnet msbuild Tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-android -p:Configuration=Debug
 
       # The logcat of the run (test-results/logcat.txt) says why an application that started sent no result: keep it, whatever the outcome.
       - name: Keep the logcat and the results
@@ -513,7 +515,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: maui-android-test-results
-          path: Routeables.Test.Maui/test-results
+          path: Tests/Routeables.Test.Maui/test-results
           if-no-files-found: ignore
 
   device-windows:
@@ -533,7 +535,7 @@ jobs:
         run: dotnet workload install maui --skip-manifest-update
 
       - name: Test
-        run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-windows10.0.19041.0 -p:Configuration=Debug
+        run: dotnet msbuild Tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-windows10.0.19041.0 -p:Configuration=Debug
 
   device-apple:
     name: Device tests (MAUI, Mac Catalyst and iOS simulator)
@@ -566,7 +568,7 @@ jobs:
           exit 1
 
       - name: Test, Mac Catalyst
-        run: dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-maccatalyst -p:Configuration=Debug
+        run: dotnet msbuild Tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-maccatalyst -p:Configuration=Debug
 
       # DeviceRunners runs the application on a simulator that is already booted ("No booted iOS simulator found" otherwise): boot an iPhone
       # of the runtime that was downloaded, creating one when the runner has none.
@@ -600,4 +602,4 @@ jobs:
       - name: Test, iOS simulator
         run: |
           xcrun simctl list devices booted
-          dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-ios -p:Configuration=Debug -p:DeviceRunnersDevice="$DEVICERUNNERS_SIMULATOR"
+          dotnet msbuild Tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-ios -p:Configuration=Debug -p:DeviceRunnersDevice="$DEVICERUNNERS_SIMULATOR"

@@ -52,6 +52,15 @@
     <File Path="logo-icon.svg" />
     <File Path="logo.svg" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj" />
+    <Project Path="Tests/Routeables.Test.Community/Routeables.Test.Community.csproj" />
+    <Project Path="Tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj" />
+    <Project Path="Tests/Routeables.Test.Playwright/Routeables.Test.Playwright.csproj" />
+    <Project Path="Tests/Routeables.Test.Reactive/Routeables.Test.Reactive.csproj" />
+    <Project Path="Tests/Routeables.Test.Uno/Routeables.Test.Uno.csproj" />
+    <Project Path="Tests/Routeables.Test/Routeables.Test.csproj" Id="19b50f73-16a6-45b8-b30b-1b4d16ca42df" />
+  </Folder>
   <Project Path="Routeables.Abstraction/Routeables.Abstraction.csproj" />
   <Project Path="Routeables.AotSmoke/Routeables.AotSmoke.csproj" />
   <Project Path="Routeables.Avalonia/Routeables.Avalonia.csproj" />
@@ -65,13 +74,6 @@
   <Project Path="Routeables.Routing/Routeables.Routing.csproj" />
   <Project Path="Routeables.Segments/Routeables.Segments.csproj" />
   <Project Path="Routeables.Services/Routeables.Services.csproj" />
-  <Project Path="Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj" />
-  <Project Path="Routeables.Test.Community/Routeables.Test.Community.csproj" />
-  <Project Path="Routeables.Test.Maui/Routeables.Test.Maui.csproj" />
-  <Project Path="Routeables.Test.Playwright/Routeables.Test.Playwright.csproj" />
-  <Project Path="Routeables.Test.Reactive/Routeables.Test.Reactive.csproj" />
-  <Project Path="Routeables.Test.Uno/Routeables.Test.Uno.csproj" />
-  <Project Path="Routeables.Test/Routeables.Test.csproj" Id="19b50f73-16a6-45b8-b30b-1b4d16ca42df" />
   <Project Path="Routeables.Uno/Routeables.Uno.csproj" />
   <Project Path="Routeables.Wpf/Routeables.Wpf.csproj" />
 </Solution>

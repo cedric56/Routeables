@@ -37,5 +37,5 @@ Your view models depend on a single `IRouter` interface instead of framework-spe
 | [`Samples`](https://github.com/cedric56/Routeables/tree/master/Samples) | Sample apps (see [Samples](guides/hosts.md#samples)) |
 | [`Reshapes`](https://github.com/cedric56/Routeables/blob/master/Reshapes/README.md) | Optional look-and-feel packages: MudBlazor, CommunityToolkit.Maui, FluentAvalonia |
 | [`Routeables.Benchmarks`](https://github.com/cedric56/Routeables/tree/master/Routeables.Benchmarks) | BenchmarkDotNet benchmarks and memory checks of the router (see [docs/benchmarks.md](benchmarks.md)) |
-| [`Routeables.Test`](https://github.com/cedric56/Routeables/tree/master/Routeables.Test) | Unit tests (xunit v3) |
+| [`Routeables.Test`](https://github.com/cedric56/Routeables/tree/master/Tests/Routeables.Test) | Unit tests (xunit v3) |
 | [`docs`](index.md) | DocFX documentation site |

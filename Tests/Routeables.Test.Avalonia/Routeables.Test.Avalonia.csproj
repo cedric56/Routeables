@@ -5,7 +5,7 @@
     Routeables.Avalonia (RouteableRegion, RouteableLink) with no window system and no drawing, so it runs on any machine and in CI.
     They check what the unit tests of Routeables.Test cannot: that the controls show what the routers display.
 
-    Run: dotnet test, with the option project set to Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj, in the Release configuration.
+    Run: dotnet test, with the option project set to Tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj, in the Release configuration.
   -->
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
-    <ProjectReference Include="..\Reshapes\Reshapes.Avalonia.Fluent\Reshapes.Avalonia.Fluent.csproj" />
+    <ProjectReference Include="..\..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Reshapes\Reshapes.Avalonia.Fluent\Reshapes.Avalonia.Fluent.csproj" />
   </ItemGroup>
 
 </Project>

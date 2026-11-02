@@ -125,6 +125,20 @@ public class DialogServiceDeviceTests
 
     private static void Tap(Button button) => ((IButton)button).Clicked();
 
+    // A dialog that a test left on the window (it failed before closing it) would be taken for the one the next test opens.
+    private static async Task CleanAsync()
+    {
+        for (var i = 0; i < 10 && Modals.Count > 0; i++)
+        {
+            try { await Host.Navigation.PopModalAsync(animated: false); }
+            catch (Exception) { break; }
+        }
+    }
+
+    private static string State(params (string Name, Task Task)[] tasks)
+        => $"modals={Modals.Count} [{string.Join(", ", Modals.Select(m => m.GetType().Name))}]; "
+           + string.Join("; ", tasks.Select(t => $"{t.Name} completed={t.Task.IsCompleted}"));
+
     private static async Task<T> ResultAsync<T>(Task<T> task)
     {
         await Device.UntilAsync(() => task.IsCompleted);
@@ -209,6 +223,7 @@ public class DialogServiceDeviceTests
     [UIFact]
     public async Task A_content_dialog_opens_over_the_page_and_gives_the_button_that_was_pressed()
     {
+        await CleanAsync();
         var shown = Service().ShowContentDialogAsync(new RouteableContentDialog
         {
             Title = "Rename", Content = "New name?", PrimaryButtonText = "Save", IsPrimaryButtonEnabled = true, CloseButtonText = "Cancel"
@@ -225,6 +240,7 @@ public class DialogServiceDeviceTests
     [UIFact]
     public async Task The_callbacks_of_a_content_dialog_run_once_each_in_order()
     {
+        await CleanAsync();
         var events = new List<string>();
         var shown = Service().ShowContentDialogAsync(new RouteableContentDialog
         {
@@ -247,6 +263,7 @@ public class DialogServiceDeviceTests
     [UIFact]
     public async Task The_caller_can_close_a_content_dialog_from_code_and_from_another_thread()
     {
+        await CleanAsync();
         var parameters = new RouteableContentDialog { Title = "t", CloseButtonText = "Close" };
         var shown = Service().ShowContentDialogAsync(parameters);
         await PopupAsync();
@@ -261,6 +278,7 @@ public class DialogServiceDeviceTests
     [UIFact]
     public async Task The_android_back_button_and_nothing_else_than_a_button_close_the_dialog()
     {
+        await CleanAsync();
         var shown = Service().ShowContentDialogAsync(new RouteableContentDialog { Title = "t", CloseButtonText = "Close" });
         var popup = await PopupAsync();
 
@@ -276,6 +294,7 @@ public class DialogServiceDeviceTests
     [UIFact]
     public async Task Two_dialogs_are_open_at_once_and_the_one_below_waits_until_it_is_on_top_to_close()
     {
+        await CleanAsync();
         var service = Service();
         var below = service.ShowContentDialogAsync(new RouteableContentDialog { Title = "below", CloseButtonText = "Close below" });
         var belowPopup = await PopupAsync();
@@ -290,9 +309,17 @@ public class DialogServiceDeviceTests
 
         Tap(ButtonOf(abovePopup, "Close above"));
 
-        Assert.Equal(RouteableContentDialogResult.None, await ResultAsync(above));
-        Assert.Equal(RouteableContentDialogResult.None, await ResultAsync(below));
-        await ClosedAsync();
+        try
+        {
+            Assert.Equal(RouteableContentDialogResult.None, await ResultAsync(above));
+            Assert.Equal(RouteableContentDialogResult.None, await ResultAsync(below));
+            await ClosedAsync();
+        }
+        catch (TimeoutException ex)
+        {
+            // Where the stack stood when it stopped is what says which dialog did not close.
+            throw new InvalidOperationException(ex.Message + " " + State(("below", below), ("above", above)), ex);
+        }
     }
 
     // ------------------------------------------------------------------------------------------------ task dialogs and modals
@@ -300,6 +327,7 @@ public class DialogServiceDeviceTests
     [UIFact]
     public async Task A_task_dialog_shows_its_texts_and_gives_the_result_that_was_pressed()
     {
+        await CleanAsync();
         var shown = Service().ShowTaskDialogAsync(
             new RouteableTaskDialog { Title = "Update", Header = "A new version", SubHeader = "Install it now?" },
             RouteableTaskDialogResult.Yes, RouteableTaskDialogResult.Cancel);
@@ -317,6 +345,7 @@ public class DialogServiceDeviceTests
     [UIFact]
     public async Task A_task_dialog_without_results_offers_Close()
     {
+        await CleanAsync();
         var shown = Service().ShowTaskDialogAsync(new RouteableTaskDialog { Title = "t", Header = "h" });
         var popup = await PopupAsync();
 
@@ -329,6 +358,7 @@ public class DialogServiceDeviceTests
     [UIFact]
     public async Task A_modal_shows_the_view_and_ends_with_the_value_the_view_model_closed_with()
     {
+        await CleanAsync();
         var ran = new List<string>();
         var viewModel = new Closeable("Edit", new RouteableCommand { Name = "Save", Command = new Run(() => ran.Add("save")) });
         var shown = Service().ShowModalAsync<Closeable, string>(viewModel, () => new Label { Text = "the form" });
@@ -347,6 +377,7 @@ public class DialogServiceDeviceTests
     [UIFact]
     public async Task A_modal_closed_from_another_thread_ends_too()
     {
+        await CleanAsync();
         var viewModel = new Closeable("Edit");
         var shown = Service().ShowModalAsync<Closeable, string>(viewModel, () => new Label());
         await Device.UntilAsync(() => Modals.Count == 1);

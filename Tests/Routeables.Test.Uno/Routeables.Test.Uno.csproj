@@ -5,9 +5,9 @@
     engine (the one of Uno's own SamplesApp), on the real WinUI controls of Routeables.Uno. The tests show on the screen, in the page below the runner.
 
     Run it and press the button of the runner, or in CI, without a screen, results written to a file:
-      dotnet build Routeables.Test.Uno/Routeables.Test.Uno.csproj -c Release
+      dotnet build Tests/Routeables.Test.Uno/Routeables.Test.Uno.csproj -c Release
       UNO_RUNTIME_TESTS_RUN_TESTS='{}' UNO_RUNTIME_TESTS_OUTPUT_PATH=$PWD/uno-results.xml \
-        xvfb-run dotnet Routeables.Test.Uno/bin/Release/net10.0-desktop/Routeables.Test.Uno.dll
+        xvfb-run dotnet Tests/Routeables.Test.Uno/bin/Release/net10.0-desktop/Routeables.Test.Uno.dll
   -->
   <PropertyGroup>
     <TargetFrameworks>net10.0-desktop</TargetFrameworks>
@@ -41,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Routeables.Uno\Routeables.Uno.csproj" />
+    <ProjectReference Include="..\..\Routeables.Uno\Routeables.Uno.csproj" />
   </ItemGroup>
 
 </Project>

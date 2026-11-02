@@ -9,10 +9,10 @@
     Run (a device or emulator must be there: Android emulator, iOS simulator; Mac Catalyst and Windows run on the machine).
     global.json turns on the Microsoft.Testing.Platform runner for the repository, which `dotnet test` of a device project does not use:
     the VSTest target of DeviceRunners.Testing.Targets is called directly.
-      dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-android
-      dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-ios
-      dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-maccatalyst
-      dotnet msbuild Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-windows10.0.19041.0
+      dotnet msbuild Tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-android
+      dotnet msbuild Tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-ios
+      dotnet msbuild Tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-maccatalyst
+      dotnet msbuild Tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-windows10.0.19041.0
     DeviceTfm (not TargetFramework) names the platform: a TargetFramework given on the command line also goes to the libraries this project
     references, which are built for net10.0 and would be restored for the wrong framework.
     Or deploy it from the IDE: the visual runner lists the tests and runs them.
@@ -70,8 +70,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Routeables.Maui\Routeables.Maui.csproj" />
-    <ProjectReference Include="..\Reshapes\Reshapes.Maui.Community\Reshapes.Maui.Community.csproj" />
+    <ProjectReference Include="..\..\Routeables.Maui\Routeables.Maui.csproj" />
+    <ProjectReference Include="..\..\Reshapes\Reshapes.Maui.Community\Reshapes.Maui.Community.csproj" />
   </ItemGroup>
 
 </Project>
