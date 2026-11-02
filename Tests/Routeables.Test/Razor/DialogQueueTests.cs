@@ -133,15 +133,16 @@ public class DialogQueueTests
     public async Task The_closed_callback_runs_before_the_dialog_is_completed()
     {
         var queue = Hosted(out _);
-        var order = new List<string>();
+        // The continuation runs on the thread pool, after the task: it can still be writing when a plain list is read.
+        var order = new System.Collections.Concurrent.ConcurrentQueue<string>();
         var shown = Show(queue, "only");
-        _ = shown.ContinueWith(_ => order.Add("completed"), TaskScheduler.Default);
+        _ = shown.ContinueWith(_ => order.Enqueue("completed"), TaskScheduler.Default);
 
-        queue.Finish(queue.Current!, 1, () => order.Add("closed"));
+        queue.Finish(queue.Current!, 1, () => order.Enqueue("closed"));
         await shown.WaitAsync(TimeSpan.FromSeconds(5), Ct);
-        await Task.Delay(50, Ct);
+        Assert.True(SpinWait.SpinUntil(() => order.Count >= 2, TimeSpan.FromSeconds(5)));
 
-        Assert.Equal(["closed", "completed"], order);
+        Assert.Equal(["closed", "completed"], order.ToArray());
     }
 
     [Fact]
