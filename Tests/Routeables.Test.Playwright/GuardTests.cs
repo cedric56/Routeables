@@ -73,4 +73,28 @@ public sealed class GuardTests(BlazorApp app) : BlazorTest(app)
         await Button("＋ Push").ClickAsync();
         await Expect(cards).ToHaveCountAsync(3);
     }
+
+    [Fact]
+    public async Task A_Back_of_the_browser_that_the_page_refuses_leaves_the_browser_history_untouched()
+    {
+        await OpenAsync("Cats");
+        await ExpectAddressAsync("/cats");
+        await OpenAsync("History");
+        await ExpectAddressAsync("/history");
+        await Page.Locator("label.nav-check input[type=checkbox]").CheckAsync();
+
+        await Page.GoBackAsync();
+
+        // The browser is put back on the page that refuses to be left...
+        await ExpectAddressAsync("/history");
+        await ExpectCurrentAsync("History");
+
+        // ...and its entries are the ones it had: once the page lets go, Back reaches Cats instead of skipping it.
+        await Page.Locator("label.nav-check input[type=checkbox]").UncheckAsync();
+        await Page.GoBackAsync();
+
+        await ExpectAddressAsync("/cats");
+        await ExpectCurrentAsync("Cats");
+        Assert.Empty(PageErrors);
+    }
 }

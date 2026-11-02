@@ -64,4 +64,21 @@ public sealed class NavigationTests(BlazorApp app) : BlazorTest(app)
             await other.CloseAsync();
         }
     }
+
+    [Fact(Skip = "Known limit: GoBackAsync from a view model replaces the address instead of going back in the browser history (RouteableUrlSync.OnRouted); this is the behaviour wanted if the router drives history.back().")]
+    public async Task GoBackAsync_from_a_view_model_goes_back_in_the_browser_history_too()
+    {
+        await OpenAsync("Dogs");
+        await ExpectAddressAsync("/dogs");
+        await Page.Locator(".animal-item").First.ClickAsync();
+        await Expect(Page.Locator("button.back-btn").First).ToBeVisibleAsync();
+        var detail = new Uri(Page.Url).AbsolutePath;
+
+        await Page.Locator("button.back-btn").First.ClickAsync();
+        await ExpectAddressAsync("/dogs");
+
+        await Page.GoForwardAsync();
+
+        await ExpectAddressAsync(detail);
+    }
 }

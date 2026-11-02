@@ -43,7 +43,7 @@ public class RegionFollowerTests
         using var follower = new RegionFollower(provider.GetRouter("content"), async () =>
         {
             if (Interlocked.Increment(ref running) > 1) overlapped = true;
-            await Task.Delay(20);
+            await Task.Yield();
             Interlocked.Decrement(ref running);
             Interlocked.Increment(ref runs);
         });

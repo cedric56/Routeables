@@ -58,9 +58,15 @@ public class AsyncHelperTests
         using var cts = new CancellationTokenSource();
         var work = new TaskCompletionSource();
 
-        AsyncHelper.FireAndForget(async () => { await work.Task.WaitAsync(cts.Token); }, provider);
+        var finished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        AsyncHelper.FireAndForget(async () =>
+        {
+            try { await work.Task.WaitAsync(cts.Token); }
+            finally { finished.TrySetResult(); }
+        }, provider);
         await cts.CancelAsync();
-        await Task.Delay(50, TestContext.Current.CancellationToken);
+        await finished.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+        await Task.Yield();
 
         Assert.Empty(sink.Reported);
     }
@@ -72,7 +78,7 @@ public class AsyncHelperTests
         using var scope = provider;
 
         Task.FromException(new InvalidOperationException("late")).Forget(provider);
-        await Task.Delay(50, TestContext.Current.CancellationToken);
+        Assert.True(SpinWait.SpinUntil(() => sink.Reported.Count > 0, TimeSpan.FromSeconds(5)));
 
         Assert.Equal("late", Assert.Single(sink.Reported).Exception.Message);
     }

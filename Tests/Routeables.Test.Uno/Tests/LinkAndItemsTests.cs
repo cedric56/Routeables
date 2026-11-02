@@ -80,7 +80,7 @@ public class LinkAndItemsTests
 
             Click(button);
             await TestHost.UntilAsync(() => TestHost.Router().CurrentView is PageBView);
-            await Task.Delay(150);
+            await TestHost.UntilAsync(() => TestHost.Router().History.Count == 2);
 
             // One entry was added: Back is the first page again.
             await TestHost.Router().GoBackAsync();

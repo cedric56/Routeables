@@ -45,7 +45,7 @@ public class DispatcherTests
         using var ui = new UiThread();
         var done = false;
 
-        await ui.InvokeAsync(async () => { await Task.Delay(20, TestContext.Current.CancellationToken); done = true; });
+        await ui.InvokeAsync(async () => { await Task.Yield(); done = true; });
 
         Assert.True(done);
     }

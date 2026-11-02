@@ -67,7 +67,7 @@ public class LinkAndItemsDeviceTests
 
         Click(button);
         await Device.UntilAsync(() => Device.Router().CurrentView is PageBView);
-        await Task.Delay(150);
+        await Device.UntilAsync(() => Device.Router().History.Count == 2);
 
         // One entry was added: Back is the first page again.
         await Device.Router().GoBackAsync();

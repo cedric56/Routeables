@@ -37,7 +37,7 @@ Routeables does not replace `Router` in `Routes.razor`: the sample keeps it.
 
 - `Routeables.Razor` ships `Main.razor`, whose two `@page` routes (`/` and `/{*path}`) give the Blazor router a page for every address. It draws nothing.
 - What the user sees is drawn by the layout (`MainLayout`, or your own inheriting `MainLayoutBase`) from the **current view of the Routeables router**.
-- `RouteableUrlSync` keeps the address and the router in step: a route change updates the address (a push adds a browser history entry, the other moves replace it); a typed address, a link or the browser's Back and Forward route the router; if a guard or a page refuses, the address goes back to the current page.
+- `RouteableUrlSync` keeps the address and the router in step: a route change updates the address (a push adds a browser history entry, the other moves replace it); a typed address, a link or the browser's Back and Forward route the router; if a guard or a page refuses, the address stays on the current page. The router is asked before the address changes (a location changing handler), so a refused Back of the browser is cancelled and the browser history keeps its entries. One limit remains: `GoBackAsync` called from a view model replaces the address instead of going back in the browser history, so the browser's Back does not follow it.
 - A page registered without an explicit route has no address of its own: the address goes back to `/`.
 
 Everything is scoped: with Blazor Server, each circuit has its own router and history.
