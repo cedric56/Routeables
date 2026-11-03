@@ -3,7 +3,7 @@
     {
       "src": [
         {
-          "src": "..",
+          "src": "../src",
           "files": [
             "Routeables.Abstraction/*.csproj",
             "Routeables.Services/*.csproj",

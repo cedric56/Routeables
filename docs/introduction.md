@@ -21,21 +21,21 @@ Your view models depend on a single `IRouter` interface instead of framework-spe
 
 | Project | Purpose |
 | --- | --- |
-| [`Routeables.Abstraction`](https://github.com/cedric56/Routeables/blob/master/Routeables.Abstraction/README.md) | Shared contracts: `IRouter`, `IRouteable`, `RouteableArgs`, attributes, lock and error contracts |
-| [`Routeables.Services`](https://github.com/cedric56/Routeables/blob/master/Routeables.Services/README.md) | Optional UI service contracts: dialogs, content and task dialogs, notifications, theme |
-| [`Routeables.Locking`](https://github.com/cedric56/Routeables/blob/master/Routeables.Locking/README.md) | Optional: the broker and the locking of the main entries |
-| [`Routeables.Regions`](https://github.com/cedric56/Routeables/blob/master/Routeables.Regions/README.md) | Optional: `RegionBinding`, `RegionFollower`, `RegionLayout` |
-| [`Routeables.Segments`](https://github.com/cedric56/Routeables/blob/master/Routeables.Segments/README.md) | Optional: routing by segments (`/Bears?SearchText=polar`) |
-| [`Routeables.Routing`](https://github.com/cedric56/Routeables/blob/master/Routeables.Routing/README.md) | The router, history, routing locking and DI registration |
-| [`Routeables.Core`](https://github.com/cedric56/Routeables/blob/master/Routeables.Core/README.md) | Routing-aware view-model bases and runtime/environment info |
+| [`Routeables.Abstraction`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Abstraction/README.md) | Shared contracts: `IRouter`, `IRouteable`, `RouteableArgs`, attributes, lock and error contracts |
+| [`Routeables.Services`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Services/README.md) | Optional UI service contracts: dialogs, content and task dialogs, notifications, theme |
+| [`Routeables.Locking`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Locking/README.md) | Optional: the broker and the locking of the main entries |
+| [`Routeables.Regions`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Regions/README.md) | Optional: `RegionBinding`, `RegionFollower`, `RegionLayout` |
+| [`Routeables.Segments`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Segments/README.md) | Optional: routing by segments (`/Bears?SearchText=polar`) |
+| [`Routeables.Routing`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Routing/README.md) | The router, history, routing locking and DI registration |
+| [`Routeables.Core`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Core/README.md) | Routing-aware view-model bases and runtime/environment info |
 | [`Routeables.Generated`](https://github.com/cedric56/Routeables/tree/master/Routeables.Generated) | Roslyn source generators: route registration and typed routing methods |
-| [`Routeables.Razor`](https://github.com/cedric56/Routeables/blob/master/Routeables.Razor/README.md) | Blazor integration |
-| [`Routeables.Maui`](https://github.com/cedric56/Routeables/blob/master/Routeables.Maui/README.md) | .NET MAUI integration |
-| [`Routeables.Avalonia`](https://github.com/cedric56/Routeables/blob/master/Routeables.Avalonia/README.md) | Avalonia integration |
-| [`Routeables.Uno`](https://github.com/cedric56/Routeables/blob/master/Routeables.Uno/README.md) | Uno Platform integration |
-| [`Routeables.Wpf`](https://github.com/cedric56/Routeables/blob/master/Routeables.Wpf/README.md) | WPF integration (Windows) |
+| [`Routeables.Razor`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Razor/README.md) | Blazor integration |
+| [`Routeables.Maui`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Maui/README.md) | .NET MAUI integration |
+| [`Routeables.Avalonia`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Avalonia/README.md) | Avalonia integration |
+| [`Routeables.Uno`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Uno/README.md) | Uno Platform integration |
+| [`Routeables.Wpf`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Wpf/README.md) | WPF integration (Windows) |
 | [`Samples`](https://github.com/cedric56/Routeables/tree/master/Samples) | Sample apps (see [Samples](guides/hosts.md#samples)) |
-| [`Reshapes`](https://github.com/cedric56/Routeables/blob/master/Reshapes/README.md) | Optional look-and-feel packages: MudBlazor, CommunityToolkit.Maui, FluentAvalonia |
+| [`Reshapes`](https://github.com/cedric56/Routeables/blob/master/reshapes/README.md) | Optional look-and-feel packages: MudBlazor, CommunityToolkit.Maui, FluentAvalonia |
 | [`Routeables.Benchmarks`](https://github.com/cedric56/Routeables/tree/master/Routeables.Benchmarks) | BenchmarkDotNet benchmarks and memory checks of the router (see [docs/benchmarks.md](benchmarks.md)) |
 | [`Routeables.Test`](https://github.com/cedric56/Routeables/tree/master/Tests/Routeables.Test) | Unit tests (xunit v3) |
 | [`docs`](index.md) | DocFX documentation site |

@@ -20,7 +20,7 @@ services.RegisterRouting(ServiceLifetime.Scoped);   // Blazor Server: one histor
 services.RegisterRoute<MoreBirdsPage, MoreBirdsViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, MoreBirdsModule.Route);
 ```
 
-A `Transient` router is refused: every resolve would get its own history. For several independent histories use regions: `services.AddRegion("adopt")`, resolved with `provider.GetRouter("adopt")` ([regions](../docs/guides/regions.md)).
+A `Transient` router is refused: every resolve would get its own history. For several independent histories use regions: `services.AddRegion("adopt")`, resolved with `provider.GetRouter("adopt")` ([regions](../../docs/guides/regions.md)).
 
 ## How it behaves
 
@@ -28,6 +28,6 @@ A `Transient` router is refused: every resolve would get its own history. For se
 - Guards and lifecycle callbacks run before the history changes. A refused or failed route change commits nothing and the previous page is restored.
 - The history has no limit by default: it keeps one entry per route change until `PopAsync` or `EraseHistoryAsync` removes them; entries that leave it are disposed. A long-lived application can set one with `services.LimitHistory(50)` (the oldest entry is then dropped and disposed), or call `EraseHistoryAsync` (or `GoBackToRootAsync`) now and then.
 - `Routing` and `Routed` are raised for each route change. A handler that throws never fails the route change: the error goes to your `IRouteableErrorSink`, or to `Trace`.
-- Measured with BenchmarkDotNet: about 4 to 7.5 µs and 7.5 to 12 KB per route change ([benchmarks](../docs/benchmarks.md)).
+- Measured with BenchmarkDotNet: about 4 to 7.5 µs and 7.5 to 12 KB per route change ([benchmarks](../../docs/benchmarks.md)).
 
 Related: [`Routeables.Abstraction`](../Routeables.Abstraction/README.md), [`Routeables.Core`](../Routeables.Core/README.md), and the hosts ([Razor](../Routeables.Razor/README.md), [MAUI](../Routeables.Maui/README.md), [Avalonia](../Routeables.Avalonia/README.md), [Uno](../Routeables.Uno/README.md), [WPF](../Routeables.Wpf/README.md)).

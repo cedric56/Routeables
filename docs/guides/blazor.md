@@ -1,6 +1,6 @@
 # Routeables for Blazor developers
 
-What changes when the pages of a Blazor application are routed by Routeables instead of by `@page`, and what stays as it was. Everything here is in the repository: the samples `Samples/XAnimals.Razor` (Blazor Server), `XAnimals.BlazorWebAssembly` and `XAnimals.MauiHybrid`.
+What changes when the pages of a Blazor application are routed by Routeables instead of by `@page`, and what stays as it was. Everything here is in the repository: the samples `samples/XAnimals.Razor` (Blazor Server), `XAnimals.BlazorWebAssembly` and `XAnimals.MauiHybrid`.
 
 ## The idea in one sentence
 
@@ -25,7 +25,7 @@ With `@page`, the address chooses a component. With Routeables, a **view model**
 Routeables does not replace `Router` in `Routes.razor`: the sample keeps it.
 
 ```razor
-@* Samples/XAnimals.Razor/Components/Routes.razor *@
+@* samples/XAnimals.Razor/Components/Routes.razor *@
 <Router AppAssembly="typeof(AboutView).Assembly"
         AdditionalAssemblies="new[] { typeof(MainLayoutBase).Assembly }"
         NotFoundPage="typeof(NotFound)">
@@ -119,7 +119,23 @@ public sealed class SignedInGuard(ISession session) : IRouteGuard
 
 `RouteableReturn` takes the user back to the page they asked for once they are signed in. Everything about guards: [Back, deep links, guards and diagnostics](system-integration.md).
 
-**Authorization is not integrated with Blazor.** There is no `AuthorizeRouteView` equivalent and no use of `[Authorize]`: a rule about who may open a route is an `IRouteGuard` that you write with your own service. Routeables does not read the authentication state of Blazor for you, and no sample or test of this repository covers it. A guard is resolved once per router and lives as long as it does, so a guard that needs a scoped service must be scoped itself.
+**Authorization.** `services.AddRouteableAuthorization(o => o.SignInRoute = "/sign-in")` makes `[Authorize]` and `[AllowAnonymous]` count on the view models (and views) of Routeables, with the `Roles` and `Policy` of `[Authorize]`. The guard it registers (`RouteableAuthorizationGuard`) reads the `AuthenticationStateProvider` of the application and the authorization policies, and asks before any other guard (`Order` is `-100`).
+
+```csharp
+services.AddRouteableAuthorization(o =>
+{
+    o.SignInRoute = "/sign-in";        // a visitor who is not signed in; without it the route change is cancelled
+    o.ForbiddenRoute = "/forbidden";   // a signed-in visitor who is refused (role or policy); without it the route change is cancelled
+});
+
+[Routeable("/account"), Authorize]
+public sealed class AccountViewModel : IRouteable { }
+
+[Routeable("/sign-in"), AllowAnonymous]
+public sealed class SignInViewModel : IRouteable { }
+```
+
+The application registers its own authentication (an `AuthenticationStateProvider`, logging) as any Blazor application with sign-in does; Routeables does not choose it. Only a new page is redirected; Back and Forward are cancelled. A sign-in page that forgot `[AllowAnonymous]` is cancelled instead of being redirected to itself. For a rule that is not about the signed-in user, write an `IRouteGuard` as above. A guard is resolved once per router, so a guard that needs a scoped service must be scoped itself.
 
 ## What to know before choosing it
 
@@ -127,7 +143,8 @@ public sealed class SignedInGuard(ISession session) : IRouteGuard
 - **There is no catch-all placeholder** (`{**path}`) in a Routeables template. `Main.razor` has the one that Blazor needs.
 - **A component must be safe to dispose twice:** the router disposes the pages that leave its history, and Blazor disposes what it renders (see [One instance of the view](#one-instance-of-the-view)).
 - **A `Transient` `IDisposable` service** injected into a page lives until the circuit ends: register it `Scoped` or `Singleton` ([lifecycle](lifecycle.md)).
-- **Render modes:** the samples run in interactive Server, WebAssembly and MAUI Hybrid. Prerendering and the other render modes of .NET 8 and later are not covered by the tests of this repository.
+- **Prerendering:** with a server that prerenders (`InteractiveServerRenderMode(prerender: true)`), register `services.AddSingleton(new RouteablePrerenderOptions())` and the layout routes to the address while the page is prerendered, so the HTML already holds the page. Without that registration nothing changes: the layout waits for the circuit. The circuit that takes over starts again from the address, and the views are built a second time (keep the loading in `InitializeAsync`, not in a static). The samples run with `prerender: false`, and this path is covered by unit tests only, not by a browser test. Static server rendering of a page without a circuit, streaming rendering and the other render modes of .NET 8 and later are not covered.
+- **404:** with prerendering on, `new RouteablePrerenderOptions { UnknownAddressIsNotFound = true }` makes an address that matches no route (other than `/`) answer with the status 404 and the not-found page of the application's `Router` (`NavigationManager.NotFound()`), instead of the default page. Without prerendering the response is always 200: the server does not know the routes before the circuit runs.
 - **Targets:** `Routeables.Razor` is `net10.0`.
 
 ## When to keep the Blazor router

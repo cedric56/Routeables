@@ -480,4 +480,28 @@ public class RouteableUrlSyncTests
         Assert.Empty(f.Routing.Calls);
         Assert.IsType<HomeVm>(f.Router.CurrentViewModel);
     }
+
+    [Fact]
+    public async Task Prerendering_routes_to_the_address_and_follows_nothing()
+    {
+        using var f = new Fixture("http://localhost/customers/4");
+
+        var chosen = await f.Sync.PrerenderAsync();
+
+        Assert.True(chosen);
+        Assert.Equal(4, Assert.IsType<CustomerVm>(f.Router.CurrentViewModel).Id);
+        Assert.Empty(f.Routing.Calls);                  // the address is the one that was asked: nothing to change
+        f.Routing.BrowserGoesTo("/home");
+        await Task.Yield();
+        Assert.IsType<CustomerVm>(f.Router.CurrentViewModel);   // not subscribed: the circuit does that
+    }
+
+    [Fact]
+    public async Task Prerendering_an_address_that_matches_nothing_chooses_no_page()
+    {
+        using var f = new Fixture("http://localhost/nowhere");
+
+        Assert.False(await f.Sync.PrerenderAsync());
+        Assert.Null(f.Router.CurrentViewModel);
+    }
 }

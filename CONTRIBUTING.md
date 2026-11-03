@@ -12,7 +12,7 @@ The projects target **.NET 10**. MAUI also needs the MAUI workload, and Uno the 
 
 ```bash
 dotnet build Routeables.slnx
-dotnet test --project Tests/Routeables.Test/Routeables.Test.csproj
+dotnet test --project tests/Routeables.Test/Routeables.Test.csproj
 ```
 
 `dotnet test` runs xunit v3 through Microsoft.Testing.Platform, enabled by `global.json`. On CI, pass `-p:CiBuild=true` so the MAUI and Uno

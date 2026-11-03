@@ -20,4 +20,4 @@ public async Task ShowYesNoAsync()
 
 Every host behaves the same way: a button press runs its command, then asks the `Closing` veto, then closes. A notification closes after five seconds unless you say otherwise (`RouteableNotificationDefaults.Never` keeps it).
 
-The look can be replaced: see [`Reshapes`](../Reshapes/README.md) (MudBlazor, CommunityToolkit.Maui, FluentAvalonia).
+The look can be replaced: see [`Reshapes`](../../reshapes/README.md) (MudBlazor, CommunityToolkit.Maui, FluentAvalonia).

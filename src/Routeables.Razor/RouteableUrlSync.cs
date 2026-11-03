@@ -52,6 +52,36 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         return await ApplyAsync(Relative(navigation.Uri)) != Outcome.Unmatched;
     }
 
+    /// <summary>
+    /// Routes to the current address while the page is being prerendered, so that the HTML sent to the browser already holds the page.
+    /// It follows nothing: there is no circuit yet, and the circuit that takes over starts again with <see cref="StartAsync"/>.
+    /// </summary>
+    /// <returns><see langword="true"/> when the address matched a route and the router now shows its page.</returns>
+    public async Task<bool> PrerenderAsync()
+    {
+        var path = Relative(navigation.Uri);
+        if (RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], path).Template is not { } template)
+            return false;
+
+        RouteableResult result;
+        try
+        {
+            result = await router.GoToAsync(path, RouteableArgs.Create(), template, CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            RouteableErrors.Report<RouteableUrlSync>(provider, ex, path);
+            return false;
+        }
+
+        if (result.Success && router.CurrentViewModel is { } current && provider.GetService<IMainViewModel>() is { } main)
+        {
+            main.CurrentView = router.CurrentView;
+            main.OnRouterMoved(current);
+        }
+        return result.Success;
+    }
+
     private void OnRouted(object? sender, RouteableRoutedEventArgs e)
     {
         var address = AddressOf(e.To);

@@ -22,7 +22,7 @@ Or let the builder show it: `.UseRouteables<MainViewModel>(r => r.AddGeneratedRo
 ## A view
 
 ```csharp
-// Samples/XAnimals.Avalonia/Views/Animals/DogDetailView.axaml.cs
+// samples/XAnimals.Avalonia/Views/Animals/DogDetailView.axaml.cs
 public partial class DogDetailView : RouteableFor<DogDetailViewModel> { public DogDetailView() => InitializeComponent(); }
 ```
 
@@ -52,7 +52,7 @@ Without `region`, the tabs follow the main history.
 
 ## Dialogs and notifications
 
-Drawn with Avalonia controls (`Routeables.Avalonia.Services` namespace). `UseRouteables` already registers them, and the dialog windows take the icon of the window that opens them. To draw them another way, give your own `IMessageBoxService` to `UseRouteablesServices` in the block (such as the FluentAvalonia one of [`Reshapes`](../Reshapes/README.md)):
+Drawn with Avalonia controls (`Routeables.Avalonia.Services` namespace). `UseRouteables` already registers them, and the dialog windows take the icon of the window that opens them. To draw them another way, give your own `IMessageBoxService` to `UseRouteablesServices` in the block (such as the FluentAvalonia one of [`Reshapes`](../../reshapes/README.md)):
 
 ```csharp
 AppBuilder.Configure<App>()
@@ -73,10 +73,10 @@ Contracts: [`Routeables.Services`](../Routeables.Services/README.md).
 
 ## Good to know
 
-- No dependency on FluentAvalonia: the default dialogs are drawn with Avalonia controls. FluentAvalonia flavour: [`Reshapes`](../Reshapes/README.md).
+- No dependency on FluentAvalonia: the default dialogs are drawn with Avalonia controls. FluentAvalonia flavour: [`Reshapes`](../../reshapes/README.md).
 - In Debug builds the container is validated on build, so a registration that cannot be built fails at start with its name.
 - Also here: `RouteableDoubleClickBehavior`, `TopLevelStateManager`, `RouteableNullConverter`.
 
 ## Next
 
-[Hosts guide](../docs/guides/hosts.md), samples `Samples/XAnimals.Avalonia` and its Desktop, Android, iOS and Browser heads.
+[Hosts guide](../../docs/guides/hosts.md), samples `samples/XAnimals.Avalonia` and its Desktop, Android, iOS and Browser heads.

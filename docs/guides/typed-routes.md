@@ -4,7 +4,7 @@
 
 Writing route strings and argument lists by hand is easy to get wrong. `[RouteableViewModel]` generates a strongly typed method instead.
 
-From the XAnimals sample (`Samples/Bases/XAnimals.ViewModels/ViewModels/Animals/MonkeyDetailViewModel.cs`):
+From the XAnimals sample (`samples/Bases/XAnimals.ViewModels/ViewModels/Animals/MonkeyDetailViewModel.cs`):
 
 ```csharp
 [RouteableViewModel(typeof(MonkeysViewModel), Route = "/monkeys/{name}")]

@@ -5,7 +5,7 @@
 Use regions when the UI needs several independent routing stacks:
 
 ```csharp
-// Samples/Bases/XAnimals.ViewModels/Extensions.cs
+// samples/Bases/XAnimals.ViewModels/Extensions.cs
 services.AddRegion(AdoptViewModel.Region);      // "adopt": the adoption zone of the Adopt a pet page
 services.AddRegion(TabsViewModel.Region);       // the tabs of the Tabs page
 ```
@@ -24,7 +24,7 @@ A region has no place on screen of its own. A view puts one down with a **region
 
 ```xml
 <!-- Avalonia: xmlns:routeables="using:Routeables.Avalonia" · Maui: xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui" -->
-<!-- Samples/XAnimals.Avalonia/Views/RegionsView.axaml -->
+<!-- samples/XAnimals.Avalonia/Views/RegionsView.axaml -->
 <routeables:RouteableRegion Region="shell-content" />
 ```
 
@@ -62,7 +62,7 @@ current view. Routing the region adds a view, `PopAsync` and `BackAsync` remove 
 not shown.
 
 ```xml
-<!-- Samples/XAnimals.Avalonia/Views/AdoptView.axaml -->
+<!-- samples/XAnimals.Avalonia/Views/AdoptView.axaml -->
 <routeables:RouteableRegionItems Region="adopt">
     <routeables:RouteableRegionItems.ItemsPanel>
         <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>

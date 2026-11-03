@@ -10,4 +10,4 @@ AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r =>
 });
 ```
 
-[Reshapes overview](https://github.com/cedric56/Routeables/blob/master/Reshapes/README.md)
+[Reshapes overview](https://github.com/cedric56/Routeables/blob/master/reshapes/README.md)

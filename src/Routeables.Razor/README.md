@@ -20,7 +20,7 @@ Everything is scoped, so each Blazor Server circuit has its own history, and so 
 ## A view
 
 ```razor
-@* Samples/XAnimals.Razor/Components/Animals/DogDetailView.razor *@
+@* samples/XAnimals.Razor/Components/Animals/DogDetailView.razor *@
 @inherits RouteableFor<DogDetailView, DogDetailViewModel>
 
 <AnimalDetail ViewModel="ViewModel" />
@@ -45,7 +45,7 @@ services.UseRouteablesServer<MainViewModel>();
 services.UseRouteablesServices(position: RouteableNotificationPosition.TopRight, maxDispayments: 3);   // optional
 ```
 
-Everything is scoped. There is one `IRouteableDialogService` (message boxes, content dialogs and task dialogs): it asks an `IMessageBoxService` to draw them, `DefaultMessageBoxService` (plain Razor, shown by the hosts) unless `UseRouteablesServices(messageBoxService: sp => ...)` gives another one; [`Reshapes.Razor.MudBlazor`](../Reshapes/README.md) gives the MudBlazor one. The notification service has an optional factory too.
+Everything is scoped. There is one `IRouteableDialogService` (message boxes, content dialogs and task dialogs): it asks an `IMessageBoxService` to draw them, `DefaultMessageBoxService` (plain Razor, shown by the hosts) unless `UseRouteablesServices(messageBoxService: sp => ...)` gives another one; [`Reshapes.Razor.MudBlazor`](../../reshapes/README.md) gives the MudBlazor one. The notification service has an optional factory too.
 
 - The hosts that draw the services: `RouteableDialogHost`, `RouteableContentDialogHost`, `RouteableTaskDialogHost`, `RouteableModalHost`, `RouteableNotificationHost`. The default `MainLayout` already contains them; a layout of your own inherits `MainLayoutBase` and adds them.
 - `RouteableModalFor<TView, TViewModel, TResult>`: shows a view in a modal and returns a typed result when its view model closes.
@@ -56,10 +56,10 @@ Contracts: [`Routeables.Services`](../Routeables.Services/README.md).
 ## Good to know
 
 - A component must be safe to dispose twice: the router disposes pages that leave its history, and Blazor disposes what it renders.
-- The first time a page is shown, Blazor renders the very instance the router created, so the hooks of the view run on the displayed component. When the page comes back from the history, Blazor builds another instance: keep the state that a hook reads in the view model. See the [Blazor guide](../docs/guides/blazor.md).
-- A `Transient` service that is `IDisposable` lives until the circuit ends: register it `Scoped` or `Singleton`. See [lifecycle](../docs/guides/lifecycle.md).
-- MudBlazor flavour: [`Reshapes`](../Reshapes/README.md).
+- The first time a page is shown, Blazor renders the very instance the router created, so the hooks of the view run on the displayed component. When the page comes back from the history, Blazor builds another instance: keep the state that a hook reads in the view model. See the [Blazor guide](../../docs/guides/blazor.md).
+- A `Transient` service that is `IDisposable` lives until the circuit ends: register it `Scoped` or `Singleton`. See [lifecycle](../../docs/guides/lifecycle.md).
+- MudBlazor flavour: [`Reshapes`](../../reshapes/README.md).
 
 ## Next
 
-[Routeables for Blazor developers](../docs/guides/blazor.md), [hosts guide](../docs/guides/hosts.md), samples `Samples/XAnimals.Razor` and the Blazor Server and WebAssembly heads.
+[Routeables for Blazor developers](../../docs/guides/blazor.md), [hosts guide](../../docs/guides/hosts.md), samples `samples/XAnimals.Razor` and the Blazor Server and WebAssembly heads.

@@ -56,11 +56,11 @@ Add the package of your host, then start Routeables where your framework starts.
 
 | Host | Package | Setup |
 | --- | --- | --- |
-| Blazor | [`Routeables.Razor`](Routeables.Razor/README.md) | `services.UseRouteablesServer<MainViewModel>(r => { ... })` |
-| .NET MAUI | [`Routeables.Maui`](Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => { ... })` |
-| Avalonia | [`Routeables.Avalonia`](Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r => { ... })` |
-| Uno Platform | [`Routeables.Uno`](Routeables.Uno/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
-| WPF | [`Routeables.Wpf`](Routeables.Wpf/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
+| Blazor | [`Routeables.Razor`](src/Routeables.Razor/README.md) | `services.UseRouteablesServer<MainViewModel>(r => { ... })` |
+| .NET MAUI | [`Routeables.Maui`](src/Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => { ... })` |
+| Avalonia | [`Routeables.Avalonia`](src/Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r => { ... })` |
+| Uno Platform | [`Routeables.Uno`](src/Routeables.Uno/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
+| WPF | [`Routeables.Wpf`](src/Routeables.Wpf/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
 
 ```bash
 dotnet add package Routeables.Avalonia   # or Routeables.Razor, .Maui, .Uno, .Wpf
@@ -94,27 +94,27 @@ Routeables is young: the first commit is from October 2026, it has one maintaine
 | Dialogs and notifications | One dialog service and one notification service on every host, replaceable at startup, system notifications (Avalonia, Blazor, MAUI) | [System integration](docs/guides/system-integration.md) |
 | Deep links | Open a route from a URL or a system activation | [System integration](docs/guides/system-integration.md) |
 | Modules | A feature is one extension method, loaded at startup or on demand | [Hosts](docs/guides/hosts.md) |
-| Locking | Pages that block leaving, a locked menu | [Locking](Routeables.Locking/README.md) |
+| Locking | Pages that block leaving, a locked menu | [Locking](src/Routeables.Locking/README.md) |
 | Menu | `RouteableMenu` on Avalonia and WPF, items bound to routes | [Hosts](docs/guides/hosts.md) |
 | Errors | `RouteableResult`, `IRouteableErrorSink` | [Lifecycle](docs/guides/lifecycle.md) |
 | Diagnostics | Tracing and metrics for route changes | [Diagnostics](docs/guides/diagnostics.md) |
 | Native AOT | Source generated; nothing scans assemblies at run time | [AOT](docs/guides/aot.md) |
 | Hosts | Blazor, .NET MAUI, Avalonia, Uno Platform, WPF | [Hosts](docs/guides/hosts.md) |
-| Dialog libraries | MudBlazor, CommunityToolkit.Maui, FluentAvalonia | [Reshapes](Reshapes/README.md) |
+| Dialog libraries | MudBlazor, CommunityToolkit.Maui, FluentAvalonia | [Reshapes](reshapes/README.md) |
 
 Routeables is the navigation layer, dialogs and notifications included. It ships no commands, view-model locator or event aggregator: use CommunityToolkit.Mvvm, ReactiveUI or plain C#.
 
 ## Add what you need
 
-The host package already holds the dialogs, modals and notifications of its framework, registered by `UseRouteables`. For MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs, add a package of [`Reshapes`](Reshapes/README.md).
+The host package already holds the dialogs, modals and notifications of its framework, registered by `UseRouteables`. For MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs, add a package of [`Reshapes`](reshapes/README.md).
 
-Everything else is in the one `Routeables` package, which every host brings: the contracts ([`Abstraction`](Routeables.Abstraction/README.md)), the router ([`Routing`](Routeables.Routing/README.md)), the view-model bases ([`Core`](Routeables.Core/README.md)), [`Regions`](Routeables.Regions/README.md), [`Segments`](Routeables.Segments/README.md) (`/Bears?SearchText=polar`), [`Locking`](Routeables.Locking/README.md) (pages that block leaving, a locked menu), the dialog and notification contracts ([`Services`](Routeables.Services/README.md)) and the source generator. They are separate projects of this repository and one package.
+Everything else is in the one `Routeables` package, which every host brings: the contracts ([`Abstraction`](src/Routeables.Abstraction/README.md)), the router ([`Routing`](src/Routeables.Routing/README.md)), the view-model bases ([`Core`](src/Routeables.Core/README.md)), [`Regions`](src/Routeables.Regions/README.md), [`Segments`](src/Routeables.Segments/README.md) (`/Bears?SearchText=polar`), [`Locking`](src/Routeables.Locking/README.md) (pages that block leaving, a locked menu), the dialog and notification contracts ([`Services`](src/Routeables.Services/README.md)) and the source generator. They are separate projects of this repository and one package.
 
 ## Learn more
 
 - [Getting started](docs/getting-started.md) and the [guides](docs/guides/routes.md): routes, typed routing, arguments, lifecycle, history, regions, modules, hosts.
 - [Compared with other routers](docs/guides/comparison.md): Prism, ReactiveUI, MAUI Shell, Uno.Extensions and the Blazor router, and where each one fits.
-- [Samples](Samples): the same Animals app on Blazor, MAUI, Avalonia, Uno and WPF.
+- [Samples](samples): the same Animals app on Blazor, MAUI, Avalonia, Uno and WPF.
 - [Documentation site](https://cedric56.github.io/Routeables/) and API reference.
 - [Contributing](CONTRIBUTING.md), [third-party notices](THIRD-PARTY-NOTICES.md).
 

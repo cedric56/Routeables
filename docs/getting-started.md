@@ -21,14 +21,14 @@ The generator must run in **every project that contains attributes it should pro
 Put `[Routeable]` on the view model to give it a route. The view is the class named after it:
 
 ```csharp
-// Samples/Bases/XAnimals.ViewModels/ViewModels/Animals/DogDetailViewModel.cs
+// samples/Bases/XAnimals.ViewModels/ViewModels/Animals/DogDetailViewModel.cs
 using Routeables.Abstraction;
 
 [Routeable("/dogs/{name}")]
 public class DogDetailViewModel(IRouter router, string name, Action? back = null)
     : AnimalDetailViewModel(router, DogData.Dogs.FirstOrDefault(d => d.Name == name), back);
 
-// Samples/XAnimals.Avalonia/Views/Animals/DogDetailView.axaml.cs (use the host's base type)
+// samples/XAnimals.Avalonia/Views/Animals/DogDetailView.axaml.cs (use the host's base type)
 public partial class DogDetailView : RouteableFor<DogDetailViewModel> { }
 ```
 
@@ -78,7 +78,7 @@ Services = this.UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes(), () => 
 this.UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes(), () => new MainView());
 ```
 
-Create the project with the template of your framework, add the host package, then follow the setup above. See each host's README for the details ([Razor](https://github.com/cedric56/Routeables/blob/master/Routeables.Razor/README.md), [MAUI](https://github.com/cedric56/Routeables/blob/master/Routeables.Maui/README.md), [Avalonia](https://github.com/cedric56/Routeables/blob/master/Routeables.Avalonia/README.md), [Uno](https://github.com/cedric56/Routeables/blob/master/Routeables.Uno/README.md), which has its own quick start, [WPF](https://github.com/cedric56/Routeables/blob/master/Routeables.Wpf/README.md)).
+Create the project with the template of your framework, add the host package, then follow the setup above. See each host's README for the details ([Razor](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Razor/README.md), [MAUI](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Maui/README.md), [Avalonia](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Avalonia/README.md), [Uno](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Uno/README.md), which has its own quick start, [WPF](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Wpf/README.md)).
 
 #### The words
 

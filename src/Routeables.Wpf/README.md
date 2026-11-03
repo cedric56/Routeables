@@ -32,7 +32,7 @@ Leave `StartupUri` out of `App.xaml`: the container must exist before the first 
 ## A view
 
 ```xml
-<!-- Samples/XAnimals.Wpf/Views/Animals/DogDetailView.xaml -->
+<!-- samples/XAnimals.Wpf/Views/Animals/DogDetailView.xaml -->
 <routeables:RouteableFor x:Class="XAnimals.Wpf.Views.DogDetailView"
     xmlns:routeables="clr-namespace:Routeables.Wpf;assembly=Routeables.Wpf" ...>
     <local:AnimalDetail />
@@ -77,7 +77,7 @@ In the `Routeables.Wpf.Services` namespace. `UseRouteables` already registers th
 
 - Dialogs, content dialogs and task dialogs are windows owned by the window the user last worked in, shown with `ShowDialog` (modal). A dialog opened over another one is owned by it.
 - Notifications are small windows at the top centre of the active window, stacked, closed after five seconds, when clicked, or with the window. WPF has no notification control, and Routeables does not use the Windows toast API.
-- `DialogView<TViewModel, TResult>`: the base of a modal view backed by a closeable view model, written in code (a XAML root cannot be generic). See `NoteView` in `Samples/XAnimals.Wpf`.
+- `DialogView<TViewModel, TResult>`: the base of a modal view backed by a closeable view model, written in code (a XAML root cannot be generic). See `NoteView` in `samples/XAnimals.Wpf`.
 - `IMessageBoxService` (`DefaultMessageBoxService`): pass your own to `UseRouteablesServices` to draw them another way.
 
 Calling a service before a window is attached throws an `InvalidOperationException` that says so.
@@ -94,4 +94,4 @@ Calling a service before a window is attached throws an `InvalidOperationExcepti
 
 ## Next
 
-[Hosts guide](../docs/guides/hosts.md), sample `Samples/XAnimals.Wpf`.
+[Hosts guide](../../docs/guides/hosts.md), sample `samples/XAnimals.Wpf`.

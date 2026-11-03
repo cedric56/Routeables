@@ -12,4 +12,4 @@ services.AddRegionLayout<AppLayout>(/* region names */);   // scoped
 | `RegionFollower` | Makes other regions follow one: each change of the source queues an update |
 | `RegionLayout` | Derive from it to drive several regions together |
 
-Regions themselves are registered with `AddRegion("name")` and resolved with `GetRouter("name")`. See the [Regions guide](../docs/guides/regions.md).
+Regions themselves are registered with `AddRegion("name")` and resolved with `GetRouter("name")`. See the [Regions guide](../../docs/guides/regions.md).

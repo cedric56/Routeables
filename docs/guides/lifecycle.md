@@ -2,7 +2,7 @@
 
 ## Lifecycle and guards
 
-Implement any of these on a view model (or a view). `AnimalsViewModel` of the XAnimals sample (`Samples/Bases/XAnimals.Common/ViewModels/AnimalsViewModel.cs`) implements `CanLeaveAsync` and `OnEnteredAsync`; the full list of members:
+Implement any of these on a view model (or a view). `AnimalsViewModel` of the XAnimals sample (`samples/Bases/XAnimals.Common/ViewModels/AnimalsViewModel.cs`) implements `CanLeaveAsync` and `OnEnteredAsync`; the full list of members:
 
 ```csharp
 public class AnimalsViewModel : IRouteable, IInitializeAsync, IAsyncDisposable

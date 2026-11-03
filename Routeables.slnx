@@ -30,7 +30,7 @@
     <Project Path="samples/Bases/XAnimals.ViewModels/XAnimals.ViewModels.csproj" Id="79831334-247e-44ba-92af-9e55f06beb09" />
   </Folder>
   <Folder Name="/samples/Controls/">
-    <Project Path="Samples/Controls/XAnimals.Avalonia.Controls/XAnimals.Avalonia.Controls.csproj" />
+    <Project Path="samples/Controls/XAnimals.Avalonia.Controls/XAnimals.Avalonia.Controls.csproj" />
     <Project Path="samples/Controls/XAnimals.Maui.Controls/XAnimals.Maui.Controls.csproj" />
     <Project Path="samples/Controls/XAnimals.Uno.Controls/XAnimals.Uno.Controls.csproj" />
     <Project Path="samples/Controls/XAnimals.Wpf.Controls/XAnimals.Wpf.Controls.csproj" />
@@ -76,6 +76,6 @@
     <Project Path="tests/Routeables.Test.Playwright/Routeables.Test.Playwright.csproj" />
     <Project Path="tests/Routeables.Test.Reactive/Routeables.Test.Reactive.csproj" />
     <Project Path="tests/Routeables.Test.Uno/Routeables.Test.Uno.csproj" />
-    <Project Path="Tests/Routeables.Test/Routeables.Test.csproj" Id="19b50f73-16a6-45b8-b30b-1b4d16ca42df" />
+    <Project Path="tests/Routeables.Test/Routeables.Test.csproj" Id="19b50f73-16a6-45b8-b30b-1b4d16ca42df" />
   </Folder>
 </Solution>

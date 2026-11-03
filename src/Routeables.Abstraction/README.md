@@ -41,4 +41,4 @@ The dialogs, notifications and theme are in [`Routeables.Services`](../Routeable
 
 ## Go further
 
-[Routes and templates](../docs/guides/routes.md), [typed routing methods](../docs/guides/typed-routes.md), [arguments](../docs/guides/arguments.md), [lifecycle and guards](../docs/guides/lifecycle.md), [history](../docs/guides/history.md).
+[Routes and templates](../../docs/guides/routes.md), [typed routing methods](../../docs/guides/typed-routes.md), [arguments](../../docs/guides/arguments.md), [lifecycle and guards](../../docs/guides/lifecycle.md), [history](../../docs/guides/history.md).

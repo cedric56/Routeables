@@ -28,7 +28,7 @@ The window can be opened by the same call: `Services = this.UseRouteables<MainVi
 ## A view
 
 ```xml
-<!-- Samples/XAnimals.Uno/Views/Animals/DogDetailView.xaml -->
+<!-- samples/XAnimals.Uno/Views/Animals/DogDetailView.xaml -->
 <routeables:RouteableFor x:Class="XAnimals.Uno.Views.DogDetailView"
     xmlns:routeables="using:Routeables.Uno" ...>
     <local:AnimalDetail />
@@ -66,7 +66,7 @@ In the `Routeables.Uno.Services` namespace. `UseRouteables` already registers th
 
 - Dialogs, content dialogs and task dialogs, drawn as `ContentDialog`s in the window the user last worked in. A window shows one at a time; a second waits for the first.
 - Notifications: `InfoBar`s stacked at the top of the active window, closed after five seconds or by the user.
-- `DialogView<TViewModel, TResult>`: the base of a modal view backed by a closeable view model, written in code (a WinUI XAML root cannot be generic). See `NoteView` in `Samples/XAnimals.Uno`.
+- `DialogView<TViewModel, TResult>`: the base of a modal view backed by a closeable view model, written in code (a WinUI XAML root cannot be generic). See `NoteView` in `samples/XAnimals.Uno`.
 - `IMessageBoxService` (`DefaultMessageBoxService`): give a factory to `UseRouteablesServices(sp => new MyMessageBoxService())` to draw them another way.
 
 Calling a service before a window has content throws an `InvalidOperationException` that says so. Contracts: [`Routeables.Services`](../Routeables.Services/README.md).
@@ -79,4 +79,4 @@ Calling a service before a window has content throws an `InvalidOperationExcepti
 
 ## Next
 
-[Hosts guide](../docs/guides/hosts.md), sample `Samples/XAnimals.Uno`.
+[Hosts guide](../../docs/guides/hosts.md), sample `samples/XAnimals.Uno`.

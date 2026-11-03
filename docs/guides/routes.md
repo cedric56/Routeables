@@ -46,7 +46,7 @@ The menu or tab bar (`IMainViewModel`) is registered by `UseRouteables<MainViewM
 A feature of the application (the birds of the samples, for example) can live in a class library of its own. There is no module catalog. A module is an extension method that the application calls at start, so the compiler, the trimmer and Native AOT see every module; one that is not known at start is loaded while the application runs ([below](#loading-a-module-while-the-application-runs)).
 
 ```csharp
-// Samples/Modules/XAnimals.Birds/BirdsModule.cs
+// samples/Modules/XAnimals.Birds/BirdsModule.cs
 public static class BirdsModule
 {
     public const string Route = "/birds";
@@ -58,7 +58,7 @@ public static class BirdsModule
            ], 10);
 }
 
-// Samples/Bases/XAnimals.ViewModels/Extensions.cs, in the application
+// samples/Bases/XAnimals.ViewModels/Extensions.cs, in the application
 services.AddBirdsModule();
 ```
 
@@ -79,7 +79,7 @@ modules.LoadFrom(Path.Combine(AppContext.BaseDirectory, "Modules", "XAnimals.Mau
 ```
 
 ```csharp
-// Samples/Modules/XAnimals.Maui.Birds/MauiBirdsModule.cs
+// samples/Modules/XAnimals.Maui.Birds/MauiBirdsModule.cs
 [RouteableModule("Birds")]
 public static IServiceCollection AddMauiBirdsModule(this IServiceCollection services)
     => global::XAnimals.Birds.BirdsModule.AddBirdsModule(services.AddGeneratedRoutes());

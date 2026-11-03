@@ -9,6 +9,6 @@
 
   <!-- The icon of the package. -->
   <ItemGroup Condition="'$(IsPackable)' != 'false' And '$(PackageIcon)' != ''">
-    <None Include="$(MSBuildThisFileDirectory)Images/icon.png" Pack="true" PackagePath="" Visible="false" />
+    <None Include="$(MSBuildThisFileDirectory)images/icon.png" Pack="true" PackagePath="" Visible="false" />
   </ItemGroup>
 </Project>

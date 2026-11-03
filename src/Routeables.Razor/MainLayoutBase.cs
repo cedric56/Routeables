@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Routeables.Abstraction;
 using Routeables.Services;
@@ -87,6 +88,55 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
         try { await InvokeAsync(StateHasChanged); }
         catch (ObjectDisposedException) { }
         catch (Exception ex) { RouteableErrors.Report(Provider, source, ex); }
+    }
+
+    /// <inheritdoc />
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (!IsPrerendering)
+            return;
+
+        // Prerendering: OnAfterRenderAsync never runs, so the page is chosen here and the HTML sent to the browser holds it.
+        // The circuit that takes over starts again from its own first render.
+        var addressChosen = await UrlSync.PrerenderAsync();
+        await Initialize(Provider);
+        if (addressChosen)
+            return;
+
+        var options = Provider.GetService<RouteablePrerenderOptions>();
+        var navigation = Provider.GetService<NavigationManager>();
+        if (options?.UnknownAddressIsNotFound == true && navigation is not null && !IsRoot(navigation))
+        {
+            try { navigation.NotFound(); }      // the status of the response becomes 404 (static server rendering)
+            catch (InvalidOperationException) { }
+            return;
+        }
+
+        if (MainViewModel.Routeables.FirstOrDefault() is { } first && MainViewModel.Routeable is null)
+        {
+            var result = await Provider.GetRequiredService<IRouter>().GoToRouteAsync(first);
+            if (result.Success)
+                MainViewModel.OnRouterMoved(Provider.GetRequiredService<IRouter>().CurrentViewModel);
+        }
+    }
+
+    // The root address is the default page, never "not found".
+    private static bool IsRoot(NavigationManager navigation)
+        => navigation.ToBaseRelativePath(navigation.Uri).Split('?', '#')[0].Trim('/').Length == 0;
+
+    // True while the server renders the page for the first response (before any circuit), and only when the application asked for it:
+    // registering RouteablePrerenderOptions switches it on. Every static renderer calls itself "Static" (a test renderer too), so the
+    // renderer alone does not tell that a page is prerendered for a browser.
+    private bool IsPrerendering
+    {
+        get
+        {
+            if (Provider.GetService<RouteablePrerenderOptions>() is null)
+                return false;
+            try { return RendererInfo.Name == "Static"; }
+            catch (InvalidOperationException) { return false; }
+        }
     }
 
     /// <inheritdoc />

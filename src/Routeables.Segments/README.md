@@ -5,7 +5,7 @@ Optional routing by segments, as in Prism: `Orders?status=open/Detail?id=5` (in 
 ```csharp
 services.RegisterRouting();
 services.AddRouteCoordinator();
-services.RegisterSegment<BearsViewModel>("Bears", "/bears");   // Samples/Bases/XAnimals.ViewModels/Extensions.cs
+services.RegisterSegment<BearsViewModel>("Bears", "/bears");   // samples/Bases/XAnimals.ViewModels/Extensions.cs
 
 await coordinator.CoordinateAsync("/Bears?SearchText=polar");   // MainViewModel.cs of the samples
 ```
