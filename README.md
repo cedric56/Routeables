@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Images/logo.svg" alt="Routeables" width="420">
+  <img src="images/logo.svg" alt="Routeables" width="420">
 </p>
 
 <p align="center">
