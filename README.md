@@ -25,6 +25,23 @@ A view model asks an `IRouter` to go somewhere. It never touches a page, a frame
 Try it 
 <a href="https://cedric56.github.io/Routeables/demo/avalonia/">The Animals sample running in your browser (Avalonia, WebAssembly).</a>
 
+## The same sample on every host
+
+The same view models drive the Animals sample on each host: only the views differ.
+
+<table>
+  <tr>
+    <td align="center"><img src="images/demos/avalonia-desktop.gif" alt="The Animals sample on Avalonia" width="220"><br><sub>Avalonia</sub></td>
+    <td align="center"><img src="images/demos/wpf.gif" alt="The Animals sample on WPF" width="220"><br><sub>WPF</sub></td>
+    <td align="center"><img src="images/demos/uno.gif" alt="The Animals sample on Uno Platform" width="220"><br><sub>Uno Platform</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="images/demos/maui-desktop.gif" alt="The Animals sample on .NET MAUI" width="220"><br><sub>.NET MAUI</sub></td>
+    <td align="center"><img src="images/demos/mauihybrid.gif" alt="The Animals sample on MAUI Blazor Hybrid" width="220"><br><sub>MAUI Blazor Hybrid</sub></td>
+    <td align="center"><img src="images/demos/blazor-server.gif" alt="The Animals sample on Blazor Server" width="220"><br><sub>Blazor Server</sub></td>
+  </tr>
+</table>
+
 ## In one minute
 
 Two ways to register a page. Both start the same way and need no menu (Avalonia shown; the other hosts: [Start with your host](#start-with-your-host)).
