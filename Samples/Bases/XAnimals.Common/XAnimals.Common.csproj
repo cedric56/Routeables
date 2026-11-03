@@ -10,8 +10,8 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Routeables.Core\Routeables.Core.csproj" />
-    <ProjectReference Include="..\..\..\Routeables.Routing\Routeables.Routing.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Core\Routeables.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Routing\Routeables.Routing.csproj" />
   </ItemGroup>
 
 </Project>

@@ -70,8 +70,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Routeables.Maui\Routeables.Maui.csproj" />
-    <ProjectReference Include="..\..\Reshapes\Reshapes.Maui.Community\Reshapes.Maui.Community.csproj" />
+    <ProjectReference Include="..\..\src\Routeables.Maui\Routeables.Maui.csproj" />
+    <ProjectReference Include="..\..\reshapes\Reshapes.Maui.Community\Reshapes.Maui.Community.csproj" />
   </ItemGroup>
 
 </Project>

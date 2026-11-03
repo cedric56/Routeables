@@ -8,9 +8,9 @@ on:
     branches: [master]
     paths:
       - 'docs/**'
-      - 'Samples/**'
-      - 'Routeables.*/**/*.cs'
-      - 'Routeables.*/**/*.csproj'
+      - 'samples/**'
+      - 'src/Routeables.*/**/*.cs'
+      - 'src/Routeables.*/**/*.csproj'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
 
@@ -43,7 +43,7 @@ jobs:
         run: dotnet workload install wasm-tools --skip-manifest-update
 
       - name: Publish Avalonia Browser
-        run: dotnet publish Samples/XAnimals.Avalonia.Browser/XAnimals.Avalonia.Browser.csproj -c Release -o artifacts/avalonia-browser
+        run: dotnet publish samples/XAnimals.Avalonia.Browser/XAnimals.Avalonia.Browser.csproj -c Release -o artifacts/avalonia-browser
 
       - name: Find the site (wwwroot of the publish)
         run: |
@@ -78,7 +78,7 @@ jobs:
         shell: pwsh
         run: |
           foreach ($p in 'Abstraction','Routing','Core','Razor','Maui','Avalonia','Uno') {
-            dotnet restore "Routeables.$p/Routeables.$p.csproj" -p:CiBuild=true
+            dotnet restore "src/Routeables.$p/Routeables.$p.csproj" -p:CiBuild=true
           }
 
       - name: Install DocFX

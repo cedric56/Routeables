@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
-    <ProjectReference Include="..\..\Routeables.Razor\Routeables.Razor.csproj" />
+    <ProjectReference Include="..\..\src\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
+    <ProjectReference Include="..\..\src\Routeables.Razor\Routeables.Razor.csproj" />
   </ItemGroup>
 
 </Project>

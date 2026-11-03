@@ -25,6 +25,7 @@
     <UnoFeatures></UnoFeatures>
     <!-- Routeables.Uno is built on Uno.WinUI 6.7.135: the head must not use an older one. -->
     <UnoVersion>6.7.135</UnoVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Routeables.Uno\Routeables.Uno.csproj" />
+    <ProjectReference Include="..\..\src\Routeables.Uno\Routeables.Uno.csproj" />
   </ItemGroup>
 
 </Project>

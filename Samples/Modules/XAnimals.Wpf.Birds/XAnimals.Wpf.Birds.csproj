@@ -11,8 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\..\..\Routeables.Wpf\Routeables.Wpf.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\..\src\Routeables.Wpf\Routeables.Wpf.csproj" />
     <ProjectReference Include="..\..\Controls\XAnimals.Wpf.Controls\XAnimals.Wpf.Controls.csproj" />
     <ProjectReference Include="..\XAnimals.Birds\XAnimals.Birds.csproj" />
   </ItemGroup>

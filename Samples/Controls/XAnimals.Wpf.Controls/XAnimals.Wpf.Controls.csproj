@@ -10,7 +10,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Routeables.Wpf\Routeables.Wpf.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Wpf\Routeables.Wpf.csproj" />
     <ProjectReference Include="..\..\Bases\XAnimals.Common\XAnimals.Common.csproj" />
     <ProjectReference Include="..\..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
   </ItemGroup>

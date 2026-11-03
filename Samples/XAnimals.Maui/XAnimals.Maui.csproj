@@ -89,9 +89,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Reshapes\Reshapes.Maui.Community\Reshapes.Maui.Community.csproj" />
-    <ProjectReference Include="..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\..\Routeables.Maui\Routeables.Maui.csproj" />
+    <ProjectReference Include="..\..\reshapes\Reshapes.Maui.Community\Reshapes.Maui.Community.csproj" />
+    <ProjectReference Include="..\..\src\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\src\Routeables.Maui\Routeables.Maui.csproj" />
     <ProjectReference Include="..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
     <ProjectReference Include="..\Controls\XAnimals.Maui.Controls\XAnimals.Maui.Controls.csproj" />
     <ProjectReference Include="..\Modules\XAnimals.Maui.Birds\XAnimals.Maui.Birds.csproj" />

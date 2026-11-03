@@ -26,12 +26,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Routeables.Core\Routeables.Core.csproj" />
-    <ProjectReference Include="..\..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
+    <ProjectReference Include="..\..\src\Routeables.Core\Routeables.Core.csproj" />
+    <ProjectReference Include="..\..\src\Routeables.Abstraction\Routeables.Abstraction.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\Routeables.Core\Community\RouteableViewModel.cs" Link="Flavour\RouteableViewModel.cs" />
+    <Compile Include="..\..\src\Routeables.Core\Community\RouteableViewModel.cs" Link="Flavour\RouteableViewModel.cs" />
   </ItemGroup>
 
   <ItemGroup>

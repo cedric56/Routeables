@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Routeables.Razor\Routeables.Razor.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Razor\Routeables.Razor.csproj" />
     <ProjectReference Include="..\..\XAnimals.Razor\XAnimals.Razor.csproj" />
     <ProjectReference Include="..\XAnimals.Birds\XAnimals.Birds.csproj" />
   </ItemGroup>

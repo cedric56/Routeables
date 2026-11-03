@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Routeables.Maui\Routeables.Maui.csproj" />
+    <ProjectReference Include="..\..\src\Routeables.Maui\Routeables.Maui.csproj" />
   </ItemGroup>
 
 </Project>

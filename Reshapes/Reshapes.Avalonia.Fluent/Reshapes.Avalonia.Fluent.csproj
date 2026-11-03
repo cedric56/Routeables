@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Routeables.Avalonia\Routeables.Avalonia.csproj" />
+    <ProjectReference Include="..\..\src\Routeables.Avalonia\Routeables.Avalonia.csproj" />
   </ItemGroup>
 
 </Project>

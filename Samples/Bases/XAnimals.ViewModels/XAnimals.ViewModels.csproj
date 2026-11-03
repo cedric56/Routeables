@@ -8,15 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Routeables.Core\Routeables.Core.csproj" />
-    <ProjectReference Include="..\..\..\Routeables.Locking\Routeables.Locking.csproj" />
-    <ProjectReference Include="..\..\..\Routeables.Regions\Routeables.Regions.csproj" />
-    <ProjectReference Include="..\..\..\Routeables.Routing\Routeables.Routing.csproj" />
-    <ProjectReference Include="..\..\..\Routeables.Segments\Routeables.Segments.csproj" />
-    <ProjectReference Include="..\..\..\Routeables.Services\Routeables.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Core\Routeables.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Locking\Routeables.Locking.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Regions\Routeables.Regions.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Routing\Routeables.Routing.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Segments\Routeables.Segments.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Services\Routeables.Services.csproj" />
     <ProjectReference Include="..\..\Modules\XAnimals.Birds\XAnimals.Birds.csproj" />
     <ProjectReference Include="..\XAnimals.Common\XAnimals.Common.csproj" />
-    <ProjectReference Include="..\..\..\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\..\src\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>
