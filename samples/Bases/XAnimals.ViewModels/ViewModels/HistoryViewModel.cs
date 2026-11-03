@@ -107,6 +107,25 @@ public class HistoryViewModel : ViewModelBase, IRouteable, IDisposable
 
     private string? PageName => RegionEntries.NameOf(_region.History.Current);
 
+
+    /// <summary>
+    /// The containing History page can only be left when the page
+    /// displayed by its region also allows leaving.
+    /// </summary>
+    public async Task<bool> CanLeaveAsync(CancellationToken ct = default)
+    {
+        if (_region.CurrentViewModel is IRouteable viewModel &&
+            !await viewModel.CanLeaveAsync(ct))
+            return false;
+
+        if (_region.CurrentView is IRouteable view &&
+            !ReferenceEquals(view, _region.CurrentViewModel) &&
+            !await view.CanLeaveAsync(ct))
+            return false;
+
+        return true;
+    }
+
     /// <summary>When set, the page on screen refuses to be left: its <see cref="AnimalsViewModel.CanLeaveAsync"/> returns false.</summary>
     public bool BlockLeaving
     {
