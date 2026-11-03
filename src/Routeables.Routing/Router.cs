@@ -305,7 +305,7 @@ internal class Router(
 
         try
         {
-            IRouteableFor? viewFor = view as IRouteableFor;
+            IRouteableFor? viewFor = view as IRouteableFor ?? provider.GetService<IRouteableViewBinder>()?.Adapt(view);
             var previousContext = viewFor?.Context;    // inside the try: a throwing getter must not leave the gate held
             args ??= RouteableArgs.Create();
 
@@ -483,7 +483,11 @@ internal class Router(
         if (provider.GetService<IMainViewModel>()?.Routeables.FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(url), StringComparison.OrdinalIgnoreCase)) is { } item)
             return await GoToEntryAsync(item, cancellationToken, []);
 
-        return RouteableResult.Fail(new InvalidOperationException($"No route matches '{url}'. Register it with an explicit route, for instance RegisterRoute<TView, TViewModel>(route: \"/orders/{{id:int}}\")."));
+        // Nothing registered at all is the usual first mistake: say where to look.
+        var hint = entries.Any()
+            ? string.Empty
+            : " No route is registered at all: call AddGeneratedRoutes() from the application project, and check that the projects with the [Routeable] view models and the views reference the Routeables package (it carries the source generator).";
+        return RouteableResult.Fail(new InvalidOperationException($"No route matches '{url}'. Register it with an explicit route, for instance RegisterRoute<TView, TViewModel>(route: \"/orders/{{id:int}}\")." + hint));
     }
 
     /// <inheritdoc />

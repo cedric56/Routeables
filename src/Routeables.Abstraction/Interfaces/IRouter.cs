@@ -1,4 +1,6 @@
-﻿namespace Routeables.Abstraction;
+﻿using System.ComponentModel;
+
+namespace Routeables.Abstraction;
 
 /// <summary>
 /// The route change of an application, or of one region of it: it keeps a history of entries (a view model and its view) and moves a
@@ -52,9 +54,11 @@ public interface IRouter
     Task<RouteableResult> PopAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Jump to the entry at <paramref name="index"/> (see IRouterHistory.Entries), keeping all entries.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     Task<RouteableResult> MoveToAsync(int index, CancellationToken cancellationToken = default);
 
     /// <summary>Forgets every entry, disposing the view models that are disposable. The router is then empty until the next route change.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     Task EraseHistoryAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -79,6 +83,7 @@ public interface IRouter
     /// <param name="viewModel">The view model of that view.</param>
     /// <param name="args">The arguments of the route change, or <see langword="null"/> for none.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     Task<RouteableResult> GoAsync(object view, object viewModel, IRouteableArgs? args = null, CancellationToken cancellationToken = default);
     
     /// <summary>
@@ -88,5 +93,6 @@ public interface IRouter
     /// </summary>
     /// <param name="request">What to go to.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     Task<RouteableResult> GoToRouteAsync(RouteableRouteRequest request, CancellationToken cancellationToken = default);
 }

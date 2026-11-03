@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Routeables",
+  "classifications": [ "Desktop", "Avalonia", "Routeables" ],
+  "identity": "Routeables.Avalonia.App",
+  "name": "Routeables Avalonia application",
+  "shortName": "routeables-avalonia",
+  "sourceName": "RouteablesApp",
+  "preferNameDirectory": true,
+  "tags": { "language": "C#", "type": "project" }
+}

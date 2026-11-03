@@ -37,6 +37,7 @@ public static class Extensions
             new RouteablePropertyEntry(typeof(QueryPropertyAttribute), a => ((QueryPropertyAttribute)a).Name, FromContainer: false));
         builder.Services.AddSingleton<IRouteableRequestedThemeService, RouteableRequestThemeService>();
         builder.Services.AddSingleton<IRouteableDispatcher, RouteableDispatcher>();
+        builder.Services.AddSingleton<IRouteableViewBinder, RouteableViewBinder>();
         builder.Services.RegisterMainViewModel<TMain>();
         builder.UseRouteablesServices();
         configure?.Invoke(builder.Services);

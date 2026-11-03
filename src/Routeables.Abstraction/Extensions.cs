@@ -21,6 +21,20 @@ public static partial class Extensions
     }
 
     /// <summary>
+    /// Says which route an application opens when it starts. For an application without a menu: <c>UseRouteables(r => { r.AddGeneratedRoutes(); r.AddHome("/hello/World"); })</c>.
+    /// An application with a main view model that lists entries does not need it: the first entry is selected.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="route">The route to open at start.</param>
+    public static IServiceCollection AddHome(this IServiceCollection services, string route)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentException.ThrowIfNullOrWhiteSpace(route);
+        services.AddSingleton(new RouteableHome(route));
+        return services;
+    }
+
+    /// <summary>
     /// Registers the main view model of a host (the menu or tab bar), which is the <see cref="IMainViewModel"/> the views,
     /// the lock coordinator and the start selection all refer to.
     /// </summary>

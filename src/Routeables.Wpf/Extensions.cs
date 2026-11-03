@@ -188,6 +188,7 @@ public static class Extensions
         services.AddRouteableHost(Runtime.Wpf, new RouteablePropertyEntry(typeof(InjectPropertyAttribute)));
         services.AddSingleton<IRouteableRequestedThemeService, RouteableRequestThemeService>();
         services.AddSingleton<IRouteableDispatcher, RouteableDispatcher>();
+        services.AddSingleton<IRouteableViewBinder, RouteableViewBinder>();
 
         configure(services);
         var provider = services.BuildRouteableProvider();

@@ -69,6 +69,9 @@
     <Project Path="src/Routeables.Uno/Routeables.Uno.csproj" />
     <Project Path="src/Routeables.Wpf/Routeables.Wpf.csproj" />
   </Folder>
+  <Folder Name="/templates/">
+    <Project Path="templates/Routeables.Templates.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj" />
     <Project Path="tests/Routeables.Test.Community/Routeables.Test.Community.csproj" />

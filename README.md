@@ -44,7 +44,7 @@ services.AddGeneratedRoutes();                       // once, at startup
 <routeables:RouteableRegion />
 ```
 
-A route on the view model, the view with the matching name, one registration call, and a `RouteableRegion` in your main view: the zone of the screen that shows whatever the router displays. That is the whole model.
+A route on the view model, the view with the matching name, one registration call, and a `RouteableRegion` in your main view: the zone of the screen that shows whatever the router displays. That is the whole model. An application without a menu starts with `UseRouteables(r => { r.AddGeneratedRoutes(); r.AddHome("/hello/World"); })`; a main view model is only for a menu. The first page, step by step: [Getting started](docs/getting-started.md).
 
 ### Several zones
 

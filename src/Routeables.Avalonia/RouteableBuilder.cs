@@ -122,6 +122,7 @@ public static class RouteableBuilder
         services.AddRouteableHost(Runtime.Avalonia, new RouteablePropertyEntry(typeof(InjectPropertyAttribute)));
         services.AddSingleton<IRouteableRequestedThemeService, RouteableRequestThemeService>();
         services.AddSingleton<IRouteableDispatcher, RouteableDispatcher>();
+        services.AddSingleton<IRouteableViewBinder, RouteableViewBinder>();
 
         configure?.Invoke(services);
         var provider = services.BuildRouteableProvider();

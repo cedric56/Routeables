@@ -14,7 +14,82 @@ It brings `Routeables`, which holds the routing, the abstractions and the source
 
 The generator must run in **every project that contains attributes it should process**: the project with the views and, if you use `[RouteableViewModel]`, the project with the view models. A project that is not a host (a class library with view models, a module) adds `dotnet add package Routeables` (see [Typed route methods](guides/typed-routes.md#typed-routing-methods-source-generator)).
 
-## Quick start
+## Your first page
+
+To skip the typing: `dotnet new install Routeables.Templates`, then `dotnet new routeables-avalonia -n MyApp` (see `templates/`).
+
+Two ways to register a page, both in about a minute and without a menu: with the generator (`AddGeneratedRoutes()`), or by name, one line per page, without the generator. The example is Avalonia; the other hosts start the same way (see [Set up your host](#2-set-up-your-host)).
+
+### With the generator
+
+**1. A page.** The route is on the view model; the view is the class with the matching name:
+
+```csharp
+[Routeable("/hello/{name}")]
+public sealed class HelloViewModel(IRouter router, string name)
+{
+    public string Greeting { get; } = $"Hello, {name}!";
+}
+
+public partial class HelloView : RouteableFor<HelloViewModel> { }
+```
+
+**2. Start Routeables and say which page opens first:**
+
+```csharp
+AppBuilder.Configure<App>()
+    .UseRouteables(r => { r.AddGeneratedRoutes(); r.AddHome("/hello/World"); },
+        view: lifetime => new MainWindow());
+```
+
+**3. Say where the pages appear**, in your main view (Blazor: `<RouteableRegion />`):
+
+```xml
+<routeables:RouteableRegion />
+```
+
+**4. Go to another page**, from any view model that asks for an `IRouter`:
+
+```csharp
+await router.GoToAsync("/hello/Routeables");
+```
+
+### By name, without the generator
+
+**1. A page.** Any view and any class as its view model; nothing to derive from, no attribute:
+
+```csharp
+public sealed class HomeViewModel(IRouter router)
+{
+    public string Greeting => "Hello!";
+    public Task GoToAbout() => router.GoToAsync("about");
+}
+
+public partial class HomeView : UserControl { public HomeView() => InitializeComponent(); }   // plain Avalonia view
+```
+
+`AboutViewModel` and `AboutView` are written the same way (a view model without any member is enough).
+
+**2. Register it under a name, and say which page opens first:**
+
+```csharp
+AppBuilder.Configure<App>()
+    .UseRouteables(r =>
+        {
+            r.RegisterRoute<HomeView, HomeViewModel>(route: "home");
+            r.RegisterRoute<AboutView, AboutViewModel>(route: "about");
+            r.AddHome("home");
+        },
+        view: lifetime => new MainWindow());
+```
+
+**3. Say where the pages appear** (`<routeables:RouteableRegion />`) and **go to a page** with `await router.GoToAsync("about");`, as in the first way.
+
+The router gives the view model to the view as its `DataContext` (`BindingContext` on MAUI) even though the view is not a `RouteableFor`. A page registered this way has no lifecycle (initialization, disposal), and nothing checks the names before the program runs: `RouteableFor<T>` and the generator add both.
+
+That is all: the rest of this page is what you add when you need it. A main view model (a menu, a tab bar) is only needed for a menu: write one when you have one, and use `UseRouteables<MainViewModel>(...)` (see below).
+
+## In detail
 
 ### 1. Declare routes
 
@@ -35,6 +110,8 @@ public partial class DogDetailView : RouteableFor<DogDetailViewModel> { }
 `DogDetailViewModel` is paired with `DogDetailView`, a routed view (it derives from the host's `RouteableFor`) found in the project or in the assemblies it references.
 Use `[RouteableView(typeof(DogDetailViewModel))]` on the view when the names do not follow that convention (`NoteView` of the samples does). Two views of the same name raise `ROUT202`.
 
+A view that does not derive from `RouteableFor` (a plain `UserControl`, registered with `RegisterRoute<TView, TViewModel>("/route")`) still gets its view model as its `DataContext` (`BindingContext` on MAUI): each host registers an `IRouteableViewBinder` for that. It does not get the lifecycle of `RouteableFor` (initialization, disposal) and the generator does not find it.
+
 The source generator turns these attributes into registrations. Register them once at startup:
 
 ```csharp
@@ -53,7 +130,7 @@ You can also register routes by hand with `services.RegisterRoute<DogDetailView,
 
 ### 2. Set up your host
 
-One call per host starts Routeables, registers your main view model (its lifetime is the host's choice) and takes a block `r => ...` for your own registrations. The block is the same on the five hosts. The same call registers the dialogs and notifications of the host. Only the shape of the call differs, because each framework has its own way to start.
+One call per host starts Routeables, registers your main view model (its lifetime is the host's choice; without a menu, call it with no type and `r.AddHome("/route")` chooses the first page) and takes a block `r => ...` for your own registrations. The block is the same on the five hosts. The same call registers the dialogs and notifications of the host. Only the shape of the call differs, because each framework has its own way to start.
 
 ```csharp
 // Blazor (Program.cs)
@@ -104,7 +181,13 @@ The verbs of the setup calls follow one rule:
 
 ### 3. Route from a view model
 
-View models only need `IRouter`:
+The shortest form is one line:
+
+```csharp
+await router.GoToAsync("/dogs/Rex");
+```
+
+To react to what happened, read the result:
 
 ```csharp
 public class DogsViewModel(IRouter router)
