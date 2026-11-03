@@ -27,6 +27,10 @@ Try it
 
 ## In one minute
 
+Two ways to register a page. Both start the same way and need no menu (Avalonia shown; the other hosts: [Start with your host](#start-with-your-host)).
+
+**With the generator**: the route is on the view model, the view is found by its name.
+
 ```csharp
 [Routeable("/hello/{name}")]                         // the route is declared on the view model
 public sealed class HelloViewModel(IRouter router, string name)
@@ -36,15 +40,33 @@ public sealed class HelloViewModel(IRouter router, string name)
 
 public partial class HelloView : RouteableFor<HelloViewModel> { }   // the page: found by its name
 
-services.AddGeneratedRoutes();                       // once, at startup
+AppBuilder.Configure<App>()
+    .UseRouteables(r => { r.AddGeneratedRoutes(); r.AddHome("/hello/World"); },   // register the pages, say which one opens first
+        view: lifetime => new MainWindow());
 ```
 
+**By name**: one line per page, no generator, no attribute, no base class. Any view and any class as its view model.
+
+```csharp
+AppBuilder.Configure<App>()
+    .UseRouteables(r =>
+        {
+            r.RegisterRoute<HomeView, HomeViewModel>(route: "home");
+            r.RegisterRoute<AboutView, AboutViewModel>(route: "about");
+            r.AddHome("home");
+        },
+        view: lifetime => new MainWindow());
+
+// from a view model that asks for an IRouter:  await router.GoToAsync("about");
+```
+
+In both, the main view says where the pages appear (Blazor: `<RouteableRegion />`):
+
 ```xml
-<!-- MainView: the zone where the pages appear (Blazor: <RouteableRegion />) -->
 <routeables:RouteableRegion />
 ```
 
-A route on the view model, the view with the matching name, one registration call, and a `RouteableRegion` in your main view: the zone of the screen that shows whatever the router displays. That is the whole model. An application without a menu starts with `UseRouteables(r => { r.AddGeneratedRoutes(); r.AddHome("/hello/World"); })`; a main view model is only for a menu. The first page, step by step: [Getting started](docs/getting-started.md).
+A route (on the view model, or given by name), a view, one registration and a `RouteableRegion`: the zone of the screen that shows whatever the router displays. That is the whole model. A main view model is only for a menu: `UseRouteables<MainViewModel>(...)`. The first page, step by step: [Getting started](docs/getting-started.md).
 
 ### Several zones
 
@@ -72,7 +94,7 @@ The call starts Routeables and registers your menu (the main view model). The bl
 r => r.AddGeneratedRoutes()
 ```
 
-Each host README has the complete setup. [Getting started](docs/getting-started.md) walks through it. To start, create a project with the template of your framework (`dotnet new avalonia.app`, `dotnet new maui`, `dotnet new blazor`, or the Uno one) and add the host package.
+Each host README has the complete setup. [Getting started](docs/getting-started.md) walks through it. To start, `dotnet new install Routeables.Templates` then `dotnet new routeables-avalonia -n MyApp` (Avalonia only for now), or create a project with the template of your framework (`dotnet new maui`, `dotnet new blazor`, or the Uno one) and add the host package.
 
 ## Status
 
