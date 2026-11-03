@@ -26,7 +26,7 @@
   </metadata>
   <files>
     <file src="README.md" target="" />
-    <file src="../Images/icon.png" target="" />
+    <file src="../../images/icon.png" target="" />
 
     <!-- The libraries, with their symbols and their XML documentation (what the IDE of the user shows). -->
     <file src="../Routeables.Abstraction/bin/$configuration$/net10.0/Routeables.Abstraction.dll" target="lib/net10.0" />
