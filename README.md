@@ -44,10 +44,6 @@ The same view models drive the Animals sample on each host: only the views diffe
 
 ## In one minute
 
-Two ways to register a page. Both start the same way and need no menu (Avalonia shown; the other hosts: [Start with your host](#start-with-your-host)).
-
-**With the generator**: the route is on the view model, the view is found by its name.
-
 ```csharp
 //You can define the entry route by default it is "/" like Blazor
 //Routeables always start with an IMainViewModel
@@ -56,7 +52,10 @@ Two ways to register a page. Both start the same way and need no menu (Avalonia 
 //MainViewModelDefault designed for plain page
 public partial class MainViewModel(IRouter router) : MainViewModelDefault(router, "/hello/World") { }
 ```
-Without generated source
+
+Two ways to register a page.
+
+**Without the generator**
 
 ```csharp
 public sealed class HelloViewModel(string name)
@@ -66,7 +65,6 @@ public sealed class HelloViewModel(string name)
 
 public partial class HelloView : UserControl { }
 
-
 AppBuilder.Configure<App>()
     .UseRouteables<MainViewModel>(r =>
         {
@@ -75,7 +73,7 @@ AppBuilder.Configure<App>()
         view: lifetime => new MainWindow());
 ```
 
-OR with generated source 
+**With the generator**: the route is on the view model, the view is found by its name.
 
 ```csharp
 [Routeable("/hello/{name}")]                         // the route is declared on the view model
@@ -83,6 +81,9 @@ public sealed class HelloViewModel(string name)
 {
     public string? Name { get; } = name;
 }
+
+public partial class HelloView : UserControl { }
+
 AppBuilder.Configure<App>()
     .UseRouteables<MainViewModel>(r =>
         {
