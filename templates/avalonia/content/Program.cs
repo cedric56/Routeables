@@ -11,7 +11,7 @@ internal static class Program
     public static void Main(string[] args) =>
         AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .UseRouteables(
+            .UseRouteables<MainViewModel>(
                 r => { r.AddGeneratedRoutes(); },   // the first page
                 view: lifetime => new MainWindow())
             .StartWithClassicDesktopLifetime(args);

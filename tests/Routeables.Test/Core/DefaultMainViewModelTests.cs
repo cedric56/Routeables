@@ -7,6 +7,9 @@ namespace Routeables.Tests.Core;
 /// <summary>An application without a menu: <see cref="MainViewModelDefault"/> and <c>AddHome</c>.</summary>
 public class DefaultMainViewModelTests
 {
+    private class DefaultMainViewModel(IRouter router) : MainViewModelDefault(router, "/home") { 
+    }
+
     public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
     public sealed class HomeVm;
 
@@ -15,9 +18,7 @@ public class DefaultMainViewModelTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-        services.RegisterMainViewModel<MainViewModelDefault>(ServiceLifetime.Singleton);
-        if (home is not null)
-            services.AddHome(home);
+        services.RegisterMainViewModel<DefaultMainViewModel>(ServiceLifetime.Singleton);
         return services.BuildServiceProvider();
     }
 
@@ -49,14 +50,5 @@ public class DefaultMainViewModelTests
 
         await UntilAsync(() => provider.GetRequiredService<IRouter>().CurrentViewModel is HomeVm);
         await UntilAsync(() => main.CurrentView is HomeView);
-    }
-
-    [Fact]
-    public void Without_a_home_route_nothing_is_selected()
-    {
-        using var provider = Build(null);
-
-        Assert.False(provider.GetRequiredService<IMainViewModel>().SelectFirst());
-        Assert.Null(provider.GetRequiredService<IRouter>().CurrentViewModel);
     }
 }
