@@ -15,18 +15,6 @@ namespace Routeables.Maui;
 public static class Extensions
 {
     /// <summary>
-    /// Starts Routeables on MAUI without a main view model of your own. Say which page opens first with <c>AddHome("/route")</c> in <paramref name="configure"/>.
-    /// <code>
-    /// builder.UseMauiApp&lt;App&gt;().UseRouteables(r => { r.AddGeneratedRoutes(); r.AddHome("/hello/World"); });
-    /// </code>
-    /// </summary>
-    /// <param name="builder">The MAUI app builder to configure.</param>
-    /// <param name="configure">Optional: your own registrations (routes, modules, services).</param>
-    /// <returns>The same <paramref name="builder"/>, for chaining.</returns>
-    public static MauiAppBuilder UseRouteables(this MauiAppBuilder builder, Action<IServiceCollection>? configure = null)
-        => builder.UseRouteables<RouteableDefaultMainViewModel>(configure);
-
-    /// <summary>
     /// Starts Routeables on MAUI: registers the router, the arguments factory, the property injection, the environment information and the
     /// theme service, and <typeparamref name="TMain"/> as the main view model (the menu), one for the application.
     /// <code>

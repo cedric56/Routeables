@@ -10,8 +10,8 @@ namespace Routeables.Core;
 /// (<see cref="MainViewModelBase"/>) when the application has a menu, a tab bar or a title to show.
 /// </summary>
 /// <param name="router">The router that shows the pages.</param>
-/// <param name="home">The route to open at start, registered by <c>AddHome</c>; <see langword="null"/> when none was.</param>
-public sealed class RouteableDefaultMainViewModel(IRouter router, RouteableHome? home = null)
+/// <param name="defaultRoute">The route to open at start.</param>
+public class MainViewModelDefault(IRouter router, string defaultRoute = "/")
     : MainViewModelBase(router, initialize: false), INotifyPropertyChanged, IMainViewModel
 {
     /// <inheritdoc />
@@ -27,10 +27,10 @@ public sealed class RouteableDefaultMainViewModel(IRouter router, RouteableHome?
     // Every host calls it once at start: with a home route, this is where the first page is chosen.
     bool IMainViewModel.SelectFirst()
     {
-        if (home is null || _router.CurrentView is not null)
+        if (_router.CurrentView is not null)
             return false;
 
-        StartAsync(home.Route).Forget();
+        StartAsync(defaultRoute).Forget();
         return true;
     }
 

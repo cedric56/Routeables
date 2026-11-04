@@ -4,7 +4,7 @@ using Routeables.Routing;
 
 namespace Routeables.Tests.Core;
 
-/// <summary>An application without a menu: <see cref="RouteableDefaultMainViewModel"/> and <c>AddHome</c>.</summary>
+/// <summary>An application without a menu: <see cref="MainViewModelDefault"/> and <c>AddHome</c>.</summary>
 public class DefaultMainViewModelTests
 {
     public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
@@ -15,7 +15,7 @@ public class DefaultMainViewModelTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-        services.RegisterMainViewModel<RouteableDefaultMainViewModel>(ServiceLifetime.Singleton);
+        services.RegisterMainViewModel<MainViewModelDefault>(ServiceLifetime.Singleton);
         if (home is not null)
             services.AddHome(home);
         return services.BuildServiceProvider();

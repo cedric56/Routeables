@@ -12,7 +12,7 @@ internal static class Program
         AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .UseRouteables(
-                r => { r.AddGeneratedRoutes(); r.AddHome("/hello/World"); },   // the first page
+                r => { r.AddGeneratedRoutes(); },   // the first page
                 view: lifetime => new MainWindow())
             .StartWithClassicDesktopLifetime(args);
 }
