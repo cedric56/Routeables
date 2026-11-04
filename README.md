@@ -50,10 +50,8 @@ Two ways to register a page. Both start the same way and need no menu (Avalonia 
 
 ```csharp
 //You can define the entry route by default it is "/" like Blazor
-public partial class MainViewModel(IRouter router) : MainViewModelDefault(router, "/hello/World") 
-{
-
-}
+//Routeables always start with an IMainViewModel
+public partial class MainViewModel(IRouter router) : MainViewModelDefault(router, "/hello/World") { }
 ```
 Without generated source
 
@@ -74,16 +72,8 @@ AppBuilder.Configure<App>()
         view: lifetime => new MainWindow());
 ```
 
-
-```csharp
-AppBuilder.Configure<App>()
-    .UseRouteables<MainViewModel>(r =>
-        {
-             r.RegisterRoute<HelloView, HelloViewModel>(route: "/hello/{name}");
-        },
-        view: lifetime => new MainWindow());
-```
 OR with generated source 
+
 ```csharp
 [Routeable("/hello/{name}")]                         // the route is declared on the view model
 public sealed class HelloViewModel(string name)
