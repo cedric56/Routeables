@@ -7,7 +7,7 @@ using Routeables.Abstraction;
 namespace Routeables.Uno;
 
 /// <summary>
-/// The content of an entry of a <see cref="RouteableListView"/>: the icon, the name and, under it, the description.
+/// The content of an entry of a <see cref="RouteableMenu"/>: the icon, the name and, under it, the description.
 /// It follows its entry: a new name appears at once, and a locked entry is disabled.
 /// </summary>
 public partial class RouteableMenuItem : ContentControl

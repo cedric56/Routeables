@@ -14,10 +14,10 @@ namespace Routeables.Uno;
 /// </code>
 /// Choosing an entry goes to it; a locked entry is disabled.
 /// </summary>
-public partial class RouteableListView : Microsoft.UI.Xaml.Controls.ListView
+public partial class RouteableMenu : Microsoft.UI.Xaml.Controls.ListView
 {
     /// <summary>Creates the list.</summary>
-    public RouteableListView()
+    public RouteableMenu()
     {
         SetBinding(ItemsSourceProperty, new Binding { Path = new PropertyPath(nameof(IMainViewModel.Routeables)) });
         SetBinding(SelectedItemProperty, new Binding { Path = new PropertyPath(nameof(IMainViewModel.Routeable)), Mode = BindingMode.TwoWay });

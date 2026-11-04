@@ -38,7 +38,7 @@
                    x:Name="RootSplitView"
                    IsPaneOpen="True">
             <SplitView.Pane>
-                <routeables:RouteableListView />
+                <routeables:RouteableMenu />
             </SplitView.Pane>
 
             <ContentControl Content="{Binding CurrentView}"

@@ -38,7 +38,7 @@ public static class Extensions
         builder.Services.RemoveAll<IRouteableDialogWindowContext>();
         builder.Services.AddSingleton<IRouteableDialogService>(sp => new RouteableDialogService(
 #if ANDROID || WINDOWS || IOS || MACCATALYST
-            sp.GetRequiredService<IServiceProvider>(),
+            sp,
 #endif
             sp.GetRequiredService<IRouteableDialogWindowContext>(),
             messageBoxService is null ? null : sp.GetRequiredService<IMessageBoxService>()));

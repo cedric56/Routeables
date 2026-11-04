@@ -10,7 +10,7 @@ using Uno.UI.RuntimeTests;
 namespace Routeables.Test.Uno.Tests;
 
 /// <summary>
-/// <see cref="RouteableMenuItem"/> and <see cref="RouteableListView"/> over the entries of a menu, and <see cref="RouteableNavigation"/> over a
+/// <see cref="RouteableMenuItem"/> and <see cref="RouteableMenu"/> over the entries of a menu, and <see cref="RouteableNavigation"/> over a
 /// <c>NavigationView</c> written in XAML: the controls follow their entries and the router, and route when the user chooses.
 /// </summary>
 [TestClass]
@@ -181,7 +181,7 @@ public class MenuAndNavigationTests
         var menu = new Menu();
         menu.Routeables.Add(new Entry("Cats"));
         menu.Routeables.Add(new Entry("Dogs"));
-        var list = await TestHost.LoadAsync(new RouteableListView { DataContext = menu });
+        var list = await TestHost.LoadAsync(new RouteableMenu { DataContext = menu });
         try
         {
             await TestHost.UntilAsync(() => Descendants(list).OfType<RouteableMenuItem>().Count() == 2);
@@ -200,7 +200,7 @@ public class MenuAndNavigationTests
         var dogs = new Entry("Dogs");
         menu.Routeables.Add(cats);
         menu.Routeables.Add(dogs);
-        var list = await TestHost.LoadAsync(new RouteableListView { DataContext = menu });
+        var list = await TestHost.LoadAsync(new RouteableMenu { DataContext = menu });
         try
         {
             list.SelectedItem = dogs;
@@ -217,7 +217,7 @@ public class MenuAndNavigationTests
     {
         var menu = new Menu();
         menu.Routeables.Add(new Entry("Cats"));
-        var list = await TestHost.LoadAsync(new RouteableListView { DataContext = menu });
+        var list = await TestHost.LoadAsync(new RouteableMenu { DataContext = menu });
         try
         {
             menu.Routeables.Add(new Entry("Dogs"));
