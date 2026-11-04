@@ -3,9 +3,16 @@ using Routeables.Services;
 
 namespace Routeables.Maui.Services;
 
-/// <summary>Message boxes of .NET MAUI (<c>DisplayAlert</c>, <c>DisplayActionSheet</c>), shown over the current page of the window. On Windows one dialog is open at a time.</summary>
+#if ANDROID || WINDOWS || IOS || MACCATALYST
+/// <summary>Message boxes of .NET MAUI (<c>DisplayAlert</c>, <c>DisplayActionSheet</c>), shown over the current page of the window. On Windows one dialog is open at a time.</summary
+/// <param name="provider">The service provider used to create the MAUI context.</param>
 /// <param name="windowContext">Where the page to show the dialog over is found.</param>
 /// <param name="messageBoxService"></param>
+#else
+/// <summary>Message boxes of .NET MAUI (<c>DisplayAlert</c>, <c>DisplayActionSheet</c>), shown over the current page of the window. On Windows one dialog is open at a time.</summary
+/// <param name="windowContext">Where the page to show the dialog over is found.</param>
+/// <param name="messageBoxService"></param>
+#endif
 public class RouteableDialogService(
 #if ANDROID || WINDOWS || IOS || MACCATALYST    
     IServiceProvider provider,
