@@ -16,6 +16,22 @@ namespace Routeables.Razor;
 public static class Extensions
 {
     /// <summary>
+    /// Starts Routeables in a Blazor Server application without a main view model of your own. Say which page opens first with
+    /// <c>AddHome("/route")</c> in <paramref name="configure"/>.
+    /// <code>
+    /// services.UseRouteablesServer(r => { r.AddGeneratedRoutes(); r.AddHome("/hello/World"); });
+    /// </code>
+    /// </summary>
+    /// <param name="services">The service collection to add services to.</param>
+    /// <param name="configure">Optional: your own registrations (routes, modules, services).</param>
+    /// <param name="onCircuitProviderChanged">Optional callback executed when the circuit provider initializes.</param>
+    public static IServiceCollection UseRouteablesServer(
+        this IServiceCollection services,
+        Action<IServiceCollection>? configure = null,
+        Func<IServiceProvider, Task>? onCircuitProviderChanged = null)
+        => services.UseRouteablesServer<RouteableDefaultMainViewModel>(configure, onCircuitProviderChanged);
+
+    /// <summary>
     /// Starts Routeables in a Blazor Server application: registers the router, the property injection, the address synchronization,
     /// the environment information and the theme, and <typeparamref name="TMain"/> as the main view model (the menu), scoped: one per circuit.
     /// It registers the dialogs (message boxes, content dialogs and task dialogs), modals and notifications too (<c>UseRouteablesServices()</c> of
@@ -34,6 +50,12 @@ public static class Extensions
         where TMain : class, IMainViewModel
         => services.UseRouteablesCore<TMain>(Runtime.BlazorServer, configure, onCircuitProviderChanged);
 
+    /// <summary>Starts Routeables in a Blazor WebAssembly application without a main view model of your own (see <see cref="UseRouteablesServer(IServiceCollection, Action{IServiceCollection}?, Func{IServiceProvider, Task}?)"/>).</summary>
+    /// <param name="services">The service collection to add services to.</param>
+    /// <param name="configure">Optional: your own registrations (routes, modules, services).</param>
+    public static IServiceCollection UseRouteablesWebAssembly(this IServiceCollection services, Action<IServiceCollection>? configure = null)
+        => services.UseRouteablesWebAssembly<RouteableDefaultMainViewModel>(configure);
+
     /// <summary>
     /// Starts Routeables in a Blazor WebAssembly application: the same as <see cref="UseRouteablesServer{TMain}"/>, for the browser.
     /// <code>
@@ -47,6 +69,12 @@ public static class Extensions
         Action<IServiceCollection>? configure = null)
         where TMain : class, IMainViewModel
         => services.UseRouteablesCore<TMain>(Runtime.BlazorWebAssembly, configure, null);
+
+    /// <summary>Starts Routeables in a MAUI Blazor Hybrid application without a main view model of your own (see <see cref="UseRouteablesServer(IServiceCollection, Action{IServiceCollection}?, Func{IServiceProvider, Task}?)"/>).</summary>
+    /// <param name="services">The service collection to add services to.</param>
+    /// <param name="configure">Optional: your own registrations (routes, modules, services).</param>
+    public static IServiceCollection UseRouteablesHybrid(this IServiceCollection services, Action<IServiceCollection>? configure = null)
+        => services.UseRouteablesHybrid<RouteableDefaultMainViewModel>(configure);
 
     /// <summary>
     /// Starts Routeables in a MAUI Blazor Hybrid application: the same as <see cref="UseRouteablesServer{TMain}"/>, in a web view.
