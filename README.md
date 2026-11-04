@@ -51,6 +51,9 @@ Two ways to register a page. Both start the same way and need no menu (Avalonia 
 ```csharp
 //You can define the entry route by default it is "/" like Blazor
 //Routeables always start with an IMainViewModel
+//Two kinds:
+//MainViewModelBase designed to have a menu
+//MainViewModelDefault designed for plain page
 public partial class MainViewModel(IRouter router) : MainViewModelDefault(router, "/hello/World") { }
 ```
 Without generated source
