@@ -13,7 +13,7 @@ namespace Reshapes.Avalonia.Fluent;
 /// <inheritdoc />
 
 public class ReshapeMessageBoxService : IMessageBoxService
-{    
+{
     /// <inheritdoc />
     public bool IsDisplayable(TopLevel topLevel)
     {

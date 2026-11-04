@@ -1,7 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using Avalonia.Threading;
+﻿using Avalonia.Threading;
 using Routeables.Abstraction;
+using System;
+using System.Diagnostics;
 
 namespace XAnimals.Avalonia;
 

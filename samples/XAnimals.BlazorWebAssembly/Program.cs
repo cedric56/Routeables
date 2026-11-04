@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Routeables.Generated;
 using Routeables.Razor;
-using Routeables.Razor.Services;
 using Xanimals.Razor;
 using XAnimals.Razor.Components;
 using XAnimals.ViewModels;

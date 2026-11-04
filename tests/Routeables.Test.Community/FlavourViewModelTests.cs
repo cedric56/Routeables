@@ -1,7 +1,7 @@
-using System.Collections.ObjectModel;
 using NSubstitute;
 using Routeables.Abstraction;
 using Routeables.Core;
+using System.Collections.ObjectModel;
 
 namespace Routeables.Test.Flavour;
 

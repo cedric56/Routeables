@@ -3,8 +3,8 @@ using Routeables.Abstraction;
 using Routeables.Avalonia;
 using Routeables.Avalonia.Services;
 using Routeables.Services;
-using AvaloniaApplication = global::Avalonia.Application;
 using Routeables.Tests.Core;
+using AvaloniaApplication = global::Avalonia.Application;
 
 namespace Routeables.Tests.Avalonia;
 

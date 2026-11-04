@@ -1,11 +1,10 @@
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using Reshapes.Maui.CommunityToolkit;
 using Routeables.Generated;
 using Routeables.Maui;
-using Routeables.Maui.Services;
 using XAnimals.Common;
 using XAnimals.ViewModels;
-using Reshapes.Maui.CommunityToolkit;
 
 namespace XAnimals.Maui;
 

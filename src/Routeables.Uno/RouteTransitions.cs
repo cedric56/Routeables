@@ -1,8 +1,7 @@
-using System.Collections.Concurrent;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Routeables.Abstraction;
 using Routeables.Regions;
+using System.Collections.Concurrent;
 
 namespace Routeables.Uno;
 

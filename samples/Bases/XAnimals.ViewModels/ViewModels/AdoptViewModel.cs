@@ -1,10 +1,9 @@
 ﻿using Routeables.Abstraction;
-using Routeables.Regions;
 using Routeables.Routing;
 using System.Windows.Input;
 using Xaminals.Data;
-using XAminals.Models;
 using XAminals.Common;
+using XAminals.Models;
 using XAnimals.Common;
 
 namespace XAnimals.ViewModels;

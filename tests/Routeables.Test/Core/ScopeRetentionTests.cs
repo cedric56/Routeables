@@ -1,8 +1,6 @@
-using System.Collections.ObjectModel;
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
-using Routeables.Routing;
 using Routeables.Locking;
+using Routeables.Routing;
 
 namespace Routeables.Tests.Core;
 

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
@@ -7,6 +6,7 @@ using Routeables.Core;
 using Routeables.Razor.Services;
 using Routeables.Routing;
 using Routeables.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Routeables.Razor;
 

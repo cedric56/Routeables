@@ -1,5 +1,4 @@
-﻿using Routeables.Abstraction;
-using Routeables.Maui;
+﻿using Routeables.Maui;
 using XAnimals.Birds;
 
 namespace XAnimals.Maui.Views;

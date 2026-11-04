@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Razor;
 using Routeables.Routing;

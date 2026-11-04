@@ -1,11 +1,10 @@
-using System.Collections.ObjectModel;
 using Avalonia;
 using Avalonia.Headless;
 using Avalonia.Themes.Fluent;
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Avalonia;
 using Routeables.Routing;
+using System.Collections.ObjectModel;
 using Xunit;
 
 namespace Routeables.Test.Avalonia;

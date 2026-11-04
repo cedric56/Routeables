@@ -1,7 +1,6 @@
-using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
-using Routeables.Routing;
+using System.Runtime.CompilerServices;
 
 namespace Routeables.Benchmarks;
 

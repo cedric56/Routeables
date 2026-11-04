@@ -2,9 +2,7 @@
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using Routeables.Abstraction;
 using Routeables.Services;
-using Routeables.Avalonia;
 
 namespace Routeables.Avalonia.Services;
 

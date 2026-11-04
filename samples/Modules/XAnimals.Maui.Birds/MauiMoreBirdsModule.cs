@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using XAnimals.Birds;
 using XAnimals.Maui.Views;

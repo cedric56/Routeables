@@ -1,5 +1,5 @@
-using System.Text.Json;
 using Routeables.Razor.Services;
+using System.Text.Json;
 
 namespace Routeables.Tests.Razor;
 

@@ -1,16 +1,15 @@
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Services;
 using Routeables.Wpf;
 using Routeables.Wpf.Services;
-using Window = System.Windows.Window;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using static Routeables.Tests.Wpf.WpfTestWindows;
 using Button = System.Windows.Controls.Button;
 using ProgressBar = System.Windows.Controls.ProgressBar;
+using Window = System.Windows.Window;
 
 namespace Routeables.Tests.Wpf;
 

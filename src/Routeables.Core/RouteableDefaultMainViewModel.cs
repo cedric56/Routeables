@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using Routeables.Abstraction;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using Routeables.Abstraction;
 
 namespace Routeables.Core;
 
@@ -30,7 +30,7 @@ public sealed class RouteableDefaultMainViewModel(IRouter router, RouteableHome?
         if (home is null || _router.CurrentView is not null)
             return false;
 
-        _ = StartAsync(home.Route);
+        StartAsync(home.Route).Forget();
         return true;
     }
 

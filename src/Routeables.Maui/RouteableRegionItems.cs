@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Routeables.Abstraction;
+﻿using Routeables.Abstraction;
 using Routeables.Regions;
 
 namespace Routeables.Maui;

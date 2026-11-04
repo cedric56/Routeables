@@ -1,6 +1,4 @@
 using Avalonia;
-using Avalonia.Controls;
-using Avalonia.VisualTree;
 using Routeables.Avalonia;
 using System;
 using XAnimals.ViewModels;

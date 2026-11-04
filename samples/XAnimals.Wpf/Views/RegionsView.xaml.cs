@@ -1,7 +1,6 @@
+using Routeables.Wpf;
 using System.Windows;
 using System.Windows.Automation;
-using System.Windows.Controls;
-using Routeables.Wpf;
 
 namespace XAnimals.Wpf.Views;
 

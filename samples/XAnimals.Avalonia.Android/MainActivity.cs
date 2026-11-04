@@ -7,7 +7,6 @@ using Avalonia;
 using Avalonia.Android;
 using Avalonia.Labs.Notifications;
 using System;
-using XAnimals.Avalonia;
 using Application = Avalonia.Application;
 
 namespace XAnimals.Avalonia.Android;

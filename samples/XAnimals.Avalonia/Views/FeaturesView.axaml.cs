@@ -1,5 +1,4 @@
-﻿using Routeables.Abstraction;
-using Routeables.Avalonia;
+﻿using Routeables.Avalonia;
 using XAnimals.ViewModels;
 
 namespace XAnimals.Avalonia;

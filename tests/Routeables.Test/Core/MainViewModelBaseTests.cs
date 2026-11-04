@@ -1,9 +1,8 @@
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Core;
+using Routeables.Locking;
 using Routeables.Routing;
 using System.Collections.ObjectModel;
-using Routeables.Locking;
 
 namespace Routeables.Tests.Core;
 
@@ -25,7 +24,7 @@ public class MainViewModelBaseTests
 
         protected override void NotifyPropertyChanged(string? propertyName)
         {
-            
+
         }
     }
 

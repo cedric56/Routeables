@@ -1,6 +1,4 @@
 using Microsoft.UI.Xaml.Automation.Peers;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Routeables.Abstraction;
 using Routeables.Uno;
 using Uno.UI.RuntimeTests;

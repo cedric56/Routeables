@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using Routeables.Services;
+using System.Diagnostics;
 
 namespace Routeables.Maui.Services;
 

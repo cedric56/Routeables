@@ -1,8 +1,8 @@
+using Routeables.Wpf;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using Routeables.Wpf;
 using Application = System.Windows.Application;
 using Button = System.Windows.Controls.Button;
 using Keyboard = System.Windows.Input.Keyboard;

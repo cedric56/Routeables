@@ -5,7 +5,6 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
 using System.Windows.Input;
-using Routeables.Avalonia;
 
 namespace Routeables.Avalonia.Services;
 

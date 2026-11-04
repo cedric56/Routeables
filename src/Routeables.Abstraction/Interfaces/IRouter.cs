@@ -85,7 +85,7 @@ public interface IRouter
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     Task<RouteableResult> GoAsync(object view, object viewModel, IRouteableArgs? args = null, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// The one member behind the <c>GoToRouteAsync</c> methods: to a route with a view model type, or to a menu entry
     /// (<see cref="RouteableRouteRequest"/>). Call those methods instead, they are extensions of <see cref="IRouter"/>:

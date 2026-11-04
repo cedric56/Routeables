@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using XAminals.Models;
+﻿using XAminals.Models;
 
 namespace Xaminals.Data
 {

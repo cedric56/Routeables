@@ -1,5 +1,5 @@
-using System.Windows;
 using Routeables.Wpf;
+using System.Windows;
 using XAnimals.ViewModels;
 
 namespace XAnimals.Wpf.Views;

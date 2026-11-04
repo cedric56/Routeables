@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Routing;
 using Routeables.Segments;
@@ -190,7 +189,7 @@ public class RouteCoordinatorTests
         coordinator.Coordinating += (_, _) => raised++;
 
         var unknownSegment = await coordinator.CoordinateAsync("Orders/Nope", TestContext.Current.CancellationToken);
-        
+
         Assert.False(unknownSegment.Success);
         Assert.Contains("Nope", unknownSegment.Exception?.Message);
         Assert.Empty(router.History.Entries);

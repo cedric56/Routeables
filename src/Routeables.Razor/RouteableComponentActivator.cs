@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
-using Microsoft.AspNetCore.Components;
 
 namespace Routeables.Razor;
 

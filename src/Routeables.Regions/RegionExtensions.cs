@@ -1,7 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.DependencyInjection;
-using Routeables.Abstraction;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Routeables.Routing;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Routeables.Regions;
 

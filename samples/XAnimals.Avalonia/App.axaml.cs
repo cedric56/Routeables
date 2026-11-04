@@ -3,7 +3,6 @@ using AsyncImageLoader.Core.Caching;
 using AsyncImageLoader.Core.Pipeline;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Labs.Notifications;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;

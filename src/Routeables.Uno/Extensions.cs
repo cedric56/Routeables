@@ -3,11 +3,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.UI.Xaml;
 using Routeables.Abstraction;
 using Routeables.Core;
-using Routeables.Routing;
 using Routeables.Services;
 using Routeables.Uno.Services;
-using Application = Microsoft.UI.Xaml.Application;
 using System.Diagnostics.CodeAnalysis;
+using Application = Microsoft.UI.Xaml.Application;
 
 namespace Routeables.Uno;
 

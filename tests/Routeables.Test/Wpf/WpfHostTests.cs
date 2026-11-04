@@ -1,9 +1,4 @@
-using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
-using Routeables.Core;
-using Routeables.Locking;
-using Routeables.Routing;
 using Routeables.Services;
 using Routeables.Tests.Core;
 using Routeables.Tests.Hosts;
@@ -47,7 +42,7 @@ public class WpfHostTests
     public Task The_services_of_the_host_are_the_ones_of_WPF() => WithHostAsync(provider =>
     {
         Assert.IsType<RouteableRequestThemeService>(provider.GetRequiredService<IRouteableRequestedThemeService>());
-        Assert.IsType<RouteableDialogService>(provider.GetRequiredService<IRouteableDialogService>());        
+        Assert.IsType<RouteableDialogService>(provider.GetRequiredService<IRouteableDialogService>());
         Assert.IsType<RouteableNotificationService>(provider.GetRequiredService<IRouteableNotificationService>());
         Assert.IsType<DefaultMessageBoxService>(provider.GetRequiredService<IMessageBoxService>());
         Assert.IsType<RouteableDispatcher>(provider.GetRequiredService<IRouteableDispatcher>());

@@ -126,7 +126,7 @@ public sealed class RouteableLinkInbox
                         if (await RouteableState.RestoreSnapshotsAsync(router, restoring))
                             RouteableMenu.Moved(services, router);
                     }
-                    : async () => await RouteableDeepLinks.GoToAsync(services, uri!, schemes));
+                : async () => await RouteableDeepLinks.GoToAsync(services, uri!, schemes));
             }
         }
         catch (Exception ex)

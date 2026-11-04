@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Razor;
-using Routeables.Tests.Core;
 using Routeables.Routing;
+using Routeables.Tests.Core;
 
 namespace Routeables.Tests.Razor;
 

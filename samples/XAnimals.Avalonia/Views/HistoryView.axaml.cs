@@ -1,7 +1,5 @@
-using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Media;
-using Routeables.Abstraction;
 using Routeables.Avalonia;
 using System;
 using XAnimals.ViewModels;

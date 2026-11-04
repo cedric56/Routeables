@@ -1,5 +1,3 @@
-using Microsoft.UI.Xaml.Media;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Routeables.Services;
 using Routeables.Uno.Services;
 using Uno.UI.RuntimeTests;

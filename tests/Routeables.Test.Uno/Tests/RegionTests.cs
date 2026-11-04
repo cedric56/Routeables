@@ -1,6 +1,4 @@
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Routeables.Abstraction;
 using Routeables.Uno;
 using Uno.UI.RuntimeTests;

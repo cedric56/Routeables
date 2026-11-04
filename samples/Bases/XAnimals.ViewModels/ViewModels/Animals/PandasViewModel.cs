@@ -15,7 +15,7 @@ public class PandasViewModel(IRouter router, IServiceProvider provider) : Animal
         // the view declares with its platform's attribute ([Parameter], [QueryProperty], [RouteableParameter]).
         // Route = the registration key and template of the view; Arguments.Route = the address asked for.
         var arguments = RouteableArgs.Create()
-            .ForViewModel(back)            
+            .ForViewModel(back)
             .WithRoute($"/pandas/{Uri.EscapeDataString(animal.Name)}");
 
         var routeableView = new RouteableEntry<PandaDetailViewModel>(string.Empty, route: PandaDetailViewModel.Route, template: PandaDetailViewModel.Route)

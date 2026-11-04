@@ -1,6 +1,6 @@
-using System.Globalization;
 using Routeables.Abstraction;
 using Routeables.Maui;
+using System.Globalization;
 using MauiBinding = Microsoft.Maui.Controls.Binding;
 
 namespace Routeables.Tests.Maui;

@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.iOS;
-using AvaloniaApplication = Avalonia.Application;
 using Foundation;
+using AvaloniaApplication = Avalonia.Application;
 
 namespace XAnimals.Avalonia.iOS;
 

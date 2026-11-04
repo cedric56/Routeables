@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Core;
 
 namespace Routeables.Tests.Core;
@@ -18,9 +17,21 @@ public class EnvironmentsTests
 
     private static Desktop Desktops(string name) => name switch
     {
-        "Gnome" => Desktop.Gnome, "Unknown" => Desktop.Unknown, "KDE" => Desktop.KDE, "Xfce" => Desktop.Xfce, "Mate" => Desktop.Mate,
-        "Cinnamon" => Desktop.Cinnamon, "WSL" => Desktop.WSL, "Macos" => Desktop.Macos, "Windows" => Desktop.Windows, "iOS" => Desktop.iOS,
-        "Android" => Desktop.Android, "Unity" => Desktop.Unity, "LXDE" => Desktop.LXDE, "TvOS" => Desktop.TvOS, "WatchOS" => Desktop.WatchOS,
+        "Gnome" => Desktop.Gnome,
+        "Unknown" => Desktop.Unknown,
+        "KDE" => Desktop.KDE,
+        "Xfce" => Desktop.Xfce,
+        "Mate" => Desktop.Mate,
+        "Cinnamon" => Desktop.Cinnamon,
+        "WSL" => Desktop.WSL,
+        "Macos" => Desktop.Macos,
+        "Windows" => Desktop.Windows,
+        "iOS" => Desktop.iOS,
+        "Android" => Desktop.Android,
+        "Unity" => Desktop.Unity,
+        "LXDE" => Desktop.LXDE,
+        "TvOS" => Desktop.TvOS,
+        "WatchOS" => Desktop.WatchOS,
         _ => throw new ArgumentOutOfRangeException(nameof(name))
     };
 

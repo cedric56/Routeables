@@ -1,4 +1,3 @@
-using UIKit;
 using Uno.UI.Hosting;
 using XAnimals.Uno;
 

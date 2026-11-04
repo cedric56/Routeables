@@ -1,9 +1,9 @@
 using Routeables.Abstraction;
 using Routeables.Avalonia;
 using Routeables.Avalonia.Services;
+using Routeables.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using Routeables.Services;
 
 namespace Routeables.Tests.Avalonia;
 

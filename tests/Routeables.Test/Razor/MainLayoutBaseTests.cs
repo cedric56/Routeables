@@ -1,9 +1,7 @@
-using System.Collections.ObjectModel;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.HtmlRendering;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using NSubstitute;
@@ -11,6 +9,7 @@ using Routeables.Abstraction;
 using Routeables.Razor;
 using Routeables.Routing;
 using Routeables.Services;
+using System.Collections.ObjectModel;
 
 namespace Routeables.Tests.Razor;
 

@@ -1,10 +1,9 @@
-using System.Globalization;
-using DeviceRunners.UITesting;
 using Routeables.Abstraction;
-using Routeables.Routing;
 using Routeables.Maui;
 using Routeables.Maui.Services;
+using Routeables.Routing;
 using Routeables.Services;
+using System.Globalization;
 using Xunit;
 
 namespace Routeables.Test.Maui;

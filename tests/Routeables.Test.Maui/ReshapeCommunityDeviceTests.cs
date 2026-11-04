@@ -1,12 +1,11 @@
-using System.Collections.ObjectModel;
-using System.Windows.Input;
-using DeviceRunners.UITesting;
 using Microsoft.Maui.Controls.Shapes;
 using Reshapes.Maui.Community;
 using Reshapes.Maui.CommunityToolkit;
 using Routeables.Abstraction;
 using Routeables.Maui.Services;
 using Routeables.Services;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 using Xunit;
 
 namespace Routeables.Test.Maui;

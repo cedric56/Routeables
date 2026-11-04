@@ -1,11 +1,9 @@
-using System.Collections.ObjectModel;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
-using Routeables.Razor;
 using Routeables.Razor.Services;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace Routeables.Tests.Razor;
 

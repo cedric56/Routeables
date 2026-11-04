@@ -1,5 +1,4 @@
 using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Routeables.Abstraction;
 using Routeables.Regions;
 using Routeables.Uno;

@@ -1,6 +1,6 @@
-﻿using Routeables.Abstraction;
+﻿using CommunityToolkit.Maui.Alerts;
+using Routeables.Abstraction;
 using Routeables.Maui.Services;
-using CommunityToolkit.Maui.Alerts;
 using Routeables.Services;
 
 namespace Reshapes.Maui.CommunityToolkit;

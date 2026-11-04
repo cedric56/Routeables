@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Labs.Notifications;
-using FluentAvalonia.Styling;
 using System;
 
 namespace XAnimals.Avalonia.Desktop;

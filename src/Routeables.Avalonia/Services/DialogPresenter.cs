@@ -1,5 +1,4 @@
-﻿using Routeables.Services;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
@@ -9,7 +8,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
-using Routeables.Avalonia;
+using Routeables.Services;
 
 namespace Routeables.Avalonia.Services;
 

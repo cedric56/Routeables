@@ -2,7 +2,6 @@
 using Reshapes.Razor.MudBlazor;
 using Routeables.Generated;
 using Routeables.Razor;
-using Routeables.Razor.Services;
 using Xanimals.Razor;
 using XAnimals.ViewModels;
 
@@ -28,8 +27,8 @@ namespace XAnimals.MauiHybrid
             builder.Services.AddMauiBlazorWebView();
 
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
-    		builder.Logging.AddDebug();
+            builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

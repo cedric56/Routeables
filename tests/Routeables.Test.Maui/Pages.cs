@@ -1,6 +1,6 @@
-using System.Collections.ObjectModel;
 using Routeables.Abstraction;
 using Routeables.Maui;
+using System.Collections.ObjectModel;
 
 namespace Routeables.Test.Maui;
 

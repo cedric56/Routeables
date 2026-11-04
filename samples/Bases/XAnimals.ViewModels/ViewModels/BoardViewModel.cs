@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Routeables.Abstraction;
-using Routeables.Regions;
-using Routeables.Routing;
+﻿using Routeables.Abstraction;
 using System.Windows.Input;
 using XAminals.Common;
 using XAnimals.Common;

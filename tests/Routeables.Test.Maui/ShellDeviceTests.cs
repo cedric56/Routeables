@@ -1,9 +1,7 @@
-using System.Collections.ObjectModel;
-using DeviceRunners.UITesting;
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Maui;
 using Routeables.Routing;
+using System.Collections.ObjectModel;
 using Xunit;
 
 namespace Routeables.Test.Maui;

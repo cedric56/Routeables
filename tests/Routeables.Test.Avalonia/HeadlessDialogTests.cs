@@ -1,4 +1,3 @@
-using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -6,6 +5,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Routeables.Avalonia.Services;
 using Routeables.Services;
+using System.Windows.Input;
 using Xunit;
 
 namespace Routeables.Test.Avalonia;

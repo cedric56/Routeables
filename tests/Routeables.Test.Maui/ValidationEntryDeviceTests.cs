@@ -1,8 +1,7 @@
+using Routeables.Maui;
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using DeviceRunners.UITesting;
-using Routeables.Maui;
 using Xunit;
 
 namespace Routeables.Test.Maui;

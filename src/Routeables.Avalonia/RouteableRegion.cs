@@ -4,7 +4,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Regions;
 

@@ -1,11 +1,8 @@
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Routing;
 using Routeables.Wpf;
-using Application = System.Windows.Application;
+using System.Windows;
+using System.Windows.Controls;
 using Window = System.Windows.Window;
 
 namespace Routeables.Tests.Wpf;

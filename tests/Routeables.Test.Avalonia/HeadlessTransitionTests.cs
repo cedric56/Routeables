@@ -1,8 +1,6 @@
 using Avalonia.Animation;
 using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Threading;
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Avalonia;
 using Routeables.Routing;

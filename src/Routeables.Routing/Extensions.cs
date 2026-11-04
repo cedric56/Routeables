@@ -1,7 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Routeables.Routing;
 

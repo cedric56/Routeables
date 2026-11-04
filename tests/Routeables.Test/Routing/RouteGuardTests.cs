@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.Metrics;
-using Routeables.Abstraction;
+﻿using Routeables.Abstraction;
 using Routeables.Routing;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace Routeables.Tests.Routing;
 

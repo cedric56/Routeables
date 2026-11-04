@@ -1,4 +1,3 @@
-using Microsoft.Maui.Controls;
 using Routeables.Abstraction;
 
 namespace Routeables.Maui;

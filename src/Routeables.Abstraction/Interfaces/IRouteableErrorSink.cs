@@ -1,6 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Routeables.Abstraction;
 

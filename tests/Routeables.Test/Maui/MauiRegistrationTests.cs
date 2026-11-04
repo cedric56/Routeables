@@ -1,6 +1,5 @@
 ﻿using NSubstitute;
 using Routeables.Abstraction;
-using Routeables.Maui;
 using Routeables.Maui.Services;
 using Routeables.Services;
 using Routeables.Tests.Core;

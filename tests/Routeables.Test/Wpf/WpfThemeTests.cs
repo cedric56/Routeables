@@ -1,6 +1,6 @@
-using System.Windows;
 using Routeables.Services;
 using Routeables.Wpf;
+using System.Windows;
 using Application = System.Windows.Application;
 
 namespace Routeables.Tests.Wpf;

@@ -1,6 +1,5 @@
 using Routeables.Generated;
 using Routeables.Razor;
-using Routeables.Razor.Services;
 using Xanimals.BlazorApp.Components;
 using Xanimals.Razor;
 using XAnimals.ViewModels;

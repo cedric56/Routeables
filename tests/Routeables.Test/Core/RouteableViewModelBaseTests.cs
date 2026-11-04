@@ -1,10 +1,9 @@
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Core;
+using Routeables.Locking;
 using Routeables.Routing;
 using Routeables.Test.Abstraction;
 using static Routeables.Test.Abstraction.RouterTestKit;
-using Routeables.Locking;
 
 namespace Routeables.Tests.Core;
 

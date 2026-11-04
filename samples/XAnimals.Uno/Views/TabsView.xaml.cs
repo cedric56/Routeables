@@ -1,4 +1,3 @@
-using Microsoft.UI.Xaml;
 using Routeables.Uno;
 using XAnimals.ViewModels;
 

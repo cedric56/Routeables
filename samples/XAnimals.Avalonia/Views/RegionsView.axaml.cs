@@ -1,8 +1,6 @@
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Automation;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Routeables.Abstraction;
 using Routeables.Avalonia;
 using XAnimals.ViewModels;
 using HorizontalAlignment = Avalonia.Layout.HorizontalAlignment;

@@ -1,9 +1,8 @@
 // The test renderer is a Renderer: it has to read the render tree frames, which the analyzer discourages outside the framework.
 #pragma warning disable BL0006
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.Extensions.Logging.Abstractions;
 using Routeables.Abstraction;
 using Routeables.Razor;

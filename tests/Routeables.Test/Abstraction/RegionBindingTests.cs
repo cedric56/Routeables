@@ -1,7 +1,6 @@
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
-using Routeables.Routing;
 using Routeables.Regions;
+using Routeables.Routing;
 
 namespace Routeables.Tests.Abstraction;
 

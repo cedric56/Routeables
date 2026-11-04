@@ -1,4 +1,3 @@
-using Microsoft.Maui.Dispatching;
 using NSubstitute;
 
 namespace Routeables.Tests.Maui;

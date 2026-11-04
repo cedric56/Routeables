@@ -1,11 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
-using Routeables.Routing;
 using Routeables.Locking;
 using Routeables.Regions;
+using Routeables.Routing;
 using Routeables.Segments;
-using Routeables.Services;
 using XAnimals.Birds;
 
 namespace XAnimals.ViewModels;

@@ -1,6 +1,4 @@
-﻿using Routeables.Services;
-
-namespace Routeables.Razor.Services;
+﻿namespace Routeables.Razor.Services;
 
 /// <summary>One button of a dialog and the value it completes the dialog with.</summary>
 internal sealed record DialogButton(string Text, int Result, bool IsPrimary = false);

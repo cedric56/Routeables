@@ -1,9 +1,8 @@
-using System.Windows;
-using System.Windows.Media.Imaging;
 using Routeables.Generated;
 using Routeables.Services;
 using Routeables.Wpf;
-using Routeables.Wpf.Services;
+using System.Windows;
+using System.Windows.Media.Imaging;
 using XAminals.Models;
 using XAnimals.Common;
 using XAnimals.ViewModels;

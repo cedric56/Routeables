@@ -1,7 +1,4 @@
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using XAnimals.Common;
-using XAnimals.ViewModels;
 
 namespace XAnimals.Uno.Views;
 

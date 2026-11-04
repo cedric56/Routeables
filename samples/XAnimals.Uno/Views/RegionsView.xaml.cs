@@ -1,8 +1,4 @@
-using Microsoft.UI.Xaml.Controls;
-using Routeables.Abstraction;
 using Routeables.Uno;
-using XAnimals.ViewModels;
-using Microsoft.UI.Xaml;
 
 namespace XAnimals.Uno.Views;
 

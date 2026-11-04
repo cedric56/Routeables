@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using XAminals.Models;
 using XAnimals.Common;
-using XAnimals.ViewModels;
 
 namespace XAnimals.Wpf.Views;
 

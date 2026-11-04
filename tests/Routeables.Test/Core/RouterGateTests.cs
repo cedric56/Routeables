@@ -15,7 +15,7 @@ public class RouterGateTests
 
         try
         {
-            Assert.Throws<InvalidOperationException>(() => { _ = gate.EnterAsync(cancellationToken:TestContext.Current.CancellationToken); });
+            Assert.Throws<InvalidOperationException>(() => { _ = gate.EnterAsync(cancellationToken: TestContext.Current.CancellationToken); });
         }
         finally
         {

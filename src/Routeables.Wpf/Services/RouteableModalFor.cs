@@ -1,7 +1,7 @@
-using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Services;
+using System.Windows.Controls;
 
 namespace Routeables.Wpf.Services;
 

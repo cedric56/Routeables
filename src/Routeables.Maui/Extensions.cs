@@ -3,7 +3,6 @@ using Microsoft.Maui.LifecycleEvents;
 using Routeables.Abstraction;
 using Routeables.Core;
 using Routeables.Maui.Services;
-using Routeables.Routing;
 using Routeables.Services;
 using System.Diagnostics.CodeAnalysis;
 

@@ -8,10 +8,10 @@ namespace Routeables.Maui.Services;
 /// <param name="messageBoxService"></param>
 public class RouteableDialogService(
 #if ANDROID || WINDOWS || IOS || MACCATALYST    
-    IServiceProvider provider, 
-#endif    
+    IServiceProvider provider,
+#endif
     IRouteableDialogWindowContext windowContext,
-    IMessageBoxService? messageBoxService = null) : 
+    IMessageBoxService? messageBoxService = null) :
     RouteableDialogServiceBase,
     IRouteableDialogService,
     IMessageBoxService
@@ -108,172 +108,172 @@ public class RouteableDialogService(
         try
         {
 #if ANDROID
-        var alertBuilder = new Android.App.AlertDialog.Builder(Platform.CurrentActivity);
+            var alertBuilder = new Android.App.AlertDialog.Builder(Platform.CurrentActivity);
 
-        alertBuilder.SetTitle(title);
-        if (content is string message)
-            alertBuilder.SetMessage(message);
-        else
-            alertBuilder.SetView(content as Android.Views.View);
+            alertBuilder.SetTitle(title);
+            if (content is string message)
+                alertBuilder.SetMessage(message);
+            else
+                alertBuilder.SetView(content as Android.Views.View);
 
-        if (!string.IsNullOrEmpty(primaryButtonText))
-            alertBuilder.SetPositiveButton(primaryButtonText, (senderAlert, args) =>
-            {
-                taskCompletionSource.TrySetResult(primaryResult);
-            });
-        if (!string.IsNullOrEmpty(secondaryButtonText))
-            alertBuilder.SetNegativeButton(secondaryButtonText, (senderAlert, args) =>
-            {
-                taskCompletionSource.TrySetResult(secondaryResult);
-            });
-        if (!string.IsNullOrEmpty(closeButtonText))
-            alertBuilder.SetNeutralButton(closeButtonText, (senderAlery, args) =>
-            {
-                taskCompletionSource.TrySetResult(closeResult);
-            });
-
-        var dialog = alertBuilder.Create();
-        // Tapping outside the dialog or pressing Back closes it without a button.
-        if (dialog is not null)
-            dialog.CancelEvent += (_, _) => taskCompletionSource.TrySetResult(closeResult);
-        dialog?.Show();
-        var result = await taskCompletionSource.Task;
-        return result;
-#elif WINDOWS
-        var current = windowContext.CurrentPage ?? throw new InvalidOperationException(
-                "No active Page to host the content dialog popup.");
-        var dialog = new Microsoft.UI.Xaml.Controls.ContentDialog
-        {
-            RequestedTheme = Application.Current?.RequestedTheme ==
-         AppTheme.Dark ? Microsoft.UI.Xaml.ElementTheme.Dark :
-         Application.Current?.RequestedTheme == AppTheme.Light ?
-         Microsoft.UI.Xaml.ElementTheme.Light : Microsoft.UI.Xaml.ElementTheme.Default,
-            Title = title,
-            Content = content,
-            PrimaryButtonText = primaryButtonText,
-            SecondaryButtonText = secondaryButtonText,
-            CloseButtonText = closeButtonText,
-            XamlRoot = current.Handler?.PlatformView is Microsoft.UI.Xaml.UIElement page ? page.XamlRoot : null
-        };
-        dialog.Closed += (s, e) => taskCompletionSource.TrySetResult(default);
-        dialog.PrimaryButtonClick += (s, e) => taskCompletionSource.TrySetResult(primaryResult);
-        dialog.SecondaryButtonClick += (s, e) => taskCompletionSource.TrySetResult(secondaryResult);
-        dialog.CloseButtonClick += (s, e) => taskCompletionSource.TrySetResult(closeResult);
-        // WinUI allows one ContentDialog at a time per window: a second ShowAsync throws. Wait for the one that is open.
-        await WindowsDialogGate.WaitAsync();
-        try { await dialog.ShowAsync(); }
-        finally { WindowsDialogGate.Release(); }
-        return await taskCompletionSource.Task;
-
-#elif MACCATALYST || IOS
-        if (content is string message)
-        {
-            var alert = new UIKit.UIAlertController
-            {
-                Title = title,
-                Message = message,
-                //PreferredStyle = UIKit.UIAlertControllerStyle.Alert
-            };
             if (!string.IsNullOrEmpty(primaryButtonText))
-                alert.AddAction(UIKit.UIAlertAction.Create(primaryButtonText, UIKit.UIAlertActionStyle.Default, _ =>
+                alertBuilder.SetPositiveButton(primaryButtonText, (senderAlert, args) =>
                 {
                     taskCompletionSource.TrySetResult(primaryResult);
-                }));
+                });
             if (!string.IsNullOrEmpty(secondaryButtonText))
-                alert.AddAction(UIKit.UIAlertAction.Create(secondaryButtonText, UIKit.UIAlertActionStyle.Default, _ =>
+                alertBuilder.SetNegativeButton(secondaryButtonText, (senderAlert, args) =>
                 {
                     taskCompletionSource.TrySetResult(secondaryResult);
-                }));
+                });
             if (!string.IsNullOrEmpty(closeButtonText))
-                alert.AddAction(UIKit.UIAlertAction.Create(closeButtonText, UIKit.UIAlertActionStyle.Default, _ =>
+                alertBuilder.SetNeutralButton(closeButtonText, (senderAlery, args) =>
                 {
                     taskCompletionSource.TrySetResult(closeResult);
-                }));
-            var keyWindow = UIKit.UIApplication.SharedApplication.ConnectedScenes
-                                .OfType<UIKit.UIWindowScene>()
-                                .SelectMany(s => s.Windows)
-                                .FirstOrDefault(w => w.IsKeyWindow);
-            var rootViewController = keyWindow?.RootViewController
-                ?? throw new InvalidOperationException("No window to present the alert; the caller would wait for ever.");
-            rootViewController.PresentViewController(alert, true, null);
-            return await taskCompletionSource.Task;
-        }
-        else if (content is UIKit.UIView contentView)
-        {
-            var vc = new UIKit.UIViewController { ModalPresentationStyle = UIKit.UIModalPresentationStyle.FormSheet };
-            vc.PreferredContentSize = new CoreGraphics.CGSize(320, 360);
+                });
 
-            var stack = new UIKit.UIStackView { Axis = UIKit.UILayoutConstraintAxis.Vertical, Spacing = 12 };
-            stack.TranslatesAutoresizingMaskIntoConstraints = false;
-
-            if (!string.IsNullOrEmpty(title))
+            var dialog = alertBuilder.Create();
+            // Tapping outside the dialog or pressing Back closes it without a button.
+            if (dialog is not null)
+                dialog.CancelEvent += (_, _) => taskCompletionSource.TrySetResult(closeResult);
+            dialog?.Show();
+            var result = await taskCompletionSource.Task;
+            return result;
+#elif WINDOWS
+            var current = windowContext.CurrentPage ?? throw new InvalidOperationException(
+                    "No active Page to host the content dialog popup.");
+            var dialog = new Microsoft.UI.Xaml.Controls.ContentDialog
             {
-                var label = new UIKit.UILabel
-                {
-                    Text = title
-                };
-                if (UIKit.UIFont.BoldSystemFontOfSize(17) is { } font)
-                {
-                    label.Font = font;
-                }
-                else if (UIKit.UIFont.SystemFontOfSize(17) is { } font2)
-                {
-                    label.Font = font2;
-                }
-                stack.AddArrangedSubview(label);
-            }
-            contentView.TranslatesAutoresizingMaskIntoConstraints = false;
-            stack.AddArrangedSubview(contentView);
-
-            var buttons = new UIKit.UIStackView
-            {
-                Axis = UIKit.UILayoutConstraintAxis.Horizontal,
-                Spacing = 8,
-                Distribution = UIKit.UIStackViewDistribution.FillEqually
+                RequestedTheme = Application.Current?.RequestedTheme ==
+             AppTheme.Dark ? Microsoft.UI.Xaml.ElementTheme.Dark :
+             Application.Current?.RequestedTheme == AppTheme.Light ?
+             Microsoft.UI.Xaml.ElementTheme.Light : Microsoft.UI.Xaml.ElementTheme.Default,
+                Title = title,
+                Content = content,
+                PrimaryButtonText = primaryButtonText,
+                SecondaryButtonText = secondaryButtonText,
+                CloseButtonText = closeButtonText,
+                XamlRoot = current.Handler?.PlatformView is Microsoft.UI.Xaml.UIElement page ? page.XamlRoot : null
             };
+            dialog.Closed += (s, e) => taskCompletionSource.TrySetResult(default);
+            dialog.PrimaryButtonClick += (s, e) => taskCompletionSource.TrySetResult(primaryResult);
+            dialog.SecondaryButtonClick += (s, e) => taskCompletionSource.TrySetResult(secondaryResult);
+            dialog.CloseButtonClick += (s, e) => taskCompletionSource.TrySetResult(closeResult);
+            // WinUI allows one ContentDialog at a time per window: a second ShowAsync throws. Wait for the one that is open.
+            await WindowsDialogGate.WaitAsync();
+            try { await dialog.ShowAsync(); }
+            finally { WindowsDialogGate.Release(); }
+            return await taskCompletionSource.Task;
 
-            void AddButton(string? text, T result)
+#elif MACCATALYST || IOS
+            if (content is string message)
             {
-                if (string.IsNullOrEmpty(text)) return;
-                var button = UIKit.UIButton.FromType(UIKit.UIButtonType.System);
-                button.SetTitle(text, UIKit.UIControlState.Normal);
-                button.TouchUpInside += (_, _) => { taskCompletionSource.TrySetResult(result); vc.DismissViewController(true, null); };
-                buttons.AddArrangedSubview(button);
+                var alert = new UIKit.UIAlertController
+                {
+                    Title = title,
+                    Message = message,
+                    //PreferredStyle = UIKit.UIAlertControllerStyle.Alert
+                };
+                if (!string.IsNullOrEmpty(primaryButtonText))
+                    alert.AddAction(UIKit.UIAlertAction.Create(primaryButtonText, UIKit.UIAlertActionStyle.Default, _ =>
+                    {
+                        taskCompletionSource.TrySetResult(primaryResult);
+                    }));
+                if (!string.IsNullOrEmpty(secondaryButtonText))
+                    alert.AddAction(UIKit.UIAlertAction.Create(secondaryButtonText, UIKit.UIAlertActionStyle.Default, _ =>
+                    {
+                        taskCompletionSource.TrySetResult(secondaryResult);
+                    }));
+                if (!string.IsNullOrEmpty(closeButtonText))
+                    alert.AddAction(UIKit.UIAlertAction.Create(closeButtonText, UIKit.UIAlertActionStyle.Default, _ =>
+                    {
+                        taskCompletionSource.TrySetResult(closeResult);
+                    }));
+                var keyWindow = UIKit.UIApplication.SharedApplication.ConnectedScenes
+                                    .OfType<UIKit.UIWindowScene>()
+                                    .SelectMany(s => s.Windows)
+                                    .FirstOrDefault(w => w.IsKeyWindow);
+                var rootViewController = keyWindow?.RootViewController
+                    ?? throw new InvalidOperationException("No window to present the alert; the caller would wait for ever.");
+                rootViewController.PresentViewController(alert, true, null);
+                return await taskCompletionSource.Task;
             }
-            AddButton(primaryButtonText, primaryResult);
-            AddButton(secondaryButtonText, secondaryResult);
-            AddButton(closeButtonText, closeResult);
-            stack.AddArrangedSubview(buttons);
-
-            vc.View!.AddSubview(stack);
-            UIKit.NSLayoutConstraint.ActivateConstraints(new[]
+            else if (content is UIKit.UIView contentView)
             {
+                var vc = new UIKit.UIViewController { ModalPresentationStyle = UIKit.UIModalPresentationStyle.FormSheet };
+                vc.PreferredContentSize = new CoreGraphics.CGSize(320, 360);
+
+                var stack = new UIKit.UIStackView { Axis = UIKit.UILayoutConstraintAxis.Vertical, Spacing = 12 };
+                stack.TranslatesAutoresizingMaskIntoConstraints = false;
+
+                if (!string.IsNullOrEmpty(title))
+                {
+                    var label = new UIKit.UILabel
+                    {
+                        Text = title
+                    };
+                    if (UIKit.UIFont.BoldSystemFontOfSize(17) is { } font)
+                    {
+                        label.Font = font;
+                    }
+                    else if (UIKit.UIFont.SystemFontOfSize(17) is { } font2)
+                    {
+                        label.Font = font2;
+                    }
+                    stack.AddArrangedSubview(label);
+                }
+                contentView.TranslatesAutoresizingMaskIntoConstraints = false;
+                stack.AddArrangedSubview(contentView);
+
+                var buttons = new UIKit.UIStackView
+                {
+                    Axis = UIKit.UILayoutConstraintAxis.Horizontal,
+                    Spacing = 8,
+                    Distribution = UIKit.UIStackViewDistribution.FillEqually
+                };
+
+                void AddButton(string? text, T result)
+                {
+                    if (string.IsNullOrEmpty(text)) return;
+                    var button = UIKit.UIButton.FromType(UIKit.UIButtonType.System);
+                    button.SetTitle(text, UIKit.UIControlState.Normal);
+                    button.TouchUpInside += (_, _) => { taskCompletionSource.TrySetResult(result); vc.DismissViewController(true, null); };
+                    buttons.AddArrangedSubview(button);
+                }
+                AddButton(primaryButtonText, primaryResult);
+                AddButton(secondaryButtonText, secondaryResult);
+                AddButton(closeButtonText, closeResult);
+                stack.AddArrangedSubview(buttons);
+
+                vc.View!.AddSubview(stack);
+                UIKit.NSLayoutConstraint.ActivateConstraints(new[]
+                {
                     stack.LeadingAnchor.ConstraintEqualTo(vc.View.LeadingAnchor, 16),
                     stack.TrailingAnchor.ConstraintEqualTo(vc.View.TrailingAnchor, -16),
                     stack.TopAnchor.ConstraintEqualTo(vc.View.TopAnchor, 16),
                     stack.BottomAnchor.ConstraintEqualTo(vc.View.BottomAnchor, -16),
                 });
 
-            // The sheet was built but never presented, so the caller waited for ever.
-            var top = UIKit.UIApplication.SharedApplication.ConnectedScenes
-                .OfType<UIKit.UIWindowScene>()
-                .SelectMany(s => s.Windows)
-                .FirstOrDefault(w => w.IsKeyWindow)?.RootViewController;
-            while (top?.PresentedViewController is { } presented)
-                top = presented;
+                // The sheet was built but never presented, so the caller waited for ever.
+                var top = UIKit.UIApplication.SharedApplication.ConnectedScenes
+                    .OfType<UIKit.UIWindowScene>()
+                    .SelectMany(s => s.Windows)
+                    .FirstOrDefault(w => w.IsKeyWindow)?.RootViewController;
+                while (top?.PresentedViewController is { } presented)
+                    top = presented;
 
-            if (top is null)
-                return closeResult;
+                if (top is null)
+                    return closeResult;
 
-            // Only the buttons close it: a swipe down would dismiss it without a result and leave the caller waiting.
-            vc.ModalInPresentation = true;
-            top.PresentViewController(vc, true, null);
-            return await taskCompletionSource.Task;
-        }
+                // Only the buttons close it: a swipe down would dismiss it without a result and leave the caller waiting.
+                vc.ModalInPresentation = true;
+                top.PresentViewController(vc, true, null);
+                return await taskCompletionSource.Task;
+            }
 
 #endif
 #if ANDROID || WINDOWS || MACCATALYST || IOS
-        throw new NotImplementedException();
+            throw new NotImplementedException();
 #else
             // No native dialog on this target (the plain net10.0 one, which is what a platform without a MAUI backend of its own
             // runs): the three buttons are those of a content dialog, drawn by the content dialog service with MAUI views.

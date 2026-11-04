@@ -1,6 +1,6 @@
 using Routeables.Abstraction;
-using System.Windows.Input;
 using Routeables.Segments;
+using System.Windows.Input;
 using XAminals.Common;
 using XAnimals.Common;
 

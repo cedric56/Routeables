@@ -1,11 +1,10 @@
-using System.Globalization;
-using System.Windows;
-using System.Windows.Controls;
 using NSubstitute;
 using Routeables.Abstraction;
 using Routeables.Routing;
 using Routeables.Tests.Core;
 using Routeables.Wpf;
+using System.Globalization;
+using System.Windows.Controls;
 using Rect = System.Windows.Rect;
 using Size = System.Windows.Size;
 using Visibility = System.Windows.Visibility;

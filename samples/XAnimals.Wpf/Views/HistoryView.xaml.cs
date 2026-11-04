@@ -1,7 +1,7 @@
+using Routeables.Wpf;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using Routeables.Wpf;
 
 namespace XAnimals.Wpf.Views;
 

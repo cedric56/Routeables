@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Routeables.Maui;
+﻿using Routeables.Maui;
 using XAminals.Models;
 using XAnimals.ViewModels;
 

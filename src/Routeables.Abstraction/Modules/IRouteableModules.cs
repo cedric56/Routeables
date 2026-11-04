@@ -1,6 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Routeables.Abstraction;
 

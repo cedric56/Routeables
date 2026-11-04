@@ -1,14 +1,14 @@
+using NSubstitute;
+using Routeables.Services;
+using Routeables.Wpf.Services;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using NSubstitute;
-using Routeables.Services;
-using Routeables.Wpf.Services;
+using static Routeables.Tests.Wpf.WpfTestWindows;
 using Application = System.Windows.Application;
 using Window = System.Windows.Window;
-using static Routeables.Tests.Wpf.WpfTestWindows;
 
 namespace Routeables.Tests.Wpf;
 

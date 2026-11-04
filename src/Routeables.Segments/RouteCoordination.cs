@@ -1,8 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Routeables.Abstraction;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
-using Routeables.Abstraction;
-using Routeables.Routing;
 
 namespace Routeables.Segments;
 

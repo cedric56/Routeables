@@ -1,4 +1,5 @@
 ﻿namespace XAminals.Models;
+
 public class Animal
 {
     public required string Name { get; set; }

@@ -1,6 +1,6 @@
-using System.Text.Json;
 using Microsoft.JSInterop;
 using Routeables.Services;
+using System.Text.Json;
 
 namespace Routeables.Razor.Services;
 

@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using Routeables.Abstraction;
+using System.Diagnostics;
 
 namespace XAnimals.ViewModels;
 

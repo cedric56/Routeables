@@ -3,7 +3,6 @@ using Avalonia.Controls.Notifications;
 using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
 using Routeables.Services;
-using Routeables.Avalonia;
 
 namespace Routeables.Avalonia.Services;
 

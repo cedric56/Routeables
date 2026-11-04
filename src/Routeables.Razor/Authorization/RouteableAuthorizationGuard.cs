@@ -1,8 +1,8 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
+using System.Security.Claims;
 
 namespace Routeables.Razor;
 

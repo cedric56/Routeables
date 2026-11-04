@@ -1,7 +1,6 @@
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
-using Routeables.Routing;
 using Routeables.Regions;
+using Routeables.Routing;
 
 namespace Routeables.Tests.Abstraction;
 
@@ -132,7 +131,8 @@ public class RegionFollowerTests
                 SetSynchronizationContext(this);
                 foreach (var (callback, state) in _queue.GetConsumingEnumerable())
                     callback(state);
-            }) { IsBackground = true };
+            })
+            { IsBackground = true };
             _thread.Start();
         }
 

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Core;
 using Routeables.Razor.Components;
