@@ -49,38 +49,75 @@ Two ways to register a page. Both start the same way and need no menu (Avalonia 
 **With the generator**: the route is on the view model, the view is found by its name.
 
 ```csharp
-[Routeable("/hello/{name}")]                         // the route is declared on the view model
-public sealed class HelloViewModel(IRouter router, string name)
+//You can define the entry route by default it is "/" like Blazor
+public partial class MainViewModel(IRouter router) : MainViewModelDefault(router, "/hello/World") 
 {
-    public Task SayHelloAgainAsync() => router.GoToAsync("/hello/World");
+
+}
+```
+Without generated source
+
+```csharp
+public sealed class HelloViewModel(string name)
+{
+    public string? Name { get; } = name;
 }
 
-public partial class HelloView : RouteableFor<HelloViewModel> { }   // the page: found by its name
+public partial class HelloView : UserControl { }
+
 
 AppBuilder.Configure<App>()
-    .UseRouteables(r => { r.AddGeneratedRoutes(); r.AddHome("/hello/World"); },   // register the pages, say which one opens first
+    .UseRouteables<MainViewModel>(r =>
+        {
+             r.RegisterRoute<HelloView, HelloViewModel>(route: "/hello/{name}");
+        },
         view: lifetime => new MainWindow());
 ```
 
-**By name**: one line per page, no generator, no attribute, no base class. Any view and any class as its view model.
 
 ```csharp
 AppBuilder.Configure<App>()
-    .UseRouteables(r =>
+    .UseRouteables<MainViewModel>(r =>
         {
-            r.RegisterRoute<HomeView, HomeViewModel>(route: "home");
-            r.RegisterRoute<AboutView, AboutViewModel>(route: "about");
-            r.AddHome("home");
+             r.RegisterRoute<HelloView, HelloViewModel>(route: "/hello/{name}");
         },
         view: lifetime => new MainWindow());
-
-// from a view model that asks for an IRouter:  await router.GoToAsync("about");
+```
+OR with generated source 
+```csharp
+[Routeable("/hello/{name}")]                         // the route is declared on the view model
+public sealed class HelloViewModel(string name)
+{
+    public string? Name { get; } = name;
+}
+AppBuilder.Configure<App>()
+    .UseRouteables<MainViewModel>(r =>
+        {
+             r.AddGeneratedRoutes();
+        },
+        view: lifetime => new MainWindow());
 ```
 
 In both, the main view says where the pages appear (Blazor: `<RouteableRegion />`):
 
 ```xml
+xmlns:routeables="clr-namespace:Routeables.Avalonia;assembly=Routeables.Avalonia"
 <routeables:RouteableRegion />
+```
+
+Important don't forget to remove initialization in OnFrameworkInitializationCompleted
+
+```csharp
+  public override void OnFrameworkInitializationCompleted()
+  {
+      //Routeables will do it
+      //if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+      //{
+      //    desktop.MainWindow = new MainWindow();
+      //}
+
+      base.OnFrameworkInitializationCompleted();
+  }
 ```
 
 A route (on the view model, or given by name), a view, one registration and a `RouteableRegion`: the zone of the screen that shows whatever the router displays. That is the whole model. A main view model is only for a menu: `UseRouteables<MainViewModel>(...)`. The first page, step by step: [Getting started](docs/getting-started.md).
