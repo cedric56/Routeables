@@ -29,7 +29,7 @@ public class DialogViewTests
     [Fact]
     public void Context_maps_to_the_Avalonia_DataContext()
     {
-        var view = new DialogView<TestViewModel, int>();
+        var view = new RouteableModalFor<TestViewModel, int>();
         var viewModel = new TestViewModel();
 
         view.Context = viewModel;
@@ -41,7 +41,7 @@ public class DialogViewTests
     [Fact]
     public async Task ShowModalAsync_requires_a_closeable_view_model_context()
     {
-        var view = new DialogView<TestViewModel, int>();
+        var view = new RouteableModalFor<TestViewModel, int>();
 
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => view.ShowModalAsync());
 
@@ -100,7 +100,7 @@ public class DialogViewTests
         viewModel.Commands.Add(Command("Save"));
         viewModel.Commands.Add(Command("Skip"));
         viewModel.Commands.Add(Command("Cancel"));
-        var view = new DialogView<TestViewModel, int> { Context = viewModel };
+        var view = new RouteableModalFor<TestViewModel, int> { Context = viewModel };
         RouteableContentDialog? shown = null;
 
         await WithServiceAsync(new FakeMessageBox(dialog => { shown = dialog; return Task.FromResult(RouteableContentDialogResult.None); }),
@@ -119,7 +119,7 @@ public class DialogViewTests
     [Fact]
     public async Task ShowModalAsync_adds_a_close_button_when_the_view_model_has_no_commands()
     {
-        var view = new DialogView<TestViewModel, int> { Context = new TestViewModel() };
+        var view = new RouteableModalFor<TestViewModel, int> { Context = new TestViewModel() };
         RouteableContentDialog? shown = null;
 
         await WithServiceAsync(new FakeMessageBox(dialog => { shown = dialog; return Task.FromResult(RouteableContentDialogResult.None); }),
@@ -135,7 +135,7 @@ public class DialogViewTests
         var viewModel = new TestViewModel();
         viewModel.Commands.Add(Command("Save"));
         viewModel.Commands.Add(Command("Skip"));
-        var view = new DialogView<TestViewModel, int> { Context = viewModel };
+        var view = new RouteableModalFor<TestViewModel, int> { Context = viewModel };
         bool? primaryBefore = null, secondaryBefore = null, primaryAfter = null;
 
         await WithServiceAsync(new FakeMessageBox(async dialog =>
@@ -159,7 +159,7 @@ public class DialogViewTests
         viewModel.Commands.Add(Command("Save"));
         viewModel.Commands.Add(Command("Skip"));
         viewModel.Commands.Add(Command("Cancel", new RecordingCommand(() => false)));
-        var view = new DialogView<TestViewModel, int> { Context = viewModel };
+        var view = new RouteableModalFor<TestViewModel, int> { Context = viewModel };
         bool? vetoed = null;
 
         await WithServiceAsync(new FakeMessageBox(dialog =>
@@ -176,7 +176,7 @@ public class DialogViewTests
     {
         var viewModel = new TestViewModel();
         viewModel.Commands.Add(Command("Save"));
-        var view = new DialogView<TestViewModel, int> { Context = viewModel };
+        var view = new RouteableModalFor<TestViewModel, int> { Context = viewModel };
         var closes = 0;
 
         var result = await WithServiceAsync(new FakeMessageBox(async dialog =>
@@ -195,7 +195,7 @@ public class DialogViewTests
     public async Task ShowModalAsync_returns_the_value_of_the_close_request_and_unsubscribes()
     {
         var viewModel = new TestViewModel();
-        var view = new DialogView<TestViewModel, int> { Context = viewModel };
+        var view = new RouteableModalFor<TestViewModel, int> { Context = viewModel };
 
         var result = await WithServiceAsync(new FakeMessageBox(async _ =>
         {
@@ -211,7 +211,7 @@ public class DialogViewTests
     public async Task ShowModalAsync_unsubscribes_when_the_dialog_is_dismissed_or_fails()
     {
         var viewModel = new TestViewModel();
-        var view = new DialogView<TestViewModel, int> { Context = viewModel };
+        var view = new RouteableModalFor<TestViewModel, int> { Context = viewModel };
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => WithServiceAsync(
             new FakeMessageBox(_ => throw new InvalidOperationException("boom")),
@@ -223,7 +223,7 @@ public class DialogViewTests
     [Fact]
     public async Task ShowModalAsync_without_a_message_box_service_explains_what_is_missing()
     {
-        var view = new DialogView<TestViewModel, int> { Context = new TestViewModel() };
+        var view = new RouteableModalFor<TestViewModel, int> { Context = new TestViewModel() };
         var previous = ServiceLocator.Services;
         ServiceLocator.Services = null;
         try

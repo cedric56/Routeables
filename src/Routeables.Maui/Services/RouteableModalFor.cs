@@ -25,4 +25,8 @@ public class RouteableModalFor<TViewModel, TResult> : RouteableFor, IRouteableMo
 
         return services.GetRequiredService<IMessageBoxService>().ShowModalAsync<TViewModel, TResult>(viewModel, () => this);
     }
+
+    /// <summary>Override to perform custom validation logic if needed.</summary>
+    /// <param name="result">The result the dialog produced.</param>
+    protected virtual Task OnValidateAsync(TResult? result) => Task.CompletedTask;
 }

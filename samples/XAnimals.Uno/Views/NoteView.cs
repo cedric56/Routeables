@@ -1,5 +1,3 @@
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Routeables.Abstraction;
 using Routeables.Uno.Services;
@@ -10,7 +8,7 @@ namespace XAnimals.Uno.Views;
 // Shown by IServiceProvider.ShowModalAsync<NoteViewModel, string>(); the buttons come from the view model's commands.
 // A WinUI XAML file cannot have a generic root, so this view is written in code.
 [RouteableView(typeof(NoteViewModel))]
-public partial class NoteView : DialogView<NoteViewModel, string>
+public partial class NoteView : RouteableModalFor<NoteViewModel, string>
 {
     public NoteView()
     {

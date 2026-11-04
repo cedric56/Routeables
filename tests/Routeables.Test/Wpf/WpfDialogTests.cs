@@ -389,7 +389,7 @@ public class WpfDialogTests
         }
     }
 
-    private sealed class ModalView : DialogView<ModalViewModel, string>
+    private sealed class ModalView : RouteableModalFor<ModalViewModel, string>
     {
         public string? Validated { get; private set; } = "(not validated)";
 

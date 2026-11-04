@@ -3,17 +3,8 @@ using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Services;
-using Routeables.Avalonia;
 
 namespace Routeables.Avalonia.Services;
-
-/// <summary>
-/// Non-generic base class for dialog views, allowing dialog controls to be referenced or
-/// grouped without knowing their view model or result types.
-/// </summary>
-public abstract class DialogViewBase : UserControl
-{
-}
 
 /// <summary>
 /// Base view for a modal dialog backed by a closeable view model. The view is shown as the content of a content
@@ -22,7 +13,7 @@ public abstract class DialogViewBase : UserControl
 /// </summary>
 /// <typeparam name="TViewModel">The closeable view model type driving this dialog.</typeparam>
 /// <typeparam name="TResult">The result type produced when the dialog is closed.</typeparam>
-public class DialogView<TViewModel, TResult> : DialogViewBase,
+public class RouteableModalFor<TViewModel, TResult> : UserControl,
     IRouteableModalFor<TViewModel, TResult?>
     where TViewModel : class, ICloseableViewModel<TResult?>
 {

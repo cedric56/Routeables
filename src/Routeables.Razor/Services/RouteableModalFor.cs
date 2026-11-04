@@ -53,5 +53,7 @@ public partial class RouteableModalFor<[DynamicallyAccessedMembers(DynamicallyAc
         }
     }
 
-
+    /// <summary>Override to perform custom validation logic if needed.</summary>
+    /// <param name="result">The result the dialog produced.</param>
+    protected virtual Task OnValidateAsync(TResult? result) => Task.CompletedTask;
 }
