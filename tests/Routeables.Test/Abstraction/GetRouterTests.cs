@@ -15,7 +15,7 @@ public class GetRouterTests
         var error = Assert.Throws<InvalidOperationException>(() => provider.GetRouter("sidebar"));
 
         Assert.Contains("'sidebar'", error.Message);
-        Assert.Contains("AddRegion", error.Message);
+        Assert.Contains("AddRegion", error.Message); 
     }
 
     [Fact]
