@@ -3,6 +3,9 @@ using UIKit;
 
 namespace Routeables.Test.Maui
 {
+    /// <summary>
+    /// Entry
+    /// </summary>
     public class Program
     {
         // This is the main entry point of the application.

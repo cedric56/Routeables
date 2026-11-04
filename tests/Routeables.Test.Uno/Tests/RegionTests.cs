@@ -12,6 +12,7 @@ namespace Routeables.Test.Uno.Tests;
 [RunsOnUIThread]
 public class RegionTests
 {
+    /// <summary>Resets the host, creates a <see cref="RouteableRegion"/>, optionally configures it, loads it and returns it.</summary>
     private static async Task<RouteableRegion> LoadedRegionAsync(Action<RouteableRegion>? configure = null)
     {
         await TestHost.ResetAsync();
@@ -20,6 +21,7 @@ public class RegionTests
         return await TestHost.LoadAsync(region);
     }
 
+    /// <summary>A region shows the view of the navigated route.</summary>
     [TestMethod]
     public async Task A_region_shows_the_view_of_the_route()
     {
@@ -27,7 +29,6 @@ public class RegionTests
         try
         {
             var result = await TestHost.Services.GoToAsync("/a");
-
             Assert.IsTrue(result.Success);
             await TestHost.UntilAsync(() => region.Content is PageAView);
             Assert.IsNotNull(((PageAView)region.Content!).ViewModel);
@@ -35,6 +36,7 @@ public class RegionTests
         finally { await TestHost.UnloadAsync(region); }
     }
 
+    /// <summary>An empty region shows nothing.</summary>
     [TestMethod]
     public async Task An_empty_region_shows_nothing()
     {
@@ -43,6 +45,7 @@ public class RegionTests
         finally { await TestHost.UnloadAsync(region); }
     }
 
+    /// <summary>A region loaded after a route has already been navigated shows the current view at once.</summary>
     [TestMethod]
     public async Task A_region_loaded_after_the_route_shows_the_current_view_at_once()
     {
@@ -53,6 +56,7 @@ public class RegionTests
         finally { await TestHost.UnloadAsync(region); }
     }
 
+    /// <summary>Going back and forward shows the previous and the next view.</summary>
     [TestMethod]
     public async Task Going_back_and_forward_shows_the_previous_and_the_next_view()
     {
@@ -62,16 +66,15 @@ public class RegionTests
             await TestHost.Services.GoToAsync("/a");
             await TestHost.Services.GoToAsync("/b");
             await TestHost.UntilAsync(() => region.Content is PageBView);
-
             Assert.IsTrue((await TestHost.Router().GoBackAsync()).Success);
             await TestHost.UntilAsync(() => region.Content is PageAView);
-
             Assert.IsTrue((await TestHost.Router().ForwardAsync()).Success);
             await TestHost.UntilAsync(() => region.Content is PageBView);
         }
         finally { await TestHost.UnloadAsync(region); }
     }
 
+    /// <summary>A page that refuses to be left stays on screen until it allows navigation.</summary>
     [TestMethod]
     public async Task A_page_that_refuses_to_be_left_stays_on_screen()
     {
@@ -82,12 +85,9 @@ public class RegionTests
             await TestHost.UntilAsync(() => region.Content is PageAView);
             var page = (PageAView)region.Content!;
             page.ViewModel.CanLeave = false;
-
             var refused = await TestHost.Services.GoToAsync("/b");
-
             Assert.IsFalse(refused.Success);
             Assert.AreSame(page, region.Content);
-
             page.ViewModel.CanLeave = true;
             Assert.IsTrue((await TestHost.Services.GoToAsync("/b")).Success);
             await TestHost.UntilAsync(() => region.Content is PageBView);
@@ -95,6 +95,7 @@ public class RegionTests
         finally { await TestHost.UnloadAsync(region); }
     }
 
+    /// <summary>Each region shows the view belonging to its own navigation independently.</summary>
     [TestMethod]
     public async Task Each_region_shows_its_own_view()
     {
@@ -104,7 +105,6 @@ public class RegionTests
         {
             await TestHost.Services.GoToAsync("/a");
             await TestHost.Services.GoToAsync("/b", App.Side);
-
             await TestHost.UntilAsync(() => main.Content is PageAView && side.Content is PageBView);
         }
         finally
@@ -114,6 +114,7 @@ public class RegionTests
         }
     }
 
+    /// <summary>Erasing the history empties the region.</summary>
     [TestMethod]
     public async Task Erasing_the_history_empties_the_region()
     {
@@ -122,29 +123,27 @@ public class RegionTests
         {
             await TestHost.Services.GoToAsync("/a");
             await TestHost.UntilAsync(() => region.Content is PageAView);
-
             await TestHost.Router().EraseHistoryAsync();
-
             await TestHost.UntilAsync(() => region.Content is null);
         }
         finally { await TestHost.UnloadAsync(region); }
     }
 
+    /// <summary>A region that leaves the tree releases the view and stops following the router.</summary>
     [TestMethod]
     public async Task A_region_that_leaves_the_tree_lets_go_of_the_view_and_stops_following_the_router()
     {
         var region = await LoadedRegionAsync();
         await TestHost.Services.GoToAsync("/a");
         await TestHost.UntilAsync(() => region.Content is PageAView);
-
         await TestHost.UnloadAsync(region);
-
         Assert.IsNull(region.Content);
         await TestHost.Services.GoToAsync("/b");
         await Task.Delay(100);
         Assert.IsNull(region.Content);
     }
 
+    /// <summary>A region that comes back into the tree shows the current view again.</summary>
     [TestMethod]
     public async Task A_region_that_comes_back_shows_the_current_view_again()
     {
@@ -152,12 +151,12 @@ public class RegionTests
         await TestHost.Services.GoToAsync("/a");
         await TestHost.UntilAsync(() => region.Content is PageAView);
         await TestHost.UnloadAsync(region);
-
         await TestHost.LoadAsync(region);
         try { await TestHost.UntilAsync(() => region.Content is PageAView); }
         finally { await TestHost.UnloadAsync(region); }
     }
 
+    /// <summary>Changing the region name while loaded switches the region to follow the other router.</summary>
     [TestMethod]
     public async Task Changing_the_region_while_loaded_follows_the_other_router()
     {
@@ -167,16 +166,15 @@ public class RegionTests
             await TestHost.Services.GoToAsync("/a");
             await TestHost.Services.GoToAsync("/b", App.Side);
             await TestHost.UntilAsync(() => region.Content is PageAView);
-
             region.Region = App.Side;
             await TestHost.UntilAsync(() => region.Content is PageBView);
-
             region.Region = null;
             await TestHost.UntilAsync(() => region.Content is PageAView);
         }
         finally { await TestHost.UnloadAsync(region); }
     }
 
+    /// <summary>A view held by another host produces an error that names who holds it.</summary>
     [TestMethod]
     public async Task A_view_held_by_another_host_gives_an_error_that_names_who_holds_it()
     {
@@ -198,7 +196,6 @@ public class RegionTests
             {
                 message = ex.ToString();
             }
-
             Assert.IsNotNull(message);
             StringAssert.Contains(message, "already displayed");
             Assert.AreSame(page, other.Content);
@@ -213,6 +210,7 @@ public class RegionTests
 
     // ------------------------------------------------------------------------------------------------ transitions
 
+    /// <summary>Every built-in region transition shows pages correctly going forward and back.</summary>
     [TestMethod]
     public async Task Every_built_in_transition_of_the_region_shows_the_pages_going_forward_and_back()
     {
@@ -224,7 +222,6 @@ public class RegionTests
                 await TestHost.Services.GoToAsync("/a");
                 await TestHost.Services.GoToAsync("/b");
                 await TestHost.UntilAsync(() => region.Content is PageBView);
-
                 await TestHost.Router().GoBackAsync();
                 await TestHost.UntilAsync(() => region.Content is PageAView);
             }
@@ -232,6 +229,7 @@ public class RegionTests
         }
     }
 
+    /// <summary>Every built-in transition requested by the navigation shows the target page.</summary>
     [TestMethod]
     public async Task Every_built_in_transition_asked_by_the_navigation_shows_the_page()
     {
@@ -242,13 +240,13 @@ public class RegionTests
             {
                 await TestHost.Services.GoToAsync("/a");
                 await TestHost.Services.GoToAsync("/b", TestHost.With(transition));
-
                 await TestHost.UntilAsync(() => region.Content is PageBView);
             }
             finally { await TestHost.UnloadAsync(region); }
         }
     }
 
+    /// <summary>The transition requested by the navigation takes precedence over the region's transition.</summary>
     [TestMethod]
     public async Task The_transition_of_the_navigation_wins_over_the_one_of_the_region()
     {
@@ -258,12 +256,12 @@ public class RegionTests
             await TestHost.Services.GoToAsync("/a");
             await TestHost.Services.GoToAsync("/b", TestHost.With(RouteTransition.Slide));
             await TestHost.UntilAsync(() => region.Content is PageBView);
-
             Assert.IsTrue(region.ContentTransitions is { Count: 1 } transitions && transitions[0] is EntranceThemeTransition);
         }
         finally { await TestHost.UnloadAsync(region); }
     }
 
+    /// <summary>The legacy duration of the region plays the theme transition.</summary>
     [TestMethod]
     public async Task The_old_duration_of_the_region_plays_the_theme_transition()
     {
@@ -272,12 +270,12 @@ public class RegionTests
         {
             await TestHost.Services.GoToAsync("/a");
             await TestHost.UntilAsync(() => region.Content is PageAView);
-
             Assert.IsNotNull(region.ContentTransitions);
         }
         finally { await TestHost.UnloadAsync(region); }
     }
 
+    /// <summary>None on the navigation suppresses the transition of the region.</summary>
     [TestMethod]
     public async Task None_on_the_navigation_stops_the_transition_of_the_region()
     {
@@ -287,12 +285,12 @@ public class RegionTests
             await TestHost.Services.GoToAsync("/a");
             await TestHost.Services.GoToAsync("/b", TestHost.With(RouteTransition.None));
             await TestHost.UntilAsync(() => region.Content is PageBView);
-
             Assert.IsNull(region.ContentTransitions);
         }
         finally { await TestHost.UnloadAsync(region); }
     }
 
+    /// <summary>An unknown transition name shows the view at once without failing.</summary>
     [TestMethod]
     public async Task An_unknown_transition_name_shows_the_view_at_once_without_failing()
     {
@@ -301,12 +299,12 @@ public class RegionTests
         {
             await TestHost.Services.GoToAsync("/a");
             await TestHost.UntilAsync(() => region.Content is PageAView);
-
             Assert.IsNull(region.ContentTransitions);
         }
         finally { await TestHost.UnloadAsync(region); }
     }
 
+    /// <summary>Rapid successive navigations leave the region on the last view.</summary>
     [TestMethod]
     public async Task Rapid_changes_leave_the_region_on_the_last_view()
     {
@@ -315,7 +313,6 @@ public class RegionTests
         {
             for (var i = 0; i < 8; i++)
                 await TestHost.Services.GoToAsync(i % 2 == 0 ? "/a" : "/b");
-
             await TestHost.UntilAsync(() => region.Content is PageBView);
         }
         finally { await TestHost.UnloadAsync(region); }

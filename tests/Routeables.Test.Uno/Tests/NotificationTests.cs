@@ -14,20 +14,25 @@ namespace Routeables.Test.Uno.Tests;
 [RunsOnUIThread]
 public class NotificationTests
 {
+    /// <summary>The XamlRoot of the test host, used as the owner for notifications.</summary>
     private static XamlRoot Root => MainPage.Host.XamlRoot!;
 
+    /// <summary>Resolves the notification service from the shared test container.</summary>
     private static IRouteableNotificationService Service => TestHost.Services.GetRequiredService<IRouteableNotificationService>();
 
+    /// <summary>Returns all open <see cref="InfoBar"/> instances currently shown in popups of the root.</summary>
     private static List<InfoBar> Bars() =>
         [.. VisualTreeHelper.GetOpenPopupsForXamlRoot(Root).Select(p => p.Child).OfType<Grid>()
             .SelectMany(g => g.Children.OfType<StackPanel>()).SelectMany(s => s.Children.OfType<InfoBar>())];
 
+    /// <summary>Closes every open info bar and waits until none remain.</summary>
     private static async Task CloseAllAsync()
     {
         foreach (var bar in Bars()) bar.IsOpen = false;
         await TestHost.UntilAsync(() => Bars().Count == 0);
     }
 
+    /// <summary>A notification is shown as an info bar with its title, message and severity.</summary>
     [TestMethod]
     public async Task A_notification_is_an_info_bar_with_its_title_and_message()
     {
@@ -48,6 +53,7 @@ public class NotificationTests
         }
     }
 
+    /// <summary>Each notification type maps to its corresponding <see cref="InfoBarSeverity"/>.</summary>
     [TestMethod]
     public async Task Each_type_has_its_own_severity()
     {
@@ -70,6 +76,7 @@ public class NotificationTests
         await CloseAllAsync();
     }
 
+    /// <summary>Multiple notifications stack up in a single popup.</summary>
     [TestMethod]
     public async Task Notifications_stack_up_in_one_popup()
     {
@@ -87,6 +94,7 @@ public class NotificationTests
         }
     }
 
+    /// <summary>A notification closes after its expiration and invokes its close callback exactly once.</summary>
     [TestMethod]
     public async Task A_notification_closes_after_its_expiration_and_tells_once()
     {
@@ -99,6 +107,7 @@ public class NotificationTests
         Assert.AreEqual(1, closed);
     }
 
+    /// <summary>A notification the user closes invokes its close callback.</summary>
     [TestMethod]
     public async Task A_notification_the_user_closes_tells_that_it_closed()
     {
@@ -112,6 +121,7 @@ public class NotificationTests
         Assert.AreEqual(1, closed);
     }
 
+    /// <summary>A notification that never expires stays open until closed explicitly.</summary>
     [TestMethod]
     public async Task A_notification_that_never_expires_stays_open()
     {
@@ -129,6 +139,7 @@ public class NotificationTests
         }
     }
 
+    /// <summary>Without a native manager there are no system notifications to list.</summary>
     [TestMethod]
     public void Without_a_native_manager_there_is_no_system_notification_to_list()
     {

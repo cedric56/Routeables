@@ -8,12 +8,16 @@ namespace Routeables.Test.Playwright;
 [Collection("Blazor")]
 public sealed class DialogTests(BlazorApp app) : BlazorTest(app)
 {
+    /// <summary>The open dialog element (<c>role=alertdialog</c>).</summary>
     private ILocator Dialog => Page.Locator(".rt-dialog[role=alertdialog]");
 
+    /// <summary>The paragraph that displays the result of the last dialog or notification action.</summary>
     private ILocator Result => Page.Locator("p.about-result");
 
+    /// <summary>A button inside the open dialog with the given accessible name.</summary>
     private ILocator DialogButton(string name) => Dialog.GetByRole(AriaRole.Button, new LocatorGetByRoleOptions { Name = name, Exact = true });
 
+    /// <summary>Opens the Dialogs page before each test.</summary>
     public override async ValueTask InitializeAsync()
     {
         await base.InitializeAsync();
@@ -21,6 +25,7 @@ public sealed class DialogTests(BlazorApp app) : BlazorTest(app)
         await ExpectAddressAsync("/dialogs");
     }
 
+    /// <summary>A Yes/No dialog returns the answer chosen by the visitor.</summary>
     [Theory]
     [InlineData("Yes", "Answer: Yes.")]
     [InlineData("No", "Answer: No.")]
@@ -36,6 +41,7 @@ public sealed class DialogTests(BlazorApp app) : BlazorTest(app)
         await Expect(Result).ToHaveTextAsync(expected);
     }
 
+    /// <summary>An Ok/Cancel dialog can be cancelled.</summary>
     [Fact]
     public async Task An_ok_cancel_dialog_can_be_cancelled()
     {
@@ -46,6 +52,7 @@ public sealed class DialogTests(BlazorApp app) : BlazorTest(app)
         await Expect(Result).ToHaveTextAsync("Answer: Cancel.");
     }
 
+    /// <summary>The page underneath does not navigate while a dialog is open.</summary>
     [Fact]
     public async Task The_page_underneath_does_not_move_while_a_dialog_is_open()
     {
@@ -58,6 +65,7 @@ public sealed class DialogTests(BlazorApp app) : BlazorTest(app)
         await DialogButton("No").ClickAsync();
     }
 
+    /// <summary>A notification appears with the severity of its type.</summary>
     [Theory]
     [InlineData("Information", "information", "Tip")]
     [InlineData("Success", "success", "Saved")]
@@ -73,6 +81,7 @@ public sealed class DialogTests(BlazorApp app) : BlazorTest(app)
         await Expect(toast).ToContainTextAsync(title);
     }
 
+    /// <summary>Closing a notification notifies the view model.</summary>
     [Fact]
     public async Task Closing_a_notification_tells_the_view_model()
     {

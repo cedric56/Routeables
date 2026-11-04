@@ -2,6 +2,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Routeables.Abstraction;
 using Routeables.Services;
+using Orientation = Microsoft.UI.Xaml.Controls.Orientation;
+using ProgressBar = Microsoft.UI.Xaml.Controls.ProgressBar;
 
 namespace Routeables.Uno.Services;
 

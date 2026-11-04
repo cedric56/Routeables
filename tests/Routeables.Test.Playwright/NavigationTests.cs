@@ -7,6 +7,7 @@ namespace Routeables.Test.Playwright;
 [Collection("Blazor")]
 public sealed class NavigationTests(BlazorApp app) : BlazorTest(app)
 {
+    /// <summary>Choosing a menu entry shows the page and changes the browser address.</summary>
     [Fact]
     public async Task Choosing_a_menu_entry_shows_the_page_and_changes_the_address()
     {
@@ -17,6 +18,7 @@ public sealed class NavigationTests(BlazorApp app) : BlazorTest(app)
         Assert.Empty(PageErrors);
     }
 
+    /// <summary>The browser Back and Forward buttons follow the router.</summary>
     [Fact]
     public async Task The_browser_Back_and_Forward_buttons_follow_the_router()
     {
@@ -34,6 +36,7 @@ public sealed class NavigationTests(BlazorApp app) : BlazorTest(app)
         await ExpectCurrentAsync("Dogs");
     }
 
+    /// <summary>A typed address opens the page it names.</summary>
     [Fact]
     public async Task A_typed_address_opens_the_page_it_names()
     {
@@ -44,6 +47,7 @@ public sealed class NavigationTests(BlazorApp app) : BlazorTest(app)
         await ExpectAddressAsync("/bears");
     }
 
+    /// <summary>Each browser context has its own router; pages are not shared across visitors.</summary>
     [Fact]
     public async Task Each_browser_context_has_its_own_router()
     {
@@ -65,6 +69,10 @@ public sealed class NavigationTests(BlazorApp app) : BlazorTest(app)
         }
     }
 
+    /// <summary>
+    /// GoBackAsync from a view model goes back in the browser history too.
+    /// Skipped: known limit — GoBackAsync currently replaces the address instead of calling history.back().
+    /// </summary>
     [Fact(Skip = "Known limit: GoBackAsync from a view model replaces the address instead of going back in the browser history (RouteableUrlSync.OnRouted); this is the behaviour wanted if the router drives history.back().")]
     public async Task GoBackAsync_from_a_view_model_goes_back_in_the_browser_history_too()
     {

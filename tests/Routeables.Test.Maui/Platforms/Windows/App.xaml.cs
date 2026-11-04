@@ -11,7 +11,7 @@ namespace Routeables.Test.Maui.WinUI
     public partial class App : MauiWinUIApplication
     {
         /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
+        /// Initializes the singleton application object. This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
@@ -19,7 +19,12 @@ namespace Routeables.Test.Maui.WinUI
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Creates and configures the .NET MAUI application instance.
+        /// </summary>
+        /// <returns>
+        /// The configured <see cref="MauiApp"/> instance.
+        /// </returns>
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
     }
-
 }

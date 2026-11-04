@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Routeables.Avalonia.Services;
+using Routeables.Avalonia;
 
 namespace Reshapes.Avalonia.Fluent;
 

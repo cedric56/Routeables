@@ -12,6 +12,7 @@ namespace Routeables.Test.Avalonia;
 [Collection("Avalonia headless")]
 public sealed class HeadlessTopLevelTests(HeadlessApp app)
 {
+    /// <summary>Polls <paramref name="condition"/> on the UI thread until it becomes true or a 5-second timeout elapses.</summary>
     private static async Task UntilAsync(Func<bool> condition)
     {
         var deadline = DateTime.UtcNow.AddSeconds(5);
@@ -24,6 +25,7 @@ public sealed class HeadlessTopLevelTests(HeadlessApp app)
         }
     }
 
+    /// <summary>Creates, shows and returns a temporary window for the tests.</summary>
     private static Window Shown()
     {
         var window = new Window { Width = 200, Height = 150, Content = new TextBlock { Text = "w" } };
@@ -32,6 +34,7 @@ public sealed class HeadlessTopLevelTests(HeadlessApp app)
         return window;
     }
 
+    /// <summary>A window that is shown becomes the active top level and raises <see cref="ITopLevelStateManager.ActiveChanged"/>.</summary>
     [Fact]
     public Task A_window_that_is_shown_becomes_the_active_top_level_and_the_change_is_announced() => app.RunAsync(async () =>
     {
@@ -53,6 +56,7 @@ public sealed class HeadlessTopLevelTests(HeadlessApp app)
         }
     });
 
+    /// <summary>The window shown last is active; activating a previous window brings it back to the front.</summary>
     [Fact]
     public Task The_window_shown_last_is_the_active_one_and_the_first_comes_back_when_it_is_focused() => app.RunAsync(async () =>
     {
@@ -74,6 +78,7 @@ public sealed class HeadlessTopLevelTests(HeadlessApp app)
         }
     });
 
+    /// <summary>Activating a window that is already active does not raise <see cref="ITopLevelStateManager.ActiveChanged"/>.</summary>
     [Fact]
     public Task Activating_the_window_that_is_already_active_announces_nothing() => app.RunAsync(async () =>
     {
@@ -95,6 +100,7 @@ public sealed class HeadlessTopLevelTests(HeadlessApp app)
         finally { window.Close(); }
     });
 
+    /// <summary>Closing the active window releases it and raises <see cref="ITopLevelStateManager.ActiveChanged"/>.</summary>
     [Fact]
     public Task The_active_window_that_closes_is_let_go_and_the_change_is_announced() => app.RunAsync(async () =>
     {
@@ -113,6 +119,7 @@ public sealed class HeadlessTopLevelTests(HeadlessApp app)
         Assert.True(count >= 1);
     });
 
+    /// <summary>Closing a non-active window leaves the active top level unchanged and does not raise the event.</summary>
     [Fact]
     public Task A_window_that_is_not_the_active_one_closes_without_changing_it() => app.RunAsync(async () =>
     {

@@ -12,11 +12,14 @@ namespace Routeables.Test.Maui;
 /// </summary>
 public class TransitionDeviceTests
 {
+    /// <summary>Builds a declared <see cref="RegionTransition"/> for the given name, direction and duration.</summary>
     private static RegionTransition Declared(string name, NavigationDirection direction = NavigationDirection.Forward, int ms = 80)
         => new(RouteTransition.Named(name), TimeSpan.FromMilliseconds(ms), direction, Declared: true);
 
+    /// <summary>Creates a hosted content view suitable for playing transitions.</summary>
     private static Hosted<ContentView> Host() => new(new ContentView { Content = new Label { Text = "x" }, WidthRequest = 200, HeightRequest = 100 });
 
+    /// <summary>Theory data containing the name of every built-in <see cref="RouteTransition"/>.</summary>
     public static TheoryData<string> BuiltInNames()
     {
         var data = new TheoryData<string>();
@@ -25,6 +28,7 @@ public class TransitionDeviceTests
         return data;
     }
 
+    /// <summary>Every built-in transition ends at rest in both directions.</summary>
     [UITheory]
     [MemberData(nameof(BuiltInNames))]
     public async Task Every_built_in_transition_ends_at_rest_in_both_directions(string name)
@@ -38,6 +42,7 @@ public class TransitionDeviceTests
         Assert.True(Device.IsAtRest(host.View));
     }
 
+    /// <summary>A transition that was not asked for leaves the control as it is.</summary>
     [UIFact]
     public async Task A_transition_that_was_not_asked_for_leaves_the_control_as_it_is()
     {
@@ -51,6 +56,7 @@ public class TransitionDeviceTests
         Assert.Equal(12, host.View.TranslationX);
     }
 
+    /// <summary>None when declared puts the control back at rest.</summary>
     [UIFact]
     public async Task None_declared_puts_the_control_back_at_rest()
     {
@@ -63,6 +69,7 @@ public class TransitionDeviceTests
         Assert.True(Device.IsAtRest(host.View));
     }
 
+    /// <summary>Fade starts transparent and ends fully opaque.</summary>
     [UIFact]
     public async Task Fade_starts_transparent()
     {
@@ -75,6 +82,7 @@ public class TransitionDeviceTests
         Assert.Equal(1, host.View.Opacity);
     }
 
+    /// <summary>Slide starts on the right going forward and on the left going back, then ends at rest.</summary>
     [UIFact]
     public async Task Slide_starts_on_the_right_going_forward_and_on_the_left_going_back()
     {
@@ -92,6 +100,7 @@ public class TransitionDeviceTests
         Assert.Equal(0, host.View.TranslationX);
     }
 
+    /// <summary>SlideUp starts below the control and ends at rest.</summary>
     [UIFact]
     public async Task SlideUp_starts_below_the_control()
     {
@@ -104,6 +113,7 @@ public class TransitionDeviceTests
         Assert.Equal(0, host.View.TranslationY);
     }
 
+    /// <summary>A new play replaces the one that is still running.</summary>
     [UIFact]
     public async Task A_new_play_replaces_the_one_that_is_still_running()
     {
@@ -116,6 +126,7 @@ public class TransitionDeviceTests
         Assert.True(Device.IsAtRest(host.View));
     }
 
+    /// <summary>A custom transition receives the control, the direction and the duration.</summary>
     [UIFact]
     public async Task A_custom_transition_receives_the_control_the_direction_and_the_duration()
     {
@@ -136,6 +147,7 @@ public class TransitionDeviceTests
         Assert.Equal(TimeSpan.FromMilliseconds(321), seenDuration);
     }
 
+    /// <summary>A custom transition name is resolved case-insensitively.</summary>
     [UIFact]
     public async Task A_custom_name_is_found_whatever_its_case()
     {
@@ -148,6 +160,7 @@ public class TransitionDeviceTests
         Assert.Equal(1, calls);
     }
 
+    /// <summary>A custom transition replaces a built-in one of the same name.</summary>
     [UIFact]
     public async Task A_custom_transition_replaces_a_built_in_one_of_the_same_name()
     {
@@ -160,6 +173,7 @@ public class TransitionDeviceTests
         Assert.Equal(1, calls);
     }
 
+    /// <summary>A custom transition that throws leaves the control at rest.</summary>
     [UIFact]
     public async Task A_custom_transition_that_throws_leaves_the_control_at_rest()
     {
@@ -176,6 +190,7 @@ public class TransitionDeviceTests
         Assert.True(Device.IsAtRest(host.View));
     }
 
+    /// <summary>An unknown name leaves the control at rest.</summary>
     [UIFact]
     public async Task An_unknown_name_leaves_the_control_at_rest()
     {
@@ -187,6 +202,7 @@ public class TransitionDeviceTests
         Assert.True(Device.IsAtRest(host.View));
     }
 
+    /// <summary>Registering a transition without a valid name or without a factory is refused.</summary>
     [Fact]
     public void Registering_a_transition_without_a_name_or_a_function_is_refused()
     {
@@ -194,6 +210,7 @@ public class TransitionDeviceTests
         Assert.Throws<ArgumentNullException>(() => RouteTransitions.Register("DeviceCustomNull", null!));
     }
 
+    /// <summary>A control that never had a handler does not break the play and ends at rest.</summary>
     [UIFact]
     public async Task A_control_that_never_had_a_handler_does_not_break_the_play()
     {

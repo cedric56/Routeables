@@ -15,7 +15,7 @@ public class MauiRegistrationTests
         var builder = MauiApp.CreateBuilder();
 
         var returned = Routeables.Maui.Extensions.UseRouteables<FakeMainViewModel>(builder);
-        Routeables.Maui.Services.Extensions.UseRouteablesServices(builder);
+        Routeables.Maui.Extensions.UseRouteablesServices(builder);
         using var provider = builder.Services.BuildServiceProvider();
 
         Assert.Same(builder, returned);
@@ -51,7 +51,7 @@ public class MauiRegistrationTests
         var custom = Substitute.For<IRouteableNotificationService>();
 
         Routeables.Maui.Extensions.UseRouteables<FakeMainViewModel>(builder);
-        Routeables.Maui.Services.Extensions.UseRouteablesServices(builder, notificationService: _ => custom);
+        Routeables.Maui.Extensions.UseRouteablesServices(builder, notificationService: _ => custom);
         using var provider = builder.Services.BuildServiceProvider();
 
         Assert.Same(custom, provider.GetRequiredService<IRouteableNotificationService>());

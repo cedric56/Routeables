@@ -13,23 +13,30 @@ namespace Routeables.Test.Maui;
 /// </summary>
 public class ValidationEntryDeviceTests
 {
+    /// <summary>A test view model that implements <see cref="INotifyDataErrorInfo"/> and records subscriber count.</summary>
     private sealed class Errors : INotifyDataErrorInfo
     {
         private readonly Dictionary<string, List<object>> _errors = [];
         private EventHandler<DataErrorsChangedEventArgs>? _changed;
 
+        /// <inheritdoc />
         public bool HasErrors => _errors.Count > 0;
+
+        /// <summary>How many handlers are currently subscribed to <see cref="ErrorsChanged"/>.</summary>
         public int Subscribers => _changed?.GetInvocationList().Length ?? 0;
 
+        /// <inheritdoc />
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged
         {
             add => _changed += value;
             remove => _changed -= value;
         }
 
+        /// <inheritdoc />
         public IEnumerable GetErrors(string? propertyName)
             => propertyName is not null && _errors.TryGetValue(propertyName, out var list) ? list : Array.Empty<object>();
 
+        /// <summary>Sets the errors for a property and raises <see cref="ErrorsChanged"/> for that property.</summary>
         public void Set(string property, params object[] errors)
         {
             if (errors.Length == 0) _errors.Remove(property); else _errors[property] = [.. errors];
@@ -42,24 +49,30 @@ public class ValidationEntryDeviceTests
             if (errors.Length == 0) _errors.Remove(property); else _errors[property] = [.. errors];
         }
 
+        /// <summary>Raises <see cref="ErrorsChanged"/> with a null property name (broad change).</summary>
         public void RaiseBroadChange() => _changed?.Invoke(this, new DataErrorsChangedEventArgs(null));
     }
 
+    /// <summary>Builds an entry bound to the given errors source and column name.</summary>
     private static RouteableMauiEntry Bound(Errors? errors, string? column = "Name")
         => new() { BindingContext = errors, ColumnName = column! };
 
+    /// <summary>Returns the inner <see cref="Entry"/> hosted by the control.</summary>
     private static Entry Inner(RouteableMauiEntry entry)
     {
         var grid = (Grid)entry.Content;
         return (Entry)((Border)grid.Children[0]).Content!;
     }
 
+    /// <summary>Returns the frame border that surrounds the inner entry.</summary>
     private static Border Frame(RouteableMauiEntry entry) => (Border)((Grid)entry.Content).Children[0];
 
+    /// <summary>Returns the marker border that shows the error icon.</summary>
     private static Border Marker(RouteableMauiEntry entry) => (Border)((Grid)entry.Content).Children[1];
 
     // ------------------------------------------------------------------------------------------------ errors
 
+    /// <summary>An entry without errors shows no error indicator.</summary>
     [UIFact]
     public void An_entry_without_errors_shows_no_error()
     {
@@ -71,6 +84,7 @@ public class ValidationEntryDeviceTests
         Assert.Equal(0, Frame(hosted.View).StrokeThickness);
     }
 
+    /// <summary>An error of its column shows the message, a red frame and an icon with its tooltip.</summary>
     [UIFact]
     public void An_error_of_its_column_shows_the_message_a_red_frame_and_an_icon_with_its_tooltip()
     {
@@ -87,6 +101,7 @@ public class ValidationEntryDeviceTests
         Assert.Equal("The name is required", ToolTipProperties.GetText(Marker(entry)));
     }
 
+    /// <summary>Fixing the error clears the indicator.</summary>
     [UIFact]
     public void Fixing_the_error_clears_the_indicator()
     {
@@ -103,6 +118,7 @@ public class ValidationEntryDeviceTests
         Assert.Equal(string.Empty, ToolTipProperties.GetText(Marker(hosted.View)));
     }
 
+    /// <summary>The message of a <see cref="ValidationResult"/> is its error message.</summary>
     [UIFact]
     public void The_message_of_a_validation_result_is_its_error_message()
     {
@@ -114,6 +130,7 @@ public class ValidationEntryDeviceTests
         Assert.Equal("Too short", hosted.View.ErrorMessage);
     }
 
+    /// <summary>Only the first error is shown when several are reported.</summary>
     [UIFact]
     public void Only_the_first_error_is_shown()
     {
@@ -125,6 +142,7 @@ public class ValidationEntryDeviceTests
         Assert.Equal("First", hosted.View.ErrorMessage);
     }
 
+    /// <summary>The errors of another column are ignored.</summary>
     [UIFact]
     public void The_errors_of_another_column_are_ignored()
     {
@@ -136,6 +154,7 @@ public class ValidationEntryDeviceTests
         Assert.False(hosted.View.HasError);
     }
 
+    /// <summary>A broad change of the errors is read again.</summary>
     [UIFact]
     public void A_broad_change_of_the_errors_is_read_again()
     {
@@ -149,6 +168,7 @@ public class ValidationEntryDeviceTests
         Assert.True(hosted.View.HasError);
     }
 
+    /// <summary>Naming the column after the errors exist shows them.</summary>
     [UIFact]
     public void Naming_the_column_after_the_errors_exist_shows_them()
     {
@@ -162,6 +182,7 @@ public class ValidationEntryDeviceTests
         Assert.True(hosted.View.HasError);
     }
 
+    /// <summary>A view model that reports no errors object shows none.</summary>
     [UIFact]
     public void A_view_model_that_reports_no_errors_object_shows_none()
     {
@@ -172,6 +193,7 @@ public class ValidationEntryDeviceTests
 
     // ------------------------------------------------------------------------------------------------ following the view model
 
+    /// <summary>The entry listens to its view model only while it is on screen.</summary>
     [UIFact]
     public void The_entry_listens_to_its_view_model_only_while_it_is_on_screen()
     {
@@ -189,6 +211,7 @@ public class ValidationEntryDeviceTests
         Assert.False(entry.HasError);
     }
 
+    /// <summary>An entry that comes back on screen reads the errors it missed.</summary>
     [UIFact]
     public void An_entry_that_comes_back_on_screen_reads_the_errors_it_missed()
     {
@@ -204,6 +227,7 @@ public class ValidationEntryDeviceTests
         Device.Detach(entry);
     }
 
+    /// <summary>Another view model replaces the first one; the entry stops following the old one.</summary>
     [UIFact]
     public void Another_view_model_replaces_the_first_one()
     {
@@ -221,6 +245,7 @@ public class ValidationEntryDeviceTests
         Assert.True(hosted.View.HasError);
     }
 
+    /// <summary>A view model that has no errors to report is not followed.</summary>
     [UIFact]
     public void A_view_model_that_has_no_errors_to_report_is_not_followed()
     {
@@ -233,6 +258,7 @@ public class ValidationEntryDeviceTests
 
     // ------------------------------------------------------------------------------------------------ text
 
+    /// <summary>The text goes to the entry inside and the text typed comes back.</summary>
     [UIFact]
     public void The_text_goes_to_the_entry_inside_and_the_text_typed_comes_back()
     {
@@ -245,12 +271,14 @@ public class ValidationEntryDeviceTests
         Assert.Equal("typed", hosted.View.Text);
     }
 
+    /// <summary>The text property is two-way by default.</summary>
     [UIFact]
     public void The_text_is_two_way_by_default()
     {
         Assert.Equal(BindingMode.TwoWay, RouteableMauiEntry.TextProperty.DefaultBindingMode);
     }
 
+    /// <summary>The underline has a color and a thickness that can be chosen.</summary>
     [UIFact]
     public void The_underline_has_a_color_and_a_thickness_that_can_be_chosen()
     {

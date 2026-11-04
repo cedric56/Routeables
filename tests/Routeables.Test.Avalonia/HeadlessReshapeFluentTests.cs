@@ -6,10 +6,14 @@ using Xunit;
 
 namespace Routeables.Test.Avalonia;
 
-/// <summary>The FluentAvalonia Reshape: how it registers itself, and the message boxes it refuses (IsDisplayable needs a window, which the headless platform of this version of Avalonia cannot create next to FluentAvalonia).</summary>
+/// <summary>
+/// The FluentAvalonia Reshape: how it registers itself, and the message boxes it refuses
+/// (IsDisplayable needs a window, which the headless platform of this version of Avalonia cannot create next to FluentAvalonia).
+/// </summary>
 [Collection("Avalonia headless")]
 public sealed class HeadlessReshapeFluentTests
 {
+    /// <summary>UseFluentAvalonia replaces the message-box service with <see cref="ReshapeMessageBoxService"/> and returns the same collection.</summary>
     [Fact]
     public void UseFluentAvalonia_replaces_the_message_box_service_with_the_Fluent_one()
     {
@@ -22,6 +26,7 @@ public sealed class HeadlessReshapeFluentTests
         Assert.IsType<ReshapeMessageBoxService>(provider.GetRequiredService<IMessageBoxService>());
     }
 
+    /// <summary>A message box whose button string implies more than three buttons is refused with an <see cref="ArgumentException"/> on the buttons parameter.</summary>
     [Theory]
     [InlineData("YesNoCancelRetry")]
     [InlineData("OkYesNoCancel")]

@@ -12,6 +12,7 @@ namespace Routeables.Test.Playwright;
 /// </summary>
 public sealed class BlazorApp : IAsyncLifetime
 {
+    /// <summary>Path of the sample project relative to the solution root.</summary>
     private const string Project = "samples/Xanimals.BlazorApp/Xanimals.BlazorApp.csproj";
 
     private readonly List<string> _output = [];
@@ -24,6 +25,7 @@ public sealed class BlazorApp : IAsyncLifetime
     /// <summary>The browser shared by the tests.</summary>
     public IBrowser Browser { get; private set; } = null!;
 
+    /// <summary>Starts the sample process, waits until it answers HTTP, and launches Chromium.</summary>
     public async ValueTask InitializeAsync()
     {
         Assertions.SetDefaultExpectTimeout(15_000);
@@ -62,6 +64,7 @@ public sealed class BlazorApp : IAsyncLifetime
         });
     }
 
+    /// <summary>Closes the browser and kills the sample process.</summary>
     public async ValueTask DisposeAsync()
     {
         if (Browser is not null)
@@ -73,6 +76,7 @@ public sealed class BlazorApp : IAsyncLifetime
         _process?.Dispose();
     }
 
+    /// <summary>Remembers a line of process output, keeping only the last 80 lines.</summary>
     private void Remember(string? line)
     {
         if (line is null) return;
@@ -83,11 +87,13 @@ public sealed class BlazorApp : IAsyncLifetime
         }
     }
 
+    /// <summary>Returns the remembered process output as a single string.</summary>
     private string Output()
     {
         lock (_output) return string.Join(Environment.NewLine, _output);
     }
 
+    /// <summary>Polls the sample until it answers HTTP 200 or a 120-second timeout elapses.</summary>
     private async Task WaitUntilReadyAsync()
     {
         using var http = new HttpClient();
@@ -110,6 +116,7 @@ public sealed class BlazorApp : IAsyncLifetime
         throw new TimeoutException($"The sample did not answer in 120 seconds:{Environment.NewLine}{Output()}");
     }
 
+    /// <summary>Walks up from the test base directory until <c>Routeables.slnx</c> is found.</summary>
     private static string FindRoot()
     {
         for (var directory = new DirectoryInfo(AppContext.BaseDirectory); directory is not null; directory = directory.Parent)
@@ -118,6 +125,7 @@ public sealed class BlazorApp : IAsyncLifetime
         throw new DirectoryNotFoundException("Routeables.slnx was not found above " + AppContext.BaseDirectory);
     }
 
+    /// <summary>Returns an unused TCP port on the loopback interface.</summary>
     private static int FreePort()
     {
         var listener = new TcpListener(IPAddress.Loopback, 0);
@@ -128,5 +136,6 @@ public sealed class BlazorApp : IAsyncLifetime
     }
 }
 
+/// <summary>xUnit collection that shares a single <see cref="BlazorApp"/> instance across tests.</summary>
 [CollectionDefinition("Blazor")]
 public sealed class BlazorCollection : ICollectionFixture<BlazorApp>;

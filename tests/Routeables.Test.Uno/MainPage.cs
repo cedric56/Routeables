@@ -5,6 +5,7 @@ namespace Routeables.Test.Uno;
 /// <summary>The runner on top and, below it, the zone the tests put their controls in (they must be in the tree of the window to be loaded).</summary>
 public sealed class MainPage : Page
 {
+    /// <summary>Builds the page with the unit-test runner in the upper half and the host grid in the lower half.</summary>
     public MainPage()
     {
         var root = new Grid

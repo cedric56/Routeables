@@ -10,6 +10,7 @@ namespace Routeables.Test.Avalonia;
 [Collection("Avalonia headless")]
 public sealed class HeadlessErrorStyleTests(HeadlessApp app)
 {
+    /// <summary>UseRouteables registers the error style on the application exactly once.</summary>
     [Fact]
     public Task UseRouteables_adds_the_error_style_to_the_application_once() => app.RunAsync(() =>
     {
@@ -17,6 +18,7 @@ public sealed class HeadlessErrorStyleTests(HeadlessApp app)
         return Task.CompletedTask;
     });
 
+    /// <summary>The error style applies a theme setter for <see cref="DataValidationErrors"/>.</summary>
     [Fact]
     public Task The_error_style_styles_the_validation_errors_of_a_control() => app.RunAsync(() =>
     {

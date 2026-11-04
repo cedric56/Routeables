@@ -8,12 +8,16 @@ namespace Routeables.Test.Playwright;
 [Collection("Blazor")]
 public sealed class RegionTests(BlazorApp app) : BlazorTest(app)
 {
+    /// <summary>The menu items of the left region.</summary>
     private ILocator LeftItems => Page.Locator(".rg-left-region .rg-menu-item");
 
+    /// <summary>The currently selected item of the left region.</summary>
     private ILocator CurrentLeftItem => Page.Locator(".rg-left-region .rg-menu-item.current");
 
+    /// <summary>The Back and Forward buttons of the left region.</summary>
     private ILocator Moves => Page.Locator(".rg-left-region .rg-menu-moves button");
 
+    /// <summary>Opens the Regions page before each test.</summary>
     public override async ValueTask InitializeAsync()
     {
         await base.InitializeAsync();
@@ -21,6 +25,7 @@ public sealed class RegionTests(BlazorApp app) : BlazorTest(app)
         await ExpectAddressAsync("/regions");
     }
 
+    /// <summary>The four zones are each filled by their own router.</summary>
     [Fact]
     public async Task The_four_zones_are_filled_by_their_own_router()
     {
@@ -31,6 +36,7 @@ public sealed class RegionTests(BlazorApp app) : BlazorTest(app)
         await Expect(CurrentLeftItem).ToHaveCountAsync(1);
     }
 
+    /// <summary>Choosing in the left panel changes the content but not the browser address.</summary>
     [Fact]
     public async Task Choosing_in_the_left_panel_changes_the_content_but_not_the_address()
     {
@@ -46,6 +52,7 @@ public sealed class RegionTests(BlazorApp app) : BlazorTest(app)
         await ExpectAddressAsync("/regions");   // the regions navigate inside the page: the address of the main router stays
     }
 
+    /// <summary>Back and Forward of the left panel walk the history of the content.</summary>
     [Fact]
     public async Task Back_and_Forward_of_the_left_panel_walk_the_history_of_the_content()
     {

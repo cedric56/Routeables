@@ -4,11 +4,13 @@ using Routeables.Uno;
 
 namespace Routeables.Test.Uno;
 
+/// <summary>The Uno test application: builds the Routeables container, registers the test routes and side region, and opens the runner page.</summary>
 public partial class App : Application
 {
     /// <summary>The name of the second region of the test application.</summary>
     public const string Side = "side";
 
+    /// <summary>Configures Routeables with the test main view model, registers routes and the side region, and sets the window title.</summary>
     public App()
     {
         InitializeComponent();
@@ -25,5 +27,6 @@ public partial class App : Application
             window => window.Title = "Routeables.Test.Uno");
     }
 
+    /// <summary>The service provider built by <see cref="Routeables.Uno.Extensions.UseRouteables{TMain}(Application, Action{Microsoft.Extensions.DependencyInjection.IServiceCollection}, Func{FrameworkElement}, Action{Window}?, Action{IServiceProvider}?, Action?)"/>.</summary>
     public IServiceProvider Services { get; }
 }

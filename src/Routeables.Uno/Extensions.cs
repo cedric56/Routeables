@@ -1,11 +1,13 @@
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.UI.Xaml;
-using Routeables.Uno.Services;
 using Routeables.Abstraction;
 using Routeables.Core;
 using Routeables.Routing;
 using Routeables.Services;
+using Routeables.Uno.Services;
+using Application = Microsoft.UI.Xaml.Application;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Routeables.Uno;
 
@@ -111,6 +113,35 @@ public static class Extensions
         var provider = StartRouteables<TMain>(configure, afterBuild);
         queue.TryEnqueue(() => application.OpenMainWindow(view(), configureWindow, onDispose));
         return provider;
+    }
+
+    /// <summary>
+    /// Registers <see cref="IRouteableDialogService"/>, <see cref="IRouteableNotificationService"/> and the <see cref="IMessageBoxService"/>
+    /// that draws them. <c>UseRouteables</c> already calls it; call it again from its <c>configure</c> callback to give another message box
+    /// service. A second call replaces the first.
+    /// <code>
+    /// Services = this.UseRouteables&lt;MainViewModel&gt;(services => services.UseRouteablesServices(sp => new MyMessageBoxService()));
+    /// </code>
+    /// </summary>
+    /// <param name="services">The service collection to add services to.</param>
+    /// <param name="messageBoxService">Builds the <see cref="IMessageBoxService"/> that draws the dialogs and the notifications; <see cref="DefaultMessageBoxService"/> when not set.</param>
+    /// <param name="notificationService">Builds the <see cref="IRouteableNotificationService"/>; Routeables' own when not set.</param>
+    /// <returns>The same <paramref name="services"/>, for chaining.</returns>
+    public static IServiceCollection UseRouteablesServices(
+        this IServiceCollection services,
+        Func<IServiceProvider, IMessageBoxService>? messageBoxService = null,
+        Func<IServiceProvider, IRouteableNotificationService>? notificationService = null)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.RemoveAll<IMessageBoxService>();
+        services.RemoveAll<IRouteableNotificationService>();
+        services.RemoveAll<IRouteableDialogService>();
+
+        services.AddSingleton<IMessageBoxService>(messageBoxService ?? (_ => new DefaultMessageBoxService()));
+        services.AddSingleton(notificationService ?? (sp => new RouteableNotificationService(sp.GetRequiredService<IMessageBoxService>())));
+        services.AddSingleton<IRouteableDialogService>(sp => new RouteableDialogService(sp.GetRequiredService<IMessageBoxService>()));
+        return services;
     }
 
     // What UseRouteables does, without an Application: the tests of the contract of the hosts call it, as an Application cannot be created outside Uno.

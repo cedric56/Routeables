@@ -64,9 +64,13 @@ public class ShellDeviceTests
         public event EventHandler<object?>? CurrentViewChanged;
         public event EventHandler? LockChanged;
 
+        /// <summary>The number of handlers subscribed to <see cref="LockChanged"/>: used to check the shell subscribes once and unsubscribes.</summary>
         public int LockSubscribers => LockChanged?.GetInvocationList().Length ?? 0;
+
+        /// <summary>The number of handlers subscribed to <see cref="CurrentViewChanged"/>: used to check the shell subscribes once and unsubscribes.</summary>
         public int ViewSubscribers => CurrentViewChanged?.GetInvocationList().Length ?? 0;
 
+        /// <summary>Raises <see cref="LockChanged"/> by hand, as a real host would after locking or unlocking its entries.</summary>
         public void NotifyLockChanged() => LockChanged?.Invoke(this, EventArgs.Empty);
 
         // Lock and Unlock are default members of the interface: they are reached through it.
@@ -74,6 +78,7 @@ public class ShellDeviceTests
 
         public void UnlockAll() => ((IMainViewModel)this).Unlock();
 
+        /// <summary>A menu with one entry per given name, in order.</summary>
         public static Menu With(params string[] names)
         {
             var menu = new Menu();
@@ -102,12 +107,14 @@ public class ShellDeviceTests
         public void PlatformArrange(Microsoft.Maui.Graphics.Rect frame) { }
     }
 
+    /// <summary>Register the test menu as the application's main view model before constructing the shell.</summary>
     private static RouteablesShell ShellOf(Menu menu)
     {
         var services = new ServiceCollection().AddSingleton<IMainViewModel>(menu).BuildServiceProvider();
         return new RouteablesShell(services);
     }
 
+    /// <summary>A handler represents an attached shell; menu-change subscriptions are active only while attached.</summary>
     private static RouteablesShell Followed(Menu menu)
     {
         var shell = ShellOf(menu);
@@ -115,11 +122,16 @@ public class ShellDeviceTests
         return shell;
     }
 
+    /// <summary>The <see cref="ShellContent"/> of the entry at <paramref name="index"/>, through the item and section Shell wraps it in.</summary>
     private static ShellContent ContentOf(Shell shell, int index) => shell.Items[index].Items[0].Items[0];
 
+    /// <summary>The page that hosts the view of the entry at <paramref name="index"/>.</summary>
     private static ContentPage PageOf(Shell shell, int index) => (ContentPage)ContentOf(shell, index).Content;
 
-    /// <summary>The host of the view of an entry: the content of its page, or the second row of the grid that has the caption.</summary>
+    /// <summary>
+    /// The host of the view of an entry: the content of its page, or the second row of the grid that has the caption.
+    /// Captions add a Grid wrapper; otherwise the page hosts the view directly.
+    /// </summary>
     private static ContentView HostOf(Shell shell, int index) => PageOf(shell, index).Content switch
     {
         ContentView host => host,
@@ -127,10 +139,12 @@ public class ShellDeviceTests
         var other => throw new InvalidOperationException($"Unexpected content: {other}")
     };
 
+    /// <summary>The titles of the navigation items of the shell, in order.</summary>
     private static List<string> Titles(Shell shell) => [.. shell.Items.Select(i => i.Items[0].Items[0].Title)];
 
     // ------------------------------------------------------------------------------------------------ the items
 
+    /// <summary>Initial menu order is preserved in both Shell navigation items and their pages.</summary>
     [UIFact]
     public void Each_entry_of_the_menu_has_an_item_with_its_name_in_the_same_order()
     {
@@ -140,6 +154,7 @@ public class ShellDeviceTests
         Assert.Equal(["Home", "Cats", "Dogs"], Enumerable.Range(0, 3).Select(i => PageOf(shell, i).Title));
     }
 
+    /// <summary>The shell binds itself to the menu, so bindings of the shell can reach it.</summary>
     [UIFact]
     public void The_menu_is_the_binding_context_of_the_shell()
     {
@@ -148,6 +163,7 @@ public class ShellDeviceTests
         Assert.Same(menu, ShellOf(menu).BindingContext);
     }
 
+    /// <summary>An empty menu produces an empty shell and selects no entry.</summary>
     [UIFact]
     public void A_shell_over_an_empty_menu_has_no_item_and_selects_nothing()
     {
@@ -159,6 +175,7 @@ public class ShellDeviceTests
         Assert.Empty(menu.Selections);
     }
 
+    /// <summary>Building the shell selects the first entry of the menu once, not repeatedly.</summary>
     [UIFact]
     public void The_first_entry_is_selected_as_soon_as_the_shell_is_built_and_once()
     {
@@ -170,6 +187,7 @@ public class ShellDeviceTests
         Assert.Single(menu.Selections);
     }
 
+    /// <summary>An entry the host has already selected is left alone: the shell does not reset the selection.</summary>
     [UIFact]
     public void An_entry_that_is_already_selected_is_kept()
     {
@@ -183,6 +201,7 @@ public class ShellDeviceTests
         Assert.Empty(menu.Selections);
     }
 
+    /// <summary>Without a description, the view of the entry is the page itself hosts, with no caption wrapper.</summary>
     [UIFact]
     public void An_entry_without_a_description_shows_its_view_directly_in_the_page()
     {
@@ -191,6 +210,7 @@ public class ShellDeviceTests
         Assert.IsType<ContentView>(PageOf(shell, 0).Content);
     }
 
+    /// <summary>The description of an entry is a caption above its view.</summary>
     [UIFact]
     public void The_description_of_an_entry_is_a_caption_above_its_view()
     {
@@ -206,6 +226,7 @@ public class ShellDeviceTests
 
     // ------------------------------------------------------------------------------------------------ the entries that arrive
 
+    /// <summary>Collection changes are picked up when the shell becomes attached to the UI.</summary>
     [UIFact]
     public void An_entry_added_before_the_shell_has_a_handler_gets_its_item_when_the_handler_comes()
     {
@@ -220,6 +241,7 @@ public class ShellDeviceTests
         Assert.Equal(["Home", "Late"], Titles(shell));
     }
 
+    /// <summary>An entry added after the shell is attached is picked up right away, at the end of the menu.</summary>
     [UIFact]
     public void An_entry_added_while_the_shell_is_followed_gets_its_item()
     {
@@ -231,6 +253,7 @@ public class ShellDeviceTests
         Assert.Equal(["Home", "Cats"], Titles(shell));
     }
 
+    /// <summary>An insertion in the middle of the menu lands at the same place among the items.</summary>
     [UIFact]
     public void An_entry_inserted_in_the_middle_gets_its_item_at_the_same_place()
     {
@@ -242,6 +265,7 @@ public class ShellDeviceTests
         Assert.Equal(["Home", "Cats", "Dogs"], Titles(shell));
     }
 
+    /// <summary>Successive additions are each followed; no change is lost along the way.</summary>
     [UIFact]
     public void Several_entries_added_together_each_get_their_item()
     {
@@ -254,6 +278,7 @@ public class ShellDeviceTests
         Assert.Equal(["Home", "Cats", "Dogs", "Birds"], Titles(shell));
     }
 
+    /// <summary>The tested contract follows additions; it does not mirror removals.</summary>
     [UIFact]
     public void The_other_changes_of_the_menu_are_not_followed()
     {
@@ -267,6 +292,7 @@ public class ShellDeviceTests
 
     // ------------------------------------------------------------------------------------------------ the locks
 
+    /// <summary>Lock state is propagated through the Shell item, section, and content hierarchy.</summary>
     [UIFact]
     public void Locking_the_menu_greys_every_item_and_unlocking_enables_them_again()
     {
@@ -292,6 +318,7 @@ public class ShellDeviceTests
         }
     }
 
+    /// <summary>A lock set before attachment is applied when the handler comes, and only to the locked entry.</summary>
     [UIFact]
     public void An_entry_locked_before_the_shell_has_a_handler_is_greyed_when_the_handler_comes()
     {
@@ -305,6 +332,7 @@ public class ShellDeviceTests
         Assert.False(shell.Items[1].IsEnabled);
     }
 
+    /// <summary>Entries added while the menu is locked are greyed as soon as the lock state is announced again.</summary>
     [UIFact]
     public void An_item_added_while_the_menu_is_locked_is_greyed_at_the_next_change_of_the_locks()
     {
@@ -320,6 +348,7 @@ public class ShellDeviceTests
 
     // ------------------------------------------------------------------------------------------------ the view
 
+    /// <summary>A new current view replaces the previous content in the selected entry's host.</summary>
     [UIFact]
     public void The_view_of_the_selected_entry_is_shown_in_its_item_and_replaced_by_the_next_one()
     {
@@ -336,6 +365,7 @@ public class ShellDeviceTests
         Assert.Same(second, HostOf(shell, 0).Content);
     }
 
+    /// <summary>The view goes to the item of the entry the menu shows, not to the first one.</summary>
     [UIFact]
     public void The_view_goes_to_the_item_of_the_entry_the_menu_shows()
     {
@@ -350,6 +380,7 @@ public class ShellDeviceTests
         Assert.Null(HostOf(shell, 0).Content);
     }
 
+    /// <summary>A view produced before attachment is kept and shown as soon as the handler comes.</summary>
     [UIFact]
     public void A_view_produced_before_the_shell_had_a_handler_is_shown_when_the_handler_comes()
     {
@@ -364,6 +395,7 @@ public class ShellDeviceTests
         Assert.Same(view, HostOf(shell, 0).Content);
     }
 
+    /// <summary>A current view that is not a control is ignored rather than thrown at the host.</summary>
     [UIFact]
     public void A_view_that_is_not_a_control_shows_nothing()
     {
@@ -375,6 +407,7 @@ public class ShellDeviceTests
         Assert.Null(HostOf(shell, 0).Content);
     }
 
+    /// <summary>View-model notifications may arrive off-thread, but UI updates must run on the UI thread.</summary>
     [UIFact]
     public async Task A_view_announced_from_another_thread_is_shown_on_the_thread_of_the_interface()
     {
@@ -389,6 +422,7 @@ public class ShellDeviceTests
 
     // ------------------------------------------------------------------------------------------------ letting go
 
+    /// <summary>Reattaching must not duplicate event handlers; detaching must unsubscribe from both events.</summary>
     [UIFact]
     public void The_shell_follows_the_menu_once_per_handler_and_lets_go_with_it()
     {
@@ -409,6 +443,7 @@ public class ShellDeviceTests
         Assert.Equal(0, menu.ViewSubscribers);
     }
 
+    /// <summary>Once the handler is gone, additions, locks, and views of the menu change nothing to the shell.</summary>
     [UIFact]
     public void A_shell_that_lost_its_handler_no_longer_changes_with_the_menu()
     {
@@ -427,6 +462,7 @@ public class ShellDeviceTests
 
     // ------------------------------------------------------------------------------------------------ the helpers of Shell
 
+    /// <summary>Routing setup rejects missing required arguments immediately.</summary>
     [UIFact]
     public void The_routes_of_the_shell_refuse_no_shell_and_no_container()
     {
@@ -436,6 +472,7 @@ public class ShellDeviceTests
         Assert.Throws<ArgumentNullException>(() => ShellRoutes.UseShellRoutes(new Shell(), null!));
     }
 
+    /// <summary>Disposing the routing subscription stops it; disposing twice does not throw.</summary>
     [UIFact]
     public void Following_the_routes_of_the_shell_stops_when_disposed_and_disposing_twice_is_harmless()
     {
@@ -445,6 +482,7 @@ public class ShellDeviceTests
         subscription.Dispose();
     }
 
+    /// <summary>Item attachment also refuses a missing shell or a missing container.</summary>
     [UIFact]
     public void The_items_of_a_shell_refuse_no_shell_and_no_container()
     {
@@ -454,6 +492,7 @@ public class ShellDeviceTests
         Assert.Throws<ArgumentNullException>(() => new Shell().AttachRouteables(null!));
     }
 
+    /// <summary>Attaching items gives a region template to every routed ShellContent and leaves the others to Shell.</summary>
     [UIFact]
     public void The_content_of_a_shell_content_that_has_a_route_is_a_region_page_and_the_others_are_left_to_Shell()
     {
@@ -492,6 +531,7 @@ public class ShellDeviceTests
         return args;
     }
 
+    /// <summary>Router-owned addresses are handled by the app router, so Shell navigation is cancelled.</summary>
     [UIFact]
     public async Task An_address_of_the_router_is_routed_and_the_navigation_of_shell_is_cancelled()
     {
@@ -505,6 +545,7 @@ public class ShellDeviceTests
         Assert.IsType<PageAView>(Device.Router().CurrentView);
     }
 
+    /// <summary>Unknown addresses are left for Shell to resolve through its own route system.</summary>
     [UIFact]
     public async Task An_address_the_router_does_not_know_is_left_to_shell()
     {
@@ -520,6 +561,7 @@ public class ShellDeviceTests
         Assert.Null(Device.Router().CurrentView);
     }
 
+    /// <summary>A navigation guard's refusal is final; Shell must not continue with a fallback route.</summary>
     [UIFact]
     public async Task A_guard_that_refuses_the_address_cancels_the_navigation_of_shell_too()
     {
@@ -536,6 +578,7 @@ public class ShellDeviceTests
         Assert.IsType<PageAView>(Device.Router().CurrentView);
     }
 
+    /// <summary>Pops and non-cancellable navigations belong to Shell; the router leaves them untouched.</summary>
     [UIFact]
     public async Task A_pop_and_a_navigation_that_cannot_be_cancelled_are_left_to_shell()
     {
@@ -554,6 +597,7 @@ public class ShellDeviceTests
         Assert.Null(Device.Router().CurrentView);
     }
 
+    /// <summary>After the subscription is disposed, Shell navigations no longer reach the router.</summary>
     [UIFact]
     public async Task Once_disposed_the_shell_is_no_longer_followed()
     {

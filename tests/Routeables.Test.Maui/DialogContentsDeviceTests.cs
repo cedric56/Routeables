@@ -14,13 +14,21 @@ namespace Routeables.Test.Maui;
 /// </summary>
 public class DialogContentsDeviceTests
 {
+    /// <summary>A command that can execute or not, and can be turned at will: the tests watch the buttons follow it.</summary>
     private sealed class FlagCommand(bool initial, Action? run = null) : ICommand
     {
         private bool _enabled = initial;
+
+        /// <summary>Raised by <see cref="Set"/>, so the buttons redraw themselves.</summary>
         public event EventHandler? CanExecuteChanged;
+
+        /// <summary>Whether the command runs at the moment: the buttons follow it.</summary>
         public bool CanExecute(object? parameter) => _enabled;
+
+        /// <summary>Runs what the test gave, if anything.</summary>
         public void Execute(object? parameter) => run?.Invoke();
 
+        /// <summary>Turns the command on or off and announces it.</summary>
         public void Set(bool enabled)
         {
             _enabled = enabled;
@@ -28,12 +36,22 @@ public class DialogContentsDeviceTests
         }
     }
 
+    /// <summary>A view model that closes with a string, and commands the tests can press.</summary>
     private sealed class Closeable(string title, params RouteableCommand[] commands) : ICloseableViewModel<string>
     {
+        /// <summary>The title of the modal, so the content can show it.</summary>
         public string Title => title;
+
+        /// <summary>The commands of the modal, shown as buttons in the content.</summary>
         public ObservableCollection<RouteableCommand> Commands { get; } = new(commands);
+
+        /// <summary>No close command: closing goes through <see cref="CloseAsync"/>.</summary>
         public ICommand? CloseCommand => null;
+
+        /// <summary>Raised by <see cref="CloseAsync"/>, so the modal ends with the value.</summary>
         public event EventHandler<string?>? CloseRequested;
+
+        /// <summary>Raises <see cref="CloseRequested"/> with the value: this is the modal ending.</summary>
         public Task CloseAsync(string? value)
         {
             CloseRequested?.Invoke(this, value);
@@ -41,6 +59,7 @@ public class DialogContentsDeviceTests
         }
     }
 
+    /// <summary>Every view of the tree under <paramref name="root"/>, the root first, whatever layouts stand in the way.</summary>
     private static IEnumerable<IView> All(IView? root)
     {
         switch (root)
@@ -66,16 +85,21 @@ public class DialogContentsDeviceTests
         }
     }
 
+    /// <summary>The texts of the labels under <paramref name="root"/>, in the order of the tree.</summary>
     private static List<string> Texts(IView root) => [.. All(root).OfType<Label>().Select(l => l.Text)];
 
+    /// <summary>Every button under <paramref name="root"/>.</summary>
     private static List<Button> Buttons(IView root) => [.. All(root).OfType<Button>()];
 
+    /// <summary>The button under <paramref name="root"/> that reads <paramref name="text"/>: the one to press.</summary>
     private static Button ButtonOf(IView root, string text) => Buttons(root).Single(b => b.Text == text);
 
+    /// <summary>Presses the button by hand: the click is sent to the control, no finger is needed.</summary>
     private static void Tap(Button button) => ((IButton)button).Clicked();
 
     // ------------------------------------------------------------------------------------------------ content dialogs
 
+    /// <summary>A content dialog shows the title it was given, and its text as a body.</summary>
     [UIFact]
     public void A_content_dialog_shows_its_title_and_its_text()
     {
@@ -88,6 +112,7 @@ public class DialogContentsDeviceTests
         Assert.Contains("New name?", Texts(content));
     }
 
+    /// <summary>A content dialog that was given a view shows it as it is, without wrapping it in a text.</summary>
     [UIFact]
     public void A_content_dialog_shows_a_view_as_it_is()
     {
@@ -99,6 +124,7 @@ public class DialogContentsDeviceTests
         Assert.Contains(body, All(content));
     }
 
+    /// <summary>A content dialog draws one button for each text it was given: close, secondary, then primary.</summary>
     [UIFact]
     public void A_content_dialog_has_one_button_for_each_text_it_was_given()
     {
@@ -117,12 +143,16 @@ public class DialogContentsDeviceTests
         Assert.Equal(["Cancel", "Other", "Save"], Buttons(content).Select(b => b.Text).Order());
     }
 
+    /// <summary>Pressing a button of a content dialog records its result and closes the session.</summary>
     [UIFact]
     public void The_buttons_of_a_content_dialog_close_it_with_their_result()
     {
         var parameters = new RouteableContentDialog
         {
-            Title = "t", PrimaryButtonText = "Save", IsPrimaryButtonEnabled = true, CloseButtonText = "Cancel"
+            Title = "t",
+            PrimaryButtonText = "Save",
+            IsPrimaryButtonEnabled = true,
+            CloseButtonText = "Cancel"
         };
         var closed = 0;
         var session = new RouteableContentDialogSession(parameters, () => closed++);
@@ -134,12 +164,16 @@ public class DialogContentsDeviceTests
         Assert.Equal(1, closed);
     }
 
+    /// <summary>A button asked disabled is drawn disabled; the others are not touched.</summary>
     [UIFact]
     public void A_disabled_button_of_a_content_dialog_is_not_enabled()
     {
         var parameters = new RouteableContentDialog
         {
-            Title = "t", PrimaryButtonText = "Save", IsPrimaryButtonEnabled = false, CloseButtonText = "Cancel"
+            Title = "t",
+            PrimaryButtonText = "Save",
+            IsPrimaryButtonEnabled = false,
+            CloseButtonText = "Cancel"
         };
 
         var content = RouteableDialogContents.ForContentDialog(parameters, new RouteableContentDialogSession(parameters, () => { }));
@@ -149,6 +183,7 @@ public class DialogContentsDeviceTests
     }
 
     // A button is drawn once: it is enabled when its command can execute at the moment the dialog opens.
+    /// <summary>A button whose command can execute as the dialog opens is enabled.</summary>
     [UIFact]
     public void A_button_is_enabled_when_its_command_can_execute_as_the_dialog_opens()
     {
@@ -157,6 +192,7 @@ public class DialogContentsDeviceTests
         Assert.True(ButtonOf(content, "Save").IsEnabled);
     }
 
+    /// <summary>A button whose command cannot execute as the dialog opens is disabled, and the others are not.</summary>
     [UIFact]
     public void A_button_is_disabled_when_its_command_cannot_execute_as_the_dialog_opens()
     {
@@ -166,15 +202,21 @@ public class DialogContentsDeviceTests
         Assert.True(ButtonOf(content, "Cancel").IsEnabled);
     }
 
+    /// <summary>A dialog with a primary button bound to the command of the test, ready to be read.</summary>
     private static Border Opened(ICommand command)
     {
         var parameters = new RouteableContentDialog
         {
-            Title = "t", PrimaryButtonText = "Save", IsPrimaryButtonEnabled = true, PrimaryButtonCommand = command, CloseButtonText = "Cancel"
+            Title = "t",
+            PrimaryButtonText = "Save",
+            IsPrimaryButtonEnabled = true,
+            PrimaryButtonCommand = command,
+            CloseButtonText = "Cancel"
         };
         return RouteableDialogContents.ForContentDialog(parameters, new RouteableContentDialogSession(parameters, () => { }));
     }
 
+    /// <summary>A content or a task dialog without its parameters, or without its session, is refused.</summary>
     [UIFact]
     public void A_null_dialog_and_a_null_session_are_refused()
     {
@@ -189,12 +231,14 @@ public class DialogContentsDeviceTests
 
     // ------------------------------------------------------------------------------------------------ task dialogs
 
+    /// <summary>The content of the task dialog of the test, with its session given back to the caller.</summary>
     private static Border TaskContent(RouteableTaskDialog parameters, out RouteableTaskDialogSession session, params RouteableTaskDialogResult[] results)
     {
         session = new RouteableTaskDialogSession(parameters, results, () => { });
         return RouteableDialogContents.ForTaskDialog(parameters, session);
     }
 
+    /// <summary>A task dialog shows its title, its header, and its sub-header under the header.</summary>
     [UIFact]
     public void A_task_dialog_shows_its_title_its_header_and_its_sub_header()
     {
@@ -206,6 +250,7 @@ public class DialogContentsDeviceTests
         Assert.Contains("Install it now?", texts);
     }
 
+    /// <summary>Without a title, the header takes its place and is shown once, not twice.</summary>
     [UIFact]
     public void Without_a_title_the_header_is_the_title_and_is_shown_once()
     {
@@ -214,6 +259,7 @@ public class DialogContentsDeviceTests
         Assert.Single(Texts(content), "Only a header");
     }
 
+    /// <summary>A task dialog draws one button per offered result, and pressing one gives that result to the session.</summary>
     [UIFact]
     public void A_task_dialog_has_one_button_for_each_result_and_pressing_one_gives_it()
     {
@@ -226,6 +272,7 @@ public class DialogContentsDeviceTests
         Assert.Equal(RouteableTaskDialogResult.Yes, session.Result);
     }
 
+    /// <summary>A task dialog asked without results offers a single Close button.</summary>
     [UIFact]
     public void A_task_dialog_without_results_has_a_close_button()
     {
@@ -234,6 +281,7 @@ public class DialogContentsDeviceTests
         Assert.Equal(["Close"], Buttons(content).Select(b => b.Text));
     }
 
+    /// <summary>The progress bar appears only when the dialog asked for one.</summary>
     [UIFact]
     public void The_progress_bar_is_shown_only_when_asked()
     {
@@ -244,12 +292,17 @@ public class DialogContentsDeviceTests
         Assert.Single(All(with).OfType<ProgressBar>());
     }
 
+    /// <summary>The button of a collapsible footer hides it, and pressing it again shows it back: the text follows.</summary>
     [UIFact]
     public void A_collapsible_footer_is_toggled_by_its_button()
     {
         var content = TaskContent(new RouteableTaskDialog
         {
-            Title = "t", Header = "h", Footer = "The details", FooterVisibility = RouteableTaskDialogFooterVisibility.Auto, IsFooterExpanded = false
+            Title = "t",
+            Header = "h",
+            Footer = "The details",
+            FooterVisibility = RouteableTaskDialogFooterVisibility.Auto,
+            IsFooterExpanded = false
         }, out _);
         var toggle = ButtonOf(content, "More Details");
         var footer = All(content).OfType<Label>().Single(l => l.Text == "The details");
@@ -264,18 +317,24 @@ public class DialogContentsDeviceTests
         Assert.False(((View)footer.Parent).IsVisible);
     }
 
+    /// <summary>A footer that starts expanded is visible, and its button offers to fold it.</summary>
     [UIFact]
     public void A_footer_that_starts_expanded_is_visible_and_its_button_offers_to_fold_it()
     {
         var content = TaskContent(new RouteableTaskDialog
         {
-            Title = "t", Header = "h", Footer = "The details", FooterVisibility = RouteableTaskDialogFooterVisibility.Auto, IsFooterExpanded = true
+            Title = "t",
+            Header = "h",
+            Footer = "The details",
+            FooterVisibility = RouteableTaskDialogFooterVisibility.Auto,
+            IsFooterExpanded = true
         }, out _);
 
         Assert.Single(Buttons(content).Where(b => b.Text == "Fewer Details"));
         Assert.True(((View)All(content).OfType<Label>().Single(l => l.Text == "The details").Parent).IsVisible);
     }
 
+    /// <summary>A footer that is never shown is not in the dialog at all.</summary>
     [UIFact]
     public void A_footer_that_is_not_shown_is_not_in_the_dialog()
     {
@@ -286,6 +345,7 @@ public class DialogContentsDeviceTests
 
     // ------------------------------------------------------------------------------------------------ modals
 
+    /// <summary>A modal shows its title, its view, and its first three commands as buttons; the rest is ignored.</summary>
     [UIFact]
     public void A_modal_shows_the_title_the_view_and_the_first_three_commands_as_buttons()
     {
@@ -305,6 +365,7 @@ public class DialogContentsDeviceTests
         Assert.Equal(["Reset"], ran);
     }
 
+    /// <summary>A command without a real name gives no button; a modal without commands gives none either.</summary>
     [UIFact]
     public void A_command_without_a_name_gives_no_button_and_a_modal_without_commands_has_none()
     {
@@ -317,6 +378,7 @@ public class DialogContentsDeviceTests
 
     // ------------------------------------------------------------------------------------------------ the look
 
+    /// <summary>The radius of the corners is the one of the platform: rounder on Android, softer on Apple, square on the desktop.</summary>
     [UIFact]
     public void The_dialog_is_dressed_like_the_platform_it_runs_on()
     {
@@ -327,6 +389,7 @@ public class DialogContentsDeviceTests
         Assert.Equal(expected, RouteableNativeDialogLook.CornerRadius);
     }
 
+    /// <summary>The look builds a frame with a title, a body and its buttons; without buttons, none is drawn and the body is still there.</summary>
     [UIFact]
     public void The_look_builds_a_frame_with_a_title_a_body_and_its_buttons_and_none_without_buttons()
     {
@@ -342,6 +405,7 @@ public class DialogContentsDeviceTests
         Assert.Contains(body, All(without));
     }
 
+    /// <summary>While the action of a button is running, the button refuses to be tapped again; once it ended, it runs once more.</summary>
     [UIFact]
     public async Task A_button_taps_once_while_its_action_is_running_and_again_when_it_ended()
     {
@@ -358,6 +422,7 @@ public class DialogContentsDeviceTests
         await Device.UntilAsync(() => { Tap(button); return tapped == 2; });
     }
 
+    /// <summary>An action that throws does not end the application: the button can be tapped again.</summary>
     [UIFact]
     public async Task A_button_whose_action_throws_does_not_end_the_application_and_can_be_tapped_again()
     {
@@ -369,6 +434,7 @@ public class DialogContentsDeviceTests
         await Device.UntilAsync(() => { Tap(button); return tapped >= 2; });
     }
 
+    /// <summary>The text helper gives a label with the text, the size and the attributes that were asked for.</summary>
     [UIFact]
     public void The_text_helper_gives_a_label_of_the_size_and_the_attributes_asked_for()
     {

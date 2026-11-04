@@ -7,11 +7,16 @@ using Routeables.Routing;
 
 namespace Routeables.Test.Maui;
 
+/// <summary>The entry point of the test application: it is a real Maui app, hosting the visual test runner and the routes under test.</summary>
 public static class MauiProgram
 {
     /// <summary>The name of the second region of the test application.</summary>
     public const string Side = "side";
 
+    /// <summary>
+    /// Builds the application of the tests: the visual runner that runs them, the UI-testing setup that puts them on the thread of the
+    /// interface, and the Routeables shell with the two pages and the side region the tests navigate to.
+    /// </summary>
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();

@@ -17,13 +17,22 @@ namespace Routeables.Test.Avalonia;
 [Collection("Avalonia headless")]
 public sealed class HeadlessRoutingTests(HeadlessApp app)
 {
+    /// <summary>A temporary window that hosts the main region, the side region and a routeable link button.</summary>
     private sealed class Screen : IAsyncDisposable
     {
+        /// <summary>The default region under test.</summary>
         public RouteableRegion Main { get; } = new();
+
+        /// <summary>The named side region under test.</summary>
         public RouteableRegion Side { get; } = new() { Region = HeadlessApp.Side };
+
+        /// <summary>A button configured as a <see cref="RouteableLink"/> to "/b" in the side region.</summary>
         public Button Link { get; } = new() { Content = "Go to B" };
+
+        /// <summary>The window that hosts the regions and the link.</summary>
         public Window Window { get; }
 
+        /// <summary>Builds the window, configures the link and shows it on the UI thread.</summary>
         public Screen(IServiceProvider provider)
         {
             RouteableLink.SetRoute(Link, "/b");
@@ -33,6 +42,7 @@ public sealed class HeadlessRoutingTests(HeadlessApp app)
             Dispatcher.UIThread.RunJobs();
         }
 
+        /// <summary>Closes the window.</summary>
         public async ValueTask DisposeAsync()
         {
             Window.Close();
@@ -50,6 +60,7 @@ public sealed class HeadlessRoutingTests(HeadlessApp app)
         await test(provider, screen);
     });
 
+    /// <summary>Polls <paramref name="condition"/> on the UI thread until it becomes true or a 5-second timeout elapses.</summary>
     private static async Task UntilAsync(Func<bool> condition)
     {
         var deadline = DateTime.UtcNow.AddSeconds(5);
@@ -62,6 +73,7 @@ public sealed class HeadlessRoutingTests(HeadlessApp app)
         }
     }
 
+    /// <summary>Navigating to a route displays the corresponding view and view model in the default region.</summary>
     [Fact]
     public Task A_region_shows_the_view_of_the_route() => RunAsync(async (provider, screen) =>
     {
@@ -74,6 +86,7 @@ public sealed class HeadlessRoutingTests(HeadlessApp app)
         Assert.Null(screen.Side.Content);
     });
 
+    /// <summary>Going back restores the previous view in the default region.</summary>
     [Fact]
     public Task Going_back_shows_the_previous_view_again() => RunAsync(async (provider, screen) =>
     {
@@ -87,6 +100,7 @@ public sealed class HeadlessRoutingTests(HeadlessApp app)
         await UntilAsync(() => screen.Main.Content is PageAView);
     });
 
+    /// <summary>A page that refuses to be left stays on screen until it allows navigation.</summary>
     [Fact]
     public Task A_page_that_refuses_to_be_left_stays_on_screen() => RunAsync(async (provider, screen) =>
     {
@@ -105,6 +119,10 @@ public sealed class HeadlessRoutingTests(HeadlessApp app)
         await UntilAsync(() => screen.Main.Content is PageBView);
     });
 
+    /// <summary>
+    /// A page shown again while its transition-out animation is still playing is released correctly
+    /// (the control keeps the leaving page in a second presenter until the animation ends).
+    /// </summary>
     [Fact]
     public Task A_page_shown_again_while_its_transition_out_is_still_playing_is_released() => RunAsync(async (provider, screen) =>
     {
@@ -121,6 +139,7 @@ public sealed class HeadlessRoutingTests(HeadlessApp app)
         await UntilAsync(() => screen.Main.Content is PageAView);
     });
 
+    /// <summary>Each region displays the view belonging to its own navigation independently.</summary>
     [Fact]
     public Task Each_region_shows_its_own_view() => RunAsync(async (provider, screen) =>
     {
@@ -130,6 +149,7 @@ public sealed class HeadlessRoutingTests(HeadlessApp app)
         await UntilAsync(() => screen.Main.Content is PageAView && screen.Side.Content is PageBView);
     });
 
+    /// <summary>Clicking a <see cref="RouteableLink"/> navigates to its route in its configured region.</summary>
     [Fact]
     public Task A_RouteableLink_goes_to_its_route_in_its_region() => RunAsync(async (provider, screen) =>
     {

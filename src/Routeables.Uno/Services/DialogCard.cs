@@ -5,6 +5,9 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.UI.Text;
+using Orientation = Microsoft.UI.Xaml.Controls.Orientation;
+using Button = Microsoft.UI.Xaml.Controls.Button;
+using Application = Microsoft.UI.Xaml.Application;
 
 namespace Routeables.Uno.Services;
 

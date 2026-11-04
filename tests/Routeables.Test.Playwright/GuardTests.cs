@@ -7,6 +7,7 @@ namespace Routeables.Test.Playwright;
 [Collection("Blazor")]
 public sealed class GuardTests(BlazorApp app) : BlazorTest(app)
 {
+    /// <summary>Members turns a signed-out visitor back to Features.</summary>
     [Fact]
     public async Task Members_turns_a_signed_out_visitor_back_to_Features()
     {
@@ -20,6 +21,7 @@ public sealed class GuardTests(BlazorApp app) : BlazorTest(app)
         Assert.Empty(PageErrors);
     }
 
+    /// <summary>A typed address of Members is redirected when the visitor is signed out.</summary>
     [Fact]
     public async Task A_typed_address_of_Members_is_redirected_when_signed_out()
     {
@@ -30,6 +32,7 @@ public sealed class GuardTests(BlazorApp app) : BlazorTest(app)
         await ExpectCurrentAsync("Features");
     }
 
+    /// <summary>Once signed in, Members opens; signing out leaves it and returns to Features.</summary>
     [Fact]
     public async Task Once_signed_in_Members_opens_and_signing_out_leaves_it()
     {
@@ -47,6 +50,7 @@ public sealed class GuardTests(BlazorApp app) : BlazorTest(app)
         await ExpectAddressAsync("/features");
     }
 
+    /// <summary>A page that refuses to be left keeps the history where it is until the refusal is lifted.</summary>
     [Fact]
     public async Task A_page_that_refuses_to_be_left_keeps_the_history_where_it_is()
     {
@@ -74,6 +78,7 @@ public sealed class GuardTests(BlazorApp app) : BlazorTest(app)
         await Expect(cards).ToHaveCountAsync(3);
     }
 
+    /// <summary>A browser Back that the page refuses leaves the browser history untouched; once allowed, Back reaches the previous page.</summary>
     [Fact]
     public async Task A_Back_of_the_browser_that_the_page_refuses_leaves_the_browser_history_untouched()
     {
