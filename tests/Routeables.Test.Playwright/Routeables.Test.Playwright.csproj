@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\samples\Blazor\Xanimals.BlazorApp\XAnimals.BlazorApp.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\samples\Blazor\XAnimals.BlazorApp\XAnimals.BlazorApp.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

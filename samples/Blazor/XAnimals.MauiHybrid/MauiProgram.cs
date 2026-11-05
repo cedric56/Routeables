@@ -2,7 +2,7 @@
 using Reshapes.Blazor.MudBlazor;
 using Routeables.Generated;
 using Routeables.Blazor;
-using Xanimals.Blazor;
+using XAnimals.Blazor;
 using XAnimals.ViewModels;
 
 namespace XAnimals.MauiHybrid

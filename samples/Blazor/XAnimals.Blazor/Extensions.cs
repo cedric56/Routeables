@@ -2,7 +2,7 @@
 using XAnimals.Common;
 using XAnimals.ViewModels;
 
-namespace Xanimals.Blazor;
+namespace XAnimals.Blazor;
 
 public static class Extensions
 {

@@ -13,7 +13,7 @@ namespace Routeables.Test.Playwright;
 public sealed class BlazorApp : IAsyncLifetime
 {
     /// <summary>Path of the sample project relative to the solution root.</summary>
-    private const string Project = "samples/Blazor/Xanimals.BlazorApp/Xanimals.BlazorApp.csproj";
+    private const string Project = "samples/Blazor/XAnimals.BlazorApp/XAnimals.BlazorApp.csproj";
 
     private readonly List<string> _output = [];
     private Process? _process;
