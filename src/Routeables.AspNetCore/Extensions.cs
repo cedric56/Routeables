@@ -1,15 +1,22 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Razor.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.AspNetCore.Rendering;
 using Routeables.Routing;
 using Routeables.Segments;
 using Routeables.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Routeables.AspNetCore
 {
+    public static class RoutableViewExtensions
+    {
+        // Le chemin du template source d'une vue Razor compilée,
+        // ex. Views_Cats_Index -> "/Views/Cats/Index.cshtml".
+        public static string? TemplatePath(this object view)
+            => view.GetType().GetCustomAttributes(inherit: false)
+                .OfType<RazorCompiledItemAttribute>()
+                .FirstOrDefault()?.Identifier;
+    }
     public static class Extensions
     {
         public static IServiceCollection
@@ -25,8 +32,7 @@ namespace Routeables.AspNetCore
                 _ => new RouteableHostLifetime(
                     ServiceLifetime.Scoped));
 
-            services.RegisterRouting(
-                ServiceLifetime.Scoped);
+            services.RegisterRouting(ServiceLifetime.Scoped);
 
             services.AddScoped<
                 IRouteableRequestExecutor,

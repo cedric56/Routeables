@@ -11,6 +11,8 @@ namespace Routeables.AspNetCore
 
         public required string Route { get; init; }
 
+        public required string Template { get; init; }
+
         public IReadOnlyDictionary<string, object?>
             RouteValues
         { get; init; }

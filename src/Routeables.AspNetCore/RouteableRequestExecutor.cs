@@ -11,6 +11,7 @@ namespace Routeables.AspNetCore
     {
         Task<RouteableRequestResult> NavigateAsync(
             string route,
+            string template,
             CancellationToken cancellationToken = default);
 
         Task<RouteableRequestResult> NavigateAsync(
@@ -24,12 +25,13 @@ namespace Routeables.AspNetCore
     {
         public async Task<RouteableRequestResult> NavigateAsync(
             string route,
+            string template,
             CancellationToken cancellationToken = default)
         {
             var result = await router.GoToAsync(
                 route,
                 RouteableArgs.Create(),
-                route,
+                template,
                 cancellationToken: cancellationToken);
 
             if (!result.Success)
@@ -64,6 +66,7 @@ namespace Routeables.AspNetCore
 
             return NavigateAsync(
                 context.Route,
+                context.Template,
                 context.CancellationToken);
         }
     }

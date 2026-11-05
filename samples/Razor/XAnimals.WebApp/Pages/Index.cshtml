@@ -1,0 +1,9 @@
+﻿@page "/{**path}"
+@using XAnimals.WebApp.Pages
+@*
+    Not meant to be seen: this page only gives endpoint routing a route for "/" and for
+    every other address, so that it does not return 404. What the user sees is drawn by
+    the layout (MainLayout) from the Routeables router; the layout does not render this
+    body. Do not remove it unless the application has its own page with these routes.
+*@
+@model ShellModel

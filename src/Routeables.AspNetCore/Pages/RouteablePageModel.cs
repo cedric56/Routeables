@@ -60,10 +60,11 @@ public abstract class RouteablePageModel : PageModel
     protected IRouteableRequestExecutor Executor { get; }
 
     protected async Task<IActionResult> NavigateAsync(
-        string route)
+        string route, string template)
     {
         var result = await Executor.NavigateAsync(
             route,
+            template,
             HttpContext.RequestAborted);
 
         return result.ToActionResult(PageContext);
