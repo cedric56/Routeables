@@ -9,7 +9,7 @@
     <id>Routeables</id>
     <version>$version$</version>
     <authors>Cédric Boutin</authors>
-    <description>Routing between view models for Blazor, .NET MAUI, Avalonia, Uno and WPF: routes declared by attributes and registered by a source generator, regions, segments, page locking, and the contracts of the dialog and notification services. Add the package of your host (Routeables.Razor, Routeables.Maui, Routeables.Avalonia, Routeables.Uno or Routeables.Wpf) to use it.</description>
+    <description>Routing between view models for Blazor, .NET MAUI, Avalonia, Uno and WPF: routes declared by attributes and registered by a source generator, regions, segments, page locking, and the contracts of the dialog and notification services. Add the package of your host (Routeables.Blazor, Routeables.Maui, Routeables.Avalonia, Routeables.Uno or Routeables.Wpf) to use it.</description>
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/cedric56/Routeables</projectUrl>
     <repository type="git" url="https://github.com/cedric56/Routeables.git" />

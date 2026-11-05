@@ -3,7 +3,7 @@
   <!--
     UI tests of the Blazor host: a real browser (Playwright, Chromium) drives the sample samples/Xanimals.BlazorApp (Blazor Server), which
     the tests start on a free port. They check what the unit tests cannot: that the address, the menu, the guards, the dialogs and the
-    regions of Routeables.Razor behave in a browser.
+    regions of Routeables.Blazor behave in a browser.
 
     First run on a machine: install the browser once, from the folder of the project after a build:
         pwsh bin/Release/net10.0/playwright.ps1 install chromium

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Reshapes.Razor.MudBlazor;
 using Routeables.Generated;
-using Routeables.Razor;
+using Routeables.Blazor;
 using Xanimals.Razor;
 using XAnimals.ViewModels;
 

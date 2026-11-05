@@ -3,7 +3,7 @@
     <File Path="../../../Downloads/host-services/Reshapes/README.md" />
     <Project Path="reshapes/Reshapes.Avalonia.Fluent/Reshapes.Avalonia.Fluent.csproj" Id="f65cd93b-7463-46ca-ba50-b5292491503b" />
     <Project Path="reshapes/Reshapes.Maui.Community/Reshapes.Maui.Community.csproj" Id="90e9e577-6f0e-458d-ad04-37914db4b98e" />
-    <Project Path="reshapes/Reshapes.Razor.MudBlazor/Reshapes.Razor.MudBlazor.csproj" Id="4b5f66a3-73fb-44ed-8f1e-733fac24cd35" />
+    <Project Path="reshapes/Reshapes.Blazor.MudBlazor/Reshapes.Blazor.MudBlazor.csproj" Id="4b5f66a3-73fb-44ed-8f1e-733fac24cd35" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/XAnimals.Avalonia.Android/XAnimals.Avalonia.Android.csproj">
@@ -21,11 +21,13 @@
     <Project Path="samples/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj" Id="9f9541b9-2097-4232-acb6-b18038aa7e33">
       <Deploy Solution="Debug|*" />
     </Project>
-    <Project Path="samples/XAnimals.Razor/XAnimals.Razor.csproj" Id="40dcae35-9b5a-4589-8f5a-9060824b6dec" />
+    <Project Path="samples/XAnimals.Blazor/XAnimals.Blazor.csproj" Id="40dcae35-9b5a-4589-8f5a-9060824b6dec" />
     <Project Path="samples/XAnimals.Uno/XAnimals.Uno.csproj">
       <Deploy Solution="Debug|*" />
     </Project>
     <Project Path="samples/XAnimals.Wpf/XAnimals.Wpf.csproj" />
+    <Project Path="XAnimals.WebApp/XAnimals.WebApp.csproj" Id="55081e57-b5d0-4411-b16d-e09a72f237c3" />
+    <Project Path="XAnimals.WebApplication/XAnimals.WebApplication.csproj" Id="d3cdcbfe-73cf-4160-a7b8-5a79ce433213" />
   </Folder>
   <Folder Name="/samples/Bases/">
     <Project Path="samples/Bases/XAnimals.Common/XAnimals.Common.csproj" />
@@ -41,7 +43,7 @@
     <Project Path="samples/Modules/XAnimals.Avalonia.Birds/XAnimals.Avalonia.Birds.csproj" />
     <Project Path="samples/Modules/XAnimals.Birds/XAnimals.Birds.csproj" />
     <Project Path="samples/Modules/XAnimals.Maui.Birds/XAnimals.Maui.Birds.csproj" />
-    <Project Path="samples/Modules/XAnimals.Razor.Birds/XAnimals.Razor.Birds.csproj" />
+    <Project Path="samples/Modules/XAnimals.Blazor.Birds/XAnimals.Blazor.Birds.csproj" />
     <Project Path="samples/Modules/XAnimals.Uno.Birds/XAnimals.Uno.Birds.csproj" />
     <Project Path="samples/Modules/XAnimals.Wpf.Birds/XAnimals.Wpf.Birds.csproj" />
   </Folder>
@@ -55,17 +57,17 @@
     <File Path="logo.svg" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/Routeables.Generated.Abstraction/Routeables.Generated.Abstraction.csproj" Id="6070271a-fb2d-49f7-ab62-5c41d9a02e1e" />
     <Project Path="src/Routeables.Abstraction/Routeables.Abstraction.csproj" />
     <Project Path="src/Routeables.AotSmoke/Routeables.AotSmoke.csproj" />
     <Project Path="src/Routeables.AspNetCore/Routeables.AspNetCore.csproj" />
     <Project Path="src/Routeables.Avalonia/Routeables.Avalonia.csproj" />
     <Project Path="src/Routeables.Benchmarks/Routeables.Benchmarks.csproj" />
+    <Project Path="src/Routeables.Blazor/Routeables.Blazor.csproj" />
     <Project Path="src/Routeables.Core/Routeables.Core.csproj" />
+    <Project Path="src/Routeables.Generated.Abstraction/Routeables.Generated.Abstraction.csproj" Id="6070271a-fb2d-49f7-ab62-5c41d9a02e1e" />
     <Project Path="src/Routeables.Generated/Routeables.Generated.csproj" Id="f5d73331-cfab-460c-b3ae-d3fb64222f17" />
     <Project Path="src/Routeables.Locking/Routeables.Locking.csproj" />
     <Project Path="src/Routeables.Maui/Routeables.Maui.csproj" />
-    <Project Path="src/Routeables.Razor/Routeables.Razor.csproj" />
     <Project Path="src/Routeables.Regions/Routeables.Regions.csproj" />
     <Project Path="src/Routeables.Routing/Routeables.Routing.csproj" />
     <Project Path="src/Routeables.Segments/Routeables.Segments.csproj" />

@@ -6,7 +6,7 @@ using static Microsoft.Playwright.Assertions;
 namespace Routeables.Test.Playwright;
 
 /// <summary>
-/// One page in a browser context of its own, opened on the sample. The menu is the drawer of <c>MainLayout</c> of Routeables.Razor:
+/// One page in a browser context of its own, opened on the sample. The menu is the drawer of <c>MainLayout</c> of Routeables.Blazor:
 /// <c>nav[aria-label=Menu]</c>, one <c>button.rt-nav-link</c> per entry, the current one with <c>aria-current="page"</c>.
 /// </summary>
 public abstract class BlazorTest(BlazorApp app) : IAsyncLifetime

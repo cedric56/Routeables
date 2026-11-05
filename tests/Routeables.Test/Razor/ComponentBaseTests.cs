@@ -1,4 +1,4 @@
-using Routeables.Razor;
+using Routeables.Blazor;
 using System.ComponentModel;
 
 namespace Routeables.Tests.Razor;

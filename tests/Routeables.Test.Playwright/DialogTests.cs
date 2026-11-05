@@ -4,7 +4,7 @@ using static Microsoft.Playwright.Assertions;
 
 namespace Routeables.Test.Playwright;
 
-/// <summary>The dialogs and the notifications of <c>Routeables.Razor</c>, opened by a view model and answered by the visitor.</summary>
+/// <summary>The dialogs and the notifications of <c>Routeables.Blazor</c>, opened by a view model and answered by the visitor.</summary>
 [Collection("Blazor")]
 public sealed class DialogTests(BlazorApp app) : BlazorTest(app)
 {

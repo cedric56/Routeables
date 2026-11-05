@@ -1,8 +1,6 @@
-﻿using Routeables.AspNetCore.Rendering;
+﻿
+using Routeables.AspNetCore.Rendering;
 using Routeables.Routing;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Routeables.AspNetCore
 {
@@ -15,11 +13,11 @@ namespace Routeables.AspNetCore
         Task<RouteableRequestResult> NavigateAsync(
             RouteableRequestContext context);
     }
+
     public sealed class RouteableRequestExecutor(
-    Routeables.Abstraction.IRouter router,
-    IServiceProvider services,
-    IRouteableViewResolver viewResolver)
-    : IRouteableRequestExecutor
+        Routeables.Abstraction.IRouter router,
+        IRouteableViewResolver viewResolver)
+        : IRouteableRequestExecutor
     {
         public async Task<RouteableRequestResult> NavigateAsync(
             string route,
@@ -38,20 +36,28 @@ namespace Routeables.AspNetCore
             if (viewModel is null)
                 return RouteableRequestResult.NotFound();
 
+            var viewModelType = viewModel.GetType();
+
             var view = await viewResolver.ResolveAsync(
-                viewModel.GetType(),
+                viewModelType,
                 cancellationToken);
 
             if (view is null)
+            {
                 return RouteableRequestResult.ViewNotFound(
-                    viewModel.GetType());
+                    viewModelType);
+            }
 
-            return RouteableRequestResult.Succeeded(view, viewModel);
+            return RouteableRequestResult.Succeeded(
+                view,
+                viewModel);
         }
 
         public Task<RouteableRequestResult> NavigateAsync(
             RouteableRequestContext context)
         {
+            ArgumentNullException.ThrowIfNull(context);
+
             return NavigateAsync(
                 context.Route,
                 context.CancellationToken);

@@ -1,7 +1,7 @@
 using Routeables.Generated;
-using Routeables.Razor;
+using Routeables.Blazor;
 using Xanimals.BlazorApp.Components;
-using Xanimals.Razor;
+using Xanimals.Blazor;
 using XAnimals.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,8 +33,8 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(
-        typeof(Routeables.Razor.MainLayoutBase).Assembly,
-        typeof(Xanimals.Razor.Extensions).Assembly
+        typeof(Routeables.Blazor.MainLayoutBase).Assembly,
+        typeof(Xanimals.Blazor.Extensions).Assembly
     );
 
 app.Run();

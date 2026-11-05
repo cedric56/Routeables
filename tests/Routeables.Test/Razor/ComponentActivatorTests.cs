@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components.Rendering;
-using Routeables.Razor;
+using Routeables.Blazor;
 
 namespace Routeables.Tests.Razor;
 

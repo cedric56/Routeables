@@ -45,7 +45,7 @@ public sealed class BlazorApp : IAsyncLifetime
         };
         foreach (var argument in new[] { "run", "--project", Project, "--no-build", "-c", configuration, "--no-launch-profile", "--urls", BaseUrl.TrimEnd('/') })
             start.ArgumentList.Add(argument);
-        start.Environment["ASPNETCORE_ENVIRONMENT"] = "Development";   // serves the static files of the libraries (Routeables.Razor, MudBlazor)
+        start.Environment["ASPNETCORE_ENVIRONMENT"] = "Development";   // serves the static files of the libraries (Routeables.Blazor, MudBlazor)
 
         _process = Process.Start(start) ?? throw new InvalidOperationException("The sample could not be started.");
         _process.OutputDataReceived += (_, e) => Remember(e.Data);

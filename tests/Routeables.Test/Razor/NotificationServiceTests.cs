@@ -1,4 +1,4 @@
-using Routeables.Razor.Services;
+using Routeables.Blazor.Services;
 using Routeables.Services;
 
 namespace Routeables.Tests.Razor;

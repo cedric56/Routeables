@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Routeables.Abstraction;
 using Routeables.Core;
-using Routeables.Razor.Components;
+using Routeables.Blazor.Components;
 using Routeables.Tests.Core;
 
 namespace Routeables.Tests.Razor;

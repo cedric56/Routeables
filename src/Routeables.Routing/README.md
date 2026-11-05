@@ -30,4 +30,4 @@ A `Transient` router is refused: every resolve would get its own history. For se
 - `Routing` and `Routed` are raised for each route change. A handler that throws never fails the route change: the error goes to your `IRouteableErrorSink`, or to `Trace`.
 - Measured with BenchmarkDotNet: about 4 to 7.5 µs and 7.5 to 12 KB per route change ([benchmarks](../../docs/benchmarks.md)).
 
-Related: [`Routeables.Abstraction`](../Routeables.Abstraction/README.md), [`Routeables.Core`](../Routeables.Core/README.md), and the hosts ([Razor](../Routeables.Razor/README.md), [MAUI](../Routeables.Maui/README.md), [Avalonia](../Routeables.Avalonia/README.md), [Uno](../Routeables.Uno/README.md), [WPF](../Routeables.Wpf/README.md)).
+Related: [`Routeables.Abstraction`](../Routeables.Abstraction/README.md), [`Routeables.Core`](../Routeables.Core/README.md), and the hosts ([Razor](../Routeables.Blazor/README.md), [MAUI](../Routeables.Maui/README.md), [Avalonia](../Routeables.Avalonia/README.md), [Uno](../Routeables.Uno/README.md), [WPF](../Routeables.Wpf/README.md)).

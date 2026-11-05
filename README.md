@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white" alt=".NET 10">
   <a href="https://www.nuget.org/packages/Routeables"><img src="https://img.shields.io/nuget/v/Routeables?label=Routeables" alt="NuGet Routeables"></a>
   <a href="https://www.nuget.org/packages/Routeables.Avalonia"><img src="https://img.shields.io/nuget/v/Routeables.Avalonia?label=Routeables.Avalonia" alt="NuGet"></a>
-  <a href="https://www.nuget.org/packages/Routeables.Razor"><img src="https://img.shields.io/nuget/v/Routeables.Razor?label=Routeables.Razor" alt="NuGet"></a>
+  <a href="https://www.nuget.org/packages/Routeables.Blazor"><img src="https://img.shields.io/nuget/v/Routeables.Blazor?label=Routeables.Blazor" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Maui"><img src="https://img.shields.io/nuget/v/Routeables.Maui?label=Routeables.Maui" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Uno"><img src="https://img.shields.io/nuget/v/Routeables.Uno?label=Routeables.Uno" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Wpf"><img src="https://img.shields.io/nuget/v/Routeables.Wpf?label=Routeables.Wpf" alt="NuGet"></a>  
@@ -126,14 +126,14 @@ Add the package of your host, then start Routeables where your framework starts.
 
 | Host | Package | Setup |
 | --- | --- | --- |
-| Blazor | [`Routeables.Razor`](src/Routeables.Razor/README.md) | `services.UseRouteablesServer<MainViewModel>(r => { ... })` |
+| Blazor | [`Routeables.Blazor`](src/Routeables.Blazor/README.md) | `services.UseRouteablesServer<MainViewModel>(r => { ... })` |
 | .NET MAUI | [`Routeables.Maui`](src/Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => { ... })` |
 | Avalonia | [`Routeables.Avalonia`](src/Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r => { ... })` |
 | Uno Platform | [`Routeables.Uno`](src/Routeables.Uno/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
 | WPF | [`Routeables.Wpf`](src/Routeables.Wpf/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
 
 ```bash
-dotnet add package Routeables.Avalonia   # or Routeables.Razor, .Maui, .Uno, .Wpf
+dotnet add package Routeables.Avalonia   # or Routeables.Blazor, .Maui, .Uno, .Wpf
 ```
 
 The call starts Routeables and registers your menu (the main view model). The block is for your own registrations, the same on every host:

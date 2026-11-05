@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using NSubstitute;
 using Routeables.Abstraction;
-using Routeables.Razor;
+using Routeables.Blazor;
 using Routeables.Routing;
 using Routeables.Services;
 using System.Collections.ObjectModel;

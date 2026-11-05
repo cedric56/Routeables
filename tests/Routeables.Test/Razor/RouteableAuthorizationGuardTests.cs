@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Routeables.Abstraction;
-using Routeables.Razor;
+using Routeables.Blazor;
 using Routeables.Routing;
 using System.Security.Claims;
 

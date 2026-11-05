@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" />
     <ProjectReference Include="..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
+    <ProjectReference Include="..\Routeables.Segments\Routeables.Segments.csproj" />
   </ItemGroup>
 
 </Project>

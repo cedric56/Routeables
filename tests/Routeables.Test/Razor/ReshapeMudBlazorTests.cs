@@ -1,10 +1,10 @@
 using MudBlazor;
 using NSubstitute;
-using Reshapes.Razor.MudBlazor;
+using Reshapes.Blazor.MudBlazor;
 using Routeables.Abstraction;
-using Routeables.Razor.Services;
+using Routeables.Blazor.Services;
 using Routeables.Services;
-using Extensions = Reshapes.Razor.MudBlazor.Extensions;
+using Extensions = Reshapes.Blazor.MudBlazor.Extensions;
 
 namespace Routeables.Tests.Razor;
 

@@ -14,13 +14,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Modules\XAnimals.Razor.Birds\XAnimals.Razor.Birds.csproj" />
-    <ProjectReference Include="..\XAnimals.Razor\XAnimals.Razor.csproj" />
+    <ProjectReference Include="..\Modules\XAnimals.Blazor.Birds\XAnimals.Blazor.Birds.csproj" />
+    <ProjectReference Include="..\XAnimals.Blazor\XAnimals.Blazor.csproj" />
     <ProjectReference Include="..\..\src\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <!-- The service worker of the system notifications must be served from the root of the site: it is copied into wwwroot (see WithAppNotifications). -->
   <Target Name="CopyNotificationWorker" BeforeTargets="BeforeBuild">
-    <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\src\Routeables.Razor\wwwroot\routeables-notifications-worker.js" DestinationFolder="$(MSBuildProjectDirectory)\wwwroot\" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\src\Routeables.Blazor\wwwroot\routeables-notifications-worker.js" DestinationFolder="$(MSBuildProjectDirectory)\wwwroot\" SkipUnchangedFiles="true" />
   </Target>
 </Project>

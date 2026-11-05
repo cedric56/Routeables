@@ -16,7 +16,7 @@
     <InternalsVisibleTo Include="Routeables.Core" />
     <InternalsVisibleTo Include="Routeables.Segments" />
     <InternalsVisibleTo Include="Routeables.Regions" />
-    <InternalsVisibleTo Include="Routeables.Razor" />
+    <InternalsVisibleTo Include="Routeables.Blazor" />
     <InternalsVisibleTo Include="Routeables.Maui" />
     <InternalsVisibleTo Include="Routeables.Avalonia" />
     <InternalsVisibleTo Include="Routeables.Uno" />

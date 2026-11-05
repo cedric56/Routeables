@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.Extensions.Logging.Abstractions;
 using Routeables.Abstraction;
-using Routeables.Razor;
+using Routeables.Blazor;
 using Routeables.Routing;
 using Dispatcher = Microsoft.AspNetCore.Components.Dispatcher;
 

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <!-- The Birds module for the Blazor hosts (Blazor Server, Blazor WebAssembly, MAUI Hybrid): its two components, which draw with the
+       controls of XAnimals.Blazor. The shared part of the module (data, view models, the menu entry) is XAnimals.Birds. The host
+       references this project: its AddGeneratedRoutes() finds the views in the assembly. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Routeables.Blazor\Routeables.Blazor.csproj" />
+    <ProjectReference Include="..\..\XAnimals.Blazor\XAnimals.Blazor.csproj" />
+    <ProjectReference Include="..\XAnimals.Birds\XAnimals.Birds.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <IsAotCompatible>true</IsAotCompatible>
+    <!-- Trim / AOT findings are reported but do not stop the build until the first CI run has shown what the UI packages raise. -->
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);IL2026;IL2067;IL2070;IL2072;IL2075;IL2087;IL2091;IL3050</WarningsNotAsErrors>
+    <PackageId>Reshapes.Razor.MudBlazor</PackageId>
+    <Authors>Cédric Boutin</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>MudBlazor dialogs for Routeables: message boxes, content dialogs, task dialogs and notifications drawn with MudBlazor.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Test" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MudBlazor" Version="9.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
+    <ProjectReference Include="..\..\src\Routeables.Blazor\Routeables.Blazor.csproj" />
+  </ItemGroup>
+
+</Project>

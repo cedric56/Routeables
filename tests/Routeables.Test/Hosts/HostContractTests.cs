@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Routeables.Avalonia;
-using Routeables.Razor;
+using Routeables.Blazor;
 using Routeables.Tests.Core;
 using AvaloniaApplication = global::Avalonia.Application;
 
