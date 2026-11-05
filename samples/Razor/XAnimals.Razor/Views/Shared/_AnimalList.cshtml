@@ -12,7 +12,7 @@
     <div class="animal-list">
     @foreach (var animal in Model.FilteredAnimals)
     {
-            <form method="post" action="/animals/select" class="animal-select-form">
+            <form method="post" action="/@species/@animal.Name" class="animal-select-form">
                 @Html.AntiForgeryToken()
                 @Html.RouteableViewModelToken()
                 <input type="hidden" name="species" value="@species" />

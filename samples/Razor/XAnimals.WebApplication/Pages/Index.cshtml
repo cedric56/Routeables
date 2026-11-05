@@ -17,9 +17,12 @@
     MainViewModel.SelectFirst();
     var view = MainViewModel.Routeable?.View;
     var vm = MainViewModel.Routeable?.ViewModel;
-    var path = view?.ToString();//.TemplatePath();
+    var path = RouteData.Values["path"]?.ToString();
+    var url = "/" + (path?.TrimStart('/') ?? "");
+    url += Request.QueryString.Value;
+    var result = await Router.GoToAsync(url);
 }
-@if (path is { } && vm is not null)
-{
+@* @if (path is { } && vm is not null)
+{ *@
     @await Html.PartialAsync("~/Views/Cats/Index.cshtml", vm, ViewData)
-}
+@* } *@

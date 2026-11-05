@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor" Version="2.3.13" />
-    <PackageReference Include="TypeGen" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

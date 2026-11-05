@@ -1,7 +1,6 @@
 ﻿using Routeables.Abstraction;
 using Routeables.Services;
 using System.Windows.Input;
-using TypeGen.Core.TypeAnnotations;
 using XAnimals.Common;
 
 namespace XAnimals.ViewModels;
@@ -11,7 +10,6 @@ namespace XAnimals.ViewModels;
 /// The services are the platform's own (Razor, Avalonia, Maui or Uno), so the same view model drives the four apps.
 /// </summary>
 [Routeable("dialogs")]
-[ExportTsClass]
 public class DialogsViewModel : ViewModelBase
 {
     private readonly IRouteableDialogService _dialogs;

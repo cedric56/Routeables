@@ -6,11 +6,7 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="TypeGen" Version="7.0.0" />
-  </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Routeables.Core\Routeables.Core.csproj" />
     <ProjectReference Include="..\..\..\src\Routeables.Generated.Abstraction\Routeables.Generated.Abstraction.csproj" />

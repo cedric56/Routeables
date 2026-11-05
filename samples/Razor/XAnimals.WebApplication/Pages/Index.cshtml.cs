@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Routeables.Abstraction;
 
 namespace XAnimals.WebApplication.Pages
 {
