@@ -100,17 +100,17 @@ jobs:
 
       - name: Libraries and Reshapes
         run: |
-          dotnet build src/Routeables.Razor/Routeables.Razor.csproj -c Debug
+          dotnet build src/Routeables.Blazor/Routeables.Blazor.csproj -c Debug
           dotnet build src/Routeables.Avalonia/Routeables.Avalonia.csproj -c Debug
-          dotnet build reshapes/Reshapes.Razor.MudBlazor/Reshapes.Razor.MudBlazor.csproj -c Debug
+          dotnet build reshapes/Reshapes.Blazor.MudBlazor/Reshapes.Blazor.MudBlazor.csproj -c Debug
           dotnet build reshapes/Reshapes.Avalonia.Fluent/Reshapes.Avalonia.Fluent.csproj -c Debug
 
       - name: Samples, Razor and Blazor
         run: |
           dotnet build samples/Bases/XAnimals.ViewModels/XAnimals.ViewModels.csproj -c Debug
-          dotnet build samples/XAnimals.Razor/XAnimals.Razor.csproj -c Debug
-          dotnet build samples/Xanimals.BlazorApp/Xanimals.BlazorApp.csproj -c Debug
-          dotnet build samples/XAnimals.BlazorWebAssembly/XAnimals.BlazorWebAssembly.csproj -c Debug
+          dotnet build samples/Blazor/XAnimals.Blazor/XAnimals.Blazor.csproj -c Debug
+          dotnet build samples/Blazor/XAnimals.BlazorApp/XAnimals.BlazorApp.csproj -c Debug
+          dotnet build samples/Blazor/XAnimals.BlazorWebAssembly/XAnimals.BlazorWebAssembly.csproj -c Debug
 
       - name: Samples, Avalonia
         run: |
@@ -215,7 +215,7 @@ jobs:
       - name: Publish Blazor WebAssembly trimmed
         shell: bash
         run: |
-          dotnet publish samples/XAnimals.BlazorWebAssembly/XAnimals.BlazorWebAssembly.csproj -c Release -p:TrimmerSingleWarn=false -o artifacts/wasm 2>&1 | tee wasm-publish.log
+          dotnet publish samples/Blazor/XAnimals.BlazorWebAssembly/XAnimals.BlazorWebAssembly.csproj -c Release -p:TrimmerSingleWarn=false -o artifacts/wasm 2>&1 | tee wasm-publish.log
           if grep -E "warning IL[23][0-9]{3}" wasm-publish.log | grep -i "routeables"; then
             echo "::error::Routeables raised trim warnings"; exit 1
           fi
@@ -243,7 +243,7 @@ jobs:
       - name: Pack
         run: |
           dotnet pack src/Routeables.Core/Routeables.Core.csproj -c Release -o artifacts
-          dotnet pack src/Routeables.Razor/Routeables.Razor.csproj -c Release -o artifacts
+          dotnet pack src/Routeables.Blazor/Routeables.Blazor.csproj -c Release -o artifacts
           dotnet pack src/Routeables.Avalonia/Routeables.Avalonia.csproj -c Release -o artifacts
 
       - name: Check the dependencies and the content
@@ -282,7 +282,7 @@ jobs:
           dotnet build src/Routeables.Maui/Routeables.Maui.csproj -c Debug -f net10.0-android
           dotnet build reshapes/Reshapes.Maui.Community/Reshapes.Maui.Community.csproj -c Debug -f net10.0-android
           dotnet build samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-android
-          dotnet build samples/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj -c Debug -f net10.0-android
+          dotnet build samples/Blazor/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj -c Debug -f net10.0-android
 
       - name: Avalonia
         run: dotnet build samples/XAnimals.Avalonia.Android/XAnimals.Avalonia.Android.csproj -c Debug
@@ -365,7 +365,7 @@ jobs:
       - name: MAUI, Mac Catalyst
         run: |
           dotnet build samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-maccatalyst
-          dotnet build samples/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj -c Debug -f net10.0-maccatalyst
+          dotnet build samples/Blazor/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj -c Debug -f net10.0-maccatalyst
 
       # actool compiles the asset catalog against the iOS simulator SDK, even for a device build, and needs the matching simulator
       # runtime. The runner image only has the runtimes of newer Xcode versions, so the one of Xcode 26.0 is downloaded.

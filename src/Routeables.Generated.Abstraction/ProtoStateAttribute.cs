@@ -23,6 +23,10 @@ public sealed class ProtoStateAttribute : Attribute
     /// <summary>Nom du message d'état (défaut : nom de la classe + "State").</summary>
     public string? StateMessage { get; set; }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="fileName"></param>
     public ProtoStateAttribute(string fileName) => FileName = fileName;
 }
 

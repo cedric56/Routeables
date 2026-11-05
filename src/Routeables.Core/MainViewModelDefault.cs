@@ -6,7 +6,7 @@ namespace Routeables.Core;
 
 /// <summary>
 /// The main view model of an application that has no menu: <c>UseRouteables(r => ...)</c> without a type registers it. It lists no
-/// entry; the page shown first is the one given to <see cref="Routeables.Abstraction.Extensions.AddHome"/>, if any. Write your own
+/// entry; the page shown first is the one given, if any. Write your own
 /// (<see cref="MainViewModelBase"/>) when the application has a menu, a tab bar or a title to show.
 /// </summary>
 /// <param name="router">The router that shows the pages.</param>
