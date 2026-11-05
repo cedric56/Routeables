@@ -319,7 +319,7 @@ jobs:
             src/Routeables.Maui/Routeables.Maui.csproj \
             reshapes/Reshapes.Maui.Community/Reshapes.Maui.Community.csproj \
             samples/XAnimals.Maui/XAnimals.Maui.csproj \
-            samples/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj; do
+            samples/Blazor/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj; do
             echo "::group::$project"
             if ! dotnet build "$project" -c Debug -f net10.0-windows10.0.19041.0 -nologo -clp:ErrorsOnly; then
               echo "::error title=MAUI Windows build failed::$project"

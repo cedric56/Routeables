@@ -27,7 +27,7 @@
   </Folder>
   <Folder Name="/samples/Blazor/">
     <Project Path="samples/Blazor/XAnimals.Blazor/XAnimals.Blazor.csproj" Id="40dcae35-9b5a-4589-8f5a-9060824b6dec" />
-    <Project Path="samples/Blazor/Xanimals.BlazorApp/Xanimals.BlazorApp.csproj" Id="36a9a6a9-a8e3-4bf4-a2db-f9fb15a9090a" />
+    <Project Path="samples/Blazor/XAnimals.BlazorApp/XAnimals.BlazorApp.csproj" Id="36a9a6a9-a8e3-4bf4-a2db-f9fb15a9090a" DisplayName="XAnimals.BlazorApp" />
     <Project Path="samples/Blazor/XAnimals.BlazorWebAssembly/XAnimals.BlazorWebAssembly.csproj" Id="83704bd0-b477-4023-b11d-d0e984037d6e" />
     <Project Path="samples/Blazor/XAnimals.MauiHybrid/XAnimals.MauiHybrid.csproj" Id="9f9541b9-2097-4232-acb6-b18038aa7e33">
       <Deploy Solution="Debug|*" />
