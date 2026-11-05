@@ -14,7 +14,7 @@
 <h1>XAnimals</h1>
 @model ShellModel
 @{
-    
+    MainViewModel.SelectFirst();
     var view = MainViewModel.Routeable?.View;
     var vm = MainViewModel.Routeable?.ViewModel;
     var path = view?.ToString();//.TemplatePath();

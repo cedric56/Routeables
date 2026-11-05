@@ -13,7 +13,7 @@ namespace XAnimals.ViewModels;
 /// The menu of the sample. <see cref="MainViewModelBase"/> does the rest: the selected entry (with the refusal of a page that
 /// cannot be left), the current view, the lock coordinator and the notifications. The hosts select the first entry themselves.
 /// </summary>
-public class MainViewModel(IRouter router, IRouteCoordinator coordinator, IRouteableRequestedThemeService themes) : MainViewModelBase(router, initialize: true), INotifyPropertyChanged
+public class MainViewModel(IRouter router, IRouteCoordinator coordinator, IRouteableRequestedThemeService themes) : MainViewModelBase(router, initialize: false), INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
