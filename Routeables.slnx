@@ -22,7 +22,9 @@
       <Deploy Solution="Debug|*" />
     </Project>
     <Project Path="samples/XAnimals.Razor/XAnimals.Razor.csproj" Id="40dcae35-9b5a-4589-8f5a-9060824b6dec" />
-    <Project Path="samples/XAnimals.Uno/XAnimals.Uno.csproj" />
+    <Project Path="samples/XAnimals.Uno/XAnimals.Uno.csproj">
+      <Deploy Solution="Debug|*" />
+    </Project>
     <Project Path="samples/XAnimals.Wpf/XAnimals.Wpf.csproj" />
   </Folder>
   <Folder Name="/samples/Bases/">
@@ -53,8 +55,10 @@
     <File Path="logo.svg" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/Routeables.Generated.Abstraction/Routeables.Generated.Abstraction.csproj" Id="6070271a-fb2d-49f7-ab62-5c41d9a02e1e" />
     <Project Path="src/Routeables.Abstraction/Routeables.Abstraction.csproj" />
     <Project Path="src/Routeables.AotSmoke/Routeables.AotSmoke.csproj" />
+    <Project Path="src/Routeables.AspNetCore/Routeables.AspNetCore.csproj" />
     <Project Path="src/Routeables.Avalonia/Routeables.Avalonia.csproj" />
     <Project Path="src/Routeables.Benchmarks/Routeables.Benchmarks.csproj" />
     <Project Path="src/Routeables.Core/Routeables.Core.csproj" />

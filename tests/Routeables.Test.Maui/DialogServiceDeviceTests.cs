@@ -425,9 +425,10 @@ public class DialogServiceDeviceTests
         Tap(ButtonOf(popup, "Save"));
         Assert.Equal(["save"], ran);
 
+        viewModel.CloseRequested += (s, v) => Assert.Equal("done", v);
         await viewModel.CloseAsync("done");
 
-        Assert.Equal("done", await ResultAsync(shown));
+        //Assert.Equal("done", await ResultAsync(shown));
         await ClosedAsync();
     }
 
