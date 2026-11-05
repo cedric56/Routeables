@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Routeables.Blazor\Routeables.Blazor.csproj" />
-    <ProjectReference Include="..\..\XAnimals.Blazor\XAnimals.Blazor.csproj" />
+    <ProjectReference Include="..\..\Blazor\XAnimals.Blazor\XAnimals.Blazor.csproj" />
     <ProjectReference Include="..\XAnimals.Birds\XAnimals.Birds.csproj" />
   </ItemGroup>
 

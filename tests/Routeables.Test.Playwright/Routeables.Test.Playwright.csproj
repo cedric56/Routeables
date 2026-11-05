@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <!--
     UI tests of the Blazor host: a real browser (Playwright, Chromium) drives the sample samples/Xanimals.BlazorApp (Blazor Server), which
@@ -29,8 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Built before the tests, but not referenced: the tests start it as a program. -->
-    <ProjectReference Include="..\..\samples\Xanimals.BlazorApp\Xanimals.BlazorApp.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\samples\Blazor\Xanimals.BlazorApp\Xanimals.BlazorApp.csproj" ReferenceOutputAssembly="false"/>
   </ItemGroup>
 
 </Project>

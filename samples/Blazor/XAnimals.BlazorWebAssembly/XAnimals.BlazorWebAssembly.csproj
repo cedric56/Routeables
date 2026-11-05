@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Modules\XAnimals.Blazor.Birds\XAnimals.Blazor.Birds.csproj" />
+    <ProjectReference Include="..\..\Modules\XAnimals.Blazor.Birds\XAnimals.Blazor.Birds.csproj" />
     <ProjectReference Include="..\XAnimals.Blazor\XAnimals.Blazor.csproj" />
     <ProjectReference Include="..\..\src\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\reshapes\Reshapes.Blazor.MudBlazor\Reshapes.Blazor.MudBlazor.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Blazor\Routeables.Blazor.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\logo.svg" />
+  </ItemGroup>
+
+</Project>

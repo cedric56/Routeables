@@ -75,9 +75,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\..\src\Routeables.Blazor\Routeables.Blazor.csproj" />
-    <ProjectReference Include="..\Modules\XAnimals.Blazor.Birds\XAnimals.Blazor.Birds.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\..\src\Routeables.Blazor\Routeables.Blazor.csproj" />
+    <ProjectReference Include="..\..\Modules\XAnimals.Blazor.Birds\XAnimals.Blazor.Birds.csproj" />
     <ProjectReference Include="..\XAnimals.Blazor\XAnimals.Blazor.csproj" />
   </ItemGroup>
 

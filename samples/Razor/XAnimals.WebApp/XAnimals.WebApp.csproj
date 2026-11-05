@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\samples\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
-    <ProjectReference Include="..\src\Routeables.AspNetCore\Routeables.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.AspNetCore\Routeables.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>
