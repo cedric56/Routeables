@@ -5,7 +5,7 @@
     private IJSObjectReference? module;
 
     /// <summary>
-    /// Once the page is up, the images of the lists load in the background (see <see cref="XAminals.Models.AnimalImages"/>): the
+    /// Once the page is up, the images of the lists load in the background (see <see cref="XAnimals.Models.AnimalImages"/>): the
     /// browser keeps them, and an img finds them there. It does nothing while the page is rendered on the server (no browser yet).
     /// </summary>
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -16,7 +16,7 @@
         try
         {
             module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/XAnimals.Razor/preload.js");
-            _ = module.InvokeVoidAsync("preload", XAminals.Models.AnimalImages.Thumbnails);
+            _ = module.InvokeVoidAsync("preload", XAnimals.Models.AnimalImages.Thumbnails);
         }
         catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException)
         {

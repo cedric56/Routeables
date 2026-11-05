@@ -1,5 +1,5 @@
 ﻿using Routeables.Maui;
-using XAminals.Models;
+using XAnimals.Models;
 using XAnimals.ViewModels;
 
 namespace XAnimals.Maui

@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:XAnimals.Common;assembly=XAnimals.Common"
-             xmlns:models="using:XAminals.Models"
+             xmlns:models="using:XAnimals.Models"
              xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              x:Class="XAnimals.Avalonia.AnimalDetail"
              x:DataType="vm:AnimalDetailViewModel"

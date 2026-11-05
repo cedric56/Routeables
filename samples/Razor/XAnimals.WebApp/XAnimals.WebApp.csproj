@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\..\src\Routeables.AspNetCore\Routeables.AspNetCore.csproj" />
     <ProjectReference Include="..\..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
     <ProjectReference Include="..\XAnimals.Razor\XAnimals.Razor.csproj" />
+    <ProjectReference Include="..\..\..\src\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

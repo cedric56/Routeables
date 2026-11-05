@@ -1,7 +1,7 @@
 using Uno.UI.Hosting;
 using XAnimals.Uno;
 
-namespace XAminals.Wasm;
+namespace XAnimals.Wasm;
 
 public class Program
 {

@@ -1,0 +1,9 @@
+@namespace XAnimals.Razor.Views.Cats
+@using Routeables.Abstraction
+@model CatsViewModel
+@attribute [RouteableView(typeof(CatsViewModel), "/cats")]
+@{
+    ViewData["Title"] = "Cats";
+    ViewData["Species"] = "cats";
+}
+@await Html.PartialAsync("~/Views/Shared/_AnimalList.cshtml", Model, ViewData)

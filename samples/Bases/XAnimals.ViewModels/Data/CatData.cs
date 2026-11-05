@@ -1,6 +1,6 @@
-﻿using XAminals.Models;
+﻿using XAnimals.Models;
 
-namespace Xaminals.Data
+namespace XAnimals.Data
 {
     public static class CatData
     {

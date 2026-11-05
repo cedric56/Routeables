@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:app="clr-namespace:XAnimals.Maui"
     xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
-    xmlns:models="clr-namespace:XAminals.Models;assembly=XAnimals.Common"
+    xmlns:models="clr-namespace:XAnimals.Models;assembly=XAnimals.Common"
     x:Class="XAnimals.Maui.Views.AnimalList">
 
     <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Paper}, Dark={StaticResource OffBlack}}">

@@ -1,8 +1,12 @@
+
 using Microsoft.AspNetCore.Mvc;
 using Routeables.AspNetCore;
+using Routeables.AspNetCore.Rendering;
+using XAnimals.Common;
+using XAnimals.Models;
 
 namespace XAnimals.WebApplication.Controllers;
-
+//[ApiController]
 public sealed class RouteablesController(IRouteableRequestExecutor executor) : Controller
 {
     [HttpGet]
@@ -14,13 +18,26 @@ public sealed class RouteablesController(IRouteableRequestExecutor executor) : C
         return result.ToActionResult(ControllerContext);
     }
 
-    [HttpPost("/animals/select"), ValidateAntiForgeryToken]
-    public IActionResult SelectAnimal([FromForm] string species, [FromForm] string name)
+    [HttpPost("/animals/select")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SelectAnimal(
+    [FromRouteableViewModel] AnimalsViewModel service,
+    [FromForm] string species,
+    [FromForm] string name)
     {
-        var allowed = new[] { "cats", "dogs", "monkeys", "elephants", "bears", "pandas" };
-        if (string.IsNullOrWhiteSpace(name) || !allowed.Contains(species, StringComparer.OrdinalIgnoreCase))
-            return BadRequest();
-        return Redirect("/" + species.ToLowerInvariant() + "/" + Uri.EscapeDataString(name));
+        //var vm = router.CurrentViewModel;
+
+        var animal = XAnimals.Data.CatData.Cats
+            .FirstOrDefault(c => c.Name == name);
+
+        if (animal is null)
+            return NotFound();
+
+        if (service != null)
+            await service.OnSelectedAnimalAsync(animal);
+
+        return Redirect(
+            $"/{species.ToLowerInvariant()}/{Uri.EscapeDataString(name)}");
     }
 
     [HttpPost("/animals/back"), ValidateAntiForgeryToken]

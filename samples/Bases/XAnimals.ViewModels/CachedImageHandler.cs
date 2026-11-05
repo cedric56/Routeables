@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using System.Net;
-using XAminals.Models;
+using XAnimals.Models;
 
 namespace XAnimals.ViewModels;
 

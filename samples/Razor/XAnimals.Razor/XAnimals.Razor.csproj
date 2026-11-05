@@ -1,15 +1,38 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <OutputType>Library</OutputType>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <RootNamespace>XAnimals.Razor</RootNamespace>
   </PropertyGroup>
+  <!--<PropertyGroup>
+    <RazorGeneratorTargetsEnabled>true</RazorGeneratorTargetsEnabled>
+    <RazorGeneratorForceOverwrite>true</RazorGeneratorForceOverwrite>
+  </PropertyGroup>-->
+  <PropertyGroup>
+    <EnableDefaultRazorItems>false</EnableDefaultRazorItems>
+  </PropertyGroup>
+
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Routeables.AspNetCore\Routeables.AspNetCore.csproj" />
+    <!--<ProjectReference Include="..\..\..\src\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />-->
     <ProjectReference Include="..\..\Bases\XAnimals.Common\XAnimals.Common.csproj" />
-    <ProjectReference Include="..\..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
+    <ProjectReference Include="..\..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />    
   </ItemGroup>
+
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="XAnimals.WebApp" />
+  </ItemGroup>
+
+
+  <!--<ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.14" />    
+  </ItemGroup>-->
+
 </Project>

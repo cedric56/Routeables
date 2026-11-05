@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using XAminals.Models;
+using XAnimals.Models;
 using XAnimals.Common;
 
 namespace XAnimals.Wpf.Views;

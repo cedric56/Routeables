@@ -1,6 +1,6 @@
-using Xaminals.Data;
+using XAnimals.Data;
 
-namespace XAminals.Models;
+namespace XAnimals.Models;
 
 /// <summary>
 /// The images every host loads while the application starts, so that a page shows them at once instead of fetching them when the

@@ -1,4 +1,4 @@
-namespace XAminals.Models;
+namespace XAnimals.Models;
 
 /// <summary>
 /// What a page shows when the picture of an animal cannot be loaded (no network, Wikimedia down): the arch of the identity, empty.

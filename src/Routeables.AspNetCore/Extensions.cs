@@ -35,6 +35,19 @@ namespace Routeables.AspNetCore
             services.AddScoped<
                 IRouteableViewResolver,
                 RouteableViewResolver>();
+            services.AddSingleton<
+    IRouteableViewModelStore,
+    RouteableViewModelStore>();
+
+            services.AddMemoryCache();
+
+            services.AddSingleton<
+                IRouteableViewModelStore,
+                RouteableViewModelStore>();
+
+            services.AddSingleton<RouteableViewModelOwner>();
+
+            services.AddTransient<RouteableViewModelModelBinder>();
 
             //services.AddScoped<
             //    IRouteableViewRenderer,

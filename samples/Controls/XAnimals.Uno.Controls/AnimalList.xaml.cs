@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using XAminals.Models;
+using XAnimals.Models;
 using XAnimals.Common;
 
 namespace XAnimals.Uno.Views;

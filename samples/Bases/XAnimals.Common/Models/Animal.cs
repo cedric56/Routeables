@@ -1,4 +1,4 @@
-﻿namespace XAminals.Models;
+﻿namespace XAnimals.Models;
 
 public class Animal
 {

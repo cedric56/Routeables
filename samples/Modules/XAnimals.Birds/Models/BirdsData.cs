@@ -1,4 +1,4 @@
-using XAminals.Models;
+using XAnimals.Models;
 
 namespace XAnimals.Birds
 {

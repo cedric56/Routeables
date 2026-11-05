@@ -1,4 +1,4 @@
-using XAminals.Models;
+using XAnimals.Models;
 using XAnimals.Common;
 
 namespace XAnimals.Maui.Views;

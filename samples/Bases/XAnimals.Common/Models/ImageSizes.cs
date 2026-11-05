@@ -1,4 +1,4 @@
-namespace XAminals.Models;
+namespace XAnimals.Models;
 
 /// <summary>
 /// The pictures of the animals are the originals of Wikimedia Commons, several megabytes each, shown in a thumbnail of 56 by 68.

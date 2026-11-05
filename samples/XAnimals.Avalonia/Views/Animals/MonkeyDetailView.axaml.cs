@@ -1,5 +1,5 @@
 using Routeables.Avalonia;
-using Xaminals.ViewModels;
+using XAnimals.ViewModels;
 using RoutedEventArgs = Avalonia.Interactivity.RoutedEventArgs;
 
 namespace XAnimals.Avalonia;

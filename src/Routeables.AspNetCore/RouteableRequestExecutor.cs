@@ -1,4 +1,7 @@
 ﻿
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.DependencyInjection;
 using Routeables.AspNetCore.Rendering;
 using Routeables.Routing;
 
@@ -26,6 +29,7 @@ namespace Routeables.AspNetCore
             var result = await router.GoToAsync(
                 route,
                 RouteableArgs.Create(),
+                route,
                 cancellationToken: cancellationToken);
 
             if (!result.Success)

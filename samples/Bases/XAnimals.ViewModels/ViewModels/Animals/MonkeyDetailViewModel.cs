@@ -1,9 +1,8 @@
 ﻿using Routeables.Abstraction;
-using Xaminals.Data;
 using XAnimals.Common;
-using XAnimals.ViewModels;
+using XAnimals.Data;
 
-namespace Xaminals.ViewModels;
+namespace XAnimals.ViewModels;
 
 [RouteableViewModel(typeof(MonkeysViewModel), Route = "/monkeys/{name}")]
 [Routeable("/monkeys/{name}")]
