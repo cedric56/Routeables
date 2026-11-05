@@ -1,0 +1,26 @@
+@model AnimalsViewModel
+@{ var species = (string)(ViewData["Species"] ?? "cats"); var title = (string)(ViewData["Title"] ?? "Animals"); }
+<div class="animals-page">
+    <h1>@title</h1>
+    <form method="get" action="/@species">
+        <input class="search-box" type="search" name="SearchText" value="@Model.SearchText"
+               placeholder="Enter search term" aria-label="Search animals" />
+        <button class="back-btn" type="submit">Search</button>
+    </form>
+    @if (!Model.FilteredAnimals.Any()) { <p class="no-results">No @species found.</p> }
+    <div class="animal-list">
+    @foreach (var animal in Model.FilteredAnimals)
+    {
+        <form method="post" action="/animals/select" class="animal-select-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="species" value="@species" />
+            <input type="hidden" name="name" value="@animal.Name" />
+            <button class="animal-item" type="submit">
+                <img src="@animal.ThumbnailUrl" alt="@animal.Name" width="56" height="68" loading="lazy" />
+                <span class="animal-text"><span class="animal-name">@animal.Name</span>
+                <span class="animal-location">@animal.Location</span></span>
+            </button>
+        </form>
+    }
+    </div>
+</div>

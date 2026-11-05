@@ -1,0 +1,4 @@
+@using Xaminals.ViewModels
+@model MonkeyDetailViewModel
+@{ ViewData["Title"] = Model.Animal?.Name ?? "Monkey"; ViewData["Species"] = "monkeys"; }
+@await Html.PartialAsync("~/Views/Shared/_AnimalDetail.cshtml", Model, ViewData)

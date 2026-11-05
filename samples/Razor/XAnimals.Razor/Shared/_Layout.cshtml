@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Routeables Animals</title>
+    <link rel="stylesheet" href="~/css/animals.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/animals-mvc.css" asp-append-version="true" />
+</head>
+<body>
+<header class="site-header">
+    <a class="brand" href="/cats">Routeables Animals</a>
+    <nav aria-label="Main navigation">
+        <a href="/cats">Cats</a><a href="/dogs">Dogs</a><a href="/monkeys">Monkeys</a>
+        <a href="/elephants">Elephants</a><a href="/bears">Bears</a><a href="/pandas">Pandas</a><a href="/about">About</a>
+    </nav>
+</header>
+<main role="main">@RenderBody()</main>
+</body>
+</html>

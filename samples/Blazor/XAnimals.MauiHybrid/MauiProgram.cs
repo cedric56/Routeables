@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Reshapes.Razor.MudBlazor;
+using Reshapes.Blazor.MudBlazor;
 using Routeables.Generated;
 using Routeables.Blazor;
-using Xanimals.Razor;
+using Xanimals.Blazor;
 using XAnimals.ViewModels;
 
 namespace XAnimals.MauiHybrid

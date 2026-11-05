@@ -1,0 +1,16 @@
+/* MVC host shell and native HTML forms. */
+:root { color-scheme: light; }
+body { margin: 0; background: var(--an-paper); color: var(--an-ink); font-family: "Inter", system-ui, sans-serif; }
+.site-header { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem; padding:1rem clamp(1rem,4vw,3rem); background:var(--an-canopy); color:#fff; }
+.site-header a { color:inherit; text-decoration:none; }
+.site-header nav { display:flex; flex-wrap:wrap; gap:.4rem 1rem; }
+.site-header nav a { padding:.35rem .55rem; border-radius:999px; }
+.site-header nav a:hover { background:rgba(255,255,255,.16); }
+.brand { font-family:"Lora",Georgia,serif; font-size:1.35rem; font-weight:600; }
+main { min-height:calc(100vh - 5rem); }
+.animals-page form:first-of-type { display:flex; gap:.5rem; align-items:center; }
+.animals-page form:first-of-type .search-box { flex:1; }
+.animal-select-form, .actions form { margin:0; }
+button.animal-item { width:100%; border:0; background:transparent; color:inherit; text-align:left; font:inherit; }
+.action-button { display:inline-flex; align-items:center; text-decoration:none; font:inherit; font-weight:600; padding:.65rem 1.4rem; border-radius:999px; background:var(--an-canopy); color:#fff; }
+@media (max-width:42rem) { .site-header { align-items:flex-start; flex-direction:column; } }

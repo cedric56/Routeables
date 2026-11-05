@@ -1,0 +1,3 @@
+@model DogsViewModel
+@{ ViewData["Title"] = "Dogs"; ViewData["Species"] = "dogs"; }
+@await Html.PartialAsync("~/Views/Shared/_AnimalList.cshtml", Model, ViewData)

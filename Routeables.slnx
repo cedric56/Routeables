@@ -50,6 +50,7 @@
   <Folder Name="/samples/Razor/">
     <Project Path="samples/Razor/XAnimals.WebApp/XAnimals.WebApp.csproj" Id="55081e57-b5d0-4411-b16d-e09a72f237c3" />
     <Project Path="samples/Razor/XAnimals.WebApplication/XAnimals.WebApplication.csproj" Id="d3cdcbfe-73cf-4160-a7b8-5a79ce433213" />
+    <Project Path="samples/Razor/XAnimals.Razor/XAnimals.Razor.csproj" Id="e03a195a-6315-4e32-84da-a0d4ab6fcc1b" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="README.md" />

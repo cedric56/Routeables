@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Routeables.Generated;
 using Routeables.Blazor;
-using Xanimals.Razor;
-using XAnimals.Razor.Components;
+using Xanimals.Blazor;
+using XAnimals.Blazor.Components;
 using XAnimals.ViewModels;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
