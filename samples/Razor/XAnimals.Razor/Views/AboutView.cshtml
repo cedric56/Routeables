@@ -1,0 +1,12 @@
+@using Routeables.Abstraction
+@model AboutViewModel
+@attribute [RouteableView(typeof(AboutViewModel), "/about")]
+@{ ViewData["Title"] = "About"; }
+<div class="about-page">
+    <div class="about-logo"><img src="~/images/logo.svg" alt="Routeables logo" /></div>
+    <h1><span class="app-name">Routeables Animals</span><span class="app-version">1.0</span></h1>
+    <section class="about-group"><h2>Links</h2><div class="actions">
+        <a class="action-button" href="@AboutViewModel.LearnMoreUrl" target="_blank" rel="noopener noreferrer">Learn more</a>
+        <form method="post" action="/about/polar-bears">@Html.AntiForgeryToken()<button type="submit">Polar bears</button></form>
+    </div></section>
+</div>

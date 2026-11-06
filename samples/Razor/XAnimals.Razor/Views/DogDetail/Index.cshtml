@@ -1,3 +1,0 @@
-@model DogDetailViewModel
-@{ ViewData["Title"] = Model.Animal?.Name ?? "Dog"; ViewData["Species"] = "dogs"; }
-@await Html.PartialAsync("~/Views/Shared/_AnimalDetail.cshtml", Model, ViewData)

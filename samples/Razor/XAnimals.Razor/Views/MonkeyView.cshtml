@@ -1,0 +1,5 @@
+@using Routeables.Abstraction
+@model MonkeysViewModel
+@attribute [RouteableView(typeof(MonkeysViewModel), "/monkeys")]
+@{ ViewData["Title"] = "Monkeys"; ViewData["Species"] = "monkeys"; }
+@await Html.PartialAsync("~/Views/Shared/_AnimalList.cshtml", Model, ViewData)
