@@ -1,5 +1,7 @@
 # Migrating from Prism
 
+Routeables targets .NET 10, so an application that moves to it has to move to .NET 10 as well. This guide treats the change of navigation layer as one step of that upgrade, taken one screen at a time rather than in one block: the table below maps each Prism concept to its Routeables counterpart, so a screen can be converted on its own.
+
 Routeables does the route change part of Prism: views and view models, routes with parameters, a history, a lifecycle with guards, regions and dialogs. It stays out of the rest. It ships **no** `DelegateCommand`, **no** view-model locator, **no** event aggregator and **no** module catalog: the MVVM library is your choice (CommunityToolkit.Mvvm, ReactiveUI, plain C#). A feature assembly is one extension method (see [Modules](routes.md#modules)).
 
 ## Concepts side by side

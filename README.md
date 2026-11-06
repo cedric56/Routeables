@@ -20,7 +20,7 @@
 
 A view model asks an `IRouter` to go somewhere. It never touches a page, a frame or a navigation API of the framework, so the same code runs on every host. A route, a view and a zone of the screen that shows it: that is the whole model.
 
-Coming from Prism? Read [Migrating from Prism](docs/guides/migrating-from-prism.md). Want to see it first? [The Animals sample runs in your browser](https://cedric56.github.io/Routeables/demo/avalonia/) (Avalonia, WebAssembly).
+Moving an existing Prism application to .NET 10? [Migrating from Prism](docs/guides/migrating-from-prism.md) maps each concept, so you can convert one screen at a time. Want to see it first? [The Animals sample runs in your browser](https://cedric56.github.io/Routeables/demo/avalonia/) (Avalonia, WebAssembly).
 
 ## Install
 

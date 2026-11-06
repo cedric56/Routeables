@@ -54,6 +54,6 @@ Routeables fits when:
 - the application is trimmed or published with Native AOT;
 - you want navigation errors found at compile time;
 - you want routes, regions, guards, dialogs and notifications from one place;
-- you are leaving Prism and want to keep the routes, the lifecycle, the regions and the dialogs.
+- you are moving a Prism application to .NET 10 and want to keep the routes, the lifecycle, the regions and the dialogs, converting one screen at a time.
 
 Another library may fit better when you want one project to provide the container, the commands and the messaging as well, when the application is on a single framework whose own router already does what you need, or when you need a library with years of use in production.
