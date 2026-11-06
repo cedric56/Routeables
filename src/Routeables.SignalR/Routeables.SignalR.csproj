@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputType>Library</OutputType>
+    <Description>Serves Routeables view models to a browser front end (Angular, Vue or any JavaScript client) over SignalR.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" />
+    <ProjectReference Include="..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
+    <ProjectReference Include="..\Routeables.Segments\Routeables.Segments.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Test" />
+  </ItemGroup>
+
+</Project>

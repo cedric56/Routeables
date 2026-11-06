@@ -1,0 +1,53 @@
+﻿@using Routeables.Abstraction
+@model FeaturesViewModel
+@attribute [RouteableView(typeof(FeaturesViewModel), "/features")]
+@{ ViewData["Title"] = "Features"; }
+@if (Model.IsLocked && Model.Remaining > 0)
+{
+    @* A lock for some seconds ends by itself on the server: the page asks again to show it. *@
+    <meta http-equiv="refresh" content="1" />
+}
+<div class="about-page">
+    <form method="post" class="about-group">
+        <input type="hidden" name="target" value="page" />
+        <h2>Guard and return</h2>
+        <p>The Members page is for members. Signed out, opening it brings you here; sign in, then open it.</p>
+        <div class="actions">
+            <button name="do" value="signin" disabled="@(!Model.IsSignedOut)">Sign in</button>
+            <button name="do" value="signout" disabled="@(!Model.IsSignedIn)">Sign out</button>
+            <button name="do" value="members">Open Members</button>
+        </div>
+    </form>
+
+    <form method="post" class="about-group">
+        <input type="hidden" name="target" value="page" />
+        <h2>Link</h2>
+        <p>An address from outside, followed through the router. In a browser the address bar does the same job.</p>
+        <div class="actions">
+            <button name="do" value="link">Open @Model.Link</button>
+        </div>
+    </form>
+
+    <form method="post" class="about-group">
+        <input type="hidden" name="target" value="page" />
+        <h2>Lock</h2>
+        <p>The page publishes a lock message; the menu entries are disabled until it publishes the unlock one.</p>
+        <div class="actions">
+            <button name="do" value="lock" disabled="@(!Model.CanLock)">Lock</button>
+            <button name="do" value="unlock" disabled="@(!Model.CanUnlock)">Unlock</button>
+            <button name="do" value="lockfor" disabled="@(!Model.CanLock)">Lock for @FeaturesViewModel.LockSeconds seconds</button>
+        </div>
+        <p class="about-result" role="status">@Model.LockStatus</p>
+    </form>
+
+    <form method="post" class="about-group">
+        <input type="hidden" name="target" value="page" />
+        <h2>Measures</h2>
+        <div class="actions">
+            <button name="do" value="refresh">Show the last route changes</button>
+        </div>
+        <pre>@Model.Measures</pre>
+    </form>
+
+    <p class="about-result" role="status">@Model.Status</p>
+</div>

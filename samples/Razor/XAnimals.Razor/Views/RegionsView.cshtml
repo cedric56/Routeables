@@ -1,0 +1,26 @@
+﻿@using Routeables.Abstraction
+@model RegionsViewModel
+@attribute [RouteableView(typeof(RegionsViewModel), "/regions")]
+@{ ViewData["Title"] = "Regions"; }
+@* An application of its own: four zones, four routers. Each zone receives whatever the router of its region displays, and every page
+   in it navigates its own region: nothing here assigns a view to a zone. *@
+<div class="rg-app @(Model.IsLeftCollapsed ? "left-collapsed" : null)">
+    <header class="rg-header">@await Html.PartialAsync("~/Views/Shared/_Region.cshtml", LayoutController.Header)</header>
+    <aside class="rg-left">
+        <form method="post">
+            <input type="hidden" name="target" value="page" />
+            <button name="do" value="left" class="rg-collapse"
+                    title="@(Model.IsLeftCollapsed ? "Show the panel" : "Reduce the panel")"
+                    aria-label="@(Model.IsLeftCollapsed ? "Show the panel" : "Reduce the panel")"
+                    aria-expanded="@(!Model.IsLeftCollapsed ? "true" : "false")">@(Model.IsLeftCollapsed ? "»" : "«")</button>
+        </form>
+        <div class="rg-left-region">@await Html.PartialAsync("~/Views/Shared/_Region.cshtml", LayoutController.LeftPanel)</div>
+        @* One navigation made of segments: the logo in the content, the author in the footer, the copyright in the left panel. *@
+        <form method="post">
+            <input type="hidden" name="target" value="page" />
+            <button name="do" value="credits" class="rg-credits">@Model.CreditsText</button>
+        </form>
+    </aside>
+    <main class="rg-content">@await Html.PartialAsync("~/Views/Shared/_Region.cshtml", LayoutController.Content)</main>
+    <footer class="rg-footer">@await Html.PartialAsync("~/Views/Shared/_Region.cshtml", LayoutController.Footer)</footer>
+</div>

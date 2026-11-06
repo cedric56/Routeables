@@ -1,0 +1,21 @@
+﻿@using Routeables.Abstraction
+@model LayoutMenuViewModel
+@attribute [RouteableView(typeof(LayoutMenuViewModel), "layout-menu")]
+@* The menu of the left panel of Regions. It is in a region of its own: its buttons name it, so the post reaches this view model. *@
+<form method="post">
+    <input type="hidden" name="target" value="@LayoutController.LeftPanel" />
+    <nav class="rg-menu">
+        <div class="rg-menu-moves">
+            <button name="do" value="back" disabled="@(!Model.CanGoBack)">◀ Back</button>
+            <button name="do" value="forward" disabled="@(!Model.CanGoForward)">Forward ▶</button>
+        </div>
+        @for (var i = 0; i < Model.Items.Count; i++)
+        {
+            var item = Model.Items[i];
+            <button type="submit" name="do" value="select:@i" class="rg-menu-item @(item.IsCurrent ? "current" : "")" aria-current="@(item.IsCurrent ? "page" : null)">
+                <span class="rg-menu-glyph">@item.Glyph</span>
+                <span>@item.Name</span>
+            </button>
+        }
+    </nav>
+</form>

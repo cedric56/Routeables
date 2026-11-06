@@ -1,0 +1,12 @@
+﻿@using Routeables.Abstraction
+@model string
+@* The zone of a region: it shows what the router of the region displays. Nothing assigns a view to it. *@
+@{
+    var router = ViewContext.HttpContext.RequestServices.GetRouter(Model);
+}
+@if (router.CurrentView is { } view)
+{
+    <div class="rt-enter rt-none">
+        @await Html.PartialAsync(MainViewPageModel.ViewName(view), router.CurrentViewModel)
+    </div>
+}

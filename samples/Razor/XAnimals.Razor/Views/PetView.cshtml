@@ -1,0 +1,10 @@
+﻿@using Routeables.Abstraction
+@model PetViewModel
+@attribute [RouteableView(typeof(PetViewModel), "/pet")]
+@* The card of one adopted animal; the adoption zone puts them side by side. *@
+<article class="pet-card">
+    <img src="@Model.Animal.PhotoUrl" alt="@Model.Name" width="150" height="190" />
+    <strong>@Model.Name</strong>
+    <span class="pet-location">@Model.Location</span>
+    <span class="pet-glyph">@Model.Glyph</span>
+</article>

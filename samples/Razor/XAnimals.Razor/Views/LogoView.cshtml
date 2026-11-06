@@ -1,0 +1,6 @@
+﻿@using Routeables.Abstraction
+@model LogoViewModel
+@attribute [RouteableView(typeof(LogoViewModel), "shell-logo")]
+<div class="rg-logo">
+    <img src="~/images/logo.svg" alt="@Model.Name logo" />
+</div>

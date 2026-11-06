@@ -46,6 +46,8 @@
     <ProjectReference Include="..\..\src\Routeables.Generated\Routeables.Generated.csproj" />
     <ProjectReference Include="..\..\src\Routeables.Routing\Routeables.Routing.csproj" />
     <ProjectReference Include="..\..\src\Routeables.Services\Routeables.Services.csproj" />
+    <ProjectReference Include="..\..\src\Routeables.SignalR\Routeables.SignalR.csproj" />
+    <ProjectReference Include="..\..\src\Routeables.AspNetCore\Routeables.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Routeables.Avalonia\Routeables.Avalonia.csproj" />
     <ProjectReference Include="..\..\src\Routeables.Maui\Routeables.Maui.csproj" />
     <ProjectReference Include="..\..\src\Routeables.Blazor\Routeables.Blazor.csproj" />

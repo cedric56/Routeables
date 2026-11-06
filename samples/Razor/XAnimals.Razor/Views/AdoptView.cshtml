@@ -1,0 +1,23 @@
+﻿@using Routeables.Abstraction
+@model AdoptViewModel
+@attribute [RouteableView(typeof(AdoptViewModel), "/adopt")]
+@{ ViewData["Title"] = "Adopt a pet"; }
+<form method="post" class="about-page">
+    <input type="hidden" name="target" value="page" />
+    @* One button per animal: adopting it routes its card into the region "adopt". *@
+    <section class="about-group adopt-choices">
+        @for (var i = 0; i < Model.Choices.Count; i++)
+        {
+            <button type="submit" name="do" value="adopt:@i" class="adopt-choice">@Model.Choices[i].Title</button>
+        }
+    </section>
+
+    <section class="about-group adopt-bar">
+        <p class="nav-status" role="status">@Model.Status</p>
+        <button type="submit" name="do" value="release" class="adopt-choice">Release the last</button>
+        <button type="submit" name="do" value="releaseall" class="adopt-choice">Release all</button>
+    </section>
+
+    @* Not one view but all of them: the region "adopt" holds a history, and every page of it is drawn here. *@
+    @await Html.PartialAsync("~/Views/Shared/_RegionItems.cshtml", "adopt")
+</form>

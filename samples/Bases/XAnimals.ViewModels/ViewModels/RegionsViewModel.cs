@@ -27,6 +27,7 @@ public class RegionsViewModel : ViewModelBase, IRouteable
         _controller = controller;
         _coordinator = coordinator;
         CreditsCommand = new AsyncCommand(ToggleCreditsAsync);
+        ToggleLeftCommand = new AsyncCommand(() => { ToggleLeft(); return Task.CompletedTask; });
     }
 
     /// <summary>The names of the regions the view declares, in layout order.</summary>
@@ -34,6 +35,9 @@ public class RegionsViewModel : ViewModelBase, IRouteable
 
     /// <summary>Shows the credits, or brings the application back.</summary>
     public ICommand CreditsCommand { get; }
+
+    /// <summary>Reduces the left panel, or brings it back (for a front end that calls commands, not methods).</summary>
+    public ICommand ToggleLeftCommand { get; }
 
     private bool _isLeftCollapsed;
 

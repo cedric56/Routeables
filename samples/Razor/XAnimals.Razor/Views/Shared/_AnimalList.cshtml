@@ -1,30 +1,40 @@
-@using Routeables.AspNetCore.Rendering
-@model AnimalsViewModel
+﻿@model AnimalsViewModel
 @{ var species = (string)(ViewData["Species"] ?? "cats"); var title = (string)(ViewData["Title"] ?? "Animals"); }
 <div class="animals-page">
     <h1>@title</h1>
+    @* A list that a region shows (HostsDetail is false) does not leave the page: no search address, no link to a detail. *@
+    @if (Model.HostsDetail)
+    {
     <form method="get" action="/@species">
         <input class="search-box" type="search" name="SearchText" value="@Model.SearchText"
                placeholder="Enter search term" aria-label="Search animals" />
         <button class="back-btn" type="submit">Search</button>
     </form>
+    }
     @if (!Model.FilteredAnimals.Any()) { <p class="no-results">No @species found.</p> }
     <div class="animal-list">
     @foreach (var animal in Model.FilteredAnimals)
     {
-            <form method="post" action="/@species/@animal.Name" class="animal-select-form">
-                @Html.AntiForgeryToken()
-                @Html.RouteableViewModelToken()
-                <input type="hidden" name="species" value="@species" />
-                <input type="hidden" name="name" value="@animal.Name" />
-                <button class="animal-item" type="submit">
-                    <img src="@animal.ThumbnailUrl" alt="@animal.Name" width="56" height="68" loading="lazy" />
-                    <span class="animal-text">
-                        <span class="animal-name">@animal.Name</span>
-                        <span class="animal-location">@animal.Location</span>
-                    </span>
-                </button>
-            </form>
+        if (Model.HostsDetail)
+        {
+            <a class="animal-item" href="/@species/@Uri.EscapeDataString(animal.Name)">
+                <img src="@animal.ThumbnailUrl" alt="@animal.Name" width="56" height="68" loading="lazy" />
+                <span class="animal-text">
+                    <span class="animal-name">@animal.Name</span>
+                    <span class="animal-location">@animal.Location</span>
+                </span>
+            </a>
+        }
+        else
+        {
+            <div class="animal-item">
+                <img src="@animal.ThumbnailUrl" alt="@animal.Name" width="56" height="68" loading="lazy" />
+                <span class="animal-text">
+                    <span class="animal-name">@animal.Name</span>
+                    <span class="animal-location">@animal.Location</span>
+                </span>
+            </div>
+        }
     }
     </div>
 </div>

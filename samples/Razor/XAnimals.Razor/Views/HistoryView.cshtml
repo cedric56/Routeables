@@ -1,0 +1,60 @@
+﻿@using Routeables.Abstraction
+@model HistoryViewModel
+@attribute [RouteableView(typeof(HistoryViewModel), "/history")]
+@{ ViewData["Title"] = "History"; }
+<div class="about-page">
+    <section class="about-group">
+        <div class="nav-track" role="list">
+            @foreach (var item in Model.Entries)
+            {
+                <div class="nav-card @(item.IsCurrent ? "current" : item.IsAhead ? "ahead" : "behind")" role="listitem">
+                    <span class="nav-number">@item.Number</span>
+                    <span class="nav-badge">@item.Badge</span>
+                    <span class="nav-glyph">@item.Glyph</span>
+                    <span class="nav-name">@item.Name</span>
+                    <span class="nav-caption">@item.Caption</span>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section class="about-group">
+        @* The zone of the "history" region: nothing assigns the view, it shows what the router of the region displays. *@
+        <div class="nav-frame" inert>
+            @await Html.PartialAsync("~/Views/Shared/_Region.cshtml", "history")
+        </div>
+    </section>
+
+    <section class="about-group">
+      <form method="post">
+        <input type="hidden" name="target" value="page" />
+        <div class="actions">
+            <button name="do" value="push">＋ Push</button>
+            <button name="do" value="back" disabled="@(!Model.CanGoBack)">◀ Back</button>
+            <button name="do" value="forward" disabled="@(!Model.CanGoForward)">Forward ▶</button>
+            <button name="do" value="pop" disabled="@(!Model.CanGoBack)">↩ Pop</button>
+        </div>
+      </form>
+    </section>
+
+    <form method="post" class="about-group">
+        <input type="hidden" name="target" value="page" />
+        <input type="hidden" name="do" value="transition" />
+        <h2>Transition</h2>
+        <select name="value" aria-label="Transition" onchange="this.form.requestSubmit()">
+            @foreach (var name in Model.Transitions)
+            {
+                <option value="@name" selected="@(name == Model.Transition)">@name</option>
+            }
+        </select>
+        <noscript><button type="submit">Apply</button></noscript>
+    </form>
+
+    <form method="post" class="about-group">
+        <input type="hidden" name="target" value="page" />
+        <h2>CanLeaveAsync</h2>
+        <button name="do" value="block" class="nav-check">@Model.GuardGlyph @Model.GuardText</button>
+    </form>
+
+    <p class="about-result nav-status @(Model.IsRefused ? "refused" : "")" role="status">@(Model.IsRefused ? "🚫 " : "")@Model.Status</p>
+</div>

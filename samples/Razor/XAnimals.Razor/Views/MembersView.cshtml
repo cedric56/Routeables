@@ -1,0 +1,13 @@
+﻿@using Routeables.Abstraction
+@model MembersViewModel
+@attribute [RouteableView(typeof(MembersViewModel), "/members")]
+@{ ViewData["Title"] = "Members"; }
+<div class="about-page">
+    <form method="post" class="about-group">
+        <input type="hidden" name="target" value="page" />
+        <p>@Model.Welcome</p>
+        <div class="actions">
+            <button name="do" value="signout">Sign out</button>
+        </div>
+    </form>
+</div>

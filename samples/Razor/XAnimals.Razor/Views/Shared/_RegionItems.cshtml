@@ -1,0 +1,13 @@
+﻿@using Routeables.Abstraction
+@model string
+@* Not one view but all of them: a region keeps a history, and every page of it up to the current one is drawn, side by side. *@
+@{
+    var router = ViewContext.HttpContext.RequestServices.GetRouter(Model);
+    var entries = router.History.Entries.Take(router.History.CurrentIndex + 1).ToList();
+}
+<div class="adopt-zone" style="display:flex;flex-wrap:wrap;gap:.8rem">
+    @foreach (var entry in entries)
+    {
+        @await Html.PartialAsync(MainViewPageModel.ViewName(entry.View), entry.ViewModel)
+    }
+</div>

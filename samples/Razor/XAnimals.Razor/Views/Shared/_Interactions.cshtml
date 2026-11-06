@@ -1,0 +1,51 @@
+﻿@using Routeables.AspNetCore
+@model RouteableInteractions
+@* What the services of the host put on the page: the notifications, and the dialog the visitor has to answer. *@
+@if (Model.Toasts.Count > 0)
+{
+    <div class="web-toasts" aria-live="polite">
+        @foreach (var toast in Model.Toasts)
+        {
+            <form method="post" class="web-toast web-toast-@toast.Type.ToString().ToLowerInvariant()" style="@(toast.Expiration is { } span ? $"animation:web-toast-out 0s linear {(int)span.TotalSeconds}s forwards" : null)">
+                <input type="hidden" name="target" value="toast" />
+                <button type="submit" name="do" value="click:@toast.Id" class="web-toast-body">
+                    <strong>@toast.Title</strong>
+                    <span>@toast.Message</span>
+                </button>
+                <button type="submit" name="do" value="close:@toast.Id" class="web-toast-close" aria-label="Close">✕</button>
+            </form>
+        }
+    </div>
+}
+@if (Model.Pending is { } dialog)
+{
+    <div class="web-dialog-backdrop">
+        <form method="post" class="web-dialog" role="dialog" aria-modal="true" aria-labelledby="web-dialog-title">
+            <input type="hidden" name="target" value="dialog" />
+            <h2 id="web-dialog-title">@dialog.Title</h2>
+            @if (dialog.Header is { Length: > 0 }) { <p><strong>@dialog.Header</strong></p> }
+            @if (dialog.Body is { Length: > 0 }) { <p>@dialog.Body</p> }
+            @if (dialog.ShowProgress) { <progress aria-label="Working"></progress> }
+            @if (dialog.ViewModel is XAnimals.ViewModels.NoteViewModel note)
+            {
+                <input class="search-box" name="value" placeholder="Write a note" aria-label="Note" value="@note.Note" required autofocus />
+                <div class="actions">
+                    @for (var i = 0; i < note.Commands.Count; i++)
+                    {
+                        <button type="submit" name="do" value="note:@i" formnovalidate="@(i != 0)">@note.Commands[i].Name</button>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="actions">
+                    @for (var i = 0; i < dialog.Buttons.Count; i++)
+                    {
+                        <button type="submit" name="do" value="answer:@i">@dialog.Buttons[i]</button>
+                    }
+                </div>
+            }
+            @if (dialog.Footer is { Length: > 0 }) { <p class="web-dialog-footer">@dialog.Footer</p> }
+        </form>
+    </div>
+}

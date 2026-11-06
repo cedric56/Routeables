@@ -9,6 +9,9 @@ public sealed class AsyncCommand(Func<Task> execute, Func<bool>? canExecute = nu
 
     public bool CanExecute(object? parameter) => canExecute?.Invoke() ?? true;
 
+    /// <summary>Runs the command and returns when it is done, for a host that must wait for it (a web request answers once the page has changed). Unlike <see cref="Execute"/>, an exception reaches the caller.</summary>
+    public Task ExecuteAsync() => execute();
+
     public async void Execute(object? parameter)
     {
         try { await execute(); }

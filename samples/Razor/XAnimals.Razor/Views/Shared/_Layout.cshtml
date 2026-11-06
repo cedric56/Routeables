@@ -1,19 +1,30 @@
+﻿@inject Routeables.AspNetCore.RouteableRequestThemeService Theme
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="@Theme.Requested.ToString().ToLowerInvariant()">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - Routeables Animals</title>
+    <script>
+        // The side panel is open on a wide screen unless the visitor closed it; the choice is kept from one page to the next.
+        try {
+            var saved = localStorage.getItem('xanimals.drawer');
+            if (saved === 'closed' || (saved === null && window.innerWidth < 760))
+                document.documentElement.classList.add('drawer-closed');
+        } catch (e) { }
+    </script>
     <link rel="stylesheet" href="~/css/animals.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/animals-mvc.css" asp-append-version="true" />
 </head>
 <body>
 <header class="site-header">
+    <button type="button" id="drawerToggle" class="drawer-toggle" aria-controls="drawer" aria-expanded="true" aria-label="Show or hide the menu">☰</button>
     <a class="brand" href="/cats">Routeables Animals</a>
-    <nav aria-label="Main navigation">
-        <a href="/cats">Cats</a><a href="/dogs">Dogs</a><a href="/monkeys">Monkeys</a>
-        <a href="/elephants">Elephants</a><a href="/bears">Bears</a><a href="/pandas">Pandas</a><a href="/about">About</a>
-    </nav>
+    @* The theme is asked of the service like on the other platforms; the page that comes back is drawn in it. Default follows the browser. *@
+    <form method="post" class="theme-form">
+        <input type="hidden" name="target" value="@PageActions.Theme" />
+        <button type="submit" name="do" value="cycle" class="drawer-toggle" title="Theme: @Theme.Requested (click for the next one)" aria-label="Change the theme, now @Theme.Requested">◐</button>
+    </form>
 </header>
 <main role="main">@RenderBody()</main>
 </body>

@@ -1,0 +1,10 @@
+﻿@using Routeables.Abstraction
+@model LayoutBarViewModel
+@attribute [RouteableView(typeof(LayoutBarViewModel), "layout-bar")]
+<div class="rg-bar @(Model.IsStrong ? "strong" : "")">
+    <span class="rg-bar-glyph">@Model.Glyph</span>
+    <div class="rg-bar-text">
+        <strong>@Model.Title</strong>
+        <span>@Model.Detail</span>
+    </div>
+</div>

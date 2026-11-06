@@ -1,152 +1,80 @@
 ﻿@page "/{**path}"
-@inject IMainViewModel MainViewModel
-@inject IRouter Router
+@model XAnimals.Razor.Pages.MainViewPageModel
 @using Routeables.Abstraction
-@using Routeables.AspNetCore
+@using XAnimals.Razor.Pages
 
 @{
-    var path = RouteData.Values["path"]?.ToString();
-    var url = "/" + (path?.TrimStart('/') ?? "") + Request.QueryString.Value;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Routeables Animals";
 
-    var result = await Router.GoToAsync(url);
-
-    if (!result.Success && MainViewModel.Routeable is null)
-        MainViewModel.SelectFirst();
+    // The menu marks the first segment of the address: /cats/Tom is still in Cats.
+    var current = "/" + (Model.Url.Split('?')[0].Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "");
 }
 
-<style>
-    .menu-container {
-        position: fixed;
-        top: 12px;
-        left: 12px;
-        z-index: 1000;
-    }
-
-    .menu-btn {
-        padding: 8px 14px;
-        background: #0d6efd;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-
-        .menu-btn:hover {
-            background: #0b5ed7;
-        }
-
-    .menu-dropdown {
-        display: none;
-        position: absolute;
-        top: 42px;
-        left: 0;
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        min-width: 180px;
-        overflow: hidden;
-    }
-
-        .menu-dropdown.show {
-            display: block;
-        }
-
-        .menu-dropdown a {
-            display: block;
-            padding: 10px 16px;
-            color: #333;
-            text-decoration: none;
-        }
-
-            .menu-dropdown a:hover {
-                background: #f0f0f0;
-            }
-
-            .menu-dropdown a.active {
-                background: #0d6efd;
-                color: white;
-            }
-</style>
-
-<!-- MENU -->
-<div class="menu-container">
-    <button class="menu-btn" id="menuBtn" type="button">
-        ☰ Menu
-    </button>
-
-    <div class="menu-dropdown" id="menuDropdown">
-        @foreach (var entry in MainViewModel.Routeables)
+<div class="shell">
+    @* The side panel: one entry per entry of the main view model, as in the other samples. It slides away with the button of the header. *@
+    <nav class="drawer" id="drawer" aria-label="Menu">
+        @foreach (var entry in Model.MenuEntries)
         {
-            <a href="javascript:void(0)"
-               onclick="navigateTo('@entry.Route')"
-               class="@(MainViewModel.Routeable == entry ? "active" : null)">
-                @entry.DisplayName
-            </a>
+            var route = MainViewPageModel.Address(entry.Route);
+            var active = string.Equals(route, current, StringComparison.OrdinalIgnoreCase);
+            if (entry.IsLock)
+            {
+                @* A page published a lock (Features): the entry cannot be followed until it publishes the unlock. *@
+                <span class="drawer-link locked" title="Locked">
+                    @if (entry.Icon is string lockedGlyph) { <span class="drawer-icon" aria-hidden="true">@lockedGlyph</span> }
+                    <span class="drawer-name">@entry.DisplayName</span>
+                </span>
+            }
+            else
+            {
+                <a href="@route" class="drawer-link @(active ? "active" : null)" aria-current="@(active ? "page" : null)">
+                    @if (entry.Icon is string glyph) { <span class="drawer-icon" aria-hidden="true">@glyph</span> }
+                    <span class="drawer-text">
+                        <span class="drawer-name">@entry.DisplayName</span>
+                        @if (entry.HasDescription) { <span class="drawer-description">@entry.Description</span> }
+                    </span>
+                </a>
+            }
         }
-    </div>
-</div>
+    </nav>
 
-<!-- CONTENT -->
-<div style="margin-top: 70px; padding: 20px;">
-    @if (Router.CurrentView is IRouteableView view)
+    <div class="shell-content">
+<div style="padding: 20px;">
+    @if (Model.NotFound)
     {
-        await view.RenderAsync(ViewContext, Router.CurrentViewModel);
+        <h1>Page not found</h1>
+        <p>No route matched: @Request.Path</p>
     }
-    else if (Router.CurrentView is not null)
+    else if (Model.Router.CurrentView is { } view)
     {
-        @await Html.PartialAsync(GetViewName(Router.CurrentView), Router.CurrentViewModel)
+        @await Html.PartialAsync(MainViewPageModel.ViewName(view), Model.Router.CurrentViewModel)
     }
-    else if (MainViewModel.Routeable?.View is not null)
+    else if (Model.Main.Routeable?.View is { } entryView)
     {
-        @await Html.PartialAsync(GetViewName(MainViewModel.Routeable.View), MainViewModel.Routeable.ViewModel)
+        @await Html.PartialAsync(MainViewPageModel.ViewName(entryView), Model.Main.Routeable.ViewModel)
     }
     else
     {
         <h1>Page not found</h1>
-        <p>No route matched: @url</p>
+        <p>No route matched: @Model.Url</p>
     }
 </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Shared/_Interactions.cshtml", Model.Interactions)
+
 <script>
-    function navigateTo(route) {
-        if (!route) {
-            alert("Route is empty!");
-            return;
-        }
-        window.location.href = route;   // classic navigation
-        // or if you prefer: window.location.assign(route);
-    }
-
-    // Menu toggle
-    const btn = document.getElementById('menuBtn');
-    const dropdown = document.getElementById('menuDropdown');
-
-    btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        dropdown.classList.toggle('show');
-    });
-
-    document.addEventListener('click', function() {
-        dropdown.classList.remove('show');
-    });
-
-    dropdown.addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
+    // Show or hide the side panel, and remember it.
+    (function () {
+        var root = document.documentElement, toggle = document.getElementById('drawerToggle');
+        function sync() { toggle.setAttribute('aria-expanded', root.classList.contains('drawer-closed') ? 'false' : 'true'); }
+        sync();
+        toggle.addEventListener('click', function () {
+            root.classList.toggle('drawer-closed');
+            try { localStorage.setItem('xanimals.drawer', root.classList.contains('drawer-closed') ? 'closed' : 'open'); } catch (e) { }
+            sync();
+        });
+    })();
 </script>
-
-@functions {
-    string GetViewName(object? view)
-    {
-        if (view is null) return "MainView";
-
-        if (view is string name)
-            return name;
-
-        var typeName = view.GetType().Name;
-
-        typeName = "~/" + typeName.Replace("_", "/") + ".cshtml";
-        return typeName;
-    }
-}

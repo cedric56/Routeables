@@ -1,0 +1,19 @@
+﻿@using Routeables.Abstraction
+@model TabsViewModel
+@attribute [RouteableView(typeof(TabsViewModel), "/tabs")]
+@{ ViewData["Title"] = "Tabs"; }
+@* The items of a tab control are routes: each tab shows its route in the region of the page, and the region draws it. *@
+<form method="post" class="about-page">
+    <input type="hidden" name="target" value="page" />
+    <div class="actions" role="tablist">
+        @for (var i = 0; i < PageActions.TabRoutes.Count; i++)
+        {
+            <button type="submit" name="do" value="tab:@i" role="tab" class="adopt-choice">@PageActions.TabRoutes[i].Header</button>
+        }
+    </div>
+</form>
+<div class="about-page">
+    <section class="about-group">
+        @await Html.PartialAsync("~/Views/Shared/_Region.cshtml", TabsViewModel.Region)
+    </section>
+</div>

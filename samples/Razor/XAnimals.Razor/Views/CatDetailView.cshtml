@@ -1,33 +1,5 @@
-@using Microsoft.AspNetCore.Mvc.ModelBinding
-@using Microsoft.Extensions.DependencyInjection
-@using Routeables.Abstraction
-@using Routeables.AspNetCore
+﻿@using Routeables.Abstraction
 @model CatDetailViewModel
 @attribute [RouteableView(typeof(CatDetailViewModel), "/cats/{name}")]
-@implements IRouteableView
 @{ ViewData["Title"] = Model.Animal?.Name ?? "Cat"; ViewData["Species"] = "cats"; }
-
- @* @await Html.PartialAsync("~/Views/Shared/_AnimalDetail.cshtml", Model, ViewData)
- *@
-@functions {
-
-    public async Task RenderAsync(ViewContext context, object viewmodel)
-    {
-        // Make sure the model is available
-        ViewData ??= new ViewDataDictionary<CatDetailViewModel>(new EmptyModelMetadataProvider(), new ModelStateDictionary());
-        ViewData.Model = viewmodel as CatDetailViewModel;
-        // Option 1 - Recommended: just render the shared partial
-        var htmlHelper = context.HttpContext.RequestServices
-            .GetRequiredService<IHtmlHelper>();
-
-        (htmlHelper as IViewContextAware)?.Contextualize(context);
-
-        var content = await htmlHelper.PartialAsync(
-            "~/Views/Shared/_AnimalDetail.cshtml",
-            Model,
-            context.ViewData);
-
-        content.WriteTo(context.Writer, System.Text.Encodings.Web.HtmlEncoder.Default);
-    
-    }
-}
+@await Html.PartialAsync("~/Views/Shared/_AnimalDetail.cshtml", Model, ViewData)

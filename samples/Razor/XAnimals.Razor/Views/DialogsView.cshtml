@@ -1,0 +1,46 @@
+﻿@using Routeables.Abstraction
+@model DialogsViewModel
+@attribute [RouteableView(typeof(DialogsViewModel), "/dialogs")]
+@{ ViewData["Title"] = "Dialogs"; }
+@* A dialog is put on the page (see _Interactions.cshtml) and the view model waits for the answer, like it waits for a window on a desktop. *@
+<form method="post" class="about-page">
+    <input type="hidden" name="target" value="page" />
+    <section class="about-group">
+        <h2>Messages</h2>
+        <div class="actions">
+            <button name="do" value="ok">Ok</button>
+            <button name="do" value="error">Error</button>
+            <button name="do" value="yesno">Yes / No</button>
+            <button name="do" value="okcancel">Ok / Cancel</button>
+            <button name="do" value="okabort">Ok / Abort</button>
+            <button name="do" value="yesnocancel">Yes / No / Cancel</button>
+            <button name="do" value="yesnoabort">Yes / No / Abort</button>
+        </div>
+    </section>
+
+    <section class="about-group">
+        <h2>Rich dialogs</h2>
+        <div class="actions">
+            <button name="do" value="content">Content dialog</button>
+            <button name="do" value="task">Task dialog</button>
+            <button name="do" value="progress">Task dialog with progress</button>
+            <button name="do" value="modal">Show modal</button>
+        </div>
+    </section>
+
+    <section class="about-group">
+        <h2>Notifications</h2>
+        <div class="actions">
+            <button name="do" value="information">Information</button>
+            <button name="do" value="success">Success</button>
+            <button name="do" value="warning">Warning</button>
+            <button name="do" value="notificationerror">Error</button>
+            <button name="do" value="system">System</button>
+        </div>
+    </section>
+
+    @if (Model.HasResult)
+    {
+        <p class="about-result" role="status">@Model.Result</p>
+    }
+</form>

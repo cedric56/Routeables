@@ -16,12 +16,17 @@ public static class Extensions
     {
         services.RegisterMainViewModel<TMain>(ServiceLifetime.Scoped);
         services.AddRouteCoordinator(ServiceLifetime.Scoped);
-        services.AddScoped<IRouteableRequestedThemeService>(_ => null!);
+        services.AddScoped<RouteableInteractions>();
+        services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());
+        services.AddScoped<IRouteableDialogService, RouteableDialogService>();
+        services.AddScoped<IRouteableNotificationService, RouteableNotificationService>();
+        services.AddScoped<RouteableRequestThemeService>();
+        services.AddScoped<IRouteableRequestedThemeService>(p => p.GetRequiredService<RouteableRequestThemeService>());
         services.AddScoped(
             _ => new RouteableHostLifetime(
                 ServiceLifetime.Scoped));
         services.RegisterRouting(ServiceLifetime.Scoped);
-
+        services.AddScoped<RouteablePageState>();
         configure?.Invoke(services);
 
         return services;
