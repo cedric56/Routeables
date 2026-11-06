@@ -41,7 +41,7 @@ public sealed class HelloViewModel(string name)
     public string? Name { get; } = name;
 }
 
-public partial class HelloView : UserControl { }
+public partial class HelloView : RouteableFor<HelloViewModel> { }   // Routeables.Avalonia; a plain UserControl is registered by name instead
 ```
 
 **2. The start of Routeables** (Avalonia shown; each host has its own line, see below):
