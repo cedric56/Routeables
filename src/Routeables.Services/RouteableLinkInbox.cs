@@ -93,7 +93,7 @@ public sealed class RouteableLinkInbox
             pumping = true;
         }
 
-        _ = Task.Run(PumpAsync);
+        AsyncHelper.FireAndForget(() => Task.Run(PumpAsync), provider, "RouteableLinkInbox.PumpAsync");
     }
 
     private async Task PumpAsync()

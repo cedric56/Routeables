@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Routeables.Abstraction;
 using System.Collections.Concurrent;
 
 namespace XAnimals.Razor.Session;
@@ -79,11 +80,11 @@ public sealed class VisitorSessions(IServiceScopeFactory scopes) : IDisposable
             return;
 
         // A request that holds the session finishes first; nobody is left to use it after that.
-        _ = Task.Run(async () =>
+        AsyncHelper.FireAndForget(() => Task.Run(async () =>
         {
             await session.Gate.WaitAsync();
             session.Dispose();
-        });
+        }), detail: "VisitorSessions.Remove");
     }
 
     public void Dispose()
