@@ -31,11 +31,11 @@ dotnet run -c Release --project Routeables.Benchmarks -- --leak
 
 The repository has many projects and few packages. `Routeables.Core` is the **`Routeables`** package: it holds the assemblies of Abstraction, Routing, Core, Regions, Services, Locking and Segments, and the generator in `analyzers/`. Its files and dependencies are listed in `Routeables.Core/Routeables.nuspec`: add a new file or change a `PackageReference` of one of those projects there too. Those projects have `IsPackable` off.
 
-The host projects (`Routeables.Razor`, `.Maui`, `.Avalonia`, `.Uno`, `.Wpf`, the Reshapes) are packed as they are; the dialogs and notifications of a host are in its `Services/` folder. A packed project must not reference Abstraction, Routing, Regions, Services, Locking, Segments or Generated directly: pack would make it depend on a package that does not exist. It references `Routeables.Core` (with `PrivateAssets="none"`, so the analyzer reaches the application) and sees the others through it.
+The host projects (`Routeables.Blazor`, `.Maui`, `.Avalonia`, `.Uno`, `.Wpf`, the Reshapes) are packed as they are; the dialogs and notifications of a host are in its `Services/` folder. A packed project must not reference Abstraction, Routing, Regions, Services, Locking, Segments or Generated directly: pack would make it depend on a package that does not exist. It references `Routeables.Core` (with `PrivateAssets="none"`, so the analyzer reaches the application) and sees the others through it.
 
 ```bash
 dotnet pack Routeables.Core -c Release -o artifacts     # the Routeables package
-dotnet pack Routeables.Razor -c Release -o artifacts    # a host; same for the others
+dotnet pack Routeables.Blazor -c Release -o artifacts    # a host; same for the others
 ```
 
 The version of every package is in `Directory.Build.props` (`VersionPrefix`, and `VersionSuffix` for a preview; empty it for a release). The CI checks that the dependencies written in the nuspec match the projects (`.github/scripts/check-nuspec.sh`), packs the packages that need no workload, and fails if one of them depends on a project that is not a package.

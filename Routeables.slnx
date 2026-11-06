@@ -48,8 +48,8 @@
     <Project Path="samples/Modules/XAnimals.Wpf.Birds/XAnimals.Wpf.Birds.csproj" />
   </Folder>
   <Folder Name="/samples/Razor/">
-    <Project Path="samples/Razor/XAnimals.WebApplication/XAnimals.WebApplication.csproj" Id="d3cdcbfe-73cf-4160-a7b8-5a79ce433213" />
     <Project Path="samples/Razor/XAnimals.Razor/XAnimals.Razor.csproj" Id="e03a195a-6315-4e32-84da-a0d4ab6fcc1b" />
+    <Project Path="samples/Razor/XAnimals.WebApplication/XAnimals.WebApplication.csproj" Id="d3cdcbfe-73cf-4160-a7b8-5a79ce433213" />
   </Folder>
   <Folder Name="/samples/Angular/">
     <File Path="samples/Angular/README.md" />
@@ -78,15 +78,14 @@
     <Project Path="src/Routeables.Benchmarks/Routeables.Benchmarks.csproj" />
     <Project Path="src/Routeables.Blazor/Routeables.Blazor.csproj" />
     <Project Path="src/Routeables.Core/Routeables.Core.csproj" />
-    <Project Path="src/Routeables.Generated.Abstraction/Routeables.Generated.Abstraction.csproj" Id="6070271a-fb2d-49f7-ab62-5c41d9a02e1e" />
     <Project Path="src/Routeables.Generated/Routeables.Generated.csproj" Id="f5d73331-cfab-460c-b3ae-d3fb64222f17" />
     <Project Path="src/Routeables.Locking/Routeables.Locking.csproj" />
     <Project Path="src/Routeables.Maui/Routeables.Maui.csproj" />
     <Project Path="src/Routeables.Regions/Routeables.Regions.csproj" />
-    <Project Path="src/Routeables.SignalR/Routeables.SignalR.csproj" />
     <Project Path="src/Routeables.Routing/Routeables.Routing.csproj" />
     <Project Path="src/Routeables.Segments/Routeables.Segments.csproj" />
     <Project Path="src/Routeables.Services/Routeables.Services.csproj" />
+    <Project Path="src/Routeables.SignalR/Routeables.SignalR.csproj" />
     <Project Path="src/Routeables.Uno/Routeables.Uno.csproj" />
     <Project Path="src/Routeables.Wpf/Routeables.Wpf.csproj" />
   </Folder>
@@ -94,10 +93,10 @@
     <Project Path="templates/Routeables.Templates.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Routeables.Test.Angular/Routeables.Test.Angular.csproj" />
     <Project Path="tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj" />
     <Project Path="tests/Routeables.Test.Community/Routeables.Test.Community.csproj" />
     <Project Path="tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj" />
-    <Project Path="tests/Routeables.Test.Angular/Routeables.Test.Angular.csproj" />
     <Project Path="tests/Routeables.Test.Playwright/Routeables.Test.Playwright.csproj" />
     <Project Path="tests/Routeables.Test.Reactive/Routeables.Test.Reactive.csproj" />
     <Project Path="tests/Routeables.Test.Uno/Routeables.Test.Uno.csproj" />

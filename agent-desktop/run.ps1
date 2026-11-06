@@ -8,7 +8,7 @@
   holds the text of the page.
 
   Needs: agent-desktop (npm install -g agent-desktop), the samples built in Debug, PowerShell 5.1 or 7.
-  Run from the repository root:  pwsh tests/native-smoke/run.ps1 -Hosts Wpf,Avalonia
+  Run from the repository root:  pwsh agent-desktop/run.ps1 -Hosts Wpf,Avalonia
 
   The result is out/native-smoke/report.json and one snapshot per step: send report.json to be read.
   The script was written from the documented commands of agent-desktop and has not been run: the first thing it records is the

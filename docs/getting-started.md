@@ -4,7 +4,7 @@
 
 The packages target **.NET 10** (`net10.0`), so you need a .NET 10 SDK. MAUI also needs the MAUI workload.
 
-Add the package of your host (`Routeables.Razor`, `Routeables.Maui`, `Routeables.Avalonia`, `Routeables.Uno` or `Routeables.Wpf`) to your application project:
+Add the package of your host (`Routeables.Blazor`, `Routeables.Maui`, `Routeables.Avalonia`, `Routeables.Uno` or `Routeables.Wpf`) to your application project:
 
 ```bash
 dotnet add package Routeables.Avalonia
@@ -139,7 +139,7 @@ builder.Services.UseRouteablesServer<MainViewModel>(      // or UseRouteablesWeb
     r => r.AddGeneratedRoutes());
 app.MapRazorComponents<App>()
    .AddInteractiveServerRenderMode()
-   .AddAdditionalAssemblies(typeof(MainLayoutBase).Assembly);    // Routeables.Razor: catch-all page, layout, not-found page
+   .AddAdditionalAssemblies(typeof(MainLayoutBase).Assembly);    // Routeables.Blazor: catch-all page, layout, not-found page
 
 // .NET MAUI (MauiProgram.cs)
 builder.UseMauiApp<App>()
@@ -156,7 +156,7 @@ Services = this.UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes(), () => 
 this.UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes(), () => new MainView());
 ```
 
-Create the project with the template of your framework, add the host package, then follow the setup above. See each host's README for the details ([Razor](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Razor/README.md), [MAUI](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Maui/README.md), [Avalonia](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Avalonia/README.md), [Uno](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Uno/README.md), which has its own quick start, [WPF](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Wpf/README.md)).
+Create the project with the template of your framework, add the host package, then follow the setup above. See each host's README for the details ([Blazor](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Blazor/README.md), [MAUI](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Maui/README.md), [Avalonia](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Avalonia/README.md), [Uno](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Uno/README.md), which has its own quick start, [WPF](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Wpf/README.md)).
 
 #### The words
 

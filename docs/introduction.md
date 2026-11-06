@@ -29,7 +29,7 @@ Your view models depend on a single `IRouter` interface instead of framework-spe
 | [`Routeables.Routing`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Routing/README.md) | The router, history, routing locking and DI registration |
 | [`Routeables.Core`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Core/README.md) | Routing-aware view-model bases and runtime/environment info |
 | [`Routeables.Generated`](https://github.com/cedric56/Routeables/tree/master/Routeables.Generated) | Roslyn source generators: route registration and typed routing methods |
-| [`Routeables.Razor`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Razor/README.md) | Blazor integration |
+| [`Routeables.Blazor`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Blazor/README.md) | Blazor integration |
 | [`Routeables.Maui`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Maui/README.md) | .NET MAUI integration |
 | [`Routeables.Avalonia`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Avalonia/README.md) | Avalonia integration |
 | [`Routeables.Uno`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Uno/README.md) | Uno Platform integration |

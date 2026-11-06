@@ -35,7 +35,7 @@ Routeables does not replace `Router` in `Routes.razor`: the sample keeps it.
 </Router>
 ```
 
-- `Routeables.Razor` ships `Main.razor`, whose two `@page` routes (`/` and `/{*path}`) give the Blazor router a page for every address. It draws nothing.
+- `Routeables.Blazor` ships `Main.razor`, whose two `@page` routes (`/` and `/{*path}`) give the Blazor router a page for every address. It draws nothing.
 - What the user sees is drawn by the layout (`MainLayout`, or your own inheriting `MainLayoutBase`) from the **current view of the Routeables router**.
 - `RouteableUrlSync` keeps the address and the router in step: a route change updates the address (a push adds a browser history entry, the other moves replace it); a typed address, a link or the browser's Back and Forward route the router; if a guard or a page refuses, the address stays on the current page. The router is asked before the address changes (a location changing handler), so a refused Back of the browser is cancelled and the browser history keeps its entries. One limit remains: `GoBackAsync` called from a view model replaces the address instead of going back in the browser history, so the browser's Back does not follow it.
 - A page registered without an explicit route has no address of its own: the address goes back to `/`.
@@ -145,7 +145,7 @@ The application registers its own authentication (an `AuthenticationStateProvide
 - **A `Transient` `IDisposable` service** injected into a page lives until the circuit ends: register it `Scoped` or `Singleton` ([lifecycle](lifecycle.md)).
 - **Prerendering:** with a server that prerenders (`InteractiveServerRenderMode(prerender: true)`), register `services.AddSingleton(new RouteablePrerenderOptions())` and the layout routes to the address while the page is prerendered, so the HTML already holds the page. Without that registration nothing changes: the layout waits for the circuit. The circuit that takes over starts again from the address, and the views are built a second time (keep the loading in `InitializeAsync`, not in a static). The samples run with `prerender: false`, and this path is covered by unit tests only, not by a browser test. Static server rendering of a page without a circuit, streaming rendering and the other render modes of .NET 8 and later are not covered.
 - **404:** with prerendering on, `new RouteablePrerenderOptions { UnknownAddressIsNotFound = true }` makes an address that matches no route (other than `/`) answer with the status 404 and the not-found page of the application's `Router` (`NavigationManager.NotFound()`), instead of the default page. Without prerendering the response is always 200: the server does not know the routes before the circuit runs.
-- **Targets:** `Routeables.Razor` is `net10.0`.
+- **Targets:** `Routeables.Blazor` is `net10.0`.
 
 ## When to keep the Blazor router
 

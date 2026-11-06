@@ -6,7 +6,7 @@ buttons of the Dialogs page and answers the dialogs, through the accessibility t
 ```powershell
 npm install -g agent-desktop
 dotnet build samples/XAnimals.Wpf -c Debug        # and the other samples
-pwsh tests/native-smoke/run.ps1 -Hosts Wpf,Avalonia,Maui,Uno
+pwsh agent-desktop/run.ps1 -Hosts Wpf,Avalonia,Maui,Uno
 ```
 
 It writes `out/native-smoke/report.json` (one line per page and per dialog) and the snapshots of every step. It is not part of the

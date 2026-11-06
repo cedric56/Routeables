@@ -1,4 +1,4 @@
-# Reshapes.Razor.MudBlazor
+# Reshapes.Blazor.MudBlazor
 
 MudBlazor dialogs, content and task dialogs, snackbar notifications and a MudBlazor layout for [`Routeables.Blazor`](https://www.nuget.org/packages/Routeables.Blazor).
 
