@@ -48,18 +48,8 @@
     <Project Path="samples/Modules/XAnimals.Wpf.Birds/XAnimals.Wpf.Birds.csproj" />
   </Folder>
   <Folder Name="/samples/Razor/">
-    <Project Path="samples/Razor/XAnimals.Razor/XAnimals.Razor.csproj" Id="e03a195a-6315-4e32-84da-a0d4ab6fcc1b" />
     <Project Path="samples/Razor/XAnimals.WebApplication/XAnimals.WebApplication.csproj" Id="d3cdcbfe-73cf-4160-a7b8-5a79ce433213" />
-  </Folder>
-  <Folder Name="/samples/Angular/">
-    <File Path="samples/Angular/README.md" />
-    <Project Path="samples/Angular/XAnimals.AngularServer/XAnimals.AngularServer.csproj" />
-  </Folder>
-  <Folder Name="/samples/Vue/">
-    <File Path="samples/Vue/README.md" />
-  </Folder>
-  <Folder Name="/samples/SignalR/">
-    <Project Path="samples/SignalR/CounterServer/CounterServer.csproj" />
+    <Project Path="samples/Razor/XAnimals.Razor/XAnimals.Razor.csproj" Id="e03a195a-6315-4e32-84da-a0d4ab6fcc1b" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
@@ -85,7 +75,6 @@
     <Project Path="src/Routeables.Routing/Routeables.Routing.csproj" />
     <Project Path="src/Routeables.Segments/Routeables.Segments.csproj" />
     <Project Path="src/Routeables.Services/Routeables.Services.csproj" />
-    <Project Path="src/Routeables.SignalR/Routeables.SignalR.csproj" />
     <Project Path="src/Routeables.Uno/Routeables.Uno.csproj" />
     <Project Path="src/Routeables.Wpf/Routeables.Wpf.csproj" />
   </Folder>
@@ -93,7 +82,6 @@
     <Project Path="templates/Routeables.Templates.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Routeables.Test.Angular/Routeables.Test.Angular.csproj" />
     <Project Path="tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj" />
     <Project Path="tests/Routeables.Test.Community/Routeables.Test.Community.csproj" />
     <Project Path="tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj" />

@@ -25,7 +25,6 @@
     <InternalsVisibleTo Include="Routeables.Avalonia" />
     <InternalsVisibleTo Include="Routeables.Uno" />
     <InternalsVisibleTo Include="Routeables.Wpf" />
-    <InternalsVisibleTo Include="Routeables.SignalR" />
     <InternalsVisibleTo Include="Routeables.AspNetCore" />
   </ItemGroup>
 

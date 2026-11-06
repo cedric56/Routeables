@@ -68,10 +68,6 @@ jobs:
           dotnet test --project tests/Routeables.Test.Community/Routeables.Test.Community.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
           dotnet test --project tests/Routeables.Test.Reactive/Routeables.Test.Reactive.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
-      # The server of the Angular sample, driven the way the Angular application drives it (Routeables.SignalR sessions).
-      - name: Angular sample server
-        run: dotnet test --project tests/Routeables.Test.Angular/Routeables.Test.Angular.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
-
   # ---------------------------------------------------------------------------------------------------------------------------
   # Compile every project of the solution, so that an error in a sample or a Reshape no longer waits for a local build.
   # The libraries and the tests are built above with CiBuild (Release, strict analyzers); the samples are built here in
@@ -410,52 +406,6 @@ jobs:
 
       - name: Test
         run: dotnet test --project tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
-
-  # The TypeScript client of Routeables.SignalR (@routeables/client), tested with node:test and a fake transport.
-  ts-client:
-    name: TypeScript client
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install
-        run: npm install --no-audit --no-fund
-        working-directory: clients/typescript
-
-      - name: Test
-        run: npm test
-        working-directory: clients/typescript
-
-  # The Vue sample draws the view models of the Angular sample server: its types and its build are checked here.
-  vue-sample:
-    name: Vue sample
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install
-        run: npm install --no-audit --no-fund
-        working-directory: samples/Vue/XAnimals.Vue
-
-      - name: Build
-        run: npm run build
-        working-directory: samples/Vue/XAnimals.Vue
 
   ui-playwright:
     name: UI tests (Playwright, Blazor)
