@@ -427,7 +427,7 @@ jobs:
           node-version: 22
 
       - name: Install
-        run: npm ci
+        run: npm install --no-audit --no-fund
         working-directory: clients/typescript
 
       - name: Test
