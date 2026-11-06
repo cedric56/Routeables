@@ -266,8 +266,9 @@ public class AngularServerTests : IAsyncLifetime
         Assert.Equal(2, dialog.Buttons.Count);
         Assert.Equal("Yes", dialog.Buttons[0]);
         Assert.True(connection.Session.Answer(dialog.Id, 0).Success);
-        Assert.True(await EventuallyAsync(() => Equals(connection.Client.State("")["result"], "Answer: Yes.")));
-        Assert.Equal(true, connection.Client.State("")["hasResult"]);
+        // The properties of a page arrive one by one: the result can come before hasResult.
+        Assert.True(await EventuallyAsync(() => Equals(connection.Client.State("")["result"], "Answer: Yes.")
+            && Equals(connection.Client.State("")["hasResult"], true)));
     }
 
     /// <summary>Every dialog command on the dialogs page can be opened and answered.</summary>
@@ -360,7 +361,7 @@ public class AngularServerTests : IAsyncLifetime
         Assert.Equal(1, entries());
         Assert.True((await connection.RunAsync("", "pushCommand")).Success);
         Assert.True(await EventuallyAsync(() => entries() == 2));
-        Assert.Equal(true, connection.Client.State("")["canGoBack"]);
+        Assert.True(await EventuallyAsync(() => Equals(connection.Client.State("")["canGoBack"], true)));
         Assert.True((await connection.RunAsync("", "backCommand")).Success);
         Assert.True(await EventuallyAsync(() => Equals(connection.Client.State("")["canGoForward"], true)));
         Assert.True((await connection.RunAsync("", "forwardCommand")).Success);
@@ -539,8 +540,7 @@ public class AngularServerTests : IAsyncLifetime
         Assert.True((await connection.RunAsync("", "lockCommand")).Success);
         Assert.True(await EventuallyAsync(() => Equals(connection.Client.State("$shell")["isLocked"], true)));
         Assert.True(Entries(connection.Client).Count(e => Equals(e["isLocked"], true)) >= 10);
-        Assert.Equal(false, connection.Client.State("")["canLock"]);
-        Assert.Equal(true, connection.Client.State("")["canUnlock"]);
+        Assert.True(await EventuallyAsync(() => Equals(connection.Client.State("")["canLock"], false) && Equals(connection.Client.State("")["canUnlock"], true)));
         Assert.True((await connection.RunAsync("", "unlockCommand")).Success);
         Assert.True(await EventuallyAsync(() => Equals(connection.Client.State("$shell")["isLocked"], false)));
         Assert.DoesNotContain(Entries(connection.Client), e => Equals(e["isLocked"], true));
