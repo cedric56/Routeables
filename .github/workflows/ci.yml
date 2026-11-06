@@ -434,6 +434,29 @@ jobs:
         run: npm test
         working-directory: clients/typescript
 
+  # The Vue sample draws the view models of the Angular sample server: its types and its build are checked here.
+  vue-sample:
+    name: Vue sample
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install
+        run: npm install --no-audit --no-fund
+        working-directory: samples/Vue/XAnimals.Vue
+
+      - name: Build
+        run: npm run build
+        working-directory: samples/Vue/XAnimals.Vue
+
   ui-playwright:
     name: UI tests (Playwright, Blazor)
     runs-on: ubuntu-24.04

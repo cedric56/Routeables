@@ -40,7 +40,7 @@ The modal is a page of the target `MODAL` (`client.subscribeTo(MODAL, ...)`); it
 
 ## Angular and Vue
 
-Turn the subscription into what the framework watches. Nothing of this is in the package yet:
+Turn the subscription into what the framework watches. Nothing of this is in the package yet; [samples/Angular](../../samples/Angular) and [samples/Vue](../../samples/Vue) do it for a whole application:
 
 ```ts
 // Angular: a signal

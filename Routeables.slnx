@@ -55,6 +55,9 @@
     <File Path="samples/Angular/README.md" />
     <Project Path="samples/Angular/XAnimals.AngularServer/XAnimals.AngularServer.csproj" />
   </Folder>
+  <Folder Name="/samples/Vue/">
+    <File Path="samples/Vue/README.md" />
+  </Folder>
   <Folder Name="/samples/SignalR/">
     <Project Path="samples/SignalR/CounterServer/CounterServer.csproj" />
   </Folder>
@@ -75,6 +78,7 @@
     <Project Path="src/Routeables.Benchmarks/Routeables.Benchmarks.csproj" />
     <Project Path="src/Routeables.Blazor/Routeables.Blazor.csproj" />
     <Project Path="src/Routeables.Core/Routeables.Core.csproj" />
+    <Project Path="src/Routeables.Generated.Abstraction/Routeables.Generated.Abstraction.csproj" Id="6070271a-fb2d-49f7-ab62-5c41d9a02e1e" />
     <Project Path="src/Routeables.Generated/Routeables.Generated.csproj" Id="f5d73331-cfab-460c-b3ae-d3fb64222f17" />
     <Project Path="src/Routeables.Locking/Routeables.Locking.csproj" />
     <Project Path="src/Routeables.Maui/Routeables.Maui.csproj" />
