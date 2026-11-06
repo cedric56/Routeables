@@ -32,7 +32,7 @@ public class AspNetCoreThemeServiceTests
     public void AddRouteablesAspNetCore_registers_one_service_per_scope_under_both_types()
     {
         var services = new ServiceCollection();
-        services.AddRouteablesAspNetCore<MainViewModelDefault>();
+        services.AddRouteablesAspNetCore();
         using var provider = services.BuildServiceProvider();
 
         using var first = provider.CreateScope();

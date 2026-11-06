@@ -50,7 +50,7 @@ public class RouteablesHubTests
     {
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddRouteablesSignalR<MainViewModelDefault>();
+        services.AddRouteablesSignalR();
         services.RegisterRoute<ShopView, ShopViewModel>(route: "/shop");
         services.AddRegion("side");
         services.AddRouteableTarget<MenuViewModel>("$menu");

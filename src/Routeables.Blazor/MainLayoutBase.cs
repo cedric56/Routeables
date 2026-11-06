@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Routeables.Abstraction;
+using Routeables.Regions;
 using Routeables.Services;
 
 namespace Routeables.Blazor;
@@ -149,8 +150,9 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
             await ApplyThemeAsync();
             // The default page only when the address did not already choose one (a link to /elephants/Mammoth).
             // Through Routeable: it is what selects the entry in the menu, and it shows the page.
-            if (!addressChosen)
-                MainViewModel.SelectFirst();
+            // An application without a menu opens its home route here and not from the region: the address decides, and it is applied above.
+            if (!addressChosen && !MainViewModel.SelectFirst())
+                RegionStart.StartDefault(Provider);
         }
         await base.OnAfterRenderAsync(firstRender);
     }

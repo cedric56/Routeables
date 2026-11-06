@@ -109,7 +109,7 @@ public class RemoteTargetsTests
     {
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddRouteablesSignalR<MainViewModelDefault>();
+        services.AddRouteablesSignalR();
         services.RegisterRoute<ShopView, ShopViewModel>(route: "/shop");
         services.RegisterRoute<NoteModalView, NoteModalViewModel>();
         services.AddRegion("side");
@@ -285,7 +285,7 @@ public class RemoteTargetsTests
     {
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddRouteablesSignalR<MainViewModelDefault>();
+        services.AddRouteablesSignalR();
         for (var i = 0; i < RouteableSession.MaxTargets + 2; i++)
             services.AddRegion("r" + i);
         await using var provider = services.BuildServiceProvider();
@@ -305,7 +305,7 @@ public class RemoteTargetsTests
 
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddRouteablesSignalR<MainViewModelDefault>();
+        services.AddRouteablesSignalR();
         services.RegisterRoute<ShopView, ModeViewModel>(route: "/mode");
         await using var provider = services.BuildServiceProvider();
         var client = new RecordingClient();

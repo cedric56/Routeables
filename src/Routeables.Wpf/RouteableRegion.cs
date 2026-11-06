@@ -15,6 +15,10 @@ namespace Routeables.Wpf;
 /// </summary>
 public class RouteableRegion : ContentControl
 {
+    /// <summary>Identifies <see cref="Route"/>.</summary>
+    public static readonly DependencyProperty RouteProperty =
+        DependencyProperty.Register(nameof(Route), typeof(string), typeof(RouteableRegion), new PropertyMetadata(null));
+
     /// <summary>Identifies <see cref="Region"/>.</summary>
     public static readonly DependencyProperty RegionProperty =
         DependencyProperty.Register(nameof(Region), typeof(string), typeof(RouteableRegion),
@@ -64,6 +68,13 @@ public class RouteableRegion : ContentControl
         set => SetValue(RegionProperty, value);
     }
 
+    /// <summary>The page this region opens when it appears and its router shows nothing yet, such as <c>/hello/World</c>; it is how an application without a menu says its first page. Without it the default region opens "/" and a named region waits for a page to route it.</summary>
+    public string? Route
+    {
+        get => (string?)GetValue(RouteProperty);
+        set => SetValue(RouteProperty, value);
+    }
+
     /// <summary>Gets or sets the container to read the region from; the one of the application when not set.</summary>
     public IServiceProvider? Services { get; set; }
 
@@ -85,6 +96,8 @@ public class RouteableRegion : ContentControl
         // Set before the binding exists: it shows the current view as soon as it is built.
         _active = true;
         _binding = new RegionBinding(provider.GetRouter(Region), Show);
+        // The default region starts the routing of an application that has no menu (the binding is there to show the first page).
+        RegionStart.Begin(provider, Region, Route);
     }
 
     // A view has one parent: it is released when the control is unloaded, so another control can display it.

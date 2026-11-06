@@ -54,6 +54,14 @@ public interface IMainViewModel
         return true;
     }
 
+    /// <summary>
+    /// Opens the home route of an application that has no menu. The default region (a <c>RouteableRegion</c> with no name) calls it
+    /// when it appears, so the routing starts where the pages are shown; <see cref="SelectFirst"/> stays for the applications that
+    /// have a menu. It does nothing when a page is already shown, and the same instance starts only once.
+    /// </summary>
+    /// <returns><see langword="true"/> when the home route is being opened.</returns>
+    bool Start() => false;
+
     /// <summary>Locks every entry (<see cref="IRouteableEntry.IsLock"/>): the menu cannot leave the current page. Raises <see cref="LockChanged"/> through <see cref="NotifyLockChanged"/>.</summary>
     void Lock()
     {

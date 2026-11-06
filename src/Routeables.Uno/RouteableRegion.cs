@@ -26,6 +26,10 @@ namespace Routeables.Uno;
 /// </summary>
 public partial class RouteableRegion : ContentControl
 {
+    /// <summary>The page the region opens when it appears: see <see cref="Route"/>.</summary>
+    public static readonly DependencyProperty RouteProperty =
+        DependencyProperty.Register(nameof(Route), typeof(string), typeof(RouteableRegion), new PropertyMetadata(null));
+
     /// <summary>The name given to <c>AddRegion</c>; empty or <see langword="null"/> shows the default router.</summary>
     public static readonly DependencyProperty RegionProperty =
         DependencyProperty.Register(nameof(Region), typeof(string), typeof(RouteableRegion),
@@ -79,6 +83,13 @@ public partial class RouteableRegion : ContentControl
         set => SetValue(RegionProperty, value);
     }
 
+    /// <summary>The page this region opens when it appears and its router shows nothing yet, such as <c>/hello/World</c>; it is how an application without a menu says its first page. Without it the default region opens "/" and a named region waits for a page to route it.</summary>
+    public string? Route
+    {
+        get => (string?)GetValue(RouteProperty);
+        set => SetValue(RouteProperty, value);
+    }
+
     /// <summary>
     /// Where the router is found. By default the provider of the running host (<c>Application.UseRouteables</c>); set it to show the
     /// regions of another one.
@@ -106,6 +117,8 @@ public partial class RouteableRegion : ContentControl
         // Set before the binding exists: it shows the current view as soon as it is built.
         _active = true;
         _binding = new RegionBinding(provider.GetRouter(name), Show);
+        // The default region starts the routing of an application that has no menu (the binding is there to show the first page).
+        RegionStart.Begin(provider, name, Route);
     }
 
     // A view has one parent: it is released when the control leaves the tree, so another control can display it.

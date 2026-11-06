@@ -137,7 +137,7 @@ public class RouteableSessionTests
     {
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddRouteablesSignalR<MainViewModelDefault>();
+        services.AddRouteablesSignalR();
         services.RegisterRoute<CounterView, CounterViewModel>(route: "/counter");
         return services.BuildServiceProvider();
     }

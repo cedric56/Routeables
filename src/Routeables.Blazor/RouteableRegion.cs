@@ -41,6 +41,14 @@ public class RouteableRegion : ComponentBase, IDisposable
     public string? Region { get; set; }
 
     /// <summary>
+    /// The page this region opens when it has appeared and its router shows nothing yet, such as <c>/hello/World</c>. A named region opens it
+    /// at once. The default region only declares it: the layout opens it once the address of the browser has been applied, because a typed
+    /// address decides the first page. Without it the default region opens "/" and a named region waits for a page to route it.
+    /// </summary>
+    [Parameter]
+    public string? Route { get; set; }
+
+    /// <summary>
     /// The name of the transition that brings in each view of this region (<c>None</c>, <c>Fade</c>, <c>Slide</c>, <c>SlideUp</c> or the name of
     /// a CSS animation of yours); a navigation can choose its own. Empty plays none (or the fade of <see cref="TransitionDuration"/>).
     /// </summary>
@@ -64,6 +72,18 @@ public class RouteableRegion : ComponentBase, IDisposable
         _boundTo = Region;
         // The first call, made by the constructor, is in the middle of a render: it only stores the view.
         _binding = new RegionBinding(Services.GetRouter(Region), Show);
+
+        // The default region only says its route here, before any layout has finished rendering: the layout starts it once the address is applied.
+        if (string.IsNullOrEmpty(Region))
+            RegionStart.Begin(Services, Region, Route, wait: true);
+    }
+
+    /// <inheritdoc />
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender && !string.IsNullOrEmpty(Region))
+            RegionStart.Begin(Services, Region, Route);
     }
 
     private void Show(object? view, RegionChange change)

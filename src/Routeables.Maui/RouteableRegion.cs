@@ -22,6 +22,10 @@ namespace Routeables.Maui;
 /// </summary>
 public class RouteableRegion : ContentView
 {
+    /// <summary>The <see cref="Route"/> property.</summary>
+    public static readonly BindableProperty RouteProperty =
+        BindableProperty.Create(nameof(Route), typeof(string), typeof(RouteableRegion), null);
+
     /// <summary>The <see cref="Region"/> property.</summary>
     public static readonly BindableProperty RegionProperty =
         BindableProperty.Create(nameof(Region), typeof(string), typeof(RouteableRegion), null,
@@ -62,6 +66,13 @@ public class RouteableRegion : ContentView
         set => SetValue(RegionProperty, value);
     }
 
+    /// <summary>The page this region opens when it appears and its router shows nothing yet, such as <c>/hello/World</c>; it is how an application without a menu says its first page. Without it the default region opens "/" and a named region waits for a page to route it.</summary>
+    public string? Route
+    {
+        get => (string?)GetValue(RouteProperty);
+        set => SetValue(RouteProperty, value);
+    }
+
     /// <summary>Where the router is found. By default the services of the app the control is displayed in.</summary>
     public IServiceProvider? Services { get; set; }
 
@@ -89,6 +100,8 @@ public class RouteableRegion : ContentView
         // Set before the binding exists: it shows the current view as soon as it is built.
         _active = true;
         _binding = new RegionBinding(provider.GetRouter(Region), Show);
+        // The default region starts the routing of an application that has no menu (the binding is there to show the first page).
+        RegionStart.Begin(provider, Region, Route);
     }
 
     // A view has one parent: it is released when the control is no longer displayed, so another control can display it.

@@ -44,20 +44,18 @@ public sealed class HelloViewModel(string name)
 public partial class HelloView : UserControl { }
 ```
 
-**2. A first page, and the start of Routeables** (Avalonia shown; each host has its own line, see below):
+**2. The start of Routeables** (Avalonia shown; each host has its own line, see below):
 
 ```csharp
-public partial class MainViewModel(IRouter router) : MainViewModelDefault(router, "/hello/World") { }
-
 AppBuilder.Configure<App>()
-    .UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes(), view: lifetime => new MainWindow());
+    .UseRouteables(r => r.AddGeneratedRoutes(), view: lifetime => new MainWindow());
 ```
 
-**3. The zone where pages appear**, in the main view (Blazor: `<RouteableRegion />`):
+**3. The zone where pages appear, and the page it opens first**, in the main view (Blazor: `<RouteableRegion Route="/hello/World" />`):
 
 ```xml
 xmlns:routeables="clr-namespace:Routeables.Avalonia;assembly=Routeables.Avalonia"
-<routeables:RouteableRegion />
+<routeables:RouteableRegion Route="/hello/World" />
 ```
 
 **4. Go somewhere**, from any view model:

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
+using Routeables.Core;
 using Routeables.Routing;
 using Routeables.Segments;
 using Routeables.Services;
@@ -13,10 +14,18 @@ namespace Routeables.SignalR;
 public static class Extensions
 {
     /// <summary>
+    /// <c>AddRouteablesSignalR&lt;TMain&gt;</c> for an application that has no menu: no main view model to write.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="configure">More registrations, such as the services the view models ask for.</param>
+    public static IServiceCollection AddRouteablesSignalR(this IServiceCollection services, Action<IServiceCollection>? configure = null)
+        => services.AddRouteablesSignalR<DefaultMainViewModel>(configure);
+
+    /// <summary>
     /// Registers SignalR and what a session needs: a router per connection (scoped), the sessions, and the main view model.
     /// Register the routes of the application as usual (<c>AddGeneratedRoutes()</c>, or <c>RegisterRoute</c> by name).
     /// </summary>
-    /// <typeparam name="TMain">The main view model; use <c>MainViewModelDefault</c> subclass for an application without a menu.</typeparam>
+    /// <typeparam name="TMain">The main view model; call <c>AddRouteablesSignalR()</c> without it for an application without a menu.</typeparam>
     /// <param name="services">The service collection.</param>
     /// <param name="configure">More registrations, such as the services the view models ask for.</param>
     public static IServiceCollection AddRouteablesSignalR<TMain>(this IServiceCollection services, Action<IServiceCollection>? configure = null)

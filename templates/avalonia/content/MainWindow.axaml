@@ -4,5 +4,5 @@
         x:Class="RouteablesApp.MainWindow"
         Title="RouteablesApp" Width="480" Height="320">
     <!-- The pages appear here. -->
-    <routeables:RouteableRegion />
+    <routeables:RouteableRegion Route="/hello/World" />
 </Window>

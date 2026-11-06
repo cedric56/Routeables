@@ -34,19 +34,21 @@ public sealed class HelloViewModel(IRouter router, string name)
 public partial class HelloView : RouteableFor<HelloViewModel> { }
 ```
 
-**2. Start Routeables and say which page opens first:**
+**2. Start Routeables:**
 
 ```csharp
 AppBuilder.Configure<App>()
-    .UseRouteables(r => { r.AddGeneratedRoutes(); r.AddHome("/hello/World"); },
+    .UseRouteables(r => r.AddGeneratedRoutes(),
         view: lifetime => new MainWindow());
 ```
 
-**3. Say where the pages appear**, in your main view (Blazor: `<RouteableRegion />`):
+**3. Say where the pages appear, and which page opens first**, in your main view (Blazor: `<RouteableRegion Route="/hello/World" />`):
 
 ```xml
-<routeables:RouteableRegion />
+<routeables:RouteableRegion Route="/hello/World" />
 ```
+
+The region starts the routing: when it appears and its router shows nothing yet, it opens its `Route`. Without a `Route`, the default region opens `/`.
 
 **4. Go to another page**, from any view model that asks for an `IRouter`:
 
@@ -70,7 +72,7 @@ public partial class HomeView : UserControl { public HomeView() => InitializeCom
 
 `AboutViewModel` and `AboutView` are written the same way (a view model without any member is enough).
 
-**2. Register it under a name, and say which page opens first:**
+**2. Register it under a name:**
 
 ```csharp
 AppBuilder.Configure<App>()
@@ -78,12 +80,11 @@ AppBuilder.Configure<App>()
         {
             r.RegisterRoute<HomeView, HomeViewModel>(route: "home");
             r.RegisterRoute<AboutView, AboutViewModel>(route: "about");
-            r.AddHome("home");
         },
         view: lifetime => new MainWindow());
 ```
 
-**3. Say where the pages appear** (`<routeables:RouteableRegion />`) and **go to a page** with `await router.GoToAsync("about");`, as in the first way.
+**3. Say where the pages appear and which page opens first** (`<routeables:RouteableRegion Route="home" />`) and **go to a page** with `await router.GoToAsync("about");`, as in the first way.
 
 The router gives the view model to the view as its `DataContext` (`BindingContext` on MAUI) even though the view is not a `RouteableFor`. A page registered this way has no lifecycle (initialization, disposal), and nothing checks the names before the program runs: `RouteableFor<T>` and the generator add both.
 
@@ -130,7 +131,7 @@ You can also register routes by hand with `services.RegisterRoute<DogDetailView,
 
 ### 2. Set up your host
 
-One call per host starts Routeables, registers your main view model (its lifetime is the host's choice; without a menu, call it with no type and `r.AddHome("/route")` chooses the first page) and takes a block `r => ...` for your own registrations. The block is the same on the five hosts. The same call registers the dialogs and notifications of the host. Only the shape of the call differs, because each framework has its own way to start.
+One call per host starts Routeables, registers your main view model (its lifetime is the host's choice; without a menu, call it with no type: the `Route` of the main `RouteableRegion` chooses the first page) and takes a block `r => ...` for your own registrations. The block is the same on the five hosts. The same call registers the dialogs and notifications of the host. Only the shape of the call differs, because each framework has its own way to start.
 
 ```csharp
 // Blazor (Program.cs)

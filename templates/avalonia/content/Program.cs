@@ -10,8 +10,8 @@ internal static class Program
     public static void Main(string[] args) =>
         AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .UseRouteables<MainViewModel>(
-                r => r.AddGeneratedRoutes(),   // the first page is the one MainViewModel opens (MainWindow.axaml.cs)
+            .UseRouteables(
+                r => r.AddGeneratedRoutes(),   // the first page is the one the region of MainWindow.axaml opens
                 view: lifetime => new MainWindow())
             .StartWithClassicDesktopLifetime(args);
 }

@@ -35,6 +35,10 @@ public class RouteableRegion : TransitioningContentControl
     public static readonly StyledProperty<string?> RegionProperty =
         AvaloniaProperty.Register<RouteableRegion, string?>(nameof(Region));
 
+    /// <summary>The <see cref="Route"/> property.</summary>
+    public static readonly StyledProperty<string?> RouteProperty =
+        AvaloniaProperty.Register<RouteableRegion, string?>(nameof(Route));
+
     /// <summary>The <see cref="Transition"/> property.</summary>
     public static readonly StyledProperty<string?> TransitionProperty =
         AvaloniaProperty.Register<RouteableRegion, string?>(nameof(Transition));
@@ -59,6 +63,13 @@ public class RouteableRegion : TransitioningContentControl
     {
         get => GetValue(RegionProperty);
         set => SetValue(RegionProperty, value);
+    }
+
+    /// <summary>The page this region opens when it appears and its router shows nothing yet, such as <c>/hello/World</c>; it is how an application without a menu says its first page. Without it the default region opens "/" and a named region waits for a page to route it.</summary>
+    public string? Route
+    {
+        get => GetValue(RouteProperty);
+        set => SetValue(RouteProperty, value);
     }
 
     /// <summary>
@@ -106,6 +117,8 @@ public class RouteableRegion : TransitioningContentControl
         // Set before the binding exists: it shows the current view as soon as it is built.
         _active = true;
         _binding = new RegionBinding(provider.GetRouter(Region), Show);
+        // The default region starts the routing of an application that has no menu (the binding is there to show the first page).
+        RegionStart.Begin(provider, Region, Route);
     }
 
     // A view has one parent: it is released when the control leaves the tree, so another control can display it.

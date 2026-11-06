@@ -19,6 +19,23 @@ public static class Extensions
     private static BackRequests? _back;
 
     /// <summary>
+    /// <c>UseRouteables&lt;TMain&gt;</c> for an application that has no menu: no main view model to write. The first page is the one the
+    /// <c>RouteableRegion</c> of the main view opens (<c>Route="/hello/World"</c>).
+    /// <code>
+    /// Services = this.UseRouteables(services => services.AddGeneratedRoutes());
+    /// </code>
+    /// </summary>
+    /// <param name="application">The application.</param>
+    /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
+    /// <param name="afterBuild">Optional callback executed immediately after the service provider is built.</param>
+    /// <returns>The container, which <see cref="GetRouteableServices"/> returns too.</returns>
+    public static IServiceProvider UseRouteables(
+        this Microsoft.UI.Xaml.Application application,
+        Action<IServiceCollection>? configure = null,
+        Action<IServiceProvider>? afterBuild = null)
+        => application.UseRouteables<DefaultMainViewModel>(configure, afterBuild);
+
+    /// <summary>
     /// Builds the container with the router, the property injection, the theme service and <typeparamref name="TMain"/> as the main view
     /// model (the menu), and keeps it for the views.
     /// Call it once, from the constructor of the <see cref="Microsoft.UI.Xaml.Application"/>: the container is then ready when
@@ -42,6 +59,26 @@ public static class Extensions
         ArgumentNullException.ThrowIfNull(application);
         return StartRouteables<TMain>(configure, afterBuild);
     }
+
+    /// <summary>
+    /// <c>UseRouteables&lt;TMain&gt;</c> that opens the main window, for an application that has no menu: no main view model to write.
+    /// The first page is the one the <c>RouteableRegion</c> of the main view opens (<c>Route="/hello/World"</c>).
+    /// </summary>
+    /// <param name="application">The application.</param>
+    /// <param name="configure">Your own registrations (routes, modules, services).</param>
+    /// <param name="view">Creates the main view.</param>
+    /// <param name="configureWindow">Sets the window up (title, size, icon).</param>
+    /// <param name="afterBuild">Called with the container once it is built.</param>
+    /// <param name="onDispose">Called when the window is closed, before the container is disposed.</param>
+    /// <returns>The container.</returns>
+    public static IServiceProvider UseRouteables(
+        this Microsoft.UI.Xaml.Application application,
+        Action<IServiceCollection> configure,
+        Func<FrameworkElement> view,
+        Action<Window>? configureWindow = null,
+        Action<IServiceProvider>? afterBuild = null,
+        Action? onDispose = null)
+        => application.UseRouteables<DefaultMainViewModel>(configure, view, configureWindow, afterBuild, onDispose);
 
     /// <summary>
     /// Adds Routeables to the application and opens its main window, in one call, so the application has no <c>OnLaunched</c> to write.

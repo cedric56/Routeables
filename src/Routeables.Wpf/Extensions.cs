@@ -14,6 +14,20 @@ namespace Routeables.Wpf;
 public static class Extensions
 {
     /// <summary>
+    /// <see cref="UseRouteables{TMain}(Application, Action{IServiceCollection}?, Action{IServiceProvider}?)"/> for an application that has no menu: no main view
+    /// model to write. The first page is the one the <c>RouteableRegion</c> of the main view opens (<c>Route="/hello/World"</c>).
+    /// </summary>
+    /// <param name="application">The application.</param>
+    /// <param name="configure">Registers the routes and the services of the application.</param>
+    /// <param name="afterBuild">Called with the container once it is built.</param>
+    /// <returns>The container.</returns>
+    public static IServiceProvider UseRouteables(
+        this Application application,
+        Action<IServiceCollection>? configure = null,
+        Action<IServiceProvider>? afterBuild = null)
+        => application.UseRouteables<DefaultMainViewModel>(configure, afterBuild);
+
+    /// <summary>
     /// Adds Routeables to the application: builds the container, registers <typeparamref name="TMain"/> as the main view
     /// model and the services of the host (dialogs, notifications, theme). Call it once, when the application starts.
     /// </summary>
@@ -36,6 +50,27 @@ public static class Extensions
             configure?.Invoke(services);
         }, afterBuild);
     }
+
+    /// <summary>
+    /// <see cref="UseRouteables{TMain}(Application, Action{IServiceCollection}, Func{FrameworkElement}, Action{Window}?, Action{IServiceProvider}?, Action?)"/>
+    /// for an application that has no menu: no main view model to write. The first page is the one the <c>RouteableRegion</c> of the
+    /// main view opens (<c>Route="/hello/World"</c>).
+    /// </summary>
+    /// <param name="application">The application.</param>
+    /// <param name="configure">Registers the routes and the services of the application.</param>
+    /// <param name="view">Creates the main view; it gets the main view model as its data context when it has none.</param>
+    /// <param name="configureWindow">Sets the window up (title, size, icon).</param>
+    /// <param name="afterBuild">Called with the container once it is built.</param>
+    /// <param name="onDispose">Called when the window is closed, before the container is disposed.</param>
+    /// <returns>The container.</returns>
+    public static IServiceProvider UseRouteables(
+        this Application application,
+        Action<IServiceCollection> configure,
+        Func<FrameworkElement> view,
+        Action<Window>? configureWindow = null,
+        Action<IServiceProvider>? afterBuild = null,
+        Action? onDispose = null)
+        => application.UseRouteables<DefaultMainViewModel>(configure, view, configureWindow, afterBuild, onDispose);
 
     /// <summary>
     /// Adds Routeables to the application and opens its main window, in one call. The container is built now; the window is

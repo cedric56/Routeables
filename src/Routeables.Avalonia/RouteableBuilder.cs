@@ -62,6 +62,28 @@ public static class RouteableBuilder
     }
 
     /// <summary>
+    /// <see cref="UseRouteables{TMain}"/> for an application that has no menu: no main view model to write. The first page is the one the
+    /// <c>RouteableRegion</c> of the main view opens (<c>&lt;routeables:RouteableRegion Route="/hello/World" /&gt;</c>).
+    /// <code>
+    /// AppBuilder.Configure&lt;App&gt;()
+    ///     .UseRouteables(r => r.AddGeneratedRoutes(), view: lifetime => new MainWindow());
+    /// </code>
+    /// </summary>
+    /// <param name="builder">The builder to configure.</param>
+    /// <param name="configure">Optional: your own registrations (routes, modules, services).</param>
+    /// <param name="afterBuild">Optional callback executed immediately after the service provider is built.</param>
+    /// <param name="onDispose">Optional callback executed when the application window closes and disposes.</param>
+    /// <param name="view">Optional: creates the main view from the lifetime of the application, as for <see cref="UseRouteables{TMain}"/>.</param>
+    /// <returns>The same <see cref="AppBuilder"/>, ready for further setup.</returns>
+    public static AppBuilder UseRouteables(
+        this AppBuilder builder,
+        Action<IServiceCollection>? configure = null,
+        Action<IServiceProvider>? afterBuild = null,
+        Action? onDispose = null,
+        Func<IApplicationLifetime?, Control>? view = null)
+        => builder.UseRouteables<DefaultMainViewModel>(configure, afterBuild, onDispose, view);
+
+    /// <summary>
     /// The container of the running Routeables host, for an <see cref="Application"/> built with
     /// <see cref="UseRouteables{TMain}"/> that has no constructor parameter to receive it.
     /// </summary>

@@ -3,7 +3,7 @@
 Serves the view models of a Routeables application to a browser front end (Angular, Vue or any JavaScript client) over SignalR. The view models stay on the server, as with Blazor Server: the browser shows their state and calls their commands.
 
 ```csharp
-builder.Services.AddRouteablesSignalR<MainViewModelDefault>(services =>
+builder.Services.AddRouteablesSignalR(services =>
     services.RegisterRoute<CounterView, CounterViewModel>(route: "/counter"));   // or AddGeneratedRoutes()
 
 app.MapRouteables();   // the hub, at /routeables
