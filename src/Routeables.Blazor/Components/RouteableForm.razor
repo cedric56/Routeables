@@ -1,7 +1,9 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Routeables.Abstraction
 @using Routeables.Core
+@using Microsoft.Extensions.DependencyInjection
 @implements IDisposable
+@inject IServiceProvider Provider
 
 <div class="split">
     @if (IsBusy)
@@ -27,7 +29,7 @@
 
     <div class="form">
         <div class="form-header">@ChildContent</div>
-        @if (MainViewModel.CurrentView is RouteableFor routeable)
+        @if (Provider.GetRequiredService<IRouter>().CurrentView is RouteableFor routeable)
         {
             <div class="form-body @routeable.Class">
                 @routeable.Render()

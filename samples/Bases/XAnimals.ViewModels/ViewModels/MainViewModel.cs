@@ -53,7 +53,6 @@ public class MainViewModel(IRouter router, IRouteCoordinator coordinator, IRoute
             // As after Back and Forward: the entry of the page that is now current becomes the selected one, so the menu and the
             // title follow (/Bears?... selects Bears; a detail page has no entry of its own and leaves the selection where it is).
             OnViewModelChanged(_router.CurrentViewModel);
-            CurrentView = _router.CurrentView;
         }
         return result;
     }
@@ -66,7 +65,6 @@ public class MainViewModel(IRouter router, IRouteCoordinator coordinator, IRoute
         if (value?.Route != "features" && _router.CurrentViewModel is FeaturesViewModel)
         {
             OnViewModelChanged(_router.CurrentViewModel);
-            CurrentView = _router.CurrentView;
         }
     }
 

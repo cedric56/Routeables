@@ -41,7 +41,7 @@ public sealed partial class DogDetailView : RouteableFor { public DogDetailView(
 
 A XAML root cannot be generic in WinUI, so XAML views use `RouteableFor`; views written in code can use `RouteableFor<TViewModel>`.
 
-The menu is a `MainViewModelBase` and `<routeables:RouteableListView />`; the current view is `<ContentControl Content="{Binding CurrentView}" />`. A region is `<routeables:RouteableRegion Region="detail" />`.
+The menu is a `MainViewModelBase` and `<routeables:RouteableListView />`; the page is shown by `<routeables:RouteableRegion />`. A region is `<routeables:RouteableRegion Region="detail" />`.
 
 ## Navigation
 

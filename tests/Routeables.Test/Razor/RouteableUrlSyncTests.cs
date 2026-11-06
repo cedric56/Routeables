@@ -141,8 +141,7 @@ public class RouteableUrlSyncTests
         var chosen = await sync.StartAsync();
 
         Assert.True(chosen);                                   // the layout then keeps this page instead of the default one
-        Assert.IsType<CustomerView>(main.CurrentView);         // and displays it
-        Assert.Same(router.CurrentView, main.CurrentView);
+        Assert.IsType<CustomerView>(router.CurrentView);       // and displays it
     }
 
     [Fact]

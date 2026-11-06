@@ -98,7 +98,7 @@ public partial class RouteablesShell : Shell
     private void ShowCurrent() => OnUiThread(() =>
     {
         var index = ShownIndex();
-        if (index >= 0 && index < hosts.Count && mainViewModel.CurrentView is View view && !ReferenceEquals(hosts[index].Content, view))
+        if (index >= 0 && index < hosts.Count && services.GetService<IRouter>()?.CurrentView is View view && !ReferenceEquals(hosts[index].Content, view))
             hosts[index].Content = view;
     });
 

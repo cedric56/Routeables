@@ -76,7 +76,6 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
         if (result.Success && router.CurrentViewModel is { } current && provider.GetService<IMainViewModel>() is { } main)
         {
-            main.CurrentView = router.CurrentView;
             main.OnRouterMoved(current);
         }
         return result.Success;
@@ -165,11 +164,9 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
                 RouteableErrors.Report<RouteableUrlSync>(provider, ex, path);
                 result = RouteableResult.Fail(ex);
             }
-            // The page was not chosen in the menu: make the layout display it.
+            // The page was not chosen in the menu: the menu follows it, and the layout displays it.
             if (result.Success && provider.GetService<IMainViewModel>() is { } shown)
-            {
-                shown.CurrentView = router.CurrentView;   // setting it raises CurrentViewChanged
-            }
+                shown.OnRouterMoved(router.CurrentViewModel);
         }
         else
         {

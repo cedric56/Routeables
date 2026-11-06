@@ -20,6 +20,8 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     [Inject] protected IMainViewModel MainViewModel { get; set; } = default!;
     /// <summary>The container of the circuit.</summary>
     [Inject] protected IServiceProvider Provider { get; set; } = default!;
+    /// <summary>The view of the page the router shows.</summary>
+    protected object? CurrentView => Provider.GetRequiredService<IRouter>().CurrentView;
     /// <summary>Starts Routeables for the circuit (registered by <c>UseRouteablesServer</c>).</summary>
     [Inject] protected Func<IServiceProvider, Task> Initialize { get; set; } = default!;
     /// <summary>Calls JavaScript, to apply the theme.</summary>

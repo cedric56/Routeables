@@ -19,7 +19,7 @@ namespace Routeables.Core;
 public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDisposable, IRouteable, IMainViewModel
 {
     /// <summary>
-    /// Occurs when the currently displayed view changes.
+    /// Occurs when the page shown or the selected entry changes. The argument is the view that is now shown (<c>IRouter.CurrentView</c>).
     /// </summary>
     public event EventHandler<object?>? CurrentViewChanged;
 
@@ -47,14 +47,10 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
         var type = viewModel.GetType();
         var entry = Routeables.FirstOrDefault(p => p.Route == type.Name || (p as RouteableEntry)?.ViewModelType == type);
         if (entry != null)
-        {
             _routeable = entry;
-            _currentView = entry.View;
-        }
         NotifyPropertyChanged(nameof(Routeable));
-        NotifyPropertyChanged(nameof(CurrentView));
         NotifyPropertyChanged(nameof(CurrentTitle));
-        CurrentViewChanged?.Invoke(this, _currentView);
+        CurrentViewChanged?.Invoke(this, _router.CurrentView);
         base.OnViewModelChanged(viewModel);
     }
 
@@ -94,11 +90,6 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
     {
         _followed = viewModel;
         OnViewModelChanged(viewModel);
-
-        // A page with no entry of its own in the menu (OnViewModelChanged found none) is shown all the same.
-        var view = _router.CurrentView;
-        if (view is not null && !ReferenceEquals(_currentView, view))
-            CurrentView = view;
     }
 
     /// <summary>
@@ -106,23 +97,6 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
     /// </summary>
     /// <param name="propertyName">The name of the property that changed.</param>
     protected abstract void NotifyPropertyChanged(string? propertyName);
-
-    private object? _currentView;
-
-    /// <summary>
-    /// The view being displayed. Setting it raises <see cref="CurrentViewChanged"/> and a property-changed notification.
-    /// </summary>
-    public object? CurrentView
-    {
-        get { return _currentView; }
-        set
-        {
-            _currentView = value;
-            NotifyPropertyChanged(nameof(CurrentView));
-            NotifyPropertyChanged(nameof(CurrentTitle));
-            CurrentViewChanged?.Invoke(this, _currentView);
-        }
-    }
 
     private IRouteableEntry? _routeable;
     private readonly SemaphoreSlim _selectionGate = new(1, 1);
@@ -218,7 +192,7 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
     {
         var version = Interlocked.Increment(ref _selectionVersion);
 
-        // No ConfigureAwait(false): CurrentView raises UI notifications, so the continuation must stay on the UI context.
+        // No ConfigureAwait(false): the notifications go to the UI, so the continuation must stay on the UI context.
         await _selectionGate.WaitAsync();
         try
         {
@@ -263,7 +237,7 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
             $"Routeables: '{entry.Route}' was not shown ({(result.Cancelled ? "cancelled by a guard (CanLeaveAsync / CanEnter) or a newer route" : "failed")}){(result.Exception is null ? "" : ": " + result.Exception)}");
 
     /// <summary>
-    /// Shows the view of an entry through the router and updates <see cref="CurrentView"/>; the previous entry is selected again if that fails.
+    /// Shows the view of an entry through the router and announces it with <see cref="CurrentViewChanged"/>; the previous entry is selected again if that fails.
     /// </summary>
     /// <param name="value">The entry to show, or <see langword="null"/> for none.</param>
     /// <param name="old">The previously selected entry, restored on failure.</param>
@@ -293,7 +267,8 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
                 if (redirected && ReferenceEquals(_routeable, value))
                     _routeable = old;
 
-                CurrentView = _router.CurrentView!;
+                NotifyPropertyChanged(nameof(CurrentTitle));
+                CurrentViewChanged?.Invoke(this, _router.CurrentView);
             }
             else
             {

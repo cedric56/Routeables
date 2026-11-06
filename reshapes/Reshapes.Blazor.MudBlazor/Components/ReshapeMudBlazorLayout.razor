@@ -27,7 +27,7 @@
     </MudDrawer>
    
     <MudMainContent>
-    @if (MainViewModel.CurrentView is RouteableFor view)
+    @if (CurrentView is RouteableFor view)
         {
             @view.Render()
         }

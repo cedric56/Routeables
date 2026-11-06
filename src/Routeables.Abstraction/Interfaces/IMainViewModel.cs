@@ -4,7 +4,7 @@ namespace Routeables.Abstraction;
 
 /// <summary>
 /// The main view model of an application: the menu entries, the one that is selected and the view it shows. Each host binds its
-/// menu to <see cref="Routeables"/> and <see cref="Routeable"/>, and shows <see cref="CurrentView"/>. Register it with
+/// menu to <see cref="Routeables"/> and <see cref="Routeable"/>; the page itself is shown by a <c>RouteableRegion</c> (the view is <c>IRouter.CurrentView</c>). Register it with
 /// <c>RegisterMainViewModel</c>: one instance per host (a singleton on Avalonia, MAUI and Uno, scoped on Blazor).
 /// </summary>
 public interface IMainViewModel
@@ -15,13 +15,10 @@ public interface IMainViewModel
     /// <summary>The selected entry. Setting it goes to that entry; <see langword="null"/> when none is selected.</summary>
     IRouteableEntry? Routeable { get; set; }
 
-    /// <summary>The view the selected entry shows, or <see langword="null"/> when there is none.</summary>
-    object? CurrentView { get; set; }
-
     /// <summary>The title of the selected entry (its display name), for a title bar. Override it for another title.</summary>
     string? CurrentTitle => Routeable?.DisplayName;
 
-    /// <summary>Raised when <see cref="CurrentView"/> changes (setting it raises it); the argument is the new view.</summary>
+    /// <summary>Raised when the page shown or the selected entry changes; the argument is the view that is now shown (<c>IRouter.CurrentView</c>).</summary>
     event EventHandler<object?>? CurrentViewChanged;
 
     /// <summary>Raised after <see cref="Lock"/> or <see cref="Unlock"/> has changed the entries.</summary>

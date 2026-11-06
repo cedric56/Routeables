@@ -50,7 +50,7 @@ else
         </nav>
 
         <main class="rt-content">
-            @if (MainViewModel.CurrentView is RouteableFor routeable)
+            @if (CurrentView is RouteableFor routeable)
             {
                 @routeable.Render()
             }

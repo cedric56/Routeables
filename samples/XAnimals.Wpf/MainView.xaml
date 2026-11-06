@@ -27,7 +27,7 @@
 
             <routeables:RouteableMenu x:Name="Menu" Grid.Column="0" />
 
-            <ContentControl Grid.Column="1" Content="{Binding CurrentView}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+            <routeables:RouteableRegion Grid.Column="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </Grid>
     </Grid>
 </UserControl>

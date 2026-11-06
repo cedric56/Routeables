@@ -51,7 +51,7 @@ public class DefaultMainViewModelTests
         Assert.True(main.Start());
 
         await UntilAsync(() => provider.GetRequiredService<IRouter>().CurrentViewModel is HomeVm);
-        await UntilAsync(() => main.CurrentView is HomeView);
+        await UntilAsync(() => provider.GetRequiredService<IRouter>().CurrentView is HomeView);
     }
 
     [Fact]
@@ -83,12 +83,11 @@ public class DefaultMainViewModelTests
     {
         using var provider = Build("/home");
         var router = provider.GetRequiredService<IRouter>();
-        var main = provider.GetRequiredService<IMainViewModel>();
 
         RegionStart.Begin(provider, null, "/home");
 
         await UntilAsync(() => router.CurrentViewModel is HomeVm);
-        await UntilAsync(() => main.CurrentView is HomeView);
+        await UntilAsync(() => router.CurrentView is HomeView);
     }
 
     [Fact]

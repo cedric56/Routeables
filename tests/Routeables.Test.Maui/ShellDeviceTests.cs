@@ -378,19 +378,23 @@ public class ShellDeviceTests
         Assert.Null(HostOf(shell, 0).Content);
     }
 
-    /// <summary>A view produced before attachment is kept and shown as soon as the handler comes.</summary>
+    /// <summary>The page the router showed before the shell had a handler is put in its host as soon as the handler comes.</summary>
     [UIFact]
-    public void A_view_produced_before_the_shell_had_a_handler_is_shown_when_the_handler_comes()
+    public async Task A_page_shown_before_the_shell_had_a_handler_is_shown_when_the_handler_comes()
     {
         var menu = Menu.With("Home");
-        var shell = ShellOf(menu);
-        var view = new Label { Text = "early" };
-        menu.CurrentView = view;
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<PageAView, PageAViewModel>(route: "/a");
+        services.AddSingleton<IMainViewModel>(menu);
+        var provider = services.BuildServiceProvider();
+        var shell = new RouteablesShell(provider);
+        await provider.GetRequiredService<IRouter>().GoToAsync("/a");
         Assert.Null(HostOf(shell, 0).Content);
 
         shell.Handler = new QuietHandler();
 
-        Assert.Same(view, HostOf(shell, 0).Content);
+        Assert.Same(provider.GetRequiredService<IRouter>().CurrentView, HostOf(shell, 0).Content);
     }
 
     /// <summary>A current view that is not a control is ignored rather than thrown at the host.</summary>

@@ -44,10 +44,9 @@ public class RouteableViewModelBaseTests
         await sut.GoBackAsync();
 
         Assert.Same(entry, sut.Routeable);
-        Assert.Equal("the view", sut.CurrentView);
-        Assert.Equal(["the view"], announced);
+        Assert.Equal([router.CurrentView], announced);
         Assert.Contains(nameof(sut.Routeable), sut.NotifiedProperties);
-        Assert.Contains(nameof(sut.CurrentView), sut.NotifiedProperties);
+        Assert.Contains(nameof(sut.CurrentTitle), sut.NotifiedProperties);
     }
 
     [Fact]
@@ -66,21 +65,8 @@ public class RouteableViewModelBaseTests
         Assert.True((await router.PopAsync(TestContext.Current.CancellationToken)).Success);
 
         Assert.Same(entry, sut.Routeable);
-        Assert.Same(shown, sut.CurrentView);
+        Assert.Same(shown, router.CurrentView);
         Assert.Equal([shown], announced);
-    }
-
-    [Fact]
-    public void Setting_the_current_view_announces_it()
-    {
-        var sut = TestNavigableViewModel.Create(CreateRouter(), [], initialize: false);
-        var announced = new List<object?>();
-        sut.CurrentViewChanged += (_, view) => announced.Add(view);
-
-        sut.CurrentView = "v";
-
-        Assert.Equal(["v"], announced);
-        Assert.Contains(nameof(sut.CurrentView), sut.NotifiedProperties);
     }
 
     private sealed class FixedRuntime(Runtime current) : IRuntime
