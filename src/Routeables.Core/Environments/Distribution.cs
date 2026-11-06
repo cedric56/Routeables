@@ -40,7 +40,7 @@ internal class DistributionImplementation : IDistribution
         (5, 1, 0, Distribution.WindowsXP),
     ];
 
-    // The first family a Linux system belongs to, by the names its os-release gives as ID or ID_LIKE.
+    // The family of a Linux system, by the names its os-release gives as ID, then as ID_LIKE.
     private static readonly (Distribution Release, string[] Ids)[] LinuxFamilies =
     [
         (Distribution.Ubuntu, ["ubuntu"]), (Distribution.Fedora, ["fedora"]), (Distribution.ArchLinux, ["arch"]),
@@ -69,33 +69,55 @@ internal class DistributionImplementation : IDistribution
         }
 
         if (OperatingSystem.IsLinux())
-        {
-            var osRelease = ReadOsRelease();
-            var id = Get(osRelease, "ID");
-            var idLike = Get(osRelease, "ID_LIKE");
-
-            foreach (var (release, ids) in LinuxFamilies)
-                if (Matches(id, idLike, ids))
-                    return release;
-        }
+            return FromOsRelease(ReadOsReleaseLines());
 
         return Distribution.Unknown;
     }
 
     /// <summary>
-    /// Reads and parses the <c>/etc/os-release</c> file on Linux systems into a dictionary of key-value pairs.
+    /// The Linux distribution an <c>os-release</c> file names, by its <c>ID</c> and <c>ID_LIKE</c>.
     /// </summary>
-    /// <returns>A dictionary containing OS release properties.</returns>
-    private static Dictionary<string, string> ReadOsRelease()
+    /// <param name="lines">The lines of the file.</param>
+    /// <returns>The family named by <c>ID</c>, else the first one named by <c>ID_LIKE</c>, or <see cref="Distribution.Unknown"/>.</returns>
+    internal static Distribution FromOsRelease(IEnumerable<string> lines)
+    {
+        var osRelease = ParseOsRelease(lines);
+        var id = Get(osRelease, "ID");
+        var idLike = Get(osRelease, "ID_LIKE");
+
+        // The ID first: Linux Mint and Pop!_OS name Ubuntu in ID_LIKE, Manjaro names Arch, and they are not those.
+        foreach (var (release, ids) in LinuxFamilies)
+            if (Matches(id, string.Empty, ids))
+                return release;
+
+        foreach (var (release, ids) in LinuxFamilies)
+            if (Matches(string.Empty, idLike, ids))
+                return release;
+
+        return Distribution.Unknown;
+    }
+
+    /// <summary>
+    /// Reads the lines of the <c>/etc/os-release</c> file on Linux systems.
+    /// </summary>
+    /// <returns>The lines, or none when the file is not there.</returns>
+    private static IEnumerable<string> ReadOsReleaseLines()
     {
         const string path = "/etc/os-release";
 
-        if (!File.Exists(path))
-            return new Dictionary<string, string>();
+        return File.Exists(path) ? File.ReadAllLines(path) : [];
+    }
 
+    /// <summary>
+    /// Parses the lines of an <c>os-release</c> file into a dictionary of key-value pairs.
+    /// </summary>
+    /// <param name="lines">The lines of the file.</param>
+    /// <returns>A dictionary containing OS release properties.</returns>
+    internal static Dictionary<string, string> ParseOsRelease(IEnumerable<string> lines)
+    {
         // The last assignment of a key wins, as for the shell that reads the file; a comment is not an assignment.
         var values = new Dictionary<string, string>();
-        foreach (var line in File.ReadAllLines(path))
+        foreach (var line in lines)
         {
             if (line.TrimStart().StartsWith('#') || ParseLine(line.Trim()) is not { } pair)
                 continue;

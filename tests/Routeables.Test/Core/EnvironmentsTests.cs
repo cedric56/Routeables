@@ -197,6 +197,98 @@ public class EnvironmentsTests
             Assert.Equal(Distribution.Fedora, current);
     }
 
+    // ------------------------------------------------------------------------------------------------ the Linux detection, whatever the machine
+
+    public static TheoryData<string, string> OsReleases => new()
+    {
+        { "ID=ubuntu", "Ubuntu" },
+        { "ID=fedora", "Fedora" },
+        { "ID=arch", "ArchLinux" },
+        { "ID=debian", "Debian" },
+        { "ID=opensuse-leap", "OpenSUSE" },
+        { "ID=opensuse-tumbleweed", "OpenSUSE" },
+        { "ID=linuxmint\nID_LIKE=\"ubuntu debian\"", "LinuxMint" },
+        { "ID=manjaro", "Manjaro" },
+        { "ID=manjaro\nID_LIKE=arch", "Manjaro" },
+        { "ID=pop\nID_LIKE=\"ubuntu debian\"", "PopOS" },
+        { "ID=pop_os", "PopOS" },
+        { "ID=zorin\nID_LIKE=\"ubuntu debian\"", "Ubuntu" },
+        { "ID=raspbian\nID_LIKE=debian", "Debian" },
+        { "ID=nobara\nID_LIKE=\"rhel centos fedora\"", "Fedora" },
+        { "ID=endeavouros\nID_LIKE=arch", "ArchLinux" },
+        { "ID=UBUNTU", "Ubuntu" },
+        { "ID=\"ubuntu\"", "Ubuntu" },
+        { "ID='fedora'", "Fedora" },
+        { "ID=gentoo", "Unknown" },
+        { "", "Unknown" },
+    };
+
+    [Theory]
+    [MemberData(nameof(OsReleases))]
+    public void An_os_release_names_its_distribution_by_ID_then_ID_LIKE(string text, string expected)
+        => Assert.Equal(Distributions(expected), DistributionImplementation.FromOsRelease(text.Split('\n')));
+
+    private static Distribution Distributions(string name) => name switch
+    {
+        "Ubuntu" => Distribution.Ubuntu,
+        "Fedora" => Distribution.Fedora,
+        "ArchLinux" => Distribution.ArchLinux,
+        "Debian" => Distribution.Debian,
+        "OpenSUSE" => Distribution.OpenSUSE,
+        "LinuxMint" => Distribution.LinuxMint,
+        "Manjaro" => Distribution.Manjaro,
+        "PopOS" => Distribution.PopOS,
+        "Unknown" => Distribution.Unknown,
+        _ => throw new ArgumentOutOfRangeException(nameof(name)),
+    };
+
+    [Fact]
+    public void An_os_release_gives_its_last_assignment_and_skips_comments_and_lines_that_are_not_assignments()
+    {
+        var values = DistributionImplementation.ParseOsRelease(
+        [
+            "# ID=ubuntu",
+            "   # ID=fedora",
+            "NAME=\"Some Linux\"",
+            "ID=debian",
+            "ID=arch",
+            "=novalue",
+            "no equals sign",
+            "",
+            "VERSION='1 (one)'",
+        ]);
+
+        Assert.Equal("arch", values["ID"]);
+        Assert.Equal("Some Linux", values["NAME"]);
+        Assert.Equal("1 (one)", values["VERSION"]);
+        Assert.Equal(3, values.Count);
+    }
+
+    [Theory]
+    [InlineData("GNOME", "", "Gnome")]
+    [InlineData("ubuntu:GNOME", "ubuntu", "Gnome")]
+    [InlineData("KDE", "", "KDE")]
+    [InlineData("", "plasma-kde", "KDE")]
+    [InlineData("XFCE", "", "Xfce")]
+    [InlineData("MATE", "", "Mate")]
+    [InlineData("X-Cinnamon", "cinnamon", "Cinnamon")]
+    [InlineData("Unity", "", "Unity")]
+    [InlineData("LXDE", "", "LXDE")]
+    [InlineData("gnome", "", "Gnome")]
+    public void A_linux_session_is_named_by_its_desktop_variables(string xdgDesktop, string session, string expected)
+    {
+        var asked = false;
+
+        Assert.Equal(Desktops(expected), DesktopImplementation.FromLinuxSession(xdgDesktop, session, () => asked = true));
+        Assert.False(asked);        // a named desktop is not a reason to look for WSL
+    }
+
+    [Theory]
+    [InlineData(true, "WSL")]
+    [InlineData(false, "Unknown")]
+    public void A_linux_session_that_names_no_desktop_is_WSL_or_unknown(bool wsl, string expected)
+        => Assert.Equal(Desktops(expected), DesktopImplementation.FromLinuxSession("", "", () => wsl));
+
     // ------------------------------------------------------------------------------------------------ registration
 
     [Fact]

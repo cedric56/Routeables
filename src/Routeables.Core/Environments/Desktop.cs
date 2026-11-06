@@ -40,17 +40,29 @@ internal class DesktopImplementation : IDesktop
         {
             var xdgDesktop = Environment.GetEnvironmentVariable("XDG_CURRENT_DESKTOP") ?? "";
             var desktopSession = Environment.GetEnvironmentVariable("DESKTOP_SESSION") ?? "";
-            var combined = $"{xdgDesktop} {desktopSession}".ToUpperInvariant();
-
-            if (combined.Contains("GNOME")) return Desktop.Gnome;
-            if (combined.Contains("KDE")) return Desktop.KDE;
-            if (combined.Contains("XFCE")) return Desktop.Xfce;
-            if (combined.Contains("MATE")) return Desktop.Mate;
-            if (combined.Contains("CINNAMON")) return Desktop.Cinnamon;
-            if (combined.Contains("UNITY")) return Desktop.Unity;
-            if (combined.Contains("LXDE")) return Desktop.LXDE;
-            if (IsWsl()) return Desktop.WSL;
+            return FromLinuxSession(xdgDesktop, desktopSession, IsWsl);
         }
+        return Desktop.Unknown;
+    }
+
+    /// <summary>
+    /// The desktop of a Linux session, by the names the session gives itself.
+    /// </summary>
+    /// <param name="xdgDesktop">The value of <c>XDG_CURRENT_DESKTOP</c>.</param>
+    /// <param name="desktopSession">The value of <c>DESKTOP_SESSION</c>.</param>
+    /// <param name="isWsl">Asks whether the system is WSL; called only when no desktop is named.</param>
+    internal static Desktop FromLinuxSession(string xdgDesktop, string desktopSession, Func<bool> isWsl)
+    {
+        var combined = $"{xdgDesktop} {desktopSession}".ToUpperInvariant();
+
+        if (combined.Contains("GNOME")) return Desktop.Gnome;
+        if (combined.Contains("KDE")) return Desktop.KDE;
+        if (combined.Contains("XFCE")) return Desktop.Xfce;
+        if (combined.Contains("MATE")) return Desktop.Mate;
+        if (combined.Contains("CINNAMON")) return Desktop.Cinnamon;
+        if (combined.Contains("UNITY")) return Desktop.Unity;
+        if (combined.Contains("LXDE")) return Desktop.LXDE;
+        if (isWsl()) return Desktop.WSL;
         return Desktop.Unknown;
     }
 
