@@ -1,7 +1,0 @@
-{
-  "/routeables": {
-    "target": "http://localhost:5090",
-    "ws": true,
-    "secure": false
-  }
-}
