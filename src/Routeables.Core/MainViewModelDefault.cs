@@ -5,9 +5,10 @@ using System.ComponentModel;
 namespace Routeables.Core;
 
 /// <summary>
-/// The main view model of an application that has no menu: <c>UseRouteables(r => ...)</c> without a type registers it. It lists no
-/// entry; the page shown first is the one given, if any. Write your own
-/// (<see cref="MainViewModelBase"/>) when the application has a menu, a tab bar or a title to show.
+/// The main view model of an application that has no menu. It lists no entry and opens <paramref name="defaultRoute"/> at start.
+/// Derive from it to give the route: <c>public partial class MainViewModel(IRouter router) : MainViewModelDefault(router, "/hello/World") { }</c>,
+/// then <c>UseRouteables&lt;MainViewModel&gt;(...)</c>. Derive from <see cref="MainViewModelBase"/> instead when the application has a menu,
+/// a tab bar or a title to show.
 /// </summary>
 /// <param name="router">The router that shows the pages.</param>
 /// <param name="defaultRoute">The route to open at start.</param>

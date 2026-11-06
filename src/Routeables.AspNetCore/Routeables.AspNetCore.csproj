@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor" Version="2.3.13" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" />
     <ProjectReference Include="..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
     <ProjectReference Include="..\Routeables.Segments\Routeables.Segments.csproj" />

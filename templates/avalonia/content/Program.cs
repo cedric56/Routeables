@@ -1,5 +1,4 @@
 using Avalonia;
-using Routeables.Abstraction;
 using Routeables.Avalonia;
 using Routeables.Generated;
 
@@ -12,7 +11,7 @@ internal static class Program
         AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .UseRouteables<MainViewModel>(
-                r => { r.AddGeneratedRoutes(); },   // the first page
+                r => r.AddGeneratedRoutes(),   // the first page is the one MainViewModel opens (MainWindow.axaml.cs)
                 view: lifetime => new MainWindow())
             .StartWithClassicDesktopLifetime(args);
 }
