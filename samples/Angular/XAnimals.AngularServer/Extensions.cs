@@ -34,7 +34,7 @@ internal static class Extensions
         services.RegisterAnimals<MonkeysViewModel, MonkeyDetailViewModel>("monkeys");
         services.RegisterAnimals<ElephantsViewModel, ElephantDetailViewModel>("elephants");
         services.RegisterAnimals<BearsViewModel, BearDetailViewModel>("bears");
-        services.RegisterAnimals<PandasViewModel, PandaDetailViewModel>("pandas");
+        services.RegisterAnimals<PandasViewModel, PandaDetail>("pandas");
         services.RegisterPage<HistoryViewModel>("history");
         services.RegisterPage<RegionsViewModel>("regions");
         services.RegisterPage<AdoptViewModel>("adopt");

@@ -11,7 +11,7 @@ import { MembersPage } from './pages/members';
 import { TabsPage } from './pages/tabs';
 
 const lists = ['Cats', 'Dogs', 'Monkeys', 'Elephants', 'Bears', 'Pandas'].map(name => `${name}ViewModel`);
-const details = ['Cat', 'Dog', 'Monkey', 'Elephant', 'Bear', 'Panda'].map(name => `${name}DetailViewModel`);
+const details = [...['Cat', 'Dog', 'Monkey', 'Elephant', 'Bear'].map(name => `${name}DetailViewModel`), 'PandaDetail'];
 
 /**
  * Chooses how to draw a page: the view model decides which page it is, this picks the component for it. The same component draws

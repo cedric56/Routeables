@@ -1,0 +1,35 @@
+﻿Wait for time (ms), element presence, text, or window appearance
+
+Usage: agent-desktop-win32-x64.exe wait [OPTIONS] [MS]
+
+Arguments:
+  [MS]  Milliseconds to pause
+
+Options:
+      --element <ELEMENT>              Block until this element ref appears in the tree
+  -v, --verbose                        Enable debug logging to stderr
+      --debug                          Visual debug for snapshot/click; requires --screenshot PATH.html
+      --window <WINDOW>                Block until a window with this title appears; with --event, narrows the event wait to that window title instead of selecting a mode
+      --screenshot <PATH.html>         Write a sensitive, local HTML screenshot visualization (new file only)
+      --text <TEXT>                    Block until text appears in the app's accessibility tree; with --notification, filter notification text
+      --menu                           Block until a menu surface is open
+      --session <SESSION>              Select the snapshot namespace; session-owned refs require the same scope
+      --agent-id <AGENT_ID>            Harness subagent ID within --session (1-64 letters/digits/-/_; or AGENT_DESKTOP_AGENT_ID)
+      --menu-closed                    Block until the menu surface is dismissed
+      --notification                   Block until a new notification arrives
+      --trace <TRACE>                  Append reliability trace JSONL to this path
+      --event <EVENT>                  Block until a desktop lifecycle signal, detected by baseline diff without needing to know the id/title up front: window-opened, window-closed, app-launched, app-terminated, focus-changed, surface-appeared, surface-dismissed
+      --trace-strict                   Fail on trace setup/pre-action write errors
+      --headed                         Prefer physical delivery for natural input commands and permit focus/cursor side effects. Default is strict headless semantic delivery.
+      --window-id <window-id>          Optional: narrow --event window-opened/window-closed/focus-changed to one window ID
+      --predicate <PREDICATE>          Element wait predicate: exists, enabled, visible, actionable, or value
+  -w, --wait-for <WAIT_FOR>            Poll until an element matching the role:text selector appears, then return the snapshot (snapshot and ref actions only)
+      --value <VALUE>                  Expected value for --predicate value
+      --wait-for-gone <WAIT_FOR_GONE>  Poll until no element matches the role:text selector, then return the snapshot (snapshot and ref actions only)
+      --action <ACTION>                Action for --predicate actionable: click (default), type, set-value, or clear
+      --wait-timeout <WAIT_TIMEOUT>    Maximum wait time in milliseconds for --wait-for / --wait-for-gone (default: 30000)
+      --count <COUNT>                  Expected match count for --text waits
+      --timeout <TIMEOUT>              Timeout in milliseconds for element/window/text waits [default: 30000]
+      --app <APP>                      Scope element, window, or text wait to this application
+  -h, --help                           Print help
+

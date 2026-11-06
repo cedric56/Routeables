@@ -1,0 +1,391 @@
+﻿{
+    "version":  "2.6",
+    "ok":  true,
+    "command":  "snapshot",
+    "data":  {
+                 "app":  "XAnimals.Wpf.exe",
+                 "complete":  true,
+                 "ref_count":  26,
+                 "snapshot_id":  "svgrym50veu8e",
+                 "tree":  {
+                              "available_actions":  [
+                                                        "SetFocus"
+                                                    ],
+                              "children":  [
+                                               {
+                                                   "available_actions":  [
+                                                                             "SetValue",
+                                                                             "SetFocus"
+                                                                         ],
+                                                   "children":  [
+                                                                    {
+                                                                        "available_actions":  [
+                                                                                                  "SetFocus"
+                                                                                              ],
+                                                                        "children":  [
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Click",
+                                                                                                                       "Expand",
+                                                                                                                       "Collapse",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "System",
+                                                                                             "ref_id":  "@svgrym50veu8e:e2",
+                                                                                             "role":  "menuitem",
+                                                                                             "role_description":  "menu item",
+                                                                                             "states":  [
+                                                                                                            "haspopup"
+                                                                                                        ]
+                                                                                         }
+                                                                                     ],
+                                                                        "name":  "System",
+                                                                        "native_id":  {
+                                                                                          "kind":  "automation_id",
+                                                                                          "value":  "SystemMenuBar"
+                                                                                      },
+                                                                        "role":  "menu",
+                                                                        "role_description":  "menu bar"
+                                                                    },
+                                                                    {
+                                                                        "available_actions":  [
+                                                                                                  "Click"
+                                                                                              ],
+                                                                        "name":  "Minimise",
+                                                                        "native_id":  {
+                                                                                          "kind":  "automation_id",
+                                                                                          "value":  "Minimize-Restore"
+                                                                                      },
+                                                                        "ref_id":  "@svgrym50veu8e:e3",
+                                                                        "role":  "button",
+                                                                        "role_description":  "button"
+                                                                    },
+                                                                    {
+                                                                        "available_actions":  [
+                                                                                                  "Click"
+                                                                                              ],
+                                                                        "name":  "Maximise",
+                                                                        "native_id":  {
+                                                                                          "kind":  "automation_id",
+                                                                                          "value":  "Maximize-Restore"
+                                                                                      },
+                                                                        "ref_id":  "@svgrym50veu8e:e4",
+                                                                        "role":  "button",
+                                                                        "role_description":  "button"
+                                                                    },
+                                                                    {
+                                                                        "available_actions":  [
+                                                                                                  "Click"
+                                                                                              ],
+                                                                        "name":  "Close",
+                                                                        "native_id":  {
+                                                                                          "kind":  "automation_id",
+                                                                                          "value":  "Close"
+                                                                                      },
+                                                                        "ref_id":  "@svgrym50veu8e:e5",
+                                                                        "role":  "button",
+                                                                        "role_description":  "button"
+                                                                    }
+                                                                ],
+                                                   "native_id":  {
+                                                                     "kind":  "automation_id",
+                                                                     "value":  "TitleBar"
+                                                                 },
+                                                   "ref_id":  "@svgrym50veu8e:e1",
+                                                   "role":  "group",
+                                                   "role_description":  "title bar",
+                                                   "value":  "XAnimals.Wpf"
+                                               },
+                                               {
+                                                   "children":  [
+                                                                    {
+                                                                        "available_actions":  [
+                                                                                                  "Click",
+                                                                                                  "SetFocus"
+                                                                                              ],
+                                                                        "description":  "Switch between the light and the dark theme",
+                                                                        "name":  "ÔùÉ",
+                                                                        "ref_id":  "@svgrym50veu8e:e6",
+                                                                        "role":  "button",
+                                                                        "role_description":  "button"
+                                                                    },
+                                                                    {
+                                                                        "available_actions":  [
+                                                                                                  "Click",
+                                                                                                  "SetFocus"
+                                                                                              ],
+                                                                        "description":  "Show or hide the menu",
+                                                                        "name":  "Ôÿ░",
+                                                                        "ref_id":  "@svgrym50veu8e:e7",
+                                                                        "role":  "button",
+                                                                        "role_description":  "button"
+                                                                    },
+                                                                    {
+                                                                        "available_actions":  [
+                                                                                                  "Scroll",
+                                                                                                  "SetFocus"
+                                                                                              ],
+                                                                        "children":  [
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.CatsViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e9",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item",
+                                                                                             "states":  [
+                                                                                                            "offscreen"
+                                                                                                        ]
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.DogsViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e10",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item",
+                                                                                             "states":  [
+                                                                                                            "offscreen"
+                                                                                                        ]
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.MonkeysViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e11",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item",
+                                                                                             "states":  [
+                                                                                                            "offscreen"
+                                                                                                        ]
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.ElephantsViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e12",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item",
+                                                                                             "states":  [
+                                                                                                            "offscreen"
+                                                                                                        ]
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.BearsViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e13",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item",
+                                                                                             "states":  [
+                                                                                                            "offscreen"
+                                                                                                        ]
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.PandasViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e14",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item",
+                                                                                             "states":  [
+                                                                                                            "offscreen"
+                                                                                                        ]
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.HistoryViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e15",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item"
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.RegionsViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e16",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item"
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.AdoptViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e17",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item"
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.DialogsViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e18",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item"
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.Birds.BirdsViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e19",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item"
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.FeaturesViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e20",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item"
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.MembersViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e21",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item"
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.AboutViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e22",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item",
+                                                                                             "states":  [
+                                                                                                            "focused",
+                                                                                                            "selected"
+                                                                                                        ]
+                                                                                         },
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Select",
+                                                                                                                       "ScrollTo",
+                                                                                                                       "Click",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "name":  "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.TabsViewModel]",
+                                                                                             "ref_id":  "@svgrym50veu8e:e23",
+                                                                                             "role":  "option",
+                                                                                             "role_description":  "list item"
+                                                                                         }
+                                                                                     ],
+                                                                        "native_id":  {
+                                                                                          "kind":  "automation_id",
+                                                                                          "value":  "Menu"
+                                                                                      },
+                                                                        "ref_id":  "@svgrym50veu8e:e8",
+                                                                        "role":  "listbox",
+                                                                        "role_description":  "list view"
+                                                                    },
+                                                                    {
+                                                                        "children":  [
+                                                                                         {
+                                                                                             "available_actions":  [
+                                                                                                                       "Scroll",
+                                                                                                                       "SetFocus"
+                                                                                                                   ],
+                                                                                             "children":  [
+                                                                                                              {
+                                                                                                                  "available_actions":  [
+                                                                                                                                            "Click",
+                                                                                                                                            "SetFocus"
+                                                                                                                                        ],
+                                                                                                                  "name":  "Learn more",
+                                                                                                                  "ref_id":  "@svgrym50veu8e:e25",
+                                                                                                                  "role":  "button",
+                                                                                                                  "role_description":  "button"
+                                                                                                              },
+                                                                                                              {
+                                                                                                                  "available_actions":  [
+                                                                                                                                            "Click",
+                                                                                                                                            "SetFocus"
+                                                                                                                                        ],
+                                                                                                                  "name":  "Polar bears",
+                                                                                                                  "ref_id":  "@svgrym50veu8e:e26",
+                                                                                                                  "role":  "button",
+                                                                                                                  "role_description":  "button"
+                                                                                                              }
+                                                                                                          ],
+                                                                                             "ref_id":  "@svgrym50veu8e:e24",
+                                                                                             "role":  "group",
+                                                                                             "role_description":  "pane"
+                                                                                         }
+                                                                                     ],
+                                                                        "role":  "unknown",
+                                                                        "role_description":  "custom"
+                                                                    }
+                                                                ],
+                                                   "role":  "unknown",
+                                                   "role_description":  "custom"
+                                               }
+                                           ],
+                              "name":  "XAnimals.Wpf",
+                              "role":  "window",
+                              "role_description":  "window"
+                          },
+                 "window":  {
+                                "id":  "w-2758080",
+                                "title":  "XAnimals.Wpf"
+                            }
+             }
+}

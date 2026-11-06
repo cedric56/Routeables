@@ -1,9 +1,20 @@
 ﻿using Routeables.Abstraction;
+using XAnimals.ViewModels;
+using IRouter = Routeables.Abstraction.IRouter;
 
 namespace XAnimals.AngularServer;
 
 /// <summary>The "view" of a route on this server: nothing. The state of the view model is what the front end receives.</summary>
 internal sealed class AnimalsPage;
+
+/// <summary>
+/// The detail of a panda on this server. <see cref="PandaDetailViewModel"/> receives the name from a property of the view
+/// (<c>{panda::}</c>), and this server has no view, so the name comes by the constructor, like every other detail.
+/// </summary>
+internal sealed class PandaDetail : PandaDetailViewModel
+{
+    public PandaDetail(IRouter router, string name) : base(router) => Name = name;
+}
 
 internal static class AnimalRoutes
 {
