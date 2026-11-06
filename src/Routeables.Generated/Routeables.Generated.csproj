@@ -17,7 +17,4 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" PrivateAssets="all" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Routeables.Generated.Abstraction\Routeables.Generated.Abstraction.csproj" />
-  </ItemGroup>
 </Project>

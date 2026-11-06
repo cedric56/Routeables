@@ -19,22 +19,30 @@ public class MainViewPageModel(IMainViewModel main, IRouter router, IServiceProv
     /// <summary>The entries of the menu that have no view in this sample: the Birds module has views for the other platforms only.</summary>
     private static readonly string[] Unserved = ["/birds"];
 
+    /// <summary>The main view-model of the application.</summary>
     public IMainViewModel Main => main;
 
+    /// <summary>The router that owns the current page and its history.</summary>
     public IRouter Router => router;
 
+    /// <summary>Dialogs and toasts waiting for the visitor.</summary>
     public RouteableInteractions Interactions => interactions;
 
     /// <summary>The address matches no route: the page says so, and the state of the visitor is left alone.</summary>
-    public bool NotFound { get; private set; }
+    public new bool NotFound { get; private set; }
 
-    public string Url => state.ServedUrl ?? "/";
+    /// <summary>The URL that was last successfully served for this session.</summary>
+    public new string Url => state.ServedUrl ?? "/";
 
     /// <summary>The entries the menu links to.</summary>
     public IEnumerable<IRouteableEntry> MenuEntries => main.Routeables.Where(e => !Unserved.Contains(Address(e.Route), StringComparer.OrdinalIgnoreCase));
 
+    /// <summary>Turns a route into an absolute path starting with <c>/</c>.</summary>
     public static string Address(string route) => "/" + route.TrimStart('/');
 
+    /// <summary>
+    /// Serves the page for the given path. Reloads keep the current view; a new address navigates.
+    /// </summary>
     public async Task OnGetAsync(string? path)
     {
         var url = "/" + (path?.TrimStart('/') ?? "") + Request.QueryString.Value;
@@ -55,6 +63,9 @@ public class MainViewPageModel(IMainViewModel main, IRouter router, IServiceProv
         }
     }
 
+    /// <summary>
+    /// Handles a button post: runs the requested action, then redirects to the page that is now shown.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync(string? path)
     {
         var form = Request.Form;
@@ -71,6 +82,9 @@ public class MainViewPageModel(IMainViewModel main, IRouter router, IServiceProv
         return Redirect(url);
     }
 
+    /// <summary>
+    /// Navigates the router to <paramref name="url"/>. Returns <see langword="false"/> when the address is unknown.
+    /// </summary>
     private async Task<bool> NavigateAsync(string url)
     {
         var result = await router.GoToAsync(url);

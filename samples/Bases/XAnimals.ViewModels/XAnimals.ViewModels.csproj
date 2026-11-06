@@ -9,7 +9,6 @@
   
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Routeables.Core\Routeables.Core.csproj" />
-    <ProjectReference Include="..\..\..\src\Routeables.Generated.Abstraction\Routeables.Generated.Abstraction.csproj" />
     <ProjectReference Include="..\..\..\src\Routeables.Locking\Routeables.Locking.csproj" />
     <ProjectReference Include="..\..\..\src\Routeables.Regions\Routeables.Regions.csproj" />
     <ProjectReference Include="..\..\..\src\Routeables.Routing\Routeables.Routing.csproj" />

@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
     <Description>Serves Routeables view models to a browser front end (Angular, Vue or any JavaScript client) over SignalR.</Description>
   </PropertyGroup>
 

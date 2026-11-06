@@ -1,7 +1,7 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using Microsoft.Extensions.DependencyInjection;
+using SignalRDialog = Routeables.SignalR.RouteableDialog;
 using Routeables.Abstraction;
 using Routeables.Core;
 using Routeables.SignalR;
@@ -38,21 +38,39 @@ public sealed class CounterViewModel(IRouter? router = null) : INotifyPropertyCh
     private void Raise([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
 
+/// <summary>A list that a test reads while the session writes to it from another thread.</summary>
+internal sealed class Told<T> : IReadOnlyList<T>
+{
+    private readonly List<T> _items = [];
+
+    public void Add(T item) { lock (_items) _items.Add(item); }
+
+    public void Clear() { lock (_items) _items.Clear(); }
+
+    public int Count { get { lock (_items) return _items.Count; } }
+
+    public T this[int index] { get { lock (_items) return _items[index]; } }
+
+    public IEnumerator<T> GetEnumerator() { lock (_items) return ((IEnumerable<T>)[.. _items]).GetEnumerator(); }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+}
+
 internal sealed class RecordingClient : IRouteableClient
 {
-    public List<RouteableNavigated> Navigated { get; } = [];
-    public List<RouteableChanged> Changed { get; } = [];
-    public List<RouteableFailure> Failed { get; } = [];
-    public List<RouteableDialog> Dialogs { get; } = [];
-    public List<RouteableToast> Toasts { get; } = [];
-    public List<RouteableClosed> Closed { get; } = [];
+    public Told<RouteableNavigated> Navigated { get; } = new();
+    public Told<RouteableChanged> Changed { get; } = new();
+    public Told<RouteableFailure> Failed { get; } = new();
+    public Told<SignalRDialog> Dialogs { get; } = new();
+    public Told<RouteableToast> Toasts { get; } = new();
+    public Told<RouteableClosed> Closed { get; } = new();
 
-    Task IRouteableClient.Navigated(RouteableNavigated message) { lock (Navigated) Navigated.Add(message); return Task.CompletedTask; }
-    Task IRouteableClient.Changed(RouteableChanged message) { lock (Changed) Changed.Add(message); return Task.CompletedTask; }
-    Task IRouteableClient.Failed(RouteableFailure message) { lock (Failed) Failed.Add(message); return Task.CompletedTask; }
-    Task IRouteableClient.DialogRequested(RouteableDialog message) { lock (Dialogs) Dialogs.Add(message); return Task.CompletedTask; }
-    Task IRouteableClient.Notified(RouteableToast message) { lock (Toasts) Toasts.Add(message); return Task.CompletedTask; }
-    Task IRouteableClient.Closed(RouteableClosed message) { lock (Closed) Closed.Add(message); return Task.CompletedTask; }
+    Task IRouteableClient.Navigated(RouteableNavigated message) { Navigated.Add(message); return Task.CompletedTask; }
+    Task IRouteableClient.Changed(RouteableChanged message) { Changed.Add(message); return Task.CompletedTask; }
+    Task IRouteableClient.Failed(RouteableFailure message) { Failed.Add(message); return Task.CompletedTask; }
+    Task IRouteableClient.DialogRequested(SignalRDialog message) { Dialogs.Add(message); return Task.CompletedTask; }
+    Task IRouteableClient.Notified(RouteableToast message) { Toasts.Add(message); return Task.CompletedTask; }
+    Task IRouteableClient.Closed(RouteableClosed message) { Closed.Add(message); return Task.CompletedTask; }
 }
 
 /// <summary>What a browser client sees of a view model: its state, its commands, and what changes.</summary>

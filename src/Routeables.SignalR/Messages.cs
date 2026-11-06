@@ -39,6 +39,7 @@ public interface IRouteableClient
 /// <param name="ViewModel">The name of the view model type, to choose the component that shows it.</param>
 /// <param name="State">The properties of the view model, by name (camel case).</param>
 /// <param name="Commands">The commands the client may call.</param>
+/// <param name="Target">Where the page is shown: the main page, the modal, a region or a registered view model (see <see cref="RouteableTargets"/>).</param>
 public sealed record RouteableNavigated(
     string Route,
     string ViewModel,
@@ -49,6 +50,7 @@ public sealed record RouteableNavigated(
 /// <summary>A property of the current view model changed.</summary>
 /// <param name="Property">The name of the property (camel case).</param>
 /// <param name="Value">Its new value.</param>
+/// <param name="Target">Where the page is shown: the main page, the modal, a region or a registered view model (see <see cref="RouteableTargets"/>).</param>
 public sealed record RouteableChanged(string Property, object? Value, string Target = RouteableTargets.Page);
 
 /// <summary>A target that has no view model any more.</summary>

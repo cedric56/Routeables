@@ -10,7 +10,7 @@ namespace Routeables.SignalR;
 /// What a connection owns: its routers, with their histories, and the view models they created. The connection is the lifetime, as
 /// the circuit is for Blazor Server: when it closes, the session is disposed and the view models with it.
 /// The client sees <em>targets</em> (see <see cref="RouteableTargets"/>): the page of the main router is always watched; the regions and the
-/// registered view models are watched when the client asks (<see cref="WatchAsync"/>).
+/// registered view models are watched when the client asks (<see cref="Watch"/>).
 /// </summary>
 public sealed class RouteableSession : IAsyncDisposable
 {

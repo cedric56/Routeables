@@ -6,8 +6,18 @@ using Routeables.Services;
 
 namespace Routeables.AspNetCore;
 
+/// <summary>
+/// Extension methods that wire Routeables into the ASP.NET Core dependency-injection container.
+/// </summary>
 public static class Extensions
 {
+    /// <summary>
+    /// Registers the core Routeables services for ASP.NET Core, using <typeparamref name="TMain"/> as the main view-model.
+    /// </summary>
+    /// <typeparam name="TMain">The main view-model type. Must implement <see cref="IMainViewModel"/>.</typeparam>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="configure">Optional callback to register additional services after the defaults.</param>
+    /// <returns>The same <paramref name="services"/> instance for chaining.</returns>
     public static IServiceCollection
         AddRouteablesAspNetCore<TMain>(
             this IServiceCollection services,

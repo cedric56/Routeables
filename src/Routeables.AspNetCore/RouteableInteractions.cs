@@ -18,6 +18,7 @@ public sealed class RouteableInteractions : IDisposable
     /// <summary>The dialog that waits for an answer, if any.</summary>
     public RouteableDialog? Pending => _dialogs.Count > 0 ? _dialogs[0] : null;
 
+    /// <summary>The toasts currently shown on the page.</summary>
     public IReadOnlyList<RouteableToast> Toasts => _toasts;
 
     // ---------------------------------------------------------------- dialogs
@@ -77,6 +78,7 @@ public sealed class RouteableInteractions : IDisposable
 
     // ---------------------------------------------------------------- notifications
 
+    /// <summary>Adds a toast notification that the page will show.</summary>
     public void Notify(string title, string message, RouteableNotificationType type, TimeSpan? expiration, Action? onClick, Action? onClose)
         => _toasts.Add(new RouteableToast(++_nextToast, title, message, type, expiration, onClick, onClose));
 
@@ -87,6 +89,7 @@ public sealed class RouteableInteractions : IDisposable
             Dismiss(toast.Id, click: false);
     }
 
+    /// <summary>Removes the toast with the given <paramref name="id"/> and optionally raises its click handler.</summary>
     public void Dismiss(int id, bool click)
     {
         if (_toasts.FirstOrDefault(t => t.Id == id) is not { } toast)
@@ -98,6 +101,9 @@ public sealed class RouteableInteractions : IDisposable
         toast.OnClose?.Invoke();
     }
 
+    /// <summary>
+    /// Cancels any dialogs that are still waiting for an answer (the visitor will never answer them once the session ends).
+    /// </summary>
     public void Dispose()
     {
         // A view model that awaits a dialog the visitor will never answer ends with the session.

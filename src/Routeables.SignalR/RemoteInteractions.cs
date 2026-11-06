@@ -82,7 +82,7 @@ public sealed class RemoteInteractions : IDisposable
         return true;
     }
 
-    /// <summary>Shows <paramref name="viewModel"/> as the modal and completes with what it passes to <paramref name="closed"/>.</summary>
+    /// <summary>Shows <paramref name="viewModel"/> as the modal and completes with what it passes to <paramref name="subscribe"/>.</summary>
     public async Task<TResult?> ShowModalAsync<TResult>(object viewModel, Func<Action<TResult?>, IDisposable> subscribe)
     {
         var closed = new TaskCompletionSource<TResult?>(TaskCreationOptions.RunContinuationsAsynchronously);

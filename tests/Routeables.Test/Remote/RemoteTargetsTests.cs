@@ -205,8 +205,9 @@ public class RemoteTargetsTests
         Assert.False(session.Answer(dialog.Id, 5).Success);
         Assert.True(session.Answer(dialog.Id, 1).Success);
 
-        Assert.True(await EventuallyAsync(() => shop.Result == "answer False"));
-        Assert.Contains(client.Changed, c => c.Property == "result" && Equals(c.Value, "answer False"));
+        // The value is set, then told: wait for what the client receives.
+        Assert.True(await EventuallyAsync(() => client.Changed.Any(c => c.Property == "result" && Equals(c.Value, "answer False"))));
+        Assert.Equal("answer False", shop.Result);
     }
 
     [Fact]

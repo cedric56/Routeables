@@ -12,6 +12,7 @@ namespace Reshapes.Blazor.MudBlazor;
 /// to display toast notifications with sanitized titles, messages, severity levels, and interaction event handlers.
 /// </summary>
 /// <param name="SnackbarService">The underlying MudBlazor snackbar service.</param>
+/// <param name="system">The system notifications to also raise outside the page, or <see langword="null"/> for none.</param>
 internal class ReshapeNotificationService(ISnackbar SnackbarService, RouteableSystemNotifications? system = null) : RouteableNotificationServiceBase(system)
 {
     /// <summary>
