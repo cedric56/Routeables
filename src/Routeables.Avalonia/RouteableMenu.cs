@@ -6,9 +6,11 @@ using Avalonia.Data;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using Routeables.Abstraction;
 using Routeables.Routing;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Routeables.Avalonia;
 
@@ -22,6 +24,43 @@ public class RouteableMenu : ListBox
     /// Gets the style key override to preserve the default <see cref="ListBox"/> theme styling.
     /// </summary>
     protected override Type StyleKeyOverride => typeof(ListBox);
+
+    private INotifyPropertyChanged? _source;
+
+    /// <inheritdoc />
+    protected override void OnDataContextBeginUpdate()
+    {
+        if (_source is not null)
+            _source.PropertyChanged -= OnMainViewModelChanged;
+        _source = null;
+        base.OnDataContextBeginUpdate();
+    }
+
+    /// <inheritdoc />
+    protected override void OnDataContextEndUpdate()
+    {
+        base.OnDataContextEndUpdate();
+        if (DataContext is IMainViewModel and INotifyPropertyChanged source)
+        {
+            _source = source;
+            source.PropertyChanged += OnMainViewModelChanged;
+        }
+    }
+
+    // The entry that was clicked stays selected in the list when the page refused to be left (CanLeaveAsync) and the view model took
+    // the previous entry back: the binding does not always push that value to the list. Whenever the view model announces its entry,
+    // the list shows it, once the current update of the selection is over.
+    private void OnMainViewModelChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(IMainViewModel.Routeable))
+            return;
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (DataContext is IMainViewModel main && !ReferenceEquals(SelectedItem, main.Routeable))
+                SetCurrentValue(SelectingItemsControl.SelectedItemProperty, main.Routeable);
+        }, DispatcherPriority.Background);
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RouteableMenu"/> class, configuring 

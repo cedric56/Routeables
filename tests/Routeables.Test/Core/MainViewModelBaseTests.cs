@@ -54,4 +54,66 @@ public class MainViewModelBaseTests
 
         Assert.Same(sut.Routeables[0], sut.Routeable);
     }
+
+    public sealed class StayView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class StayVm : IRouteable
+    {
+        // A page with unsaved changes: it answers at once, so the menu is still inside the setter when the refusal is known.
+        public Task<bool> CanLeaveAsync(CancellationToken ct = default) => Task.FromResult(false);
+        public Task OnEnteringAsync(IRouteableArgs args, CancellationToken ct = default) => Task.CompletedTask;
+        public Task OnLeavingAsync(IRouteableArgs args, CancellationToken ct = default) => Task.CompletedTask;
+    }
+    public sealed class OtherView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class OtherVm;
+
+    private sealed class GuardedMenu(IRouter router) : MainViewModelBase(router, initialize: false)
+    {
+        public bool InSetter { get; set; }
+        public int AnnouncedInSetter { get; private set; }
+        public int AnnouncedAfterSetter { get; private set; }
+
+        protected override ObservableCollection<IRouteableEntry> GetRouteables() =>
+        [
+            new RouteableEntry<StayVm>("Stay", route: "/stay", template: "/stay"),
+            new RouteableEntry<OtherVm>("Other", route: "/other", template: "/other"),
+        ];
+
+        protected override void NotifyPropertyChanged(string? propertyName)
+        {
+            if (propertyName != nameof(Routeable)) return;
+            if (InSetter) AnnouncedInSetter++; else AnnouncedAfterSetter++;
+        }
+    }
+
+    [Fact]
+    public async Task The_selected_entry_is_announced_again_after_the_setter_when_the_page_refuses_to_be_left()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<StayView, StayVm>(route: "/stay");
+        services.RegisterRoute<OtherView, OtherVm>(route: "/other");
+        using var provider = services.BuildServiceProvider();
+        var sut = new GuardedMenu(provider.GetRequiredService<IRouter>());
+        var stay = sut.Routeables[0];
+        var router = provider.GetRequiredService<IRouter>();
+        sut.Routeable = stay;
+        while (router.CurrentViewModel is not StayVm)
+            await Task.Delay(10, ct);
+        await Task.Delay(50, ct);   // the selection that opened the page has ended
+        Assert.Same(stay, sut.Routeable);
+        var before = sut.AnnouncedAfterSetter;
+
+        sut.InSetter = true;
+        sut.Routeable = sut.Routeables[1];   // what a menu does when the user clicks an entry
+        sut.InSetter = false;
+
+        var deadline = DateTime.UtcNow.AddSeconds(5);
+        while (sut.AnnouncedAfterSetter == before && DateTime.UtcNow < deadline)
+            await Task.Delay(10, ct);
+
+        Assert.Same(stay, sut.Routeable);                      // the page is still shown, so is its entry
+        Assert.IsType<StayVm>(router.CurrentViewModel);
+        Assert.True(sut.AnnouncedAfterSetter > before);        // and the control is told once the setter has returned
+    }
 }

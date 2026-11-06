@@ -145,7 +145,7 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
             // SelectAsync below does the actual serialized, version-guarded work; callers that
             // need to await completion or observe failure should call SelectAsync directly
             // instead of going through this property.
-            _ = ObserveAsync(SelectAsync(value, old));
+            _ = ObserveAsync(SelectAsync(value, old), value);
         }
     }
 
@@ -176,7 +176,11 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
     /// Observes an asynchronous task, catching and reporting any unhandled exceptions via <see cref="OnSelectionFailed"/>.
     /// </summary>
     /// <param name="task">The task to observe.</param>
-    private async Task ObserveAsync(Task task)
+    /// <param name="requested">
+    /// The entry the selection asked for. When the menu does not end on it (a guard such as <c>CanLeaveAsync</c> refused, or the route
+    /// failed), the selected entry is announced again once the setter has returned.
+    /// </param>
+    private async Task ObserveAsync(Task task, IRouteableEntry? requested = null)
     {
         try
         {
@@ -185,6 +189,16 @@ public abstract partial class RouteableViewModelBase : RouterViewModelBase, IDis
         catch (Exception exception)
         {
             OnSelectionFailed(exception);
+        }
+
+        // The control that selected the entry is still inside the set of Routeable when a guard answers at once, and it ignores
+        // a notification raised there: it would keep showing the refused entry as selected. Announce the entry that is selected
+        // after the setter has returned, on the same context.
+        if (requested is not null && !ReferenceEquals(_routeable, requested))
+        {
+            await Task.Yield();
+            NotifyPropertyChanged(nameof(Routeable));
+            NotifyPropertyChanged(nameof(CurrentTitle));
         }
     }
 
