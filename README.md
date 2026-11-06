@@ -18,14 +18,67 @@
 
 **View-model-first routing and navigation for Blazor, .NET MAUI, Avalonia, Uno Platform and WPF.**
 
-Coming from Prism? Start with [Migrating from Prism](docs/guides/migrating-from-prism.md).
+A view model asks an `IRouter` to go somewhere. It never touches a page, a frame or a navigation API of the framework, so the same code runs on every host. A route, a view and a zone of the screen that shows it: that is the whole model.
 
-A view model asks an `IRouter` to go somewhere. It never touches a page, a frame or a navigation API of the framework, so the same code runs on every host.
+Coming from Prism? Read [Migrating from Prism](docs/guides/migrating-from-prism.md). Want to see it first? [The Animals sample runs in your browser](https://cedric56.github.io/Routeables/demo/avalonia/) (Avalonia, WebAssembly).
 
-Try it 
-<a href="https://cedric56.github.io/Routeables/demo/avalonia/">The Animals sample running in your browser (Avalonia, WebAssembly).</a>
+## Install
 
-## The same sample on every host
+```bash
+dotnet add package Routeables.Avalonia   # or Routeables.Blazor, .Maui, .Uno, .Wpf
+```
+
+The host package brings everything else, the source generator included. You need the .NET 10 SDK.
+
+## Your first page
+
+**1. A view model with its route, and its view** (found by name):
+
+```csharp
+[Routeable("/hello/{name}")]
+public sealed class HelloViewModel(string name)
+{
+    public string? Name { get; } = name;
+}
+
+public partial class HelloView : UserControl { }
+```
+
+**2. A first page, and the start of Routeables** (Avalonia shown; each host has its own line, see below):
+
+```csharp
+public partial class MainViewModel(IRouter router) : MainViewModelDefault(router, "/hello/World") { }
+
+AppBuilder.Configure<App>()
+    .UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes(), view: lifetime => new MainWindow());
+```
+
+**3. The zone where pages appear**, in the main view (Blazor: `<RouteableRegion />`):
+
+```xml
+xmlns:routeables="clr-namespace:Routeables.Avalonia;assembly=Routeables.Avalonia"
+<routeables:RouteableRegion />
+```
+
+**4. Go somewhere**, from any view model:
+
+```csharp
+await router.GoToAsync("/hello/Claire");
+```
+
+On Avalonia, remove the creation of the window from `OnFrameworkInitializationCompleted`: Routeables shows it. The complete first page, step by step, with the other way to register a page (one line per page, no generator): [Getting started](docs/getting-started.md).
+
+## Your host
+
+| Host | Package | Setup |
+| --- | --- | --- |
+| Blazor | [`Routeables.Blazor`](src/Routeables.Blazor/README.md) | `services.UseRouteablesServer<MainViewModel>(r => { ... })` |
+| .NET MAUI | [`Routeables.Maui`](src/Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => { ... })` |
+| Avalonia | [`Routeables.Avalonia`](src/Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r => { ... })` |
+| Uno Platform | [`Routeables.Uno`](src/Routeables.Uno/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
+| WPF | [`Routeables.Wpf`](src/Routeables.Wpf/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
+
+The block is for your own registrations, the same on every host: `r => r.AddGeneratedRoutes()`. To start from a template: `dotnet new install Routeables.Templates`, then `dotnet new routeables-avalonia -n MyApp` (Avalonia only for now).
 
 The same view models drive the Animals sample on each host: only the views differ.
 
@@ -42,113 +95,9 @@ The same view models drive the Animals sample on each host: only the views diffe
   </tr>
 </table>
 
-## In one minute
+## When you need more
 
-```csharp
-//You can define the entry route by default it is "/" like Blazor
-//Routeables always start with an IMainViewModel
-//Two kinds:
-//MainViewModelBase designed to have a menu
-//MainViewModelDefault designed for plain page
-public partial class MainViewModel(IRouter router) : MainViewModelDefault(router, "/hello/World") { }
-```
-
-Two ways to register a page.
-
-**Without the generator**
-
-```csharp
-public sealed class HelloViewModel(string name)
-{
-    public string? Name { get; } = name;
-}
-
-public partial class HelloView : UserControl { }
-
-AppBuilder.Configure<App>()
-    .UseRouteables<MainViewModel>(r =>
-        {
-             r.RegisterRoute<HelloView, HelloViewModel>(route: "/hello/{name}");
-        },
-        view: lifetime => new MainWindow());
-```
-
-**With the generator**: the route is on the view model, the view is found by its name.
-
-```csharp
-[Routeable("/hello/{name}")]                         // the route is declared on the view model
-public sealed class HelloViewModel(string name)
-{
-    public string? Name { get; } = name;
-}
-
-public partial class HelloView : UserControl { }
-
-AppBuilder.Configure<App>()
-    .UseRouteables<MainViewModel>(r =>
-        {
-             r.AddGeneratedRoutes();
-        },
-        view: lifetime => new MainWindow());
-```
-
-In both, the main view says where the pages appear (Blazor: `<RouteableRegion />`):
-
-```xml
-xmlns:routeables="clr-namespace:Routeables.Avalonia;assembly=Routeables.Avalonia"
-<routeables:RouteableRegion />
-```
-
-Important don't forget to remove initialization in OnFrameworkInitializationCompleted
-
-```csharp
-  public override void OnFrameworkInitializationCompleted()
-  {
-      //Routeables will do it
-      //if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-      //{
-      //    desktop.MainWindow = new MainWindow();
-      //}
-
-      base.OnFrameworkInitializationCompleted();
-  }
-```
-
-A route (on the view model, or given by name), a view, one registration and a `RouteableRegion`: the zone of the screen that shows whatever the router displays. That is the whole model. A main view model is only for a menu: `UseRouteables<MainViewModel>(...)`. The first page, step by step: [Getting started](docs/getting-started.md).
-
-### Several zones
-
-`RouteableRegion` without a name shows the default router. To have several zones, each with its own router and history (a side panel, a detail pane, a tab), name them: `services.AddRegion("detail")`, `<routeables:RouteableRegion Region="detail" />`, and `[Routeable("/hello/{name}", region: "detail")]` on the view model. A view model that asks for an `IRouter` receives the router of its region, so `Back` stays in the region. More in [Regions](docs/guides/regions.md).
-
-## Start with your host
-
-Add the package of your host, then start Routeables where your framework starts. The host package brings the `Routeables` package, which carries the generator: there is nothing else to add.
-
-| Host | Package | Setup |
-| --- | --- | --- |
-| Blazor | [`Routeables.Blazor`](src/Routeables.Blazor/README.md) | `services.UseRouteablesServer<MainViewModel>(r => { ... })` |
-| .NET MAUI | [`Routeables.Maui`](src/Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => { ... })` |
-| Avalonia | [`Routeables.Avalonia`](src/Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r => { ... })` |
-| Uno Platform | [`Routeables.Uno`](src/Routeables.Uno/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
-| WPF | [`Routeables.Wpf`](src/Routeables.Wpf/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
-
-```bash
-dotnet add package Routeables.Avalonia   # or Routeables.Blazor, .Maui, .Uno, .Wpf
-```
-
-The call starts Routeables and registers your menu (the main view model). The block is for your own registrations, the same on every host:
-
-```csharp
-r => r.AddGeneratedRoutes()
-```
-
-Each host README has the complete setup. [Getting started](docs/getting-started.md) walks through it. To start, `dotnet new install Routeables.Templates` then `dotnet new routeables-avalonia -n MyApp` (Avalonia only for now), or create a project with the template of your framework (`dotnet new maui`, `dotnet new blazor`, or the Uno one) and add the host package.
-
-## Status
-
-Routeables is young: the first commit is from October 2026, it has one maintainer, and the API is still evolving, so a few breaking changes can come with the next versions. They are named in the release notes of each version: pin the version you use and read the notes before you update. What is documented works as described, and CI tests it on every host.
-
-## Features
+Nothing below is needed for a first page. Each line has its own guide.
 
 | Area | What Routeables offers | Guide |
 | --- | --- | --- |
@@ -174,11 +123,13 @@ Routeables is young: the first commit is from October 2026, it has one maintaine
 
 Routeables is the navigation layer, dialogs and notifications included. It ships no commands, view-model locator or event aggregator: use CommunityToolkit.Mvvm, ReactiveUI or plain C#.
 
-## Add what you need
+## Packages
 
-The host package already holds the dialogs, modals and notifications of its framework, registered by `UseRouteables`. For MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs, add a package of [`Reshapes`](reshapes/README.md).
+The host package already holds the dialogs, modals and notifications of its framework. For MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs, add a package of [`Reshapes`](reshapes/README.md). Everything else is in the one `Routeables` package that every host brings; its parts ([`Abstraction`](src/Routeables.Abstraction/README.md), [`Routing`](src/Routeables.Routing/README.md), [`Core`](src/Routeables.Core/README.md), [`Regions`](src/Routeables.Regions/README.md), [`Segments`](src/Routeables.Segments/README.md), [`Locking`](src/Routeables.Locking/README.md), [`Services`](src/Routeables.Services/README.md)) are separate projects of this repository.
 
-Everything else is in the one `Routeables` package, which every host brings: the contracts ([`Abstraction`](src/Routeables.Abstraction/README.md)), the router ([`Routing`](src/Routeables.Routing/README.md)), the view-model bases ([`Core`](src/Routeables.Core/README.md)), [`Regions`](src/Routeables.Regions/README.md), [`Segments`](src/Routeables.Segments/README.md) (`/Bears?SearchText=polar`), [`Locking`](src/Routeables.Locking/README.md) (pages that block leaving, a locked menu), the dialog and notification contracts ([`Services`](src/Routeables.Services/README.md)) and the source generator. They are separate projects of this repository and one package.
+## Status
+
+Routeables is young: the first commit is from October 2026, it has one maintainer, and the API is still evolving, so a few breaking changes can come with the next versions. They are named in the release notes of each version: pin the version you use and read the notes before you update. What is documented works as described, and CI tests it on every host.
 
 ## Learn more
 
