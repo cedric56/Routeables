@@ -41,7 +41,14 @@ public sealed class HelloViewModel(string name)
     public string? Name { get; } = name;
 }
 
-public partial class HelloView : RouteableFor<HelloViewModel> { }   // Routeables.Avalonia; a plain UserControl is registered by name instead
+public partial class HelloView : RouteableFor<HelloViewModel> { }   // Routeables.Avalonia
+```
+
+`RouteableFor<T>` is not required. A view of your own (a plain `UserControl`, `Window` or `Page`) is paired by naming the view model on it:
+
+```csharp
+[RouteableView(typeof(HelloViewModel))]
+public partial class HelloView : UserControl { public HelloView() => InitializeComponent(); }
 ```
 
 **2. The start of Routeables** (Avalonia shown; each host has its own line, see below):

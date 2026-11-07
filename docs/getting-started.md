@@ -34,6 +34,15 @@ public sealed class HelloViewModel(IRouter router, string name)
 public partial class HelloView : RouteableFor<HelloViewModel> { }
 ```
 
+`RouteableFor<T>` is not required. A view of your own (a plain `UserControl`, `Window` or `Page`) is paired by naming the view model on it:
+
+```csharp
+[RouteableView(typeof(HelloViewModel))]
+public partial class HelloView : UserControl { public HelloView() => InitializeComponent(); }
+```
+
+Without the generator, `RegisterRoute<HelloView, HelloViewModel>(route: "hello")` does the same by name (see below).
+
 **2. Start Routeables:**
 
 ```csharp
