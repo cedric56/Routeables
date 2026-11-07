@@ -87,6 +87,11 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      # Routeables.Blazor references Routeables.Native, which targets Android on Linux: restoring it needs this workload, even to build
+      # a project that only uses its net10.0 target.
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android --skip-manifest-update
+
       # Avalonia.Browser needs the WebAssembly build tools (its Release configuration also compiles ahead of time; Debug does not).
       - name: Install wasm-tools workload
         run: dotnet workload install wasm-tools --skip-manifest-update
@@ -214,6 +219,11 @@ jobs:
       - name: Run the native binary
         run: ./artifacts/aot-smoke/Routeables.AotSmoke
 
+      # Routeables.Blazor references Routeables.Native, which targets Android on Linux: restoring it needs this workload, even to build
+      # a project that only uses its net10.0 target.
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android --skip-manifest-update
+
       - name: Install wasm-tools workload
         run: dotnet workload install wasm-tools --skip-manifest-update
 
@@ -243,6 +253,11 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+
+      # Routeables.Blazor references Routeables.Native, which targets Android on Linux: restoring it needs this workload, even to build
+      # a project that only uses its net10.0 target.
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android --skip-manifest-update
 
       - name: Check the dependencies written in the nuspec
         run: bash .github/scripts/check-nuspec.sh
@@ -428,6 +443,11 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+
+      # Routeables.Blazor references Routeables.Native, which targets Android on Linux: restoring it needs this workload, even to build
+      # a project that only uses its net10.0 target.
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android --skip-manifest-update
 
       # Builds the project and the Blazor sample it starts (a project reference).
       - name: Build
