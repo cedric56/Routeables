@@ -26,7 +26,7 @@ Two ways to register a page, both in about a minute and without a menu: with the
 
 ```csharp
 [Routeable("/hello/{name}")]
-public sealed class HelloViewModel(IRouter router, string name)
+public sealed class HelloViewModel(string name)
 {
     public string Greeting { get; } = $"Hello, {name}!";
 }
@@ -65,13 +65,17 @@ AppBuilder.Configure<App>()
     .UseRouteables(view: lifetime => new MainWindow());
 ```
 
-**3. Say where the pages appear, and which page opens first**, in your main view (Blazor: the same region in your own layout, which inherits `MainLayoutBase`; the ready-made `MainLayout` has no menu to draw without a main view model and opens `/`):
+> **Avalonia: remove the creation of the window** from `OnFrameworkInitializationCompleted` of your `App`. Routeables shows the window it is given with `view:`; if yours also creates one, the application opens two.
+
+**3. Say where the pages appear, and which page opens first**, in your main view:
 
 ```xml
 <routeables:RouteableRegion Route="/hello/World" />
 ```
 
 The region starts the routing: when it appears and its router shows nothing yet, it opens its `Route`. Without a `Route`, the default region opens `/`.
+
+On Blazor the region goes in your own layout, which inherits `MainLayoutBase`; the ready-made `MainLayout` has no menu to draw without a main view model and opens `/`.
 
 **4. Go to another page**, from any view model that asks for an `IRouter`:
 

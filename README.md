@@ -54,26 +54,28 @@ AppBuilder.Configure<App>()
     .UseRouteables(view: lifetime => new MainWindow());
 ```
 
-**3. The zone where pages appear, and the page it opens first**, in the main view (Blazor: the same region in your own layout, which inherits `MainLayoutBase`; the ready-made `MainLayout` has no menu to draw without a main view model and opens `/`):
+> **Avalonia: remove the creation of the window** from `OnFrameworkInitializationCompleted` of your `App`. Routeables shows the window it is given with `view:`; if yours also creates one, the application opens two.
+
+**3. The zone where pages appear, and the page it opens first**, in the main view:
 
 ```xml
 xmlns:routeables="clr-namespace:Routeables.Avalonia;assembly=Routeables.Avalonia"
 <routeables:RouteableRegion Route="/hello/World" />
 ```
 
-**4. Go somewhere**, from any view model:
+**4. Go somewhere**, from any view model that asks for an `IRouter` in its constructor:
 
 ```csharp
 await router.GoToAsync("/hello/Claire");
 ```
 
-On Avalonia, remove the creation of the window from `OnFrameworkInitializationCompleted`: Routeables shows it. The complete first page, step by step, with the other way to register a page (one line per page, no generator): [Getting started](docs/getting-started.md).
+The complete first page, step by step, with the other way to register a page (one line per page, no generator): [Getting started](docs/getting-started.md).
 
 ## Your host
 
 | Host | Package | Setup |
 | --- | --- | --- |
-| Blazor | [`Routeables.Blazor`](src/Routeables.Blazor/README.md) | `services.UseRouteablesServer(r => { ... })` |
+| Blazor | [`Routeables.Blazor`](src/Routeables.Blazor/README.md) | `services.UseRouteablesServer(r => { ... })`; the region goes in your own layout, which inherits `MainLayoutBase` (the ready-made `MainLayout` has no menu and opens `/`) |
 | ASP.NET Core (Razor Pages, MVC) | [`Routeables.AspNetCore`](src/Routeables.AspNetCore/README.md) | `services.AddRouteablesAspNetCore(r => { ... })` |
 | .NET MAUI | [`Routeables.Maui`](src/Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables(r => { ... })` |
 | Avalonia | [`Routeables.Avalonia`](src/Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables(r => { ... })` |
