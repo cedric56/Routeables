@@ -35,6 +35,9 @@ public sealed class AccessibilityTests(BlazorApp app) : BlazorTest(app)
         Assert.NotEmpty(names);
 
         var report = new StringBuilder();
+        var signedIn = false;
+        try
+        {
         foreach (var name in names)
         {
             // Each page is reached from a fresh start: a page can keep the user from leaving it (a guard, a lock), so a walk from one
@@ -44,8 +47,13 @@ public sealed class AccessibilityTests(BlazorApp app) : BlazorTest(app)
 
             // Signed in: Members turns a signed-out visitor back to Features, and the page to audit would be another one.
             await OpenAsync("Features");
-            await Button("Sign in").ClickAsync();
-            await Expect(Page.GetByText("Signed in: Open Members now goes there.")).ToBeVisibleAsync();
+            // The sample keeps one visitor for the whole server: after the first entry the visitor is still signed in.
+            if (!signedIn)
+            {
+                await Button("Sign in").ClickAsync();
+                await Expect(Page.GetByText("Signed in: Open Members now goes there.")).ToBeVisibleAsync();
+                signedIn = true;
+            }
 
             await OpenAsync(name);
             await ExpectCurrentAsync(name);
@@ -62,6 +70,19 @@ public sealed class AccessibilityTests(BlazorApp app) : BlazorTest(app)
             foreach (var violation in JsonSerializer.Deserialize<JsonElement>(json).EnumerateArray())
                 report.AppendLine($"{scheme} / {name}: {violation.GetProperty("id").GetString()} ({violation.GetProperty("impact").GetString()}, " +
                                   $"{violation.GetProperty("count").GetInt32()}x) {violation.GetProperty("first").GetString()}");
+        }
+
+        }
+        finally
+        {
+            // The sample keeps one visitor for the whole server: leaving it signed in would change what the next test finds.
+            if (signedIn)
+            {
+                await Page.GotoAsync(BaseUrl);
+                await Menu.First.WaitForAsync();
+                await OpenAsync("Features");
+                await Button("Sign out").ClickAsync();
+            }
         }
 
         Assert.True(report.Length == 0, Environment.NewLine + report);
