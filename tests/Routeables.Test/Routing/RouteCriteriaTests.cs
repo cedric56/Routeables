@@ -5,8 +5,7 @@ using Routeables.Services;
 namespace Routeables.Tests.Routing;
 
 /// <summary>
-/// The capabilities of the matrix of the MAUI routing gist that are about typed routes, one registration place and the state as
-/// data: each test is the proof of one row (docs/guides/criteria.md lists them).
+/// The capabilities about typed routes, one registration place and the state as data: each test is the proof of one of them.
 /// </summary>
 public class RouteCriteriaTests
 {
