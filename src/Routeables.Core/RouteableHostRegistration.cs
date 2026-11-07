@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
 using Routeables.Routing;
+using Routeables.Services;
 
 namespace Routeables.Core;
 
@@ -34,9 +35,11 @@ internal static class RouteableHostRegistration
     public static IServiceProvider BuildRouteableProvider(this IServiceCollection services)
     {
 #if DEBUG
-        return services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true });
+        var provider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true });
 #else
-        return services.BuildServiceProvider();
+        var provider = services.BuildServiceProvider();
 #endif
+        // The history of the previous run is put back, when the application asked for it (AddRouteableHistory).
+        return provider.StartRouteableHistory();
     }
 }

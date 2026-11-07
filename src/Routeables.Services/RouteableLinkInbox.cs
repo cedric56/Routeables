@@ -149,7 +149,7 @@ public sealed class RouteableLinkInbox
     }
 
     // The menu selects its first entry when the window opens: before that the history is empty.
-    private static async Task<bool> WaitForFirstPageAsync(IRouter router)
+    internal static async Task<bool> WaitForFirstPageAsync(IRouter router)
     {
         var until = DateTime.UtcNow + FirstPageTimeout;
         while (router.History.Count == 0)

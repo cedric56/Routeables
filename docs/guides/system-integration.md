@@ -1,4 +1,4 @@
-# Back, deep links, guards and diagnostics
+﻿# Back, deep links, guards and diagnostics
 
 What an application needs around the route changes themselves: the Back button of the system, an address opened from outside, pages that come back after the system killed the process, a rule that applies to every route, and numbers about what the router does.
 
@@ -122,6 +122,19 @@ await RouteableState.RestoreSnapshotsAsync(router, RouteableState.DeserializeSna
 ```
 
 `LoadState` runs after the view model is initialized from its address, so it wins over the initialization. Keep to text that is small (a search, a draft, a selected tab): the Android bundle is limited to about 500 KB for the whole application. `RouteableLinkInbox.Save` and `Restore` do this for you, and a text made by the routes-only `Serialize` is read by `DeserializeSnapshots` (pages with no values).
+
+## The history between two runs
+
+Every host keeps the pages the user had open, and what they saved, from one run of the application to the next. One line registers it:
+
+```csharp
+services.AddRouteableHistory();                 // a file in the local application data of the user
+services.AddRouteableHistory("history.txt");    // or the file you choose
+```
+
+The host starts it when it builds its container (WPF, Avalonia, WinUI, Uno, WinUI 3 and MAUI). After each route change the history is written; when the application starts again, it is put back once the first page is shown, and the menu follows. Nothing is written before the pages are back, so the first page of the new run does not replace the history that is waiting. A history that cannot be written (a read-only disk) is reported and never fails a route change.
+
+To keep it somewhere else (a database, the cloud), register your own `IRouteableHistoryStore` (`Load` and `Save`) before `AddRouteableHistory`. Blazor keeps the history of a circuit with `PersistentComponentState` instead (see the Blazor guide), and the ASP.NET Core host keeps one scope per visitor in memory.
 
 ## Diagnostics: traces and metrics
 

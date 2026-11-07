@@ -55,6 +55,8 @@ public static class MauiRouteablesExtensions
         builder.Services.AddSingleton<IRouteableViewBinder, RouteableViewBinder>();
         builder.Services.RegisterMainViewModel<TMain>();
         builder.UseRouteablesServices();
+        // The history of the previous run is put back once the app is built, when the application asked for it (AddRouteableHistory).
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<Microsoft.Maui.Hosting.IMauiInitializeService, RouteableHistoryInitializer>());
         configure?.Invoke(builder.Services);
         // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
         global::Routeables.Abstraction.RouteableAutoRegistration.Apply(builder.Services);
@@ -140,4 +142,10 @@ public static class MauiRouteablesExtensions
 #endif
         return builder;
     }
+}
+
+/// <summary>Starts <see cref="RouteableHistoryKeeper"/> when MAUI has built the app (it does nothing unless <c>AddRouteableHistory</c> was called).</summary>
+internal sealed class RouteableHistoryInitializer : Microsoft.Maui.Hosting.IMauiInitializeService
+{
+    public void Initialize(IServiceProvider services) => services.StartRouteableHistory();
 }

@@ -1,4 +1,4 @@
-using Routeables.Routing;
+﻿using Routeables.Routing;
 
 namespace Routeables.Test.Abstraction;
 
@@ -74,6 +74,30 @@ public class RouteParserTests
         Assert.True(matched);
         Assert.Equal("a b", args.ViewModelParameters.Single(x => x.name == "name").value);
         Assert.Equal("last value", args.ViewModelParameters.Single(x => x.name == "tag").value);
+    }
+
+    [Fact]
+    public void A_plus_in_a_query_is_a_space_and_in_a_path_it_is_a_plus()
+    {
+        var args = RouteableArgs.Create();
+
+        Assert.True(RouteParser.TryMatch("files/{name}?{tag}", "files/a+b?tag=x+y%2Bz", args));
+
+        Assert.Equal("a+b", args.ViewModelParameters.Single(x => x.name == "name").value);   // a path segment is not a query
+        Assert.Equal("x y+z", args.ViewModelParameters.Single(x => x.name == "tag").value);  // + is a space, %2B is a plus
+    }
+
+    [Theory]
+    [InlineData("a b")]
+    [InlineData("a+b")]
+    [InlineData("a b+c&d=e")]
+    public void A_query_value_written_by_Build_is_read_back_as_it_was(string value)
+    {
+        var address = RouteParser.Build("files?{tag}", new Dictionary<string, object?> { ["tag"] = value });
+
+        var back = RouteableArgs.Create();
+        Assert.True(RouteParser.TryMatch("files?{tag}", address, back));
+        Assert.Equal(value, back.ViewModelParameters.Single(x => x.name == "tag").value);
     }
 
     [Fact]

@@ -132,7 +132,7 @@ public static class RouteableState
         if (route.IndexOf('?') is var at and >= 0)
         {
             foreach (var pair in route[(at + 1)..].Split('&', StringSplitOptions.RemoveEmptyEntries))
-                inAddress.Add(Uri.UnescapeDataString(pair.Split('=', 2)[0]));
+                inAddress.Add(Uri.UnescapeDataString(pair.Split('=', 2)[0].Replace('+', ' ')));   // a query: + is a space
         }
 
         foreach (var (value, name, _) in args.Values)

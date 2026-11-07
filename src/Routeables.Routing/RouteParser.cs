@@ -366,9 +366,16 @@ public static class RouteParser
         foreach (var pair in q.Split('&', StringSplitOptions.RemoveEmptyEntries))
         {
             var p = pair.Split('=', 2);
-            result[Uri.UnescapeDataString(p[0])] =
-                p.Length > 1 ? Uri.UnescapeDataString(p[1]) : "";   // last value wins on duplicates
+            result[DecodeQuery(p[0])] =
+                p.Length > 1 ? DecodeQuery(p[1]) : "";   // last value wins on duplicates
         }
         return result;
     }
+
+    /// <summary>
+    /// A name or a value of a query string: <c>+</c> is a space and <c>%XX</c> is a character, as ASP.NET Core and Blazor read it (a form sent with
+    /// GET writes a space as <c>+</c>). A real plus is <c>%2B</c>, which is what <see cref="Uri.EscapeDataString(string)"/> writes. A path segment is
+    /// not a query: <c>+</c> stays a plus there.
+    /// </summary>
+    internal static string DecodeQuery(string text) => Uri.UnescapeDataString(text.Replace('+', ' '));
 }
