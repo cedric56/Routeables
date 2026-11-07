@@ -11,9 +11,11 @@ The package brings `Routeables` (routing, abstractions and the source generator)
 ## Set up
 
 ```csharp
-services.UseRouteablesServer<MainViewModel>(      // or UseRouteablesWebAssembly, UseRouteablesHybrid
+services.UseRouteablesServer(      // or UseRouteablesWebAssembly, UseRouteablesHybrid
     r => r.AddGeneratedRoutes());
 ```
+
+An application with a menu gives its main view model: `services.UseRouteablesServer<MainViewModel>(r => r.AddGeneratedRoutes());`.
 
 Everything is scoped, so each Blazor Server circuit has its own history, and so has its menu. Nothing is discovered for you: the main view model and the routes are what you give.
 

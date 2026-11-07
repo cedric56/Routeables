@@ -42,7 +42,7 @@ AppBuilder.Configure<App>()
         view: lifetime => new MainWindow());
 ```
 
-**3. Say where the pages appear, and which page opens first**, in your main view (Blazor: `<RouteableRegion Route="/hello/World" />`):
+**3. Say where the pages appear, and which page opens first**, in your main view (Blazor: the same region in your own layout, which inherits `MainLayoutBase`; the ready-made `MainLayout` has no menu to draw without a main view model and opens `/`):
 
 ```xml
 <routeables:RouteableRegion Route="/hello/World" />
@@ -135,26 +135,32 @@ One call per host starts Routeables, registers your main view model (its lifetim
 
 ```csharp
 // Blazor (Program.cs)
-builder.Services.UseRouteablesServer<MainViewModel>(      // or UseRouteablesWebAssembly, UseRouteablesHybrid
+builder.Services.UseRouteablesServer(      // or UseRouteablesWebAssembly, UseRouteablesHybrid
     r => r.AddGeneratedRoutes());
 app.MapRazorComponents<App>()
    .AddInteractiveServerRenderMode()
    .AddAdditionalAssemblies(typeof(MainLayoutBase).Assembly);    // Routeables.Blazor: catch-all page, layout, not-found page
 
+// ASP.NET Core, Razor Pages (Program.cs)
+builder.Services.AddRouteablesAspNetCore();
+builder.Services.AddGeneratedRoutes();
+
 // .NET MAUI (MauiProgram.cs)
 builder.UseMauiApp<App>()
-       .UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes());
+       .UseRouteables(r => r.AddGeneratedRoutes());
 
-// Avalonia (App.axaml.cs): the view argument shows the window with its menu (or: OpenMainView in OnFrameworkInitializationCompleted)
-AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes(),
+// Avalonia (App.axaml.cs): the view argument shows the window (or: OpenMainView in OnFrameworkInitializationCompleted)
+AppBuilder.Configure<App>().UseRouteables(r => r.AddGeneratedRoutes(),
     view: lifetime => lifetime is IClassicDesktopStyleApplicationLifetime ? new MainWindow() : new MainView());
 
 // Uno Platform (App.xaml.cs, in the constructor): the container and the window in one call (or: OpenMainWindow in OnLaunched)
-Services = this.UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes(), () => new MainPage());
+Services = this.UseRouteables(r => r.AddGeneratedRoutes(), () => new MainPage());
 
 // WPF (App.xaml.cs, in the constructor or in OnStartup): the container and the main window in one call
-this.UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes(), () => new MainView());
+this.UseRouteables(r => r.AddGeneratedRoutes(), () => new MainView());
 ```
+
+With a menu, give the main view model: `UseRouteables<MainViewModel>(...)` on MAUI, Avalonia, Uno and WPF, `UseRouteablesServer<MainViewModel>(...)` on Blazor, `AddRouteablesAspNetCore<MainViewModel>()` on ASP.NET Core.
 
 Create the project with the template of your framework, add the host package, then follow the setup above. See each host's README for the details ([Blazor](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Blazor/README.md), [MAUI](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Maui/README.md), [Avalonia](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Avalonia/README.md), [Uno](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Uno/README.md), which has its own quick start, [WPF](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Wpf/README.md)).
 

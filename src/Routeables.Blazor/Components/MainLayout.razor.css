@@ -20,6 +20,11 @@
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+    /* No menu: the page takes the whole width. */
+    .rt-layout.rt-no-menu {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     .rt-layout[data-wui-theme="dark"] {
         color-scheme: dark;
         --rt-primary: #776be7;

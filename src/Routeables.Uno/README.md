@@ -14,14 +14,16 @@ The package brings `Routeables` (routing, abstractions and the source generator)
 public App()
 {
     InitializeComponent();
-    Services = this.UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes());
+    Services = this.UseRouteables(r => r.AddGeneratedRoutes());
 }
 
 protected override void OnLaunched(LaunchActivatedEventArgs args) =>
     _window = this.OpenMainWindow(new MainPage());
 ```
 
-The window can be opened by the same call: `Services = this.UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes(), () => new MainPage(), window => window.Title = "My app");` in the constructor of `App` builds the container and creates the window as the application runs, with no `OnLaunched` to write.
+An application with a menu gives its main view model: `this.UseRouteables<MainViewModel>(r => ...)`.
+
+The window can be opened by the same call: `Services = this.UseRouteables(r => r.AddGeneratedRoutes(), () => new MainPage(), window => window.Title = "My app");` in the constructor of `App` builds the container and creates the window as the application runs, with no `OnLaunched` to write.
 
 `OpenMainWindow` creates the window, gives the page the menu as `DataContext`, selects the first entry and disposes the container when the window closes. For another window, call `window.AttachRouteables()`.
 

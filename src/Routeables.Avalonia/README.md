@@ -13,9 +13,11 @@ The package brings `Routeables` (routing, abstractions and the source generator)
 ```csharp
 public static AppBuilder BuildAvaloniaApp() =>
     AppBuilder.Configure<App>()
-        .UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes())
+        .UseRouteables(r => r.AddGeneratedRoutes())
         .UsePlatformDetect();
 ```
+
+An application with a menu gives its main view model: `.UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes())`.
 
 Or let the builder show it: `.UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes(), view: lifetime => lifetime is IClassicDesktopStyleApplicationLifetime ? new MainWindow() : new MainView())` shows the view as soon as the lifetime is known, and the application needs no `OnFrameworkInitializationCompleted`. Otherwise, show the main view from `OnFrameworkInitializationCompleted`: `this.OpenMainView(...)` takes the window on desktop, or the view on Android (activity) and single-view platforms (browser), and gives it the menu as `DataContext`. `this.GetRouteableServices()` returns the container.
 

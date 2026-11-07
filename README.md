@@ -51,7 +51,7 @@ AppBuilder.Configure<App>()
     .UseRouteables(r => r.AddGeneratedRoutes(), view: lifetime => new MainWindow());
 ```
 
-**3. The zone where pages appear, and the page it opens first**, in the main view (Blazor: `<RouteableRegion Route="/hello/World" />`):
+**3. The zone where pages appear, and the page it opens first**, in the main view (Blazor: the same region in your own layout, which inherits `MainLayoutBase`; the ready-made `MainLayout` has no menu to draw without a main view model and opens `/`):
 
 ```xml
 xmlns:routeables="clr-namespace:Routeables.Avalonia;assembly=Routeables.Avalonia"
@@ -70,13 +70,13 @@ On Avalonia, remove the creation of the window from `OnFrameworkInitializationCo
 
 | Host | Package | Setup |
 | --- | --- | --- |
-| Blazor | [`Routeables.Blazor`](src/Routeables.Blazor/README.md) | `services.UseRouteablesServer<MainViewModel>(r => { ... })` |
-| .NET MAUI | [`Routeables.Maui`](src/Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables<MainViewModel>(r => { ... })` |
-| Avalonia | [`Routeables.Avalonia`](src/Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables<MainViewModel>(r => { ... })` |
-| Uno Platform | [`Routeables.Uno`](src/Routeables.Uno/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
-| WPF | [`Routeables.Wpf`](src/Routeables.Wpf/README.md) | `this.UseRouteables<MainViewModel>(r => { ... })` |
+| Blazor | [`Routeables.Blazor`](src/Routeables.Blazor/README.md) | `services.UseRouteablesServer(r => { ... })` |
+| .NET MAUI | [`Routeables.Maui`](src/Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables(r => { ... })` |
+| Avalonia | [`Routeables.Avalonia`](src/Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables(r => { ... })` |
+| Uno Platform | [`Routeables.Uno`](src/Routeables.Uno/README.md) | `this.UseRouteables(r => { ... })` |
+| WPF | [`Routeables.Wpf`](src/Routeables.Wpf/README.md) | `this.UseRouteables(r => { ... })` |
 
-The block is for your own registrations, the same on every host: `r => r.AddGeneratedRoutes()`. To start from a template: `dotnet new install Routeables.Templates`, then `dotnet new routeables-avalonia -n MyApp` (Avalonia only for now).
+The block is for your own registrations, the same on every host: `r => r.AddGeneratedRoutes()`. An application with a menu gives its main view model, `UseRouteables<MainViewModel>(...)` (`UseRouteablesServer<MainViewModel>` on Blazor). To start from a template: `dotnet new install Routeables.Templates`, then `dotnet new routeables-avalonia -n MyApp` (Avalonia only for now).
 
 The same view models drive the Animals sample on each host: only the views differ.
 
