@@ -90,9 +90,11 @@ internal class DistributionImplementation : IDistribution
             if (Matches(id, string.Empty, ids))
                 return release;
 
-        foreach (var (release, ids) in LinuxFamilies)
-            if (Matches(string.Empty, idLike, ids))
-                return release;
+        // ID_LIKE lists the closest relative first: the first name that is a family is the answer, not the first family of the table.
+        foreach (var like in idLike.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+            foreach (var (release, ids) in LinuxFamilies)
+                if (ids.Contains(like, StringComparer.OrdinalIgnoreCase))
+                    return release;
 
         return Distribution.Unknown;
     }

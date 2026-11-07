@@ -45,4 +45,16 @@ public class AspNetCoreThemeServiceTests
         asInterface.Request(RouteableRequestedTheme.Dark);
         Assert.Equal(RouteableRequestedTheme.Default, second.ServiceProvider.GetRequiredService<RouteableRequestThemeService>().Requested);
     }
+
+    [Fact]
+    public void AddRouteablesAspNetCore_registers_the_environments()
+    {
+        var services = new ServiceCollection();
+        services.AddRouteablesAspNetCore();
+        using var provider = services.BuildServiceProvider();
+
+        Assert.Equal(Runtime.AspNetCore, provider.GetRequiredService<IRuntime>().Current);
+        Assert.NotNull(provider.GetRequiredService<IDesktop>());
+        Assert.NotNull(provider.GetRequiredService<IDistribution>());
+    }
 }

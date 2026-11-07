@@ -141,8 +141,13 @@ public abstract class RegionLayout : IDisposable
     {
         ArgumentNullException.ThrowIfNull(view);
         if (_shown.TryGetValue(region, out var shown) && Equals(shown, key)) return;
-        _shown[region] = key;
-        await GoToAsync(region, view());
+
+        // Remembered only once the region shows it: a view that could not be built, or a route that was refused, is tried again at the
+        // next move instead of leaving the region on something else for good.
+        _shown.Remove(region);
+        var result = await GoToAsync(region, view());
+        if (result.Success)
+            _shown[region] = key;
     }
 
     /// <summary>Tells <see cref="Changed"/> listeners that the layout moved without the primary region moving.</summary>

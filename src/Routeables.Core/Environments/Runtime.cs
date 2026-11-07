@@ -54,6 +54,9 @@ public readonly struct Runtime : IEquatable<Runtime>
     /// <summary>Gets a <see cref="Runtime"/> instance representing Blazor WebAssembly.</summary>
     public static Runtime BlazorWebAssembly { get; } = new Runtime(nameof(BlazorWebAssembly));
 
+    /// <summary>Gets a <see cref="Runtime"/> instance representing an ASP.NET Core application (Razor Pages or MVC).</summary>
+    public static Runtime AspNetCore { get; } = new Runtime(nameof(AspNetCore));
+
     /// <summary>Gets a <see cref="Runtime"/> instance representing an unknown runtime.</summary>
     public static Runtime Unknown { get; } = new Runtime(nameof(Unknown));
 

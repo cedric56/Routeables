@@ -36,6 +36,7 @@ public static class AspNetCoreRouteablesExtensions
             Action<IServiceCollection>? configure = null)
         where TMain : class, IMainViewModel
     {
+        services.RegisterEnvironments(Runtime.AspNetCore);
         services.RegisterMainViewModel<TMain>(ServiceLifetime.Scoped);
         services.AddRouteCoordinator(ServiceLifetime.Scoped);
         services.AddScoped<RouteableInteractions>();

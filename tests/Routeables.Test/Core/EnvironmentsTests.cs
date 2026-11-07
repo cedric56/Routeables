@@ -1,4 +1,4 @@
-using Routeables.Core;
+﻿using Routeables.Core;
 
 namespace Routeables.Tests.Core;
 
@@ -135,7 +135,7 @@ public class EnvironmentsTests
     [Fact]
     public void A_runtime_is_equal_by_value_and_the_runtimes_are_all_different()
     {
-        Runtime[] all = [Runtime.Avalonia, Runtime.Uno, Runtime.Wpf, Runtime.Maui, Runtime.MauiHybrid, Runtime.BlazorServer, Runtime.BlazorWebAssembly, Runtime.Unknown];
+        Runtime[] all = [Runtime.Avalonia, Runtime.Uno, Runtime.Wpf, Runtime.Maui, Runtime.MauiHybrid, Runtime.BlazorServer, Runtime.BlazorWebAssembly, Runtime.AspNetCore, Runtime.Unknown];
 
         Assert.Equal(all.Length, all.Distinct().Count());
         Assert.Equal(Runtime.Wpf, Runtime.Create("Wpf"));
@@ -214,6 +214,9 @@ public class EnvironmentsTests
         { "ID=pop_os", "PopOS" },
         { "ID=zorin\nID_LIKE=\"ubuntu debian\"", "Ubuntu" },
         { "ID=raspbian\nID_LIKE=debian", "Debian" },
+        { "ID=other\nID_LIKE=\"debian ubuntu\"", "Debian" },          // the closest relative is named first
+        { "ID=other\nID_LIKE=\"arch ubuntu\"", "ArchLinux" },
+        { "ID=other\nID_LIKE=\"suse opensuse\"", "OpenSUSE" },
         { "ID=nobara\nID_LIKE=\"rhel centos fedora\"", "Fedora" },
         { "ID=endeavouros\nID_LIKE=arch", "ArchLinux" },
         { "ID=UBUNTU", "Ubuntu" },
@@ -309,6 +312,7 @@ public class EnvironmentsTests
     [InlineData("BlazorServer", true)]
     [InlineData("BlazorWebAssembly", true)]
     [InlineData("MauiHybrid", true)]
+    [InlineData("AspNetCore", true)]
     [InlineData("Maui", false)]
     [InlineData("Avalonia", false)]
     [InlineData("Uno", false)]

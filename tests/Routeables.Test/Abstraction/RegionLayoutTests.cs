@@ -144,3 +144,43 @@ public class RegionLayoutTests
         Assert.Equal(2, changes);
     }
 }
+
+/// <summary>A layout whose follower cannot be built the first time.</summary>
+public sealed class FlakyLayout(IServiceProvider provider) : RegionLayout(provider, "content", "header")
+{
+    public int Builds { get; private set; }
+    public bool Fail { get; set; } = true;
+    public List<Exception> Failures { get; } = [];
+
+    protected override Task OnStartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+    protected override async Task OnPrimaryChangedAsync()
+        => await FollowAsync("header", "key", () =>
+        {
+            Builds++;
+            return Fail ? throw new InvalidOperationException("no header") : new MenuEntry<RegionDogsViewModel>("/dogs", null, "/dogs", "/dogs");
+        });
+}
+
+public class FlakyLayoutTests
+{
+    [Fact]
+    public async Task A_follower_that_could_not_be_updated_is_tried_again_for_the_same_key()
+    {
+        using var provider = RegionTestServices.Build(services => services.AddRegionLayout<FlakyLayout>("content", "header"));
+        var layout = provider.GetRequiredService<FlakyLayout>();
+        layout.Failed += (_, ex) => layout.Failures.Add(ex);
+        await layout.StartAsync(TestContext.Current.CancellationToken);
+
+        await layout.ShowAsync(new MenuEntry<RegionCatsViewModel>("/cats", null, "/cats", "/cats"), TestContext.Current.CancellationToken);
+        await layout.SettledAsync();
+        Assert.True(layout.Failures.Count > 0);
+        Assert.Equal(0, provider.GetRouter("header").History.Count);
+
+        layout.Fail = false;
+        await layout.ShowAsync(new MenuEntry<RegionCatsViewModel>("/cats", null, "/cats", "/cats"), TestContext.Current.CancellationToken);
+        await layout.SettledAsync();
+
+        Assert.Equal(1, provider.GetRouter("header").History.Count);
+    }
+}

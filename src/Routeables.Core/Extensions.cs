@@ -24,12 +24,13 @@ public static class Extensions
 
     /// <summary>
     /// Determines whether the specified runtime environment represents a Razor-based web or hybrid host 
-    /// (such as Blazor Server, Blazor WebAssembly, or MAUI Hybrid).
+    /// (such as Blazor Server, Blazor WebAssembly, MAUI Hybrid, or ASP.NET Core).
     /// </summary>
     /// <param name="runtime">The runtime instance to check.</param>
     /// <returns><see langword="true"/> if the runtime is Razor-based; otherwise, <see langword="false"/>.</returns>
     public static bool IsRazorRuntime(this IRuntime runtime)
         => runtime.Current == Runtime.BlazorServer ||
            runtime.Current == Runtime.BlazorWebAssembly ||
-           runtime.Current == Runtime.MauiHybrid;
+           runtime.Current == Runtime.MauiHybrid ||
+           runtime.Current == Runtime.AspNetCore;
 }
