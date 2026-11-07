@@ -11,8 +11,8 @@ namespace Routeables.Blazor;
 /// Keeps the browser address and the router in step, for the routes registered with an explicit route
 /// (<c>"/customers/{id:int}"</c>, <c>[Routeable("about")]</c>; the leading <c>/</c> is optional and added to the address):
 /// <list type="bullet">
-/// <item>a route change of the router (push, back, forward...) updates the address: a push adds a browser history entry. A back or a
-/// forward the router makes itself (<c>GoBackAsync</c> from a view model) is the same move in the history of the browser (<c>history.go</c>),
+/// <item>a route change of the router (push, back, forward...) updates the address: a push adds a browser history entry. A back, a
+/// forward or a pop the router makes itself (<c>GoBackAsync</c> or <c>PopAsync</c> from a view model) is the same move in the history of the browser (<c>history.go</c>),
 /// as long as the browser holds the entry it goes to; the other moves replace the address;</item>
 /// <item>an address change (link, typed URL, browser back/forward) routes the router: back and forward re-use the
 /// router's own history when the address is the previous or next entry, anything else is looked up in the
@@ -103,11 +103,12 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         if (Same(Relative(navigation.Uri), address))
             return;
 
-        // The router goes back or forward by itself: the browser does the same move when it holds that entry.
-        if ((e.Kind == RouteableKind.Back && _back > 0 || e.Kind == RouteableKind.Forward && _forward > 0)
+        // The router goes back or forward by itself (a Pop goes back too: the page it leaves is only forgotten by the router): the browser
+        // does the same move when it holds that entry.
+        if ((e.Kind is RouteableKind.Back or RouteableKind.Pop && _back > 0 || e.Kind == RouteableKind.Forward && _forward > 0)
             && provider.GetService<IJSRuntime>() is { } js)
         {
-            var delta = e.Kind == RouteableKind.Back ? -1 : 1;
+            var delta = e.Kind == RouteableKind.Forward ? 1 : -1;
             Track(e.Kind);
             _ = GoInBrowserAsync(js, delta, address!, replace: true);
             return;
@@ -135,6 +136,11 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
                 break;
             case RouteableKind.Forward:
                 if (_forward > 0) { _forward--; _back++; }
+                break;
+            case RouteableKind.Pop:
+                // The router forgets the page it leaves: the browser keeps it ahead, and reaches it again as a new page if asked.
+                if (_back > 0) _back--;
+                _forward = 0;
                 break;
             default:
                 _back = _forward = 0;

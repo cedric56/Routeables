@@ -70,7 +70,8 @@ public sealed class NavigationTests(BlazorApp app) : BlazorTest(app)
     }
 
     /// <summary>
-    /// GoBackAsync from a view model goes back in the browser history too (history.go(-1)), so the Forward button of the browser comes back to the detail.
+    /// The Back of the detail page is a PopAsync (the router forgets the detail): the browser goes back in its history too (history.go(-1)), so it does not
+    /// stay on a second copy of the list, and its Forward button opens the detail again.
     /// </summary>
     [Fact]
     public async Task GoBackAsync_from_a_view_model_goes_back_in_the_browser_history_too()

@@ -160,6 +160,30 @@ public class RouteableUrlSyncHistoryTests
     }
 
     [Fact]
+    public async Task A_pop_of_the_router_goes_back_in_the_browser_history_and_forward_opens_the_page_again()
+    {
+        using var f = new Fixture();
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+        await f.GoAsync("/named/Afghan Hound", "/named/{name}");
+        f.Navigation.Calls.Clear();
+
+        await f.Router.PopAsync(TestContext.Current.CancellationToken);
+        await Fixture.Until(() => f.Scripts.Moves.Count == 1);
+
+        Assert.Equal(-1, f.Scripts.Moves[0]);
+        Assert.Empty(f.Navigation.Calls);                       // not replaced: the browser went back, it does not stay on a copy of the list
+        Assert.IsType<HomeVm>(f.Router.CurrentViewModel);
+        var entries = f.Router.History.Entries.Count;
+
+        f.Navigation.Go(1);                                     // the Forward button: the page the router forgot is opened again
+        await Fixture.Until(() => f.Router.CurrentViewModel is NamedVm);
+
+        Assert.Equal("Afghan Hound", ((NamedVm)f.Router.CurrentViewModel!).Name);
+        Assert.Equal(entries + 1, f.Router.History.Entries.Count);
+    }
+
+    [Fact]
     public async Task A_forward_of_the_router_goes_forward_in_the_browser_history()
     {
         using var f = new Fixture();
