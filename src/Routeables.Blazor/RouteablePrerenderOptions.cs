@@ -13,4 +13,11 @@ public sealed class RouteablePrerenderOptions
     /// as it does once the circuit runs. Prerendering only: the interactive behaviour does not change.
     /// </summary>
     public bool UnknownAddressIsNotFound { get; set; }
+
+    /// <summary>
+    /// When <see langword="true"/> (the default), the history of the router goes from the prerendered page to the circuit (or to
+    /// WebAssembly) that takes over with <see cref="Microsoft.AspNetCore.Components.PersistentComponentState"/>: the user finds the Back button
+    /// where it was, and the pages keep what their view model saves (<see cref="Routeables.Abstraction.IRouteableState"/>).
+    /// </summary>
+    public bool PersistHistory { get; set; } = true;
 }

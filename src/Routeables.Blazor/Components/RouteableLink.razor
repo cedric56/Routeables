@@ -1,0 +1,67 @@
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.Extensions.DependencyInjection
+@using Routeables.Abstraction
+@inject IServiceProvider Provider
+@inject NavigationManager Navigation
+
+@* A link to a route. It is a real <a href>, so it can be followed without script (prerendering, a search engine, "open in a new tab"),
+   and a click goes through the router of Routeables instead of a page load: the history, the guards and the lifecycle all see it. *@
+<a href="@Href"
+   @onclick="OnClickAsync"
+   @onclick:preventDefault="@Intercept"
+   @attributes="AdditionalAttributes">@ChildContent</a>
+
+@code {
+    /// <summary>The route to go to, with its values: <c>/orders/42</c>.</summary>
+    [Parameter, EditorRequired]
+    public string Route { get; set; } = string.Empty;
+
+    /// <summary>The region whose router goes to the route, or <see langword="null"/> for the main one.</summary>
+    [Parameter]
+    public string? Region { get; set; }
+
+    /// <summary>The template registered for the route, when the route alone does not tell it.</summary>
+    [Parameter]
+    public string? Template { get; set; }
+
+    /// <summary>The arguments of the route change, or <see langword="null"/> for none.</summary>
+    [Parameter]
+    public IRouteableArgs? Args { get; set; }
+
+    /// <summary>What the link shows.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Other attributes of the <c>&lt;a&gt;</c> (<c>class</c>, <c>target</c>, <c>aria-*</c>...). A <c>target</c> other than <c>_self</c> is left to the browser.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string Href => Navigation.ToAbsoluteUri(Route).ToString();
+
+    // A link that opens elsewhere (target="_blank") is the browser's business: the router does not change.
+    private bool Intercept =>
+        AdditionalAttributes is null
+        || !AdditionalAttributes.TryGetValue("target", out var target)
+        || target is null
+        || string.Equals(target.ToString(), "_self", StringComparison.OrdinalIgnoreCase);
+
+    private Task OnClickAsync(MouseEventArgs e)
+        => Intercept && !string.IsNullOrWhiteSpace(Route)
+            ? FollowAsync(Provider, Route, Region, Args, Template)
+            : Task.CompletedTask;
+
+    // What a click does; apart from the component so a test can run it without a browser.
+    internal static async Task FollowAsync(IServiceProvider provider, string route, string? region, IRouteableArgs? args, string? template)
+    {
+        try
+        {
+            var result = await provider.GoToAsync(route, region, args, template);
+            if (!result.Success && result.Exception is { } failure)
+                RouteableErrors.Report(provider, nameof(RouteableLink), failure);
+        }
+        catch (Exception ex)
+        {
+            RouteableErrors.Report(provider, nameof(RouteableLink), ex);
+        }
+    }
+}

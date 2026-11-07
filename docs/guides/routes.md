@@ -16,12 +16,13 @@ A type that is not in the table is a registered one (`RouteParser.RegisterSerial
 
 ### Which route wins
 
-When several templates match a route, the **most specific** one wins, whatever the order they were registered in. Segments are compared from the left: a literal (`new`) beats a typed placeholder (`{id:int}`, a registered type), which beats an untyped one (`{id}`), which beats an optional one (`{tab?}`). With `/bears/{id}`, `/bears/{id:int}` and `/bears/new` registered, `/bears/new` opens the third, `/bears/12` the second and `/bears/polar` the first. Templates that are equally specific keep the order of registration. There is no catch-all placeholder (`{**path}`).
+When several templates match a route, the **most specific** one wins, whatever the order they were registered in. Segments are compared from the left: a literal (`new`) beats a typed placeholder (`{id:int}`, a registered type), which beats an untyped one (`{id}`), which beats an optional one (`{tab?}`). With `/bears/{id}`, `/bears/{id:int}` and `/bears/new` registered, `/bears/new` opens the third, `/bears/12` the second and `/bears/polar` the first. Templates that are equally specific keep the order of registration. A catch-all placeholder (`{**path}`) is the last segment of a template and takes the rest of the path, slashes included (`/files/{**path}` matches `/files/a/b/c`); it is the least specific of the templates that match.
 
 Details of the matching:
 
 - The route is split into segments before it is decoded, so `files/a%2Fb` is the one segment `a/b`; an escape sequence that is not valid (`100%zz`) is kept as it is.
 - Literal segments are compared without regard to case.
+- `{**path}` is for the last segment too, and may be empty (`/files` matches `/files/{**path}` with an empty `path`).
 - An optional placeholder (`{tab?}`) is for the last segment of the path; one in the middle does not skip a segment.
 - When a query name is repeated (`?tag=a&tag=b`), the last value wins.
 

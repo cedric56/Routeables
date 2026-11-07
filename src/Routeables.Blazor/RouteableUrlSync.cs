@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 using Routeables.Abstraction;
 using Routeables.Routing;
 
@@ -10,8 +11,9 @@ namespace Routeables.Blazor;
 /// Keeps the browser address and the router in step, for the routes registered with an explicit route
 /// (<c>"/customers/{id:int}"</c>, <c>[Routeable("about")]</c>; the leading <c>/</c> is optional and added to the address):
 /// <list type="bullet">
-/// <item>a route change of the router (push, back, forward...) updates the address: a push adds a browser history entry,
-/// the other moves replace it;</item>
+/// <item>a route change of the router (push, back, forward...) updates the address: a push adds a browser history entry. A back or a
+/// forward the router makes itself (<c>GoBackAsync</c> from a view model) is the same move in the history of the browser (<c>history.go</c>),
+/// as long as the browser holds the entry it goes to; the other moves replace the address;</item>
 /// <item>an address change (link, typed URL, browser back/forward) routes the router: back and forward re-use the
 /// router's own history when the address is the previous or next entry, anything else is looked up in the
 /// <see cref="RouteableTable"/>;</item>
@@ -25,7 +27,12 @@ namespace Routeables.Blazor;
 [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 public sealed class RouteableUrlSync(NavigationManager navigation, IRouter router, IServiceProvider provider) : IDisposable
 {
+    private const string HistoryModule = "./_content/Routeables.Blazor/routeables-history.js";
+
     private bool _started;
+    private int _back;             // the entries of the browser history behind the current one that this application pushed
+    private int _forward;          // the ones ahead of it, left by a Back
+    private Task<IJSObjectReference>? _history;
     private IDisposable? _changing;
     private string? _pending;      // the address being routed to by the location changing handler
 
@@ -83,11 +90,73 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
     private void OnRouted(object? sender, RouteableRoutedEventArgs e)
     {
-        var address = AddressOf(e.To);
-        if (!e.Succeeded || Same(Relative(navigation.Uri), address) || Same(_pending, address))
+        if (!e.Succeeded)
             return;
 
-        Show(address!, replace: e.Kind != RouteableKind.Push || e.From is null);
+        var address = AddressOf(e.To);
+        if (Same(_pending, address))
+        {
+            Track(e.Kind);      // the browser made this move itself (a link, its Back or Forward button)
+            return;
+        }
+
+        if (Same(Relative(navigation.Uri), address))
+            return;
+
+        // The router goes back or forward by itself: the browser does the same move when it holds that entry.
+        if ((e.Kind == RouteableKind.Back && _back > 0 || e.Kind == RouteableKind.Forward && _forward > 0)
+            && provider.GetService<IJSRuntime>() is { } js)
+        {
+            var delta = e.Kind == RouteableKind.Back ? -1 : 1;
+            Track(e.Kind);
+            _ = GoInBrowserAsync(js, delta, address!, replace: true);
+            return;
+        }
+
+        var push = e.Kind == RouteableKind.Push && e.From is not null;
+        if (push)
+            Track(RouteableKind.Push);
+        else if (e.Kind is RouteableKind.Pop or RouteableKind.Root or RouteableKind.MoveTo)
+            _back = _forward = 0;     // the router history no longer follows the one of the browser: replace until it does again
+
+        Show(address!, replace: !push);
+    }
+
+    private void Track(RouteableKind kind)
+    {
+        switch (kind)
+        {
+            case RouteableKind.Push:
+                _back++;
+                _forward = 0;
+                break;
+            case RouteableKind.Back:
+                if (_back > 0) { _back--; _forward++; }
+                break;
+            case RouteableKind.Forward:
+                if (_forward > 0) { _forward--; _back++; }
+                break;
+            default:
+                _back = _forward = 0;
+                break;
+        }
+    }
+
+    // history.go(delta); when the browser cannot be reached (prerendering, no script), the address is replaced instead.
+    private async Task GoInBrowserAsync(IJSRuntime js, int delta, string address, bool replace)
+    {
+        try
+        {
+            _history ??= js.InvokeAsync<IJSObjectReference>("import", HistoryModule).AsTask();
+            var module = await _history;
+            await module.InvokeVoidAsync("go", delta);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or JSException or JSDisconnectedException or TaskCanceledException)
+        {
+            _history = null;
+            _back = _forward = 0;
+            Show(address, replace);
+        }
     }
 
     // Runs before the address changes, for a link, a typed address and the Back and Forward buttons of the browser:

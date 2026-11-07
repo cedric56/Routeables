@@ -70,10 +70,9 @@ public sealed class NavigationTests(BlazorApp app) : BlazorTest(app)
     }
 
     /// <summary>
-    /// GoBackAsync from a view model goes back in the browser history too.
-    /// Skipped: known limit — GoBackAsync currently replaces the address instead of calling history.back().
+    /// GoBackAsync from a view model goes back in the browser history too (history.go(-1)), so the Forward button of the browser comes back to the detail.
     /// </summary>
-    [Fact(Skip = "Known limit: GoBackAsync from a view model replaces the address instead of going back in the browser history (RouteableUrlSync.OnRouted); this is the behaviour wanted if the router drives history.back().")]
+    [Fact]
     public async Task GoBackAsync_from_a_view_model_goes_back_in_the_browser_history_too()
     {
         await OpenAsync("Dogs");

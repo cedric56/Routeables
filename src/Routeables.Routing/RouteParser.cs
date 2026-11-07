@@ -28,10 +28,10 @@ public static class RouteParser
         SerializationInfos[typeof(T).Name] = info;
     }
 
-    // {Id:int}  {Tab?}  {Tab::?}  {animate::bool}  {person:Person}
-    // "::" sets the 'attribute' group, "?" sets 'opt'
+    // {Id:int}  {Tab?}  {Tab::?}  {animate::bool}  {person:Person}  {**path}
+    // "::" sets the 'attribute' group, "?" sets 'opt', "**" sets 'rest': the placeholder takes what is left of the path, slashes included
     private static readonly Regex Param =
-        new(@"^\{(?<name>\w+)(?::(?<attribute>:)?(?<type>[^}?]*))?(?<opt>\?)?\}$");
+        new(@"^\{(?<rest>\*\*)?(?<name>\w+)(?::(?<attribute>:)?(?<type>[^}?]*))?(?<opt>\?)?\}$");
 
     /// <summary>
     /// Attempts to match a given URI against a route template, extracting parameters and populating arguments.
@@ -69,13 +69,25 @@ public static class RouteParser
         // --- path ---
         var tSegs = tPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
         var uSegs = uPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-        if (uSegs.Length > tSegs.Length)
+        var restAt = Array.FindIndex(tSegs, segment => Param.Match(segment) is { Success: true } found && found.Groups["rest"].Success);
+        if (restAt >= 0 && restAt != tSegs.Length - 1)
+            return $"the catch-all placeholder {tSegs[restAt]} must be the last segment of the template";
+        if (restAt < 0 && uSegs.Length > tSegs.Length)
             return $"the route has {uSegs.Length} segment(s), the template only {tSegs.Length} (unexpected \"{uSegs[tSegs.Length]}\")";
 
         for (var i = 0; i < tSegs.Length; i++)
         {
-            var raw = i < uSegs.Length ? Uri.UnescapeDataString(uSegs[i]) : null;
             var m = Param.Match(tSegs[i]);
+
+            // {**path}: everything that is left, as it was written (each segment unescaped, the slashes kept). Nothing left is no value.
+            if (m.Success && m.Groups["rest"].Success)
+            {
+                var rest = string.Join('/', uSegs.Skip(i).Select(Uri.UnescapeDataString));
+                if (Bind(m, rest, args, viewKeySet, bound) is { } restFailure) return restFailure;
+                break;
+            }
+
+            var raw = i < uSegs.Length ? Uri.UnescapeDataString(uSegs[i]) : null;
 
             if (!m.Success) // literal segment
             {
@@ -117,7 +129,7 @@ public static class RouteParser
         var name = m.Groups["name"].Value;
         var type = m.Groups["type"].Value;
         var attribute = m.Groups["attribute"].Success;
-        var optional = m.Groups["opt"].Success;
+        var optional = m.Groups["opt"].Success || m.Groups["rest"].Success;   // a catch-all may be empty
 
         // A constraint that is neither built in nor registered is a mistake in the template: it never matches, and says so (instead of throwing
         // while the router looks for a route).
@@ -222,6 +234,7 @@ public static class RouteParser
         {
             var m = Param.Match(segment);
             if (!m.Success) return 3;                                   // literal
+            if (m.Groups["rest"].Success) return -1;                    // catch-all
             if (m.Groups["opt"].Success) return 0;                      // optional
             var type = m.Groups["type"].Value;
             return type is "" or "?" or "string" ? 1 : 2;               // untyped, or typed
@@ -284,6 +297,14 @@ public static class RouteParser
         {
             var m = Param.Match(segment);
             if (!m.Success) { segments.Add(segment); continue; }
+            if (m.Groups["rest"].Success)
+            {
+                // {**path}: the slashes of the value stay, each segment is escaped.
+                if (bag.TryGetValue(m.Groups["name"].Value, out var restValue) && restValue is not null
+                    && Format(restValue, m.Groups["type"].Value) is { Length: > 0 } restText)
+                    segments.AddRange(restText.Split('/', StringSplitOptions.RemoveEmptyEntries).Select(Uri.EscapeDataString));
+                continue;
+            }
             if (Fill(m, "path") is { } text) segments.Add(text);
         }
 

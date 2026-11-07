@@ -93,12 +93,33 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
         catch (Exception ex) { RouteableErrors.Report(Provider, source, ex); }
     }
 
+    // The history handed over by the prerender (or kept by a paused circuit), when the application asked for it.
+    private RouteableHistoryPersistence? _persistence;
+    private bool _restorable;
+
+    private RouteableHistoryPersistence? Persistence()
+    {
+        if (_persistence is not null)
+            return _persistence;
+        var on = Provider.GetService<RouteableHistoryOptions>() is not null
+                 || Provider.GetService<RouteablePrerenderOptions>() is { PersistHistory: true };
+        if (!on || Provider.GetService<PersistentComponentState>() is not { } state)
+            return null;
+        return _persistence = new RouteableHistoryPersistence(state, Provider.GetRequiredService<IRouter>());
+    }
+
     /// <inheritdoc />
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        var persistence = Persistence();
+        persistence?.Register();
         if (!IsPrerendering)
+        {
+            // The circuit that takes over: what the prerender (or the paused circuit) saved is taken now, and brought back after the first render.
+            _restorable = persistence?.Take() == true;
             return;
+        }
 
         // Prerendering: OnAfterRenderAsync never runs, so the page is chosen here and the HTML sent to the browser holds it.
         // The circuit that takes over starts again from its own first render.
@@ -147,7 +168,12 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
+            // The saved history first: the address that follows is then the one of the page it shows, not a new push.
+            var restored = _restorable && _persistence is not null && await _persistence.RestoreAsync();
+            if (restored && Provider.GetService<IMainViewModel>() is { } main)
+                main.OnRouterMoved(Provider.GetRequiredService<IRouter>().CurrentViewModel);
             var addressChosen = await UrlSync.StartAsync();
+            addressChosen |= restored;
             await Initialize(Provider);
             await ApplyThemeAsync();
             // The default page only when the address did not already choose one (a link to /elephants/Mammoth).
@@ -191,5 +217,6 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
         MainViewModel.CurrentViewChanged -= CurrentViewChanged;
         MainViewModel.Entries.CollectionChanged -= RouteablesChanged;
         Service.RequestedThemeChanged -= ThemeChanged;
+        _persistence?.Dispose();
     }
 }
