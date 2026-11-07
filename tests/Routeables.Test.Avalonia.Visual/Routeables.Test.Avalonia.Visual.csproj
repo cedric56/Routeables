@@ -6,7 +6,7 @@
     headless platform of the whole process (UseHeadlessDrawing = false), which the tests of Routeables.Test.Avalonia do without.
 
     The images are those of Skia with the Inter font on Linux: make them with CI (the job uploads Snapshots/_actual), not on your own machine.
-    Run: dotnet test --project tests/Routeables.Test.Avalonia.Visual/Routeables.Test.Avalonia.Visual.csproj -c Release
+    Run: dotnet test, with the option project set to tests/Routeables.Test.Avalonia.Visual/Routeables.Test.Avalonia.Visual.csproj, in the Release configuration.
   -->
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
