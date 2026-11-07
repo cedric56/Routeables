@@ -21,7 +21,7 @@ Your view models depend on a single `IRouter` interface instead of framework-spe
 
 | Project | Purpose |
 | --- | --- |
-| [`Routeables.Abstraction`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Abstraction/README.md) | Shared contracts: `IRouter`, `IRouteable`, `RouteableArgs`, attributes, lock and error contracts |
+| [`Routeables.Abstraction`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Abstraction/README.md) | Shared contracts, a NuGet package of its own: `IRouter`, `IRouteable`, `RouteableArgs`, attributes, lock and error contracts |
 | [`Routeables.Services`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Services/README.md) | Optional UI service contracts: dialogs, content and task dialogs, notifications, theme |
 | [`Routeables.Locking`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Locking/README.md) | Optional: the broker and the locking of the main entries |
 | [`Routeables.Regions`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Regions/README.md) | Optional: `RegionBinding`, `RegionFollower`, `RegionLayout` |

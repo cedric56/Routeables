@@ -8,7 +8,7 @@
 set -euo pipefail
 
 dir="${1:-artifacts}"
-bad='Routeables\.(Abstraction|Routing|Core|Regions|Services|Locking|Segments|Generated)'
+bad='Routeables\.(Routing|Core|Regions|Services|Locking|Segments|Generated)'
 status=0
 
 for nupkg in "$dir"/*.nupkg; do
@@ -29,11 +29,17 @@ for nupkg in "$dir"/*.nupkg; do
   }
 done
 
+# Routeables.Abstraction is a package of its own, and the Routeables package depends on exactly its version.
+abstraction=$(ls "$dir"/Routeables.Abstraction.[0-9]*.nupkg | grep -v 'symbols' | head -1)
+unzip -l "$abstraction" | grep -q ' lib/net10.0/Routeables.Abstraction.dll$' || {
+  echo "::error::$(basename "$abstraction") does not contain lib/net10.0/Routeables.Abstraction.dll"
+  status=1
+}
+
 # The Routeables package must hold its libraries and the generator.
 core=$(ls "$dir"/Routeables.[0-9]*.nupkg | grep -v 'symbols' | head -1)
 
 for entry in \
-  lib/net10.0/Routeables.Abstraction.dll \
   lib/net10.0/Routeables.Routing.dll \
   lib/net10.0/Routeables.Core.dll \
   lib/net10.0/Routeables.Regions.dll \
@@ -50,5 +56,17 @@ for entry in \
     status=1
   }
 done
+
+# The assembly is in one package only, and the dependency is on exactly the version that was packed.
+if unzip -l "$core" | grep -q ' lib/net10.0/Routeables.Abstraction.dll$'; then
+  echo "::error::$(basename "$core") contains Routeables.Abstraction.dll, which is a package of its own"
+  status=1
+fi
+
+version=$(basename "$abstraction" .nupkg | sed 's/^Routeables\.Abstraction\.//')
+unzip -p "$core" '*.nuspec' | grep -q "dependency id=\"Routeables.Abstraction\" version=\"\[$version\]\"" || {
+  echo "::error::$(basename "$core") does not depend on Routeables.Abstraction [$version]"
+  status=1
+}
 
 exit "$status"

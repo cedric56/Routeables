@@ -5,8 +5,12 @@
     <Nullable>enable</Nullable>
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <!-- Shipped inside the Routeables package (Routeables.Core/Routeables.nuspec), not as a package of its own. -->
-    <IsPackable>false</IsPackable>
+    <!-- A package of its own: the contracts, for the libraries that only declare view models, routes or modules. The Routeables package depends on exactly this version, because the assemblies of the repository see each other's internals (InternalsVisibleTo). -->
+    <PackageId>Routeables.Abstraction</PackageId>
+    <Authors>Cédric Boutin</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>The contracts of Routeables: IRouter, IRouteable, RouteableArgs, the attributes and the lock and error contracts. A view model depends on these types instead of an API of Blazor, .NET MAUI, Avalonia, Uno or WPF.</Description>
   </PropertyGroup>
 
   <ItemGroup>

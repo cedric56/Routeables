@@ -3,14 +3,14 @@
 
 # The dependencies of the "Routeables" package are written in
 # Routeables.Core/Routeables.nuspec, because the package holds the
-# assemblies of seven projects. This fails when they differ from
+# assemblies of six projects (Routeables.Abstraction is a package of its own). This fails when they differ from
 # the PackageReference of those projects.
 
 set -euo pipefail
 
 cd "$(dirname "$0")/../.."
 
-projects="Abstraction Routing Core Regions Services Locking Segments"
+projects="Routing Core Regions Services Locking Segments"
 
 declared=$(
   for p in $projects; do
@@ -25,6 +25,7 @@ packed=$(
   grep -o '\<dependency id="[^"]*" version="[^"]*"' \
     "src/Routeables.Core/Routeables.nuspec" |
     sed -E 's/.*id="([^"]*)" version="([^"]*)".*/\1 \2/' |
+    grep -v '^Routeables\.Abstraction ' |
     sort -u
 )
 

@@ -7,9 +7,9 @@
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <!--
-      This project is the "Routeables" package: it carries Abstraction, Routing, Core, Regions, Services, Locking, Segments and the source
+      This project is the "Routeables" package: it carries Routing, Core, Regions, Services, Locking, Segments and the source
       generator. The files and the dependencies of the package are those of Routeables.nuspec (a project that references this one
-      depends on "Routeables"). The projects below are built before the pack, so that their assemblies exist.
+      depends on "Routeables"; it depends on the Routeables.Abstraction package, of exactly the same version). The projects below are built before the pack, so that their assemblies exist.
     -->
     <PackageId>Routeables</PackageId>
     <NuspecFile>Routeables.nuspec</NuspecFile>

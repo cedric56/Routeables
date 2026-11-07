@@ -4,7 +4,7 @@ The contracts of Routeables. View models and views depend on these types instead
 
 The router itself is in [`Routeables.Routing`](../Routeables.Routing/README.md), the platform services are in the host packages. Targets **.NET 10**; its only package is `Microsoft.Extensions.DependencyInjection.Abstractions`.
 
-It ships inside the [`Routeables`](../Routeables.Core/README.md) package, which every host package brings: `dotnet add package Routeables.Avalonia` (or the package of your host) is enough.
+It is a package of its own, `Routeables.Abstraction`, for a library that only declares view models, routes or modules: `dotnet add package Routeables.Abstraction`. The [`Routeables`](../Routeables.Core/README.md) package, which every host package brings, depends on exactly the same version, so an application needs `dotnet add package Routeables.Avalonia` (or the package of your host) and nothing else.
 
 ## Route from a view model
 
