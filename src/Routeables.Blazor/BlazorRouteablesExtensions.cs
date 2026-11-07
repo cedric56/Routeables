@@ -33,7 +33,7 @@ public static class BlazorRouteablesExtensions
     /// It registers the dialogs (message boxes, content dialogs and task dialogs), modals and notifications too (<c>UseRouteablesServices()</c> of
     /// <c>Routeables.Blazor.Services</c>); call that one again only to replace a service or to move the notifications.
     /// <code>
-    /// services.UseRouteablesServer&lt;MainViewModel&gt;(r => r.AddGeneratedRoutes());
+    /// services.UseRouteablesServer&lt;MainViewModel&gt;();
     /// </code>
     /// </summary>
     /// <typeparam name="TMain">The main view model.</typeparam>
@@ -57,7 +57,7 @@ public static class BlazorRouteablesExtensions
     /// <summary>
     /// Starts Routeables in a Blazor WebAssembly application: the same as <see cref="UseRouteablesServer{TMain}"/>, for the browser.
     /// <code>
-    /// builder.Services.UseRouteablesWebAssembly&lt;MainViewModel&gt;(r => r.AddGeneratedRoutes());
+    /// builder.Services.UseRouteablesWebAssembly&lt;MainViewModel&gt;();
     /// </code>
     /// </summary>
     /// <typeparam name="TMain">The main view model.</typeparam>
@@ -79,7 +79,7 @@ public static class BlazorRouteablesExtensions
     /// <summary>
     /// Starts Routeables in a MAUI Blazor Hybrid application: the same as <see cref="UseRouteablesServer{TMain}"/>, in a web view.
     /// <code>
-    /// builder.Services.UseRouteablesHybrid&lt;MainViewModel&gt;(r => r.AddGeneratedRoutes());
+    /// builder.Services.UseRouteablesHybrid&lt;MainViewModel&gt;();
     /// </code>
     /// </summary>
     /// <typeparam name="TMain">The main view model.</typeparam>

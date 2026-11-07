@@ -26,7 +26,7 @@ public static class RouteableBuilder
     /// To draw them another way, register your own <c>IMessageBoxService</c> in <paramref name="configure"/>.
     /// <code>
     /// AppBuilder.Configure&lt;App&gt;()
-    ///     .UseRouteables&lt;MainViewModel&gt;(r => r.AddGeneratedRoutes())
+    ///     .UseRouteables&lt;MainViewModel&gt;()
     ///     .UsePlatformDetect();
     /// </code>
     /// </summary>
@@ -68,7 +68,7 @@ public static class RouteableBuilder
     /// <c>RouteableRegion</c> of the main view opens (<c>&lt;routeables:RouteableRegion Route="/hello/World" /&gt;</c>).
     /// <code>
     /// AppBuilder.Configure&lt;App&gt;()
-    ///     .UseRouteables(r => r.AddGeneratedRoutes(), view: lifetime => new MainWindow());
+    ///     .UseRouteables(view: lifetime => new MainWindow());
     /// </code>
     /// </summary>
     /// <param name="builder">The builder to configure.</param>

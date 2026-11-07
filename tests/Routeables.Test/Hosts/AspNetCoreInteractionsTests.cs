@@ -97,6 +97,40 @@ public class AspNetCoreInteractionsTests
     }
 
     [Fact]
+    public async Task An_action_left_waiting_for_a_dialog_is_finished_inside_the_request_that_answers_it()
+    {
+        using var interactions = new RouteableInteractions();
+        var done = false;
+        await interactions.StartAsync(async () =>
+        {
+            await interactions.AskAsync(new RouteableDialog("Title", null, "Body", ["Ok"]));
+            await Task.Delay(50, TestContext.Current.CancellationToken);
+            done = true;
+        });
+
+        // The visitor did something else instead of answering: another action starts and ends.
+        await interactions.StartAsync(() => Task.CompletedTask);
+        await interactions.AnswerAsync(0).WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+
+        Assert.True(done);
+    }
+
+    [Fact]
+    public async Task A_second_action_that_asks_does_not_hide_the_failure_of_the_first_one()
+    {
+        using var interactions = new RouteableInteractions();
+        await interactions.StartAsync(async () =>
+        {
+            await interactions.AskAsync(new RouteableDialog("First", null, null, ["Ok"]));
+            throw new InvalidOperationException("first failed");
+        });
+        await interactions.StartAsync(async () => await interactions.AskAsync(new RouteableDialog("Second", null, null, ["Ok"])));
+
+        // The first dialog is still the one that waits; answering it ends the first action, which fails inside this request.
+        await Assert.ThrowsAsync<InvalidOperationException>(() => interactions.AnswerAsync(0).WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
     public async Task An_action_that_does_not_ask_ends_inside_the_request()
     {
         using var interactions = new RouteableInteractions();

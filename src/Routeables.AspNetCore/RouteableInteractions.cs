@@ -12,7 +12,11 @@ public sealed class RouteableInteractions : IDisposable
     private readonly List<RouteableDialog> _dialogs = [];
     private readonly List<RouteableToast> _toasts = [];
     private TaskCompletionSource _asked = new(TaskCreationOptions.RunContinuationsAsynchronously);
-    private Task? _running;
+
+    // The action that is running in the flow of the caller: the dialogs it asks belong to it, so that answering one waits for
+    // that action, not for another one the visitor started in the meantime.
+    private sealed class Run { public Task? Task; }
+    private readonly AsyncLocal<Run?> _current = new();
     private int _nextToast;
 
     /// <summary>The dialog that waits for an answer, if any.</summary>
@@ -33,6 +37,7 @@ public sealed class RouteableInteractions : IDisposable
     /// <summary>Puts <paramref name="dialog"/> on the page; <see cref="Close"/> removes it.</summary>
     public void Show(RouteableDialog dialog)
     {
+        dialog.Owner ??= _current.Value;
         _dialogs.Add(dialog);
         _asked.TrySetResult();
     }
@@ -48,32 +53,42 @@ public sealed class RouteableInteractions : IDisposable
     public Task StartAsync(Func<Task> action)
     {
         _asked = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        _running = action();
-        return SettleAsync();
+        var run = new Run();
+        var outer = _current.Value;
+        _current.Value = run;
+        try { run.Task = action(); }
+        finally { _current.Value = outer; }   // StartAsync is not async: what it sets would stay in the flow of the caller
+        return SettleAsync(run);
     }
 
     /// <summary>Does <paramref name="answer"/> (what the visitor chose), then waits for the action that was started to end or to ask again.</summary>
-    public Task ContinueAsync(Action answer)
+    public Task ContinueAsync(Action answer) => ContinueAsync(answer, Pending?.Owner as Run);
+
+    private Task ContinueAsync(Action answer, Run? owner)
     {
         _asked = new(TaskCreationOptions.RunContinuationsAsynchronously);
         answer();
-        return SettleAsync();
+        return SettleAsync(owner);
     }
 
     /// <summary>Gives the button <paramref name="index"/> as the answer of the dialog that waits.</summary>
-    public Task AnswerAsync(int index) => ContinueAsync(() => Pending?.Answer.TrySetResult(index));
-
-    private async Task SettleAsync()
+    public Task AnswerAsync(int index)
     {
-        if (_running is not { } running)
+        var dialog = Pending;
+        return ContinueAsync(() => dialog?.Answer.TrySetResult(index), dialog?.Owner as Run);
+    }
+
+    // Waits for the action to end or to ask something; its failure reaches the request that waits for it.
+    private async Task SettleAsync(Run? run)
+    {
+        if (run?.Task is not { } task)
             return;
 
-        await Task.WhenAny(running, _asked.Task);
-        if (!running.IsCompleted)
+        await Task.WhenAny(task, _asked.Task);
+        if (!task.IsCompleted)
             return;
 
-        _running = null;
-        await running;
+        await task;
     }
 
     // ---------------------------------------------------------------- notifications

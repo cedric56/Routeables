@@ -610,12 +610,12 @@ namespace Routeables.Generated
                     _sb.AppendLine("#pragma warning disable CA2255");
                     _sb.AppendLine("    [global::System.Runtime.CompilerServices.ModuleInitializer]");
                     _sb.AppendLine("#pragma warning restore CA2255");
-                    _sb.AppendLine("    internal static void RegisterWithHost() => RouteableAutoRegistration.Add(static services => AddGeneratedRoutes(services));");
+                    _sb.AppendLine("    internal static void RegisterWithHost() => RouteableAutoRegistration.Add(typeof(RouteRegistration).Assembly, static services => AddGeneratedRoutes(services));");
                     _sb.AppendLine();
                 }
                 _sb.AppendLine("    public static IServiceCollection AddGeneratedRoutes(this IServiceCollection services)");
                 _sb.AppendLine("    {");
-                _sb.AppendLine("        RouteableAutoRegistration.Mark(services);");
+                _sb.AppendLine("        RouteableAutoRegistration.Mark(services, typeof(RouteRegistration).Assembly);");
 
                 // A) View + ViewModel pairs ([RouteableView]); route/region from the view and/or [Routeable] on the ViewModel
                 foreach (var view in views)

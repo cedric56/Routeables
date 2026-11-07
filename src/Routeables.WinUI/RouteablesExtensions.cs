@@ -38,7 +38,7 @@ public static class UnoRouteablesExtensions
     /// <c>UseRouteables&lt;TMain&gt;</c> for an application that has no menu: no main view model to write. The first page is the one the
     /// <c>RouteableRegion</c> of the main view opens (<c>Route="/hello/World"</c>).
     /// <code>
-    /// Services = this.UseRouteables(services => services.AddGeneratedRoutes());
+    /// Services = this.UseRouteables();
     /// </code>
     /// </summary>
     /// <param name="application">The application.</param>
@@ -58,7 +58,7 @@ public static class UnoRouteablesExtensions
     /// <c>OnLaunched</c> creates the window. The dialogs, content dialogs, task dialogs and notifications are registered too;
     /// call <c>UseRouteablesServices(sp => new MyMessageBoxService())</c> in <paramref name="configure"/> only to draw them another way.
     /// <code>
-    /// Services = this.UseRouteables&lt;MainViewModel&gt;(services => services.AddGeneratedRoutes());
+    /// Services = this.UseRouteables&lt;MainViewModel&gt;();
     /// </code>
     /// </summary>
     /// <typeparam name="TMain">The main view model.</typeparam>
@@ -101,7 +101,7 @@ public static class UnoRouteablesExtensions
     /// The container is built now; the window is created by the dispatcher of the application as soon as it runs, which is right after
     /// the constructor returns. Call it from the constructor of the <see cref="Microsoft.UI.Xaml.Application"/>.
     /// <code>
-    /// Services = this.UseRouteables&lt;MainViewModel&gt;(services => services.AddGeneratedRoutes(), () => new MainPage(), window => window.Title = "My app");
+    /// Services = this.UseRouteables&lt;MainViewModel&gt;(services => { }, () => new MainPage(), window => window.Title = "My app");
     /// </code>
     /// </summary>
     /// <typeparam name="TMain">The main view model.</typeparam>

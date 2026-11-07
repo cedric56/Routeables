@@ -487,7 +487,7 @@ internal class Router(
         // Nothing registered at all is the usual first mistake: say where to look.
         var hint = entries.Any()
             ? string.Empty
-            : " No route is registered at all: call AddGeneratedRoutes() from the application project, and check that the projects with the [Routeable] view models and the views reference the Routeables package (it carries the source generator).";
+            : " No route is registered at all: check that the projects with the [Routeable] view models and the views reference the Routeables package (it carries the source generator). An executable registers its generated routes by itself; a library, or a project built with RouteablesAutoRegister=false, needs its AddGeneratedRoutes() called.";
         return RouteableResult.Fail(new InvalidOperationException($"No route matches '{url}'. Register it with an explicit route, for instance RegisterRoute<TView, TViewModel>(route: \"/orders/{{id:int}}\")." + hint));
     }
 

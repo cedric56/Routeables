@@ -101,7 +101,7 @@ public class RouteAutoRegistrationTests
     [Fact]
     public void AddGeneratedRoutes_marks_the_collection_so_that_the_host_does_not_add_them_twice()
     {
-        Assert.Contains("RouteableAutoRegistration.Mark(services)", Generate(OutputKind.DynamicallyLinkedLibrary));
+        Assert.Contains("RouteableAutoRegistration.Mark(services, typeof(RouteRegistration).Assembly)", Generate(OutputKind.DynamicallyLinkedLibrary));
     }
 
     // ---- what the host does with them
@@ -181,7 +181,7 @@ public class RouteAutoRegistrationTests
     {
         var services = new ServiceCollection();
 
-        Assert.False(RouteableAutoRegistration.Apply(services, []));
+        Assert.False(RouteableAutoRegistration.Apply(services, Array.Empty<Action<IServiceCollection>>()));
         Assert.Empty(services);
     }
 
@@ -262,5 +262,50 @@ public class RouteAutoRegistrationTests
             """);
 
         Assert.Contains("ROUT202", LastDiagnostics);
+    }
+
+    // ---- a library's AddGeneratedRoutes() must not hide the routes of the application
+
+    private static Action<IServiceCollection> GeneratedBy(System.Reflection.Assembly owner, params Action<IServiceCollection>[] pages) => services =>
+    {
+        RouteableAutoRegistration.Mark(services, owner);
+        foreach (var page in pages)
+            page(services);
+    };
+
+    private static readonly System.Reflection.Assembly Library = typeof(object).Assembly;
+    private static readonly System.Reflection.Assembly Application = typeof(RouteAutoRegistrationTests).Assembly;
+
+    [Fact]
+    public void The_generated_routes_of_a_library_do_not_hide_those_of_the_application()
+    {
+        var services = new ServiceCollection();
+        GeneratedBy(Library, About)(services);   // AddBirdsModule(): the library's own AddGeneratedRoutes()
+
+        var applied = RouteableAutoRegistration.Apply(services, [(Application, GeneratedBy(Application, About, Help))]);
+
+        Assert.True(applied);
+        Assert.Equal(typeof(HelpViewModel), Open(services, "/help"));
+    }
+
+    [Fact]
+    public void The_application_that_called_its_own_AddGeneratedRoutes_is_not_applied_twice()
+    {
+        var services = new ServiceCollection();
+        GeneratedBy(Application, About)(services);
+
+        Assert.False(RouteableAutoRegistration.Apply(services, [(Application, GeneratedBy(Application, About, Help))]));
+        Assert.Null(Open(services, "/help"));
+    }
+
+    [Fact]
+    public void The_marks_of_two_assemblies_are_both_kept()
+    {
+        var services = new ServiceCollection();
+        GeneratedBy(Library, About)(services);
+        RouteableAutoRegistration.Apply(services, [(Application, GeneratedBy(Application, Help))]);
+
+        Assert.False(RouteableAutoRegistration.Apply(services, [(Library, GeneratedBy(Library, About))]));
+        Assert.False(RouteableAutoRegistration.Apply(services, [(Application, GeneratedBy(Application, Help))]));
     }
 }

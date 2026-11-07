@@ -234,4 +234,57 @@ public class RouteableModulesTests
         Assert.Single(sink.Reports);
         Assert.Contains("Orders", sink.Reports[0]);
     }
+
+    // ---- ModuleServiceProvider: the keyed services
+
+    private sealed class Tag(string name) { public string Name { get; } = name; }
+
+    private static ModuleServiceProvider ProviderOf(Action<IServiceCollection> application, Action<IServiceCollection>? module = null)
+    {
+        var app = new ServiceCollection();
+        application(app);
+        var own = new ServiceCollection();
+        module?.Invoke(own);
+        return new ModuleServiceProvider(app.BuildServiceProvider(), new ModuleServices(own));
+    }
+
+    [Fact]
+    public void A_keyed_service_of_the_application_is_reachable_from_a_module()
+    {
+        var provider = ProviderOf(app => app.AddKeyedSingleton("a", new Tag("application")));
+
+        Assert.Equal("application", ((Tag)provider.GetKeyedService(typeof(Tag), "a")!).Name);
+        Assert.Equal("application", ((Tag)provider.GetRequiredKeyedService(typeof(Tag), "a")).Name);
+    }
+
+    [Fact]
+    public void A_keyed_service_nobody_registered_is_null_and_required_throws()
+    {
+        var provider = ProviderOf(_ => { });
+
+        Assert.Null(provider.GetKeyedService(typeof(Tag), "missing"));
+        Assert.Throws<InvalidOperationException>(() => provider.GetRequiredKeyedService(typeof(Tag), "missing"));
+    }
+
+    [Fact]
+    public void A_keyed_service_of_a_module_is_not_registered()
+    {
+        // Documented: the keyed services of a module are left out (see IRouteableModules); the unkeyed ones are served.
+        var provider = ProviderOf(_ => { }, module =>
+        {
+            module.AddKeyedSingleton("m", new Tag("module"));
+            module.AddSingleton(new Tag("plain"));
+        });
+
+        Assert.Null(provider.GetKeyedService(typeof(Tag), "m"));
+        Assert.Equal("plain", ((Tag)provider.GetService(typeof(Tag))!).Name);
+    }
+
+    [Fact]
+    public void A_service_of_the_module_wins_over_the_one_of_the_application()
+    {
+        var provider = ProviderOf(app => app.AddSingleton(new Tag("application")), module => module.AddSingleton(new Tag("module")));
+
+        Assert.Equal("module", ((Tag)provider.GetService(typeof(Tag))!).Name);
+    }
 }

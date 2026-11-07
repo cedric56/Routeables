@@ -22,6 +22,9 @@ public sealed class RouteableDialog(string title, string? header, string? body, 
     /// <summary>The view model of a modal dialog (the note); a message has none.</summary>
     public object? ViewModel { get; init; }
 
+    /// <summary>The action that asked it (see <c>RouteableInteractions.StartAsync</c>); the request that answers it waits for that action.</summary>
+    internal object? Owner { get; set; }
+
     /// <summary>Completes with the zero-based index of the button the visitor selected.</summary>
     public TaskCompletionSource<int> Answer { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 }

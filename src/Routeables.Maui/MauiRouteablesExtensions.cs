@@ -19,7 +19,7 @@ public static class MauiRouteablesExtensions
     /// <c>UseRouteables&lt;TMain&gt;</c> for an application that has no menu: no main view model to write. The first page is the one the
     /// <c>RouteableRegion</c> of the main page opens (<c>Route="/hello/World"</c>).
     /// <code>
-    /// builder.UseMauiApp&lt;App&gt;().UseRouteables(r => r.AddGeneratedRoutes());
+    /// builder.UseMauiApp&lt;App&gt;().UseRouteables();
     /// </code>
     /// </summary>
     /// <param name="builder">The MAUI app builder to configure.</param>
@@ -32,7 +32,7 @@ public static class MauiRouteablesExtensions
     /// Starts Routeables on MAUI: registers the router, the arguments factory, the property injection, the environment information and the
     /// theme service, and <typeparamref name="TMain"/> as the main view model (the menu), one for the application.
     /// <code>
-    /// builder.UseMauiApp&lt;App&gt;().UseRouteables&lt;MainViewModel&gt;(r => r.AddGeneratedRoutes());
+    /// builder.UseMauiApp&lt;App&gt;().UseRouteables&lt;MainViewModel&gt;();
     /// </code>
     /// </summary>
     /// <remarks>
