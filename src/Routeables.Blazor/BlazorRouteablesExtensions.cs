@@ -13,7 +13,7 @@ namespace Routeables.Blazor;
 /// <summary>
 /// Registers Routeables in a Blazor application's <see cref="IServiceCollection"/>.
 /// </summary>
-public static class Extensions
+public static class BlazorRouteablesExtensions
 {
     /// <summary>
     /// <c>UseRouteablesServer&lt;TMain&gt;</c> for an application that has no menu: no main view model to write. The first page is the

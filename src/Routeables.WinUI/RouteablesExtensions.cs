@@ -22,7 +22,11 @@ namespace Routeables.Uno;
 /// Entry points for bootstrapping an Uno Platform application together with its dependency injection container and the
 /// Routeables core (routing, injection, theming).
 /// </summary>
-public static class Extensions
+#if WINUI3
+public static class WinUI3RouteablesExtensions
+#else
+public static class UnoRouteablesExtensions
+#endif
 {
 #if !WINUI3
     private static BackRequests? _back;

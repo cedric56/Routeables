@@ -7,7 +7,7 @@ namespace Reshapes.Maui.CommunityToolkit;
 /// <summary>
 /// 
 /// </summary>
-public static class Extensions
+public static class MauiCommunityReshapeExtensions
 {
     /// <summary>
     /// Draws the modals, content dialogs, task dialogs and notifications with CommunityToolkit.Maui (popups and snackbars).

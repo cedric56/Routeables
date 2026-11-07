@@ -11,7 +11,7 @@ using System.Windows.Input;
 namespace Routeables.Wpf;
 
 /// <summary>Adds Routeables to a WPF application.</summary>
-public static class Extensions
+public static class WpfRouteablesExtensions
 {
     /// <summary>
     /// <see cref="UseRouteables{TMain}(Application, Action{IServiceCollection}?, Action{IServiceProvider}?)"/> for an application that has no menu: no main view

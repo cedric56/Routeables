@@ -58,13 +58,13 @@ public class HostContractTests
         new Host("Uno", ServiceLifetime.Singleton, () =>
         {
             IServiceProvider? provider = null;
-            Routeables.Uno.Extensions.StartRouteables<FakeMainViewModel>(afterBuild: p => provider = p);
+            Routeables.Uno.UnoRouteablesExtensions.StartRouteables<FakeMainViewModel>(afterBuild: p => provider = p);
             return (provider!, (IDisposable)provider!);
         }),
         new Host("Maui", ServiceLifetime.Singleton, () =>
         {
             var builder = MauiApp.CreateBuilder();
-            Routeables.Maui.Extensions.UseRouteables<FakeMainViewModel>(builder);
+            Routeables.Maui.MauiRouteablesExtensions.UseRouteables<FakeMainViewModel>(builder);
             var root = builder.Services.BuildServiceProvider();
             return (root, root);
         }),

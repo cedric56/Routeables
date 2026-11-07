@@ -105,7 +105,7 @@ public class SystemNotificationCenterTests
     {
         var builder = MauiApp.CreateBuilder();
 
-        var returned = Routeables.Maui.Extensions.WithAppNotifications(builder, new AppNotificationOptions { ChannelName = "Animals" });
+        var returned = Routeables.Maui.MauiRouteablesExtensions.WithAppNotifications(builder, new AppNotificationOptions { ChannelName = "Animals" });
 
         Assert.Same(builder, returned);
         Assert.Equal("Animals", SystemNotificationCenter.Current.Options?.ChannelName);

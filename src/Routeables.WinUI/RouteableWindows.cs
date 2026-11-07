@@ -7,7 +7,7 @@ namespace Routeables.Uno;
 #endif
 
 /// <summary>
-/// The windows that were given to <see cref="Extensions.AttachRouteables"/>, and which of them the user is working in.
+/// The windows that were given to <c>AttachRouteables</c>, and which of them the user is working in.
 /// The dialogs and the notifications of <c>Routeables.Uno.Services</c> are shown in the active one, and the theme service
 /// changes its content.
 /// </summary>

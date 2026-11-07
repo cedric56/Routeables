@@ -6,7 +6,7 @@ namespace Reshapes.Avalonia.Fluent;
 /// <summary>
 /// 
 /// </summary>
-public static class Extensions
+public static class FluentReshapeExtensions
 {
     /// <summary>
     /// Draws the dialogs, content dialogs, task dialogs and notifications with FluentAvaloniaUI. Call it in the block of

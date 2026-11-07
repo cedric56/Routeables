@@ -4,7 +4,7 @@ using Reshapes.Blazor.MudBlazor;
 using Routeables.Abstraction;
 using Routeables.Blazor.Services;
 using Routeables.Services;
-using Extensions = Reshapes.Blazor.MudBlazor.Extensions;
+using Extensions = Reshapes.Blazor.MudBlazor.MudBlazorReshapeExtensions;
 
 namespace Routeables.Tests.Razor;
 

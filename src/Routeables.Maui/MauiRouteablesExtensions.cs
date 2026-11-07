@@ -13,7 +13,7 @@ namespace Routeables.Maui;
 /// Extension methods for wiring up the Routeables IoC container and its associated services
 /// into a MAUI application's <see cref="MauiAppBuilder"/>.
 /// </summary>
-public static class Extensions
+public static class MauiRouteablesExtensions
 {
     /// <summary>
     /// <c>UseRouteables&lt;TMain&gt;</c> for an application that has no menu: no main view model to write. The first page is the one the

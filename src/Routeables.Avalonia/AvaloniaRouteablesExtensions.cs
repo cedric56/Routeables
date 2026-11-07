@@ -1,7 +1,7 @@
 ﻿namespace Routeables.Avalonia;
 
 /// <summary>String and enum helpers of the Avalonia host.</summary>
-public static class Extensions
+public static class AvaloniaRouteablesExtensions
 {
     /// <summary>Splits a text written together, one word per capital letter: <c>"YesNo"</c> gives Yes and No. See <see cref="Routeables.Services.RouteableButtons.Split"/>.</summary>
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

@@ -1,7 +1,7 @@
 namespace Routeables.Blazor.Services;
 
 /// <summary>
-/// Options of the system notifications of the browser, given to <see cref="Extensions.WithAppNotifications"/> like the <c>AppNotificationOptions</c>
+/// Options of the system notifications of the browser, given to <see cref="BlazorRouteablesExtensions.WithAppNotifications"/> like the <c>AppNotificationOptions</c>
 /// of Avalonia.Labs.Notifications. Its <c>ClearOnAppClose</c> is here too; the application id and the channels do not apply to a browser.
 /// </summary>
 public sealed class AppNotificationOptions

@@ -27,6 +27,6 @@ public partial class App : Application
             window => window.Title = "Routeables.Test.Uno");
     }
 
-    /// <summary>The service provider built by <see cref="Routeables.Uno.Extensions.UseRouteables{TMain}(Application, Action{Microsoft.Extensions.DependencyInjection.IServiceCollection}, Func{FrameworkElement}, Action{Window}?, Action{IServiceProvider}?, Action?)"/>.</summary>
+    /// <summary>The service provider built by <see cref="Routeables.Uno.UnoRouteablesExtensions.UseRouteables{TMain}(Application, Action{Microsoft.Extensions.DependencyInjection.IServiceCollection}, Func{FrameworkElement}, Action{Window}?, Action{IServiceProvider}?, Action?)"/>.</summary>
     public IServiceProvider Services { get; }
 }

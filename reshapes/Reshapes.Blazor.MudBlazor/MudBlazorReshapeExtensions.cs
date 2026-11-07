@@ -10,7 +10,7 @@ namespace Reshapes.Blazor.MudBlazor;
 /// <summary>
 /// 
 /// </summary>
-public static class Extensions
+public static class MudBlazorReshapeExtensions
 {
     /// <summary>
     /// Draws the dialogs, content dialogs, task dialogs and notifications with MudBlazor (dialogs and snackbars) and adds MudBlazor itself.

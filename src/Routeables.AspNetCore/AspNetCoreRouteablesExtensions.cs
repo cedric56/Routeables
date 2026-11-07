@@ -10,7 +10,7 @@ namespace Routeables.AspNetCore;
 /// <summary>
 /// Extension methods that wire Routeables into the ASP.NET Core dependency-injection container.
 /// </summary>
-public static class Extensions
+public static class AspNetCoreRouteablesExtensions
 {
     /// <summary>
     /// <c>AddRouteablesAspNetCore&lt;TMain&gt;</c> for an application that has no menu: no main view model to write.
