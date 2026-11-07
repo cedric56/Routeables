@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Routeables.Abstraction;
 using Routeables.AspNetCore;
 using Routeables.Avalonia;
 using Routeables.Blazor;
@@ -91,7 +92,7 @@ public class HostContractTests
     public sealed class PageAVm;
     public sealed class PageBVm;
 
-    public static void RegisterPages(IServiceCollection services)
+    internal static void RegisterPages(IServiceCollection services)
     {
         services.RegisterRoute<FakeViewFor, PageAVm>(route: "/a");
         services.RegisterRoute<FakeViewFor, PageBVm>(route: "/b");

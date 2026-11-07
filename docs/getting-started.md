@@ -43,6 +43,21 @@ public partial class HelloView : UserControl { public HelloView() => InitializeC
 
 Without the generator, `RegisterRoute<HelloView, HelloViewModel>(route: "hello")` does the same by name (see below).
 
+**`RouteableFor<T>`, the base class of a view.** The page above works as it is. Derive the view from the `RouteableFor<TViewModel>` of your host (Avalonia, WPF, Uno, WinUI 3, MAUI; `RouteableFor<TView, TViewModel>` in Razor) when you want more from it:
+
+```csharp
+public partial class HelloView : RouteableFor<HelloViewModel>
+{
+    public override Task<bool> CanLeaveAsync(CancellationToken ct = default) => Task.FromResult(!ViewModel.HasUnsavedChanges);
+}
+```
+
+- `ViewModel` is typed, and set before the view is shown.
+- The lifecycle: `InitializeAsync` when the page is shown, `OnSubscribe` / `OnUnsubscribe` for what must not outlive the page (a messenger, an event), disposal when the page leaves the history, and `CanLeaveAsync` to refuse to leave (see the [lifecycle guide](guides/lifecycle.md)).
+- It is found by its name (`HelloView` for `HelloViewModel`) without `[RouteableView]`, and the generator checks the pairing while you build.
+
+A view that does not derive from it still gets its view model, but none of this.
+
 **2. Start Routeables:**
 
 ```csharp

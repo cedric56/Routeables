@@ -8,6 +8,7 @@ references `Routeables.Abstraction` and `Routeables.Routing` only, so it measure
 dotnet run -c Release --project Routeables.Benchmarks -- --filter "*"                  # everything (about 15 minutes)
 dotnet run -c Release --project Routeables.Benchmarks -- --filter "*Navigation*" --job short
 dotnet run -c Release --project Routeables.Benchmarks -- --leak                        # memory and disposal checks, exit code 0 = pass
+dotnet run -c Release --project Routeables.Benchmarks -- --perf                        # regression gate against perf-baseline.json, exit code 0 = pass
 ```
 
 Always run in `Release`, on a machine that is doing nothing else. Compare numbers only between runs on the same machine.
@@ -80,3 +81,23 @@ The other classes (routing, history, regions) have no published results yet. Run
 - The cold start is not a first start of the process: the one-time reflection caches are already filled by the warm-up. A real first launch costs more.
 - They use `Transient` pages and an in-process container. A real application with a larger container or `Scoped` pages will differ.
 - CI does not build this project. Build it with `dotnet build -c Release Routeables.Benchmarks` when the router changes.
+
+## Regression gate (`--perf`)
+
+Not a measurement either: CI runs it on every push and fails when a route change got more expensive. It runs five scenarios (an address, a view
+model with a dependency, a guarded page, an address parameter, Back and Forward) and compares each with `perf-baseline.json`:
+
+- **Allocations** (bytes per route change) are the same on every machine, so the limit is tight: +10 % and 256 bytes.
+- **Time** is divided by the time a fixed loop takes on the same machine, which cancels the speed of the runner; the limit is loose (4 times the
+  baseline) because a shared runner is noisy.
+
+A change that moves the numbers on purpose (the library got faster, or does more) updates the baseline in a commit of its own:
+`dotnet run -c Release --project Routeables.Benchmarks -- --perf <path of perf-baseline.json> --update`, then reads the diff.
+
+## Screenshots
+
+The controls of a host are checked with screenshots: each page is drawn in a region, in the light and the dark theme, and compared with the image
+kept in `Snapshots` (`tests/Shared/Snapshot.cs`: a PNG reader and writer, 0.2 % of the pixels may differ). Blazor (Playwright), Avalonia (Skia, headless),
+WPF, MAUI and Uno have them. The images belong to the renderer and fonts of the machine that made them, so CI makes them: a test without an image is skipped and
+writes the screenshot to `Snapshots/_actual`, which the job uploads (`snapshots-actual` (Blazor), `snapshots-avalonia`, `snapshots-wpf`, `snapshots-uno`, `snapshots-maui`).
+Look at the images, and move the right ones to `Snapshots`. `ROUTEABLES_UPDATE_SNAPSHOTS=1` replaces them after a change that is wanted.

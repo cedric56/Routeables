@@ -194,6 +194,51 @@ public sealed class HeadlessDialogTests(HeadlessApp app)
         await ResultAsync(shown);
     });
 
+    /// <summary>
+    /// Message boxes opened over each other and answered from the top, at random (a button or Escape): each gets exactly the result of the
+    /// way it was closed, the ones below stay open and unanswered, and no window is left once all are answered.
+    /// </summary>
+    [Fact]
+    public Task Message_boxes_stacked_at_random_each_get_their_own_result() => RunAsync(async (owner, service) =>
+    {
+        var random = new Random(7);
+        var open = new List<(Task<string?> Shown, Window Window, string[] Buttons)>();
+        var shownCount = 0;
+
+        for (var step = 0; step < 60; step++)
+        {
+            if (open.Count == 0 || (open.Count < 4 && random.Next(3) == 0))
+            {
+                var buttons = random.Next(2) == 0 ? "Ok" : "YesNo";
+                var shown = service.ShowMessageBoxAsync("box" + shownCount++, "m", buttons, owner);
+                var parent = open.Count == 0 ? owner : open[^1].Window;
+                await UntilAsync(() => parent.OwnedWindows.Count == 1 && Buttons(parent.OwnedWindows[0]).Count > 0);
+                open.Add((shown, parent.OwnedWindows[0], buttons == "Ok" ? ["Ok"] : ["Yes", "No"]));
+                continue;
+            }
+
+            var top = open[^1];
+            string? expected = null;
+            if (random.Next(4) == 0) PressEscape(top.Window);
+            else { expected = top.Buttons[random.Next(top.Buttons.Length)]; Click(ButtonOf(top.Window, expected)); }
+
+            Assert.Equal(expected, await ResultAsync(top.Shown));
+            open.RemoveAt(open.Count - 1);
+            foreach (var below in open)
+                Assert.False(below.Shown.IsCompleted);
+        }
+
+        while (open.Count > 0)
+        {
+            var top = open[^1];
+            Click(Buttons(top.Window).First());
+            await ResultAsync(top.Shown);
+            open.RemoveAt(open.Count - 1);
+        }
+
+        await UntilAsync(() => owner.OwnedWindows.Count == 0);
+    });
+
     // ------------------------------------------------------------------------------------------------ content dialogs
 
     /// <summary>A content dialog shows its title, content text, and configured buttons, and returns the primary result when Save is clicked.</summary>

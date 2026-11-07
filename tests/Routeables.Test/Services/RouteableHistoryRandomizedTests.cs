@@ -69,12 +69,12 @@ public class RouteableHistoryRandomizedTests
                     trace += op;
                     switch (op)
                     {
-                        case 0: case 1: case 2: await router.GoToAsync(Routes[random.Next(Routes.Length)]); break;
-                        case 3: await router.GoToAsync("/unknown-" + step); break;           // refused: nothing changes
-                        case 4: await router.GoBackAsync(); break;
-                        case 5: await router.ForwardAsync(); break;
-                        case 6: await router.PopAsync(); break;
-                        default: await router.GoToAsync(Routes[random.Next(Routes.Length)]); break;
+                        case 0: case 1: case 2: await router.GoToAsync(Routes[random.Next(Routes.Length)], cancellationToken:TestContext.Current.CancellationToken); break;
+                        case 3: await router.GoToAsync("/unknown-" + step, cancellationToken: TestContext.Current.CancellationToken); break;           // refused: nothing changes
+                        case 4: await router.GoBackAsync(cancellationToken: TestContext.Current.CancellationToken); break;
+                        case 5: await router.ForwardAsync(cancellationToken: TestContext.Current.CancellationToken); break;
+                        case 6: await router.PopAsync(cancellationToken: TestContext.Current.CancellationToken); break;
+                        default: await router.GoToAsync(Routes[random.Next(Routes.Length)], cancellationToken: TestContext.Current.CancellationToken); break;
                     }
 
                     var shown = RouteableState.Capture(router);
@@ -98,7 +98,7 @@ public class RouteableHistoryRandomizedTests
             using var next = Build(store, limit);
             next.StartRouteableHistory();
             var nextRouter = next.GetRequiredService<IRouter>();
-            await nextRouter.GoToAsync("/r0");
+            await nextRouter.GoToAsync("/r0", cancellationToken: TestContext.Current.CancellationToken);
 
             await UntilAsync(() => RouteableState.Capture(nextRouter).SequenceEqual(expected));
             if (!RouteableState.Deserialize(store.Kept).SequenceEqual(expected))

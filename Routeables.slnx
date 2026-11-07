@@ -88,6 +88,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj" />
+    <Project Path="tests/Routeables.Test.Avalonia.Visual/Routeables.Test.Avalonia.Visual.csproj" />
     <Project Path="tests/Routeables.Test.Community/Routeables.Test.Community.csproj" />
     <Project Path="tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj" />
     <Project Path="tests/Routeables.Test.Playwright/Routeables.Test.Playwright.csproj" />

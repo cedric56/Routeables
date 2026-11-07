@@ -203,7 +203,8 @@ internal class Router(
 
             var removed = commit();                                // only after the lifecycle succeeded
             await lifecycle.NotifyEnteredAsync(leaving, target, ct);   // before the removed entries are disposed
-            await lifecycle.DestroyAsync(removed, history.Snapshot());
+            // Nothing removed, nothing to destroy: the copy of the whole history is only for what a removal needs.
+            if (removed.Count > 0) await lifecycle.DestroyAsync(removed, history.Snapshot());
             return RouteableResult.Ok();
         });
     }
@@ -336,7 +337,7 @@ internal class Router(
                     // 5. Commit, then destroy what the push cut off (forward entries, evicted oldest)
                     var removed = history.Push(entering);
                     await lifecycle.NotifyEnteredAsync(previous, entering, cancellationToken);
-                    await lifecycle.DestroyAsync(removed, history.Snapshot());
+                    if (removed.Count > 0) await lifecycle.DestroyAsync(removed, history.Snapshot());
                     return RouteableResult.Ok();
                 }
                 catch

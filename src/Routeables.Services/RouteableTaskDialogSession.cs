@@ -13,6 +13,7 @@ public sealed class RouteableTaskDialogSession
 {
     private readonly RouteableTaskDialog _dialog;
     private readonly Action _complete;
+    private bool _completed;   // a button decided the result: a second click while the dialog closes must neither ask Closing again nor change it
 
     /// <summary>Starts the session of <paramref name="dialog"/>.</summary>
     /// <param name="dialog">The dialog to show.</param>
@@ -52,7 +53,8 @@ public sealed class RouteableTaskDialogSession
         if (RouteableErrors.Guard(null, RouteableCallbackSources.TaskDialogClosing, _dialog.Closing))
             return false;
 
-        Result = RouteableTaskDialogResult.None;
+        if (!_completed)
+            Result = RouteableTaskDialogResult.None;
         return true;
     }
 
@@ -61,9 +63,13 @@ public sealed class RouteableTaskDialogSession
 
     private bool Submit(RouteableTaskDialogResult requested)
     {
+        if (_completed)
+            return false;
+
         if (RouteableErrors.Guard(null, RouteableCallbackSources.TaskDialogClosing, _dialog.Closing))
             return false;
 
+        _completed = true;
         Result = requested;
         _complete();
         return true;

@@ -32,7 +32,7 @@ The host package brings everything else, the source generator included. You need
 
 ## Your first page
 
-**1. A view model with its route, and its view** (found by name):
+**1. A view model with its route, and its view** (a view of your own: a `UserControl`, `Window` or `Page` that names its view model):
 
 ```csharp
 [Routeable("/hello/{name}")]
@@ -41,15 +41,11 @@ public sealed class HelloViewModel(string name)
     public string? Name { get; } = name;
 }
 
-public partial class HelloView : RouteableFor<HelloViewModel> { }   // Routeables.Avalonia
-```
-
-`RouteableFor<T>` is not required. A view of your own (a plain `UserControl`, `Window` or `Page`) is paired by naming the view model on it:
-
-```csharp
 [RouteableView(typeof(HelloViewModel))]
 public partial class HelloView : UserControl { public HelloView() => InitializeComponent(); }
 ```
+
+The router gives the view model to the view as its `DataContext` (`BindingContext` on MAUI). For the lifecycle of a page (initialization, disposal, leaving guards), derive the view from the base class `RouteableFor<T>` of your host: it is described in [Getting started](docs/getting-started.md) and the [lifecycle guide](docs/guides/lifecycle.md).
 
 **2. The start of Routeables** (Avalonia shown; each host has its own line, see below):
 

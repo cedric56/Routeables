@@ -344,6 +344,61 @@ public class DialogServiceDeviceTests
         await ResultAsync(shown);
     }
 
+    /// <summary>
+    /// Content dialogs opened over each other and closed from the top, at random (a button, or the handle of the parameters from another
+    /// thread): each ends with the result of the way it was closed, the ones below stay open, and no page is left once all are closed.
+    /// </summary>
+    [UIFact]
+    public async Task Content_dialogs_stacked_at_random_each_get_their_own_result()
+    {
+        await CleanAsync();
+        var service = Service();
+        var random = new Random(5);
+        var open = new List<(Task<RouteableContentDialogResult> Shown, ContentPage Popup, RouteableContentDialog Parameters, int Id)>();
+        var count = 0;
+
+        for (var step = 0; step < 30; step++)
+        {
+            if (open.Count == 0 || (open.Count < 3 && random.Next(3) == 0))
+            {
+                var id = count++;
+                var parameters = new RouteableContentDialog
+                {
+                    Title = "d" + id, PrimaryButtonText = "Primary " + id, IsPrimaryButtonEnabled = true,
+                    SecondaryButtonText = "Secondary " + id, IsSecondaryButtonEnabled = true, CloseButtonText = "Close " + id,
+                };
+                var shown = service.ShowContentDialogAsync(parameters);
+                open.Add((shown, await PopupAsync(open.Count + 1), parameters, id));
+                continue;
+            }
+
+            var top = open[^1];
+            RouteableContentDialogResult expected;
+            switch (random.Next(4))
+            {
+                case 0: Tap(ButtonOf(top.Popup, "Primary " + top.Id)); expected = RouteableContentDialogResult.Primary; break;
+                case 1: Tap(ButtonOf(top.Popup, "Secondary " + top.Id)); expected = RouteableContentDialogResult.Secondary; break;
+                case 2: Tap(ButtonOf(top.Popup, "Close " + top.Id)); expected = RouteableContentDialogResult.None; break;
+                default: await Task.Run(() => top.Parameters.Close!()); expected = RouteableContentDialogResult.None; break;
+            }
+
+            Assert.Equal(expected, await ResultAsync(top.Shown));
+            open.RemoveAt(open.Count - 1);
+            await ClosedAsync(open.Count);
+            foreach (var below in open)
+                Assert.False(below.Shown.IsCompleted);
+        }
+
+        while (open.Count > 0)
+        {
+            var top = open[^1];
+            Tap(ButtonOf(top.Popup, "Close " + top.Id));
+            await ResultAsync(top.Shown);
+            open.RemoveAt(open.Count - 1);
+            await ClosedAsync(open.Count);
+        }
+    }
+
     /// <summary>Several dialogs are open at once; a dialog closed from below waits until it is on top again to disappear.</summary>
     [UIFact]
     public async Task Two_dialogs_are_open_at_once_and_the_one_below_waits_until_it_is_on_top_to_close()

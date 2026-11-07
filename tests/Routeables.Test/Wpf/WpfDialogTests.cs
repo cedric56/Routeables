@@ -117,6 +117,51 @@ public class WpfDialogTests
     });
 
     [Fact]
+    public Task Message_boxes_stacked_at_random_each_get_their_own_result() => WithOwnerAsync(async owner =>
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var random = new Random(11);
+        var open = new List<(Task<string?> Shown, Window Window, string Title, string[] Buttons)>();
+        var count = 0;
+
+        for (var step = 0; step < 40; step++)
+        {
+            if (open.Count == 0 || (open.Count < 4 && random.Next(3) == 0))
+            {
+                var title = "Random" + count++;
+                var buttons = random.Next(2) == 0 ? "Ok" : "YesNo";
+                var shown = await StartAsync(() => Box.ShowMessageBoxAsync(title, "m", buttons, owner));
+                var window = await WaitForWindowAsync(title, ct);
+                open.Add((shown, window, title, buttons == "Ok" ? ["Ok"] : ["Yes", "No"]));
+                continue;
+            }
+
+            // Only the top one can be answered (the others are blocked behind it).
+            var top = open[^1];
+            string? expected = null;
+            if (random.Next(4) == 0) await PressEscapeAsync(top.Window);
+            else { expected = top.Buttons[random.Next(top.Buttons.Length)]; await ClickAsync(top.Window, expected); }
+
+            Assert.Equal(expected, await top.Shown);
+            Assert.False(await IsOpenAsync(top.Title));
+            open.RemoveAt(open.Count - 1);
+            foreach (var below in open)
+            {
+                Assert.False(below.Shown.IsCompleted);
+                Assert.True(await IsOpenAsync(below.Title));
+            }
+        }
+
+        while (open.Count > 0)
+        {
+            var top = open[^1];
+            await ClickAsync(top.Window, top.Buttons[0]);
+            await top.Shown;
+            open.RemoveAt(open.Count - 1);
+        }
+    });
+
+    [Fact]
     public Task A_dialog_over_a_window_that_was_never_shown_is_shown_on_the_screen() => WithOwnerAsync(async owner =>
     {
         var pending = await StartAsync(() => Box.ShowMessageBoxAsync("Alone", "text", "Ok", owner));

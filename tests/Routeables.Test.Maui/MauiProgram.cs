@@ -30,6 +30,8 @@ public static class MauiProgram
             {
                 services.RegisterRoute<PageAView, PageAViewModel>(route: "/a");
                 services.RegisterRoute<PageBView, PageBViewModel>(route: "/b");
+                services.RegisterRoute<VisualFormView, VisualFormViewModel>(route: "/visual-form");
+                services.RegisterRoute<VisualAboutView, VisualAboutViewModel>(route: "/visual-about");
                 services.AddRegion(Side);
             });
 

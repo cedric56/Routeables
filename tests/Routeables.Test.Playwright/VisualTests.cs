@@ -61,7 +61,7 @@ public sealed class VisualTests(BlazorApp app) : BlazorTest(app)
         if (update)
         {
             Directory.CreateDirectory(SnapshotsFolder);
-            await File.WriteAllBytesAsync(baseline, actual);
+            await File.WriteAllBytesAsync(baseline, actual, TestContext.Current.CancellationToken);
             return;
         }
 
@@ -71,7 +71,7 @@ public sealed class VisualTests(BlazorApp app) : BlazorTest(app)
             Assert.Skip($"No image for {name} yet: look at Snapshots/_actual/{name} and move it to Snapshots if it is right.");
         }
 
-        var difference = await DifferenceAsync(await File.ReadAllBytesAsync(baseline), actual);
+        var difference = await DifferenceAsync(await File.ReadAllBytesAsync(baseline, TestContext.Current.CancellationToken), actual);
         if (difference > AllowedDifference)
         {
             Keep(name, actual);

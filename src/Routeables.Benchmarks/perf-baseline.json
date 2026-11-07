@@ -1,0 +1,22 @@
+{
+  "goto_address": {
+    "Bytes": 7848,
+    "Relative": 10224.19
+  },
+  "goto_with_dependency": {
+    "Bytes": 7484,
+    "Relative": 4060.2
+  },
+  "goto_guarded": {
+    "Bytes": 7566,
+    "Relative": 3825.69
+  },
+  "goto_parameter": {
+    "Bytes": 11242,
+    "Relative": 5318.44
+  },
+  "back_and_forward": {
+    "Bytes": 2180,
+    "Relative": 754.44
+  }
+}
