@@ -40,9 +40,9 @@ namespace Routeables.Generated
         private static DiagnosticDescriptor Descriptor(string id, string title, DiagnosticSeverity severity) =>
             new DiagnosticDescriptor(id, title, "{0}", Category, severity, isEnabledByDefault: true);
 
-        // Mirrors RouteParser.Param: {name}, {name:type}, {name:type?}, {name::type} (view-bound).
+        // Mirrors RouteParser.Param: {name}, {name:type}, {name:type?}, {name::type} (view-bound), {**name} (the rest of the path).
         private static readonly Regex Placeholder =
-            new Regex(@"^\{(?<name>\w+)(?::(?<attribute>:)?(?<type>[^}?]*))?(?<opt>\?)?\}$", RegexOptions.CultureInvariant);
+            new Regex(@"^\{(?<rest>\*\*)?(?<name>\w+)(?::(?<attribute>:)?(?<type>[^}?]*))?(?<opt>\?)?\}$", RegexOptions.CultureInvariant);
 
         private static readonly string[] ReservedNames = { "caller", "router", "cancellationToken", "__args", "__route", "__separator" };
 
@@ -419,6 +419,27 @@ namespace Routeables.Generated
                     return false;
                 }
 
+                if (part.IsRest)
+                {
+                    if (part.IsQuery)
+                    {
+                        error = "the catch-all {**" + part.Name + "} can only be in the path, not in the query.";
+                        return false;
+                    }
+
+                    if (i != lastPath)
+                    {
+                        error = "the catch-all {**" + part.Name + "} must be the last path segment.";
+                        return false;
+                    }
+
+                    if (part.Type.Length > 0 && !string.Equals(part.Type, "string", StringComparison.OrdinalIgnoreCase))
+                    {
+                        error = "the catch-all {**" + part.Name + ":" + part.Type + "} must be a string.";
+                        return false;
+                    }
+                }
+
                 if (!names.Add(part.Name))
                 {
                     error = "the placeholder {" + part.Name + "} is used twice.";
@@ -454,7 +475,8 @@ namespace Routeables.Generated
                     match.Groups["name"].Value,
                     match.Groups["type"].Value,
                     match.Groups["attribute"].Success,
-                    match.Groups["opt"].Success);
+                    match.Groups["opt"].Success,
+                    match.Groups["rest"].Success);
                 return true;
             }
 
@@ -675,7 +697,7 @@ namespace Routeables.Generated
                     continue;
                 }
 
-                target.BecomeRoute(part.Optional, expected);
+                target.BecomeRoute(part.Optional, part.IsRest ? ClrKind.Rest : expected);
             }
 
             if (failed)
@@ -1023,6 +1045,10 @@ namespace Routeables.Generated
                     return "(" + value + " ? \"true\" : \"false\")";
                 case ClrKind.Guid:
                     return "global::System.Uri.EscapeDataString(" + value + ".ToString())";
+                case ClrKind.Rest:
+                    // The rest of the path keeps its slashes; each piece is escaped (RouteParser.Build does the same).
+                    return "global::System.String.Join(\"/\", global::System.Linq.Enumerable.Select(" + value
+                        + ".Split(new[] { '/' }, global::System.StringSplitOptions.RemoveEmptyEntries), new global::System.Func<string, string>(global::System.Uri.EscapeDataString)))";
                 default:
                     return "global::System.Uri.EscapeDataString(" + value + ")";
             }
@@ -1182,7 +1208,7 @@ namespace Routeables.Generated
 
         private enum RouteOpKind { PathLiteral, PathParam, QueryLiteral, QueryParam }
 
-        private enum ClrKind { None, String, Int, Long, Bool, Guid, Decimal, Double }
+        private enum ClrKind { None, String, Int, Long, Bool, Guid, Decimal, Double, Rest }
 
         // Text: the literal, or the query key. Prefix: the separator written before a path segment.
         private sealed record RouteOp(
@@ -1197,7 +1223,7 @@ namespace Routeables.Generated
 
         private sealed class TemplatePart
         {
-            public TemplatePart(bool isQuery, bool isPlaceholder, string text, string name, string type, bool isViewBound, bool optional)
+            public TemplatePart(bool isQuery, bool isPlaceholder, string text, string name, string type, bool isViewBound, bool optional, bool isRest = false)
             {
                 IsQuery = isQuery;
                 IsPlaceholder = isPlaceholder;
@@ -1206,6 +1232,7 @@ namespace Routeables.Generated
                 Type = type;
                 IsViewBound = isViewBound;
                 Optional = optional;
+                IsRest = isRest;
             }
 
             public bool IsQuery { get; }
@@ -1215,6 +1242,7 @@ namespace Routeables.Generated
             public string Type { get; }
             public bool IsViewBound { get; }
             public bool Optional { get; }
+            public bool IsRest { get; }
 
             public static TemplatePart Literal(bool isQuery, string text) =>
                 new TemplatePart(isQuery, isPlaceholder: false, text, string.Empty, string.Empty, isViewBound: false, optional: false);

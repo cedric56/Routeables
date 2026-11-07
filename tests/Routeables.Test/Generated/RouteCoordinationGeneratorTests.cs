@@ -413,6 +413,72 @@ public class RouteCoordinationGeneratorTests
         Assert.Equal("a+b|a+null|1-2", summary);
     }
 
+    // {**path} takes the rest of the path: its slashes stay, each piece is escaped (RouteParser.Build does the same), and the route parser reads it back.
+    [Fact]
+    public async Task A_catch_all_keeps_its_slashes_escapes_each_piece_and_comes_back_whole()
+    {
+        var summary = await RunScenarioAsync(Prelude + """
+
+            [Routeable("/files/{**path}")] [RouteableViewModel(typeof(HomeViewModel))]
+            public sealed class FilesViewModel(string path) { public string Value { get; } = path; }
+
+            [Routeable("/docs/{section}/{**rest?}")] [RouteableViewModel(typeof(HomeViewModel))]
+            public sealed class DocsViewModel(string section, string? rest = null) { public string Value { get; } = section + ":" + (rest ?? "null"); }
+
+            public static class Scenario
+            {
+                public static async Task<string> RunAsync()
+                {
+                    var services = new ServiceCollection();
+                    services.RegisterRouting();
+                    services.RegisterRoute<PageView, FilesViewModel>(route: "/files/{**path}");
+                    services.RegisterRoute<PageView, DocsViewModel>(route: "/docs/{section}/{**rest?}");
+                    using var provider = services.BuildServiceProvider();
+                    var router = provider.GetRequiredService<IRouter>();
+                    var home = new HomeViewModel();
+                    var seen = new System.Collections.Generic.List<string>();
+
+                    async Task Check(Task<RouteableResult> go, Func<object?, string> read)
+                    {
+                        var result = await go;
+                        seen.Add(result.Success ? read(router.CurrentViewModel) + " @ " + router.History.Current!.Args.Route : "FAIL " + result.Exception?.Message);
+                    }
+
+                    await Check(home.GoToFilesAsync(router, "a b/c#d/e.txt"), vm => ((FilesViewModel)vm!).Value);
+                    await Check(home.GoToDocsAsync(router, "intro", "x/y z"), vm => ((DocsViewModel)vm!).Value);
+                    await Check(home.GoToDocsAsync(router, "intro"), vm => ((DocsViewModel)vm!).Value);
+                    return string.Join("|", seen);
+                }
+            }
+            """);
+
+        Assert.Equal(
+            "a b/c#d/e.txt @ /files/a%20b/c%23d/e.txt|intro:x/y z @ /docs/intro/x/y%20z|intro:null @ /docs/intro",
+            summary);
+    }
+
+    [Fact]
+    public void ROUT104_a_catch_all_must_be_the_last_path_segment()
+    {
+        AssertDiagnostic("ROUT104", """
+
+            [Routeable("/files/{**path}/more")]
+            [RouteableViewModel(typeof(HomeViewModel))]
+            public sealed class AViewModel(string path) { }
+            """);
+    }
+
+    [Fact]
+    public void ROUT104_a_catch_all_must_be_a_string()
+    {
+        AssertDiagnostic("ROUT104", """
+
+            [Routeable("/files/{**path:int}")]
+            [RouteableViewModel(typeof(HomeViewModel))]
+            public sealed class AViewModel(int path) { }
+            """);
+    }
+
     [Fact]
     public async Task Route_placeholders_are_written_into_the_route_and_container_parameters_are_resolved()
     {

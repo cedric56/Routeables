@@ -54,10 +54,22 @@ internal abstract class DialogQueue<TRequest, TResult> : IDisposable
     /// </summary>
     public void Finish(TRequest request, TResult result, Action? closed = null)
     {
+        var wasWaiting = false;
         lock (gate)
         {
-            if (!ReferenceEquals(Current, request)) return;
-            Current = pending.Count > 0 ? pending.Dequeue() : null;
+            if (!ReferenceEquals(Current, request))
+            {
+                // Closed from code before it was shown: it leaves the queue and is never shown. Anything else is already closed.
+                if (!pending.Contains(request)) return;
+                var kept = pending.Where(r => !ReferenceEquals(r, request)).ToArray();
+                pending.Clear();
+                foreach (var r in kept) pending.Enqueue(r);
+                wasWaiting = true;
+            }
+            else
+            {
+                Current = pending.Count > 0 ? pending.Dequeue() : null;
+            }
         }
 
         try
@@ -67,7 +79,7 @@ internal abstract class DialogQueue<TRequest, TResult> : IDisposable
         finally
         {
             request.Completion.TrySetResult(result);
-            Changed?.Invoke();
+            if (!wasWaiting) Changed?.Invoke();    // the host shows Current: a request that never was on screen changes nothing
         }
     }
 

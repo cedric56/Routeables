@@ -1,4 +1,4 @@
-using Routeables.Blazor.Services;
+﻿using Routeables.Blazor.Services;
 using Routeables.Services;
 
 namespace Routeables.Tests.Razor;
@@ -399,4 +399,24 @@ public class DialogQueueTests
     [Fact]
     public void Dismissing_with_no_task_dialog_does_nothing()
         => HostedTask().Dismiss();
+
+    [Fact]
+    public async Task A_dialog_closed_from_code_before_it_is_shown_leaves_the_queue_and_is_never_shown()
+    {
+        var queue = new RouteableContentDialogQueue();
+        queue.Changed += () => { };
+        var shown = new RouteableContentDialog { PrimaryButtonText = "Ok" };
+        var waiting = new RouteableContentDialog { PrimaryButtonText = "Ok" };
+        var first = queue.ShowAsync(shown);
+        var second = queue.ShowAsync(waiting);
+
+        waiting.Close!();
+
+        Assert.Equal(RouteableContentDialogResult.None, await second.WaitAsync(TimeSpan.FromSeconds(5), Ct));
+        Assert.Same(shown, queue.Current!.Parameters);       // the one on screen is untouched
+
+        queue.Current!.Session.Buttons[0].Press();
+        Assert.Equal(RouteableContentDialogResult.Primary, await first.WaitAsync(TimeSpan.FromSeconds(5), Ct));
+        Assert.Null(queue.Current);                           // the closed one did not come back
+    }
 }

@@ -1,4 +1,4 @@
-# Diagnostics reference
+﻿# Diagnostics reference
 
 ## Diagnostics reference
 
@@ -9,7 +9,7 @@ The typed-routing generator reports these diagnostics at the attribute or the of
 | `ROUT101` | Error | Missing or invalid caller type (none given, static, or generic) |
 | `ROUT102` | Error | Invalid destination (abstract, no public constructor, ambiguous constructors) or invalid `MethodName` |
 | `ROUT103` | Error | No route found, or several `[Routeable]` and no explicit `Route` |
-| `ROUT104` | Error | Invalid or unsupported template: placeholder without a matching constructor parameter, type mismatch, optional placeholder without a default value, optional path placeholder not last, view-bound placeholder, unsupported type, malformed placeholder |
+| `ROUT104` | Error | Invalid or unsupported template: placeholder without a matching constructor parameter, type mismatch, optional placeholder without a default value, optional path placeholder not last, catch-all `{**name}` not last, in the query or not a string, view-bound placeholder, unsupported type, malformed placeholder |
 | `ROUT105` | Error | Unsupported parameter (`ref`, pointer, ref struct) or a name that clashes with a generated one (`caller`, `router`, `cancellationToken`, ...) |
 | `ROUT106` | Warning | A parameter that may not receive a value is type-compatible with another one, so constructor arguments could be matched to the wrong parameter |
 | `ROUT107` | Error | Two destinations would generate the same method on the same caller |
