@@ -18,6 +18,7 @@ public sealed class RouteableContentDialogSession
 {
     private readonly RouteableContentDialog _dialog;
     private readonly Action _complete;
+    private bool _completed;   // the result is decided: a second button, or the code, must neither run again nor change it
 
     /// <summary>Starts the session of <paramref name="dialog"/>.</summary>
     /// <param name="dialog">The dialog to show.</param>
@@ -52,7 +53,8 @@ public sealed class RouteableContentDialogSession
         if (RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogClosing, _dialog.Closing, nameof(RouteableContentDialogResult.None)))
             return false;
 
-        Result = RouteableContentDialogResult.None;
+        if (!_completed)
+            Result = RouteableContentDialogResult.None;
         return true;
     }
 
@@ -65,6 +67,11 @@ public sealed class RouteableContentDialogSession
         ArgumentNullException.ThrowIfNull(runOnUiThread);
         _dialog.Close = () => runOnUiThread(() =>
         {
+            // A button already decided: closing from code now must not turn its result into None, nor complete the surface twice.
+            if (_completed)
+                return;
+
+            _completed = true;
             Result = RouteableContentDialogResult.None;
             _complete();
         });
@@ -102,6 +109,10 @@ public sealed class RouteableContentDialogSession
 
     private bool Submit(RouteableContentDialogResult requested, ICommand? command, object? parameter, Action? click)
     {
+        // A second click while the dialog is closing: the command of the button already ran.
+        if (_completed)
+            return false;
+
         if (command is not null && !command.CanExecute(parameter))
             return false;
 
@@ -111,6 +122,11 @@ public sealed class RouteableContentDialogSession
         if (RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogClosing, _dialog.Closing, requested.ToString()))
             return false;
 
+        // The command may have asked the dialog to close from code: that decided the result already.
+        if (_completed)
+            return false;
+
+        _completed = true;
         Result = requested;
         _complete();
         return true;

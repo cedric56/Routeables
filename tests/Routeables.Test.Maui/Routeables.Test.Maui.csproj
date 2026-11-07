@@ -70,6 +70,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Shared\RouterContract.cs" Link="Shared\RouterContract.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Routeables.Maui\Routeables.Maui.csproj" />
     <ProjectReference Include="..\..\reshapes\Reshapes.Maui.Community\Reshapes.Maui.Community.csproj" />
   </ItemGroup>

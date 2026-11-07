@@ -25,7 +25,7 @@ namespace Routeables.Blazor;
 /// A page registered without a route (the default keys) has no address of its own: the address goes back to <c>/</c>. Started by <c>MainLayout</c>; call <see cref="StartAsync"/> yourself if you use another layout.
 /// </summary>
 [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-public sealed class RouteableUrlSync(NavigationManager navigation, IRouter router, IServiceProvider provider) : IDisposable
+public sealed class RouteableUrlSync(NavigationManager navigation, IRouter router, IServiceProvider provider) : IDisposable, IAsyncDisposable
 {
     private const string HistoryModule = "./_content/Routeables.Blazor/routeables-history.js";
 
@@ -295,14 +295,15 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
     // The browser reports an address escaped ("/dogs/Afghan%20Hound") and a route is kept as it was asked ("/dogs/Afghan Hound"): both are
     // the same address, so they are compared unescaped. Without it the two never match and the address is shown again and again.
-    private static bool Same(string? a, string? b)
+    internal static bool Same(string? a, string? b)
         => a is not null && b is not null
            && string.Equals(Normalize(a), Normalize(b), StringComparison.OrdinalIgnoreCase);
 
     private static string Normalize(string address)
     {
         var path = Url(address).TrimEnd('/');
-        try { return Uri.UnescapeDataString(path); }
+        // An escaped slash is not a separator: "/files/a%2Fb" is one segment and "/files/a/b" is two, so the first must stay escaped.
+        try { return Uri.UnescapeDataString(path.Replace("%2F", "%252F", StringComparison.OrdinalIgnoreCase)); }
         catch (UriFormatException) { return path; }
     }
 
@@ -315,5 +316,18 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         _changing = null;
         router.Routed -= OnRouted;
         navigation.LocationChanged -= OnLocationChanged;
+    }
+
+    /// <summary>Stops following, and lets go of the script module that moves the history of the browser, which a scope that ends asynchronously owns.</summary>
+    public async ValueTask DisposeAsync()
+    {
+        Dispose();
+        var history = _history;
+        _history = null;
+        if (history is { IsCompletedSuccessfully: true })
+        {
+            try { await history.Result.DisposeAsync(); }
+            catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException) { }   // the circuit is already gone
+        }
     }
 }

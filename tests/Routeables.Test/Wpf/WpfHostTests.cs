@@ -39,6 +39,22 @@ public class WpfHostTests
     });
 
     [Fact]
+    public async Task WPF_routes_by_the_router_contract()
+    {
+        IServiceProvider? provider = null;
+        try
+        {
+            await WpfHarness.Run(() => provider = Application.Current.UseRouteables<FakeMainViewModel>(HostContractTests.RegisterPages));
+            await Routeables.Test.RouterContract.RunAsync(provider!);
+        }
+        finally
+        {
+            ServiceLocator.Services = null;
+            (provider as IDisposable)?.Dispose();
+        }
+    }
+
+    [Fact]
     public Task The_services_of_the_host_are_the_ones_of_WPF() => WithHostAsync(provider =>
     {
         Assert.IsType<RouteableRequestThemeService>(provider.GetRequiredService<IRouteableRequestedThemeService>());

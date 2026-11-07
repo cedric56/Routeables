@@ -155,4 +155,31 @@ public class RouteableHistoryRandomizedTests
             if (Directory.Exists(folder)) Directory.Delete(folder, recursive: true);
         }
     }
+
+    [Fact]
+    public async Task An_erased_history_is_not_brought_back_by_the_next_run()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var store = new MemoryStore();
+
+        using (var provider = Build(store, limit: null))
+        {
+            provider.StartRouteableHistory();
+            var router = provider.GetRequiredService<IRouter>();
+            await router.GoToAsync("/r0", cancellationToken: ct);
+            await router.GoToAsync("/r1", cancellationToken: ct);
+            Assert.False(string.IsNullOrEmpty(store.Kept));
+
+            await router.EraseHistoryAsync(ct);         // a sign-out: the pages must not come back
+        }
+
+        Assert.True(string.IsNullOrEmpty(store.Kept));
+
+        using var next = Build(store, limit: null);
+        next.StartRouteableHistory();
+        var second = next.GetRequiredService<IRouter>();
+        await second.GoToAsync("/r4", cancellationToken: ct);
+        await Task.Delay(50, ct);
+        Assert.Equal(["/r4"], RouteableState.Capture(second));
+    }
 }

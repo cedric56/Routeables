@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Routeables.AspNetCore;
 using Routeables.Avalonia;
 using Routeables.Blazor;
 using Routeables.Tests.Core;
@@ -21,7 +22,7 @@ public class HostContractTests
     private sealed class TestApplication : AvaloniaApplication;
 
     /// <summary>A host as the contract sees it: how to build its container, and the lifetime its main view model must have.</summary>
-    public sealed record Host(string Name, ServiceLifetime MainLifetime, Func<(IServiceProvider Provider, IDisposable Owner)> Build)
+    public sealed record Host(string Name, ServiceLifetime MainLifetime, Func<Action<IServiceCollection>, (IServiceProvider Provider, IDisposable Owner)> Build)
     {
         public override string ToString() => Name;
     }
@@ -41,40 +42,66 @@ public class HostContractTests
 
     public static TheoryData<Host> Hosts() => new()
     {
-        new Host("Razor", ServiceLifetime.Scoped, () =>
+        new Host("Razor", ServiceLifetime.Scoped, routes =>
         {
             var services = new ServiceCollection();
             services.AddSingleton<NavigationManager>(new TestNavigationManager());
             services.UseRouteablesServer<FakeMainViewModel>();
+            routes(services);
             return (Scoped(services, out var owner), owner);
         }),
-        new Host("Avalonia", ServiceLifetime.Singleton, () =>
+        new Host("Avalonia", ServiceLifetime.Singleton, routes =>
         {
             IServiceProvider? provider = null;
             global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMainViewModel>(
-                afterBuild: p => provider = p);
+                configure: routes, afterBuild: p => provider = p);
             return (provider!, (IDisposable)provider!);
         }),
-        new Host("Uno", ServiceLifetime.Singleton, () =>
+        new Host("Uno", ServiceLifetime.Singleton, routes =>
         {
             IServiceProvider? provider = null;
-            Routeables.Uno.UnoRouteablesExtensions.StartRouteables<FakeMainViewModel>(afterBuild: p => provider = p);
+            Routeables.Uno.UnoRouteablesExtensions.StartRouteables<FakeMainViewModel>(routes, p => provider = p);
             return (provider!, (IDisposable)provider!);
         }),
-        new Host("Maui", ServiceLifetime.Singleton, () =>
+        new Host("Maui", ServiceLifetime.Singleton, routes =>
         {
             var builder = MauiApp.CreateBuilder();
             Routeables.Maui.MauiRouteablesExtensions.UseRouteables<FakeMainViewModel>(builder);
+            routes(builder.Services);
             var root = builder.Services.BuildServiceProvider();
             return (root, root);
         }),
     };
 
+    /// <summary>The hosts that route: the ones above and ASP.NET Core, whose services are not compared with the others.</summary>
+    public static TheoryData<Host> RoutingHosts()
+    {
+        var hosts = Hosts();
+        hosts.Add(
+        new Host("AspNetCore", ServiceLifetime.Scoped, routes =>
+            {
+                var services = new ServiceCollection();
+                services.AddRouteablesAspNetCore<FakeMainViewModel>(routes);
+                return (Scoped(services, out var owner), owner);
+            }));
+        return hosts;
+    }
+
+    /// <summary>The routes of the shared scenario: two pages, whatever the host draws them with.</summary>
+    public sealed class PageAVm;
+    public sealed class PageBVm;
+
+    public static void RegisterPages(IServiceCollection services)
+    {
+        services.RegisterRoute<FakeViewFor, PageAVm>(route: "/a");
+        services.RegisterRoute<FakeViewFor, PageBVm>(route: "/b");
+    }
+
     [Theory]
     [MemberData(nameof(Hosts))]
     public void Every_host_provides_the_router_and_the_injection_rules(Host host)
     {
-        var (provider, owner) = host.Build();
+        var (provider, owner) = host.Build(_ => { });
         using (owner) HostContract.ProvidesRouterAndInjection(provider);
     }
 
@@ -82,7 +109,7 @@ public class HostContractTests
     [MemberData(nameof(Hosts))]
     public void The_main_view_model_is_one_instance_for_the_whole_host(Host host)
     {
-        var (provider, owner) = host.Build();
+        var (provider, owner) = host.Build(_ => { });
         using (owner) HostContract.MainViewModelIsOneInstance(provider);
     }
 
@@ -90,7 +117,15 @@ public class HostContractTests
     [MemberData(nameof(Hosts))]
     public void A_value_attribute_never_falls_back_to_the_container_on_any_host(Host host)
     {
-        var (provider, owner) = host.Build();
+        var (provider, owner) = host.Build(_ => { });
         using (owner) HostContract.ValueAttributesNeverComeFromTheContainer(provider);
+    }
+
+    [Theory]
+    [MemberData(nameof(RoutingHosts))]
+    public async Task Every_host_routes_the_same_way_back_forward_and_refusals(Host host)
+    {
+        var (provider, owner) = host.Build(RegisterPages);
+        using (owner) await Routeables.Test.RouterContract.RunAsync(provider);
     }
 }

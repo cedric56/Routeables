@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Shared\RouterContract.cs" Link="Shared\RouterContract.cs" />
     <ProjectReference Include="..\..\src\Routeables.Locking\Routeables.Locking.csproj" />
     <ProjectReference Include="..\..\src\Routeables.Regions\Routeables.Regions.csproj" />
     <ProjectReference Include="..\..\src\Routeables.Segments\Routeables.Segments.csproj" />

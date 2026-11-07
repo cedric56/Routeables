@@ -124,6 +124,36 @@ public class DialogSessionTests
         Assert.Equal(1, closed);
     }
 
+    [Fact]
+    public void Closing_from_code_after_a_button_decided_keeps_the_result_and_completes_once()
+    {
+        var completed = 0;
+        var dialog = new RouteableContentDialog { PrimaryButtonText = "Ok" };
+        var session = new RouteableContentDialogSession(dialog, () => completed++);
+        session.AllowCloseFromCode(action => action());
+
+        Assert.True(session.Buttons[0].Press());
+        dialog.Close!();                               // the view model closes while the surface is still animating out
+
+        Assert.Equal(RouteableContentDialogResult.Primary, session.Result);
+        Assert.Equal(1, completed);
+    }
+
+    [Fact]
+    public void A_second_press_while_the_dialog_is_closing_does_not_run_the_command_again()
+    {
+        var log = new List<string>();
+        var completed = 0;
+        var dialog = new RouteableContentDialog { PrimaryButtonText = "Ok", PrimaryButtonCommand = new Command(log) };
+        var session = new RouteableContentDialogSession(dialog, () => completed++);
+
+        Assert.True(session.Buttons[0].Press());
+        Assert.False(session.Buttons[0].Press());
+
+        Assert.Equal(["command:"], log);
+        Assert.Equal(1, completed);
+    }
+
     private sealed class ThrowingCommand : ICommand
     {
         public event EventHandler? CanExecuteChanged { add { } remove { } }

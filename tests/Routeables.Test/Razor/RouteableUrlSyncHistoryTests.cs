@@ -46,6 +46,7 @@ public class RouteableUrlSyncHistoryTests
     private sealed class FakeScripts(FakeNavigation browser) : IJSRuntime
     {
         public List<int> Moves { get; } = [];
+        public int ModulesDisposed { get; private set; }
         public bool Broken { get; set; }
 
         public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args)
@@ -72,7 +73,7 @@ public class RouteableUrlSyncHistoryTests
             public ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args)
                 => InvokeAsync<TValue>(identifier, args);
 
-            public ValueTask DisposeAsync() => default;
+            public ValueTask DisposeAsync() { owner.ModulesDisposed++; return default; }
         }
 
         public FakeNavigation Browser { get; } = browser;
@@ -139,6 +140,31 @@ public class RouteableUrlSyncHistoryTests
 
         Assert.Equal(-1, f.Scripts.Moves[0]);
         Assert.Empty(f.Navigation.Calls);                       // the address is not replaced: the browser moved itself
+    }
+
+    [Fact]
+    public void An_escaped_slash_is_not_the_same_address_as_a_separator()
+    {
+        Assert.False(RouteableUrlSync.Same("/files/a%2Fb", "/files/a/b"));
+        Assert.True(RouteableUrlSync.Same("/files/a%2Fb", "/files/a%2fb"));
+        Assert.True(RouteableUrlSync.Same("/dogs/Afghan%20Hound", "/dogs/Afghan Hound"));
+        Assert.True(RouteableUrlSync.Same("/dogs/Afghan%20Hound/", "/dogs/Afghan Hound"));
+    }
+
+    [Fact]
+    public async Task Disposing_the_sync_lets_go_of_the_script_module()
+    {
+        var f = new Fixture();
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+        await f.GoAsync("/detail/1", "/detail/{id:int}");
+        await f.Router.GoBackAsync(TestContext.Current.CancellationToken);
+        await Fixture.Until(() => f.Scripts.Moves.Count == 1);        // the module was imported to move the history
+
+        await f.Sync.DisposeAsync();
+
+        Assert.Equal(1, f.Scripts.ModulesDisposed);
+        f.Provider.Dispose();
     }
 
     [Fact]

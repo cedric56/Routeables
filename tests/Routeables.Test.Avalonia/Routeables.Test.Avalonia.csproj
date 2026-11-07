@@ -29,6 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Shared\RouterContract.cs" Link="Shared\RouterContract.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Routeables.Avalonia\Routeables.Avalonia.csproj" />
     <ProjectReference Include="..\..\reshapes\Reshapes.Avalonia.Fluent\Reshapes.Avalonia.Fluent.csproj" />
   </ItemGroup>

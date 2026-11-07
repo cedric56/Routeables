@@ -90,6 +90,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         catch (Exception ex) { RouteableErrors.Report<RouteableHistoryKeeper>(provider, ex, "Load"); }
 
         router.Routed += OnRouted;
+        router.History.Changed += OnHistoryChanged;
 
         // Nothing is written before the pages are back: the first page of the new run must not replace the history that is waiting.
         if (kept.Count == 0)
@@ -147,7 +148,16 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             SaveNow();
     }
 
-    private void SaveNow()
+    // An erased history raises no route change: without this, the pages that were erased would come back at the next start.
+    private void OnHistoryChanged(object? sender, EventArgs e)
+    {
+        if (_active && _router is { } router && router.History.Count == 0)
+            SaveNow(allowEmpty: true);
+    }
+
+    private void SaveNow() => SaveNow(allowEmpty: false);
+
+    private void SaveNow(bool allowEmpty)
     {
         try
         {
@@ -155,10 +165,11 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
                 return;
 
             var snapshots = RouteableState.CaptureSnapshots(router);
-            if (snapshots.Count == 0)
+            // An empty history is written only when it was erased: the first page of a new run is not yet there when the keeper starts.
+            if (snapshots.Count == 0 && !allowEmpty)
                 return;
 
-            var text = RouteableState.Serialize(snapshots);
+            var text = snapshots.Count == 0 ? string.Empty : RouteableState.Serialize(snapshots);
             lock (_gate)
             {
                 if (text == _last)
@@ -180,6 +191,8 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         _active = false;
         if (_router is { } router)
             router.Routed -= OnRouted;
+        if (_router is { } erased)
+            erased.History.Changed -= OnHistoryChanged;
     }
 }
 
