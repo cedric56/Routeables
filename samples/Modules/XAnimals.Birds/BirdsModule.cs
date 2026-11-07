@@ -20,7 +20,7 @@ public static class BirdsModule
             // the [RouteableView] attribute on the view of the platform project, which AddGeneratedRoutes() registers.
             .AddMenuEntries(() =>
             [
-                new RouteableEntry<BirdsViewModel>("Birds", AnimalIcons.Bird, route: Route, template: Route,
+                new MenuEntry<BirdsViewModel>("Birds", AnimalIcons.Bird, route: Route, template: Route,
                     description: string.Join(Environment.NewLine, "A module", "AddMenuEntries"))
 
             ], 10);

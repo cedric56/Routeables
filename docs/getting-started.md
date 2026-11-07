@@ -184,7 +184,7 @@ A few names look alike. They are different things:
 | `[RouteableView(typeof(VM))]` | Attribute on a **view**: pairs it with a view model when the names do not match |
 | `RouteableFor<…>` | The **base class of a view** (page, user control) |
 | `IRouteable` | Optional **lifecycle hooks** (`CanLeaveAsync`, `OnEnteringAsync`…) of a view model or a view |
-| `IRouteableEntry`, `RouteableEntry<T>` | A **menu entry** (a title, an icon, a route) listed by the main view model |
+| `IMenuEntry`, `MenuEntry<T>` | A **menu entry** (a title, an icon, a route) listed by the main view model |
 | `IMainViewModel`, `MainViewModelBase` | The **menu** (or tab bar): the list of entries and the selected one |
 
 The verbs of the setup calls follow one rule:

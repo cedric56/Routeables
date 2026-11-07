@@ -148,9 +148,9 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             Moved(result);
         }
         else if (provider.GetService<IMainViewModel>() is { } mainViewModel
-                 && mainViewModel.Routeables.FirstOrDefault(r => Same(r.Route, path)) is { } item)
+                 && mainViewModel.Entries.FirstOrDefault(r => Same(r.Route, path)) is { } item)
         {
-            mainViewModel.Routeable = item;       // keeps the layout's selection (menu highlight) in step; it navigates the router
+            mainViewModel.SelectedEntry = item;       // keeps the layout's selection (menu highlight) in step; it navigates the router
             return Outcome.Done;
         }
         else if (RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], path).Template is { } template)

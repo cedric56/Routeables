@@ -8,7 +8,7 @@ namespace Routeables.Core;
 /// </summary>
 /// <remarks>
 /// <b>This class does not implement <see cref="System.ComponentModel.INotifyPropertyChanged"/>: a class derived from it must</b> (see
-/// <see cref="RouteableViewModelBase"/>): <c>[INotifyPropertyChanged]</c> or <c>[ObservableObject]</c> of CommunityToolkit.Mvvm,
+/// <see cref="MainViewModelBase"/>): <c>[INotifyPropertyChanged]</c> or <c>[ObservableObject]</c> of CommunityToolkit.Mvvm,
 /// <c>[IReactiveObject]</c> of ReactiveUI, or by hand.
 /// </remarks>
 public abstract class RouterViewModelBase

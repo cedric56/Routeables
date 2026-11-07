@@ -17,7 +17,7 @@ public class DogsViewModel(IRouter router, IServiceProvider provider) : AnimalsV
             .ForViewModel(back)
             .WithRoute($"/dogs/{Uri.EscapeDataString(animal.Name)}");
 
-        var routeableView = new RouteableEntry<DogDetailViewModel>(string.Empty, route: "/dogs/{name}", template: "/dogs/{name}")
+        var routeableView = new MenuEntry<DogDetailViewModel>(string.Empty, route: "/dogs/{name}", template: "/dogs/{name}")
         {
             Arguments = arguments
         };

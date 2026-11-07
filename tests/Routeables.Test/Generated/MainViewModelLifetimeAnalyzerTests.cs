@@ -18,8 +18,8 @@ public class MainViewModelLifetimeAnalyzerTests
 
         public class Main : IMainViewModel
         {
-            public ObservableCollection<IRouteableEntry> Routeables { get; } = new();
-            public IRouteableEntry? Routeable { get; set; }
+            public ObservableCollection<IMenuEntry> Entries { get; } = new();
+            public IMenuEntry? SelectedEntry { get; set; }
             public object? CurrentView { get; set; }
             public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
             public event EventHandler? LockChanged { add { } remove { } }

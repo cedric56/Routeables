@@ -1,7 +1,7 @@
 ﻿namespace Routeables.Abstraction;
 
 /// <summary>
-/// Gives a page its icon from a key (<see cref="IRouteableEntry.Path"/>). Implement it to draw icons from your own set, a font or
+/// Gives a page its icon from a key (<see cref="IMenuEntry.Path"/>). Implement it to draw icons from your own set, a font or
 /// resources, and register it with <see cref="IconResolver.Register"/>; the first resolver that knows a key wins.
 /// </summary>
 public interface IIconResolver
@@ -18,7 +18,7 @@ public interface IIconResolver
 /// <summary>
 /// A list of icon resolvers, safe to use from several threads: a resolver registered twice is kept once,
 /// <see cref="Register"/> returns a token that removes it. An application that wants its icons apart from the process-wide
-/// ones (tests, several hosts) creates its own and gives it to its views with <see cref="IRouteableEntry.Icons"/>.
+/// ones (tests, several hosts) creates its own and gives it to its views with <see cref="IMenuEntry.Icons"/>.
 /// </summary>
 public sealed class IconResolverRegistry : IIconResolver
 {
@@ -81,9 +81,9 @@ public sealed class IconResolverRegistry : IIconResolver
 }
 
 /// <summary>
-/// Turns the icon key of a page (<see cref="IRouteableEntry.Path"/>) into what a platform displays.
+/// Turns the icon key of a page (<see cref="IMenuEntry.Path"/>) into what a platform displays.
 /// A menu entry has no container to ask, so the resolvers of the application are kept here, once for the process, in
-/// <see cref="Default"/>; a view that names its own <see cref="IRouteableEntry.Icons"/> uses those instead.
+/// <see cref="Default"/>; a view that names its own <see cref="IMenuEntry.Icons"/> uses those instead.
 /// </summary>
 public static class IconResolver
 {

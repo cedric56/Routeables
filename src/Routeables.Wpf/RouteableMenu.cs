@@ -6,8 +6,8 @@ using System.Windows.Data;
 namespace Routeables.Wpf;
 
 /// <summary>
-/// The menu of the application: one item per entry of the main view model (<see cref="IMainViewModel.Routeables"/>), the
-/// selected item is the current entry (<see cref="IMainViewModel.Routeable"/>). Its items are disabled while the menu is
+/// The menu of the application: one item per entry of the main view model (<see cref="IMainViewModel.Entries"/>), the
+/// selected item is the current entry (<see cref="IMainViewModel.SelectedEntry"/>). Its items are disabled while the menu is
 /// locked. Its data context must be the main view model.
 /// </summary>
 public class RouteableMenu : ListBox
@@ -15,15 +15,15 @@ public class RouteableMenu : ListBox
     /// <summary>Creates the menu.</summary>
     public RouteableMenu()
     {
-        SetBinding(ItemsSourceProperty, new Binding(nameof(IMainViewModel.Routeables)));
-        SetBinding(SelectedItemProperty, new Binding(nameof(IMainViewModel.Routeable)) { Mode = BindingMode.TwoWay });
+        SetBinding(ItemsSourceProperty, new Binding(nameof(IMainViewModel.Entries)));
+        SetBinding(SelectedItemProperty, new Binding(nameof(IMainViewModel.SelectedEntry)) { Mode = BindingMode.TwoWay });
 
         var name = new FrameworkElementFactory(typeof(TextBlock));
-        name.SetBinding(TextBlock.TextProperty, new Binding(nameof(IRouteableEntry.DisplayName)));
+        name.SetBinding(TextBlock.TextProperty, new Binding(nameof(IMenuEntry.DisplayName)));
 
         var description = new FrameworkElementFactory(typeof(TextBlock));
-        description.SetBinding(TextBlock.TextProperty, new Binding(nameof(IRouteableEntry.Description)));
-        description.SetBinding(VisibilityProperty, new Binding(nameof(IRouteableEntry.Description)) { Converter = new TextToVisibilityConverter() });
+        description.SetBinding(TextBlock.TextProperty, new Binding(nameof(IMenuEntry.Description)));
+        description.SetBinding(VisibilityProperty, new Binding(nameof(IMenuEntry.Description)) { Converter = new TextToVisibilityConverter() });
         description.SetValue(TextBlock.FontSizeProperty, 12.0);
         description.SetValue(OpacityProperty, 0.7);
         description.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
@@ -58,7 +58,7 @@ public class RouteableMenu : ListBox
         // (a Data Error 4 in the output): they are given here.
         item.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
         item.Setters.Add(new Setter(VerticalContentAlignmentProperty, VerticalAlignment.Center));
-        item.Setters.Add(new Setter(IsEnabledProperty, new Binding(nameof(IRouteableEntry.IsLock)) { Converter = new NotConverter() }));
+        item.Setters.Add(new Setter(IsEnabledProperty, new Binding(nameof(IMenuEntry.IsLock)) { Converter = new NotConverter() }));
         ItemContainerStyle = item;
     }
 }
@@ -84,7 +84,7 @@ internal sealed class TextToVisibilityConverter : IValueConverter
 internal sealed class IconConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
-        => (value as IRouteableEntry)?.Icon;
+        => (value as IMenuEntry)?.Icon;
 
     public object ConvertBack(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture) => throw new NotSupportedException();
 }

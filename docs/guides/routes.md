@@ -54,7 +54,7 @@ public static class BirdsModule
     public static IServiceCollection AddBirdsModule(this IServiceCollection services)
         => services.AddMenuEntries(() =>
            [
-               new RouteableEntry<BirdsViewModel>("Birds", AnimalIcons.Bird, route: Route, template: Route),
+               new MenuEntry<BirdsViewModel>("Birds", AnimalIcons.Bird, route: Route, template: Route),
            ], 10);
 }
 

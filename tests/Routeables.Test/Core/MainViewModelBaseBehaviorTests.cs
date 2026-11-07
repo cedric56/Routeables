@@ -7,9 +7,9 @@ using static Routeables.Test.Abstraction.RouterTestKit;
 
 namespace Routeables.Tests.Core;
 
-public class RouteableViewModelBaseTests
+public class MainViewModelBaseBehaviorTests
 {
-    private sealed class Entry(string route) : IRouteableEntry
+    private sealed class Entry(string route) : IMenuEntry
     {
         public bool IsLock { get; set; }
         public object? ViewModel { get; set; }
@@ -43,9 +43,9 @@ public class RouteableViewModelBaseTests
 
         await sut.GoBackAsync();
 
-        Assert.Same(entry, sut.Routeable);
+        Assert.Same(entry, sut.SelectedEntry);
         Assert.Equal([router.CurrentView], announced);
-        Assert.Contains(nameof(sut.Routeable), sut.NotifiedProperties);
+        Assert.Contains(nameof(sut.SelectedEntry), sut.NotifiedProperties);
         Assert.Contains(nameof(sut.CurrentTitle), sut.NotifiedProperties);
     }
 
@@ -64,7 +64,7 @@ public class RouteableViewModelBaseTests
         // Not through the menu: a button of the page calls the router.
         Assert.True((await router.PopAsync(TestContext.Current.CancellationToken)).Success);
 
-        Assert.Same(entry, sut.Routeable);
+        Assert.Same(entry, sut.SelectedEntry);
         Assert.Same(shown, router.CurrentView);
         Assert.Equal([shown], announced);
     }

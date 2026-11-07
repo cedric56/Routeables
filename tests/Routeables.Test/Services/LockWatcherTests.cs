@@ -6,7 +6,7 @@ namespace Routeables.Tests.Services;
 
 public class LockWatcherTests
 {
-    private sealed class Entry(bool locked) : IRouteableEntry
+    private sealed class Entry(bool locked) : IMenuEntry
     {
         public bool IsLock { get; set; } = locked;
         public object? ViewModel { get; set; }
@@ -23,7 +23,7 @@ public class LockWatcherTests
         var main = new FakeMainViewModel();
         foreach (var isLocked in locked)
         {
-            main.Routeables.Add(new Entry(isLocked));
+            main.Entries.Add(new Entry(isLocked));
         }
 
         return main;
@@ -31,7 +31,7 @@ public class LockWatcherTests
 
     private static void Lock(FakeMainViewModel main, bool locked)
     {
-        foreach (var entry in main.Routeables)
+        foreach (var entry in main.Entries)
             entry.IsLock = locked;
 
         main.NotifyLockChanged();

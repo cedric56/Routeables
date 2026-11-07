@@ -19,7 +19,7 @@ public class WpfControlsTests
     {
         var main = new FakeMainViewModel();
         foreach (var name in names)
-            main.Routeables.Add(new RouteableEntry<FakeViewModel>(name, route: $"/{name}", template: $"/{name}"));
+            main.Entries.Add(new MenuEntry<FakeViewModel>(name, route: $"/{name}", template: $"/{name}"));
         return main;
     }
 
@@ -48,9 +48,9 @@ public class WpfControlsTests
     {
         var main = Menu("Cats", "Dogs");
 
-        await WpfHarness.Run(() => Shown(main).SelectedItem = main.Routeables[1]);
+        await WpfHarness.Run(() => Shown(main).SelectedItem = main.Entries[1]);
 
-        Assert.Same(main.Routeables[1], main.Routeable);
+        Assert.Same(main.Entries[1], main.SelectedEntry);
     }
 
     [Fact]
@@ -69,11 +69,11 @@ public class WpfControlsTests
                 list.UpdateLayout();
                 var first = (Item(list, 0).IsEnabled, Item(list, 1).IsEnabled);
 
-                ((RouteableEntry)main.Routeables[1]).IsLock = true;
+                ((MenuEntry)main.Entries[1]).IsLock = true;
                 list.UpdateLayout();
                 var second = (Item(list, 0).IsEnabled, Item(list, 1).IsEnabled);
 
-                ((RouteableEntry)main.Routeables[1]).IsLock = false;
+                ((MenuEntry)main.Entries[1]).IsLock = false;
                 list.UpdateLayout();
                 return (first, second, Item(list, 1).IsEnabled);
             }
@@ -97,7 +97,7 @@ public class WpfControlsTests
         Assert.Equal(Visibility.Collapsed, new TextToVisibilityConverter().Convert("  ", typeof(Visibility), null, culture));
         Assert.Equal(Visibility.Visible, new TextToVisibilityConverter().Convert("text", typeof(Visibility), null, culture));
 
-        var entry = Substitute.For<IRouteableEntry>();
+        var entry = Substitute.For<IMenuEntry>();
         entry.Icon.Returns("glyph");
         Assert.Equal("glyph", new IconConverter().Convert(entry, typeof(object), null, culture));
         Assert.Null(new IconConverter().Convert("not an entry", typeof(object), null, culture));
@@ -116,15 +116,15 @@ public class WpfControlsTests
             await view.InitializeAsync(args, ct);
             var first = view.IsLocked;
 
-            ((RouteableEntry)main.Routeables[0]).IsLock = true;
+            ((MenuEntry)main.Entries[0]).IsLock = true;
             main.NotifyLockChanged();
             var second = view.IsLocked;
 
-            ((RouteableEntry)main.Routeables[1]).IsLock = true;
+            ((MenuEntry)main.Entries[1]).IsLock = true;
             main.NotifyLockChanged();
             var third = view.IsLocked;
 
-            ((RouteableEntry)main.Routeables[0]).IsLock = false;
+            ((MenuEntry)main.Entries[0]).IsLock = false;
             main.NotifyLockChanged();
             return (first, second, third, view.IsLocked);
         });

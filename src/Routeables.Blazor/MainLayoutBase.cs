@@ -51,7 +51,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     /// Handles routing link clicks, updating the active routeable item in the manager.
     /// </summary>
     /// <param name="item">The routeable view item selected.</param>
-    public void OnNavClick(IRouteableEntry item) => MainViewModel.Routeable = item;
+    public void OnNavClick(IMenuEntry item) => MainViewModel.SelectedEntry = item;
 
     /// <summary>
     /// Gets the concrete theme service implementation instance.
@@ -67,7 +67,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
         base.OnInitialized();
         MainViewModel.LockChanged += LockChanged;
         MainViewModel.CurrentViewChanged += CurrentViewChanged;
-        MainViewModel.Routeables.CollectionChanged += RouteablesChanged;
+        MainViewModel.Entries.CollectionChanged += RouteablesChanged;
         Service.RequestedThemeChanged += ThemeChanged;
     }
 
@@ -116,7 +116,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
             return;
         }
 
-        if (MainViewModel.Routeables.FirstOrDefault() is { } first && MainViewModel.Routeable is null)
+        if (MainViewModel.Entries.FirstOrDefault() is { } first && MainViewModel.SelectedEntry is null)
         {
             var result = await Provider.GetRequiredService<IRouter>().GoToRouteAsync(first);
             if (result.Success)
@@ -151,7 +151,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
             await Initialize(Provider);
             await ApplyThemeAsync();
             // The default page only when the address did not already choose one (a link to /elephants/Mammoth).
-            // Through Routeable: it is what selects the entry in the menu, and it shows the page.
+            // Through SelectedEntry: it is what selects the entry in the menu, and it shows the page.
             // An application without a menu opens its home route here and not from the region: the address decides, and it is applied above.
             if (!addressChosen && !MainViewModel.SelectFirst())
                 RegionStart.StartDefault(Provider);
@@ -189,7 +189,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     {
         MainViewModel.LockChanged -= LockChanged;
         MainViewModel.CurrentViewChanged -= CurrentViewChanged;
-        MainViewModel.Routeables.CollectionChanged -= RouteablesChanged;
+        MainViewModel.Entries.CollectionChanged -= RouteablesChanged;
         Service.RequestedThemeChanged -= ThemeChanged;
     }
 }

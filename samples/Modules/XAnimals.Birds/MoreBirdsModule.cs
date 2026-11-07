@@ -19,7 +19,7 @@ public static class MoreBirdsModule
     public static IServiceCollection AddMoreBirdsModule(this IServiceCollection services)
         => services.AddMenuEntries(() =>
         [
-            new RouteableEntry<MoreBirdsViewModel>("More birds", AnimalIcons.Bird, route: Route, template: Route,
+            new MenuEntry<MoreBirdsViewModel>("More birds", AnimalIcons.Bird, route: Route, template: Route,
                 description: "A module loaded while the application runs")
         ]);
 }

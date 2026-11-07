@@ -27,7 +27,7 @@ public class FeaturesViewModel : ViewModelBase, IRouteableState, IDisposable
     private readonly IMainViewModel _main;
     private readonly IServiceProvider _provider;
     private readonly MemberSession _session;
-    private readonly IRouteableBrokerService _broker;
+    private readonly IRouteableLockBroker _broker;
     private CancellationTokenSource? _countdown;
     private bool _isLocked;
     private int _remaining;
@@ -35,7 +35,7 @@ public class FeaturesViewModel : ViewModelBase, IRouteableState, IDisposable
     private string? _status;
     private string _measures = string.Empty;
 
-    public FeaturesViewModel(IRouter router, IMainViewModel main, IServiceProvider provider, MemberSession session, IRouteableBrokerService broker)
+    public FeaturesViewModel(IRouter router, IMainViewModel main, IServiceProvider provider, MemberSession session, IRouteableLockBroker broker)
     {
         _router = router;
         _main = main;

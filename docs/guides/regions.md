@@ -40,7 +40,7 @@ A region is one router for as long as its scope lives, which is the whole applic
 
 ```csharp
 // AdoptViewModel.cs: an entry says which region shows it (null: the default router)...
-var entry = new RouteableEntry<PetViewModel>("Pet", null, route: "pet", template: "pet")
+var entry = new MenuEntry<PetViewModel>("Pet", null, route: "pet", template: "pet")
 {
     Region = "adopt",
     Arguments = RouteableArgs.Create().ForViewModel(pet)

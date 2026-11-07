@@ -2,14 +2,14 @@ using Routeables.Locking;
 
 namespace Routeables.Tests.Abstraction;
 
-public class RouteableBrokerServiceTests
+public class RouteableLockBrokerTests
 {
     private sealed record Ping(string Topic = "ping") : RouteableMessage(Topic);
 
     [Fact]
     public void Publish_calls_the_subscribers_of_the_topic_only()
     {
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         var pings = 0;
         var others = 0;
         broker.Subscribe("ping", _ => pings++);
@@ -24,7 +24,7 @@ public class RouteableBrokerServiceTests
     [Fact]
     public void Disposing_a_token_removes_that_subscription_and_no_other()
     {
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         var first = 0;
         var second = 0;
         var token = broker.Subscribe("ping", _ => first++);
@@ -41,7 +41,7 @@ public class RouteableBrokerServiceTests
     [Fact]
     public void A_subscriber_disposed_while_a_message_is_on_its_way_is_not_called()
     {
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         IDisposable? later = null;
         var laterCalls = 0;
         broker.Subscribe("ping", _ => later!.Dispose());
@@ -55,7 +55,7 @@ public class RouteableBrokerServiceTests
     [Fact]
     public void A_subscriber_can_subscribe_and_publish_from_its_callback()
     {
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         var inner = 0;
         broker.Subscribe("ping", _ =>
         {
@@ -71,7 +71,7 @@ public class RouteableBrokerServiceTests
     [Fact]
     public void A_subscriber_that_throws_does_not_stop_the_others()
     {
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         var reached = false;
         broker.Subscribe("ping", _ => throw new InvalidOperationException("first"));
         broker.Subscribe("ping", _ => reached = true);
@@ -85,7 +85,7 @@ public class RouteableBrokerServiceTests
     [Fact]
     public void Several_subscribers_that_throw_are_thrown_together()
     {
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         broker.Subscribe("ping", _ => throw new InvalidOperationException("a"));
         broker.Subscribe("ping", _ => throw new InvalidOperationException("b"));
 
@@ -97,7 +97,7 @@ public class RouteableBrokerServiceTests
     [Fact]
     public async Task Concurrent_subscriptions_and_publications_neither_lose_a_subscriber_nor_throw()
     {
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         var calls = 0;
         const int subscribers = 200;
 
@@ -116,7 +116,7 @@ public class RouteableBrokerServiceTests
     [Fact]
     public void Subscribing_and_publishing_from_many_threads_loses_nothing_and_throws_nothing()
     {
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         var permanent = 0;
         broker.Subscribe("ping", _ => Interlocked.Increment(ref permanent));
 

@@ -8,14 +8,14 @@ namespace Routeables.Routing;
 /// Represents a navigable page in the application, pairing a view model type with the display
 /// information needed to present it (name, icon/source, and launch behavior).
 /// </summary>
-public class RouteableEntry : IRouteableEntry, INotifyPropertyChanged
+public class MenuEntry : IMenuEntry, INotifyPropertyChanged
 {
     /// <summary>Creates an entry.</summary>
     /// <param name="route">The address of the entry (<c>/cats</c>).</param>
     /// <param name="template">The template of the route (<c>/cats/{name}</c>).</param>
     /// <param name="displayName">The name the menu shows.</param>
     /// <param name="path">The path of the icon or image the menu shows, or <see langword="null"/>.</param>
-    public RouteableEntry(string route, string template, string displayName, string? path = null)
+    public MenuEntry(string route, string template, string displayName, string? path = null)
     {
         Template = template;
         Route = route;
@@ -51,7 +51,7 @@ public class RouteableEntry : IRouteableEntry, INotifyPropertyChanged
     /// </summary>
     internal bool InverseIsLock => !_isLock;
 
-    /// <summary>The type of the view model this entry is for, when it is typed (<see cref="RouteableEntry{T}"/>); otherwise <see langword="null"/>.</summary>
+    /// <summary>The type of the view model this entry is for, when it is typed (<see cref="MenuEntry{T}"/>); otherwise <see langword="null"/>.</summary>
     internal virtual Type? ViewModelType => null;
 
     /// <summary>
@@ -111,22 +111,22 @@ public class RouteableEntry : IRouteableEntry, INotifyPropertyChanged
     /// <summary>
     /// Creates another entry for the same page: same route, template, name, icon, icons and description, without the
     /// instances (<see cref="ViewModel"/>, <see cref="View"/>), the <see cref="Region"/> or the <see cref="Arguments"/>.
-    /// A typed entry (<see cref="RouteableEntry{T}"/>) copies as a typed entry, with no reflection.
+    /// A typed entry (<see cref="MenuEntry{T}"/>) copies as a typed entry, with no reflection.
     /// </summary>
-    public virtual RouteableEntry Copy()
+    public virtual MenuEntry Copy()
         => new(Route, Template, DisplayName, Path) { Description = Description, Icons = Icons };
 }
 
 /// <summary>
-/// Strongly typed variant of <see cref="RouteableEntry"/> whose view model is known to be of type <typeparamref name="T"/>.
+/// Strongly typed variant of <see cref="MenuEntry"/> whose view model is known to be of type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">The view model type associated with this page.</typeparam>
-public class RouteableEntry<T> : RouteableEntry
+public class MenuEntry<T> : MenuEntry
 {
     internal override Type? ViewModelType => typeof(T);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RouteableEntry{T}"/> class with no pre-existing view model.
+    /// Initializes a new instance of the <see cref="MenuEntry{T}"/> class with no pre-existing view model.
     /// </summary>
     /// <param name="displayName">The display name shown for this page.</param>
     /// <param name="icon">
@@ -135,14 +135,14 @@ public class RouteableEntry<T> : RouteableEntry
     /// <param name="route">The address of the entry; the one of the view model (<c>[Routeable]</c>) when <see langword="null"/>.</param>
     /// <param name="template">The template; the one of the view model when <see langword="null"/>.</param>
     /// <param name="description">A short sentence shown under the name (optional).</param>
-    public RouteableEntry(string displayName, string? icon = null, string? route = null, string? template = null, string? description = null)
+    public MenuEntry(string displayName, string? icon = null, string? route = null, string? template = null, string? description = null)
         : base(RouteableKeys.GetRoute(typeof(T), route), template ?? RouteableKeys.GetTemplate(typeof(T)), displayName, icon)
     {
         Description = description;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RouteableEntry{T}"/> class using an existing view model.
+    /// Initializes a new instance of the <see cref="MenuEntry{T}"/> class using an existing view model.
     /// </summary>
     /// <param name="viewModel">The existing view model instance to associate with this page.</param>
     /// <param name="displayName">The display name shown for this page.</param>
@@ -152,14 +152,14 @@ public class RouteableEntry<T> : RouteableEntry
     /// <param name="route">The address of the entry; the one of the view model (<c>[Routeable]</c>) when <see langword="null"/>.</param>
     /// <param name="template">The template; the one of the view model when <see langword="null"/>.</param>
     /// <param name="description">A short sentence shown under the name (optional).</param>
-    public RouteableEntry(T viewModel, string displayName, string? icon = null, string? route = null, string? template = null, string? description = null)
+    public MenuEntry(T viewModel, string displayName, string? icon = null, string? route = null, string? template = null, string? description = null)
         : base(RouteableKeys.GetRoute(typeof(T), route), template ?? RouteableKeys.GetTemplate(typeof(T)), displayName, icon)
     {
         ViewModel = viewModel;
         Description = description;
     }
 
-    /// <inheritdoc cref="RouteableEntry.Copy"/>
-    public override RouteableEntry<T> Copy()
+    /// <inheritdoc cref="MenuEntry.Copy"/>
+    public override MenuEntry<T> Copy()
         => new(DisplayName, Path, Route, Template, Description) { Icons = Icons };
 }

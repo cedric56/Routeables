@@ -50,9 +50,9 @@
     {
         @await Html.PartialAsync(MainViewPageModel.ViewName(view), Model.Router.CurrentViewModel)
     }
-    else if (Model.Main.Routeable?.View is { } entryView)
+    else if (Model.Main.SelectedEntry?.View is { } entryView)
     {
-        @await Html.PartialAsync(MainViewPageModel.ViewName(entryView), Model.Main.Routeable.ViewModel)
+        @await Html.PartialAsync(MainViewPageModel.ViewName(entryView), Model.Main.SelectedEntry.ViewModel)
     }
     else
     {

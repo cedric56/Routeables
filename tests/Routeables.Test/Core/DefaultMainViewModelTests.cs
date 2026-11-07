@@ -39,7 +39,7 @@ public class DefaultMainViewModelTests
     {
         using var provider = Build();
 
-        Assert.Empty(provider.GetRequiredService<IMainViewModel>().Routeables);
+        Assert.Empty(provider.GetRequiredService<IMainViewModel>().Entries);
     }
 
     [Fact]

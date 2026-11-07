@@ -8,10 +8,10 @@ namespace Routeables.Test.Maui;
 public sealed class TestMain : IMainViewModel
 {
     /// <summary>The entries of the menu: empty, since only the presence of a main view model matters to the tests.</summary>
-    public ObservableCollection<IRouteableEntry> Routeables { get; } = [];
+    public ObservableCollection<IMenuEntry> Entries { get; } = [];
 
     /// <summary>The selected entry: never set by the tests, the controls under test do not drive it here.</summary>
-    public IRouteableEntry? Routeable { get; set; }
+    public IMenuEntry? SelectedEntry { get; set; }
 
     /// <summary>The current view: the tests read it, nothing notifies its changes.</summary>
     public object? CurrentView { get; set; }

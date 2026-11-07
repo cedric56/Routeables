@@ -14,7 +14,7 @@ public class RouteBenchmarks
 
     private ServiceProvider provider = null!;
     private IRouter router = null!;
-    private readonly IRouteableEntry viewB = new RouteableEntry<VmB>("B", null, "/b", "/b");
+    private readonly IMenuEntry viewB = new MenuEntry<VmB>("B", null, "/b", "/b");
 
     [GlobalSetup]
     public async Task Setup()

@@ -18,7 +18,7 @@ public class PandasViewModel(IRouter router, IServiceProvider provider) : Animal
             .ForViewModel(back)
             .WithRoute($"/pandas/{Uri.EscapeDataString(animal.Name)}");
 
-        var routeableView = new RouteableEntry<PandaDetailViewModel>(string.Empty, route: PandaDetailViewModel.Route, template: PandaDetailViewModel.Route)
+        var routeableView = new MenuEntry<PandaDetailViewModel>(string.Empty, route: PandaDetailViewModel.Route, template: PandaDetailViewModel.Route)
         {
             Arguments = arguments
         };

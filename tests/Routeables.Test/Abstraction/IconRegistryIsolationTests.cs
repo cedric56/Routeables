@@ -19,7 +19,7 @@ public class IconRegistryIsolationTests
         using var token = IconResolver.Register(new Fixed(key, global));
 
         var own = new IconResolverRegistry();
-        IRouteableEntry view = new RouteableEntry("/a", "/a", "A", key) { Icons = own };
+        IMenuEntry view = new MenuEntry("/a", "/a", "A", key) { Icons = own };
 
         Assert.Null(view.Icon);                                 // its registry is empty
         var local = new object();
@@ -35,7 +35,7 @@ public class IconRegistryIsolationTests
         var icon = new object();
         using var token = IconResolver.Register(new Fixed(key, icon));
 
-        IRouteableEntry view = new RouteableEntry("/a", "/a", "A", key);
+        IMenuEntry view = new MenuEntry("/a", "/a", "A", key);
 
         Assert.Same(icon, view.Icon);
         Assert.Null(view.Icons);

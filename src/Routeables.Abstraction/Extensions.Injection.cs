@@ -10,7 +10,7 @@ public static partial class Extensions
     /// <summary>
     /// Populates the injectable properties of <paramref name="view"/> (view or view model):
     /// <list type="number">
-    /// <item>A property of type <see cref="RouteablesParameters"/> receives the whole parameter bag.</item>
+    /// <item>A property of type <see cref="RouteableParameters"/> receives the whole parameter bag.</item>
     /// <item>A property whose name matches an entry in <paramref name="parameters"/> (case-insensitive)
     /// receives that value. Explicit values always win, and <c>null</c> is a valid value.</item>
     /// <item>Any other eligible property that is still <c>null</c> is resolved from DI by its type, when one of its
@@ -48,10 +48,10 @@ public static partial class Extensions
             if (property.Name == "Context" || property.Get is null)
                 continue;
 
-            // A RouteablesParameters property receives the entire parameter bag.
-            if (parameters != null && property.PropertyType == typeof(RouteablesParameters))
+            // A RouteableParameters property receives the entire parameter bag.
+            if (parameters != null && property.PropertyType == typeof(RouteableParameters))
             {
-                var bag = new RouteablesParameters();
+                var bag = new RouteableParameters();
                 foreach (var entry in parameters)
                     bag.Add(entry.Key, entry.Value);
                 property.Set(view, bag);
@@ -126,7 +126,7 @@ public static partial class Extensions
 
         foreach (var property in injectable.Properties)
         {
-            if (property.Name == "Context" || property.PropertyType == typeof(RouteablesParameters))
+            if (property.Name == "Context" || property.PropertyType == typeof(RouteableParameters))
                 continue;
             if (injection.AttributeTypes.Any(a => property.Has(a.Type)))
                 names.Add(property.Name);

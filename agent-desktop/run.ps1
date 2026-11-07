@@ -74,7 +74,7 @@ function Get-Snapshot([string] $app, [string] $label, [string] $dir) {
 }
 
 # A button is found by its name. A menu entry too, or by the view model it shows: the menu of the WPF sample has no accessible name,
-# its entries are called "Routeables.Routing.RouteableEntry`1[XAnimals.ViewModels.CatsViewModel]".
+# its entries are called "Routeables.Routing.MenuEntry`1[XAnimals.ViewModels.CatsViewModel]".
 function Find-Node($snapshot, [string] $name, [string] $viewModel = '') {
   $named = @($snapshot.Nodes | Where-Object { $_.ref_id -and $_.name })
   # The exact name first: "Ok" is not "Ok / Cancel", "Yes" is not "Yes / No".

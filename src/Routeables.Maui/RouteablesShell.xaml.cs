@@ -4,7 +4,7 @@ using Routeables.Services;
 namespace Routeables.Maui;
 
 /// <summary>
-/// A <see cref="Shell"/> whose top-level items (tabs or flyout entries) come from <see cref="IMainViewModel.Routeables"/>.
+/// A <see cref="Shell"/> whose top-level items (tabs or flyout entries) come from <see cref="IMainViewModel.Entries"/>.
 /// Shell owns the top-level structure; Routeables owns the route change inside each item, so pages managed
 /// by the router must not also be routed with <c>Shell.GoToAsync</c>.
 /// </summary>
@@ -25,7 +25,7 @@ public partial class RouteablesShell : Shell
         mainViewModel = provider.GetRequiredService<IMainViewModel>();
         BindingContext = mainViewModel;
 
-        foreach (var routeable in mainViewModel.Routeables)
+        foreach (var routeable in mainViewModel.Entries)
             AddItem(routeable, hosts.Count);
 
         // The content of the first item is resolved from the start: its route change begins now, not when the shell appears.
@@ -33,7 +33,7 @@ public partial class RouteablesShell : Shell
     }
 
     // An item for an entry, at its place in the collection: the view produced by the router is shown inside its host.
-    private void AddItem(IRouteableEntry routeable, int index)
+    private void AddItem(IMenuEntry routeable, int index)
     {
         var host = new ContentView();
         index = Math.Clamp(index, 0, hosts.Count);
@@ -57,8 +57,8 @@ public partial class RouteablesShell : Shell
     private void OnRouteablesChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) => OnUiThread(() =>
     {
         if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add || e.NewItems is null) return;
-        var index = e.NewStartingIndex >= 0 ? e.NewStartingIndex : mainViewModel.Routeables.Count - e.NewItems.Count;
-        foreach (IRouteableEntry routeable in e.NewItems)
+        var index = e.NewStartingIndex >= 0 ? e.NewStartingIndex : mainViewModel.Entries.Count - e.NewItems.Count;
+        foreach (IMenuEntry routeable in e.NewItems)
             AddItem(routeable, index++);
     });
 
@@ -66,9 +66,9 @@ public partial class RouteablesShell : Shell
     // platform reads depends on how it draws them (a ShellContent put in Items is wrapped in an item and a section), so all three are set.
     private void OnLockChanged(object? sender, EventArgs e) => OnUiThread(() =>
     {
-        for (var i = 0; i < Items.Count && i < mainViewModel.Routeables.Count; i++)
+        for (var i = 0; i < Items.Count && i < mainViewModel.Entries.Count; i++)
         {
-            var enabled = !mainViewModel.Routeables[i].IsLock;
+            var enabled = !mainViewModel.Entries[i].IsLock;
             Items[i].IsEnabled = enabled;
             foreach (var section in Items[i].Items)
             {
@@ -90,7 +90,7 @@ public partial class RouteablesShell : Shell
     // The entry the view model shows; before Shell has a current item (it has none until it appears) the shell cannot tell it.
     private int ShownIndex()
     {
-        var index = mainViewModel.Routeable is { } routeable ? mainViewModel.Routeables.IndexOf(routeable) : -1;
+        var index = mainViewModel.SelectedEntry is { } routeable ? mainViewModel.Entries.IndexOf(routeable) : -1;
         return index >= 0 ? index : CurrentIndex();
     }
 
@@ -124,14 +124,14 @@ public partial class RouteablesShell : Shell
         {
             mainViewModel.LockChanged -= OnLockChanged;
             mainViewModel.CurrentViewChanged -= OnCurrentViewChanged;
-            mainViewModel.Routeables.CollectionChanged -= OnRouteablesChanged;
+            mainViewModel.Entries.CollectionChanged -= OnRouteablesChanged;
             following = false;
         }
         else if (args.NewHandler is not null && !following)
         {
             mainViewModel.LockChanged += OnLockChanged;
             mainViewModel.CurrentViewChanged += OnCurrentViewChanged;
-            mainViewModel.Routeables.CollectionChanged += OnRouteablesChanged;
+            mainViewModel.Entries.CollectionChanged += OnRouteablesChanged;
             following = true;
             SyncItems();                              // the entries added before the shell had a handler
             OnLockChanged(this, EventArgs.Empty);     // the locks set before the shell had a handler
@@ -169,16 +169,16 @@ public partial class RouteablesShell : Shell
     // The entries added between the constructor and the handler (a module loaded in that time) are in the collection but not in the shell.
     private void SyncItems()
     {
-        if (hosts.Count == mainViewModel.Routeables.Count) return;
+        if (hosts.Count == mainViewModel.Entries.Count) return;
 
         Items.Clear();
         hosts.Clear();
         shown = -1;
-        foreach (var routeable in mainViewModel.Routeables)
+        foreach (var routeable in mainViewModel.Entries)
             AddItem(routeable, hosts.Count);
     }
 
-    private static ContentPage BuildPage(IRouteableEntry routeable, ContentView host)
+    private static ContentPage BuildPage(IMenuEntry routeable, ContentView host)
     {
         if (string.IsNullOrWhiteSpace(routeable.Description))
             return new ContentPage { Title = routeable.DisplayName, Content = host };
@@ -204,9 +204,9 @@ public partial class RouteablesShell : Shell
     private void Activate()
     {
         var index = CurrentIndex();
-        if (index < 0 || index >= mainViewModel.Routeables.Count) return;
+        if (index < 0 || index >= mainViewModel.Entries.Count) return;
 
-        var routeable = mainViewModel.Routeables[index];
+        var routeable = mainViewModel.Entries[index];
 
         // A locked entry cannot be entered, whatever the platform does with IsEnabled: the selection goes back to the entry shown.
         if (shown >= 0 && index != shown && routeable.IsLock)
@@ -216,9 +216,9 @@ public partial class RouteablesShell : Shell
         }
 
         shown = index;
-        if (ReferenceEquals(mainViewModel.Routeable, routeable)) return;
+        if (ReferenceEquals(mainViewModel.SelectedEntry, routeable)) return;
 
-        // The Routeable setter of the view model starts the route change (see MainViewModel in the sample).
-        mainViewModel.Routeable = routeable;
+        // The SelectedEntry setter of the view model starts the route change (see MainViewModel in the sample).
+        mainViewModel.SelectedEntry = routeable;
     }
 }

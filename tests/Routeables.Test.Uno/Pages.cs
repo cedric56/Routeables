@@ -8,10 +8,10 @@ namespace Routeables.Test.Uno;
 public sealed class TestMain : IMainViewModel
 {
     /// <summary>The collection of available routeable entries.</summary>
-    public ObservableCollection<IRouteableEntry> Routeables { get; } = [];
+    public ObservableCollection<IMenuEntry> Entries { get; } = [];
 
     /// <summary>The currently selected routeable entry, if any.</summary>
-    public IRouteableEntry? Routeable { get; set; }
+    public IMenuEntry? SelectedEntry { get; set; }
 
     /// <summary>The view currently displayed by the main content area.</summary>
     public object? CurrentView { get; set; }

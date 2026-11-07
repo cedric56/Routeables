@@ -14,7 +14,7 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
 
     public event EventHandler<RouteCoordinatedEventArgs>? Coordinated;
 
-    private sealed record Step(RouteSegment Segment, IRouter Router, IRouteableEntry? View);
+    private sealed record Step(RouteSegment Segment, IRouter Router, IMenuEntry? View);
 
     public async Task<RouteableResult> CoordinateAsync(RouteCoordination coordination, CancellationToken cancellationToken = default)
     {

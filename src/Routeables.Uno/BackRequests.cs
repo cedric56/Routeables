@@ -51,7 +51,7 @@ internal sealed class BackRequests : IDisposable
 
     private void Update()
     {
-        if (_menu?.Routeable?.Region is { Length: > 0 } region)
+        if (_menu?.SelectedEntry?.Region is { Length: > 0 } region)
         {
             try
             {

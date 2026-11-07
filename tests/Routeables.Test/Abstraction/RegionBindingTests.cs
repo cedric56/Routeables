@@ -32,7 +32,7 @@ public class RegionBindingTests
         services.AddRegion("right");
     });
 
-    private static RouteableEntry<T> Entry<T>(string route, string? region) => new(route, null, route, route) { Region = region };
+    private static MenuEntry<T> Entry<T>(string route, string? region) => new(route, null, route, route) { Region = region };
 
     [Fact]
     public async Task An_entry_goes_to_the_router_of_its_region_and_the_host_of_that_region_shows_it()

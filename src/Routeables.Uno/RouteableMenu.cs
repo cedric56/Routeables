@@ -19,8 +19,8 @@ public partial class RouteableMenu : Microsoft.UI.Xaml.Controls.ListView
     /// <summary>Creates the list.</summary>
     public RouteableMenu()
     {
-        SetBinding(ItemsSourceProperty, new Binding { Path = new PropertyPath(nameof(IMainViewModel.Routeables)) });
-        SetBinding(SelectedItemProperty, new Binding { Path = new PropertyPath(nameof(IMainViewModel.Routeable)), Mode = BindingMode.TwoWay });
+        SetBinding(ItemsSourceProperty, new Binding { Path = new PropertyPath(nameof(IMainViewModel.Entries)) });
+        SetBinding(SelectedItemProperty, new Binding { Path = new PropertyPath(nameof(IMainViewModel.SelectedEntry)), Mode = BindingMode.TwoWay });
         SelectionMode = ListViewSelectionMode.Single;
         ItemTemplate = (DataTemplate)XamlReader.Load(MenuItemTemplate);
     }

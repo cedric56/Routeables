@@ -10,7 +10,7 @@ Without `AddLocking()` nothing is locked.
 
 ## To know
 
-- `IRouteableBrokerService`: publish and subscribe between components. A subscriber that throws does not stop the others.
+- `IRouteableLockBroker`: publish and subscribe between components. A subscriber that throws does not stop the others.
 - `RouteableLockMessage(isLocked, isAllLocked)`: locks or unlocks the main entries (every main view model when `isAllLocked`).
 
 See [lifecycle and guards](../../docs/guides/lifecycle.md).

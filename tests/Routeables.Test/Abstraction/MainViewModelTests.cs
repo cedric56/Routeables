@@ -6,19 +6,19 @@ namespace Routeables.Test.Abstraction;
 
 public class MainViewModelTests
 {
-    private static IRouteableEntry View(string name) => new RouteableEntry("/" + name, "/" + name, name);
+    private static IMenuEntry View(string name) => new MenuEntry("/" + name, "/" + name, name);
 
     [Fact]
     public void SelectFirst_selects_the_first_entry_once()
     {
-        IMainViewModel main = new FakeMainViewModel { Routeables = { View("a"), View("b") } };
+        IMainViewModel main = new FakeMainViewModel { Entries = { View("a"), View("b") } };
 
         Assert.True(main.SelectFirst());
-        Assert.Equal("a", main.Routeable!.DisplayName);
+        Assert.Equal("a", main.SelectedEntry!.DisplayName);
 
-        main.Routeable = main.Routeables[1];
+        main.SelectedEntry = main.Entries[1];
         Assert.True(!main.SelectFirst());                    // something is selected: left alone
-        Assert.Equal("b", main.Routeable.DisplayName);
+        Assert.Equal("b", main.SelectedEntry.DisplayName);
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public class MainViewModelTests
         IMainViewModel main = new FakeMainViewModel();
 
         Assert.True(!main.SelectFirst());
-        Assert.Null(main.Routeable);
+        Assert.Null(main.SelectedEntry);
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class MainViewModelTests
 
         var main = provider.GetRequiredService<IMainViewModel>();
 
-        Assert.Equal(["orders", "invoices", "customers"], main.Routeables.Select(entry => entry.DisplayName));
+        Assert.Equal(["orders", "invoices", "customers"], main.Entries.Select(entry => entry.DisplayName));
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class MainViewModelTests
 
         var main = provider.GetRequiredService<IMainViewModel>();
 
-        Assert.Equal(["first", "middle", "second", "far", "last"], main.Routeables.Select(entry => entry.DisplayName));
+        Assert.Equal(["first", "middle", "second", "far", "last"], main.Entries.Select(entry => entry.DisplayName));
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public class MainViewModelTests
 
         provider.GetRequiredService<IRouteableModules>().Load("Orders", s => s.AddMenuEntries(() => [View("orders")], index: 1));
 
-        Assert.Equal(["home", "orders", "about"], main.Routeables.Select(entry => entry.DisplayName));
+        Assert.Equal(["home", "orders", "about"], main.Entries.Select(entry => entry.DisplayName));
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class MainViewModelTests
         var second = scope.ServiceProvider.GetRequiredService<IMainViewModel>();
 
         Assert.Same(first, second);
-        Assert.Single(first.Routeables);
+        Assert.Single(first.Entries);
         Assert.Same(scope.ServiceProvider.GetRequiredService<FakeMainViewModel>(), first);   // the main itself is the same instance
     }
 
@@ -143,15 +143,15 @@ public class MainViewModelTests
 
         var main = provider.GetRequiredService<FakeMainViewModel>();       // the class first, not the interface
 
-        Assert.Single(main.Routeables);
+        Assert.Single(main.Entries);
         Assert.Same(main, provider.GetRequiredService<IMainViewModel>());
-        Assert.Single(main.Routeables);
+        Assert.Single(main.Entries);
     }
 
     [Fact]
     public void The_same_module_added_twice_adds_its_entries_once()
     {
-        static IEnumerable<IRouteableEntry> Orders() => [View("orders")];
+        static IEnumerable<IMenuEntry> Orders() => [View("orders")];
 
         var services = new ServiceCollection();
         services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Singleton);
@@ -159,15 +159,15 @@ public class MainViewModelTests
         services.AddMenuEntries(Orders);
         using var provider = services.BuildServiceProvider();
 
-        Assert.Single(provider.GetRequiredService<IMainViewModel>().Routeables);
+        Assert.Single(provider.GetRequiredService<IMainViewModel>().Entries);
     }
 
     [Fact]
     public void A_module_that_needs_another_one_calls_it_and_the_other_is_added_once()
     {
         // Orders needs Customers (a dependency is a call, as in any code); the application adds both.
-        static IEnumerable<IRouteableEntry> CustomersEntries() => [View("customers")];
-        static IEnumerable<IRouteableEntry> OrdersEntries() => [View("orders")];
+        static IEnumerable<IMenuEntry> CustomersEntries() => [View("customers")];
+        static IEnumerable<IMenuEntry> OrdersEntries() => [View("orders")];
         static IServiceCollection AddCustomersModule(IServiceCollection services) => services.AddMenuEntries(CustomersEntries);
         static IServiceCollection AddOrdersModule(IServiceCollection services) => AddCustomersModule(services).AddMenuEntries(OrdersEntries);
 
@@ -177,7 +177,7 @@ public class MainViewModelTests
         AddCustomersModule(services);
         using var provider = services.BuildServiceProvider();
 
-        Assert.Equal(["customers", "orders"], provider.GetRequiredService<IMainViewModel>().Routeables.Select(entry => entry.DisplayName));
+        Assert.Equal(["customers", "orders"], provider.GetRequiredService<IMainViewModel>().Entries.Select(entry => entry.DisplayName));
     }
 
     [Fact]
@@ -194,8 +194,8 @@ public class MainViewModelTests
     private sealed class MainWithDependency(IMissing missing) : IMainViewModel
     {
         public IMissing Missing { get; } = missing;
-        public System.Collections.ObjectModel.ObservableCollection<IRouteableEntry> Routeables { get; } = [];
-        public IRouteableEntry? Routeable { get; set; }
+        public System.Collections.ObjectModel.ObservableCollection<IMenuEntry> Entries { get; } = [];
+        public IMenuEntry? SelectedEntry { get; set; }
         public object? CurrentView { get; set; }
         public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
         public event EventHandler? LockChanged { add { } remove { } }
@@ -212,8 +212,8 @@ public class MainViewModelTests
 
         using var one = provider.CreateScope();
         using var other = provider.CreateScope();
-        var entryOfOne = one.ServiceProvider.GetRequiredService<IMainViewModel>().Routeables.Single();
-        var entryOfOther = other.ServiceProvider.GetRequiredService<IMainViewModel>().Routeables.Single();
+        var entryOfOne = one.ServiceProvider.GetRequiredService<IMainViewModel>().Entries.Single();
+        var entryOfOther = other.ServiceProvider.GetRequiredService<IMainViewModel>().Entries.Single();
 
         entryOfOne.IsLock = true;                       // a lock in one circuit...
 
@@ -228,7 +228,7 @@ public class MainViewModelTests
         services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Singleton);
         using var provider = services.BuildServiceProvider();
 
-        Assert.Empty(provider.GetRequiredService<IMainViewModel>().Routeables);
+        Assert.Empty(provider.GetRequiredService<IMainViewModel>().Entries);
     }
 
     [Fact]

@@ -6,7 +6,7 @@
 
 - `RouterViewModelBase`: back/forward routing through the router's history.
 - `MainViewModelBase`: a ready-to-use main view model; you only return the entries.
-- `RouteableViewModelBase`: the abstract base under it; manages routing between a set of `IRouteableEntry` items (menus, tab bars), implements `IMainViewModel` and guards the change of the current item.
+- `MainViewModelBase`: the abstract base under it; manages routing between a set of `IMenuEntry` items (menus, tab bars), implements `IMainViewModel` and guards the change of the current item.
 - `CloseableViewModelBase<TResult>`: a view model that can be closed and returns a result (dialogs).
 
 The CommunityToolkit.Mvvm and ReactiveUI flavours are opt-in sources: they are not in the assembly. Declare the feature in your project file; `Routeables.targets` (in the `Routeables` package) adds the matching source files and the packages they use:
@@ -21,7 +21,7 @@ The CommunityToolkit.Mvvm and ReactiveUI flavours are opt-in sources: they are n
 
 ## Shared services
 
-These interfaces live in `Routeables.Services` (namespace `Routeables.Services`) and are implemented by each host. Routing does not need them: a project that only routes references `Routeables.Abstraction` and `Routeables.Routing`, and the hosts bring `Routeables.Services` when they are used. `IRouteableBrokerService` stays in `Routeables.Abstraction` because the lock coordinator uses it.
+These interfaces live in `Routeables.Services` (namespace `Routeables.Services`) and are implemented by each host. Routing does not need them: a project that only routes references `Routeables.Abstraction` and `Routeables.Routing`, and the hosts bring `Routeables.Services` when they are used. `IRouteableLockBroker` stays in `Routeables.Abstraction` because the lock coordinator uses it.
 
 | Interface | Purpose |
 | --- | --- |

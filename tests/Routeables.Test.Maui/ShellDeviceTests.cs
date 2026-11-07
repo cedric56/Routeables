@@ -15,7 +15,7 @@ public class ShellDeviceTests
     // ------------------------------------------------------------------------------------------------ the fixture
 
     /// <summary>An entry of the menu: a name, a route, and a description if the test wants a caption.</summary>
-    private sealed class Entry(string name, string? description = null) : IRouteableEntry
+    private sealed class Entry(string name, string? description = null) : IMenuEntry
     {
         public bool IsLock { get; set; }
         public object? ViewModel { get; set; }
@@ -31,12 +31,12 @@ public class ShellDeviceTests
     /// <summary>The menu of the fixture: entries, a selection, and every event a host raises, by hand.</summary>
     private sealed class Menu : IMainViewModel
     {
-        private IRouteableEntry? _selected;
+        private IMenuEntry? _selected;
         private object? _view;
 
-        public ObservableCollection<IRouteableEntry> Routeables { get; } = [];
+        public ObservableCollection<IMenuEntry> Entries { get; } = [];
 
-        public IRouteableEntry? Routeable
+        public IMenuEntry? SelectedEntry
         {
             get => _selected;
             set
@@ -57,7 +57,7 @@ public class ShellDeviceTests
         }
 
         /// <summary>Every entry that was selected, in order.</summary>
-        public List<IRouteableEntry?> Selections { get; } = [];
+        public List<IMenuEntry?> Selections { get; } = [];
 
         public event EventHandler<object?>? CurrentViewChanged;
         public event EventHandler? LockChanged;
@@ -80,7 +80,7 @@ public class ShellDeviceTests
         public static Menu With(params string[] names)
         {
             var menu = new Menu();
-            foreach (var name in names) menu.Routeables.Add(new Entry(name));
+            foreach (var name in names) menu.Entries.Add(new Entry(name));
             return menu;
         }
     }
@@ -181,7 +181,7 @@ public class ShellDeviceTests
 
         _ = ShellOf(menu);
 
-        Assert.Same(menu.Routeables[0], menu.Routeable);
+        Assert.Same(menu.Entries[0], menu.SelectedEntry);
         Assert.Single(menu.Selections);
     }
 
@@ -190,12 +190,12 @@ public class ShellDeviceTests
     public void An_entry_that_is_already_selected_is_kept()
     {
         var menu = Menu.With("Home", "Cats");
-        menu.Routeable = menu.Routeables[1];
+        menu.SelectedEntry = menu.Entries[1];
         menu.Selections.Clear();
 
         _ = ShellOf(menu);
 
-        Assert.Same(menu.Routeables[1], menu.Routeable);
+        Assert.Same(menu.Entries[1], menu.SelectedEntry);
         Assert.Empty(menu.Selections);
     }
 
@@ -213,7 +213,7 @@ public class ShellDeviceTests
     public void The_description_of_an_entry_is_a_caption_above_its_view()
     {
         var menu = new Menu();
-        menu.Routeables.Add(new Entry("Home", "The start page"));
+        menu.Entries.Add(new Entry("Home", "The start page"));
 
         var shell = ShellOf(menu);
 
@@ -231,7 +231,7 @@ public class ShellDeviceTests
         var menu = Menu.With("Home");
         var shell = ShellOf(menu);
 
-        menu.Routeables.Add(new Entry("Late"));
+        menu.Entries.Add(new Entry("Late"));
         Assert.Single(shell.Items);
 
         shell.Handler = new QuietHandler();
@@ -246,7 +246,7 @@ public class ShellDeviceTests
         var menu = Menu.With("Home");
         var shell = Followed(menu);
 
-        menu.Routeables.Add(new Entry("Cats"));
+        menu.Entries.Add(new Entry("Cats"));
 
         Assert.Equal(["Home", "Cats"], Titles(shell));
     }
@@ -258,7 +258,7 @@ public class ShellDeviceTests
         var menu = Menu.With("Home", "Dogs");
         var shell = Followed(menu);
 
-        menu.Routeables.Insert(1, new Entry("Cats"));
+        menu.Entries.Insert(1, new Entry("Cats"));
 
         Assert.Equal(["Home", "Cats", "Dogs"], Titles(shell));
     }
@@ -271,7 +271,7 @@ public class ShellDeviceTests
         var shell = Followed(menu);
 
         foreach (var name in new[] { "Cats", "Dogs", "Birds" })
-            menu.Routeables.Add(new Entry(name));
+            menu.Entries.Add(new Entry(name));
 
         Assert.Equal(["Home", "Cats", "Dogs", "Birds"], Titles(shell));
     }
@@ -283,7 +283,7 @@ public class ShellDeviceTests
         var menu = Menu.With("Home", "Cats");
         var shell = Followed(menu);
 
-        menu.Routeables.RemoveAt(1);
+        menu.Entries.RemoveAt(1);
 
         Assert.Equal(["Home", "Cats"], Titles(shell));
     }
@@ -322,7 +322,7 @@ public class ShellDeviceTests
     {
         var menu = Menu.With("Home", "Cats");
         var shell = ShellOf(menu);
-        menu.Routeables[1].IsLock = true;
+        menu.Entries[1].IsLock = true;
 
         shell.Handler = new QuietHandler();
 
@@ -338,7 +338,7 @@ public class ShellDeviceTests
         var shell = Followed(menu);
         menu.LockAll();
 
-        menu.Routeables.Add(new Entry("Late") { IsLock = true });
+        menu.Entries.Add(new Entry("Late") { IsLock = true });
         menu.NotifyLockChanged();
 
         Assert.False(shell.Items[1].IsEnabled);
@@ -369,7 +369,7 @@ public class ShellDeviceTests
     {
         var menu = Menu.With("Home", "Cats");
         var shell = Followed(menu);
-        menu.Routeable = menu.Routeables[1];
+        menu.SelectedEntry = menu.Entries[1];
         var view = new Label { Text = "cats" };
 
         menu.CurrentView = view;
@@ -453,7 +453,7 @@ public class ShellDeviceTests
         var shell = Followed(menu);
         shell.Handler = null;
 
-        menu.Routeables.Add(new Entry("Late"));
+        menu.Entries.Add(new Entry("Late"));
         menu.LockAll();
         menu.CurrentView = new Label();
 

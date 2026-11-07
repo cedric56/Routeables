@@ -22,7 +22,7 @@ internal sealed class DefaultMainViewModel(IRouter router) : MainViewModelBase(r
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     /// <summary>No entry: the application has no menu.</summary>
-    protected override ObservableCollection<IRouteableEntry> GetRouteables() => [];
+    protected override ObservableCollection<IMenuEntry> GetEntries() => [];
 
     private int _started;
 

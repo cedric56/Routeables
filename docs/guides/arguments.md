@@ -15,7 +15,7 @@ await router.GoToAsync($"/cats/{Uri.EscapeDataString(animal.Name)}",
     RouteableArgs.Create().WithValue(CatDetailViewModel.AnimalKey, animal).WithValue(CatDetailViewModel.BackKey, back));
 ```
 
-The route is found from the address. When the address alone does not say which route you mean, give its template: `router.GoToAsync("/dogs/Eurohound", args, template: "/dogs/{name}")`. `DogsViewModel` does it with a `RouteableEntry<DogDetailViewModel>` whose `route` and `template` are `/dogs/{name}`.
+The route is found from the address. When the address alone does not say which route you mean, give its template: `router.GoToAsync("/dogs/Eurohound", args, template: "/dogs/{name}")`. `DogsViewModel` does it with a `MenuEntry<DogDetailViewModel>` whose `route` and `template` are `/dogs/{name}`.
 
 To name the view model yourself, give it as the type argument: `router.GoToRouteAsync<BearDetailViewModel>("/bears/Brown%20Bear")` goes to the view registered under that route and builds a `BearDetailViewModel` for it. It takes the same `args` and `template`.
 

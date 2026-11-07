@@ -54,7 +54,7 @@ A view and a view model that are the same object, or an instance shared with an 
 
 `Singleton` and `Scoped` views and view models belong to the cache that builds them: they are disposed with the provider or the scope, never by the router when they leave the history, since the next route change to the same route shows the same instance.
 
-A menu entry (`IRouteableEntry`) remembers the view and view model it showed last and gives them back on its next click. If the router has disposed them since (the entry left the history), the entry gets new ones instead of a disposed page.
+A menu entry (`IMenuEntry`) remembers the view and view model it showed last and gives them back on its next click. If the router has disposed them since (the entry left the history), the entry gets new ones instead of a disposed page.
 
 > [!NOTE]
 > When a scope or provider is disposed **synchronously** (`Dispose`, not `DisposeAsync`), a view or view model that only implements `IAsyncDisposable` has its `DisposeAsync()` started and not awaited: a synchronous call cannot wait for it, on a UI thread it would risk a deadlock, and on Blazor WebAssembly (one thread) it is impossible. The disposal finishes afterwards and an error goes to the error sink. Dispose the scope with `DisposeAsync` when you can await.
@@ -130,7 +130,7 @@ If the view overrides `InitializeAsync`, call `base.InitializeAsync(args, ct)` s
 `GoToRouteAsync` returns a `RouteableResult` (`Success`, `Cancelled`, `Exception`) instead of throwing. `MainViewModelBase` writes the reason to the debug output when an entry is not shown, and calls the virtual `OnRoutingFailed(entry, result)`: override it to log, or put a breakpoint in it.
 
 ```csharp
-protected override void OnRoutingFailed(IRouteableEntry entry, RouteableResult result)
+protected override void OnRoutingFailed(IMenuEntry entry, RouteableResult result)
 {
     base.OnRoutingFailed(entry, result);
     logger.LogWarning(result.Exception, "Route {Route} not shown (cancelled: {Cancelled})", entry.Route, result.Cancelled);

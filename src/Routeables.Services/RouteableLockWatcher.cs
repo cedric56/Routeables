@@ -20,7 +20,7 @@ internal sealed class RouteableLockWatcher(Action<bool> changed) : IDisposable
     /// <summary>Whether every entry of <paramref name="mainViewModel"/> is locked (a page is blocking the route change); <see langword="false"/> without entries.</summary>
     /// <param name="mainViewModel">The main view model, or <see langword="null"/>.</param>
     public static bool AllLocked(IMainViewModel? mainViewModel) =>
-        mainViewModel?.Routeables is { Count: > 0 } entries && entries.All(entry => entry.IsLock);
+        mainViewModel?.Entries is { Count: > 0 } entries && entries.All(entry => entry.IsLock);
 
     /// <summary>
     /// Follows the lock of <paramref name="context"/> when it is a main view model, and stops following the previous one.

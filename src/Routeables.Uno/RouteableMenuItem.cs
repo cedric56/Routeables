@@ -14,8 +14,8 @@ public partial class RouteableMenuItem : ContentControl
 {
     /// <summary>The entry shown.</summary>
     public static readonly DependencyProperty ItemProperty =
-        DependencyProperty.Register(nameof(Item), typeof(IRouteableEntry), typeof(RouteableMenuItem),
-            new PropertyMetadata(null, (d, e) => ((RouteableMenuItem)d).OnItemChanged(e.OldValue as IRouteableEntry, e.NewValue as IRouteableEntry)));
+        DependencyProperty.Register(nameof(Item), typeof(IMenuEntry), typeof(RouteableMenuItem),
+            new PropertyMetadata(null, (d, e) => ((RouteableMenuItem)d).OnItemChanged(e.OldValue as IMenuEntry, e.NewValue as IMenuEntry)));
 
     private readonly ContentControl _icon = new() { VerticalAlignment = VerticalAlignment.Center };
     private readonly TextBlock _name = new();
@@ -49,20 +49,20 @@ public partial class RouteableMenuItem : ContentControl
     }
 
     /// <summary>The entry shown.</summary>
-    public IRouteableEntry? Item
+    public IMenuEntry? Item
     {
-        get => (IRouteableEntry?)GetValue(ItemProperty);
+        get => (IMenuEntry?)GetValue(ItemProperty);
         set => SetValue(ItemProperty, value);
     }
 
-    private void OnItemChanged(IRouteableEntry? oldItem, IRouteableEntry? newItem)
+    private void OnItemChanged(IMenuEntry? oldItem, IMenuEntry? newItem)
     {
         Unwatch(oldItem);
         Refresh(newItem);
         Watch(newItem);
     }
 
-    private void Watch(IRouteableEntry? item)
+    private void Watch(IMenuEntry? item)
     {
         if (_loaded && item is INotifyPropertyChanged notifier)
         {
@@ -71,7 +71,7 @@ public partial class RouteableMenuItem : ContentControl
         }
     }
 
-    private void Unwatch(IRouteableEntry? item)
+    private void Unwatch(IMenuEntry? item)
     {
         if (item is INotifyPropertyChanged notifier)
             notifier.PropertyChanged -= OnItemPropertyChanged;
@@ -86,7 +86,7 @@ public partial class RouteableMenuItem : ContentControl
             Refresh(Item);
     }
 
-    private void Refresh(IRouteableEntry? item)
+    private void Refresh(IMenuEntry? item)
     {
         _name.Text = item?.DisplayName ?? string.Empty;
         _description.Text = item?.Description ?? string.Empty;

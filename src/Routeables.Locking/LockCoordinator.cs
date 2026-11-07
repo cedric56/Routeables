@@ -12,7 +12,7 @@ internal sealed class LockCoordinator : ILockCoordinator, IDisposable
 {
     private readonly object _gate = new();
     private readonly IServiceProvider _provider;
-    private readonly IRouteableBrokerService _broker;
+    private readonly IRouteableLockBroker _broker;
     private readonly IMainViewModel _mainViewModel;
     private IDisposable? _subscription;
 
@@ -26,7 +26,7 @@ internal sealed class LockCoordinator : ILockCoordinator, IDisposable
     /// </param>
     /// <param name="broker">The broker service used for subscribing to lock change messages.</param>
     /// <param name="manager">The primary routeable manager instance.</param>
-    public LockCoordinator(IServiceProvider provider, IRouteableBrokerService broker, IMainViewModel manager)
+    public LockCoordinator(IServiceProvider provider, IRouteableLockBroker broker, IMainViewModel manager)
     {
         _provider = provider;
         _broker = broker;

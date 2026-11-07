@@ -52,7 +52,7 @@ public static class SegmentExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
         var segment = string.IsNullOrWhiteSpace(name) ? typeof(TViewModel).Name : name;
-        GetSegmentRegistry(services).Add(segment, () => new RouteableEntry<TViewModel>(segment, null, route, template ?? route));
+        GetSegmentRegistry(services).Add(segment, () => new MenuEntry<TViewModel>(segment, null, route, template ?? route));
         return services;
     }
 

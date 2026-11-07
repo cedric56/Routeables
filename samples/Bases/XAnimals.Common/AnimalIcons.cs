@@ -3,7 +3,7 @@ using Routeables.Abstraction;
 namespace XAnimals.Common;
 
 /// <summary>
-/// The icon of each page of the menu. A page names its icon by a key (the second argument of <c>RouteableEntry</c>),
+/// The icon of each page of the menu. A page names its icon by a key (the second argument of <c>MenuEntry</c>),
 /// and <see cref="IconResolver"/> turns the key into what the platform displays: a glyph (text) for Razor and Avalonia,
 /// an <c>ImageSource</c> for Maui, built from the key and the glyph by the function given to <see cref="Register"/>.
 /// </summary>

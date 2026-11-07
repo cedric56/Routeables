@@ -34,7 +34,7 @@ public abstract partial class CloseableViewModel<TResult>
 /// <param name="router">The router managing routing state and history.</param>
 /// <param name="initialize">A value indicating whether the view model should initialize immediately upon construction.</param>
 [IReactiveObject]
-public abstract partial class RouteableViewModel(IRouter router, bool initialize = true) : RouteableViewModelBase(router, initialize)
+public abstract partial class RouteableViewModel(IRouter router, bool initialize = true) : MainViewModelBase(router, initialize)
 {
     /// <summary>
     /// Goes backward in the route change history asynchronously.

@@ -17,7 +17,7 @@ public static class HostContract
         // A view model can reach the thread of the interface on every host.
         Assert.NotNull(provider.GetRequiredService<IRouteableDispatcher>());
         // Locking is optional: no host registers the broker or the lock coordinator (AddLocking does).
-        Assert.Null(provider.GetService<IRouteableBrokerService>());
+        Assert.Null(provider.GetService<IRouteableLockBroker>());
     }
 
     public static void MainViewModelIsOneInstance(IServiceProvider provider)

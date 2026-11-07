@@ -8,7 +8,7 @@ namespace Routeables.Tests.Razor;
 
 public class RouteableFormTests
 {
-    private sealed class FakeView(string name, bool locked = false) : IRouteableEntry
+    private sealed class FakeView(string name, bool locked = false) : IMenuEntry
     {
         public bool IsLock { get; set; } = locked;
         public object? ViewModel { get; set; }
@@ -20,16 +20,17 @@ public class RouteableFormTests
         public string? Path => null;
     }
 
-    private static RouteableViewModelBase CreateViewModel(params IRouteableEntry[] views) =>
+    private static MainViewModelBase CreateViewModel(params IMenuEntry[] views) =>
         TestNavigableViewModel.Create(
             NSubstitute.Substitute.For<IRouter>(),
-            new System.Collections.ObjectModel.ObservableCollection<IRouteableEntry>(views),
+            new System.Collections.ObjectModel.ObservableCollection<IMenuEntry>(views),
             initialize: false);
 
-    private static async Task<string> RenderAsync(RouteableViewModelBase vm, bool busy)
+    private static async Task<string> RenderAsync(MainViewModelBase vm, bool busy)
     {
         var services = new ServiceCollection();
         services.AddLogging();
+        services.AddSingleton(NSubstitute.Substitute.For<IRouter>());
         await using var provider = services.BuildServiceProvider();
         await using var renderer = new Microsoft.AspNetCore.Components.Web.HtmlRenderer(provider, provider.GetRequiredService<Microsoft.Extensions.Logging.ILoggerFactory>());
         return await renderer.Dispatcher.InvokeAsync(async () =>

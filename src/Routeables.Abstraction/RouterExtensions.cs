@@ -44,7 +44,7 @@ public static class RouterExtensions
     /// <param name="viewKeys">Names of the route values that go to the view instead of the view model.</param>
     public static Task<RouteableResult> GoToRouteAsync<TViewModel>(
         this IRouter router,
-        IRouteableEntry routeableView,
+        IMenuEntry routeableView,
         CancellationToken cancellationToken = default,
         params string[] viewKeys)
         where TViewModel : class
@@ -63,7 +63,7 @@ public static class RouterExtensions
     /// <param name="viewKeys">Names of the route values that go to the view instead of the view model.</param>
     public static Task<RouteableResult> GoToRouteAsync(
         this IRouter router,
-        IRouteableEntry routeableView,
+        IMenuEntry routeableView,
         CancellationToken cancellationToken = default,
         params string[] viewKeys)
     {

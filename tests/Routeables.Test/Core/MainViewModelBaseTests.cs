@@ -16,10 +16,10 @@ public class MainViewModelBaseTests
     {
         public void ViewModelBecameCurrent(object viewModel) => OnViewModelChanged(viewModel);
 
-        protected override ObservableCollection<IRouteableEntry> GetRouteables() =>
+        protected override ObservableCollection<IMenuEntry> GetEntries() =>
         [
-            new RouteableEntry<PageA>("A", route: "/a", template: "/a"),
-            new RouteableEntry<PageB>("B", route: "/b", template: "/b"),
+            new MenuEntry<PageA>("A", route: "/a", template: "/a"),
+            new MenuEntry<PageB>("B", route: "/b", template: "/b"),
         ];
 
         protected override void NotifyPropertyChanged(string? propertyName)
@@ -40,7 +40,7 @@ public class MainViewModelBaseTests
     {
         var sut = new Menu(CreateRouter());
 
-        Assert.Equal(["A", "B"], sut.Routeables.Select(r => r.DisplayName));
+        Assert.Equal(["A", "B"], sut.Entries.Select(r => r.DisplayName));
         Assert.Equal("Application", sut.CurrentTitle);
     }
 
@@ -52,7 +52,7 @@ public class MainViewModelBaseTests
 
         sut.ViewModelBecameCurrent(new object());
 
-        Assert.Same(sut.Routeables[0], sut.Routeable);
+        Assert.Same(sut.Entries[0], sut.SelectedEntry);
     }
 
     public sealed class StayView : IRouteableFor { public object? Context { get; set; } }
@@ -72,15 +72,15 @@ public class MainViewModelBaseTests
         public int AnnouncedInSetter { get; private set; }
         public int AnnouncedAfterSetter { get; private set; }
 
-        protected override ObservableCollection<IRouteableEntry> GetRouteables() =>
+        protected override ObservableCollection<IMenuEntry> GetEntries() =>
         [
-            new RouteableEntry<StayVm>("Stay", route: "/stay", template: "/stay"),
-            new RouteableEntry<OtherVm>("Other", route: "/other", template: "/other"),
+            new MenuEntry<StayVm>("Stay", route: "/stay", template: "/stay"),
+            new MenuEntry<OtherVm>("Other", route: "/other", template: "/other"),
         ];
 
         protected override void NotifyPropertyChanged(string? propertyName)
         {
-            if (propertyName != nameof(Routeable)) return;
+            if (propertyName != nameof(SelectedEntry)) return;
             if (InSetter) AnnouncedInSetter++; else AnnouncedAfterSetter++;
         }
     }
@@ -95,24 +95,24 @@ public class MainViewModelBaseTests
         services.RegisterRoute<OtherView, OtherVm>(route: "/other");
         using var provider = services.BuildServiceProvider();
         var sut = new GuardedMenu(provider.GetRequiredService<IRouter>());
-        var stay = sut.Routeables[0];
+        var stay = sut.Entries[0];
         var router = provider.GetRequiredService<IRouter>();
-        sut.Routeable = stay;
+        sut.SelectedEntry = stay;
         while (router.CurrentViewModel is not StayVm)
             await Task.Delay(10, ct);
         await Task.Delay(50, ct);   // the selection that opened the page has ended
-        Assert.Same(stay, sut.Routeable);
+        Assert.Same(stay, sut.SelectedEntry);
         var before = sut.AnnouncedAfterSetter;
 
         sut.InSetter = true;
-        sut.Routeable = sut.Routeables[1];   // what a menu does when the user clicks an entry
+        sut.SelectedEntry = sut.Entries[1];   // what a menu does when the user clicks an entry
         sut.InSetter = false;
 
         var deadline = DateTime.UtcNow.AddSeconds(5);
         while (sut.AnnouncedAfterSetter == before && DateTime.UtcNow < deadline)
             await Task.Delay(10, ct);
 
-        Assert.Same(stay, sut.Routeable);                      // the page is still shown, so is its entry
+        Assert.Same(stay, sut.SelectedEntry);                      // the page is still shown, so is its entry
         Assert.IsType<StayVm>(router.CurrentViewModel);
         Assert.True(sut.AnnouncedAfterSetter > before);        // and the control is told once the setter has returned
     }

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace Routeables.Tests.Core;
 
-public class RouteableViewModelBaseDisposeTests
+public class MainViewModelBaseDisposeTests
 {
     [Fact]
     public void Disposing_the_main_view_model_removes_its_lock_coordinator_from_the_broker()
@@ -13,7 +13,7 @@ public class RouteableViewModelBaseDisposeTests
         var router = Substitute.For<IRouter, ILockCoordinatorFactory>();
         ((ILockCoordinatorFactory)router).CreateLockCoordinator(Arg.Any<IMainViewModel>()).Returns(coordinator);
 
-        var viewModel = TestNavigableViewModel.Create(router, new ObservableCollection<IRouteableEntry>(), initialize: false);
+        var viewModel = TestNavigableViewModel.Create(router, new ObservableCollection<IMenuEntry>(), initialize: false);
         coordinator.Received(1).Subscribe();
 
         viewModel.Dispose();

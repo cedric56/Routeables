@@ -10,7 +10,7 @@ namespace Routeables.Locking;
 public static class LockingExtensions
 {
     /// <summary>
-    /// Registers the broker (<see cref="IRouteableBrokerService"/>) and the coordinator that listens to it. A main view model
+    /// Registers the broker (<see cref="IRouteableLockBroker"/>) and the coordinator that listens to it. A main view model
     /// that derives from <c>MainViewModelBase</c> then locks and unlocks its entries when a
     /// <see cref="RouteableLockMessage"/> is published. Without this call nothing is locked and no broker exists.
     /// </summary>
@@ -20,7 +20,7 @@ public static class LockingExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         // TryAdd: an application-provided broker registration takes precedence. Scoped, like the router it serves.
-        services.TryAdd(new ServiceDescriptor(typeof(IRouteableBrokerService), typeof(RouteableBrokerService), ServiceLifetime.Scoped));
+        services.TryAdd(new ServiceDescriptor(typeof(IRouteableLockBroker), typeof(RouteableLockBroker), ServiceLifetime.Scoped));
         services.RegisterLockCoordinator<LockCoordinator>();
         return services;
     }

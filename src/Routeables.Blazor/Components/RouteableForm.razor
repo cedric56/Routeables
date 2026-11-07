@@ -14,9 +14,9 @@
     }
 
     <nav class="split-nav" aria-label="Pages">
-        @foreach (var item in MainViewModel.Routeables)
+        @foreach (var item in MainViewModel.Entries)
         {
-            var current = ReferenceEquals(item, MainViewModel.Routeable);
+            var current = ReferenceEquals(item, MainViewModel.SelectedEntry);
             <button type="button"
                     class="split-nav-item @(current ? "split-nav-active" : string.Empty)"
                     disabled="@item.IsLock"
@@ -68,9 +68,9 @@
     /// <summary>
     /// Makes <paramref name="page"/> the active page.
     /// </summary>
-    private void Select(IRouteableEntry page)
+    private void Select(IMenuEntry page)
     {
-        MainViewModel.Routeable = page;
+        MainViewModel.SelectedEntry = page;
     }
 
     private IMainViewModel? _subscribed;

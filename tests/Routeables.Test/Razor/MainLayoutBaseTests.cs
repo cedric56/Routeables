@@ -61,11 +61,11 @@ public class MainLayoutBaseTests
 
     private sealed class Menu : IMainViewModel
     {
-        public ObservableCollection<IRouteableEntry> Routeables { get; } = [];
-        public IRouteableEntry? Routeable { get; set; }
+        public ObservableCollection<IMenuEntry> Entries { get; } = [];
+        public IMenuEntry? SelectedEntry { get; set; }
         public object? CurrentView { get; set; }
         public string? Title { get; set; }
-        public string? CurrentTitle => Title ?? Routeable?.DisplayName;
+        public string? CurrentTitle => Title ?? SelectedEntry?.DisplayName;
 
         public event EventHandler<object?>? CurrentViewChanged;
         public event EventHandler? LockChanged;
@@ -165,9 +165,9 @@ public class MainLayoutBaseTests
         }
     }
 
-    private static IRouteableEntry Entry(string name)
+    private static IMenuEntry Entry(string name)
     {
-        var entry = Substitute.For<IRouteableEntry>();
+        var entry = Substitute.For<IMenuEntry>();
         entry.DisplayName.Returns(name);
         // A route of its own: an entry whose route is empty would match the address "/" and be selected by the address.
         entry.Route.Returns("/" + name.ToLowerInvariant());
@@ -229,13 +229,13 @@ public class MainLayoutBaseTests
     {
         await using var f = new Fixture();
         var first = Entry("First");
-        f.Menu.Routeables.Add(first);
-        f.Menu.Routeables.Add(Entry("Second"));
+        f.Menu.Entries.Add(first);
+        f.Menu.Entries.Add(Entry("Second"));
 
         await f.StartAsync();
 
-        await Fixture.UntilAsync(() => f.Menu.Routeable is not null);
-        Assert.Same(first, f.Menu.Routeable);
+        await Fixture.UntilAsync(() => f.Menu.SelectedEntry is not null);
+        Assert.Same(first, f.Menu.SelectedEntry);
     }
 
     [Fact]
@@ -243,14 +243,14 @@ public class MainLayoutBaseTests
     {
         await using var f = new Fixture();
         var chosen = Entry("Chosen");
-        f.Menu.Routeables.Add(Entry("First"));
-        f.Menu.Routeable = chosen;
+        f.Menu.Entries.Add(Entry("First"));
+        f.Menu.SelectedEntry = chosen;
 
         await f.StartAsync();
 
         await Fixture.UntilAsync(() => f.Js.Calls.Count > 0);
         await Task.Delay(50, TestContext.Current.CancellationToken);
-        Assert.Same(chosen, f.Menu.Routeable);
+        Assert.Same(chosen, f.Menu.SelectedEntry);
     }
 
     // ------------------------------------------------------------------------------------------------ title, menu, theme
@@ -302,7 +302,7 @@ public class MainLayoutBaseTests
 
         layout.OnNavClick(entry);
 
-        Assert.Same(entry, f.Menu.Routeable);
+        Assert.Same(entry, f.Menu.SelectedEntry);
     }
 
     [Fact]
@@ -365,7 +365,7 @@ public class MainLayoutBaseTests
         await f.StartAsync();
 
         f.Menu.RaiseLock();
-        f.Menu.Routeables.Add(Entry("Added later"));
+        f.Menu.Entries.Add(Entry("Added later"));
 
         Assert.Contains("<main", await f.HtmlAsync());
     }

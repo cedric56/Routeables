@@ -51,7 +51,7 @@ public class BirdsViewModel : AnimalsViewModel
             .ForViewModel(back)
             .WithRoute($"{BirdsModule.Route}/{Uri.EscapeDataString(animal.Name)}");
 
-        var routeableView = new RouteableEntry<BirdDetailViewModel>(string.Empty, route: BirdDetailViewModel.Route, template: BirdDetailViewModel.Route)
+        var routeableView = new MenuEntry<BirdDetailViewModel>(string.Empty, route: BirdDetailViewModel.Route, template: BirdDetailViewModel.Route)
         {
             Arguments = arguments
         };

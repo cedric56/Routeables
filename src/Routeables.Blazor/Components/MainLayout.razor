@@ -10,7 +10,7 @@
 else
 {
     @* An application without a menu has no drawer and no button to open it. *@
-    var hasMenu = MainViewModel.Routeables.Count > 0;
+    var hasMenu = MainViewModel.Entries.Count > 0;
     <div class="rt-layout @(hasMenu ? "" : "rt-no-menu")" data-wui-theme="@ThemeName">
             <RouteableDialogHost />
             <RouteableContentDialogHost />
@@ -34,12 +34,12 @@ else
         @if (hasMenu)
         {
             <nav class="rt-drawer @(_drawerOpen ? "" : "rt-drawer-closed")" aria-label="Menu">
-                @foreach (var item in MainViewModel.Routeables)
+                @foreach (var item in MainViewModel.Entries)
                 {
                     <button type="button"
-                            class="rt-nav-link @(ReferenceEquals(item, MainViewModel.Routeable) ? "rt-active" : "")"
+                            class="rt-nav-link @(ReferenceEquals(item, MainViewModel.SelectedEntry) ? "rt-active" : "")"
                     disabled="@item.IsLock"
-                            aria-current="@(ReferenceEquals(item, MainViewModel.Routeable) ? "page" : null)"
+                            aria-current="@(ReferenceEquals(item, MainViewModel.SelectedEntry) ? "page" : null)"
                     @onclick="() => OnNavClick(item)">
                         @if (item.Icon is string glyph)
                         {

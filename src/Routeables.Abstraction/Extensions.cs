@@ -74,7 +74,7 @@ public static partial class Extensions
     /// <code>
     /// public static IServiceCollection AddOrdersModule(this IServiceCollection services)
     ///     => services.AddGeneratedRoutes()
-    ///                .AddMenuEntries(() => [new RouteableEntry&lt;OrdersViewModel&gt;("Orders", route: "/orders", template: "/orders")]);
+    ///                .AddMenuEntries(() => [new MenuEntry&lt;OrdersViewModel&gt;("Orders", route: "/orders", template: "/orders")]);
     /// </code>
     /// </summary>
     /// <param name="services">The service collection.</param>
@@ -93,7 +93,7 @@ public static partial class Extensions
     /// <see cref="IMainViewModel"/>. Adding the same module twice adds its entries once (the same <paramref name="entries"/> function);
     /// a function that captures something different on each call counts as another module.
     /// </remarks>
-    public static IServiceCollection AddMenuEntries(this IServiceCollection services, Func<IEnumerable<IRouteableEntry>> entries, int? index = null)
+    public static IServiceCollection AddMenuEntries(this IServiceCollection services, Func<IEnumerable<IMenuEntry>> entries, int? index = null)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(entries);

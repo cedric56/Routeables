@@ -52,13 +52,13 @@ public class RouteableMenu : ListBox
     // the list shows it, once the current update of the selection is over.
     private void OnMainViewModelChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(IMainViewModel.Routeable))
+        if (e.PropertyName != nameof(IMainViewModel.SelectedEntry))
             return;
 
         Dispatcher.UIThread.Post(() =>
         {
-            if (DataContext is IMainViewModel main && !ReferenceEquals(SelectedItem, main.Routeable))
-                SetCurrentValue(SelectingItemsControl.SelectedItemProperty, main.Routeable);
+            if (DataContext is IMainViewModel main && !ReferenceEquals(SelectedItem, main.SelectedEntry))
+                SetCurrentValue(SelectingItemsControl.SelectedItemProperty, main.SelectedEntry);
         }, DispatcherPriority.Background);
     }
 
@@ -69,20 +69,20 @@ public class RouteableMenu : ListBox
     public RouteableMenu()
     {
         // Bindings against the DataContext
-        Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create<IMainViewModel, ObservableCollection<IRouteableEntry>>(r => r.Routeables));
+        Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create<IMainViewModel, ObservableCollection<IMenuEntry>>(r => r.Entries));
         Bind(SelectingItemsControl.SelectedItemProperty,
-            CompiledBinding.Create<IMainViewModel, IRouteableEntry?>(r => r.Routeable, mode: BindingMode.TwoWay));
+            CompiledBinding.Create<IMainViewModel, IMenuEntry?>(r => r.SelectedEntry, mode: BindingMode.TwoWay));
 
         // Item template (live bindings)
-        ItemTemplate = new FuncDataTemplate<RouteableEntry>((_, _) =>
+        ItemTemplate = new FuncDataTemplate<MenuEntry>((_, _) =>
         {
             var icon = new ContentControl { VerticalAlignment = VerticalAlignment.Center };
             icon.Bind(ContentControl.ContentProperty,
-                CompiledBinding.Create<IRouteableEntry, object?>(r => r.Icon));
+                CompiledBinding.Create<IMenuEntry, object?>(r => r.Icon));
 
             var name = new TextBlock();
             name.Bind(TextBlock.TextProperty,
-                CompiledBinding.Create<IRouteableEntry, string>(r => r.DisplayName));
+                CompiledBinding.Create<IMenuEntry, string>(r => r.DisplayName));
 
             var description = new TextBlock
             {
@@ -91,9 +91,9 @@ public class RouteableMenu : ListBox
                 TextWrapping = TextWrapping.Wrap
             };
             description.Bind(TextBlock.TextProperty,
-                CompiledBinding.Create<IRouteableEntry, string?>(r => r.Description));
+                CompiledBinding.Create<IMenuEntry, string?>(r => r.Description));
             description.Bind(Visual.IsVisibleProperty,
-                CompiledBinding.Create<IRouteableEntry, bool>(r => r.HasDescription));
+                CompiledBinding.Create<IMenuEntry, bool>(r => r.HasDescription));
 
             var texts = new StackPanel { Spacing = 2, Children = { name, description } };
 
@@ -112,7 +112,7 @@ public class RouteableMenu : ListBox
             Setters =
         {
             new Setter(TemplatedControl.PaddingProperty, new Thickness(10)),
-            new Setter(TemplatedControl.IsEnabledProperty, CompiledBinding.Create<RouteableEntry, bool>(r => r.InverseIsLock))
+            new Setter(TemplatedControl.IsEnabledProperty, CompiledBinding.Create<MenuEntry, bool>(r => r.InverseIsLock))
         }
         });
     }

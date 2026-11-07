@@ -24,11 +24,11 @@ public class ViewForTests
 
     private sealed class RouteablesViewModel : TestViewModel, IMainViewModel
     {
-        public ObservableCollection<IRouteableEntry> Routeables { get; } = [];
+        public ObservableCollection<IMenuEntry> Entries { get; } = [];
         public event EventHandler? LockChanged { add { } remove { } }
         public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
         public object? CurrentView { get; set; }
-        public IRouteableEntry? Routeable { get; set; }
+        public IMenuEntry? SelectedEntry { get; set; }
 
         public string? CurrentTitle { get; }
     }
@@ -88,10 +88,10 @@ public class ViewForTests
 
         Assert.False(view.IsLocked);
 
-        viewModel.Routeables.Add(new RouteableEntry<TestViewModel>("First", "First") { IsLock = true });
+        viewModel.Entries.Add(new MenuEntry<TestViewModel>("First", "First") { IsLock = true });
         Assert.True(view.IsLocked);
 
-        viewModel.Routeables.Add(new RouteableEntry<TestViewModel>("Second", "Second") { IsLock = false });
+        viewModel.Entries.Add(new MenuEntry<TestViewModel>("Second", "Second") { IsLock = false });
         Assert.False(view.IsLocked);
     }
 
@@ -103,7 +103,7 @@ public class ViewForTests
         var view = new TestView
         {
             Context = viewModel,
-            DictionaryParameters = new RouteablesParameters { ["Label"] = "Rendered" }
+            DictionaryParameters = new RouteableParameters { ["Label"] = "Rendered" }
         };
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
         var services = new ServiceCollection();

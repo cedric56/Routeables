@@ -6,7 +6,7 @@ using XAnimals.Common;
 namespace XAnimals.ViewModels;
 
 /// <summary>
-/// Builds the entries the sample pages send to their regions. An entry is a menu entry with a <see cref="IRouteableEntry.Region"/>:
+/// Builds the entries the sample pages send to their regions. An entry is a menu entry with a <see cref="IMenuEntry.Region"/>:
 /// <c>provider.GoToAsync(entry)</c> sends it to the router of that region, and the <c>RouteableRegion</c> of that name shows it.
 /// </summary>
 public static class RegionEntries
@@ -28,8 +28,8 @@ public static class RegionEntries
     private static readonly string[] PageRoutes = ["/cats", "/dogs", "/monkeys", "/elephants", "/bears", "/pandas"];
 
     /// <summary>The animal pages of the main menu, in the order of the menu.</summary>
-    public static IReadOnlyList<IRouteableEntry> Pages(IServiceProvider provider)
-        => provider.GetRequiredService<IMainViewModel>().Routeables
+    public static IReadOnlyList<IMenuEntry> Pages(IServiceProvider provider)
+        => provider.GetRequiredService<IMainViewModel>().Entries
             .Where(entry => PageRoutes.Contains(entry.Route))
             .ToList();
 
@@ -37,11 +37,11 @@ public static class RegionEntries
     /// The same page as the menu entry, but an entry of its own: the router of the region builds its own view and view model,
     /// and keeps them apart from the ones the main menu remembers. The name and the icon travel with the entry.
     /// </summary>
-    public static RouteableEntry Page(IRouteableEntry source, string region)
+    public static MenuEntry Page(IMenuEntry source, string region)
     {
         // A copy of the entry, of the same type: the router of the region builds its own view and view model for it.
-        if (source is not RouteableEntry entry)
-            throw new InvalidOperationException($"The entry {source.Route} is not a RouteableEntry.");
+        if (source is not MenuEntry entry)
+            throw new InvalidOperationException($"The entry {source.Route} is not a MenuEntry.");
 
         var page = entry.Copy();
         page.Region = region;
@@ -54,16 +54,16 @@ public static class RegionEntries
     }
 
     /// <summary>A bar (header or footer) for <paramref name="region"/>; the router builds a new one each time.</summary>
-    public static RouteableEntry Bar(string region, LayoutBarInfo info)
-        => new RouteableEntry<LayoutBarViewModel>("Bar", null, route: "layout-bar", template: "layout-bar")
+    public static MenuEntry Bar(string region, LayoutBarInfo info)
+        => new MenuEntry<LayoutBarViewModel>("Bar", null, route: "layout-bar", template: "layout-bar")
         {
             Region = region,
             Arguments = RouteableArgs.Create().ForViewModel(info)
         };
 
     /// <summary>The menu of the left panel.</summary>
-    public static RouteableEntry Menu(string region)
-        => new RouteableEntry<LayoutMenuViewModel>("Menu", null, route: "layout-menu", template: "layout-menu") { Region = region };
+    public static MenuEntry Menu(string region)
+        => new MenuEntry<LayoutMenuViewModel>("Menu", null, route: "layout-menu", template: "layout-menu") { Region = region };
 
     /// <summary>Whether the entry was sent as an animal page (it carries its name), not opened from inside one (a detail).</summary>
     public static bool HasName(IHistoryEntry? entry) => ValueOf(entry, NameKey) is not null;

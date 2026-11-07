@@ -31,7 +31,7 @@ public sealed class LayoutController(IServiceProvider provider) : RegionLayout(p
     public string? Current => Section(PrimaryRouter.History) is { } section ? RegionEntries.NameOf(section) : null;
 
     /// <summary>The animal pages the left panel offers.</summary>
-    public IReadOnlyList<IRouteableEntry> Pages => RegionEntries.Pages(Provider);
+    public IReadOnlyList<IMenuEntry> Pages => RegionEntries.Pages(Provider);
 
     /// <summary>The menu in the left panel, the first page in the content.</summary>
     protected override async Task OnStartAsync(CancellationToken ct)
@@ -41,7 +41,7 @@ public sealed class LayoutController(IServiceProvider provider) : RegionLayout(p
     }
 
     /// <summary>Shows a page in the content (the header and the footer follow).</summary>
-    public Task<RouteableResult> ShowPageAsync(IRouteableEntry source, CancellationToken ct = default)
+    public Task<RouteableResult> ShowPageAsync(IMenuEntry source, CancellationToken ct = default)
         => ShowAsync(RegionEntries.Page(source, Content), ct);
 
     /// <summary>

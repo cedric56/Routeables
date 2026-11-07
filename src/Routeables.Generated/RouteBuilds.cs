@@ -12,7 +12,7 @@ namespace Routeables.Generated
     internal static class RouteBuilds
     {
         private const string ActivatorCtorMetadataName = "Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructorAttribute";
-        private const string RouteablesParametersName = "Routeables.Abstraction.RouteablesParameters";
+        private const string RouteableParametersName = "Routeables.Abstraction.RouteableParameters";
 
         private static readonly SymbolDisplayFormat Fq = SymbolDisplayFormat.FullyQualifiedFormat;
 
@@ -249,7 +249,7 @@ namespace Routeables.Generated
             info = null;
 
             var attributes = AttributeNames(property);
-            var bag = property.Type.ToDisplayString(Fq) == "global::" + RouteablesParametersName;
+            var bag = property.Type.ToDisplayString(Fq) == "global::" + RouteableParametersName;
             if (attributes.Count == 0 && !bag && !typeNamesProperties)
                 return true;
 

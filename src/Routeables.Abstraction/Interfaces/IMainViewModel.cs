@@ -4,19 +4,19 @@ namespace Routeables.Abstraction;
 
 /// <summary>
 /// The main view model of an application: the menu entries, the one that is selected and the view it shows. Each host binds its
-/// menu to <see cref="Routeables"/> and <see cref="Routeable"/>; the page itself is shown by a <c>RouteableRegion</c> (the view is <c>IRouter.CurrentView</c>). Register it with
+/// menu to <see cref="Entries"/> and <see cref="SelectedEntry"/>; the page itself is shown by a <c>RouteableRegion</c> (the view is <c>IRouter.CurrentView</c>). Register it with
 /// <c>RegisterMainViewModel</c>: one instance per host (a singleton on Avalonia, MAUI and Uno, scoped on Blazor).
 /// </summary>
 public interface IMainViewModel
 {
     /// <summary>The entries of the menu, in the order they are shown.</summary>
-    ObservableCollection<IRouteableEntry> Routeables { get; }
+    ObservableCollection<IMenuEntry> Entries { get; }
 
     /// <summary>The selected entry. Setting it goes to that entry; <see langword="null"/> when none is selected.</summary>
-    IRouteableEntry? Routeable { get; set; }
+    IMenuEntry? SelectedEntry { get; set; }
 
     /// <summary>The title of the selected entry (its display name), for a title bar. Override it for another title.</summary>
-    string? CurrentTitle => Routeable?.DisplayName;
+    string? CurrentTitle => SelectedEntry?.DisplayName;
 
     /// <summary>Raised when the page shown or the selected entry changes; the argument is the view that is now shown (<c>IRouter.CurrentView</c>).</summary>
     event EventHandler<object?>? CurrentViewChanged;
@@ -44,10 +44,10 @@ public interface IMainViewModel
     /// <returns><see langword="true"/> when an entry was selected.</returns>
     bool SelectFirst()
     {
-        if (Routeable is not null || Routeables.FirstOrDefault() is not { } first)
+        if (SelectedEntry is not null || Entries.FirstOrDefault() is not { } first)
             return false;
 
-        Routeable = first;
+        SelectedEntry = first;
         return true;
     }
 
@@ -59,10 +59,10 @@ public interface IMainViewModel
     /// <returns><see langword="true"/> when the home route is being opened.</returns>
     bool Start() => false;
 
-    /// <summary>Locks every entry (<see cref="IRouteableEntry.IsLock"/>): the menu cannot leave the current page. Raises <see cref="LockChanged"/> through <see cref="NotifyLockChanged"/>.</summary>
+    /// <summary>Locks every entry (<see cref="IMenuEntry.IsLock"/>): the menu cannot leave the current page. Raises <see cref="LockChanged"/> through <see cref="NotifyLockChanged"/>.</summary>
     void Lock()
     {
-        foreach (var routeable in Routeables)
+        foreach (var routeable in Entries)
             routeable.IsLock = true;
 
         NotifyLockChanged();
@@ -71,7 +71,7 @@ public interface IMainViewModel
     /// <summary>Unlocks every entry again. Raises <see cref="LockChanged"/> through <see cref="NotifyLockChanged"/>.</summary>
     void Unlock()
     {
-        foreach (var routeable in Routeables)
+        foreach (var routeable in Entries)
             routeable.IsLock = false;
 
         NotifyLockChanged();

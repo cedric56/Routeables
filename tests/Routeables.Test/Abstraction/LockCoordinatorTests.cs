@@ -11,7 +11,7 @@ public class LockCoordinatorTests
     {
         var primary = new RouteablesProbe();
         var other = new RouteablesProbe();
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         using var provider = new ServiceCollection()
             .AddSingleton<IMainViewModel>(primary)
             .AddSingleton<IMainViewModel>(other)
@@ -32,7 +32,7 @@ public class LockCoordinatorTests
     {
         var primary = new RouteablesProbe();
         var other = new RouteablesProbe();
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         using var provider = new ServiceCollection()
             .AddSingleton<IMainViewModel>(primary)
             .AddSingleton<IMainViewModel>(other)
@@ -53,7 +53,7 @@ public class LockCoordinatorTests
     public void Dispose_unsubscribes_from_lock_changes()
     {
         var primary = new RouteablesProbe();
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         using var provider = new ServiceCollection()
             .AddSingleton<IMainViewModel>(primary)
             .BuildServiceProvider();
@@ -71,7 +71,7 @@ public class LockCoordinatorTests
     public void The_other_managers_are_resolved_only_when_a_message_is_addressed_to_all_of_them()
     {
         var primary = new RouteablesProbe();
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         var provider = new CountingProvider();
         var coordinator = new LockCoordinator(provider, broker, primary);
 
@@ -90,7 +90,7 @@ public class LockCoordinatorTests
     public void Subscribe_twice_listens_once()
     {
         var primary = new RouteablesProbe();
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         using var provider = new ServiceCollection().BuildServiceProvider();
         var coordinator = new LockCoordinator(provider, broker, primary);
 
@@ -106,7 +106,7 @@ public class LockCoordinatorTests
     {
         var first = new RouteablesProbe();
         var second = new RouteablesProbe();
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         using var provider = new ServiceCollection().BuildServiceProvider();
         var stopped = new LockCoordinator(provider, broker, first);
         var listening = new LockCoordinator(provider, broker, second);
@@ -124,7 +124,7 @@ public class LockCoordinatorTests
     public void A_global_message_is_ignored_by_the_others_when_their_scope_is_gone()
     {
         var primary = new RouteablesProbe();
-        var broker = new RouteableBrokerService();
+        var broker = new RouteableLockBroker();
         var provider = new ServiceCollection().AddSingleton<IMainViewModel>(primary).BuildServiceProvider();
         var coordinator = new LockCoordinator(provider, broker, primary);
         coordinator.Subscribe();
@@ -150,8 +150,8 @@ public class LockCoordinatorTests
 
     private sealed class RouteablesProbe : IMainViewModel
     {
-        public ObservableCollection<IRouteableEntry> Routeables { get; } = [];
-        public IRouteableEntry? Routeable { get; set; }
+        public ObservableCollection<IMenuEntry> Entries { get; } = [];
+        public IMenuEntry? SelectedEntry { get; set; }
         public object? CurrentView { get; set; }
         public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
         public event EventHandler? LockChanged { add { } remove { } }

@@ -67,7 +67,7 @@ public class BoardViewModel : ViewModelBase, IRouteable, IDisposable
     }
 
     /// <summary>Routes the page of <paramref name="source"/> into the region: it opens after the ones already there.</summary>
-    public async Task AddAsync(IRouteableEntry source)
+    public async Task AddAsync(IMenuEntry source)
     {
         if (_region.History.Count >= MaxPages)
         {

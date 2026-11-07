@@ -16,7 +16,7 @@ public class LockingRegistrationTests
         var router = CreateRouter(services);
 
         Assert.Null(router.CreateLockCoordinator(new FakeMainViewModel()));
-        Assert.Null(services.BuildServiceProvider().GetService<IRouteableBrokerService>());
+        Assert.Null(services.BuildServiceProvider().GetService<IRouteableLockBroker>());
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class LockingRegistrationTests
         services.AddLocking();
         services.AddLocking();
 
-        Assert.Equal(1, services.Count(d => d.ServiceType == typeof(IRouteableBrokerService)));
+        Assert.Equal(1, services.Count(d => d.ServiceType == typeof(IRouteableLockBroker)));
         Assert.NotNull(CreateRouter(services).CreateLockCoordinator(new FakeMainViewModel()));
     }
 
@@ -35,17 +35,17 @@ public class LockingRegistrationTests
     {
         var services = new ServiceCollection();
         var own = new Own();
-        services.AddSingleton<IRouteableBrokerService>(own);
+        services.AddSingleton<IRouteableLockBroker>(own);
         services.AddLocking();
 
-        Assert.Same(own, services.BuildServiceProvider().GetRequiredService<IRouteableBrokerService>());
+        Assert.Same(own, services.BuildServiceProvider().GetRequiredService<IRouteableLockBroker>());
     }
 
     [Fact]
     public void AddLocking_rejects_null_services()
         => Assert.Throws<ArgumentNullException>(() => LockingExtensions.AddLocking(null!));
 
-    private sealed class Own : IRouteableBrokerService
+    private sealed class Own : IRouteableLockBroker
     {
         public void Publish(RouteableMessage message) { }
         public IDisposable Subscribe(string topic, Action<RouteableMessage> callback) => new Sub();

@@ -1,6 +1,6 @@
 ﻿namespace Routeables.Locking;
 
-/// <summary>A message of the <see cref="IRouteableBrokerService"/>: the topic says who receives it.</summary>
+/// <summary>A message of the <see cref="IRouteableLockBroker"/>: the topic says who receives it.</summary>
 /// <param name="Topic">The topic subscribers listen to.</param>
 public abstract record RouteableMessage(string Topic);
 
@@ -13,7 +13,7 @@ public record RouteableLockMessage(bool IsLocked, bool IsAllLocked) : RouteableM
 /// A small publish/subscribe channel between components (the lock coordinator listens to it, a view model publishes on it).
 /// It is safe to use from several threads.
 /// </summary>
-public interface IRouteableBrokerService
+public interface IRouteableLockBroker
 {
     /// <summary>
     /// Delivers <paramref name="message"/> to every subscriber of its topic. A subscriber that throws does not stop the others:
@@ -26,7 +26,7 @@ public interface IRouteableBrokerService
     IDisposable Subscribe(string topic, Action<RouteableMessage> callback);
 }
 
-internal class RouteableBrokerService : IRouteableBrokerService
+internal class RouteableLockBroker : IRouteableLockBroker
 {
     // Copy-on-write: a publication reads an immutable snapshot and calls the subscribers outside the lock,
     // so a subscriber can subscribe, dispose or publish again without deadlocking.
@@ -101,7 +101,7 @@ internal class RouteableBrokerService : IRouteableBrokerService
         }
     }
 
-    private sealed class Subscription(RouteableBrokerService owner, string topic, Action<RouteableMessage> callback) : IDisposable
+    private sealed class Subscription(RouteableLockBroker owner, string topic, Action<RouteableMessage> callback) : IDisposable
     {
         private int _disposed;
 

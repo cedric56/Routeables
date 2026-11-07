@@ -11,7 +11,7 @@ public static class ReflectedModule
     public static IServiceCollection AddReflectedModule(this IServiceCollection services)
     {
         services.RegisterRoute("/reflected", (_, _) => new ReflectedPage());
-        services.AddMenuEntries(() => [new RouteableEntry("/reflected", "/reflected", "Reflected")]);
+        services.AddMenuEntries(() => [new MenuEntry("/reflected", "/reflected", "Reflected")]);
         return services;
     }
 
@@ -28,7 +28,7 @@ public class RouteableModulesTests
     public sealed class AppClock;
     public sealed class OrdersPage(IOrderRepository repository) { public IOrderRepository Repository { get; } = repository; }
 
-    private static IRouteableEntry Entry(string name) => new RouteableEntry("/" + name, "/" + name, name);
+    private static IMenuEntry Entry(string name) => new MenuEntry("/" + name, "/" + name, name);
 
     private static ServiceProvider Application(ServiceLifetime main = ServiceLifetime.Singleton, Action<IServiceCollection>? more = null)
     {
@@ -95,16 +95,16 @@ public class RouteableModulesTests
         using var provider = Application(ServiceLifetime.Scoped);
         using var early = provider.CreateScope();
         var earlyMain = early.ServiceProvider.GetRequiredService<IMainViewModel>();
-        Assert.Empty(earlyMain.Routeables);
+        Assert.Empty(earlyMain.Entries);
 
         provider.GetRequiredService<IRouteableModules>().Load("Orders", AddOrders);
 
-        Assert.Equal(["orders"], earlyMain.Routeables.Select(e => e.DisplayName));        // added to the menu that was alive
+        Assert.Equal(["orders"], earlyMain.Entries.Select(e => e.DisplayName));        // added to the menu that was alive
 
         using var late = provider.CreateScope();
         var lateMain = late.ServiceProvider.GetRequiredService<IMainViewModel>();
-        Assert.Equal(["orders"], lateMain.Routeables.Select(e => e.DisplayName));         // and to the one built after
-        Assert.NotSame(earlyMain.Routeables[0], lateMain.Routeables[0]);                 // each menu has entries of its own
+        Assert.Equal(["orders"], lateMain.Entries.Select(e => e.DisplayName));         // and to the one built after
+        Assert.NotSame(earlyMain.Entries[0], lateMain.Entries[0]);                 // each menu has entries of its own
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class RouteableModulesTests
         Assert.Equal(["Orders"], raised);
         Assert.True(modules.IsLoaded("ORDERS"));
         Assert.Single(modules.Loaded);
-        Assert.Single(provider.GetRequiredService<IMainViewModel>().Routeables);
+        Assert.Single(provider.GetRequiredService<IMainViewModel>().Entries);
     }
 
     [Fact]
@@ -145,7 +145,7 @@ public class RouteableModulesTests
         Assert.Contains(loaded, m => m.Name == "Reflected" && m.Assembly == "Routeables.Test");
         Assert.Contains(loaded, m => m.Name == nameof(ReflectedModule.AddWithAName));       // the method name when the attribute has none
         Assert.IsType<ReflectedPage>(provider.GetViewModel("/reflected", new RouteableArgs()));
-        Assert.Contains(provider.GetRequiredService<IMainViewModel>().Routeables, e => e.DisplayName == "Reflected");
+        Assert.Contains(provider.GetRequiredService<IMainViewModel>().Entries, e => e.DisplayName == "Reflected");
     }
 
     [Fact]
@@ -192,7 +192,7 @@ public class RouteableModulesTests
         Assert.False(modules.IsLoaded("Broken"));
         Assert.Empty(modules.Loaded);
         Assert.Null(provider.GetViewModel("/broken", new RouteableArgs()));
-        Assert.DoesNotContain(main.Routeables, e => e.DisplayName == "broken");
+        Assert.DoesNotContain(main.Entries, e => e.DisplayName == "broken");
         modules.Load("Broken", s => s.RegisterRoute("/broken", (_, _) => new object()));      // and it can be loaded again
         Assert.True(modules.IsLoaded("Broken"));
     }
@@ -212,7 +212,7 @@ public class RouteableModulesTests
 
         Assert.False(modules.IsLoaded("Broken"));
         Assert.Null(provider.GetViewModel("/broken", new RouteableArgs()));
-        Assert.Empty(main.Routeables);
+        Assert.Empty(main.Entries);
     }
 
     [Fact]

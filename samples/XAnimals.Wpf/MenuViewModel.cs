@@ -15,11 +15,11 @@ public sealed class MenuViewModel(IRouter router) : MainViewModelBase(router, in
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected override ObservableCollection<IRouteableEntry> GetRouteables() =>
+    protected override ObservableCollection<IMenuEntry> GetEntries() =>
     [
-        new RouteableEntry<AdoptViewModel>("Adopt a pet", null, route: "adopt", template: "adopt", description: string.Join(Environment.NewLine, "RouteableRegionItems", "Every page of a region, in rows and columns", "PopAsync releases the last")),
-        new RouteableEntry<FeaturesViewModel>("Features", null, route: "features", template: "features", description: string.Join(Environment.NewLine, "IRouteGuard", "Links, saved values, lock and measures")),
-        new RouteableEntry<DialogsViewModel>("Dialogs", null, route: "dialogs", template: "dialogs", description: string.Join(Environment.NewLine, "Dialogs, notifications and modal", "The services next to IRouter"))
+        new MenuEntry<AdoptViewModel>("Adopt a pet", null, route: "adopt", template: "adopt", description: string.Join(Environment.NewLine, "RouteableRegionItems", "Every page of a region, in rows and columns", "PopAsync releases the last")),
+        new MenuEntry<FeaturesViewModel>("Features", null, route: "features", template: "features", description: string.Join(Environment.NewLine, "IRouteGuard", "Links, saved values, lock and measures")),
+        new MenuEntry<DialogsViewModel>("Dialogs", null, route: "dialogs", template: "dialogs", description: string.Join(Environment.NewLine, "Dialogs, notifications and modal", "The services next to IRouter"))
     ];
 
     protected override void NotifyPropertyChanged(string? propertyName)

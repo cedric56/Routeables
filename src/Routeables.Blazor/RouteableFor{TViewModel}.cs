@@ -27,9 +27,9 @@ public partial class RouteableFor<[DynamicallyAccessedMembers(DynamicallyAccesse
     public bool IsLocked
     {
         get => ViewModel is IMainViewModel mainViewModel &&
-            mainViewModel.Routeables != null &&
-            mainViewModel.Routeables.Count > 0 &&
-            mainViewModel.Routeables.All(r => r.IsLock);
+            mainViewModel.Entries != null &&
+            mainViewModel.Entries.Count > 0 &&
+            mainViewModel.Entries.All(r => r.IsLock);
     }
 
     /// <summary>

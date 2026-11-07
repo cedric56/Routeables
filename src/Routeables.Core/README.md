@@ -20,14 +20,14 @@ It is one package built from several projects of the repository:
 | You write | Derive from |
 | --- | --- |
 | A page | nothing: a plain class that takes `IRouter` (add `IRouteable` for `CanLeaveAsync`, `OnEnteringAsync`...) |
-| The menu or tab bar | `MainViewModelBase`: return the entries from `GetRouteables()` |
+| The menu or tab bar | `MainViewModelBase`: return the entries from `GetEntries()` |
 | The menu, with CommunityToolkit.Mvvm or ReactiveUI | `RouteableViewModel` (feature `;CommunityToolkit;` or `;ReactiveUI;`) |
 | A view model shown in a dialog, closing with a result | `CloseableViewModel<TResult>` (CommunityToolkit or ReactiveUI) or `CloseableViewModelBase<TResult>` |
-| Your own base (another MVVM library) | `RouteableViewModelBase` for a menu, `RouterViewModelBase` for back and forward only |
+| Your own base (another MVVM library) | `MainViewModelBase` for a menu, `RouterViewModelBase` for back and forward only |
 
 Register the menu with `UseRouteables<MainViewModel>(...)` on your host, or `services.RegisterMainViewModel<MainViewModel>()`. The host chooses the lifetime (`Scoped` per circuit on Blazor, `Singleton` elsewhere). It implements `IMainViewModel`: the entries, the selected one, and the guard that stops a change of entry while a page blocks leaving. To write your own instead, `IMainViewModel` asks for four members (`Routeables`, `Routeable` and the events `CurrentViewChanged` and `LockChanged`); the title, `Lock`/`Unlock` and the first selection have defaults, and `NotifyLockChanged` is where your class raises `LockChanged`.
 
-**None of the bases implements `INotifyPropertyChanged` (`MainViewModelBase`, `RouteableViewModelBase`, `CloseableViewModelBase`, `RouterViewModelBase`): the class that derives from one must.** Put `[INotifyPropertyChanged]` (or `[ObservableObject]`) of CommunityToolkit.Mvvm or `[IReactiveObject]` of ReactiveUI on your `partial` class, or implement the interface by hand, and override `NotifyPropertyChanged` and `RaiseCanExecutesChanged`. Those generators add the interface only once in a hierarchy, which is why the bases leave it to you; `RouteableViewModel` and `CloseableViewModel<TResult>` (the flavours) already do it.
+**None of the bases implements `INotifyPropertyChanged` (`MainViewModelBase`, `MainViewModelBase`, `CloseableViewModelBase`, `RouterViewModelBase`): the class that derives from one must.** Put `[INotifyPropertyChanged]` (or `[ObservableObject]`) of CommunityToolkit.Mvvm or `[IReactiveObject]` of ReactiveUI on your `partial` class, or implement the interface by hand, and override `NotifyPropertyChanged` and `RaiseCanExecutesChanged`. Those generators add the interface only once in a hierarchy, which is why the bases leave it to you; `RouteableViewModel` and `CloseableViewModel<TResult>` (the flavours) already do it.
 
 The CommunityToolkit.Mvvm and ReactiveUI flavours are opt-in sources, not part of the assembly. Declare the flavour in the project file: `Routeables.targets` adds its sources and the packages it uses.
 

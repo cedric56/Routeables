@@ -63,10 +63,10 @@ public class RouterRoutedCallbacksTests
     }
 
     private static Task<RouteableResult> GoToPage(IRouter r) =>
-        r.GoToRouteAsync<PageVm>(new RouteableEntry<PageVm>("page"), TestContext.Current.CancellationToken);
+        r.GoToRouteAsync<PageVm>(new MenuEntry<PageVm>("page"), TestContext.Current.CancellationToken);
 
     private static Task<RouteableResult> GoToOther(IRouter r) =>
-        r.GoToRouteAsync<OtherVm>(new RouteableEntry<OtherVm>("other"), TestContext.Current.CancellationToken);
+        r.GoToRouteAsync<OtherVm>(new MenuEntry<OtherVm>("other"), TestContext.Current.CancellationToken);
 
     [Fact]
     public async Task The_first_routing_only_notifies_the_entry_it_enters()

@@ -30,7 +30,7 @@ public abstract class RouteableFor : ComponentBase, IRouteableFor
     /// Gets or sets a dictionary of additional parameters passed dynamically to the component.
     /// </summary>
     [Parameter]
-    public RouteablesParameters DictionaryParameters { get; set; } = new();
+    public RouteableParameters DictionaryParameters { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the data context object passed to the rendered component.

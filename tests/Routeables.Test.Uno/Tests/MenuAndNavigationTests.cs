@@ -16,7 +16,7 @@ namespace Routeables.Test.Uno.Tests;
 public class MenuAndNavigationTests
 {
     /// <summary>An entry that tells when it changes, as the entries of a menu written with an observable base class do.</summary>
-    private sealed class Entry(string name, string? description = null) : IRouteableEntry, INotifyPropertyChanged
+    private sealed class Entry(string name, string? description = null) : IMenuEntry, INotifyPropertyChanged
     {
         private string _name = name;
         private bool _locked;
@@ -65,16 +65,16 @@ public class MenuAndNavigationTests
     /// <summary>A menu a list can bind to.</summary>
     private sealed class Menu : IMainViewModel, INotifyPropertyChanged
     {
-        private IRouteableEntry? _selected;
+        private IMenuEntry? _selected;
 
         /// <inheritdoc />
-        public ObservableCollection<IRouteableEntry> Routeables { get; } = [];
+        public ObservableCollection<IMenuEntry> Entries { get; } = [];
 
         /// <summary>The currently selected entry.</summary>
-        public IRouteableEntry? Routeable
+        public IMenuEntry? SelectedEntry
         {
             get => _selected;
-            set { _selected = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Routeable))); }
+            set { _selected = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedEntry))); }
         }
 
         /// <inheritdoc />
@@ -206,8 +206,8 @@ public class MenuAndNavigationTests
     public async Task The_list_shows_one_item_for_each_entry_of_the_menu_it_is_given()
     {
         var menu = new Menu();
-        menu.Routeables.Add(new Entry("Cats"));
-        menu.Routeables.Add(new Entry("Dogs"));
+        menu.Entries.Add(new Entry("Cats"));
+        menu.Entries.Add(new Entry("Dogs"));
         var list = await TestHost.LoadAsync(new RouteableMenu { DataContext = menu });
         try
         {
@@ -225,14 +225,14 @@ public class MenuAndNavigationTests
         var menu = new Menu();
         var cats = new Entry("Cats");
         var dogs = new Entry("Dogs");
-        menu.Routeables.Add(cats);
-        menu.Routeables.Add(dogs);
+        menu.Entries.Add(cats);
+        menu.Entries.Add(dogs);
         var list = await TestHost.LoadAsync(new RouteableMenu { DataContext = menu });
         try
         {
             list.SelectedItem = dogs;
-            await TestHost.UntilAsync(() => ReferenceEquals(menu.Routeable, dogs));
-            menu.Routeable = cats;
+            await TestHost.UntilAsync(() => ReferenceEquals(menu.SelectedEntry, dogs));
+            menu.SelectedEntry = cats;
             await TestHost.UntilAsync(() => ReferenceEquals(list.SelectedItem, cats));
         }
         finally { await TestHost.UnloadAsync(list); }
@@ -243,11 +243,11 @@ public class MenuAndNavigationTests
     public async Task An_entry_added_to_the_menu_is_added_to_the_list()
     {
         var menu = new Menu();
-        menu.Routeables.Add(new Entry("Cats"));
+        menu.Entries.Add(new Entry("Cats"));
         var list = await TestHost.LoadAsync(new RouteableMenu { DataContext = menu });
         try
         {
-            menu.Routeables.Add(new Entry("Dogs"));
+            menu.Entries.Add(new Entry("Dogs"));
             await TestHost.UntilAsync(() => Descendants(list).OfType<RouteableMenuItem>().Count() == 2);
         }
         finally { await TestHost.UnloadAsync(list); }

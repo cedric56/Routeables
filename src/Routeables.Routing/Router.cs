@@ -364,7 +364,7 @@ internal class Router(
         CancellationToken cancellationToken = default,
         params string[] viewKeys)
     {
-        // One route change, one arguments instance. The caller's (RouteableEntry.Arguments is reused on every click) is only a
+        // One route change, one arguments instance. The caller's (MenuEntry.Arguments is reused on every click) is only a
         // model: TryMatch appends the route values to its bags and Route is written, so two history entries sharing it
         // would see each other's values (doubled constructor arguments, a duplicate key, the wrong address on Back).
         args = Snapshot(args);
@@ -481,7 +481,7 @@ internal class Router(
 
         // A page of the menu, whose route has no parameter.
         static string Normal(string? route) => (route ?? string.Empty).Split('?')[0].Trim('/');
-        if (provider.GetService<IMainViewModel>()?.Routeables.FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(url), StringComparison.OrdinalIgnoreCase)) is { } item)
+        if (provider.GetService<IMainViewModel>()?.Entries.FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(url), StringComparison.OrdinalIgnoreCase)) is { } item)
             return await GoToEntryAsync(item, cancellationToken, []);
 
         // Nothing registered at all is the usual first mistake: say where to look.
@@ -515,9 +515,9 @@ internal class Router(
         return GoToTypedRouteAsync(request.ViewModelType, request.Route, request.Args, request.Template, cancellationToken, viewKeys);
     }
 
-    private Task<RouteableResult> GoToEntryAsync(IRouteableEntry routeableView, CancellationToken cancellationToken, string[] viewKeys)
+    private Task<RouteableResult> GoToEntryAsync(IMenuEntry routeableView, CancellationToken cancellationToken, string[] viewKeys)
     {
-        // A typed entry (RouteableEntry<TViewModel>) names the keys of its view model; any other is bound by its template alone.
+        // A typed entry (MenuEntry<TViewModel>) names the keys of its view model; any other is bound by its template alone.
         var type = GetRouteableEntryType(routeableView);
         if (type is null)
             return GoToViewAsync(routeableView, routeableView.Template, routeableView.Template, cancellationToken, viewKeys);
@@ -528,7 +528,7 @@ internal class Router(
 
     // Goes to the entry, then gives it back the page the router shows so that the next visit finds it.
     private async Task<RouteableResult> GoToViewAsync(
-        IRouteableEntry routeableView, string viewKey, string viewModelKey, CancellationToken cancellationToken, string[] viewKeys)
+        IMenuEntry routeableView, string viewKey, string viewModelKey, CancellationToken cancellationToken, string[] viewKeys)
     {
         var result = await GoToRouteAsync(
             routeableView.Arguments.Route ?? routeableView.Route,
@@ -550,14 +550,14 @@ internal class Router(
     }
 
     // Whether the page shown is the one of the entry (its route), and not the one a guard redirected to.
-    internal bool WentTo(IRouteableEntry entry)
+    internal bool WentTo(IMenuEntry entry)
         => string.Equals(history.Current?.Args.Route, entry.Arguments.Route ?? entry.Route, StringComparison.Ordinal);
 
     // A menu entry remembers the page it showed last. Not one the router has disposed since: a new one is created instead.
     private object? Reusable(object? remembered) => lifecycle.WasDestroyed(remembered) ? null : remembered;
 
-    // The view model a typed menu entry (RouteableEntry<T>) is for; an entry of another kind is bound by its template alone.
-    static Type? GetRouteableEntryType(IRouteableEntry view) => (view as RouteableEntry)?.ViewModelType;
+    // The view model a typed menu entry (MenuEntry<T>) is for; an entry of another kind is bound by its template alone.
+    static Type? GetRouteableEntryType(IMenuEntry view) => (view as MenuEntry)?.ViewModelType;
 
     private Task<RouteableResult> GoToTypedRouteAsync(
         Type viewModelType, string route, IRouteableArgs? args, string? template, CancellationToken cancellationToken, string[] viewKeys)
@@ -588,12 +588,12 @@ internal class Router(
         if (matching.Template is not null)
             return matching.Template;
 
-        var item = provider.GetService<IMainViewModel>()?.Routeables
+        var item = provider.GetService<IMainViewModel>()?.Entries
             .FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(route), StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(r.Template));
         return item?.Template ?? route;
     }
 
-    private Task<RouteableResult> GoToEntryAsync(IRouteableEntry routeableView, Type viewModelType, CancellationToken cancellationToken, string[] viewKeys)
+    private Task<RouteableResult> GoToEntryAsync(IMenuEntry routeableView, Type viewModelType, CancellationToken cancellationToken, string[] viewKeys)
     {
         var keys = RouteableKeys.GetKeys(viewModelType, routeableView.Route);
         return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys);

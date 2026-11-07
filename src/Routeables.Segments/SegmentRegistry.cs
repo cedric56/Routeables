@@ -8,10 +8,10 @@ namespace Routeables.Segments;
 /// </summary>
 internal sealed class SegmentRegistry
 {
-    private readonly Dictionary<string, Func<IRouteableEntry>> _factories = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, Func<IMenuEntry>> _factories = new(StringComparer.OrdinalIgnoreCase);
     private readonly object _gate = new();
 
-    public void Add(string name, Func<IRouteableEntry> factory)
+    public void Add(string name, Func<IMenuEntry> factory)
     {
         lock (_gate)
         {
@@ -20,9 +20,9 @@ internal sealed class SegmentRegistry
         }
     }
 
-    public bool TryCreate(string name, out IRouteableEntry view)
+    public bool TryCreate(string name, out IMenuEntry view)
     {
-        Func<IRouteableEntry>? factory;
+        Func<IMenuEntry>? factory;
         lock (_gate)
             _factories.TryGetValue(name, out factory);
 

@@ -160,7 +160,7 @@ public class RouteableErrorsGuardTests
         services.AddLocking();
         var router = new Router(new RouterHistory(), new RouterGate(), new RouterLifecycle(), services.BuildServiceProvider());
         var sut = TestNavigableViewModel.Create(router, [], initialize: false);
-        var method = typeof(RouteableViewModelBase).GetMethod("OnSelectionFailed", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+        var method = typeof(MainViewModelBase).GetMethod("OnSelectionFailed", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
 
         Traced(capture, () => method.Invoke(sut, [new InvalidOperationException("selection-failed-3")]));
 
