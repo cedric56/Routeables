@@ -188,11 +188,33 @@ jobs:
           dotnet build src/Routeables.Native/Routeables.Native.csproj -c Debug
           dotnet build src/Routeables.WinUI3/Routeables.WinUI3.csproj -c Debug
 
-      - name: Sample, WinUI 3
-        run: dotnet build samples/XAnimals.WinUI3/XAnimals.WinUI3.csproj -c Debug
-
       - name: Pack
         run: dotnet pack src/Routeables.Wpf/Routeables.Wpf.csproj -c Release -o artifacts
+
+  winui3:
+    name: Build WinUI 3
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-winui3-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-winui3-
+
+      - name: WinUI 3 library
+        run: dotnet build src/Routeables.WinUI3/Routeables.WinUI3.csproj -c Debug
+
+      - name: Sample, WinUI 3
+        run: dotnet build samples/XAnimals.WinUI3/XAnimals.WinUI3.csproj -c Debug
 
   # ---------------------------------------------------------------------------------------------------------------------------
   # The AOT / trimming guarantee, proven rather than declared: a console app using the libraries the way an application does is
