@@ -2,6 +2,7 @@ using Microsoft.Playwright;
 using System.Text;
 using System.Text.Json;
 using Xunit;
+using static Microsoft.Playwright.Assertions;
 
 namespace Routeables.Test.Playwright;
 
@@ -40,6 +41,12 @@ public sealed class AccessibilityTests(BlazorApp app) : BlazorTest(app)
             // entry to the next would stop at the first one that does.
             await Page.GotoAsync(BaseUrl);
             await Menu.First.WaitForAsync();
+
+            // Signed in: Members turns a signed-out visitor back to Features, and the page to audit would be another one.
+            await OpenAsync("Features");
+            await Button("Sign in").ClickAsync();
+            await Expect(Page.GetByText("Signed in: Open Members now goes there.")).ToBeVisibleAsync();
+
             await OpenAsync(name);
             await ExpectCurrentAsync(name);
 
