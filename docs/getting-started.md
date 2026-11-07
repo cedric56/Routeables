@@ -135,6 +135,9 @@ You can also register routes by hand with `services.RegisterRoute<DogDetailView,
 > [!NOTE]
 > `AddGeneratedRoutes()` is generated as an `internal` extension in **each project** that references the generator, so it must be called from the project that generated it (normally the application project). It collects the attributes of the current project and of the assemblies it references.
 
+> [!TIP]
+> **In an executable you do not have to call it.** The generator also writes a module initializer that gives the routes to the host, which adds them after your `configure` block. What you registered yourself always wins: a route (a key) that is already registered, with `RegisterRoute`, `AddRoutes` or a module, is left as it is. If you call `AddGeneratedRoutes()` yourself, nothing is added a second time. A library gets no initializer (it would only run when one of its types is first used), so it keeps wrapping `AddGeneratedRoutes()` in a public method. To turn it off, set `<RouteablesAutoRegister>false</RouteablesAutoRegister>` in the project; `true` turns it on for a project the compiler does not take for an executable.
+
 > [!IMPORTANT]
 > **Blazor:** the generator cannot read `.razor` files of its own project (the Razor compiler is another generator, and generators do not see each other's output). A view written in Razor is found in two cases: its `[RouteableView(...)]` is on a C# `partial class` of the same name (`DogDetailView.razor.cs`), or the view is in a **referenced** project, and `AddGeneratedRoutes()` is called from the application project that references it. An `@attribute [RouteableView(...)]` inside the Razor file, in the project that calls `AddGeneratedRoutes()`, registers nothing.
 

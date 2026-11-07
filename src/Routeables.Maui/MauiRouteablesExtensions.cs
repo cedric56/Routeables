@@ -56,6 +56,8 @@ public static class MauiRouteablesExtensions
         builder.Services.RegisterMainViewModel<TMain>();
         builder.UseRouteablesServices();
         configure?.Invoke(builder.Services);
+        // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
+        global::Routeables.Abstraction.RouteableAutoRegistration.Apply(builder.Services);
         return builder;
     }
 

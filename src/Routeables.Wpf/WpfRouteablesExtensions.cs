@@ -48,6 +48,8 @@ public static class WpfRouteablesExtensions
             services.RegisterMainViewModel<TMain>();
             services.UseRouteablesServices();
             configure?.Invoke(services);
+            // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
+            global::Routeables.Abstraction.RouteableAutoRegistration.Apply(services);
         }, afterBuild);
     }
 
@@ -252,6 +254,8 @@ public static class WpfRouteablesExtensions
         services.AddSingleton<IRouteableViewBinder, RouteableViewBinder>();
 
         configure(services);
+        // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
+        global::Routeables.Abstraction.RouteableAutoRegistration.Apply(services);
         var provider = services.BuildRouteableProvider();
         ServiceLocator.Services = provider;
         afterBuild?.Invoke(provider);

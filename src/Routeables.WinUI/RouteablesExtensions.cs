@@ -194,6 +194,8 @@ public static class UnoRouteablesExtensions
             services.RegisterMainViewModel<TMain>();
             services.UseRouteablesServices();
             configure?.Invoke(services);
+            // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
+            global::Routeables.Abstraction.RouteableAutoRegistration.Apply(services);
         }, afterBuild);
 
     /// <summary>The container of the running Routeables host.</summary>
@@ -333,6 +335,8 @@ public static class UnoRouteablesExtensions
         services.AddSingleton<IRouteableViewBinder, RouteableViewBinder>();
 
         configure?.Invoke(services);
+        // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
+        global::Routeables.Abstraction.RouteableAutoRegistration.Apply(services);
         var provider = services.BuildRouteableProvider();
         ServiceLocator.Services = provider;
         afterBuild?.Invoke(provider);

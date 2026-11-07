@@ -6,6 +6,12 @@
        To choose another version, reference the package, or set the properties below. With central package management
        (ManagePackageVersionsCentrally) a PackageReference that carries a Version is an error (NU1008): nothing is added then,
        and the application declares the packages in its Directory.Packages.props. -->
+  <!-- The source generator reads RouteablesAutoRegister: in an executable it registers the generated routes with the host, so that the
+       application does not call AddGeneratedRoutes(). Set it to false to keep calling it yourself. -->
+  <ItemGroup>
+    <CompilerVisibleProperty Include="RouteablesAutoRegister" />
+  </ItemGroup>
+
   <PropertyGroup>
     <RouteablesCommunityToolkitMvvmVersion Condition="'$(RouteablesCommunityToolkitMvvmVersion)' == ''">8.4.2</RouteablesCommunityToolkitMvvmVersion>
     <RouteablesReactiveUIVersion Condition="'$(RouteablesReactiveUIVersion)' == ''">23.2.28</RouteablesReactiveUIVersion>

@@ -210,6 +210,17 @@ public static partial class Extensions
             services.GetRouteableTable().Add(route, typeof(TViewModel));
     }
 
+    internal static InjectionTable GetInjectionTable(this IServiceCollection services)
+    {
+        var table = services.Select(d => d.ImplementationInstance).OfType<InjectionTable>().FirstOrDefault();
+        if (table is null)
+        {
+            table = new InjectionTable();
+            services.AddSingleton(table);
+        }
+        return table;
+    }
+
     // A route without a view model (a view only, or a custom factory): the view is found under the route itself.
     private static void AddAddressableRoute(this IServiceCollection services, string route)
     {
@@ -218,7 +229,7 @@ public static partial class Extensions
     }
 
     // One table per collection, found through its instance registration so the order of calls does not matter.
-    private static RouteableTable GetRouteableTable(this IServiceCollection services)
+    internal static RouteableTable GetRouteableTable(this IServiceCollection services)
     {
         var table = services.Select(d => d.ImplementationInstance).OfType<RouteableTable>().FirstOrDefault();
         if (table is null)

@@ -149,6 +149,14 @@ internal sealed class InjectionTable
         types[type] = injectable;
     }
 
+    /// <summary>Takes the descriptions of another table; with <paramref name="overwrite"/> false, the ones already here are kept.</summary>
+    internal void AddRange(InjectionTable other, bool overwrite)
+    {
+        foreach (var (type, injectable) in other.types)
+            if (overwrite || !types.ContainsKey(type))
+                types[type] = injectable;
+    }
+
     internal InjectableType? Find(Type type) => types.GetValueOrDefault(type);
 
     /// <summary>

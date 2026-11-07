@@ -1,6 +1,5 @@
 using Avalonia;
 using Routeables.Avalonia;
-using Routeables.Generated;
 
 namespace RouteablesApp;
 
@@ -10,8 +9,8 @@ internal static class Program
     public static void Main(string[] args) =>
         AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .UseRouteables(
-                r => r.AddGeneratedRoutes(),   // the first page is the one the region of MainWindow.axaml opens
-                view: lifetime => new MainWindow())
+            // The pages are registered for you (the generator finds [Routeable] and the views); the first page is the one the region of
+            // MainWindow.axaml opens. To register by hand too, pass a block: r => r.RegisterRoute<...>(...).
+            .UseRouteables(view: lifetime => new MainWindow())
             .StartWithClassicDesktopLifetime(args);
 }

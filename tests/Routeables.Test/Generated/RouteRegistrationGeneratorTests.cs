@@ -402,7 +402,7 @@ public class RouteRegistrationGeneratorTests
     }
 
     [Fact]
-    public void Generator_does_not_pair_a_class_called_View_that_is_not_routed()
+    public void Generator_pairs_a_class_called_View_that_implements_nothing()
     {
         var result = RunGenerator("""
             using Routeables.Abstraction;
@@ -415,8 +415,7 @@ public class RouteRegistrationGeneratorTests
 
         var generated = GetGeneratedCode(result);
 
-        Assert.DoesNotContain("global::OrderView,", generated);
-        Assert.Contains("OrderViewModel", generated);
+        Assert.Contains("RegisterRoute<global::OrderView, global::OrderViewModel>", generated);
         Assert.Empty(result.Diagnostics);
     }
 
