@@ -70,7 +70,7 @@ The route, its parameter and its type are written once. The name is a constructo
 
 ## What changes in practice
 
-1. **Register nothing by hand.** Remove the `RegisterForNavigation` calls, put `[Routeable]` on the view models, and call `AddGeneratedRoutes()` once.
+1. **Register nothing by hand.** Remove the `RegisterForNavigation` calls, put `[Routeable]` on the view models, and nothing else: the host registers the generated routes at startup.
 2. **Replace names with routes.** `"DogDetail"` becomes `"/dogs/{name}"`. Typed route methods can be generated so a call site does not contain a string: see [Typed route methods](typed-routes.md).
 3. **Move the parameters.** Read them from constructor parameters instead of from `INavigationParameters` in `OnNavigatedTo`.
 4. **Move the lifecycle.** `OnNavigatedTo` is usually `InitializeAsync` (loading) or `OnEnteredAsync` (reacting to the arrival); `CanNavigate` is `CanLeaveAsync`.

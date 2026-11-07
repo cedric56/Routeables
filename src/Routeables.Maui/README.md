@@ -12,10 +12,10 @@ The package brings `Routeables` (routing, abstractions and the source generator)
 
 ```csharp
 var builder = MauiApp.CreateBuilder();
-builder.UseMauiApp<App>().UseRouteables(r => r.AddGeneratedRoutes());
+builder.UseMauiApp<App>().UseRouteables();
 ```
 
-An application with a menu gives its main view model: `.UseRouteables<MainViewModel>(r => r.AddGeneratedRoutes())`.
+An application with a menu gives its main view model: `.UseRouteables<MainViewModel>()`.
 
 ## A view
 

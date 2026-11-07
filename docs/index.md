@@ -29,8 +29,7 @@ public sealed class HelloViewModel(IRouter router, string name)
 <span class="c">// the view is found by its name</span>
 public partial class HelloView : RouteableFor&lt;HelloViewModel&gt; { }
 
-<span class="c">// once, at startup</span>
-services.AddGeneratedRoutes();
+<span class="c">// nothing to register: the host adds the generated routes at startup</span>
 
 <span class="c">// MainView: the zone where pages appear</span>
 <span class="k">&lt;routeables:RouteableRegion</span> <span class="k">/&gt;</span></code></pre></div>

@@ -8,7 +8,7 @@
     <TargetFrameworks Condition="'$(CiBuild)' == 'true'">net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <!-- Not turned on yet: this project could not be built where it was written. Switch it on, with IsAotCompatible, once the CI is green. -->
+    <!-- The trimming and AOT analyzers are on. The CI builds the net10.0 target with CiBuild, where a warning fails the build; the Android and iOS heads are not built there. -->
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PackageId>Routeables.Uno</PackageId>

@@ -18,7 +18,7 @@ The generator must run in **every project that contains attributes it should pro
 
 To skip the typing: `dotnet new install Routeables.Templates`, then `dotnet new routeables-avalonia -n MyApp` (see `templates/`).
 
-Two ways to register a page, both in about a minute and without a menu: with the generator (`AddGeneratedRoutes()`), or by name, one line per page, without the generator. The example is Avalonia; the other hosts start the same way (see [Set up your host](#2-set-up-your-host)).
+Two ways to register a page, both in about a minute and without a menu: with the generator (nothing to call in an application), or by name, one line per page, without the generator. The example is Avalonia; the other hosts start the same way (see [Set up your host](#2-set-up-your-host)).
 
 ### With the generator
 
@@ -47,8 +47,7 @@ Without the generator, `RegisterRoute<HelloView, HelloViewModel>(route: "hello")
 
 ```csharp
 AppBuilder.Configure<App>()
-    .UseRouteables(r => r.AddGeneratedRoutes(),
-        view: lifetime => new MainWindow());
+    .UseRouteables(view: lifetime => new MainWindow());
 ```
 
 **3. Say where the pages appear, and which page opens first**, in your main view (Blazor: the same region in your own layout, which inherits `MainLayoutBase`; the ready-made `MainLayout` has no menu to draw without a main view model and opens `/`):
@@ -122,7 +121,7 @@ Use `[RouteableView(typeof(DogDetailViewModel))]` on the view when the names do 
 
 A view that does not derive from `RouteableFor` (a plain `UserControl`, registered with `RegisterRoute<TView, TViewModel>("/route")`) still gets its view model as its `DataContext` (`BindingContext` on MAUI): each host registers an `IRouteableViewBinder` for that. It does not get the lifecycle of `RouteableFor` (initialization, disposal) and the generator does not find it.
 
-The source generator turns these attributes into registrations. Register them once at startup:
+The source generator turns these attributes into registrations. In an application there is nothing to call: the host adds them at startup (see the tip below). A library, or a project that turns the automatic registration off, registers them itself, once:
 
 ```csharp
 using Routeables.Generated;
@@ -147,29 +146,27 @@ One call per host starts Routeables, registers your main view model (its lifetim
 
 ```csharp
 // Blazor (Program.cs)
-builder.Services.UseRouteablesServer(      // or UseRouteablesWebAssembly, UseRouteablesHybrid
-    r => r.AddGeneratedRoutes());
+builder.Services.UseRouteablesServer();      // or UseRouteablesWebAssembly, UseRouteablesHybrid
 app.MapRazorComponents<App>()
    .AddInteractiveServerRenderMode()
    .AddAdditionalAssemblies(typeof(MainLayoutBase).Assembly);    // Routeables.Blazor: catch-all page, layout, not-found page
 
 // ASP.NET Core, Razor Pages (Program.cs)
 builder.Services.AddRouteablesAspNetCore();
-builder.Services.AddGeneratedRoutes();
 
 // .NET MAUI (MauiProgram.cs)
 builder.UseMauiApp<App>()
-       .UseRouteables(r => r.AddGeneratedRoutes());
+       .UseRouteables();
 
 // Avalonia (App.axaml.cs): the view argument shows the window (or: OpenMainView in OnFrameworkInitializationCompleted)
-AppBuilder.Configure<App>().UseRouteables(r => r.AddGeneratedRoutes(),
+AppBuilder.Configure<App>().UseRouteables(
     view: lifetime => lifetime is IClassicDesktopStyleApplicationLifetime ? new MainWindow() : new MainView());
 
 // Uno Platform (App.xaml.cs, in the constructor): the container and the window in one call (or: OpenMainWindow in OnLaunched)
-Services = this.UseRouteables(r => r.AddGeneratedRoutes(), () => new MainPage());
+Services = this.UseRouteables(r => { }, () => new MainPage());
 
 // WPF (App.xaml.cs, in the constructor or in OnStartup): the container and the main window in one call
-this.UseRouteables(r => r.AddGeneratedRoutes(), () => new MainView());
+this.UseRouteables(r => { }, () => new MainView());
 ```
 
 With a menu, give the main view model: `UseRouteables<MainViewModel>(...)` on MAUI, Avalonia, Uno and WPF, `UseRouteablesServer<MainViewModel>(...)` on Blazor, `AddRouteablesAspNetCore<MainViewModel>()` on ASP.NET Core.

@@ -188,6 +188,9 @@ jobs:
           dotnet build src/Routeables.Native/Routeables.Native.csproj -c Debug
           dotnet build src/Routeables.WinUI3/Routeables.WinUI3.csproj -c Debug
 
+      - name: Sample, WinUI 3
+        run: dotnet build samples/XAnimals.WinUI3/XAnimals.WinUI3.csproj -c Debug
+
       - name: Pack
         run: dotnet pack src/Routeables.Wpf/Routeables.Wpf.csproj -c Release -o artifacts
 
@@ -408,15 +411,14 @@ jobs:
           dotnet build samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-ios -r ios-arm64 -p:EnableCodeSigning=false
           dotnet build samples/XAnimals.Avalonia.iOS/XAnimals.Avalonia.iOS.csproj -c Debug -r ios-arm64 -p:EnableCodeSigning=false
   # ---------------------------------------------------------------------------------------------------------------------------
-  # UI tests. They do not block the build while they are new (continue-on-error): a failure shows as a red step in the run, not as a
-  # failed check. Remove continue-on-error once they have been green for a while.
+  # UI tests. The headless ones (Avalonia, Playwright on Blazor, Uno desktop) block the build like the other tests. The device ones
+  # (Android emulator, Windows, Apple) depend on the runner image and report without blocking (continue-on-error).
   # ---------------------------------------------------------------------------------------------------------------------------
 
   ui-avalonia:
     name: UI tests (Avalonia headless)
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v4
@@ -435,7 +437,6 @@ jobs:
     name: UI tests (Playwright, Blazor)
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v4
@@ -463,7 +464,6 @@ jobs:
     name: UI tests (Uno, desktop)
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v4

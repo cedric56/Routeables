@@ -19,7 +19,7 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        this.UseRouteables(services => services.AddGeneratedRoutes());
+        this.UseRouteables();
         this.OpenMainWindow(new MainView());
     }
 }
@@ -27,7 +27,7 @@ public partial class App : Application
 
 An application with a menu gives its main view model: `this.UseRouteables<MainViewModel>(services => ...)`.
 
-The two calls can be one: `this.UseRouteables(services => services.AddGeneratedRoutes(), () => new MainView(), window => window.Title = "My app");` builds the container now and opens the window as the application runs, so it works from the constructor of `App`, from `OnStartup` or from a `Startup` handler.
+The two calls can be one: `this.UseRouteables(services => { /* your own services */ }, () => new MainView(), window => window.Title = "My app");` builds the container now and opens the window as the application runs, so it works from the constructor of `App`, from `OnStartup` or from a `Startup` handler.
 
 Leave `StartupUri` out of `App.xaml`: the container must exist before the first window. `OpenMainWindow` creates the window, gives the view the menu as `DataContext`, selects the first entry when the window is first activated and disposes the container when the last window closes. For a window you create yourself, call `window.AttachRouteables()`.
 

@@ -14,7 +14,7 @@ The package brings `Routeables` (routing, abstractions and the source generator)
 public App()
 {
     InitializeComponent();
-    Services = this.UseRouteables(r => r.AddGeneratedRoutes());
+    Services = this.UseRouteables();
 }
 
 protected override void OnLaunched(LaunchActivatedEventArgs args) =>

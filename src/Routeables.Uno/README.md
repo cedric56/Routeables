@@ -14,7 +14,7 @@ The package brings `Routeables` (routing, abstractions and the source generator)
 public App()
 {
     InitializeComponent();
-    Services = this.UseRouteables(r => r.AddGeneratedRoutes());
+    Services = this.UseRouteables();
 }
 
 protected override void OnLaunched(LaunchActivatedEventArgs args) =>
@@ -23,7 +23,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args) =>
 
 An application with a menu gives its main view model: `this.UseRouteables<MainViewModel>(r => ...)`.
 
-The window can be opened by the same call: `Services = this.UseRouteables(r => r.AddGeneratedRoutes(), () => new MainPage(), window => window.Title = "My app");` in the constructor of `App` builds the container and creates the window as the application runs, with no `OnLaunched` to write.
+The window can be opened by the same call: `Services = this.UseRouteables(r => { /* your own services */ }, () => new MainPage(), window => window.Title = "My app");` in the constructor of `App` builds the container and creates the window as the application runs, with no `OnLaunched` to write.
 
 `OpenMainWindow` creates the window, gives the page the menu as `DataContext`, selects the first entry and disposes the container when the window closes. For another window, call `window.AttachRouteables()`.
 
@@ -76,7 +76,7 @@ Calling a service before a window has content throws an `InvalidOperationExcepti
 ## Good to know
 
 - Routeables does not use `Frame` or Uno.Extensions: do not mix them in one window.
-- Not trimmer-checked yet (`IsAotCompatible` is not declared).
+- `IsAotCompatible` is declared and the CI builds the `net10.0` target with the analyzers (a trim or AOT warning fails the build). No trimmed Uno application is published or run there, and the Android and iOS heads are not built.
 - Images in the sample are fetched by Uno itself; Wikimedia may refuse them without a User-Agent.
 
 ## Next

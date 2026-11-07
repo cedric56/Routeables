@@ -62,7 +62,7 @@ public class DogDetailViewModel(IRouter router, string name, Action? back = null
 <AnimalDetail ViewModel="ViewModel" />
 ```
 
-`ViewModel` is typed and the lifecycle hooks come with the base class. Register the routes at startup with `services.UseRouteablesServer<MainViewModel>(r => r.AddGeneratedRoutes())` (or `UseRouteablesWebAssembly`, `UseRouteablesHybrid`).
+`ViewModel` is typed and the lifecycle hooks come with the base class. The routes are registered at startup by `services.UseRouteablesServer<MainViewModel>()` (generated routes are added by the host) (or `UseRouteablesWebAssembly`, `UseRouteablesHybrid`).
 
 > [!IMPORTANT]
 > The generator cannot read the `.razor` files of its own project. A Razor view is found when `[RouteableView(...)]` is on a C# `partial class` of the same name (`DogDetailView.razor.cs`), or when the view is in a **referenced** project and `AddGeneratedRoutes()` is called from the application project. An `@attribute [RouteableView(...)]` inside the Razor file, in the project that calls `AddGeneratedRoutes()`, registers nothing. See [getting started](../getting-started.md).
