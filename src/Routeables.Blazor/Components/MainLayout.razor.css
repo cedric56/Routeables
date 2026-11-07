@@ -28,6 +28,7 @@
     .rt-layout[data-wui-theme="dark"] {
         color-scheme: dark;
         --rt-primary: #776be7;
+        --rt-appbar-bg: #594ae2;
         --rt-border: rgba(255, 255, 255, 0.15);
         --rt-hover: rgba(255, 255, 255, 0.1);
     }
@@ -38,7 +39,7 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0 1rem;
-    background: var(--rt-primary);
+    background: var(--rt-appbar-bg, var(--rt-primary));
     color: var(--rt-primary-text);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
     z-index: 1;

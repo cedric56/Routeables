@@ -65,7 +65,7 @@ public sealed class AccessibilityTests(BlazorApp app) : BlazorTest(app)
             var json = await Page.EvaluateAsync<string>(
                 "async () => JSON.stringify((await axe.run(document, { runOnly: ['wcag2a', 'wcag2aa'] })).violations" +
                 ".filter(v => v.impact === 'serious' || v.impact === 'critical')" +
-                ".map(v => ({ id: v.id, impact: v.impact, count: v.nodes.length, first: v.nodes[0].html.slice(0, 120) })))");
+                ".map(v => ({ id: v.id, impact: v.impact, count: v.nodes.length, first: v.nodes.slice(0, 4).map(n => n.target.join(' ') + (n.any[0] && n.any[0].data && n.any[0].data.contrastRatio ? ' ' + n.any[0].data.fgColor + ' on ' + n.any[0].data.bgColor + ' = ' + n.any[0].data.contrastRatio : '')).join(' | ') })))");
 
             foreach (var violation in JsonSerializer.Deserialize<JsonElement>(json).EnumerateArray())
                 report.AppendLine($"{scheme} / {name}: {violation.GetProperty("id").GetString()} ({violation.GetProperty("impact").GetString()}, " +
