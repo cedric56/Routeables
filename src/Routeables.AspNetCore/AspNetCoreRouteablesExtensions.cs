@@ -49,6 +49,7 @@ public static class AspNetCoreRouteablesExtensions
                 ServiceLifetime.Scoped));
         services.RegisterRouting(ServiceLifetime.Scoped);
         services.AddScoped<RouteablePageState>();
+        services.AddScoped<RouteableTransitions>();
         configure?.Invoke(services);
         // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
         global::Routeables.Abstraction.RouteableAutoRegistration.Apply(services);

@@ -1,12 +1,17 @@
-﻿@using Routeables.Abstraction
+﻿@using Microsoft.Extensions.DependencyInjection
+@using Routeables.Abstraction
+@using Routeables.AspNetCore
 @model string
-@* The zone of a region: it shows what the router of the region displays. Nothing assigns a view to it. *@
+@* The zone of a region: it shows what the router of the region displays. Nothing assigns a view to it. The view comes in with the
+   transition of the navigation, else the one the page gives for the region (ViewData["Transition"]); the classes are in animals-mvc.css. *@
 @{
-    var router = ViewContext.HttpContext.RequestServices.GetRouter(Model);
+    var services = ViewContext.HttpContext.RequestServices;
+    var router = services.GetRouter(Model);
+    var transition = services.GetRequiredService<RouteableTransitions>().Next(Model, ViewData["Transition"] as RouteTransition);
 }
 @if (router.CurrentView is { } view)
 {
-    <div class="rt-enter rt-none">
+    <div class="@transition.CssClass" style="@(transition.Animated ? transition.Style : null)">
         @await Html.PartialAsync(MainViewPageModel.ViewName(view), router.CurrentViewModel)
     </div>
 }

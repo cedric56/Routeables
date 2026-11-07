@@ -68,6 +68,7 @@ Animation is native to each host, so a custom transition is registered per host 
 | MAUI | `RouteTransitions.Register("Grow", async (region, direction, duration) => await region.ScaleToAsync(...))` |
 | Uno | `RouteTransitions.Register("Pop", direction => new TransitionCollection { new EntranceThemeTransition { FromVerticalOffset = 30 } })` returns the transitions the region plays |
 | Blazor | a CSS animation of yours: `.rt-enter.rt-spin { animation-name: spin; }` |
+| ASP.NET Core (Razor Pages, MVC) | the same CSS animation of yours, on the element `RouteableTransitions` gives the region |
 
 ## What each host does
 
@@ -76,8 +77,17 @@ Animation is native to each host, so a custom transition is registered per host 
 - **Uno** uses the theme transitions of the platform (`ContentThemeTransition`, `EntranceThemeTransition`), which decide how long they last: the effects it cannot reproduce become a short rise from below (Uno does not implement `PopupThemeTransition`). Register a name to play your own animation.
 - **Blazor** gives the element the classes `rt-enter rt-{name} rt-{forward|back|none}` and the variable `--rt-duration`; the animations of the built-in names are in `theme.css`, and `prefers-reduced-motion` turns them off.
 
+- **ASP.NET Core** sends a whole page for each request, so the view of a region is a new element each time and the browser plays the CSS animation when the page loads. `RouteableTransitions` (registered by `AddRouteablesAspNetCore`) follows each region and gives, where the region is written, the classes and the style of the element: `rt-enter rt-{name} rt-{forward|back|none}` and `--rt-duration`, the same as on Blazor.
+
+  ```cshtml
+  @{ var transition = Context.RequestServices.GetRequiredService<RouteableTransitions>().Next("detail", RouteTransition.Slide); }
+  <div class="@transition.CssClass" style="@(transition.Animated ? transition.Style : null)"> ... </div>
+  ```
+
+  `Next(region, regionTransition, regionDuration)` resolves as the other hosts do (the navigation wins over the region). A transition plays once, for the request that follows the route change: a reload plays none, and the first page of a region comes in without one. The animations of the built-in names are in `RouteableTransitions.Css` (put it in a `<style>` or copy it into your stylesheet); `prefers-reduced-motion` turns them off.
+
 `RouteableRegionItems` and the controls that do not show a router's current view (menus, tabs) play no transition.
 
 ## Sample
 
-The **History** page of every sample (Avalonia, WPF, Uno, MAUI, Blazor) has a *Transition* list that sets the transition of its frame (`Transition="{Binding Transition}"` on the `RouteableRegion`; on MAUI and Uno the property is a string, so bind the name: `{Binding Transition.Name}`), a *Push (SlideUp)* button that asks for its own transition for that one navigation (`WithTransition(RouteTransition.SlideUp)`), and a custom transition, *Pop*, registered in the code-behind of the page (a CSS animation in the Blazor sample).
+The **History** page of every sample (Avalonia, WPF, Uno, WinUI 3, MAUI, Blazor, Razor Pages) has a *Transition* list that sets the transition of its frame (`Transition="{Binding Transition}"` on the `RouteableRegion`; on MAUI and Uno the property is a string, so bind the name: `{Binding Transition.Name}`), a *Push (SlideUp)* button that asks for its own transition for that one navigation (`WithTransition(RouteTransition.SlideUp)`), and a custom transition, *Pop*, registered in the code-behind of the page (a CSS animation in the Blazor sample).

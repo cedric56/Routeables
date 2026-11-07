@@ -37,6 +37,11 @@
       </form>
     </section>
 
+    <section class="about-group">
+        @* The frame: the pages pushed here come in with the transition chosen below, Back and Forward included. *@
+        @await Html.PartialAsync("~/Views/Shared/_Region.cshtml", HistoryViewModel.Region, new ViewDataDictionary(ViewData) { ["Transition"] = Model.Transition })
+    </section>
+
     <form method="post" class="about-group">
         <input type="hidden" name="target" value="page" />
         <input type="hidden" name="do" value="transition" />
