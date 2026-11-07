@@ -14,7 +14,7 @@
 | 8 | Route result | Every move returns a `RouteableResult` (success, exception, redirection); a modal returns its typed result; `RouteableReturn` brings the user back after a guard | `RouterResultTests`, `RouteableReturnTests` |
 | 9 | ViewModel lifecycle | `IInitializeAsync`, entering, leaving, `CanLeaveAsync`, `OnSubscribe`, destroy ([Lifecycle](lifecycle.md)) | `RouterLifecycleTests` |
 | 10 | Route guards | `IRouteGuard`: let in, cancel or redirect, with the route to come back to | `RouteGuardTests`, `RouteGuardDecisionAndLifetimeTests` |
-| 11 | State as data | The history is a list of routes: `RouteableState.Capture`, `Serialize`, `Deserialize`, `RestoreAsync`. With `CaptureSnapshots` each page also keeps what its view model saves (`IRouteableState`) and the values it was reached with | `RouteableDeepLinksTests`; `RouteCriteriaTests`: `The_values_a_page_was_reached_with_come_back_with_the_page`, `A_page_shown_with_its_own_view_is_saved_when_it_is_given_a_route` |
+| 11 | State as data | The history is a list of routes: `RouteableState.Capture`, `Serialize`, `Deserialize`, `RestoreAsync`. With `CaptureSnapshots` each page also keeps what its view model saves (`IRouteableState`) and the values it was reached with. `RouteableSnapshot` is compared by what it holds | `RouteableDeepLinksTests`; `RouteCriteriaTests`: `The_values_a_page_was_reached_with_come_back_with_the_page`, `A_page_shown_with_its_own_view_is_saved_when_it_is_given_a_route`, `The_state_is_compared_by_what_it_holds` |
 | 12 | Deep linking | A route is a link: `RouteableDeepLinks`, `RouteableLinkInbox` (links that arrive before the first page), the address bar of Blazor | `RouteableDeepLinksTests` |
 | 13 | DI-first | Pages and view models are built by the container (`ActivatorUtilities`, `[FromContainer]`, keyed services); lifetimes per route | `RegisterRouteLifetimeTests`, `ConstructorArgumentsTests` |
 | 14 | Scoped parameters | `RouteableArgs.WithValue` belongs to one history entry (two entries never share them) and is saved and restored with that entry | `RouteableArgsIsolationTests`; `RouteCriteriaTests.The_values_a_page_was_reached_with_come_back_with_the_page` |
@@ -39,3 +39,14 @@ await router.GoToAsync<OrderViewModel>(new { id = 42 });   // reads the properti
 ```
 
 The template registered for the view model is filled: numbers are written with the invariant culture, each value is escaped, an optional value that is missing leaves its segment out, and a required one that is missing gives a failed result that names it.
+
+## The rest of the proposal of the gist
+
+| Point of the gist | In Routeables |
+| --- | --- |
+| An event before the change, which can be cancelled | `IRouter.Routing` tells what is about to change; what cancels or redirects is an `IRouteGuard` (a guard sees the same change and answers let in, cancel or redirect), not a flag of the event |
+| Events after the change: done, failed | `IRouter.Routed`, raised once after every change, with its outcome (done, cancelled, failed) and the exception |
+| Results that say success or failure | `RouteableResult` on every move, and a typed result for a modal |
+| `CanGoBack`, the current state | `IRouter.CanGoBack`, `CanGoForward`, `History`, `CurrentViewModel` |
+| State to and from a URI | The history as a list of routes, one line per page (`RouteableState.Serialize` and `Deserialize`); each route is an address on its own |
+| A shell facade over the new core (phase 2 and 3 of the migration) | Not applicable: Routeables is not built on MAUI Shell and does not replace it. The MAUI host shows its pages without `Shell` |

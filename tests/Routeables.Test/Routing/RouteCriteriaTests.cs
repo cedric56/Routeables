@@ -221,4 +221,17 @@ public class RouteCriteriaTests
         Assert.Single(routes);
         Assert.Equal("/form", routes[0]);
     }
+
+    [Fact]
+    public void The_state_is_compared_by_what_it_holds()
+    {
+        var a = new RouteableSnapshot("/form", new Dictionary<string, string> { ["x"] = "1", ["y"] = "2" });
+        var b = new RouteableSnapshot("/form", new Dictionary<string, string> { ["y"] = "2", ["x"] = "1" });
+        var other = new RouteableSnapshot("/form", new Dictionary<string, string> { ["x"] = "1" });
+
+        Assert.Equal(a, b);
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+        Assert.NotEqual(a, other);
+        Assert.NotEqual(a, new RouteableSnapshot("/other", a.State));
+    }
 }

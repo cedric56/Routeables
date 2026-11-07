@@ -256,6 +256,26 @@ public sealed record RouteableSnapshot(string Route, IReadOnlyDictionary<string,
 {
     /// <summary>A page with no values.</summary>
     public RouteableSnapshot(string route) : this(route, new Dictionary<string, string>()) { }
+
+    /// <summary>Two snapshots are equal when they have the same route and the same values (the state is data: it is compared by what it holds).</summary>
+    public bool Equals(RouteableSnapshot? other)
+        => other is not null
+           && string.Equals(Route, other.Route, StringComparison.Ordinal)
+           && State.Count == other.State.Count
+           && State.All(pair => other.State.TryGetValue(pair.Key, out var value) && string.Equals(pair.Value, value, StringComparison.Ordinal));
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        hash.Add(Route, StringComparer.Ordinal);
+        // Order of the values does not count: the entries are combined by addition.
+        var values = 0;
+        foreach (var pair in State)
+            values += HashCode.Combine(pair.Key, pair.Value);
+        hash.Add(values);
+        return hash.ToHashCode();
+    }
 }
 
 /// <summary>The arguments of a page that is reached again: only the values it was reached with. The router copies them.</summary>
