@@ -1,9 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Headless;
+using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Routeables.Abstraction;
 using Routeables.Avalonia;
+using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Routeables.Test.Avalonia.Visual;
@@ -41,11 +43,21 @@ public sealed class VisualTests(VisualApp app)
         Dispatcher.UIThread.RunJobs();
 
         using var frame = window.CaptureRenderedFrame() ?? throw new InvalidOperationException("The window drew nothing: is Skia on?");
-        using var stream = new MemoryStream();
-        frame.Save(stream);
+        byte[] png;
+        using (var pixels = frame.Lock())
+        {
+            // The pixels are read from the bitmap itself, row by row: the encoders of Avalonia changed between versions, the framebuffer did not.
+            var width = pixels.Size.Width;
+            var height = pixels.Size.Height;
+            var bytes = new byte[width * height * 4];
+            for (var y = 0; y < height; y++)
+                Marshal.Copy(pixels.Address + y * pixels.RowBytes, bytes, y * width * 4, width * 4);
+            png = Snapshot.Encode(width, height, pixels.Format == PixelFormat.Rgba8888 ? bytes : Snapshot.BgraToRgba(bytes));
+        }
+
         window.Close();
 
-        var (outcome, message) = Snapshot.Compare(Snapshot.FolderOf("Routeables.Test.Avalonia.Visual.csproj"), name, stream.ToArray());
+        var (outcome, message) = Snapshot.Compare(Snapshot.FolderOf("Routeables.Test.Avalonia.Visual.csproj"), name, png);
         switch (outcome)
         {
             case SnapshotOutcome.NoBaseline: Assert.Skip(message); break;

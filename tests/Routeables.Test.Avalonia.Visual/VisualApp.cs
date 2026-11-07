@@ -46,7 +46,7 @@ public sealed class FormView : RouteableFor<FormViewModel>
         {
             new TextBlock { Text = "Settings", FontSize = 24, FontWeight = FontWeight.SemiBold },
             new TextBlock { Text = "Choose how the application behaves.", TextWrapping = TextWrapping.Wrap },
-            new TextBox { Text = "Routeables", Watermark = "Name" },
+            new TextBox { Text = "Routeables", PlaceholderText = "Name" },
             new CheckBox { Content = "Keep me signed in", IsChecked = true },
             new ComboBox { ItemsSource = new[] { "Light", "Dark", "System" }, SelectedIndex = 1 },
             new StackPanel
