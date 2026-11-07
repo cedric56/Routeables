@@ -287,9 +287,18 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     private bool IsKnown(string route)
         => provider.GetService<RouteableTable>()?.Entries.Any(e => RouteParser.TryMatch(e.Template, route)) == true;
 
+    // The browser reports an address escaped ("/dogs/Afghan%20Hound") and a route is kept as it was asked ("/dogs/Afghan Hound"): both are
+    // the same address, so they are compared unescaped. Without it the two never match and the address is shown again and again.
     private static bool Same(string? a, string? b)
         => a is not null && b is not null
-           && string.Equals(Url(a).TrimEnd('/'), Url(b).TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+           && string.Equals(Normalize(a), Normalize(b), StringComparison.OrdinalIgnoreCase);
+
+    private static string Normalize(string address)
+    {
+        var path = Url(address).TrimEnd('/');
+        try { return Uri.UnescapeDataString(path); }
+        catch (UriFormatException) { return path; }
+    }
 
     /// <inheritdoc />
     public void Dispose()

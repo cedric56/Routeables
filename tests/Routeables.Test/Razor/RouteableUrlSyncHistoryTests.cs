@@ -20,7 +20,7 @@ public class RouteableUrlSyncHistoryTests
 
         protected override void NavigateToCore(string uri, NavigationOptions options)
         {
-            var absolute = ToAbsoluteUri(uri).ToString();
+            var absolute = ToAbsoluteUri(uri).AbsoluteUri;      // escaped, as a browser reports it
             Calls.Add(("/" + ToBaseRelativePath(absolute), options.ReplaceHistoryEntry));
             if (options.ReplaceHistoryEntry)
                 _entries[_at] = absolute;
@@ -83,6 +83,9 @@ public class RouteableUrlSyncHistoryTests
     public sealed class DetailView : IRouteableFor { public object? Context { get; set; } }
     public sealed class DetailVm(int id) { public int Id { get; } = id; }
 
+    public sealed class NamedView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class NamedVm(string name) { public string Name { get; } = name; }
+
     private sealed class Fixture : IDisposable
     {
         public ServiceProvider Provider { get; }
@@ -98,6 +101,7 @@ public class RouteableUrlSyncHistoryTests
             services.RegisterRouting();
             services.RegisterRoute<HomeView, HomeVm>(route: "/home");
             services.RegisterRoute<DetailView, DetailVm>(route: "/detail/{id:int}");
+            services.RegisterRoute<NamedView, NamedVm>(route: "/named/{name}");
             services.AddSingleton<NavigationManager>(Navigation);
             if (withScripts)
                 services.AddSingleton<IJSRuntime>(Scripts);
@@ -135,6 +139,24 @@ public class RouteableUrlSyncHistoryTests
 
         Assert.Equal(-1, f.Scripts.Moves[0]);
         Assert.Empty(f.Navigation.Calls);                       // the address is not replaced: the browser moved itself
+    }
+
+    [Fact]
+    public async Task The_browser_forward_to_an_address_with_a_space_goes_forward_in_the_router()
+    {
+        using var f = new Fixture();
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+        await f.GoAsync("/named/Afghan Hound", "/named/{name}");
+        await f.Router.GoBackAsync(TestContext.Current.CancellationToken);
+        await Fixture.Until(() => f.Scripts.Moves.Count == 1);
+        var entries = f.Router.History.Entries.Count;
+
+        f.Navigation.Go(1);                                     // the Forward button: the address is "/named/Afghan%20Hound"
+        await Fixture.Until(() => f.Router.CurrentViewModel is NamedVm);
+
+        Assert.Equal("Afghan Hound", ((NamedVm)f.Router.CurrentViewModel!).Name);
+        Assert.Equal(entries, f.Router.History.Entries.Count);  // moved forward: no new entry was pushed
     }
 
     [Fact]
