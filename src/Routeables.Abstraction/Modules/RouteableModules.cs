@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace Routeables.Abstraction;
@@ -84,7 +84,15 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
         foreach (var (main, entries, menu) in pending)
             menu.AddTo(main, entries);
 
-        ModuleLoaded?.Invoke(this, info);
+        // The module is loaded: an observer that throws must not make the load fail (a second Load would answer "already loaded").
+        if (ModuleLoaded is { } handlers)
+        {
+            foreach (EventHandler<RouteableModuleInfo> handler in handlers.GetInvocationList())
+            {
+                try { handler(this, info); }
+                catch (Exception ex) { RouteableErrors.Report<RouteableModules>(root, ex, nameof(ModuleLoaded)); }
+            }
+        }
         return info;
     }
 

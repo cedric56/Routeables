@@ -1,4 +1,4 @@
-using Routeables.Abstraction;
+﻿using Routeables.Abstraction;
 using Routeables.Routing;
 using Routeables.Tests.Core;
 
@@ -123,6 +123,22 @@ public class RouteableModulesTests
         Assert.True(modules.IsLoaded("ORDERS"));
         Assert.Single(modules.Loaded);
         Assert.Single(provider.GetRequiredService<IMainViewModel>().Entries);
+    }
+
+    [Fact]
+    public void An_observer_that_throws_does_not_fail_the_load_and_the_others_are_still_called()
+    {
+        using var provider = Application();
+        var modules = provider.GetRequiredService<IRouteableModules>();
+        var raised = new List<string>();
+        modules.ModuleLoaded += (_, _) => throw new InvalidOperationException("observer");
+        modules.ModuleLoaded += (_, module) => raised.Add(module.Name);
+
+        var info = modules.Load("Orders", AddOrders);
+
+        Assert.Equal("Orders", info.Name);
+        Assert.Equal(["Orders"], raised);
+        Assert.True(modules.IsLoaded("Orders"));
     }
 
     [Fact]

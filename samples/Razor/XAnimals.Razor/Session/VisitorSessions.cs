@@ -21,11 +21,14 @@ public sealed class VisitorSession(string id, IServiceScope scope) : IDisposable
 
     public DateTime LastSeen { get; set; } = DateTime.UtcNow;
 
+    /// <summary>Set when the sessions dropped it: a request that was waiting for its gate must ask for another session.</summary>
+    public volatile bool Retired;
+
     public void Dispose()
     {
         // The view models that listen or count down stop with their scope (HistoryViewModel, FeaturesViewModel...).
+        // The gate is not disposed: a request still waiting for it must wake up (and see Retired), not fail or wait for ever.
         Scope.Dispose();
-        Gate.Dispose();
     }
 }
 
@@ -79,11 +82,14 @@ public sealed class VisitorSessions(IServiceScopeFactory scopes) : IDisposable
         if (!_sessions.TryRemove(id, out var session))
             return;
 
-        // A request that holds the session finishes first; nobody is left to use it after that.
+        // A request that holds the session finishes first. The ones that already found it wait for the gate: they see Retired once they
+        // have it, and take another session.
+        session.Retired = true;
         AsyncHelper.FireAndForget(() => Task.Run(async () =>
         {
             await session.Gate.WaitAsync();
-            session.Dispose();
+            try { session.Dispose(); }
+            finally { session.Gate.Release(); }
         }), detail: "VisitorSessions.Remove");
     }
 
@@ -100,7 +106,22 @@ internal sealed class VisitorSessionMiddleware(RequestDelegate next, VisitorSess
 {
     public async Task InvokeAsync(HttpContext context)
     {
-        var session = sessions.GetOrCreate(context.Request.Cookies[VisitorSessions.CookieName], out var created);
+        var cookie = context.Request.Cookies[VisitorSessions.CookieName];
+        var created = false;
+        VisitorSession session;
+        while (true)
+        {
+            session = sessions.GetOrCreate(cookie, out var made);
+            created |= made;
+            await session.Gate.WaitAsync(context.RequestAborted);
+            if (!session.Retired)
+                break;
+
+            // The sessions dropped it between the lookup and the gate (idle, or too many): ask again, the cookie is not known any more.
+            session.Gate.Release();
+            cookie = null;
+        }
+
         if (created)
         {
             context.Response.Cookies.Append(VisitorSessions.CookieName, session.Id, new CookieOptions
@@ -112,7 +133,6 @@ internal sealed class VisitorSessionMiddleware(RequestDelegate next, VisitorSess
             });
         }
 
-        await session.Gate.WaitAsync(context.RequestAborted);
         var requestServices = context.RequestServices;
         try
         {
