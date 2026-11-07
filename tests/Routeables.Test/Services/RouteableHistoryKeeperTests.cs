@@ -157,5 +157,5 @@ public class RouteableHistoryKeeperTests
 
     [Fact]
     public void The_default_file_is_named_after_the_application()
-        => Assert.True(new FileRouteableHistoryStore().Path.EndsWith("routeables-history.txt", StringComparison.Ordinal));
+        => Assert.EndsWith("routeables-history.txt", new FileRouteableHistoryStore().Path, StringComparison.Ordinal);
 }

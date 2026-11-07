@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
 
@@ -126,7 +126,18 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         finally
         {
             _active = true;
-            SaveNow();
+            try
+            {
+                // The history belongs to the thread of the interface: read it there, as the route changes that save it do.
+                if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
+                    await dispatcher.InvokeAsync(SaveNow);
+                else
+                    SaveNow();
+            }
+            catch (Exception ex)
+            {
+                RouteableErrors.Report<RouteableHistoryKeeper>(provider, ex, "Save");
+            }
         }
     }
 
