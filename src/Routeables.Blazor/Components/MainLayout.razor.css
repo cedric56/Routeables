@@ -120,6 +120,11 @@
         font-weight: 600;
     }
 
+    /* The description keeps the colour of its entry: the faded one of the other entries is too pale on the accent colour. */
+    .rt-nav-link.rt-active .rt-nav-description {
+        opacity: 1;
+    }
+
     .rt-nav-icon {
         flex: none;
         width: 1.5rem;

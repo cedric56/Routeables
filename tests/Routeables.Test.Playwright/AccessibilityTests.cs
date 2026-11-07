@@ -67,6 +67,12 @@ public sealed class AccessibilityTests(BlazorApp app) : BlazorTest(app)
                 ".filter(v => v.impact === 'serious' || v.impact === 'critical')" +
                 ".map(v => ({ id: v.id, impact: v.impact, count: v.nodes.length, first: v.nodes.slice(0, 4).map(n => n.target.join(' ') + (n.any[0] && n.any[0].data && n.any[0].data.contrastRatio ? ' ' + n.any[0].data.fgColor + ' on ' + n.any[0].data.bgColor + ' = ' + n.any[0].data.contrastRatio : '')).join(' | ') })))");
 
+            if (json != "[]")
+                report.AppendLine(scheme + " / " + name + ": " + await Page.EvaluateAsync<string>(
+                    "() => { const l = document.querySelector('.rt-layout'); const c = getComputedStyle(l); " +
+                    "return 'theme=' + l.dataset.wuiTheme + ' layout-bg=' + c.backgroundColor + ' color=' + c.color + ' scheme=' + " +
+                    "matchMedia('(prefers-color-scheme: dark)').matches; }"));
+
             foreach (var violation in JsonSerializer.Deserialize<JsonElement>(json).EnumerateArray())
                 report.AppendLine($"{scheme} / {name}: {violation.GetProperty("id").GetString()} ({violation.GetProperty("impact").GetString()}, " +
                                   $"{violation.GetProperty("count").GetInt32()}x) {violation.GetProperty("first").GetString()}");

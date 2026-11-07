@@ -36,7 +36,8 @@ body .rt-layout.rt-layout[data-wui-theme="dark"] {
     --an-muted: #9DB0A6;
     --an-line: rgba(231, 239, 233, .14);
     --an-canopy-soft: #1E3A30;
-    --rt-primary: #2E8C73;
+    --rt-primary: #4DB89A;        /* text of the active entry: 5.7:1 on the hover colour */
+    --rt-appbar-bg: var(--an-canopy);   /* white text on the bar: 6.6:1 */
     --rt-hover: #1C2F27;
 }
 
