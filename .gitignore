@@ -464,3 +464,6 @@ Samples/XAnimals.MauiHybrid/wwwroot/routeables-notifications-worker.js
 
 # Output of the native smoke test (agent-desktop/run.ps1)
 /out/
+
+# Screenshots of the visual tests that have no image yet or that differ (see tests/Routeables.Test.Playwright/VisualTests.cs)
+tests/Routeables.Test.Playwright/Snapshots/_actual/

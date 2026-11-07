@@ -23,10 +23,13 @@ public abstract class BlazorTest(BlazorApp app) : IAsyncLifetime
     /// <summary>The errors of the page (exceptions that nobody caught) seen so far.</summary>
     protected IReadOnlyList<string> PageErrors => _errors;
 
+    /// <summary>The options of the browser context of the test: a test that needs another size, scheme or motion overrides it.</summary>
+    protected virtual BrowserNewContextOptions ContextOptions => new() { ViewportSize = new ViewportSize { Width = 1280, Height = 900 } };
+
     /// <summary>Opens a new browser context and page on the sample, waiting until the menu is drawn.</summary>
     public virtual async ValueTask InitializeAsync()
     {
-        _context = await app.Browser.NewContextAsync(new BrowserNewContextOptions { ViewportSize = new ViewportSize { Width = 1280, Height = 900 } });
+        _context = await app.Browser.NewContextAsync(ContextOptions);
         Page = await _context.NewPageAsync();
         Page.SetDefaultTimeout(15_000);
         Page.PageError += (_, message) => _errors.Add(message);

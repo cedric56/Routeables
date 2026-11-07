@@ -1,0 +1,58 @@
+using Microsoft.Playwright;
+using System.Text;
+using System.Text.Json;
+using Xunit;
+
+namespace Routeables.Test.Playwright;
+
+/// <summary>
+/// An automatic accessibility check (axe-core, WCAG 2 A and AA) of every page the menu reaches, in the light and in the dark scheme. It
+/// finds what a person cannot see on a screenshot: a text whose colour is too close to its background, a button without a name, a form
+/// field without a label. axe-core is loaded from a CDN when the test runs. Only the serious and critical findings fail the test.
+/// </summary>
+[Collection("Blazor")]
+public sealed class AccessibilityTests(BlazorApp app) : BlazorTest(app)
+{
+    private const string AxeUrl = "https://cdn.jsdelivr.net/npm/axe-core@4.10.2/axe.min.js";
+
+    // The animations are off: a page seen in the middle of a fade has colours that are not its own.
+    protected override BrowserNewContextOptions ContextOptions => new()
+    {
+        ViewportSize = new ViewportSize { Width = 1280, Height = 900 },
+        ReducedMotion = ReducedMotion.Reduce,
+    };
+
+    [Theory]
+    [InlineData(ColorScheme.Light)]
+    [InlineData(ColorScheme.Dark)]
+    public async Task No_page_of_the_menu_has_a_serious_accessibility_violation(ColorScheme scheme)
+    {
+        await Page.EmulateMediaAsync(new PageEmulateMediaOptions { ColorScheme = scheme });
+        await Page.AddScriptTagAsync(new PageAddScriptTagOptions { Url = AxeUrl });
+
+        var names = await Page.Locator("nav[aria-label='Menu'] button.rt-nav-link .rt-nav-name").AllInnerTextsAsync();
+        Assert.NotEmpty(names);
+
+        var report = new StringBuilder();
+        foreach (var name in names)
+        {
+            await OpenAsync(name);
+            await ExpectCurrentAsync(name);
+
+            // A navigation that reloads the page drops the script: it is added again when it is gone.
+            if (!await Page.EvaluateAsync<bool>("typeof axe !== 'undefined'"))
+                await Page.AddScriptTagAsync(new PageAddScriptTagOptions { Url = AxeUrl });
+
+            var json = await Page.EvaluateAsync<string>(
+                "async () => JSON.stringify((await axe.run(document, { runOnly: ['wcag2a', 'wcag2aa'] })).violations" +
+                ".filter(v => v.impact === 'serious' || v.impact === 'critical')" +
+                ".map(v => ({ id: v.id, impact: v.impact, count: v.nodes.length, first: v.nodes[0].html.slice(0, 120) })))");
+
+            foreach (var violation in JsonSerializer.Deserialize<JsonElement>(json).EnumerateArray())
+                report.AppendLine($"{scheme} / {name}: {violation.GetProperty("id").GetString()} ({violation.GetProperty("impact").GetString()}, " +
+                                  $"{violation.GetProperty("count").GetInt32()}x) {violation.GetProperty("first").GetString()}");
+        }
+
+        Assert.True(report.Length == 0, Environment.NewLine + report);
+    }
+}

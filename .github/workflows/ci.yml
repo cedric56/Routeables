@@ -126,6 +126,10 @@ jobs:
       - name: Benchmarks
         run: dotnet build src/Routeables.Benchmarks/Routeables.Benchmarks.csproj -c Release
 
+      # Not a timing: the history grows by one entry per route change, the pages that leave it can be collected, the disposable ones are disposed.
+      - name: Leak check
+        run: dotnet run --project src/Routeables.Benchmarks/Routeables.Benchmarks.csproj -c Release --no-build -- --leak
+
   # The Uno projects are in a job of their own: they were written without being able to restore Uno Platform, so a failure here
   # must not hide the result of the jobs above. Once it is green, fold it into web-and-desktop.
   uno:
@@ -481,6 +485,16 @@ jobs:
 
       - name: Test
         run: dotnet test --project tests/Routeables.Test.Playwright/Routeables.Test.Playwright.csproj --no-build -c ${{ env.CONFIGURATION }}
+
+      # The screenshots that have no image yet, or that differ from it (tests/Routeables.Test.Playwright/Snapshots/_actual): look at them,
+      # and move the right ones to Snapshots.
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshots-actual
+          path: tests/Routeables.Test.Playwright/Snapshots/_actual
+          if-no-files-found: ignore
 
   ui-uno:
     name: UI tests (Uno, desktop)
