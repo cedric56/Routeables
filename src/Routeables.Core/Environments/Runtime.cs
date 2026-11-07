@@ -36,6 +36,9 @@ public readonly struct Runtime : IEquatable<Runtime>
     /// <summary>Gets a <see cref="Runtime"/> instance representing Uno Platform.</summary>
     public static Runtime Uno { get; } = new Runtime(nameof(Uno));
 
+    /// <summary>Gets a <see cref="Runtime"/> instance representing WinUI 3 (Windows App SDK).</summary>
+    public static Runtime WinUI3 { get; } = new Runtime(nameof(WinUI3));
+
     /// <summary>Gets a <see cref="Runtime"/> instance representing WPF.</summary>
     public static Runtime Wpf { get; } = new Runtime(nameof(Wpf));
 

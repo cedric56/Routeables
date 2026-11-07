@@ -1,0 +1,8 @@
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="using:Routeables.WinUI3"
+    xmlns:local="using:XAnimals.WinUI3.Views"
+    x:Class="XAnimals.WinUI3.Views.PandaDetailView">
+    <local:AnimalDetail />
+</routeables:RouteableFor>

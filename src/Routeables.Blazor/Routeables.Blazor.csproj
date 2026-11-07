@@ -16,6 +16,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Routeables.Test" />
     <InternalsVisibleTo Include="Routeables.Routing" />
+    <InternalsVisibleTo Include="Reshapes.Blazor.MudBlazor" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
+    <ProjectReference Include="..\Routeables.Native\Routeables.Native.csproj" PrivateAssets="none" />
   </ItemGroup>
 
 </Project>

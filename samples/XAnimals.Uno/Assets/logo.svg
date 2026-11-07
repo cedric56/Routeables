@@ -17,6 +17,7 @@
     <circle cx="44" cy="98" r="10" fill="#fff"/>
     <circle cx="90" cy="98" r="10" fill="#4A22C8" stroke="#fff" stroke-width="7"/>
   </g>
-  <text x="168" y="88" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="60" font-weight="700" fill="#6B7280">Route<tspan fill="#7C5CFF">ables</tspan></text>
-  <text x="170" y="118" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#8B93A1">One routing layer for Blazor, MAUI, Avalonia, Uno &amp; WPF</text>
+  <text x="168" y="80" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="60" font-weight="700" fill="#6B7280">Route<tspan fill="#7C5CFF">ables</tspan></text>
+  <text x="170" y="108" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#8B93A1">One routing layer for Blazor, ASP.NET Core (.cshtml),</text>
+  <text x="170" y="132" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#8B93A1">MAUI, Avalonia, Uno, WinUI 3 &amp; WPF</text>
 </svg>

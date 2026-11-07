@@ -32,7 +32,7 @@ internal sealed class ToastNotification(RouteableNotificationSession session)
 /// that a <see cref="RouteableNotificationHost"/> placed once in the application's layout displays.
 /// Without a host, notifications are simply not visible.
 /// </summary>
-internal sealed class RouteableNotificationService(RouteableNotificationOptions options, BrowserSystemNotifications? system = null)
+internal sealed class RouteableNotificationService(RouteableNotificationOptions options, IRouteableSystemNotificationSource? system = null)
     : RouteableNotificationServiceBase(new RouteableSystemNotifications(system)), IDisposable
 {
     private readonly List<ToastNotification> items = [];

@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The WinUI 3 (Windows App SDK) sample: an unpackaged, self-contained application, so it runs with F5 or dotnet run on Windows, without MSIX. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <UseWinUI>true</UseWinUI>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>XAnimals.WinUI3</RootNamespace>
+    <ApplicationTitle>XAnimals.WinUI3</ApplicationTitle>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>    
+  </PropertyGroup>
+
+  <!-- Floating 1.8.*: pin the version of your application. -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Routeables.WinUI3\Routeables.WinUI3.csproj" />
+    <ProjectReference Include="..\..\src\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
+    <ProjectReference Include="..\Controls\XAnimals.WinUI3.Controls\XAnimals.WinUI3.Controls.csproj" />
+    <ProjectReference Include="..\Modules\XAnimals.WinUI3.Birds\XAnimals.WinUI3.Birds.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -145,6 +145,7 @@ jobs:
       - name: Uno libraries
         run: |
           dotnet build src/Routeables.Uno/Routeables.Uno.csproj -c Debug -p:CiBuild=true
+          dotnet build src/Routeables.WinUI3/Routeables.WinUI3.csproj -c Debug -p:CiBuild=true
 
       - name: Sample, Uno (desktop)
         run: dotnet build samples/XAnimals.Uno/XAnimals.Uno.csproj -c Debug -p:CiBuild=true
@@ -175,6 +176,12 @@ jobs:
 
       - name: Sample, WPF
         run: dotnet build samples/XAnimals.Wpf/XAnimals.Wpf.csproj -c Debug
+
+      # WinUI 3 and the native notifications build their Windows target here (CiBuild would keep the empty net10.0 one).
+      - name: WinUI 3 library and Routeables.Native (Windows)
+        run: |
+          dotnet build src/Routeables.Native/Routeables.Native.csproj -c Debug
+          dotnet build src/Routeables.WinUI3/Routeables.WinUI3.csproj -c Debug
 
       - name: Pack
         run: dotnet pack src/Routeables.Wpf/Routeables.Wpf.csproj -c Release -o artifacts
@@ -244,6 +251,7 @@ jobs:
         run: |
           dotnet pack src/Routeables.Abstraction/Routeables.Abstraction.csproj -c Release -o artifacts
           dotnet pack src/Routeables.Core/Routeables.Core.csproj -c Release -o artifacts
+          dotnet pack src/Routeables.Native/Routeables.Native.csproj -c Release -o artifacts
           dotnet pack src/Routeables.Blazor/Routeables.Blazor.csproj -c Release -o artifacts
           dotnet pack src/Routeables.Avalonia/Routeables.Avalonia.csproj -c Release -o artifacts
 

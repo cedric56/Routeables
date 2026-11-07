@@ -10,7 +10,7 @@ namespace Routeables.Blazor.Services;
 /// (Notification API) and only the click and the close are reported. The clicks come back as <c>NotificationCompleted</c>: <c>ActionTag</c> is the
 /// button, <c>UserData</c> the text of a reply.
 /// </summary>
-internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationOptions options) : IAsyncDisposable
+internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationOptions options) : IAsyncDisposable, IRouteableSystemNotificationSource
 {
     private const string Module = "./_content/Routeables.Blazor/notifications.js";
 

@@ -19,6 +19,9 @@ public sealed class AppNotificationOptions
     /// <summary>Whether the notifications still displayed are closed when the application ends (the circuit, the tab). <see langword="false"/> by default.</summary>
     public bool ClearOnAppClose { get; set; }
 
+    /// <summary>MAUI Blazor Hybrid only: the name of the notification channel the user sees in the settings of Android 8 and later.</summary>
+    public string ChannelName { get; set; } = "Notifications";
+
     /// <summary>
     /// Whether <see cref="Routeables.Services.IRouteableNotificationService.InitializeAsync"/> asks the user for the permission to notify.
     /// A browser only accepts the question after a gesture of the user (a click): call it from a click handler. <see langword="true"/> by default.

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 160" width="680" height="160" role="img" aria-label="Routeables">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 160" width="760" height="160" role="img" aria-label="Routeables">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#7C5CFF"/>
@@ -24,6 +24,7 @@
     <circle cx="44" cy="98" r="10" fill="#fff"/>
     <circle cx="90" cy="98" r="10" fill="#4A22C8" stroke="#fff" stroke-width="7"/>
   </g>
-  <text x="168" y="88" class="name">Route<tspan class="accent">ables</tspan></text>
-  <text x="170" y="118" class="tag">One routing layer for Blazor, MAUI, Avalonia, Uno &amp; WPF</text>
+  <text x="168" y="80" class="name">Route<tspan class="accent">ables</tspan></text>
+  <text x="170" y="108" class="tag">One routing layer for Blazor, ASP.NET Core (.cshtml),</text>
+  <text x="170" y="132" class="tag">MAUI, Avalonia, Uno, WinUI 3 &amp; WPF</text>
 </svg>

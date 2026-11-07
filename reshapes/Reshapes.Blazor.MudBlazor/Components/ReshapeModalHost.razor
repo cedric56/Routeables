@@ -1,0 +1,47 @@
+@using Routeables.Blazor.Services
+@using global::MudBlazor
+@implements IDisposable
+@inject RouteableModalService Service
+@inject IDialogService Dialogs
+
+@code {
+    // The modals that are open, by request: a modal of Routeables (RouteableModalFor.ShowModalAsync) is shown as a MudDialog, like the other dialogs.
+    private readonly Dictionary<ModalRequest, IDialogReference?> _open = [];
+
+    protected override void OnInitialized() => Service.Changed += OnChanged;
+
+    private void OnChanged() => _ = InvokeAsync(SyncAsync);
+
+    private async Task SyncAsync()
+    {
+        var requests = Service.Items;
+
+        // Closed by the view model: close the dialog.
+        foreach (var request in _open.Keys.Where(r => !requests.Contains(r)).ToList())
+        {
+            var dialog = _open[request];
+            _open.Remove(request);
+            dialog?.Close();
+        }
+
+        // Opened: show it. The placeholder keeps a second change from opening it twice.
+        foreach (var request in requests.Where(r => !_open.ContainsKey(r)).ToList())
+        {
+            _open[request] = null;
+            var dialog = await Dialogs.ShowAsync<ModalDialog>(request.Title,
+                new DialogParameters
+                {
+                    { nameof(ModalDialog.Title), request.Title },
+                    { nameof(ModalDialog.Content), request.Content }
+                },
+                new DialogOptions { BackdropClick = false, CloseOnEscapeKey = false, CloseButton = false });
+
+            if (_open.ContainsKey(request))
+                _open[request] = dialog;
+            else
+                dialog.Close();   // closed while it was opening
+        }
+    }
+
+    public void Dispose() => Service.Changed -= OnChanged;
+}

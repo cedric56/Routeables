@@ -16,7 +16,7 @@
 
 # Routeables
 
-**View-model-first routing and navigation for Blazor, .NET MAUI, Avalonia, Uno Platform and WPF.**
+**View-model-first routing and navigation for Blazor, ASP.NET Core (Razor Pages and .cshtml views), .NET MAUI, Avalonia, Uno Platform, WinUI 3 and WPF.**
 
 A view model asks an `IRouter` to go somewhere. It never touches a page, a frame or a navigation API of the framework, so the same code runs on every host. A route, a view and a zone of the screen that shows it: that is the whole model.
 
@@ -25,7 +25,7 @@ Moving an existing Prism application to .NET 10? [Migrating from Prism](docs/gui
 ## Install
 
 ```bash
-dotnet add package Routeables.Avalonia   # or Routeables.Blazor, .Maui, .Uno, .Wpf
+dotnet add package Routeables.Avalonia   # or Routeables.Blazor, .Maui, .Uno, .WinUI3, .Wpf
 ```
 
 The host package brings everything else, the source generator included. You need the .NET 10 SDK.
@@ -81,6 +81,7 @@ On Avalonia, remove the creation of the window from `OnFrameworkInitializationCo
 | .NET MAUI | [`Routeables.Maui`](src/Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables(r => { ... })` |
 | Avalonia | [`Routeables.Avalonia`](src/Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables(r => { ... })` |
 | Uno Platform | [`Routeables.Uno`](src/Routeables.Uno/README.md) | `this.UseRouteables(r => { ... })` |
+| WinUI 3 | [`Routeables.WinUI3`](src/Routeables.WinUI3/README.md) | `this.UseRouteables(r => { ... })` |
 | WPF | [`Routeables.Wpf`](src/Routeables.Wpf/README.md) | `this.UseRouteables(r => { ... })` |
 
 The block is for your own registrations, the same on every host: `r => r.AddGeneratedRoutes()`. An application with a menu gives its main view model, `UseRouteables<MainViewModel>(...)` (`UseRouteablesServer<MainViewModel>` on Blazor). To start from a template: `dotnet new install Routeables.Templates`, then `dotnet new routeables-avalonia -n MyApp` (Avalonia only for now).
@@ -123,7 +124,7 @@ Nothing below is needed for a first page. Each line has its own guide.
 | Errors | `RouteableResult`, `IRouteableErrorSink` | [Lifecycle](docs/guides/lifecycle.md) |
 | Diagnostics | Tracing and metrics for route changes | [Diagnostics](docs/guides/diagnostics.md) |
 | Native AOT | Source generated; nothing scans assemblies at run time | [AOT](docs/guides/aot.md) |
-| Hosts | Blazor, .NET MAUI, Avalonia, Uno Platform, WPF | [Hosts](docs/guides/hosts.md) |
+| Hosts | Blazor, .NET MAUI, Avalonia, Uno Platform, WinUI 3, WPF | [Hosts](docs/guides/hosts.md) |
 | Dialog libraries | MudBlazor, CommunityToolkit.Maui, FluentAvalonia | [Reshapes](reshapes/README.md) |
 
 Routeables is the navigation layer, dialogs and notifications included. It ships no commands, view-model locator or event aggregator: use CommunityToolkit.Mvvm, ReactiveUI or plain C#.
@@ -140,7 +141,7 @@ Routeables is young: the first commit is from October 2026, it has one maintaine
 
 - [Getting started](docs/getting-started.md) and the [guides](docs/guides/routes.md): routes, typed routing, arguments, lifecycle, history, regions, modules, hosts.
 - [Compared with other routers](docs/guides/comparison.md): Prism, ReactiveUI, MAUI Shell, Uno.Extensions and the Blazor router, and where each one fits.
-- [Samples](samples): the same Animals app on Blazor, MAUI, Avalonia, Uno and WPF.
+- [Samples](samples): the same Animals app on Blazor, MAUI, Avalonia, Uno, WinUI 3 and WPF.
 - [Documentation site](https://cedric56.github.io/Routeables/) and API reference.
 - [Contributing](CONTRIBUTING.md), [third-party notices](THIRD-PARTY-NOTICES.md).
 

@@ -9,9 +9,9 @@ namespace Routeables.Blazor.Services;
 /// </summary>
 public sealed class RouteableSystemNotifications
 {
-    private readonly BrowserSystemNotifications? _system;
+    private readonly IRouteableSystemNotificationSource? _system;
 
-    internal RouteableSystemNotifications(BrowserSystemNotifications? system) => _system = system;
+    internal RouteableSystemNotifications(IRouteableSystemNotificationSource? system) => _system = system;
 
     /// <summary>The system notifications that are active, by id.</summary>
     public IReadOnlyDictionary<uint, IRouteableSystemNotification> ActiveNotifications()

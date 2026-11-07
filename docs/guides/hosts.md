@@ -38,11 +38,12 @@ These interfaces live in `Routeables.Services` (namespace `Routeables.Services`)
 | .NET MAUI ([`Routeables.Maui`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Maui/README.md)) | `builder.UseRouteables(r => ...)`; with a menu, `UseRouteables<MainViewModel>(...)` | Targets `net10.0` plus Android, iOS, Mac Catalyst and Windows. Includes `RouteablesShell`, `RouteableRegion` and `RouteableFor`. CommunityToolkit.Maui popups are optional (`UseCommunityToolkit`, see [`Reshapes`](https://github.com/cedric56/Routeables/blob/master/reshapes/README.md)) |
 | Avalonia ([`Routeables.Avalonia`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Avalonia/README.md)) | `AppBuilder.UseRouteables(r => ...)` (or `UseRouteables<MainViewModel>(...)` with a menu), with `view:` to show the main view (or `Application.OpenMainView(view)`) | `RouteableFor<TViewModel>`, `RouteableRegion`, `RouteableMenu`, modal dialogs, themes, replaceable `IMessageBoxService` (FluentAvalonia in [`Reshapes`](https://github.com/cedric56/Routeables/blob/master/reshapes/README.md)) |
 | Uno Platform ([`Routeables.Uno`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Uno/README.md)) | `Application.UseRouteables(r => ..., () => new MainPage())` (`UseRouteables<MainViewModel>(...)` with a menu; or `UseRouteables(r => ...)` and `Application.OpenMainWindow(page)` in `OnLaunched`) | `RouteableFor`, `RouteableFor<TViewModel>`, `RouteableRegion`, `RouteableListView`, `ContentDialog` dialogs, `InfoBar` notifications, themes, replaceable `IMessageBoxService` |
+| WinUI 3 ([`Routeables.WinUI3`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.WinUI3/README.md)) | `Application.UseRouteables(r => ..., () => new MainPage())`, the same calls as Uno (Windows only; system notifications with `WithAppNotifications()`) | `RouteableFor`, `RouteableFor<TViewModel>`, `RouteableRegion`, `RouteableListView`, `ContentDialog` dialogs, `InfoBar` notifications, themes, replaceable `IMessageBoxService` |
 | WPF ([`Routeables.Wpf`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Wpf/README.md)) | `Application.UseRouteables(r => ..., () => new MainView())` (`UseRouteables<MainViewModel>(...)` with a menu; or `UseRouteables(r => ...)` and `Application.OpenMainWindow(view)`) | `net10.0-windows`. `RouteableFor`, `RouteableFor<TViewModel>`, `RouteableRegion`, `RouteableRegionItems`, `RouteableMenu`, dialogs in owned windows, notifications in small windows, Fluent themes, replaceable `IMessageBoxService`. Shares the dialog and notification logic with the other hosts (`Routeables.Services`) |
 
 The Razor, MAUI, Avalonia and Uno hosts share one contract, checked by `HostContractTests` (WPF is not in it: the test project targets `net10.0` and cannot reference a Windows-only project): the same services (router, injection rules), the same injection rule (a value attribute never falls back to the container) and one main view model for the whole host. While developing, the Avalonia host (Debug builds) and the MAUI sample build the container with `ValidateOnBuild`, so a registration that cannot be built fails at start with its name; ASP.NET Core does the same by default in the Development environment.
 
-`Runtime` identifies the host (`Runtime.Avalonia`, `Uno`, `Wpf`, `Maui`, `MauiHybrid`, `BlazorServer`, `BlazorWebAssembly`) and is available through `IRuntime`.
+`Runtime` identifies the host (`Runtime.Avalonia`, `Uno`, `WinUI3`, `Wpf`, `Maui`, `MauiHybrid`, `BlazorServer`, `BlazorWebAssembly`) and is available through `IRuntime`.
 
 ## Samples
 
@@ -50,11 +51,12 @@ The [`Samples`](https://github.com/cedric56/Routeables/tree/master/Samples) fold
 
 | Sample | Stack |
 | --- | --- |
-| `XAnimals.Birds` | The shared part of a [module](routes.md#modules): a page, `AddBirdsModule()`, its view models and data. Its views are in `XAnimals.Razor.Birds`, `XAnimals.Avalonia.Birds`, `XAnimals.Maui.Birds`, `XAnimals.Uno.Birds` and `XAnimals.Wpf.Birds`, which the heads reference (they draw with `XAnimals.<Platform>.Controls`). `XAnimals.ViewModels` calls it in `RegisterViewModels` (`AddAnimalModules()`) |
+| `XAnimals.Birds` | The shared part of a [module](routes.md#modules): a page, `AddBirdsModule()`, its view models and data. Its views are in `XAnimals.Razor.Birds`, `XAnimals.Avalonia.Birds`, `XAnimals.Maui.Birds`, `XAnimals.Uno.Birds`, `XAnimals.WinUI3.Birds` and `XAnimals.Wpf.Birds`, which the heads reference (they draw with `XAnimals.<Platform>.Controls`). `XAnimals.ViewModels` calls it in `RegisterViewModels` (`AddAnimalModules()`) |
 | `XAnimals.Common` | What the view models and the modules share (bases, `Animal`, the list and detail every animal kind derives from, icons): a module references it, not `XAnimals.ViewModels`, which references the module |
 | `XAnimals.ViewModels` | Shared view models (uses `[RouteableViewModel]`) |
 | `XAnimals.Avalonia` (+ `.Desktop`, `.Android`, `.iOS`, `.Browser`) | Avalonia |
 | `XAnimals.Uno` | Uno Platform (desktop head) |
+| `XAnimals.WinUI3` | WinUI 3 (Windows App SDK, unpackaged), with `XAnimals.WinUI3.Controls` and the Birds module `XAnimals.WinUI3.Birds` |
 | `XAnimals.Wpf` | WPF (Windows): every page of the other samples, with `XAnimals.Wpf.Controls` and the Birds module `XAnimals.Wpf.Birds` |
 | `XAnimals.Maui`, `XAnimals.MauiHybrid` | .NET MAUI and MAUI Blazor Hybrid |
 | `XAnimals.Razor`, `XAnimals.BlazorWebAssembly`, `Xanimals.BlazorApp` | Blazor |

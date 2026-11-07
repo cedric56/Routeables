@@ -18,6 +18,11 @@
     <Description>Routeables for Uno Platform: view-model-first routing, routed views, regions, dialogs and notifications.</Description>
   </PropertyGroup>
 
+  <!-- The views, the region, the dialogs... are shared with Routeables.WinUI3 (same Microsoft.UI.Xaml API, other assembly). -->
+  <ItemGroup>
+    <Compile Include="..\Routeables.WinUI\**\*.cs" Link="Routeables.WinUI\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="Routeables.Test" />
     <InternalsVisibleTo Include="Routeables.Test.Uno" />

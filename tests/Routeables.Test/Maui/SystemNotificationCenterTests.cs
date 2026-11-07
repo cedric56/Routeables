@@ -1,4 +1,5 @@
 using Routeables.Maui.Services;
+using Routeables.Native;
 using Routeables.Services;
 
 namespace Routeables.Tests.Maui;

@@ -169,14 +169,14 @@ public static class Extensions
         services.AddScoped<IRouteableDialogService>(sp => new RouteableDialogService(sp.GetRequiredService<IMessageBoxService>()));
 
         services.RemoveAll<RouteableSystemNotifications>();
-        services.AddScoped(sp => new RouteableSystemNotifications(sp.GetService<BrowserSystemNotifications>()));
+        services.AddScoped(sp => new RouteableSystemNotifications(sp.GetService<IRouteableSystemNotificationSource>()));
         services.AddSingleton(new RouteableNotificationOptions
         {
             Position = position,
             MaxDisplayed = maxDispayments
         });
         services.RegisterServices<IRouteableNotificationService, RouteableNotificationService>(
-            sp => new RouteableNotificationService(sp.GetRequiredService<RouteableNotificationOptions>(), sp.GetService<BrowserSystemNotifications>()),
+            sp => new RouteableNotificationService(sp.GetRequiredService<RouteableNotificationOptions>(), sp.GetService<IRouteableSystemNotificationSource>()),
             notificationService);
         return services;
     }
@@ -198,9 +198,25 @@ public static class Extensions
         options ??= new AppNotificationOptions();
         services.RemoveAll<AppNotificationOptions>();
         services.RemoveAll<BrowserSystemNotifications>();
+        services.RemoveAll<IRouteableSystemNotificationSource>();
         services.AddSingleton(options);
+
+        // MAUI Blazor Hybrid runs in the web view of the platform, which has no usable Notification API: the notification center
+        // of the platform (Routeables.Native) takes its place. Server and WebAssembly keep the one of the browser.
+        if (Routeables.Native.SystemNotificationCenter.IsSupported)
+        {
+            Routeables.Native.SystemNotificationCenter.Current.Configure(new Routeables.Native.AppNotificationOptions
+            {
+                ClearOnAppClose = options.ClearOnAppClose,
+                ChannelName = options.ChannelName
+            });
+            services.AddSingleton<IRouteableSystemNotificationSource>(Routeables.Native.SystemNotificationCenter.Current);
+            return services;
+        }
+
         services.AddScoped(sp => new BrowserSystemNotifications(
             sp.GetRequiredService<Microsoft.JSInterop.IJSRuntime>(), sp.GetRequiredService<AppNotificationOptions>()));
+        services.AddScoped<IRouteableSystemNotificationSource>(sp => sp.GetRequiredService<BrowserSystemNotifications>());
         return services;
     }
 

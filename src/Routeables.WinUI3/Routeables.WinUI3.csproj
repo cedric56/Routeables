@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- WinUI 3 is Windows only. Another OS (or CiBuild) builds an empty net10.0 assembly, so a solution still restores and builds there. -->
+    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework Condition="$([MSBuild]::IsOSPlatform('windows')) And '$(CiBuild)' != 'true'">net10.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWinUI Condition="'$(TargetFramework)' != 'net10.0'">true</UseWinUI>
+    <EnableDefaultCompileItems Condition="'$(TargetFramework)' == 'net10.0'">false</EnableDefaultCompileItems>
+    <SupportedOSPlatformVersion Condition="'$(TargetFramework)' != 'net10.0'">10.0.17763.0</SupportedOSPlatformVersion>
+    <IsAotCompatible>true</IsAotCompatible>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RootNamespace>Routeables.WinUI3</RootNamespace>
+    <PackageId>Routeables.WinUI3</PackageId>
+    <Authors>Cédric Boutin</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Routeables for WinUI 3 (Windows App SDK): view-model-first routing, routed views, regions, dialogs and notifications.</Description>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <!-- The views, the region, the dialogs... are shared with Routeables.Uno (same Microsoft.UI.Xaml API, other assembly); WINUI3 selects the differences. -->
+  <PropertyGroup Condition="'$(TargetFramework)' != 'net10.0'">
+    <DefineConstants>$(DefineConstants);WINUI3</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'net10.0'">
+    <Compile Include="..\Routeables.WinUI\**\*.cs" Link="Routeables.WinUI\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Test" />
+  </ItemGroup>
+
+  <!-- Floating 1.8.*: pin the version your application uses. -->
+  <ItemGroup Condition="'$(TargetFramework)' != 'net10.0'">
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
+    <ProjectReference Include="..\Routeables.Native\Routeables.Native.csproj" PrivateAssets="none" />
+  </ItemGroup>
+</Project>

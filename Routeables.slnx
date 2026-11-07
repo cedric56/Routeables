@@ -19,6 +19,7 @@
     <Project Path="samples/XAnimals.Uno/XAnimals.Uno.csproj">
       <Deploy Solution="Debug|*" />
     </Project>
+    <Project Path="samples/XAnimals.WinUI3/XAnimals.WinUI3.csproj" />
     <Project Path="samples/XAnimals.Wpf/XAnimals.Wpf.csproj" />
   </Folder>
   <Folder Name="/samples/Bases/">
@@ -37,6 +38,7 @@
     <Project Path="samples/Controls/XAnimals.Avalonia.Controls/XAnimals.Avalonia.Controls.csproj" />
     <Project Path="samples/Controls/XAnimals.Maui.Controls/XAnimals.Maui.Controls.csproj" />
     <Project Path="samples/Controls/XAnimals.Uno.Controls/XAnimals.Uno.Controls.csproj" />
+    <Project Path="samples/Controls/XAnimals.WinUI3.Controls/XAnimals.WinUI3.Controls.csproj" />
     <Project Path="samples/Controls/XAnimals.Wpf.Controls/XAnimals.Wpf.Controls.csproj" />
   </Folder>
   <Folder Name="/samples/Modules/">
@@ -45,6 +47,7 @@
     <Project Path="samples/Modules/XAnimals.Blazor.Birds/XAnimals.Blazor.Birds.csproj" />
     <Project Path="samples/Modules/XAnimals.Maui.Birds/XAnimals.Maui.Birds.csproj" />
     <Project Path="samples/Modules/XAnimals.Uno.Birds/XAnimals.Uno.Birds.csproj" />
+    <Project Path="samples/Modules/XAnimals.WinUI3.Birds/XAnimals.WinUI3.Birds.csproj" />
     <Project Path="samples/Modules/XAnimals.Wpf.Birds/XAnimals.Wpf.Birds.csproj" />
   </Folder>
   <Folder Name="/samples/Razor/">
@@ -71,11 +74,13 @@
     <Project Path="src/Routeables.Generated/Routeables.Generated.csproj" Id="f5d73331-cfab-460c-b3ae-d3fb64222f17" />
     <Project Path="src/Routeables.Locking/Routeables.Locking.csproj" />
     <Project Path="src/Routeables.Maui/Routeables.Maui.csproj" />
+    <Project Path="src/Routeables.Native/Routeables.Native.csproj" />
     <Project Path="src/Routeables.Regions/Routeables.Regions.csproj" />
     <Project Path="src/Routeables.Routing/Routeables.Routing.csproj" />
     <Project Path="src/Routeables.Segments/Routeables.Segments.csproj" />
     <Project Path="src/Routeables.Services/Routeables.Services.csproj" />
     <Project Path="src/Routeables.Uno/Routeables.Uno.csproj" />
+    <Project Path="src/Routeables.WinUI3/Routeables.WinUI3.csproj" />
     <Project Path="src/Routeables.Wpf/Routeables.Wpf.csproj" />
   </Folder>
   <Folder Name="/templates/">

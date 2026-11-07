@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
+    <ProjectReference Include="..\Routeables.Native\Routeables.Native.csproj" PrivateAssets="none" />
   </ItemGroup>
 
   <ItemGroup>

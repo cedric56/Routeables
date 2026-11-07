@@ -1,6 +1,7 @@
 ﻿using Routeables.Abstraction;
 using Routeables.Routing;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Routeables.Core;
 
@@ -35,8 +36,6 @@ namespace Routeables.Core;
 /// the derived class exist: build the entries from the code alone (as above), not from a field or a constructor parameter.
 /// </para>
 /// </remarks>
-/// <param name="router">The router that shows the selected entry.</param>
-/// <param name="initialize">Whether the first entry is selected when the view model is created.</param>
 public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposable, IRouteable, IMainViewModel
 {
     /// <summary>Nothing to refresh: a main view model has no commands. Override it to refresh yours.</summary>

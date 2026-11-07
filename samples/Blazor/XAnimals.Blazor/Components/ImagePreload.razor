@@ -15,7 +15,7 @@
 
         try
         {
-            module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/XAnimals.Razor/preload.js");
+            module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/XAnimals.Blazor/preload.js");
             _ = module.InvokeVoidAsync("preload", XAnimals.Models.AnimalImages.Thumbnails);
         }
         catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException)

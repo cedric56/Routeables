@@ -14,6 +14,7 @@
     <InternalsVisibleTo Include="Routeables.Wpf" />
     <InternalsVisibleTo Include="Routeables.Avalonia" />
     <InternalsVisibleTo Include="Routeables.Uno" />
+    <InternalsVisibleTo Include="Routeables.WinUI3" />
   </ItemGroup>
 
   <ItemGroup>

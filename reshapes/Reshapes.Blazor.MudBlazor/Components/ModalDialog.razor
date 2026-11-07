@@ -1,0 +1,24 @@
+@using Routeables.Blazor.Services
+@using global::MudBlazor
+
+<MudDialog>
+    <TitleContent>
+        @if (!string.IsNullOrWhiteSpace(Title))
+        {
+            <MudText Typo="Typo.h6">@Title</MudText>
+        }
+    </TitleContent>
+    <DialogContent>
+        @Content
+    </DialogContent>
+</MudDialog>
+
+@code {
+    /// <summary>The text of the header of the modal.</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>The view shown in the modal; the view model closes the modal, a modal has no button of its own.</summary>
+    [Parameter]
+    public RenderFragment? Content { get; set; }
+}
