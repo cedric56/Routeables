@@ -19,17 +19,30 @@ public class VisualDeviceTests
 
         await Device.ResetAsync();
         var region = new RouteableRegion { WidthRequest = 480, HeightRequest = 360 };
-        using var host = new Hosted<RouteableRegion>(region);
-        Assert.True((await Device.Services.GoToAsync(route)).Success);
-        await Device.UntilAsync(() => region.Content?.GetType() == page);
-        await Task.Delay(300);                                        // one frame: the layout of the page is done
-
-        var png = await VisualDiagnostics.CaptureAsPngAsync(region) ?? throw new InvalidOperationException("Nothing was drawn.");
-        var (outcome, message) = Snapshot.Compare(folder, name, png);
-        switch (outcome)
+        // The control must be in the tree of a window to be drawn (a screenshot of a control that only has a handler fails): it goes on a
+        // modal page over the page of the window, in a box of a fixed size, and the box is what is captured.
+        var box = new Grid { WidthRequest = 480, HeightRequest = 360, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Start, BackgroundColor = Colors.White, Children = { region } };
+        var modal = new ContentPage { Content = box, BackgroundColor = Colors.White };
+        var navigation = Application.Current!.Windows[0].Page!.Navigation;
+        await navigation.PushModalAsync(modal, animated: false);
+        try
         {
-            case SnapshotOutcome.NoBaseline: Assert.Skip(message); break;
-            case SnapshotOutcome.Different: Assert.Fail(message); break;
+            await Device.UntilAsync(() => box.Handler is not null && region.Handler is not null);
+            Assert.True((await Device.Services.GoToAsync(route)).Success);
+            await Device.UntilAsync(() => region.Content?.GetType() == page);
+            await Task.Delay(500);                                        // a few frames: the layout of the page is done
+
+            var png = await VisualDiagnostics.CaptureAsPngAsync(box) ?? throw new InvalidOperationException("Nothing was drawn.");
+            var (outcome, message) = Snapshot.Compare(folder, name, png);
+            switch (outcome)
+            {
+                case SnapshotOutcome.NoBaseline: Assert.Skip(message); break;
+                case SnapshotOutcome.Different: Assert.Fail(message); break;
+            }
+        }
+        finally
+        {
+            await navigation.PopModalAsync(animated: false);
         }
     }
 

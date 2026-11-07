@@ -36,6 +36,10 @@ public sealed class AccessibilityTests(BlazorApp app) : BlazorTest(app)
         var report = new StringBuilder();
         foreach (var name in names)
         {
+            // Each page is reached from a fresh start: a page can keep the user from leaving it (a guard, a lock), so a walk from one
+            // entry to the next would stop at the first one that does.
+            await Page.GotoAsync(BaseUrl);
+            await Menu.First.WaitForAsync();
             await OpenAsync(name);
             await ExpectCurrentAsync(name);
 
