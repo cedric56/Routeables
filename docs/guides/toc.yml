@@ -2,7 +2,7 @@
   href: routes.md
 - name: Typed routing methods
   href: typed-routes.md
-- name: The 17 criteria of a navigation system
+- name: The 17 criteria of a routing system
   href: criteria.md
 - name: Passing arguments
   href: arguments.md

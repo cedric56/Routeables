@@ -15,7 +15,8 @@
             "Routeables.Blazor/*.csproj",
             "Routeables.Maui/*.csproj",
             "Routeables.Avalonia/*.csproj",
-            "Routeables.Uno/*.csproj"
+            "Routeables.Uno/*.csproj",
+            "Routeables.WinUI3/*.csproj"
           ]
         }
       ],
