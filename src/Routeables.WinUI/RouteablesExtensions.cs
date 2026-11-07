@@ -6,8 +6,10 @@ using Routeables.Core;
 using Routeables.Services;
 #if WINUI3
 using Routeables.WinUI3.Services;
+using HostExtensions = Routeables.WinUI3.WinUI3RouteablesExtensions;
 #else
 using Routeables.Uno.Services;
+using HostExtensions = Routeables.Uno.UnoRouteablesExtensions;
 #endif
 using System.Diagnostics.CodeAnalysis;
 using Application = Microsoft.UI.Xaml.Application;
@@ -280,7 +282,7 @@ public static class UnoRouteablesExtensions
             // The main view model is a singleton (RegisterMainViewModel refuses a transient one), so this is the
             // instance the window displays.
             try { provider.GetService<IMainViewModel>()?.SelectFirst(); }
-            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(Extensions)); }   // raised from an event: it must not end the application
+            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(HostExtensions)); }   // raised from an event: it must not end the application
         }
 
         void OnClosed(object sender, WindowEventArgs e)
@@ -290,7 +292,7 @@ public static class UnoRouteablesExtensions
             RouteableWindows.Remove(window);
 
             try { onDispose?.Invoke(); }
-            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(Extensions)); }   // the provider is still disposed below
+            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(HostExtensions)); }   // the provider is still disposed below
 
             // The last window takes the container with it. The static locator must not keep serving the service of a host
             // that is gone (a second host in the same process, or the next test).

@@ -198,7 +198,7 @@ public static class WpfRouteablesExtensions
             // The main view model is a singleton (RegisterMainViewModel refuses a transient one), so this is the
             // instance the window displays.
             try { provider.GetService<IMainViewModel>()?.SelectFirst(); }
-            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(Extensions)); }   // raised from an event: it must not end the application
+            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(WpfRouteablesExtensions)); }   // raised from an event: it must not end the application
         }
 
         void OnClosed(object? sender, EventArgs e)
@@ -208,7 +208,7 @@ public static class WpfRouteablesExtensions
             RouteableWindows.Remove(window);
 
             try { onDispose?.Invoke(); }
-            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(Extensions)); }   // the provider is still disposed below
+            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(WpfRouteablesExtensions)); }   // the provider is still disposed below
 
             // The last window takes the container with it. The static locator must not keep serving the service of a host
             // that is gone (a second host in the same process).
