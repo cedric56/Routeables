@@ -111,6 +111,7 @@ Nothing below is needed for a first page. Each line has its own guide.
 | Declarative navigation | `routeables:RouteableLink.Route="/hello/World"` on a button, in XAML, no code in the view model (Avalonia, WPF, Uno, MAUI) | [Routes](docs/guides/routes.md) |
 | Typed routing | `GoToMonkeyDetailAsync(router, name)` generated from the constructor | [Typed routes](docs/guides/typed-routes.md) |
 | Arguments | Route values, query values and objects passed to the target | [Arguments](docs/guides/arguments.md) |
+| The 17 criteria | Each capability of the navigation matrix of the MAUI gist, with its API and its test | [Criteria](docs/guides/criteria.md) |
 | History | Back, forward, pop, back to root, move to an entry, erase; no limit by default, `LimitHistory` to set one | [History](docs/guides/history.md) |
 | Regions | Several zones, each with its own router and history | [Regions](docs/guides/regions.md) |
 | Lifecycle | Initialize, entering, leaving, `CanLeaveAsync` veto, `OnSubscribe`/`OnUnsubscribe`, destroy | [Lifecycle](docs/guides/lifecycle.md) |

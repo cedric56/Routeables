@@ -9,8 +9,9 @@ namespace Routeables.Services;
 /// <remarks>
 /// What is saved is the address of each page, not the page: its view model is built again from its route and its arguments, so what was typed
 /// in a form or loaded in memory is not brought back, unless the view model implements <see cref="IRouteableState"/> and writes it
-/// (<see cref="CaptureSnapshots"/>). A page that was reached with values that are not in its address (<c>RouteableArgs.WithValue</c>) is
-/// reached without them. Pages that have no address (a view and a view model given to <see cref="IRouter.GoAsync"/>) are not saved. The
+/// (<see cref="CaptureSnapshots"/>). The values a page was reached with that are not in its address (<c>RouteableArgs.WithValue</c>) are kept
+/// with the snapshot when they are text, numbers, <c>bool</c>, <c>Guid</c> or dates (<see cref="CaptureSnapshots"/>), and given again when
+/// the page is reached again: each page of the history owns its values. Other values are not kept. Pages that have no address (a view and a view model given to <see cref="IRouter.GoAsync"/>) are not saved. The
 /// host stores the result where it keeps its state (an Android bundle, a file, <c>Preferences</c>) as a string
 /// (<c>Serialize</c> and <c>Deserialize</c>).
 /// </remarks>
@@ -81,6 +82,7 @@ public static class RouteableState
             var values = new Dictionary<string, string>();
             if (entries[i].ViewModel is IRouteableState keeper)
                 keeper.SaveState(values);
+            CaptureValues(entries[i].Args, route, values);
             snapshots.Add(new RouteableSnapshot(route, values));
         }
 
@@ -103,7 +105,7 @@ public static class RouteableState
         await router.EraseHistoryAsync(cancellationToken);
         foreach (var snapshot in list)
         {
-            var result = await router.GoToAsync(snapshot.Route, null, null, cancellationToken);
+            var result = await router.GoToAsync(snapshot.Route, ValuesArgs(snapshot.State), null, cancellationToken);
             if (!result.Success)
                 return false;
 
@@ -111,10 +113,93 @@ public static class RouteableState
             if (snapshot.State.Count > 0
                 && string.Equals(router.History.Current?.Args.Route, snapshot.Route, StringComparison.Ordinal)
                 && router.CurrentViewModel is IRouteableState keeper)
-                keeper.LoadState(snapshot.State);
+                keeper.LoadState(snapshot.State.Where(pair => !pair.Key.StartsWith(ValuePrefix, StringComparison.Ordinal))
+                    .ToDictionary(pair => pair.Key, pair => pair.Value));
         }
 
         return true;
+    }
+
+
+    // The values of a page that are not in its address (RouteableArgs.WithValue) are kept in the same dictionary as what its view model
+    // saves, under a prefix: "value:<type>:<name>". Only what can be written as text and read back is kept (text, numbers, bool, Guid,
+    // dates); the values the route itself brings (its query) come back with the route.
+    internal const string ValuePrefix = "value:";
+
+    private static void CaptureValues(IRouteableArgs args, string route, Dictionary<string, string> into)
+    {
+        var inAddress = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (route.IndexOf('?') is var at and >= 0)
+        {
+            foreach (var pair in route[(at + 1)..].Split('&', StringSplitOptions.RemoveEmptyEntries))
+                inAddress.Add(Uri.UnescapeDataString(pair.Split('=', 2)[0]));
+        }
+
+        foreach (var (value, name, _) in args.Values)
+        {
+            if (string.IsNullOrEmpty(name) || inAddress.Contains(name) || ValueTag(value) is not { } tag)
+                continue;
+            into[$"{ValuePrefix}{tag}:{name}"] = Format(value!);
+        }
+    }
+
+    private static IRouteableArgs? ValuesArgs(IReadOnlyDictionary<string, string> state)
+    {
+        RestoredArgs? args = null;
+        foreach (var (key, text) in state)
+        {
+            if (!key.StartsWith(ValuePrefix, StringComparison.Ordinal))
+                continue;
+            var rest = key[ValuePrefix.Length..];
+            var colon = rest.IndexOf(':');
+            if (colon <= 0 || Parse(rest[..colon], text) is not { } value)
+                continue;
+            args ??= new RestoredArgs();
+            args.Values.Add(new RouteableArgument(value, rest[(colon + 1)..]));
+        }
+
+        return args;
+    }
+
+    private static string? ValueTag(object? value) => value switch
+    {
+        string => "s",
+        int => "i",
+        long => "l",
+        bool => "b",
+        double => "d",
+        decimal => "m",
+        Guid => "g",
+        DateTime => "t",
+        DateTimeOffset => "o",
+        _ => null,
+    };
+
+    private static string Format(object value) => value switch
+    {
+        DateTime time => time.ToString("O", System.Globalization.CultureInfo.InvariantCulture),
+        DateTimeOffset moment => moment.ToString("O", System.Globalization.CultureInfo.InvariantCulture),
+        IFormattable formattable => formattable.ToString(null, System.Globalization.CultureInfo.InvariantCulture),
+        _ => value.ToString() ?? string.Empty,
+    };
+
+    private static object? Parse(string tag, string text)
+    {
+        var inv = System.Globalization.CultureInfo.InvariantCulture;
+        const System.Globalization.DateTimeStyles round = System.Globalization.DateTimeStyles.RoundtripKind;
+        return tag switch
+        {
+            "s" => text,
+            "i" => int.TryParse(text, System.Globalization.NumberStyles.Integer, inv, out var i) ? i : null,
+            "l" => long.TryParse(text, System.Globalization.NumberStyles.Integer, inv, out var l) ? l : null,
+            "b" => bool.TryParse(text, out var b) ? b : null,
+            "d" => double.TryParse(text, System.Globalization.NumberStyles.Float, inv, out var d) ? d : null,
+            "m" => decimal.TryParse(text, System.Globalization.NumberStyles.Number, inv, out var m) ? m : null,
+            "g" => Guid.TryParse(text, out var g) ? g : null,
+            "t" => DateTime.TryParse(text, inv, round, out var t) ? t : null,
+            "o" => DateTimeOffset.TryParse(text, inv, round, out var o) ? o : null,
+            _ => null,
+        };
     }
 
     /// <summary>The pages and their values as one string, to keep in a setting or a file.</summary>
@@ -171,4 +256,19 @@ public sealed record RouteableSnapshot(string Route, IReadOnlyDictionary<string,
 {
     /// <summary>A page with no values.</summary>
     public RouteableSnapshot(string route) : this(route, new Dictionary<string, string>()) { }
+}
+
+/// <summary>The arguments of a page that is reached again: only the values it was reached with. The router copies them.</summary>
+internal sealed class RestoredArgs : IRouteableArgs
+{
+    public List<RouteableArgument> ViewModelParameters { get; } = [];
+    public List<RouteableArgument> ViewParameters { get; } = [];
+    public List<RouteableArgument> Values { get; } = [];
+    public Exception? Exception { get; set; }
+    public string? Route { get; set; }
+
+    public IRouteableArgs ForViewModel(params RouteableArgument[] entries) { ViewModelParameters.AddRange(entries); return this; }
+    public IRouteableArgs ForValues(params RouteableArgument[] entries) { Values.AddRange(entries); return this; }
+    public IRouteableArgs ForView(params RouteableArgument[] entries) { ViewParameters.AddRange(entries); return this; }
+    public IRouteableArgs WithRoute(string? route = null) { Route = route; return this; }
 }

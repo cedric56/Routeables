@@ -136,11 +136,27 @@ public class RouterGenericRouteTests
     }
 
     [Fact]
-    public async Task A_request_with_neither_an_entry_nor_a_route_is_refused()
+    public async Task A_request_with_neither_an_entry_nor_a_route_nor_a_view_model_type_is_refused()
     {
         var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
 
         await Assert.ThrowsAsync<ArgumentException>(() =>
-            router.GoToRouteAsync(new RouteableRouteRequest { ViewModelType = typeof(DetailVm) }, TestContext.Current.CancellationToken));
+            router.GoToRouteAsync(new RouteableRouteRequest(), TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public async Task A_request_with_only_a_view_model_type_uses_its_registered_route_and_needs_its_values()
+    {
+        var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
+
+        // The route is registered, but the request gives no value for {id}: a failed result, not an exception.
+        var missing = await router.GoToRouteAsync(new RouteableRouteRequest { ViewModelType = typeof(DetailVm) }, TestContext.Current.CancellationToken);
+        Assert.False(missing.Success);
+
+        var found = await router.GoToRouteAsync(
+            new RouteableRouteRequest { ViewModelType = typeof(DetailVm), Values = new Dictionary<string, object?> { ["id"] = 9 } },
+            TestContext.Current.CancellationToken);
+        Assert.True(found.Success);
+        Assert.Equal(9, Assert.IsType<DetailVm>(router.CurrentViewModel).Id);
     }
 }

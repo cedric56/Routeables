@@ -509,10 +509,37 @@ internal class Router(
                 ? GoToEntryAsync(entry, entryType, cancellationToken, viewKeys)
                 : GoToEntryAsync(entry, cancellationToken, viewKeys);
 
+        if (string.IsNullOrWhiteSpace(request.Route) && request.ViewModelType is { } byType)
+            return GoToRegisteredAsync(byType, request, viewKeys, cancellationToken);
+
         if (string.IsNullOrWhiteSpace(request.Route) || request.ViewModelType is null)
-            throw new ArgumentException("A route request needs an entry, or a route and a view model type.", nameof(request));
+            throw new ArgumentException("A route request needs an entry, a route and a view model type, or a view model type with a registered route.", nameof(request));
 
         return GoToTypedRouteAsync(request.ViewModelType, request.Route, request.Args, request.Template, cancellationToken, viewKeys);
+    }
+
+    // A request with a view model type and no route: the template registered for the view model, filled with the values.
+    private Task<RouteableResult> GoToRegisteredAsync(Type viewModelType, RouteableRouteRequest request, string[] viewKeys, CancellationToken cancellationToken)
+    {
+        var entries = provider.GetService<RouteableTable>()?.Entries ?? [];
+        var templates = entries.Where(e => e.ViewModelType == viewModelType).Select(e => e.Template).ToList();
+        if (templates.Count == 0)
+            return Task.FromResult(RouteableResult.Fail(new InvalidOperationException(
+                $"No route is registered for {viewModelType.Name}. Give it one: [Routeable(\"/path/{{id:int}}\")] on the view model, or RegisterRoute<TView, {viewModelType.Name}>(route: \"/path\").")));
+
+        // Several routes for one view model: the first one the values can fill; the error of the last one when none can.
+        Exception? failure = null;
+        foreach (var template in templates)
+        {
+            try
+            {
+                var route = RouteParser.Build(template, request.Values);
+                return GoToTypedRouteAsync(viewModelType, route, request.Args, template, cancellationToken, viewKeys);
+            }
+            catch (ArgumentException ex) { failure = ex; }
+        }
+
+        return Task.FromResult(RouteableResult.Fail(failure!));
     }
 
     private Task<RouteableResult> GoToEntryAsync(IMenuEntry routeableView, CancellationToken cancellationToken, string[] viewKeys)

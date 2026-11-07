@@ -23,4 +23,11 @@ public sealed class RouteableRouteRequest
 
     /// <summary>Names of the route values that go to the view (a property marked <c>[Parameter]</c>, <c>[QueryProperty]</c> or <c>[RouteableParameter]</c>) instead of the view model.</summary>
     public string[] ViewKeys { get; init; } = [];
+
+    /// <summary>
+    /// The values of the route, for a request that has a view model type and no <see cref="Route"/>: the router finds the template
+    /// registered for the view model and fills its placeholders from the properties of this object (an anonymous object, a record) or from
+    /// its entries (an <see cref="System.Collections.Generic.IReadOnlyDictionary{TKey, TValue}"/> of string to object).
+    /// </summary>
+    public object? Values { get; init; }
 }

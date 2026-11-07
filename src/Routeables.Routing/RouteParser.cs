@@ -252,6 +252,91 @@ public static class RouteParser
     }
 
     /// <summary>
+    /// Writes the route a template stands for: the placeholders are filled from <paramref name="values"/> (an object's properties or a
+    /// dictionary of name to value; names are not case-sensitive). Numbers and dates are written with the invariant culture, a
+    /// registered type (<c>{person:Person}</c>) as JSON, and each value is escaped. A missing optional value leaves its segment (or its
+    /// query entry) out.
+    /// </summary>
+    /// <exception cref="ArgumentException">A required value is missing, or a constraint is unknown.</exception>
+    internal static string Build(string template, object? values)
+    {
+        ArgumentNullException.ThrowIfNull(template);
+        var bag = ValuesOf(values);
+
+        string? Fill(Match m, string where)
+        {
+            var name = m.Groups["name"].Value;
+            var type = m.Groups["type"].Value;
+            if (!IsKnownConstraint(type))
+                throw new ArgumentException($"The constraint \"{type}\" of {{{name}}} in \"{template}\" is unknown.", nameof(template));
+            if (!bag.TryGetValue(name, out var value) || value is null || value is string { Length: 0 })
+            {
+                if (m.Groups["opt"].Success) return null;
+                throw new ArgumentException($"The route \"{template}\" needs a value for {{{name}}} ({where}).", nameof(values));
+            }
+
+            return Uri.EscapeDataString(Format(value, type));
+        }
+
+        var (path, query) = Split(template);
+        var segments = new List<string>();
+        foreach (var segment in path.Split('/', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var m = Param.Match(segment);
+            if (!m.Success) { segments.Add(segment); continue; }
+            if (Fill(m, "path") is { } text) segments.Add(text);
+        }
+
+        var pairs = new List<string>();
+        foreach (var part in query.Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var m = Param.Match(part);
+            if (!m.Success) { pairs.Add(part); continue; }
+            if (Fill(m, "query") is { } text) pairs.Add($"{Uri.EscapeDataString(m.Groups["name"].Value)}={text}");
+        }
+
+        var route = (path.StartsWith('/') ? "/" : string.Empty) + string.Join('/', segments);
+        return pairs.Count == 0 ? route : route + "?" + string.Join('&', pairs);
+    }
+
+    [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "Reached with an object of values only through the overload of GoToAsync that is marked RequiresUnreferencedCode.")]
+    private static Dictionary<string, object?> ValuesOf(object? values)
+    {
+        var bag = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        switch (values)
+        {
+            case null:
+                break;
+            case IReadOnlyDictionary<string, object?> map:
+                foreach (var (key, value) in map) bag[key] = value;
+                break;
+            case IDictionary<string, object?> map:
+                foreach (var (key, value) in map) bag[key] = value;
+                break;
+            default:
+                foreach (var property in values.GetType().GetProperties())
+                    if (property.GetIndexParameters().Length == 0 && property.CanRead)
+                        bag[property.Name] = property.GetValue(values);
+                break;
+        }
+
+        return bag;
+    }
+
+    private static string Format(object value, string type)
+    {
+        if (SerializationInfos.TryGetValue(type, out var info))
+            return JsonSerializer.Serialize(value, info);
+        return value switch
+        {
+            string text => text,
+            bool flag => flag ? "true" : "false",
+            IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
+            _ => value.ToString() ?? string.Empty,
+        };
+    }
+
+    /// <summary>
     /// Parses a query string into a key-value dictionary.
     /// </summary>
     private static Dictionary<string, string> ParseQuery(string q)
