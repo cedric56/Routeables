@@ -19,7 +19,7 @@ public sealed class CallLog
 /// A view model that records every lifecycle call as <c>"{name}:{Hook}"</c> in a shared <see cref="CallLog"/>
 /// (hooks: CanLeave, Init, To, From, Destroy) and can be told to refuse or to fail.
 /// </summary>
-public class RecordingViewModel(string name, CallLog log) : IRouteable, IInitializeAsync
+public class RecordingViewModel(string name, CallLog log) : IRouteable, IInitializeAsync, IAsyncDisposable
 {
     public string Name { get; } = name;
 
@@ -67,6 +67,9 @@ public class RecordingViewModel(string name, CallLog log) : IRouteable, IInitial
         log.Add($"{Name}:From");
         return Task.CompletedTask;
     }
+
+    /// <summary>What the router calls when the page leaves the history for good (it disposes pages; it does not know DestroyAsync).</summary>
+    public ValueTask DisposeAsync() => new(DestroyAsync());
 
     public Task DestroyAsync(CancellationToken ct = default)
     {

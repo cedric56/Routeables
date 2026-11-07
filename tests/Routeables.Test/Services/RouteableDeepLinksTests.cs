@@ -343,4 +343,17 @@ public class RouteableDeepLinksTests
         Assert.Throws<ArgumentNullException>(() => new RouteableLinkInbox((IServiceProvider)null!));
         Assert.Throws<ArgumentNullException>(() => new RouteableLinkInbox().Attach(null!));
     }
+
+    [Theory]
+    [InlineData("myapp://SKU12/details", "/SKU12/details")]
+    [InlineData("myapp://Orders/Big?Q=A#top", "/Orders/Big?Q=A")]
+    [InlineData("myapp://orders:5/1", "/orders:5/1")]
+    [InlineData("myapp://user@orders/1", "/user@orders/1")]
+    [InlineData("myapp://orders/a%20b", "/orders/a%20b")]
+    [InlineData("myapp:///orders/1", "/orders/1")]
+    public void The_first_segment_of_an_application_scheme_is_kept_as_it_was_written(string address, string expected)
+    {
+        Assert.True(RouteableDeepLinks.TryGetRoute(new Uri(address), null, out var route));
+        Assert.Equal(expected, route);
+    }
 }

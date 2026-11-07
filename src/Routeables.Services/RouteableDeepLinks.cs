@@ -35,7 +35,7 @@ public static class RouteableDeepLinks
         var isWeb = uri.Scheme is "http" or "https";
         var path = isWeb || string.IsNullOrEmpty(uri.Host)
             ? uri.AbsolutePath
-            : "/" + uri.Host + (uri.AbsolutePath == "/" ? string.Empty : uri.AbsolutePath);
+            : AfterTheScheme(uri);
 
         // "myapp:///" and "myapp://" name nothing.
         path = "/" + path.Trim('/');
@@ -44,6 +44,20 @@ public static class RouteableDeepLinks
 
         route = path + uri.Query;
         return true;
+    }
+
+    // "myapp://Orders/42": what follows "//" as it was written. The Uri calls the first segment a host and changes it (lower case, the port
+    // and the user name taken out), which would change a value such as the SKU12 of myapp://SKU12/details.
+    private static string AfterTheScheme(Uri uri)
+    {
+        var text = uri.OriginalString;
+        var at = text.IndexOf("://", StringComparison.Ordinal);
+        if (at < 0)
+            return "/" + uri.Host + (uri.AbsolutePath == "/" ? string.Empty : uri.AbsolutePath);
+
+        var rest = text[(at + 3)..];
+        var end = rest.IndexOfAny(['?', '#']);
+        return "/" + (end >= 0 ? rest[..end] : rest);
     }
 
     /// <summary>The route of an address, without a limit on the schemes.</summary>

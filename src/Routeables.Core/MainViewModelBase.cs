@@ -72,7 +72,7 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
         var type = viewModel.GetType();
         var entry = Entries.FirstOrDefault(p => p.Route == type.Name || (p as MenuEntry)?.ViewModelType == type);
         if (entry != null)
-            _routeable = entry;
+            _routeable = _confirmed = entry;
         NotifyPropertyChanged(nameof(SelectedEntry));
         NotifyPropertyChanged(nameof(CurrentTitle));
         CurrentViewChanged?.Invoke(this, _router.CurrentView);
@@ -124,6 +124,10 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
     protected abstract void NotifyPropertyChanged(string? propertyName);
 
     private IMenuEntry? _routeable;
+
+    // The entry whose page the router has shown. A selection that a newer one replaced before it started never showed its page, so it is
+    // not the entry to go back to when the newer selection is refused.
+    private IMenuEntry? _confirmed;
     private readonly SemaphoreSlim _selectionGate = new(1, 1);
     private int _selectionVersion;
 
@@ -261,6 +265,10 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
         => System.Diagnostics.Debug.WriteLine(
             $"Routeables: '{entry.Route}' was not shown ({(result.Cancelled ? "cancelled by a guard (CanLeaveAsync / CanEnter) or a newer route" : "failed")}){(result.Exception is null ? "" : ": " + result.Exception)}");
 
+    // The entry to select again when a selection is not shown: the one whose page the router shows. The `old` of a selection that a newer
+    // one replaced before it started was never shown, so it is only the answer when no page was shown through this menu yet.
+    private IMenuEntry? Previous(IMenuEntry? old, int version) => version != 0 ? _confirmed ?? old : old;
+
     /// <summary>
     /// Shows the view of an entry through the router and announces it with <see cref="CurrentViewChanged"/>; the previous entry is selected again if that fails.
     /// </summary>
@@ -279,6 +287,11 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
             var outcome = await _router.GoToRouteAsync(value);
             var result = outcome.Success;
 
+            // Whatever a newer selection does next, the router now shows this entry: it is the one to go back to if that one is refused.
+            if (result && _router.History.Current is { } shown
+                && string.Equals(shown.Args.Route, value.Arguments.Route ?? value.Route, StringComparison.Ordinal))
+                _confirmed = value;
+
             // A newer selection replaced this one while the router was working: its result is the one to keep.
             if (version != 0 && version != _selectionVersion)
                 return;
@@ -290,21 +303,21 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
                 var redirected = _router.History.Current is { } current
                     && !string.Equals(current.Args.Route, value.Arguments.Route ?? value.Route, StringComparison.Ordinal);
                 if (redirected && ReferenceEquals(_routeable, value))
-                    _routeable = old;
+                    _routeable = Previous(old, version);
 
                 NotifyPropertyChanged(nameof(CurrentTitle));
                 CurrentViewChanged?.Invoke(this, _router.CurrentView);
             }
             else
             {
-                _routeable = old;
+                _routeable = Previous(old, version);
                 OnRoutingFailed(value, outcome);
             }
         }
         catch
         {
             if (version == 0 || version == _selectionVersion)
-                _routeable = old;
+                _routeable = Previous(old, version);
 
             throw;
         }

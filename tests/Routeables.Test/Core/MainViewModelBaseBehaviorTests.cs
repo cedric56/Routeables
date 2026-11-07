@@ -101,4 +101,43 @@ public class MainViewModelBaseBehaviorTests
         Assert.NotEqual(Runtime.Wpf, Runtime.Unknown);
         Assert.Equal("Wpf", Runtime.Wpf.ToString());
     }
+
+    private sealed class PageEntry(string route, object page) : IMenuEntry
+    {
+        public bool IsLock { get; set; }
+        public object? ViewModel { get; set; } = page;
+        public object? View { get; set; } = page;
+        public string Route => route;
+        public string Template => route;
+        public IRouteableArgs Arguments { get; set; } = RouteableArgs.Create();
+        public string DisplayName => route;
+        public string? Path => null;
+    }
+
+    [Fact]
+    public async Task A_selection_replaced_before_it_started_is_not_the_entry_the_menu_goes_back_to()
+    {
+        var router = CreateRouter();
+        var log = new CallLog();
+        RecordingView Page(string name) => new(name, log);
+        var a = Page("a");
+        var first = new PageEntry("/a", a);
+        var second = new PageEntry("/b", Page("b"));
+        var third = new PageEntry("/c", Page("c"));
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        a.OnEnter = _ => release.Task;
+        var sut = TestNavigableViewModel.Create(router, [first, second, third], initialize: false);
+
+        sut.SelectedEntry = first;        // being entered: it holds the gate of the menu
+        sut.SelectedEntry = second;       // replaced by the next one before it starts, so its page is never shown
+        sut.SelectedEntry = third;
+        a.CanLeave = false;               // once shown, the first page refuses to be left: the third selection is refused
+        release.SetResult();
+        for (var i = 0; i < 200 && router.CurrentView is null; i++)
+            await Task.Delay(10, TestContext.Current.CancellationToken);
+        await Task.Delay(300, TestContext.Current.CancellationToken);
+
+        Assert.Same(a, router.CurrentView);
+        Assert.Same(first, sut.SelectedEntry);          // the menu shows the page that is displayed, not the one that was skipped
+    }
 }
