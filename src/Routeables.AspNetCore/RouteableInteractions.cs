@@ -5,7 +5,7 @@ namespace Routeables.AspNetCore;
 /// <summary>
 /// What the dialog and notification services of the web host share with the pages. On a desktop a dialog is a window and the view model
 /// awaits it; here the view model awaits too, but the answer comes with a later request: <see cref="StartAsync"/> runs an action until
-/// it ends or asks something, and <see cref="ContinueAsync"/> goes on once the visitor has answered.
+/// it ends or asks something, and <see cref="ContinueAsync(Action)"/> goes on once the visitor has answered.
 /// </summary>
 public sealed class RouteableInteractions : IDisposable
 {

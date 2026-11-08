@@ -21,13 +21,19 @@ public sealed class VisualTests(BlazorApp app) : BlazorTest(app)
     /// <summary>The share of pixels allowed to differ (the antialiasing of the text moves a few).</summary>
     private const double AllowedDifference = 0.002;
 
-    // The animations are off and the caret hidden: the screenshot of a page is always the same.
+    /// <summary>
+    /// Browser context options used for every visual test.
+    /// Animations are reduced and the caret is hidden so that screenshots are deterministic.
+    /// </summary>
     protected override BrowserNewContextOptions ContextOptions => new()
     {
         ViewportSize = new ViewportSize { Width = 1280, Height = 900 },
         ReducedMotion = ReducedMotion.Reduce,
     };
 
+    /// <summary>
+    /// Absolute path to the <c>Snapshots</c> folder that lives next to the test project file.
+    /// </summary>
     private static string SnapshotsFolder
     {
         get
@@ -39,6 +45,12 @@ public sealed class VisualTests(BlazorApp app) : BlazorTest(app)
         }
     }
 
+    /// <summary>
+    /// Opens the given menu entry in the requested colour scheme, takes a screenshot and compares it
+    /// with the baseline image stored under <c>Snapshots</c>.
+    /// </summary>
+    /// <param name="entry">Display name of the menu item to open.</param>
+    /// <param name="scheme">Light or dark colour scheme to emulate.</param>
     [Theory]
     [InlineData("Cats", ColorScheme.Light)]
     [InlineData("Cats", ColorScheme.Dark)]
@@ -111,6 +123,9 @@ public sealed class VisualTests(BlazorApp app) : BlazorTest(app)
         }
     }
 
+    /// <summary>
+    /// Writes the given screenshot into <c>Snapshots/_actual</c> so that it can be inspected or promoted to a baseline.
+    /// </summary>
     private static void Keep(string name, byte[] image)
     {
         var folder = Path.Combine(SnapshotsFolder, "_actual");
@@ -118,7 +133,11 @@ public sealed class VisualTests(BlazorApp app) : BlazorTest(app)
         File.WriteAllBytes(Path.Combine(folder, name), image);
     }
 
-    // The share of pixels that differ: both images are drawn on a canvas of the page and read back. A size that differs is a total difference.
+    /// <summary>
+    /// Returns the share of pixels that differ between the two PNG images.
+    /// Both images are drawn onto an off-screen canvas inside the page and compared pixel-by-pixel;
+    /// a size mismatch is treated as a total difference (1.0).
+    /// </summary>
     private async Task<double> DifferenceAsync(byte[] expected, byte[] actual)
         => await Page.EvaluateAsync<double>(
             """
