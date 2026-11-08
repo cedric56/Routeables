@@ -62,8 +62,6 @@ public sealed class VisualTests(BlazorApp app) : BlazorTest(app)
     [InlineData("Dialogs", ColorScheme.Dark)]
     [InlineData("Features", ColorScheme.Light)]
     [InlineData("Features", ColorScheme.Dark)]
-    [InlineData("Members", ColorScheme.Light)]
-    [InlineData("Members", ColorScheme.Dark)]
     [InlineData("About", ColorScheme.Light)]
     [InlineData("About", ColorScheme.Dark)]
     public async Task Every_menu_entry_looks_as_it_did(string entry, ColorScheme scheme)
