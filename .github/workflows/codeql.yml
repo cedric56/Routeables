@@ -22,11 +22,11 @@ jobs:
       - uses: actions/checkout@v7
 
       # No build: CodeQL reads the C# sources itself, so the MAUI, WinUI and Uno workloads are not needed.
-      - uses: github/codeql-action/init@v3
+      - uses: github/codeql-action/init@v4
         with:
           languages: csharp
           build-mode: none
 
-      - uses: github/codeql-action/analyze@v3
+      - uses: github/codeql-action/analyze@v4
         with:
           category: "/language:csharp"
