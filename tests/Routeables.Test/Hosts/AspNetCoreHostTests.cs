@@ -28,7 +28,7 @@ public class AspNetCoreHostTests
         using var scope = root.CreateScope();
         var router = scope.ServiceProvider.GetRequiredService<IRouter>();
 
-        var result = await router.GoToAsync("/things/Red%20Panda");
+        var result = await router.GoToAsync("/things/Red%20Panda", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(result.Success, result.Exception?.Message);
         Assert.Equal("Red Panda", Assert.IsType<ThingViewModel>(router.CurrentViewModel).Name);
