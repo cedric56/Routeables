@@ -14,6 +14,7 @@ public sealed record PetInfo(Animal Animal, string Glyph);
 /// the constructor by type, <c>ForViewModel(info)</c>). It does not know where it is shown.
 /// </summary>
 [Routeable("pet")]
+[System.ComponentModel.Bindable(true)]
 public class PetViewModel(PetInfo info)
 {
     public Animal Animal { get; } = info.Animal;

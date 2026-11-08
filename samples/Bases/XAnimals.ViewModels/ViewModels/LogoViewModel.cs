@@ -7,6 +7,7 @@ namespace XAnimals.ViewModels;
 /// say, whose view draws the logo of the platform.
 /// </summary>
 [Routeable("shell-logo")]
+[System.ComponentModel.Bindable(true)]
 public class LogoViewModel
 {
     public string Name => "Routeables";

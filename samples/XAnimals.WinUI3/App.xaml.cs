@@ -1,6 +1,8 @@
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Routeables.Generated;
 using Routeables.WinUI3;
+using WinRT.Interop;
 using XAnimals.Common;
 using XAnimals.ViewModels;
 
@@ -8,8 +10,6 @@ namespace XAnimals.WinUI3;
 
 public partial class App : Application
 {
-    private Window? _window;
-
     public App()
     {
         InitializeComponent();
@@ -29,5 +29,15 @@ public partial class App : Application
     public IServiceProvider Services { get; }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args) =>
-        _window = this.OpenMainWindow(new MainPage(), window => window.Title = "XAnimals.WinUI3");
+        this.OpenMainWindow(new MainPage(), window =>
+        {
+#if WINDOWS
+            var windowHandle = WindowNative.GetWindowHandle(window);
+            var windowId = Win32Interop.GetWindowIdFromWindow(windowHandle);
+            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+            appWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets", "icon.ico"));
+#endif
+
+            window.Title = "XAnimals.WinUI3";
+        });
 }

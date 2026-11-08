@@ -9,6 +9,7 @@ namespace XAnimals.ViewModels;
 /// Features page, where they sign in and open this page again. Signing out leaves the page for Features.
 /// </summary>
 [Routeable("members")]
+[System.ComponentModel.Bindable(true)]
 public class MembersViewModel : ViewModelBase
 {
     private readonly IRouter _router;

@@ -27,6 +27,7 @@ public sealed record AdoptChoice(string Name, string Glyph, ICommand AdoptComman
 /// </para>
 /// </summary>
 [Routeable("adopt")]
+[System.ComponentModel.Bindable(true)]
 public class AdoptViewModel : ViewModelBase, IRouteable, IDisposable
 {
     /// <summary>The identifier of the region (registered by <see cref="Extensions.AddAdoptRegion"/>).</summary>

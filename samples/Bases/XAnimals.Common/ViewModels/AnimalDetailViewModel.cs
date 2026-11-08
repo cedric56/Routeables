@@ -8,6 +8,7 @@ namespace XAnimals.Common;
 /// A concrete detail either declares its own <c>[RouteableViewModel]</c> so the navigation is generated per list
 /// (animal and back come from the constructor), or implements <see cref="IInitializeAsync{TData}"/> and sets them there.
 /// </summary>
+[System.ComponentModel.Bindable(true)]
 public abstract class AnimalDetailViewModel(IRouter router, Animal? animal = null, Action? back = null) : ViewModelBase
 {
     private Animal? _animal = animal;

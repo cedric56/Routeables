@@ -20,6 +20,7 @@ public sealed record LayoutBarInfo(string Glyph, string Title, string Detail, bo
 /// <c>ForViewModel(info)</c>).
 /// </summary>
 [Routeable("layout-bar")]
+[System.ComponentModel.Bindable(true)]
 public class LayoutBarViewModel(LayoutBarInfo info)
 {
     public string Glyph { get; } = info.Glyph;

@@ -12,6 +12,7 @@ public sealed record LayoutMenuItem(string Name, string Glyph, bool IsCurrent, I
 /// the page to the content region by name: the panel does not know where the content is, nor that a header and a footer follow.
 /// </summary>
 [Routeable("layout-menu")]
+[System.ComponentModel.Bindable(true)]
 public class LayoutMenuViewModel : ViewModelBase, IDisposable
 {
     private readonly LayoutController _controller;

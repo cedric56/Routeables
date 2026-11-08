@@ -10,6 +10,7 @@ namespace XAnimals.ViewModels;
 /// The services are the platform's own (Razor, Avalonia, Maui or Uno), so the same view model drives the four apps.
 /// </summary>
 [Routeable("dialogs")]
+[System.ComponentModel.Bindable(true)]
 public class DialogsViewModel : ViewModelBase
 {
     private readonly IRouteableDialogService _dialogs;

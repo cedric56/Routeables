@@ -11,5 +11,6 @@ namespace XAnimals.ViewModels;
 /// </summary>
 [RouteableViewModel(typeof(ElephantsViewModel), Route = "/elephants/{name}")]
 [Routeable("/elephants/{name}")]
+[System.ComponentModel.Bindable(true)]
 public class ElephantDetailViewModel(IRouter router, string name, Action? back = null)
     : AnimalDetailViewModel(router, ElephantData.Elephants.FirstOrDefault(e => e.Name == name), back);

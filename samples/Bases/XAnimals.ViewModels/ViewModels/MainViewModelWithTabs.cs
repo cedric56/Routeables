@@ -12,6 +12,7 @@ namespace XAnimals.ViewModels;
 /// <c>NavigationView</c> on Uno): the entries of <see cref="MainViewModel"/>, and the Tabs page. The other heads keep
 /// <see cref="MainViewModel"/>, which has no entry for a page they cannot show.
 /// </summary>
+[System.ComponentModel.Bindable(true)]
 public sealed class MainViewModelWithTabs(IRouter router, IRouteCoordinator coordinator, IRouteableRequestedThemeService themes) : MainViewModel(router, coordinator, themes)
 {
     protected override ObservableCollection<IMenuEntry> GetEntries()

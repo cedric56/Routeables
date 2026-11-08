@@ -38,6 +38,7 @@ public sealed record HistoryItem(int Number, string Name, string Glyph, string C
 /// </para>
 /// </summary>
 [Routeable("history")]
+[System.ComponentModel.Bindable(true)]
 public class HistoryViewModel : ViewModelBase, IRouteable, IDisposable
 {
     /// <summary>The identifier of the region (registered by <see cref="Extensions.AddHistoryRegion"/>).</summary>

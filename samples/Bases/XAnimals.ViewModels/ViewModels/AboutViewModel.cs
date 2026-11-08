@@ -9,6 +9,7 @@ namespace XAnimals.ViewModels;
 /// Dialogs page (<see cref="DialogsViewModel"/>).
 /// </summary>
 [Routeable("about")]
+[System.ComponentModel.Bindable(true)]
 public class AboutViewModel : ViewModelBase
 {
     public const string LearnMoreUrl = "https://github.com/cedric56/Routeables";

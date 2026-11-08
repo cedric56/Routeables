@@ -17,6 +17,7 @@ namespace XAnimals.ViewModels;
 /// </para>
 /// </summary>
 [Routeable("regions")]
+[System.ComponentModel.Bindable(true)]
 public class RegionsViewModel : ViewModelBase, IRouteable
 {
     private readonly LayoutController _controller;

@@ -7,6 +7,7 @@ using XAnimals.Common;
 namespace XAnimals.ViewModels;
 
 [Routeable("/bears")]
+[System.ComponentModel.Bindable(true)]
 public class BearsViewModel(IRouter router, IServiceProvider provider) : AnimalsViewModel(router, provider, BearData.Bears)
 {
     protected override Task<RouteableResult> GoToDetailAsync(Animal animal, Action back)

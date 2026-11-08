@@ -9,6 +9,7 @@ namespace XAnimals.ViewModels;
 /// A modal that asks for a short note and returns it, or <see langword="null"/> when cancelled.
 /// Each platform's view shows it in its own modal; the buttons come from <see cref="Commands"/>.
 /// </summary>
+[System.ComponentModel.Bindable(true)]
 public class NoteViewModel : ViewModelBase, ICloseableViewModel<string?>
 {
     private string _note = string.Empty;

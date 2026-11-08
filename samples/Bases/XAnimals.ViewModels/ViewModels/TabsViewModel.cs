@@ -9,6 +9,7 @@ namespace XAnimals.ViewModels;
 /// region <see cref="Region"/>, not the default router: they would otherwise replace the page that holds them.
 /// </summary>
 [Routeable("tabs")]
+[System.ComponentModel.Bindable(true)]
 public class TabsViewModel : ViewModelBase
 {
     /// <summary>The router the tabs route: a region with its own history.</summary>

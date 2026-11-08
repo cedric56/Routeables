@@ -9,6 +9,7 @@ namespace XAnimals.ViewModels;
 /// from the address in a property decorated with its platform's attribute and gives it to <see cref="Name"/>.
 /// </summary>
 [Routeable(PandaDetailViewModel.Route)]
+[System.ComponentModel.Bindable(true)]
 public class PandaDetailViewModel(IRouter router, Action? back = null) : AnimalDetailViewModel(router, null, back)
 {
     /// <summary>The route and template of the detail; <c>::</c> marks <c>panda</c> as an attribute parameter.</summary>

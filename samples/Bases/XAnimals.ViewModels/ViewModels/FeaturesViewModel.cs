@@ -19,6 +19,7 @@ namespace XAnimals.ViewModels;
 /// The Back button of the system, the transitions of the regions and the links that start the application are in the heads.
 /// </summary>
 [Routeable("features")]
+[System.ComponentModel.Bindable(true)]
 public class FeaturesViewModel : ViewModelBase, IRouteableState, IDisposable
 {
     public const string SampleLink = "xanimals://dogs/Eurohound";

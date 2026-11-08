@@ -19,6 +19,7 @@ public sealed record BoardChoice(string Name, string Glyph, ICommand AddCommand)
 /// </para>
 /// </summary>
 [Routeable("board")]
+[System.ComponentModel.Bindable(true)]
 public class BoardViewModel : ViewModelBase, IRouteable, IDisposable
 {
     /// <summary>The identifier of the region (registered by <see cref="Extensions.AddBoardRegion"/>).</summary>

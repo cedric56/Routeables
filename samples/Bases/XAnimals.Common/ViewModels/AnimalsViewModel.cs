@@ -7,6 +7,7 @@ namespace XAnimals.Common;
 /// What every animal list page has in common: the search, the selection and the hosting of the detail view.
 /// A concrete list only gives its animals and the navigation to its own detail view model.
 /// </summary>
+[System.ComponentModel.Bindable(true)]
 public abstract class AnimalsViewModel(IRouter router, IServiceProvider provider, IEnumerable<Animal> animals) : ViewModelBase, IRouteable
 {
     private string _searchText = string.Empty;

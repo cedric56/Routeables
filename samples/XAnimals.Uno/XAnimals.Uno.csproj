@@ -42,4 +42,10 @@
     <ProjectReference Include="..\Modules\XAnimals.Uno.Birds\XAnimals.Uno.Birds.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Assets\icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

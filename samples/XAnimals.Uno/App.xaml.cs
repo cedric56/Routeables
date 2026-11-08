@@ -22,6 +22,14 @@ public partial class App : Application
             () => new MainPage(),
             window =>
             {
+
+#if WINDOWS
+            var windowHandle = WindowNative.GetWindowHandle(window);
+            var windowId = Win32Interop.GetWindowIdFromWindow(windowHandle);
+            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+            appWindow.SetIcon("Assets/icon.ico");
+#endif
+
 #if !__IOS__
                 window.Title = "XAnimals.Uno";      // Window.Title is not implemented on iOS
 #endif
