@@ -19,7 +19,7 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # No build: CodeQL reads the C# sources itself, so the MAUI, WinUI and Uno workloads are not needed.
       - uses: github/codeql-action/init@v3
