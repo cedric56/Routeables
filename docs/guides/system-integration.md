@@ -62,6 +62,8 @@ await RouteableDeepLinks.GoToAsync(provider, new Uri("xanimals://dogs/Eurohound"
 
 - `https://example.com/dogs/Eurohound?x=1` and `xanimals://dogs/Eurohound?x=1` both give `/dogs/Eurohound?x=1`. The fragment is dropped.
 - An address with another scheme, no path (`xanimals://`) or no registered route is a failed result, not an exception: the address was typed by someone else.
+- **Always give the schemes your application owns.** `schemes: null` (or an empty list) accepts any scheme, which suits a test or a closed application and nothing that receives addresses from other applications, a web page or a message. Give `["myapp", "https"]` there, and for `https` check the host yourself before calling: the schemes say how the address is written, not who sent it.
+- **A route that exists is not a right to see it.** `RouteableDeepLinks` only finds the route; what the user may open is decided by a route guard (`IRouteGuard`) and, for data, by your server on every request. The values of the address that the template does not declare are not trusted either: they reach the hooks as `args.Values`, never the constructor.
 - The host receives the address its own way and passes it on to a `RouteableLinkInbox`. The inbox is a field of the application, because the platform often delivers the link before the container exists. It keeps what it receives, and once you give it the container (`Attach`) and the first page is shown, it follows the addresses on the thread of the interface, one after the other.
 
 ```csharp

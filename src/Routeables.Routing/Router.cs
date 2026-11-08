@@ -387,6 +387,8 @@ internal class Router(
 
             if (viewModel is null)
             {
+                // A view declared without a view model (a Razor component, for instance) is shown with an empty object as its context:
+                // it is wanted, not a failure.
                 viewModel = provider.GetViewModel(viewmodelkey, args) ?? new object();
                 built.Add(viewModel);
             }
@@ -460,7 +462,7 @@ internal class Router(
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(url);
 
-        
+
         // A route registered with an explicit template (RegisterRoute(route: "/orders/{id:int}"), [Routeable]): the template
         // reads the parameters from the address. Given a template, it is the registered route with that template.
         var entries = provider.GetService<RouteableTable>()?.Entries ?? [];

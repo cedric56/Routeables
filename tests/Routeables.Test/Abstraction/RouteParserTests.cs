@@ -174,6 +174,26 @@ public class RouteParserTests
         => Assert.Equal(expected, RouteParser.BestMatch(Bears, route).Template);
 
     [Fact]
+    public void A_shorter_template_beats_the_optional_one_that_extends_it_in_any_order_of_registration()
+    {
+        (string Template, Type? ViewModelType)[] optionalFirst = [("products/{tab?}", null), ("products", null)];
+        (string Template, Type? ViewModelType)[] exactFirst = [("products", null), ("products/{tab?}", null)];
+
+        Assert.Equal("products", RouteParser.BestMatch(optionalFirst, "products").Template);
+        Assert.Equal("products", RouteParser.BestMatch(exactFirst, "products").Template);
+        Assert.Equal("products/{tab?}", RouteParser.BestMatch(optionalFirst, "products/specs").Template);
+    }
+
+    [Fact]
+    public void A_shorter_template_beats_the_catch_all_that_extends_it()
+    {
+        (string Template, Type? ViewModelType)[] entries = [("files/{**path}", null), ("files", null)];
+
+        Assert.Equal("files", RouteParser.BestMatch(entries, "files").Template);
+        Assert.Equal("files/{**path}", RouteParser.BestMatch(entries, "files/a/b").Template);
+    }
+
+    [Fact]
     public void Equally_specific_templates_keep_the_order_of_registration()
     {
         (string Template, Type? ViewModelType)[] entries = [("a/{x}", null), ("a/{y}", null)];

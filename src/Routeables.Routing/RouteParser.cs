@@ -203,7 +203,8 @@ public static class RouteParser
     /// The registered route that opens <paramref name="uri"/>. When several templates match, the most specific wins, whatever their
     /// registration order: segment by segment from the left, a literal beats a typed parameter (<c>{id:int}</c>, a registered type),
     /// which beats an untyped one (<c>{id}</c>), which beats an optional one (<c>{tab?}</c>). <c>/bears/new</c> is therefore
-    /// <c>bears/new</c>, not <c>bears/{id}</c>. Equally specific templates keep the order of registration.
+    /// <c>bears/new</c>, not <c>bears/{id}</c>. When one template is the start of the other, the shorter wins (<c>/products</c> over
+    /// <c>/products/{tab?}</c>). Equally specific templates keep the order of registration.
     /// </summary>
     /// <returns>The entry, or one whose <c>Template</c> is <see langword="null"/> when no template matches.</returns>
     internal static (string Template, Type? ViewModelType) BestMatch(
@@ -246,7 +247,9 @@ public static class RouteParser
         for (var i = 0; i < Math.Min(a.Length, b.Length); i++)
             if (a[i] != b[i])
                 return a[i].CompareTo(b[i]);
-        return 0;
+
+        // The same start: the shorter template is the more exact one (/products before /products/{tab?}, /files before /files/{**path}).
+        return b.Length.CompareTo(a.Length);
     }
 
     /// <summary>

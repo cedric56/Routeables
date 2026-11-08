@@ -159,4 +159,21 @@ public class RouterGenericRouteTests
         Assert.True(found.Success);
         Assert.Equal(9, Assert.IsType<DetailVm>(router.CurrentViewModel).Id);
     }
+
+    public sealed class SoloView : IRouteableFor { public object? Context { get; set; } }
+
+    public sealed class LostVm;
+
+    /// <summary>A view declared without a view model is shown with an empty object as its context (a Razor component has no view model).</summary>
+    [Fact]
+    public async Task A_view_without_a_registered_view_model_is_shown_with_an_empty_object()
+    {
+        var router = Build(s => s.RegisterRoute<SoloView>(route: "Solo"));
+
+        var result = await router.GoToRouteAsync<LostVm>("Solo", cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.True(result.Success, result.Exception?.Message);
+        Assert.IsType<SoloView>(router.CurrentView);
+        Assert.NotNull(router.CurrentViewModel);
+    }
 }

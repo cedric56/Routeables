@@ -36,6 +36,13 @@ Order of events for a route change from page A to page B:
 3. `OnLeavingAsync` on A, then `OnEnteringAsync` on B.
 4. The history is updated, and entries removed by this change are disposed.
 
+When a step fails, the route change fails with that exception (`result.Exception`) and A stays the current page:
+
+| Where it fails | What the router does |
+|----------------|----------------------|
+| `OnLeavingAsync` of A (view model or view) | Stops there. B is not touched and A's `OnEnteringAsync` is **not** called again: A never stopped being current. What the callbacks of A that already ran did is not undone, so keep `OnLeavingAsync` free of effects that cannot be repeated or must not be half done. |
+| `OnEnteringAsync` of B | A already ran `OnLeavingAsync`, so the router calls A's `OnEnteringAsync` again to make it current again. If that fails too, the second exception goes to the `IRouteableErrorSink` and the first one is the result. |
+
 ### Routing from a hook
 
 A router makes one route change at a time. A route change started **from a hook of that same router** (`CanLeaveAsync`, `InitializeAsync`, `OnLeavingAsync`, `OnEnteringAsync`, or a `Routing` or `Routed` handler) does not wait for the first one: the router throws an `InvalidOperationException` ("Reentrant route changes are not supported"). The history would otherwise change under a route change that has not finished.

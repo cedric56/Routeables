@@ -47,6 +47,68 @@ public class RouteGuardTests
 
     private static bool IsAdmin(RouteableRoutingEventArgs change) => change.To.ViewModel is GuardAdminVm;
 
+    /// <summary>A guard that asks the user (a dialog): it holds the router while it waits for the answer.</summary>
+    private sealed class DialogGuard : IRouteGuard
+    {
+        public TaskCompletionSource Asked { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource<RouteGuardDecision> Answer { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public async Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
+        {
+            if (change.To.ViewModel is not GuardAdminVm)
+                return RouteGuardDecision.Allow;
+
+            Asked.TrySetResult();
+            return await Answer.Task.WaitAsync(cancellationToken);
+        }
+    }
+
+    [Fact]
+    public async Task A_guard_that_waits_for_a_dialog_lets_the_route_change_go_on_when_the_dialog_answers()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var guard = new DialogGuard();
+        using var provider = Build(guard);
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/guard-home", cancellationToken: ct);
+
+        var change = router.GoToAsync("/guard-admin", cancellationToken: ct);
+        await guard.Asked.Task.WaitAsync(TimeSpan.FromSeconds(10), ct);
+        Assert.False(change.IsCompleted);
+        guard.Answer.SetResult(RouteGuardDecision.Allow);
+
+        Assert.True((await change.WaitAsync(TimeSpan.FromSeconds(10), ct)).Success);
+        Assert.IsType<GuardAdminVm>(router.CurrentViewModel);
+    }
+
+    /// <summary>
+    /// The deadlock to avoid: the dialog the guard waits for navigates before it answers. That route change waits for the router, which
+    /// the guard holds; it must be cancellable (not wait for ever), and the router must go on working once the dialog has answered.
+    /// </summary>
+    [Fact]
+    public async Task A_dialog_that_navigates_while_its_guard_waits_is_made_to_wait_and_can_be_cancelled()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var guard = new DialogGuard();
+        using var provider = Build(guard);
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/guard-home", cancellationToken: ct);
+
+        var change = router.GoToAsync("/guard-admin", cancellationToken: ct);
+        await guard.Asked.Task.WaitAsync(TimeSpan.FromSeconds(10), ct);
+
+        // The dialog's own flow, outside the route change that waits for it.
+        using var shortLived = new CancellationTokenSource(TimeSpan.FromMilliseconds(200));
+        var fromDialog = Task.Run(() => router.GoToAsync("/guard-login", cancellationToken: shortLived.Token), ct);
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => fromDialog.WaitAsync(TimeSpan.FromSeconds(10), ct));
+        Assert.False(change.IsCompleted);
+
+        guard.Answer.SetResult(RouteGuardDecision.Allow);
+
+        Assert.True((await change.WaitAsync(TimeSpan.FromSeconds(10), ct)).Success);
+        Assert.True((await router.GoToAsync("/guard-login", cancellationToken: ct)).Success);
+    }
+
     [Fact]
     public async Task Without_a_guard_the_route_change_goes_on()
     {

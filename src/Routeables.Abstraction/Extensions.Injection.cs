@@ -165,9 +165,9 @@ public static partial class Extensions
     private static T Resolve<T>(this IList<RouteableArgument> args, int index)
     {
         if (index < 0 || index >= args.Count)
-            throw new ArgumentException($"Invalid index : {index} but length is : {args.Count}");
+            throw new ArgumentException($"Invalid index: {index}, but there are {args.Count} argument(s).");
         var value = args[index].value;
         return value is T t ? t :
-            throw new InvalidCastException($"Excepted argument is type of : {typeof(T)} but resolved : {value?.GetType()}");
+            throw new InvalidCastException($"Expected an argument of type {typeof(T)}, but it is {value?.GetType().ToString() ?? "null"}.");
     }
 }

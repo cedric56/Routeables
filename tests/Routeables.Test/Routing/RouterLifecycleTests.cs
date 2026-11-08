@@ -91,6 +91,25 @@ public class RouterLifecycleTests
         Assert.Same(recoveryFailure, reported.Exception);
     }
 
+    /// <summary>
+    /// The contract of a failed OnLeavingAsync: the route change fails with that exception, the entering page is never touched, and the
+    /// page being left is not entered again (it never stopped being the current one). What its callbacks already did is not undone.
+    /// </summary>
+    [Fact]
+    public async Task A_leaving_callback_that_fails_stops_the_transition_without_entering_anything_again()
+    {
+        var calls = new List<string>();
+        var failure = new InvalidOperationException("the view failed to leave");
+        var leaving = Entry(new LifecycleProbe("leaving-vm", calls), new LifecycleProbe("leaving-view", calls) { OnFrom = (_, _) => throw failure });
+        var entering = Entry(new LifecycleProbe("entering-vm", calls), new LifecycleProbe("entering-view", calls));
+        var lifecycle = new RouterLifecycle();
+
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => lifecycle.TransitionAsync(leaving, entering, ct: TestContext.Current.CancellationToken));
+
+        Assert.Same(failure, thrown);
+        Assert.Equal(["leaving-vm:from", "leaving-view:from"], calls);
+    }
+
     [Fact]
     public async Task Initialize_calls_a_shared_view_and_view_model_only_once()
     {
@@ -111,6 +130,7 @@ public class RouterLifecycleTests
     {
         public bool CanLeave { get; init; } = true;
         public Func<IRouteableArgs, CancellationToken, Task>? OnTo { get; init; }
+        public Func<IRouteableArgs, CancellationToken, Task>? OnFrom { get; init; }
         public int DestroyCount { get; private set; }
         public CancellationToken DestroyToken { get; private set; }
 
@@ -129,7 +149,7 @@ public class RouterLifecycleTests
         public Task OnLeavingAsync(IRouteableArgs context, CancellationToken ct = default)
         {
             calls.Add($"{name}:from");
-            return Task.CompletedTask;
+            return OnFrom?.Invoke(context, ct) ?? Task.CompletedTask;
         }
 
         public Task InitializeAsync(IRouteableArgs args, CancellationToken ct = default)
