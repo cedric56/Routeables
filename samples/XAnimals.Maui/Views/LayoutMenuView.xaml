@@ -10,8 +10,8 @@
 
     <VerticalStackLayout Padding="10" Spacing="4">
         <Grid ColumnDefinitions="*,*" ColumnSpacing="6" Margin="0,0,0,6">
-            <Button Grid.Column="0" Text="◀ Back" Command="{Binding BackCommand}" IsEnabled="{Binding CanGoBack}" />
-            <Button Grid.Column="1" Text="Forward ▶" Command="{Binding ForwardCommand}" IsEnabled="{Binding CanGoForward}" />
+            <Button Grid.Column="0" Text="◀ Back" Padding="6,0" FontSize="13" Command="{Binding BackCommand}" IsEnabled="{Binding CanGoBack}" />
+            <Button Grid.Column="1" Text="Forward ▶" Padding="6,0" FontSize="13" Command="{Binding ForwardCommand}" IsEnabled="{Binding CanGoForward}" />
         </Grid>
         <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Spacing="4">
             <BindableLayout.ItemTemplate>

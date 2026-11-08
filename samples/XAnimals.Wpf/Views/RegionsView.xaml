@@ -28,7 +28,7 @@
                 <Button x:Name="CollapseButton" Margin="6" Padding="10,2" HorizontalAlignment="Right"
                         Content="«" Click="OnCollapseClick" ToolTip="Reduce the panel"
                         AutomationProperties.Name="Reduce the panel" />
-                <ScrollViewer x:Name="LeftScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}" x:Name="LeftScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto">
                     <routeables:RouteableRegion Region="shell-left" HorizontalContentAlignment="Stretch" />
                 </ScrollViewer>
                 <!-- One route made of segments: the logo in the content, the author in the footer, the copyright in the left panel. -->

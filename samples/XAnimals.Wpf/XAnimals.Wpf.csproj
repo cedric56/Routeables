@@ -29,6 +29,8 @@
     <!-- WPF draws bitmaps, not SVG: the About and Logo pages use the PNG of the logo. -->
     <Resource Include="Assets\logo.png" />
     <Resource Include="Assets\icon.ico" />
+    <!-- Lora, the serif of the titles and of the animal names, as in the Avalonia, Blazor and MAUI samples. -->
+    <Resource Include="Assets\Fonts\*.ttf" />
   </ItemGroup>
 
 </Project>

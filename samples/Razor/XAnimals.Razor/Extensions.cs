@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
+using XAnimals.Common;
 using XAnimals.Razor.Session;
 using XAnimals.ViewModels;
 
@@ -14,6 +15,7 @@ public static class Extensions
     /// </summary>
     public static IServiceCollection AddAnimalsWeb(this IServiceCollection services)
     {
+        AnimalIcons.Register();   // the glyph of each page in the menu, as in the Blazor sample
         services.RegisterViewModels();
         // RegisterViewModels() makes the sign-in a singleton, as a desktop has one user. A site has many: each session has its own.
         services.Replace(ServiceDescriptor.Scoped<MemberSession, MemberSession>());

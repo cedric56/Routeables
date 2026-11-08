@@ -27,11 +27,11 @@
                                 <ColumnDefinition Width="56" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Border Width="56" Height="68" CornerRadius="28,28,10,10" Background="{StaticResource PlainCardBrush}">
+                            <Border Width="56" Height="68" CornerRadius="28,28,14,14" Background="{StaticResource PlainCardBrush}">
                                 <Image Stretch="UniformToFill" Source="{Binding ThumbnailUrl, Converter={StaticResource AnimalImage}}" />
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                <TextBlock Text="{Binding Name}" FontSize="20" />
+                                <TextBlock Text="{Binding Name}" FontFamily="{StaticResource AnDisplayFont}" FontSize="20" />
                                 <TextBlock Text="{Binding Location}" Opacity="0.7" FontSize="14" />
                             </StackPanel>
                         </Grid>

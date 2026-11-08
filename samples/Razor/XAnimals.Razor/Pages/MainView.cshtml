@@ -9,6 +9,9 @@
 
     // The menu marks the first segment of the address: /cats/Tom is still in Cats.
     var current = "/" + (Model.Url.Split('?')[0].Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "");
+
+    // The bar shows the page you are in (Cats, History...), as in the Blazor sample.
+    ViewData["PageTitle"] = Model.MenuEntries.FirstOrDefault(e => string.Equals(MainViewPageModel.Address(e.Route), current, StringComparison.OrdinalIgnoreCase))?.DisplayName ?? "Routeables Animals";
 }
 
 <div class="shell">

@@ -19,7 +19,7 @@
 <body>
 <header class="site-header">
     <button type="button" id="drawerToggle" class="drawer-toggle" aria-controls="drawer" aria-expanded="true" aria-label="Show or hide the menu">☰</button>
-    <a class="brand" href="/cats">Routeables Animals</a>
+    <a class="brand" href="/cats">@(ViewData["PageTitle"] ?? "Routeables Animals")</a>
     @* The theme is asked of the service like on the other platforms; the page that comes back is drawn in it. Default follows the browser. *@
     <form method="post" class="theme-form">
         <input type="hidden" name="target" value="@PageActions.Theme" />

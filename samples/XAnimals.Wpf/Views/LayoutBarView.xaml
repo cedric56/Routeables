@@ -5,6 +5,16 @@
     xmlns:routeables="clr-namespace:Routeables.Wpf;assembly=Routeables.Wpf">
     <!-- One view for the header and the footer: the strong one is the header. -->
     <Border Background="{Binding IsStrong, Converter={StaticResource StrongBarBrush}}" Padding="14,8">
+        <!-- White on the Canopy of the header, whatever the theme. -->
+        <Border.Style>
+            <Style TargetType="Border">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsStrong}" Value="True">
+                        <Setter Property="TextElement.Foreground" Value="White" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding Glyph}" FontSize="28" VerticalAlignment="Center" Margin="0,0,12,0" />
             <StackPanel VerticalAlignment="Center">

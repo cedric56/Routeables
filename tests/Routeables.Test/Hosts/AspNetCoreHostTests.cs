@@ -1,5 +1,6 @@
 using Routeables.Abstraction;
 using Routeables.AspNetCore;
+using Routeables.Services;
 
 namespace Routeables.Tests.Hosts;
 
@@ -27,9 +28,68 @@ public class AspNetCoreHostTests
         using var scope = root.CreateScope();
         var router = scope.ServiceProvider.GetRequiredService<IRouter>();
 
-        var result = await router.GoToAsync("/things/Red%20Panda", cancellationToken:TestContext.Current.CancellationToken);
+        var result = await router.GoToAsync("/things/Red%20Panda");
 
         Assert.True(result.Success, result.Exception?.Message);
         Assert.Equal("Red Panda", Assert.IsType<ThingViewModel>(router.CurrentViewModel).Name);
+    }
+
+    private static (IRouteableNotificationService Service, RouteableInteractions Interactions, IServiceScope Scope) Notifications()
+    {
+        var services = new ServiceCollection();
+        services.AddRouteablesAspNetCore();
+        var scope = services.BuildServiceProvider().CreateScope();
+        return (scope.ServiceProvider.GetRequiredService<IRouteableNotificationService>(), scope.ServiceProvider.GetRequiredService<RouteableInteractions>(), scope);
+    }
+
+    /// <summary>The browser has a notification center: the host creates the notification and hands it to the page that is rendered next, once.</summary>
+    [Fact]
+    public async Task A_system_notification_reaches_the_next_page_once()
+    {
+        var (service, interactions, scope) = Notifications();
+        using (scope)
+        {
+            var notification = await service.CreateNotificationAsync("animals");
+            Assert.NotNull(notification);
+            notification.Title = "New animal";
+            notification.Message = "A polar bear <b>arrived</b>.";
+            notification.Expiration = TimeSpan.FromSeconds(5);
+            await notification.ShowAsync();
+
+            Assert.Same(notification, service.ActiveNotifications()[notification.Id]);
+            var json = interactions.TakeSystemNotificationsJson();
+            Assert.NotNull(json);
+            Assert.Contains("\"op\":\"show\"", json);
+            Assert.Contains("New animal", json);
+            Assert.Contains("\"expirationMs\":5000", json);
+            Assert.DoesNotContain("<b>", json);   // the page puts it in a script tag: nothing can close it
+            Assert.Null(interactions.TakeSystemNotificationsJson());
+        }
+    }
+
+    /// <summary>A notification closed before the page was rendered never reaches the browser; one the browser has gets a close order.</summary>
+    [Fact]
+    public async Task Closing_a_system_notification_withdraws_or_closes_it()
+    {
+        var (service, interactions, scope) = Notifications();
+        using (scope)
+        {
+            var queued = (await service.CreateNotificationAsync(null))!;
+            queued.Title = "queued";
+            await queued.ShowAsync();
+            await queued.CloseAsync();
+            Assert.Null(interactions.TakeSystemNotificationsJson());
+            Assert.Empty(service.ActiveNotifications());
+
+            var shown = (await service.CreateNotificationAsync(null))!;
+            shown.Title = "shown";
+            await shown.ShowAsync();
+            interactions.TakeSystemNotificationsJson();
+            await shown.CloseAsync();
+            Assert.Contains("\"op\":\"close\"", interactions.TakeSystemNotificationsJson());
+
+            service.CloseAll();
+            Assert.Contains("closeAll", interactions.TakeSystemNotificationsJson());
+        }
     }
 }

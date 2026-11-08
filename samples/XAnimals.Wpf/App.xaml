@@ -6,17 +6,58 @@
     ThemeMode="System">
     <!-- No StartupUri: OnStartup builds the container, then opens the window. ThemeMode is the Fluent theme of WPF (evaluation API, WPF0001). -->
     <Application.Resources>
-        <SolidColorBrush x:Key="BarBrush" Color="#33808080" />
-        <SolidColorBrush x:Key="BarStrongBrush" Color="#662F6B4F" />
-        <SolidColorBrush x:Key="CurrentCardBrush" Color="#552F6B4F" />
+        <!-- Same palette as the Avalonia sample (Canopy, Saffron); colours that read on both themes, so the Fluent theme only decides light or dark. -->
+        <FontFamily x:Key="AnDisplayFont">pack://application:,,,/Assets/Fonts/#Lora</FontFamily>
+        <SolidColorBrush x:Key="AnCanopy" Color="#1B6B57" />
+        <SolidColorBrush x:Key="AnCanopyHover" Color="#175A49" />
+        <SolidColorBrush x:Key="AnSaffron" Color="#B97A16" />
+        <SolidColorBrush x:Key="NoBrush" Color="Transparent" />
+
+        <!-- The accent of Windows (blue) drew the selected row of the menu and of the lists: it is the Canopy green here. -->
+        <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="#1B6B57" />
+        <SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="#175A49" />
+        <SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="#134A3C" />
+        <SolidColorBrush x:Key="TextOnAccentFillColorPrimaryBrush" Color="White" />
+        <SolidColorBrush x:Key="TextOnAccentFillColorSecondaryBrush" Color="#E6FFFFFF" />
+
+        <SolidColorBrush x:Key="BarBrush" Color="#261B6B57" />
+        <SolidColorBrush x:Key="BarStrongBrush" Color="#1B6B57" />
+        <SolidColorBrush x:Key="CurrentCardBrush" Color="#1B6B57" />
         <SolidColorBrush x:Key="AheadCardBrush" Color="#22808080" />
-        <SolidColorBrush x:Key="PlainCardBrush" Color="#11808080" />
-        <SolidColorBrush x:Key="RefusedBrush" Color="#55B3261E" />
+        <SolidColorBrush x:Key="PlainCardBrush" Color="#141B6B57" />
+        <SolidColorBrush x:Key="RefusedBrush" Color="#40E9A23B" />
 
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <local:BoolToBrushConverter x:Key="StrongBarBrush" TrueBrush="{StaticResource BarStrongBrush}" FalseBrush="{StaticResource BarBrush}" />
         <local:BoolToBrushConverter x:Key="RefusedStatusBrush" TrueBrush="{StaticResource RefusedBrush}" FalseBrush="{StaticResource PlainCardBrush}" />
+        <local:BoolToBrushConverter x:Key="CurrentBorderBrush" TrueBrush="{StaticResource AnSaffron}" FalseBrush="{StaticResource NoBrush}" />
         <local:HistoryCardBrushConverter x:Key="HistoryCardBrush" Current="{StaticResource CurrentCardBrush}" Ahead="{StaticResource AheadCardBrush}" Past="{StaticResource PlainCardBrush}" />
+
+        <!-- The main button, a Canopy pill as in the Avalonia sample (class "an"). -->
+        <Style x:Key="AnButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Padding" Value="22,9" />
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" Background="{StaticResource AnCanopy}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{StaticResource AnCanopyHover}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.45" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <!-- The button that loads a module while the application runs. -->
         <Style x:Key="LoadModuleButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">

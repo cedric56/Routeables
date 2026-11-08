@@ -21,7 +21,8 @@
     <section class="about-group">
         @* The zone of the "history" region: nothing assigns the view, it shows what the router of the region displays. *@
         <div class="nav-frame" inert>
-            @await Html.PartialAsync("~/Views/Shared/_Region.cshtml", "history")
+            @* The frame: the pages pushed here come in with the transition chosen below, Back and Forward included. *@
+            @await Html.PartialAsync("~/Views/Shared/_Region.cshtml", HistoryViewModel.Region, new ViewDataDictionary(ViewData) { ["Transition"] = Model.Transition })
         </div>
     </section>
 
@@ -35,11 +36,6 @@
             <button name="do" value="pop" disabled="@(!Model.CanGoBack)">↩ Pop</button>
         </div>
       </form>
-    </section>
-
-    <section class="about-group">
-        @* The frame: the pages pushed here come in with the transition chosen below, Back and Forward included. *@
-        @await Html.PartialAsync("~/Views/Shared/_Region.cshtml", HistoryViewModel.Region, new ViewDataDictionary(ViewData) { ["Transition"] = Model.Transition })
     </section>
 
     <form method="post" class="about-group">

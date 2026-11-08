@@ -2,15 +2,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:XAnimals.MauiHybrid"
-             xmlns:components="clr-namespace:Reshapes.Blazor.MudBlazor.Components;assembly=Reshapes.Blazor.MudBlazor"
              xmlns:animals="clr-namespace:XAnimals.Blazor.Components;assembly=XAnimals.Blazor"
              x:Class="XAnimals.MauiHybrid.MainPage">
 
     <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
         <BlazorWebView.RootComponents>
-            <RootComponent Selector="#app" ComponentType="{x:Type components:ReshapeMudBlazorLayout}" />
-            <!-- Loads the images of the lists in the background (see ImagePreload). -->
-            <RootComponent Selector="#preload" ComponentType="{x:Type animals:ImagePreload}" />
+            <!-- The same router, layout and style as the Blazor samples (Routes loads the images of the lists in the background too). -->
+            <RootComponent Selector="#app" ComponentType="{x:Type animals:Routes}" />
         </BlazorWebView.RootComponents>
     </BlazorWebView>
 

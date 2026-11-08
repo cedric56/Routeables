@@ -9,7 +9,7 @@
     BackgroundColor="{AppThemeBinding Light={StaticResource Paper}, Dark={StaticResource OffBlack}}">
 
     <!-- Three rows: what comes before the frame, the frame (it takes the room that is left), what comes after. -->
-    <Grid RowDefinitions="Auto,*,Auto">
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16,8">
         <VerticalStackLayout>
             <!-- A history entry is an arch: filled where the cursor is, dimmed ahead of it (reached with Forward). -->
             <FlexLayout Wrap="Wrap" JustifyContent="Start" Margin="0,10,0,0" BindableLayout.ItemsSource="{Binding Entries}">

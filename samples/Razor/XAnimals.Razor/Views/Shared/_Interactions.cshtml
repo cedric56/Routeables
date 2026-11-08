@@ -49,3 +49,41 @@
         </form>
     </div>
 }
+@* The system notifications that a view model asked for (CreateNotificationAsync): the browser shows them, if the visitor allows it. The server is
+   not told what he does with them. The permission is asked with a click, as the browsers require. *@
+@if (Model.TakeSystemNotificationsJson() is { } system)
+{
+    <script type="application/json" id="web-system-notifications">@Html.Raw(system)</script>
+    <script>
+        (function () {
+            if (!('Notification' in window)) return;
+            var commands = JSON.parse(document.getElementById('web-system-notifications').textContent);
+            var live = {};
+            function run() {
+                commands.forEach(function (c) {
+                    if (c.op === 'show') {
+                        var n = new Notification(c.title || '', { body: c.message, icon: c.icon, tag: c.tag || ('routeables-' + c.id) });
+                        n.onclick = function () { window.focus(); n.close(); };
+                        live[c.id] = n;
+                        if (c.expirationMs > 0) setTimeout(function () { n.close(); }, c.expirationMs);
+                    } else if (c.op === 'close') {
+                        if (live[c.id]) live[c.id].close();
+                    } else if (c.op === 'closeAll') {
+                        Object.keys(live).forEach(function (id) { live[id].close(); });
+                    }
+                });
+            }
+            if (Notification.permission === 'granted') { run(); return; }
+            if (Notification.permission !== 'default') return;
+            var ask = document.createElement('div');
+            ask.className = 'web-allow';
+            ask.setAttribute('role', 'status');
+            ask.innerHTML = '<span>Show notifications of this site on your device?</span> <button type="button" class="web-allow-yes">Allow</button> <button type="button" class="web-allow-no">Not now</button>';
+            document.body.appendChild(ask);
+            ask.querySelector('.web-allow-yes').addEventListener('click', function () {
+                Notification.requestPermission().then(function (p) { if (p === 'granted') run(); ask.remove(); });
+            });
+            ask.querySelector('.web-allow-no').addEventListener('click', function () { ask.remove(); });
+        })();
+    </script>
+}

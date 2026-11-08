@@ -9,12 +9,28 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
             </ResourceDictionary.MergedDictionaries>
 
-            <SolidColorBrush x:Key="BarBrush" Color="#33808080" />
-            <SolidColorBrush x:Key="BarStrongBrush" Color="#662F6B4F" />
-            <SolidColorBrush x:Key="CurrentCardBrush" Color="#552F6B4F" />
+            <!-- Same palette as the Avalonia sample. The accent of Windows (blue) drew the selected rows and the main buttons: it is the Canopy green here. -->
+            <Color x:Key="SystemAccentColor">#1B6B57</Color>
+            <Color x:Key="SystemAccentColorLight1">#2C8A71</Color>
+            <Color x:Key="SystemAccentColorLight2">#3FA88C</Color>
+            <Color x:Key="SystemAccentColorLight3">#5CC4A8</Color>
+            <Color x:Key="SystemAccentColorDark1">#175A49</Color>
+            <Color x:Key="SystemAccentColorDark2">#134A3C</Color>
+            <Color x:Key="SystemAccentColorDark3">#0E3A2F</Color>
+            <!-- The rounded corners of the Avalonia sample (10) on every control: buttons, boxes, list rows. -->
+            <CornerRadius x:Key="ControlCornerRadius">10</CornerRadius>
+            <!-- Lora, the serif of the animal names. -->
+            <FontFamily x:Key="AnDisplayFont">ms-appx:///Assets/Fonts/Lora-Regular.ttf#Lora</FontFamily>
+
+            <SolidColorBrush x:Key="AnCanopy" Color="#1B6B57" />
+            <SolidColorBrush x:Key="AnSaffron" Color="#B97A16" />
+            <SolidColorBrush x:Key="NoBrush" Color="Transparent" />
+            <SolidColorBrush x:Key="BarBrush" Color="#261B6B57" />
+            <SolidColorBrush x:Key="BarStrongBrush" Color="#1B6B57" />
+            <SolidColorBrush x:Key="CurrentCardBrush" Color="#1B6B57" />
             <SolidColorBrush x:Key="AheadCardBrush" Color="#22808080" />
-            <SolidColorBrush x:Key="PlainCardBrush" Color="#11808080" />
-            <SolidColorBrush x:Key="RefusedBrush" Color="#55B3261E" />
+            <SolidColorBrush x:Key="PlainCardBrush" Color="#141B6B57" />
+            <SolidColorBrush x:Key="RefusedBrush" Color="#40E9A23B" />
 
             <local:BoolToVisibilityConverter x:Key="BoolToVisibility" />
             <local:BoolToVisibilityConverter x:Key="InverseBoolToVisibility" Invert="True" />
@@ -22,6 +38,7 @@
             <local:NullToVisibilityConverter x:Key="NullToVisibility" Invert="True" />
             <local:BoolToBrushConverter x:Key="StrongBarBrush" TrueBrush="{StaticResource BarStrongBrush}" FalseBrush="{StaticResource BarBrush}" />
             <local:BoolToBrushConverter x:Key="RefusedStatusBrush" TrueBrush="{StaticResource RefusedBrush}" FalseBrush="{StaticResource PlainCardBrush}" />
+            <local:BoolToBrushConverter x:Key="CurrentBorderBrush" TrueBrush="{StaticResource AnSaffron}" FalseBrush="{StaticResource NoBrush}" />
             <local:HistoryCardBrushConverter x:Key="HistoryCardBrush" Current="{StaticResource CurrentCardBrush}" Ahead="{StaticResource AheadCardBrush}" Past="{StaticResource PlainCardBrush}" />
             <local:AnimalImageConverter x:Key="AnimalImage" />
 

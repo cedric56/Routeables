@@ -6,7 +6,7 @@
              x:DataType="vm:HistoryViewModel"
              Background="{DynamicResource AnPaper}">
     
-        <Grid RowDefinitions="Auto, *, Auto">
+        <Grid RowDefinitions="Auto, *, Auto" Margin="16,8">
             <StackPanel Grid.Row="0">
                 <ItemsControl ItemsSource="{Binding Entries}" Margin="0,10,0,0">
                     <ItemsControl.ItemsPanel>

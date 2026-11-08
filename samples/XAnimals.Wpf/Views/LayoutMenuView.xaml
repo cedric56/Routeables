@@ -15,8 +15,18 @@
         <ItemsControl ItemsSource="{Binding Items}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button Command="{Binding Select}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,0,0,4"
-                            Background="{Binding IsCurrent, Converter={StaticResource StrongBarBrush}}">
+                    <Button Command="{Binding Select}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,0,0,4" BorderThickness="2"
+                            Background="{Binding IsCurrent, Converter={StaticResource StrongBarBrush}}"
+                            BorderBrush="{Binding IsCurrent, Converter={StaticResource CurrentBorderBrush}}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                                        <Setter Property="Foreground" Value="White" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding Glyph}" FontSize="20" VerticalAlignment="Center" Margin="0,0,10,0" />
                             <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />

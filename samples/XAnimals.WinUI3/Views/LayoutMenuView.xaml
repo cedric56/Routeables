@@ -16,6 +16,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Command="{Binding Select}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            BorderThickness="2" BorderBrush="{Binding IsCurrent, Converter={StaticResource CurrentBorderBrush}}"
                             Background="{Binding IsCurrent, Converter={StaticResource StrongBarBrush}}">
                         <StackPanel Orientation="Horizontal" Spacing="10">
                             <TextBlock Text="{Binding Glyph}" FontSize="20" VerticalAlignment="Center" />

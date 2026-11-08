@@ -51,12 +51,12 @@
                                 <ColumnDefinition Width="56" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Border Width="56" Height="68" CornerRadius="28,28,10,10" Background="{StaticResource PlainCardBrush}">
-                                <Border CornerRadius="28,28,10,10" views:AnimalPicture.Url="{Binding ThumbnailUrl}">
+                            <Border Width="56" Height="68" CornerRadius="28,28,14,14" Background="{StaticResource PlainCardBrush}">
+                                <Border CornerRadius="28,28,14,14" views:AnimalPicture.Url="{Binding ThumbnailUrl}">
                                 </Border>
                             </Border>
                             <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Name}" FontSize="20" />
+                                <TextBlock Text="{Binding Name}" FontFamily="{DynamicResource AnDisplayFont}" FontSize="20" />
                                 <TextBlock Text="{Binding Location}" Opacity="0.7" FontSize="14" />
                             </StackPanel>
                         </Grid>

@@ -23,7 +23,7 @@ Everything is **scoped**. A request that has no scope of its own to share would 
 
 | Service | What it is for |
 | --- | --- |
-| `IRouteableDialogService`, `IRouteableNotificationService` | A view model awaits a dialog or a notification as on a desktop; the answer comes with a later request. `RouteableInteractions` holds the dialogs and the toasts that wait to be drawn (`Pending`, `Toasts`) and runs an action until it ends or asks something (`StartAsync`, then `AnswerAsync`) |
+| `IRouteableDialogService`, `IRouteableNotificationService` | A view model awaits a dialog or a notification as on a desktop; the answer comes with a later request. `RouteableInteractions` holds the dialogs and the toasts that wait to be drawn (`Pending`, `Toasts`) and runs an action until it ends or asks something (`StartAsync`, then `AnswerAsync`) **System notifications** (`CreateNotificationAsync`) are those of the browser: the server queues them (`ShowAsync`), the page rendered next hands them to the browser with `TakeSystemNotificationsJson()` (the sample draws them in `_Interactions.cshtml`), and the visitor must allow them. The server is not told what he does with one: `NotificationCompleted` is never raised, and a notification can only be closed by the page that showed it. |
 | `IRouteableRequestedThemeService` | The theme the visitor asked for (`RouteableRequestThemeService`) |
 | `RouteablePageState` | The address that was last served: a reload shows the state as it is, another address navigates |
 | `RouteableTransitions` | The CSS classes and the duration for the view of a region (see below) |
