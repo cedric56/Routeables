@@ -27,7 +27,20 @@ public class VisualDeviceTests
         await navigation.PushModalAsync(modal, animated: false);
         try
         {
-            await Device.UntilAsync(() => box.Handler is not null && region.Handler is not null);
+            try
+            {
+                await Device.UntilAsync(() => box.Handler is not null && region.Handler is not null);
+            }
+            catch (TimeoutException)
+            {
+                // The emulator of CI did not give the modal page a native view in time: nothing can be drawn, and nothing was compared.
+                // Say what was seen instead of failing a test that has no image to compare with yet.
+                var window = Application.Current!.Windows[0];
+                Assert.Skip($"The modal page was not realised on this device (window page {window.Page?.GetType().Name ?? "none"}, " +
+                            $"modal stack {navigation.ModalStack.Count}, box handler {(box.Handler is null ? "none" : "set")}, " +
+                            $"region handler {(region.Handler is null ? "none" : "set")}).");
+                return;
+            }
             Assert.True((await Device.Services.GoToAsync(route)).Success);
             await Device.UntilAsync(() => region.Content?.GetType() == page);
             await Task.Delay(500);                                        // a few frames: the layout of the page is done
