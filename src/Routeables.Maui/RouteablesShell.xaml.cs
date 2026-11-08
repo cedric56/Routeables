@@ -1,5 +1,6 @@
 ﻿using Routeables.Abstraction;
 using Routeables.Services;
+using System.Globalization;
 
 namespace Routeables.Maui;
 
@@ -21,6 +22,8 @@ public partial class RouteablesShell : Shell
     {
         InitializeComponent();
 
+        ItemTemplate = RouteableShellContent.GetTemplate();
+
         services = provider;
         mainViewModel = provider.GetRequiredService<IMainViewModel>();
         BindingContext = mainViewModel;
@@ -39,11 +42,12 @@ public partial class RouteablesShell : Shell
         index = Math.Clamp(index, 0, hosts.Count);
         hosts.Insert(index, host);
 
-        ShellItem item = new ShellContent
+        ShellItem item = new RouteableShellContent
         {
             Title = routeable.DisplayName,
             Icon = routeable.Source as ImageSource,
-            Content = BuildPage(routeable, host)
+            Description = routeable.Description,
+            Content = new ContentPage { Title = routeable.DisplayName, Content = host }
         };
         Items.Insert(index, item);
 
@@ -176,24 +180,6 @@ public partial class RouteablesShell : Shell
         shown = -1;
         foreach (var routeable in mainViewModel.Entries)
             AddItem(routeable, hosts.Count);
-    }
-
-    private static ContentPage BuildPage(IMenuEntry routeable, ContentView host)
-    {
-        if (string.IsNullOrWhiteSpace(routeable.Description))
-            return new ContentPage { Title = routeable.DisplayName, Content = host };
-
-        var caption = new Label
-        {
-            Text = routeable.Description,
-            FontSize = 12,
-            Opacity = 0.7,
-            Margin = new Thickness(16, 8, 16, 4)
-        };
-        var grid = new Grid { RowDefinitions = { new RowDefinition(GridLength.Auto), new RowDefinition(GridLength.Star) } };
-        grid.Add(caption, 0, 0);
-        grid.Add(host, 0, 1);
-        return new ContentPage { Title = routeable.DisplayName, Content = grid };
     }
 
     private int CurrentIndex() => CurrentItem is null ? -1 : Items.IndexOf(CurrentItem);
