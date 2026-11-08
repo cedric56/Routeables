@@ -5,9 +5,10 @@ using System.Reflection;
 namespace Routeables.Abstraction;
 
 /// <summary>
-/// The routes the source generator found, handed to the host without the application calling <c>AddGeneratedRoutes()</c>: the
-/// generator writes a module initializer in the executable that gives its registration method to <see cref="Add"/>, and each host
-/// calls <see cref="Apply"/> once the application has configured its services. It is meant for the generated code and the hosts.
+/// The routes the source generator found, handed to the host without the application calling <c>AddGeneratedRoutes()</c>:
+/// the generator writes a module initializer in the executable that gives its registration method to
+/// <see cref="Add(System.Action{Microsoft.Extensions.DependencyInjection.IServiceCollection})"/>, and each host
+/// calls <see cref="Apply(Microsoft.Extensions.DependencyInjection.IServiceCollection)"/> once the application has configured its services.
 /// </summary>
 /// <remarks>
 /// What the application registered itself always wins. A route (a key) that is already registered, with <c>RegisterRoute</c>,

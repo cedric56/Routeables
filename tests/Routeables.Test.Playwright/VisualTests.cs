@@ -4,9 +4,9 @@ using Xunit;
 namespace Routeables.Test.Playwright;
 
 /// <summary>
-/// Compares a screenshot of each page of the sample with the one kept in <c>Snapshots</c>, in the light and in the dark scheme: a change of
-/// colour, spacing or layout that no other test notices fails here. The images are compared by the browser itself (a canvas), so the tests
-/// need no image library.
+/// Compares a screenshot of every menu page of the sample with the one kept in <c>Snapshots</c>, in the light and in the dark scheme.
+/// A change of colour, spacing or layout that no other test notices fails here. The images are compared by the browser itself (a canvas),
+/// so the tests need no image library.
 /// <list type="bullet">
 /// <item>No image yet: the test writes the screenshot to <c>Snapshots/_actual</c> and is skipped. Look at the images; if they are right, move
 /// them to <c>Snapshots</c>. CI uploads <c>_actual</c> as the artifact <c>snapshots-actual</c>.</item>
@@ -44,17 +44,51 @@ public sealed class VisualTests(BlazorApp app) : BlazorTest(app)
     [InlineData("Cats", ColorScheme.Dark)]
     [InlineData("Dogs", ColorScheme.Light)]
     [InlineData("Dogs", ColorScheme.Dark)]
+    [InlineData("Monkeys", ColorScheme.Light)]
+    [InlineData("Monkeys", ColorScheme.Dark)]
+    [InlineData("Elephants", ColorScheme.Light)]
+    [InlineData("Elephants", ColorScheme.Dark)]
+    [InlineData("Bears", ColorScheme.Light)]
+    [InlineData("Bears", ColorScheme.Dark)]
+    [InlineData("Pandas", ColorScheme.Light)]
+    [InlineData("Pandas", ColorScheme.Dark)]
+    [InlineData("History", ColorScheme.Light)]
+    [InlineData("History", ColorScheme.Dark)]
+    [InlineData("Regions", ColorScheme.Light)]
+    [InlineData("Regions", ColorScheme.Dark)]
+    [InlineData("Adopt a pet", ColorScheme.Light)]
+    [InlineData("Adopt a pet", ColorScheme.Dark)]
+    [InlineData("Dialogs", ColorScheme.Light)]
+    [InlineData("Dialogs", ColorScheme.Dark)]
+    [InlineData("Features", ColorScheme.Light)]
+    [InlineData("Features", ColorScheme.Dark)]
+    [InlineData("Members", ColorScheme.Light)]
+    [InlineData("Members", ColorScheme.Dark)]
     [InlineData("About", ColorScheme.Light)]
     [InlineData("About", ColorScheme.Dark)]
-    public async Task A_page_looks_as_it_did(string page, ColorScheme scheme)
+    public async Task Every_menu_entry_looks_as_it_did(string entry, ColorScheme scheme)
     {
         await Page.EmulateMediaAsync(new PageEmulateMediaOptions { ColorScheme = scheme });
-        await OpenAsync(page);
-        await ExpectCurrentAsync(page);
+
+        // Members is guarded: sign in on Features first, otherwise the router correctly sends us back there.
+        if (entry == "Members")
+        {
+            await OpenAsync("Features");
+            await ExpectCurrentAsync("Features");
+            await Button("Sign in").ClickAsync();
+        }
+
+        await OpenAsync(entry);
+        await ExpectCurrentAsync(entry);
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-        var actual = await Page.ScreenshotAsync(new PageScreenshotOptions { Animations = ScreenshotAnimations.Disabled, Caret = ScreenshotCaret.Hide });
-        var name = $"{page.ToLowerInvariant().Replace(' ', '-')}-{scheme.ToString().ToLowerInvariant()}.png";
+        var actual = await Page.ScreenshotAsync(new PageScreenshotOptions
+        {
+            Animations = ScreenshotAnimations.Disabled,
+            Caret = ScreenshotCaret.Hide,
+        });
+        var slug = entry.ToLowerInvariant().Replace(' ', '-');
+        var name = $"{slug}-{scheme.ToString().ToLowerInvariant()}.png";
         var baseline = Path.Combine(SnapshotsFolder, name);
         var update = Environment.GetEnvironmentVariable("ROUTEABLES_UPDATE_SNAPSHOTS") == "1";
 
