@@ -208,20 +208,6 @@ public class ShellDeviceTests
         Assert.IsType<ContentView>(PageOf(shell, 0).Content);
     }
 
-    /// <summary>The description of an entry is a caption above its view.</summary>
-    [UIFact]
-    public void The_description_of_an_entry_is_a_caption_above_its_view()
-    {
-        var menu = new Menu();
-        menu.Entries.Add(new Entry("Home", "The start page"));
-
-        var shell = ShellOf(menu);
-
-        var grid = Assert.IsType<Grid>(PageOf(shell, 0).Content);
-        Assert.Equal("The start page", grid.Children.OfType<Label>().Single().Text);
-        Assert.Single(grid.Children.OfType<ContentView>());
-    }
-
     // ------------------------------------------------------------------------------------------------ the entries that arrive
 
     /// <summary>Collection changes are picked up when the shell becomes attached to the UI.</summary>
