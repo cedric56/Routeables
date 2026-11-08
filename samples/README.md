@@ -26,7 +26,7 @@ Every command is run from the root of the repository. The SDK is the one of `glo
 | Blazor Hybrid (MAUI) | `Blazor/XAnimals.MauiHybrid` | `maui` workload | build (Android, Mac Catalyst) |
 | [Razor Pages](#razor-pages) | `Razor/XAnimals.WebApplication` | .NET 10 | not built |
 | [WPF](#wpf) | `XAnimals.Wpf` | Windows | build, device tests |
-| [WinUI 3](#winui-3) | `XAnimals.WinUI3` | Windows 10 19041 or later | not built (the library is) |
+| [WinUI 3](#winui-3) | `XAnimals.WinUI3` | Windows 10 19041 or later | build |
 | [Uno Platform](#uno-platform) | `XAnimals.Uno` | the Uno SDK (`global.json`); a head per target | build, UI tests |
 | [.NET MAUI](#net-maui) | `XAnimals.Maui` | `maui` workload | build (Android, Mac Catalyst, iOS) |
 

@@ -10,7 +10,7 @@
     <Authors>Cédric Boutin</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>The contracts of Routeables: IRouter, IRouteable, RouteableArgs, the attributes and the lock and error contracts. A view model depends on these types instead of an API of Blazor, .NET MAUI, Avalonia, Uno or WPF.</Description>
+    <Description>The contracts of Routeables: IRouter, IRouteable, RouteableArgs, the attributes and the lock and error contracts. A view model depends on these types instead of an API of Blazor, ASP.NET Core, .NET MAUI, Avalonia, Uno, WinUI 3 or WPF.</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +20,7 @@
     <InternalsVisibleTo Include="Routeables.Test" />
     <InternalsVisibleTo Include="Routeables.Core" />
     <InternalsVisibleTo Include="Routeables.Blazor" />
+    <InternalsVisibleTo Include="Routeables.AspNetCore" />
     <InternalsVisibleTo Include="Routeables.Maui" />
     <InternalsVisibleTo Include="Routeables.Avalonia" />
     <InternalsVisibleTo Include="Routeables.Uno" />

@@ -5,8 +5,8 @@ using XAnimals.Common;
 namespace XAnimals.ViewModels;
 
 /// <summary>
-/// A detail that does not read its panda from a constructor: the view receives <c>{panda::}</c> from the address in a property
-/// decorated with its platform's attribute and gives it to <see cref="Name"/>.
+/// A detail that does not read its panda from a constructor: the view (or, for ASP.NET Core, <see cref="Panda"/>) receives <c>{panda::}</c>
+/// from the address in a property decorated with its platform's attribute and gives it to <see cref="Name"/>.
 /// </summary>
 [Routeable(PandaDetailViewModel.Route)]
 public class PandaDetailViewModel(IRouter router, Action? back = null) : AnimalDetailViewModel(router, null, back)
@@ -15,6 +15,17 @@ public class PandaDetailViewModel(IRouter router, Action? back = null) : AnimalD
     public const string Route = "/pandas/{panda::}";
 
     private string? _name;
+
+    /// <summary>
+    /// <c>{panda::}</c> of the address. A host whose view has a property of that name (Blazor, MAUI, Avalonia...) gives it to the view,
+    /// which hands it to <see cref="Name"/>; a host whose view cannot have one (ASP.NET Core Razor views) gives it to this property.
+    /// </summary>
+    [RouteableParameter]
+    public string? Panda
+    {
+        get => Name;
+        set => Name = value;
+    }
 
     /// <summary>The name of the panda to show; setting it finds the animal.</summary>
     public string? Name

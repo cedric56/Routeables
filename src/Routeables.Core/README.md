@@ -1,6 +1,6 @@
 # Routeables
 
-Routing between view models for Blazor, .NET MAUI, Avalonia, Uno and WPF. This package is what the hosts share, and an application gets it through the package of its host (`Routeables.Blazor`, `Routeables.Maui`, `Routeables.Avalonia`, `Routeables.Uno`, `Routeables.Wpf`). Targets **.NET 10**.
+Routing between view models for Blazor, ASP.NET Core, .NET MAUI, Avalonia, Uno Platform, WinUI 3 and WPF. This package is what the hosts share, and an application gets it through the package of its host (`Routeables.Blazor`, `Routeables.AspNetCore`, `Routeables.Maui`, `Routeables.Avalonia`, `Routeables.Uno`, `Routeables.WinUI3`, `Routeables.Wpf`). Targets **.NET 10**.
 
 It is one package built from several projects of the repository:
 

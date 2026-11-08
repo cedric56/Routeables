@@ -123,7 +123,7 @@ Nothing below is needed for a first page. Each line has its own guide.
 | Errors | `RouteableResult`, `IRouteableErrorSink` | [Lifecycle](docs/guides/lifecycle.md) |
 | Diagnostics | Tracing and metrics for route changes | [Diagnostics](docs/guides/diagnostics.md) |
 | Native AOT | Source generated; nothing scans assemblies at run time | [AOT](docs/guides/aot.md) |
-| Hosts | Blazor, .NET MAUI, Avalonia, Uno Platform, WinUI 3, WPF | [Hosts](docs/guides/hosts.md) |
+| Hosts | Blazor, ASP.NET Core, .NET MAUI, Avalonia, Uno Platform, WinUI 3, WPF | [Hosts](docs/guides/hosts.md) |
 | Dialog libraries | MudBlazor, CommunityToolkit.Maui, FluentAvalonia | [Reshapes](reshapes/README.md) |
 
 Routeables is the navigation layer, dialogs and notifications included. It ships no commands, view-model locator or event aggregator: use CommunityToolkit.Mvvm, ReactiveUI or plain C#.
@@ -140,7 +140,7 @@ Routeables is young: the first commit is from October 2026, it has one maintaine
 
 - [Getting started](docs/getting-started.md) and the [guides](docs/guides/routes.md): routes, typed routing, arguments, lifecycle, history, regions, modules, hosts.
 - [Compared with other routers](docs/guides/comparison.md): Prism, ReactiveUI, MAUI Shell, Uno.Extensions and the Blazor router, and where each one fits.
-- [Samples](samples): the same Animals app on Blazor, MAUI, Avalonia, Uno, WinUI 3 and WPF.
+- [Samples](samples): the same Animals app on Blazor, ASP.NET Core, MAUI, Avalonia, Uno, WinUI 3 and WPF.
 - [Documentation site](https://cedric56.github.io/Routeables/) and API reference.
 - [Contributing](CONTRIBUTING.md), [third-party notices](THIRD-PARTY-NOTICES.md).
 

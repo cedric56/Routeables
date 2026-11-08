@@ -161,7 +161,7 @@ You can also register routes by hand with `services.RegisterRoute<DogDetailView,
 
 ### 2. Set up your host
 
-One call per host starts Routeables, registers your main view model (its lifetime is the host's choice; without a menu, call it with no type: the `Route` of the main `RouteableRegion` chooses the first page) and takes a block `r => ...` for your own registrations. The block is the same on the five hosts. The same call registers the dialogs and notifications of the host. Only the shape of the call differs, because each framework has its own way to start.
+One call per host starts Routeables, registers your main view model (its lifetime is the host's choice; without a menu, call it with no type: the `Route` of the main `RouteableRegion` chooses the first page) and takes a block `r => ...` for your own registrations. The block is the same on every host. The same call registers the dialogs and notifications of the host. Only the shape of the call differs, because each framework has its own way to start.
 
 ```csharp
 // Blazor (Program.cs)
@@ -188,7 +188,7 @@ Services = this.UseRouteables(r => { }, () => new MainPage());
 this.UseRouteables(r => { }, () => new MainView());
 ```
 
-With a menu, give the main view model: `UseRouteables<MainViewModel>(...)` on MAUI, Avalonia, Uno and WPF, `UseRouteablesServer<MainViewModel>(...)` on Blazor, `AddRouteablesAspNetCore<MainViewModel>()` on ASP.NET Core.
+With a menu, give the main view model: `UseRouteables<MainViewModel>(...)` on MAUI, Avalonia, Uno, WinUI 3 and WPF, `UseRouteablesServer<MainViewModel>(...)` on Blazor, `AddRouteablesAspNetCore<MainViewModel>()` on ASP.NET Core.
 
 Create the project with the template of your framework, add the host package, then follow the setup above. See each host's README for the details ([Blazor](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Blazor/README.md), [MAUI](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Maui/README.md), [Avalonia](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Avalonia/README.md), [Uno](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Uno/README.md), which has its own quick start, [WPF](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Wpf/README.md)).
 

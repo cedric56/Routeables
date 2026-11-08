@@ -1,12 +1,12 @@
 # Routeables compared with other routers
 
-Routeables is a navigation framework for view-model-first applications on Blazor, .NET MAUI, Avalonia, Uno Platform and WPF. A view model asks an `IRouter` to go somewhere; routes, history, regions, guards, lifecycle, transitions, deep links, modules, dialogs and notifications are the same on every host. It is not an MVVM toolkit: commands and messaging come from CommunityToolkit.Mvvm or ReactiveUI, and Routeables has a source flavour for each of them.
+Routeables is a navigation framework for view-model-first applications on Blazor, ASP.NET Core, .NET MAUI, Avalonia, Uno Platform, WinUI 3 and WPF. A view model asks an `IRouter` to go somewhere; routes, history, regions, guards, lifecycle, transitions, deep links, modules, dialogs and notifications are the same on every host. It is not an MVVM toolkit: commands and messaging come from CommunityToolkit.Mvvm or ReactiveUI, and Routeables has a source flavour for each of them.
 
 This page is written from the public documentation of each project. Projects change: check the one you are weighing, and open an issue if something here is out of date.
 
 ## What sets it apart
 
-- **One framework for five hosts.** The same view model, with the same `[Routeable("/dogs/{name}")]`, runs on every host. Only the views are written once per UI framework.
+- **One framework for seven hosts.** The same view model, with the same `[Routeable("/dogs/{name}")]`, runs on every host. Only the views are written once per UI framework.
 - **Source-generated, with no reflection at run time.** Routes are registered at build time, and navigation methods such as `GoToDogDetailAsync(name)` are generated, so a wrong route is a compile error. A Native AOT application and a trimmed Blazor WebAssembly application are published in CI, and a trim or AOT warning fails the build. See [Native AOT and trimming](aot.md) and [Typed routing methods](typed-routes.md).
 - **The whole navigation, behind one `IRouter`.** History with back, forward and pop, [regions](regions.md) that each have their own router and history, [guards](lifecycle.md) that allow, redirect or cancel, a lifecycle with a veto, 15 built-in [transitions](transitions.md), deep links, locking, and modules loaded at startup or on demand.
 - **Dialogs and notifications included.** One dialog service (message boxes, content dialogs, task dialogs, modals) and one notification service on every host, replaceable at startup, with system notifications on Avalonia, Blazor and MAUI. The `Reshapes` packages draw them with MudBlazor, CommunityToolkit.Maui or FluentAvalonia.

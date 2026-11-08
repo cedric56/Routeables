@@ -8,7 +8,7 @@ title: Routeables
 
 # Routing from your view models
 
-One `IRouter` for Blazor, .NET MAUI, Avalonia, Uno Platform and WPF. Declare a route with an attribute; your view model never touches a page, a frame or a framework navigation API.
+One `IRouter` for Blazor, ASP.NET Core, .NET MAUI, Avalonia, Uno Platform, WinUI 3 and WPF. Declare a route with an attribute; your view model never touches a page, a frame or a framework navigation API.
 
 <div class="rt-cta">
 <a class="rt-primary" href="getting-started.md">Get started</a>
@@ -49,7 +49,7 @@ public partial class HelloView : RouteableFor&lt;HelloViewModel&gt; { }
 <div><h3>History and guards</h3><p>Back, forward, pop, root. A page can veto leaving.</p></div>
 <div><h3>Regions and modules</h3><p>Several areas of the screen with their own history; a feature is one extension method.</p></div>
 <div><h3>AOT and trimming</h3><p>Compatible by design, on every host.</p></div>
-<div><h3>Same code everywhere</h3><p>One view model, five hosts, one Animals sample on each.</p></div>
+<div><h3>Same code everywhere</h3><p>One view model, seven hosts, one Animals sample on each.</p></div>
 </div>
 
 - [Introduction](introduction.md): what it does and how the projects fit together.

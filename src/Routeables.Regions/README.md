@@ -1,6 +1,6 @@
 # Routeables.Regions
 
-Optional helpers for a window made of several regions (header, side menu, content), each with its own router and history. Works on Razor, MAUI, Avalonia, Uno and WPF; the hosts reference it, so an application that uses `RouteableRegion` already has it. Targets **.NET 10**.
+Optional helpers for a window made of several regions (header, side menu, content), each with its own router and history. Works on Blazor, ASP.NET Core, MAUI, Avalonia, Uno, WinUI 3 and WPF; the hosts reference it, so an application that uses `RouteableRegion` already has it. Targets **.NET 10**.
 
 ```csharp
 services.AddRegionLayout<AppLayout>(/* region names */);   // scoped

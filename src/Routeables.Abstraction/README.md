@@ -1,6 +1,6 @@
 # Routeables.Abstraction
 
-The contracts of Routeables. View models and views depend on these types instead of an API of Blazor, .NET MAUI, Avalonia, Uno Platform or WPF, so the same routing code runs on all five hosts.
+The contracts of Routeables. View models and views depend on these types instead of an API of Blazor, ASP.NET Core, .NET MAUI, Avalonia, Uno Platform, WinUI 3 or WPF, so the same routing code runs on all seven hosts.
 
 The router itself is in [`Routeables.Routing`](../Routeables.Routing/README.md), the platform services are in the host packages. Targets **.NET 10**; its only package is `Microsoft.Extensions.DependencyInjection.Abstractions`.
 
