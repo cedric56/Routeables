@@ -43,7 +43,7 @@ public class FlavourViewModelTests
         protected override Task<bool> CanCloseAsync() => Task.FromResult(MayClose);
 
         /// <inheritdoc />
-        protected override ObservableCollection<IMenuEntry> GetEntries() => [];
+        protected override ObservableCollection<IRouteableMenuEntry> GetEntries() => [];
 
         /// <inheritdoc />
         protected override ObservableCollection<RouteableCommand> GetCommands()

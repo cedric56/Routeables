@@ -36,7 +36,7 @@ public partial class RouteablesShell : Shell
     }
 
     // An item for an entry, at its place in the collection: the view produced by the router is shown inside its host.
-    private void AddItem(IMenuEntry routeable, int index)
+    private void AddItem(IRouteableMenuEntry routeable, int index)
     {
         var host = new ContentView();
         index = Math.Clamp(index, 0, hosts.Count);
@@ -62,7 +62,7 @@ public partial class RouteablesShell : Shell
     {
         if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add || e.NewItems is null) return;
         var index = e.NewStartingIndex >= 0 ? e.NewStartingIndex : mainViewModel.Entries.Count - e.NewItems.Count;
-        foreach (IMenuEntry routeable in e.NewItems)
+        foreach (IRouteableMenuEntry routeable in e.NewItems)
             AddItem(routeable, index++);
     });
 

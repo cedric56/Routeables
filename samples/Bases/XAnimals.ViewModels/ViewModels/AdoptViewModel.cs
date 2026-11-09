@@ -96,7 +96,7 @@ public class AdoptViewModel : ViewModelBase, IRouteable, IDisposable
         }
 
         // The entry names its region; the zone with that name shows the card. Nothing here says where.
-        var entry = new MenuEntry<PetViewModel>("Pet", null, route: "pet", template: "pet")
+        var entry = new RouteableMenuEntry<PetViewModel>("Pet", null, route: "pet", template: "pet")
         {
             Region = Region,
             Arguments = RouteableArgs.Create().ForViewModel(pet)

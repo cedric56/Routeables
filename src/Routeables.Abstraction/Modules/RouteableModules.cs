@@ -41,7 +41,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
         ArgumentNullException.ThrowIfNull(add);
 
         RouteableModuleInfo info;
-        List<(IMainViewModel Main, IReadOnlyList<IMenuEntry> Entries, MenuEntries Menu)> pending = [];
+        List<(IMainViewModel Main, IReadOnlyList<IRouteableMenuEntry> Entries, MenuEntries Menu)> pending = [];
         lock (_gate)
         {
             var known = _loaded.FirstOrDefault(l => string.Equals(l.Info.Name, name, StringComparison.OrdinalIgnoreCase));

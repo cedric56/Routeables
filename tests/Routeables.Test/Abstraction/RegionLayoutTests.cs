@@ -11,14 +11,14 @@ public sealed class TitleLayout(IServiceProvider provider) : RegionLayout(provid
     public int Moves { get; private set; }
 
     protected override Task OnStartAsync(CancellationToken cancellationToken)
-        => ShowAsync(new MenuEntry<RegionCatsViewModel>("/cats", null, "/cats", "/cats"), cancellationToken);
+        => ShowAsync(new RouteableMenuEntry<RegionCatsViewModel>("/cats", null, "/cats", "/cats"), cancellationToken);
 
     protected override async Task OnPrimaryChangedAsync()
     {
         Moves++;
         var title = PrimaryRouter.History.Current!.ViewModel.GetType().Name;
         Titles.Add(title);
-        await FollowAsync("header", title, () => new MenuEntry<RegionDogsViewModel>("/dogs", null, "/dogs", "/dogs"));
+        await FollowAsync("header", title, () => new RouteableMenuEntry<RegionDogsViewModel>("/dogs", null, "/dogs", "/dogs"));
     }
 
     public void Pause() => Following = false;
@@ -32,7 +32,7 @@ public class RegionLayoutTests
         services.AddRegionLayout<TitleLayout>("content", "header", "footer");
     });
 
-    private static MenuEntry<RegionCatsViewModel> Cats() => new("/cats", null, "/cats", "/cats");
+    private static RouteableMenuEntry<RegionCatsViewModel> Cats() => new("/cats", null, "/cats", "/cats");
 
     [Fact]
     public async Task Registering_a_layout_registers_its_regions_and_starting_it_fills_them()
@@ -70,7 +70,7 @@ public class RegionLayoutTests
         await layout.StartAsync(TestContext.Current.CancellationToken);
         await layout.SettledAsync();
 
-        await layout.ShowAsync(new MenuEntry<RegionDogsViewModel>("/dogs", null, "/dogs", "/dogs"), TestContext.Current.CancellationToken);
+        await layout.ShowAsync(new RouteableMenuEntry<RegionDogsViewModel>("/dogs", null, "/dogs", "/dogs"), TestContext.Current.CancellationToken);
         await layout.SettledAsync();
 
         Assert.Equal([nameof(RegionCatsViewModel), nameof(RegionDogsViewModel)], layout.Titles);
@@ -158,7 +158,7 @@ public sealed class FlakyLayout(IServiceProvider provider) : RegionLayout(provid
         => await FollowAsync("header", "key", () =>
         {
             Builds++;
-            return Fail ? throw new InvalidOperationException("no header") : new MenuEntry<RegionDogsViewModel>("/dogs", null, "/dogs", "/dogs");
+            return Fail ? throw new InvalidOperationException("no header") : new RouteableMenuEntry<RegionDogsViewModel>("/dogs", null, "/dogs", "/dogs");
         });
 }
 
@@ -172,13 +172,13 @@ public class FlakyLayoutTests
         layout.Failed += (_, ex) => layout.Failures.Add(ex);
         await layout.StartAsync(TestContext.Current.CancellationToken);
 
-        await layout.ShowAsync(new MenuEntry<RegionCatsViewModel>("/cats", null, "/cats", "/cats"), TestContext.Current.CancellationToken);
+        await layout.ShowAsync(new RouteableMenuEntry<RegionCatsViewModel>("/cats", null, "/cats", "/cats"), TestContext.Current.CancellationToken);
         await layout.SettledAsync();
         Assert.True(layout.Failures.Count > 0);
         Assert.Equal(0, provider.GetRouter("header").History.Count);
 
         layout.Fail = false;
-        await layout.ShowAsync(new MenuEntry<RegionCatsViewModel>("/cats", null, "/cats", "/cats"), TestContext.Current.CancellationToken);
+        await layout.ShowAsync(new RouteableMenuEntry<RegionCatsViewModel>("/cats", null, "/cats", "/cats"), TestContext.Current.CancellationToken);
         await layout.SettledAsync();
 
         Assert.Equal(1, provider.GetRouter("header").History.Count);

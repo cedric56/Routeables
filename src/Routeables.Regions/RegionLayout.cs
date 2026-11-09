@@ -94,7 +94,7 @@ public abstract class RegionLayout : IDisposable
     }
 
     /// <summary>Shows <paramref name="view"/> in the primary region; the others follow.</summary>
-    public async Task<RouteableResult> ShowAsync(IMenuEntry view, CancellationToken cancellationToken = default)
+    public async Task<RouteableResult> ShowAsync(IRouteableMenuEntry view, CancellationToken cancellationToken = default)
     {
         var result = await PrimaryRouter.GoToRouteAsync(view, cancellationToken);
         await SettledAsync();
@@ -130,14 +130,14 @@ public abstract class RegionLayout : IDisposable
     protected virtual Task OnPrimaryChangedAsync() => Task.CompletedTask;
 
     /// <summary>Shows <paramref name="view"/> in the region it names, whichever it is.</summary>
-    protected Task<RouteableResult> GoToAsync(string region, IMenuEntry view, CancellationToken cancellationToken = default)
+    protected Task<RouteableResult> GoToAsync(string region, IRouteableMenuEntry view, CancellationToken cancellationToken = default)
         => Provider.GetRouter(region).GoToRouteAsync(view, cancellationToken);
 
     /// <summary>
     /// Updates <paramref name="region"/> to <paramref name="view"/>, unless <paramref name="key"/> (a record or a value that
     /// compares by content) is what that region shows already. The view is only built when it is needed.
     /// </summary>
-    protected async Task FollowAsync(string region, object? key, Func<IMenuEntry> view)
+    protected async Task FollowAsync(string region, object? key, Func<IRouteableMenuEntry> view)
     {
         ArgumentNullException.ThrowIfNull(view);
         if (_shown.TryGetValue(region, out var shown) && Equals(shown, key)) return;

@@ -8,7 +8,7 @@ namespace Routeables.Maui;
 /// (<c>services.AddRegion("detail")</c>), and follows it when that router routes.
 /// <para>
 /// Nobody assigns the view to this control. Whoever routes the region (a view model, a menu entry whose
-/// <see cref="IMenuEntry.Region"/> names it, <c>provider.GoToAsync(entry)</c>) only names the region; the control with the
+/// <see cref="IRouteableMenuEntry.Region"/> names it, <c>provider.GoToAsync(entry)</c>) only names the region; the control with the
 /// same name displays the result. A view can hold several of them, and without <see cref="Region"/> the control shows the
 /// default router.
 /// </para>

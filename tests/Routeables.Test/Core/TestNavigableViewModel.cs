@@ -21,9 +21,9 @@ namespace Routeables.Tests.Core;
 public class TestNavigableViewModel : MainViewModelBase
 {
     [ThreadStatic]
-    private static ObservableCollection<IMenuEntry>? _pending;
+    private static ObservableCollection<IRouteableMenuEntry>? _pending;
 
-    public static TestNavigableViewModel Create(IRouter router, ObservableCollection<IMenuEntry> navigables, bool initialize = true)
+    public static TestNavigableViewModel Create(IRouter router, ObservableCollection<IRouteableMenuEntry> navigables, bool initialize = true)
     {
         _pending = navigables;
         try
@@ -36,7 +36,7 @@ public class TestNavigableViewModel : MainViewModelBase
         }
     }
 
-    private readonly ObservableCollection<IMenuEntry> _navigables;
+    private readonly ObservableCollection<IRouteableMenuEntry> _navigables;
 
     private TestNavigableViewModel(IRouter router, bool initialize)
         : base(router, initialize)
@@ -48,7 +48,7 @@ public class TestNavigableViewModel : MainViewModelBase
 
     public int RaiseCanExecutesChangedCallCount { get; private set; }
 
-    protected override ObservableCollection<IMenuEntry> GetEntries() => _pending ?? _navigables;
+    protected override ObservableCollection<IRouteableMenuEntry> GetEntries() => _pending ?? _navigables;
 
     protected override void NotifyPropertyChanged(string? propertyName)
     {

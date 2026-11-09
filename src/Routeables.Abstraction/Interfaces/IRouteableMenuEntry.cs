@@ -2,9 +2,9 @@
 
 /// <summary>
 /// An entry of the menu, and a destination of the router: a name, a route, the view and view model it shows, and an icon. The main
-/// view model (<see cref="IMainViewModel"/>) lists them; <c>MenuEntry&lt;TViewModel&gt;</c> is the usual implementation.
+/// view model (<see cref="IMainViewModel"/>) lists them; <c>RouteableMenuEntry&lt;TViewModel&gt;</c> is the usual implementation.
 /// </summary>
-public interface IMenuEntry
+public interface IRouteableMenuEntry
 {
     /// <summary>Whether the menu refuses to select this entry (see <see cref="IMainViewModel.Lock"/>).</summary>
     bool IsLock { get; set; }
@@ -32,7 +32,7 @@ public interface IMenuEntry
     /// <summary>
     /// The region this entry is shown in: the name given to <c>AddRegion</c>, which is also the name a <c>RouteableRegion</c>
     /// of a view is given. <see langword="null"/> is the default router (the main area). See
-    /// <see cref="Extensions.RouterFor(IServiceProvider, IMenuEntry)"/>.
+    /// <see cref="Extensions.RouterFor(IServiceProvider, IRouteableMenuEntry)"/>.
     /// </summary>
     string? Region => null;
 

@@ -24,11 +24,11 @@ public class ViewForTests
 
     private sealed class RouteablesViewModel : TestViewModel, IMainViewModel
     {
-        public ObservableCollection<IMenuEntry> Entries { get; } = [];
+        public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
         public event EventHandler? LockChanged { add { } remove { } }
         public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
         public object? CurrentView { get; set; }
-        public IMenuEntry? SelectedEntry { get; set; }
+        public IRouteableMenuEntry? SelectedEntry { get; set; }
 
         public string? CurrentTitle { get; }
     }
@@ -88,10 +88,10 @@ public class ViewForTests
 
         Assert.False(view.IsLocked);
 
-        viewModel.Entries.Add(new MenuEntry<TestViewModel>("First", "First") { IsLock = true });
+        viewModel.Entries.Add(new RouteableMenuEntry<TestViewModel>("First", "First") { IsLock = true });
         Assert.True(view.IsLocked);
 
-        viewModel.Entries.Add(new MenuEntry<TestViewModel>("Second", "Second") { IsLock = false });
+        viewModel.Entries.Add(new RouteableMenuEntry<TestViewModel>("Second", "Second") { IsLock = false });
         Assert.False(view.IsLocked);
     }
 

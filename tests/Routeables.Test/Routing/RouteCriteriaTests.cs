@@ -143,8 +143,8 @@ public class RouteCriteriaTests
 
     public sealed class MenuMain : IMainViewModel
     {
-        public System.Collections.ObjectModel.ObservableCollection<IMenuEntry> Entries { get; } = [];
-        public IMenuEntry? SelectedEntry { get; set; }
+        public System.Collections.ObjectModel.ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
+        public IRouteableMenuEntry? SelectedEntry { get; set; }
         public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
         public event EventHandler? LockChanged { add { } remove { } }
     }

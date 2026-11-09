@@ -7,13 +7,13 @@ public class MenuEntryTests
     [Fact]
     public void Locking_an_entry_tells_the_bindings_about_the_entry_and_its_inverse()
     {
-        var view = new MenuEntry("/a", "/a", "A");
+        var view = new RouteableMenuEntry("/a", "/a", "A");
         var changed = new List<string?>();
         view.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
 
         view.IsLock = true;
 
-        Assert.Equal([nameof(MenuEntry.IsLock), nameof(MenuEntry.InverseIsLock)], changed);
+        Assert.Equal([nameof(RouteableMenuEntry.IsLock), nameof(RouteableMenuEntry.InverseIsLock)], changed);
         Assert.True(view.IsLock);
         Assert.False(view.InverseIsLock);
     }
@@ -21,7 +21,7 @@ public class MenuEntryTests
     [Fact]
     public void Setting_the_same_lock_state_again_changes_nothing()
     {
-        var view = new MenuEntry("/a", "/a", "A");
+        var view = new RouteableMenuEntry("/a", "/a", "A");
         var changed = new List<string?>();
         view.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
 
@@ -35,14 +35,14 @@ public class MenuEntryTests
     [Fact]
     public void A_typed_entry_knows_its_view_model_type_and_an_untyped_one_does_not()
     {
-        Assert.Equal(typeof(string), new MenuEntry<string>("S").ViewModelType);
-        Assert.Null(new MenuEntry("/a", "/a", "A").ViewModelType);
+        Assert.Equal(typeof(string), new RouteableMenuEntry<string>("S").ViewModelType);
+        Assert.Null(new RouteableMenuEntry("/a", "/a", "A").ViewModelType);
     }
 
     [Fact]
     public void Copy_of_a_typed_entry_is_a_typed_entry_without_the_instances()
     {
-        MenuEntry source = new MenuEntry<string>("S", "icon.svg", route: "/s", template: "/s/{x}", description: "d")
+        RouteableMenuEntry source = new RouteableMenuEntry<string>("S", "icon.svg", route: "/s", template: "/s/{x}", description: "d")
         {
             Region = "side",
             ViewModel = "vm",
@@ -51,7 +51,7 @@ public class MenuEntryTests
 
         var copy = source.Copy();
 
-        Assert.IsType<MenuEntry<string>>(copy);
+        Assert.IsType<RouteableMenuEntry<string>>(copy);
         Assert.Equal(typeof(string), copy.ViewModelType);
         Assert.Equal(("S", "icon.svg", "/s", "/s/{x}", "d"), (copy.DisplayName, copy.Path, copy.Route, copy.Template, copy.Description));
         Assert.Null(copy.Region);
@@ -63,9 +63,9 @@ public class MenuEntryTests
     [Fact]
     public void Copy_of_an_untyped_entry_stays_untyped()
     {
-        var copy = new MenuEntry("/a", "/a/{x}", "A", "p") { Description = "d" }.Copy();
+        var copy = new RouteableMenuEntry("/a", "/a/{x}", "A", "p") { Description = "d" }.Copy();
 
-        Assert.Equal(typeof(MenuEntry), copy.GetType());
+        Assert.Equal(typeof(RouteableMenuEntry), copy.GetType());
         Assert.Equal(("A", "p", "/a", "/a/{x}", "d"), (copy.DisplayName, copy.Path, copy.Route, copy.Template, copy.Description));
     }
 }

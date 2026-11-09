@@ -6,7 +6,7 @@ namespace Routeables.Tests.Services;
 
 public class LockWatcherTests
 {
-    private sealed class Entry(bool locked) : IMenuEntry
+    private sealed class Entry(bool locked) : IRouteableMenuEntry
     {
         public bool IsLock { get; set; } = locked;
         public object? ViewModel { get; set; }

@@ -60,8 +60,8 @@ public static partial class Extensions
     public static ILockCoordinator? CreateLockCoordinator(this IRouter router, IMainViewModel mainViewModel)
         => (router as ILockCoordinatorFactory)?.CreateLockCoordinator(mainViewModel);
 
-    /// <summary>The router that shows <paramref name="view"/>: the one of its <see cref="IMenuEntry.Region"/>.</summary>
-    public static IRouter RouterFor(this IServiceProvider provider, IMenuEntry view)
+    /// <summary>The router that shows <paramref name="view"/>: the one of its <see cref="IRouteableMenuEntry.Region"/>.</summary>
+    public static IRouter RouterFor(this IServiceProvider provider, IRouteableMenuEntry view)
     {
         ArgumentNullException.ThrowIfNull(view);
         return provider.GetRouter(view.Region);
@@ -72,7 +72,7 @@ public static partial class Extensions
     /// same name displays it: the call does not need to know where on screen that is.
     /// </summary>
     public static Task<RouteableResult> GoToAsync(
-        this IServiceProvider provider, IMenuEntry view, CancellationToken cancellationToken = default)
+        this IServiceProvider provider, IRouteableMenuEntry view, CancellationToken cancellationToken = default)
         => provider.RouterFor(view).GoToRouteAsync(view, cancellationToken);
 
     /// <summary>

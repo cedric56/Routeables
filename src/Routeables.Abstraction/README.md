@@ -34,7 +34,7 @@ public class DogsViewModel(IRouter router)
 | Routes | `[Routeable]`, `[RouteableView]`, `[RouteableViewModel]`, `RegisterRoute<TView, TViewModel>` |
 | Lifecycle | `IRouteable` (every member has a default), `IInitializeAsync`, `IReturnsResult<T>` |
 | Arguments | `IRouteableArgs` (values for the view model, for the view, neutral ones), `RouteableParameterAttribute` |
-| Menu | `IMenuEntry`, `IMainViewModel`, `AddMenuEntries`, `IRouteableModules` (modules loaded while running) |
+| Menu | `IRouteableMenuEntry`, `IMainViewModel`, `AddMenuEntries`, `IRouteableModules` (modules loaded while running) |
 | Errors and locks | `IRouteableErrorSink`, `RouteableErrors`, `ILockCoordinator` |
 
 The dialogs, notifications and theme are in [`Routeables.Services`](../Routeables.Services/README.md), regions in [`Routeables.Regions`](../Routeables.Regions/README.md), segments in [`Routeables.Segments`](../Routeables.Segments/README.md): a project that only routes carries none of them.

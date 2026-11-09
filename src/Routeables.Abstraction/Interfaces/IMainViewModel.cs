@@ -10,10 +10,10 @@ namespace Routeables.Abstraction;
 public interface IMainViewModel
 {
     /// <summary>The entries of the menu, in the order they are shown.</summary>
-    ObservableCollection<IMenuEntry> Entries { get; }
+    ObservableCollection<IRouteableMenuEntry> Entries { get; }
 
     /// <summary>The selected entry. Setting it goes to that entry; <see langword="null"/> when none is selected.</summary>
-    IMenuEntry? SelectedEntry { get; set; }
+    IRouteableMenuEntry? SelectedEntry { get; set; }
 
     /// <summary>The title of the selected entry (its display name), for a title bar. Override it for another title.</summary>
     string? CurrentTitle => SelectedEntry?.DisplayName;
@@ -59,7 +59,7 @@ public interface IMainViewModel
     /// <returns><see langword="true"/> when the home route is being opened.</returns>
     bool Start() => false;
 
-    /// <summary>Locks every entry (<see cref="IMenuEntry.IsLock"/>): the menu cannot leave the current page. Raises <see cref="LockChanged"/> through <see cref="NotifyLockChanged"/>.</summary>
+    /// <summary>Locks every entry (<see cref="IRouteableMenuEntry.IsLock"/>): the menu cannot leave the current page. Raises <see cref="LockChanged"/> through <see cref="NotifyLockChanged"/>.</summary>
     void Lock()
     {
         foreach (var routeable in Entries)

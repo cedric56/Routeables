@@ -150,8 +150,8 @@ public class LockCoordinatorTests
 
     private sealed class RouteablesProbe : IMainViewModel
     {
-        public ObservableCollection<IMenuEntry> Entries { get; } = [];
-        public IMenuEntry? SelectedEntry { get; set; }
+        public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
+        public IRouteableMenuEntry? SelectedEntry { get; set; }
         public object? CurrentView { get; set; }
         public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
         public event EventHandler? LockChanged { add { } remove { } }

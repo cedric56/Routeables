@@ -8,7 +8,7 @@ namespace Routeables.Tests.Razor;
 
 public class RouteableFormTests
 {
-    private sealed class FakeView(string name, bool locked = false) : IMenuEntry
+    private sealed class FakeView(string name, bool locked = false) : IRouteableMenuEntry
     {
         public bool IsLock { get; set; } = locked;
         public object? ViewModel { get; set; }
@@ -20,10 +20,10 @@ public class RouteableFormTests
         public string? Path => null;
     }
 
-    private static MainViewModelBase CreateViewModel(params IMenuEntry[] views) =>
+    private static MainViewModelBase CreateViewModel(params IRouteableMenuEntry[] views) =>
         TestNavigableViewModel.Create(
             NSubstitute.Substitute.For<IRouter>(),
-            new System.Collections.ObjectModel.ObservableCollection<IMenuEntry>(views),
+            new System.Collections.ObjectModel.ObservableCollection<IRouteableMenuEntry>(views),
             initialize: false);
 
     private static async Task<string> RenderAsync(MainViewModelBase vm, bool busy)

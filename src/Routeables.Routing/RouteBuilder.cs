@@ -61,7 +61,7 @@ public sealed class RouteBuilder
         ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
         var template = route ?? RouteableKeys.GetTemplate(typeof(TViewModel));
         _services.RegisterRoute<TView, TViewModel>(route: template);
-        _services.AddMenuEntries(() => [new MenuEntry<TViewModel>(displayName, icon, route, template, description)], index);
+        _services.AddMenuEntries(() => [new RouteableMenuEntry<TViewModel>(displayName, icon, route, template, description)], index);
         return this;
     }
 

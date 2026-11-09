@@ -16,10 +16,10 @@ namespace Routeables.Test.Avalonia.Visual;
 public sealed class TestMain : IMainViewModel
 {
     /// <inheritdoc />
-    public ObservableCollection<IMenuEntry> Entries { get; } = [];
+    public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
 
     /// <inheritdoc />
-    public IMenuEntry? SelectedEntry { get; set; }
+    public IRouteableMenuEntry? SelectedEntry { get; set; }
 
     /// <inheritdoc />
     public object? CurrentView { get; set; }

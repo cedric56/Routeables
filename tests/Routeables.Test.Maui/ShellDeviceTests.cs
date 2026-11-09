@@ -15,7 +15,7 @@ public class ShellDeviceTests
     // ------------------------------------------------------------------------------------------------ the fixture
 
     /// <summary>An entry of the menu: a name, a route, and a description if the test wants a caption.</summary>
-    private sealed class Entry(string name, string? description = null) : IMenuEntry
+    private sealed class Entry(string name, string? description = null) : IRouteableMenuEntry
     {
         public bool IsLock { get; set; }
         public object? ViewModel { get; set; }
@@ -31,12 +31,12 @@ public class ShellDeviceTests
     /// <summary>The menu of the fixture: entries, a selection, and every event a host raises, by hand.</summary>
     private sealed class Menu : IMainViewModel
     {
-        private IMenuEntry? _selected;
+        private IRouteableMenuEntry? _selected;
         private object? _view;
 
-        public ObservableCollection<IMenuEntry> Entries { get; } = [];
+        public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
 
-        public IMenuEntry? SelectedEntry
+        public IRouteableMenuEntry? SelectedEntry
         {
             get => _selected;
             set
@@ -57,7 +57,7 @@ public class ShellDeviceTests
         }
 
         /// <summary>Every entry that was selected, in order.</summary>
-        public List<IMenuEntry?> Selections { get; } = [];
+        public List<IRouteableMenuEntry?> Selections { get; } = [];
 
         public event EventHandler<object?>? CurrentViewChanged;
         public event EventHandler? LockChanged;

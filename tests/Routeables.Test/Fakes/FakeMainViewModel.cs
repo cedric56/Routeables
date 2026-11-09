@@ -6,8 +6,8 @@ namespace Routeables.Tests.Core;
 /// <summary>An <see cref="IMainViewModel"/> that does nothing: the main view model of a host, in tests that are about something else.</summary>
 public sealed class FakeMainViewModel : IMainViewModel
 {
-    public ObservableCollection<IMenuEntry> Entries { get; } = [];
-    public IMenuEntry? SelectedEntry { get; set; }
+    public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
+    public IRouteableMenuEntry? SelectedEntry { get; set; }
     public object? CurrentView { get; set; }
     public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
 

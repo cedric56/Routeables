@@ -31,12 +31,12 @@ public class WpfRegionTests
         return services.BuildServiceProvider();
     }
 
-    private static MenuEntry<CatsViewModel> Cats(string? region) => new("Cats", null, "/cats", "/cats") { Region = region };
+    private static RouteableMenuEntry<CatsViewModel> Cats(string? region) => new("Cats", null, "/cats", "/cats") { Region = region };
 
-    private static MenuEntry<DogsViewModel> Dogs(string? region) => new("Dogs", null, "/dogs", "/dogs") { Region = region };
+    private static RouteableMenuEntry<DogsViewModel> Dogs(string? region) => new("Dogs", null, "/dogs", "/dogs") { Region = region };
 
     // The views are created, and the controls loaded, on the thread of the application.
-    private static async Task GoToAsync<T>(IServiceProvider provider, MenuEntry<T> entry)
+    private static async Task GoToAsync<T>(IServiceProvider provider, RouteableMenuEntry<T> entry)
     {
         var result = await WpfHarness.Run(() => provider.GoToAsync(entry, TestContext.Current.CancellationToken));
         Assert.True(result.Success);

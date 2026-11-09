@@ -7,7 +7,7 @@ namespace Routeables.Abstraction;
 /// <code>
 /// [RouteableModule("Orders")]
 /// public static IServiceCollection AddOrdersModule(this IServiceCollection services)
-///     => services.AddGeneratedRoutes().AddMenuEntries(() => [new MenuEntry&lt;OrdersViewModel&gt;("Orders", route: "/orders", template: "/orders")]);
+///     => services.AddGeneratedRoutes().AddMenuEntries(() => [new RouteableMenuEntry&lt;OrdersViewModel&gt;("Orders", route: "/orders", template: "/orders")]);
 /// </code>
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]

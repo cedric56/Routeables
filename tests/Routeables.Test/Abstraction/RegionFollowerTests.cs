@@ -13,7 +13,7 @@ public class RegionFollowerTests
         services.AddRegion("header");
     });
 
-    private static MenuEntry<T> Entry<T>(string route, string region) => new(route, null, route, route) { Region = region };
+    private static RouteableMenuEntry<T> Entry<T>(string route, string region) => new(route, null, route, route) { Region = region };
 
     [Fact]
     public async Task A_region_routes_another_one_each_time_the_source_changes()

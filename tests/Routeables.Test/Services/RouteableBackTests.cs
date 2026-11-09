@@ -98,8 +98,8 @@ public class RouteableBackTests
 
     private sealed class TabMenu : IMainViewModel
     {
-        public ObservableCollection<IMenuEntry> Entries { get; } = [];
-        public IMenuEntry? SelectedEntry { get; set; }
+        public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
+        public IRouteableMenuEntry? SelectedEntry { get; set; }
         public object? CurrentView { get; set; }
         public string? CurrentTitle => null;
         public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
@@ -124,7 +124,7 @@ public class RouteableBackTests
         await main.GoToAsync("/back-second", cancellationToken: ct);
         await tab.GoToAsync("/back-first", cancellationToken: ct);
         await tab.GoToAsync("/back-second", cancellationToken: ct);
-        menu.SelectedEntry = new MenuEntry<BackFirstVm>("Tab", route: "/back-first", template: "/back-first") { Region = "back-tab" };
+        menu.SelectedEntry = new RouteableMenuEntry<BackFirstVm>("Tab", route: "/back-first", template: "/back-first") { Region = "back-tab" };
 
         Assert.Same(tab, RouteableBack.Target(provider));
         Assert.True(RouteableBack.TryGoBack(provider));

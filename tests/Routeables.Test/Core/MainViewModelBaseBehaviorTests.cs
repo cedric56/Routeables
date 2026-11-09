@@ -9,7 +9,7 @@ namespace Routeables.Tests.Core;
 
 public class MainViewModelBaseBehaviorTests
 {
-    private sealed class Entry(string route) : IMenuEntry
+    private sealed class Entry(string route) : IRouteableMenuEntry
     {
         public bool IsLock { get; set; }
         public object? ViewModel { get; set; }
@@ -102,7 +102,7 @@ public class MainViewModelBaseBehaviorTests
         Assert.Equal("Wpf", Runtime.Wpf.ToString());
     }
 
-    private sealed class PageEntry(string route, object page) : IMenuEntry
+    private sealed class PageEntry(string route, object page) : IRouteableMenuEntry
     {
         public bool IsLock { get; set; }
         public object? ViewModel { get; set; } = page;

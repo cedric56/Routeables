@@ -1,7 +1,6 @@
 @using Microsoft.AspNetCore.Components.Web
-@namespace Routeables.Blazor.Services
-@using Routeables.Abstraction
 @using Routeables.Blazor
+@namespace Routeables.Blazor.Services
 @inherits MainLayoutBase
 @if (ChildContent != null)
 {
@@ -9,14 +8,12 @@
 }
 else
 {
+    
+
     @* An application without a menu has no drawer and no button to open it. *@
     var hasMenu = MainViewModel.Entries.Count > 0;
     <div class="rt-layout @(hasMenu ? "" : "rt-no-menu")" data-wui-theme="@ThemeName">
-            <RouteableDialogHost />
-            <RouteableContentDialogHost />
-            <RouteableTaskDialogHost />
-            <RouteableModalHost />
-            <RouteableNotificationHost />
+            
         
         <header class="rt-appbar">
             @if (hasMenu)
@@ -58,10 +55,12 @@ else
         }
 
         <main class="rt-content">
-            @if (CurrentView is RouteableFor routeable)
-            {
-                @routeable.Render()
-            }
+            <RouteableDialogHost />
+            <RouteableContentDialogHost />
+            <RouteableTaskDialogHost />
+            <RouteableModalHost />
+            <RouteableNotificationHost />
+            <RouteableRegion/>
         </main>
     </div>
 }

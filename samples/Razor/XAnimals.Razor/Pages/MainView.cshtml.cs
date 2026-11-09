@@ -35,7 +35,7 @@ public class MainViewPageModel(IMainViewModel main, IRouter router, IServiceProv
     public new string Url => state.ServedUrl ?? "/";
 
     /// <summary>The entries the menu links to.</summary>
-    public IEnumerable<IMenuEntry> MenuEntries => main.Entries.Where(e => !Unserved.Contains(Address(e.Route), StringComparer.OrdinalIgnoreCase));
+    public IEnumerable<IRouteableMenuEntry> MenuEntries => main.Entries.Where(e => !Unserved.Contains(Address(e.Route), StringComparer.OrdinalIgnoreCase));
 
     /// <summary>Turns a route into an absolute path starting with <c>/</c>.</summary>
     public static string Address(string route) => "/" + route.TrimStart('/');

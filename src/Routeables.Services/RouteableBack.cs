@@ -6,7 +6,7 @@ namespace Routeables.Services;
 /// <summary>
 /// The answer of a host to the Back request of the system (the hardware button or gesture of Android, Alt+Left and the mouse back button
 /// on a desktop, the back command of a window): go back one page of the router when there is one to go back to, and tell the system whether it
-/// must leave it alone. A tab that has its own history (an entry with a <see cref="IMenuEntry.Region"/>) goes back inside the tab first. Every host calls this one method; a host of your own calls it the same way.
+/// must leave it alone. A tab that has its own history (an entry with a <see cref="IRouteableMenuEntry.Region"/>) goes back inside the tab first. Every host calls this one method; a host of your own calls it the same way.
 /// </summary>
 public static class RouteableBack
 {

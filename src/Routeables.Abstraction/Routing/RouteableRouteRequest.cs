@@ -19,7 +19,7 @@ public sealed class RouteableRouteRequest
     public IRouteableArgs? Args { get; init; }
 
     /// <summary>The menu entry to go to. It remembers the page it showed last.</summary>
-    public IMenuEntry? Entry { get; init; }
+    public IRouteableMenuEntry? Entry { get; init; }
 
     /// <summary>Names of the route values that go to the view (a property marked <c>[Parameter]</c>, <c>[QueryProperty]</c> or <c>[RouteableParameter]</c>) instead of the view model.</summary>
     public string[] ViewKeys { get; init; } = [];

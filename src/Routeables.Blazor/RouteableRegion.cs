@@ -10,7 +10,7 @@ namespace Routeables.Blazor;
 /// (<c>services.AddRegion("detail")</c>), and renders again when that router routes.
 /// <para>
 /// Nobody assigns the view to this component. Whoever routes the region (a view model, a menu entry whose
-/// <see cref="IMenuEntry.Region"/> names it, <c>provider.GoToAsync(entry)</c>) only names the region; the component with the
+/// <see cref="IRouteableMenuEntry.Region"/> names it, <c>provider.GoToAsync(entry)</c>) only names the region; the component with the
 /// same name displays the result. A page can hold several of them, and without <see cref="Region"/> the component shows the
 /// default router.
 /// </para>

@@ -6,7 +6,7 @@ namespace Routeables.Test.Abstraction;
 
 public class MainViewModelTests
 {
-    private static IMenuEntry View(string name) => new MenuEntry("/" + name, "/" + name, name);
+    private static IRouteableMenuEntry View(string name) => new RouteableMenuEntry("/" + name, "/" + name, name);
 
     [Fact]
     public void SelectFirst_selects_the_first_entry_once()
@@ -151,7 +151,7 @@ public class MainViewModelTests
     [Fact]
     public void The_same_module_added_twice_adds_its_entries_once()
     {
-        static IEnumerable<IMenuEntry> Orders() => [View("orders")];
+        static IEnumerable<IRouteableMenuEntry> Orders() => [View("orders")];
 
         var services = new ServiceCollection();
         services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Singleton);
@@ -166,8 +166,8 @@ public class MainViewModelTests
     public void A_module_that_needs_another_one_calls_it_and_the_other_is_added_once()
     {
         // Orders needs Customers (a dependency is a call, as in any code); the application adds both.
-        static IEnumerable<IMenuEntry> CustomersEntries() => [View("customers")];
-        static IEnumerable<IMenuEntry> OrdersEntries() => [View("orders")];
+        static IEnumerable<IRouteableMenuEntry> CustomersEntries() => [View("customers")];
+        static IEnumerable<IRouteableMenuEntry> OrdersEntries() => [View("orders")];
         static IServiceCollection AddCustomersModule(IServiceCollection services) => services.AddMenuEntries(CustomersEntries);
         static IServiceCollection AddOrdersModule(IServiceCollection services) => AddCustomersModule(services).AddMenuEntries(OrdersEntries);
 
@@ -194,8 +194,8 @@ public class MainViewModelTests
     private sealed class MainWithDependency(IMissing missing) : IMainViewModel
     {
         public IMissing Missing { get; } = missing;
-        public System.Collections.ObjectModel.ObservableCollection<IMenuEntry> Entries { get; } = [];
-        public IMenuEntry? SelectedEntry { get; set; }
+        public System.Collections.ObjectModel.ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
+        public IRouteableMenuEntry? SelectedEntry { get; set; }
         public object? CurrentView { get; set; }
         public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
         public event EventHandler? LockChanged { add { } remove { } }

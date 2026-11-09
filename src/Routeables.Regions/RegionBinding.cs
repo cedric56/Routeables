@@ -7,7 +7,7 @@ namespace Routeables.Regions;
 /// router, and again each time the history of that router changes.
 /// <para>
 /// A region is a router with its own history. Whoever routes it (a view model, a menu entry whose
-/// <see cref="IMenuEntry.Region"/> names it, a URL segment <c>region:name</c>) never says where on screen the view goes:
+/// <see cref="IRouteableMenuEntry.Region"/> names it, a URL segment <c>region:name</c>) never says where on screen the view goes:
 /// the host that is given the same name receives it. Several hosts can display the same region.
 /// </para>
 /// <para>

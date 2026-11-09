@@ -19,11 +19,11 @@ public class RouteableMenu : ListBox
         SetBinding(SelectedItemProperty, new Binding(nameof(IMainViewModel.SelectedEntry)) { Mode = BindingMode.TwoWay });
 
         var name = new FrameworkElementFactory(typeof(TextBlock));
-        name.SetBinding(TextBlock.TextProperty, new Binding(nameof(IMenuEntry.DisplayName)));
+        name.SetBinding(TextBlock.TextProperty, new Binding(nameof(IRouteableMenuEntry.DisplayName)));
 
         var description = new FrameworkElementFactory(typeof(TextBlock));
-        description.SetBinding(TextBlock.TextProperty, new Binding(nameof(IMenuEntry.Description)));
-        description.SetBinding(VisibilityProperty, new Binding(nameof(IMenuEntry.Description)) { Converter = new TextToVisibilityConverter() });
+        description.SetBinding(TextBlock.TextProperty, new Binding(nameof(IRouteableMenuEntry.Description)));
+        description.SetBinding(VisibilityProperty, new Binding(nameof(IRouteableMenuEntry.Description)) { Converter = new TextToVisibilityConverter() });
         description.SetValue(TextBlock.FontSizeProperty, 12.0);
         description.SetValue(OpacityProperty, 0.7);
         description.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
@@ -58,7 +58,7 @@ public class RouteableMenu : ListBox
         // (a Data Error 4 in the output): they are given here.
         item.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
         item.Setters.Add(new Setter(VerticalContentAlignmentProperty, VerticalAlignment.Center));
-        item.Setters.Add(new Setter(IsEnabledProperty, new Binding(nameof(IMenuEntry.IsLock)) { Converter = new NotConverter() }));
+        item.Setters.Add(new Setter(IsEnabledProperty, new Binding(nameof(IRouteableMenuEntry.IsLock)) { Converter = new NotConverter() }));
         ItemContainerStyle = item;
     }
 }
@@ -84,7 +84,7 @@ internal sealed class TextToVisibilityConverter : IValueConverter
 internal sealed class IconConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
-        => (value as IMenuEntry)?.Icon;
+        => (value as IRouteableMenuEntry)?.Icon;
 
     public object ConvertBack(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture) => throw new NotSupportedException();
 }

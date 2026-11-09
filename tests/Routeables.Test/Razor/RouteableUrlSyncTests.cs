@@ -227,8 +227,8 @@ public class RouteableUrlSyncTests
 
     private sealed class RecordingMenu : IMainViewModel
     {
-        public System.Collections.ObjectModel.ObservableCollection<IMenuEntry> Entries { get; } = [];
-        public IMenuEntry? SelectedEntry { get; set; }
+        public System.Collections.ObjectModel.ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
+        public IRouteableMenuEntry? SelectedEntry { get; set; }
         public object? CurrentView { get; set; }
         public string? CurrentTitle => null;
         public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
@@ -289,7 +289,7 @@ public class RouteableUrlSyncTests
         f.Routing.Calls.Clear();
 
         await f.Router.GoToRouteAsync<PlainVm>(
-            new MenuEntry<PlainVm>("plain"), TestContext.Current.CancellationToken);
+            new RouteableMenuEntry<PlainVm>("plain"), TestContext.Current.CancellationToken);
 
         Assert.Equal([("/", false)], f.Routing.Calls);      // a new browser entry: Back returns to /home
         Assert.Equal("http://localhost/", f.Routing.Uri);
@@ -334,7 +334,7 @@ public class RouteableUrlSyncTests
         await f.Sync.StartAsync();
 
         await f.Router.GoToRouteAsync<PlainVm>(
-            new MenuEntry<PlainVm>("plain"), TestContext.Current.CancellationToken);
+            new RouteableMenuEntry<PlainVm>("plain"), TestContext.Current.CancellationToken);
 
         Assert.Empty(f.Routing.Calls);
     }
@@ -346,7 +346,7 @@ public class RouteableUrlSyncTests
         await f.Sync.StartAsync();
         await f.Home();
         await f.Router.GoToRouteAsync<PlainVm>(
-            new MenuEntry<PlainVm>("plain"), TestContext.Current.CancellationToken);
+            new RouteableMenuEntry<PlainVm>("plain"), TestContext.Current.CancellationToken);
 
         f.Routing.BrowserGoesTo("/home");                   // Back
         await Fixture.Until(() => f.Router.CurrentViewModel is HomeVm);

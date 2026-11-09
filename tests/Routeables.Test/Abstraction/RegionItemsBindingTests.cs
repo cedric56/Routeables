@@ -9,7 +9,7 @@ public class RegionItemsBindingTests
 {
     private static ServiceProvider Build() => RegionTestServices.Build(services => services.AddRegion("stack"));
 
-    private static MenuEntry<T> Entry<T>(string route) => new(route, null, route, route) { Region = "stack" };
+    private static RouteableMenuEntry<T> Entry<T>(string route) => new(route, null, route, route) { Region = "stack" };
 
     [Fact]
     public async Task The_list_grows_with_each_route_and_shrinks_with_back_and_pop()

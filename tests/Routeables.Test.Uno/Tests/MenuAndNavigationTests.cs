@@ -16,7 +16,7 @@ namespace Routeables.Test.Uno.Tests;
 public class MenuAndNavigationTests
 {
     /// <summary>An entry that tells when it changes, as the entries of a menu written with an observable base class do.</summary>
-    private sealed class Entry(string name, string? description = null) : IMenuEntry, INotifyPropertyChanged
+    private sealed class Entry(string name, string? description = null) : IRouteableMenuEntry, INotifyPropertyChanged
     {
         private string _name = name;
         private bool _locked;
@@ -65,13 +65,13 @@ public class MenuAndNavigationTests
     /// <summary>A menu a list can bind to.</summary>
     private sealed class Menu : IMainViewModel, INotifyPropertyChanged
     {
-        private IMenuEntry? _selected;
+        private IRouteableMenuEntry? _selected;
 
         /// <inheritdoc />
-        public ObservableCollection<IMenuEntry> Entries { get; } = [];
+        public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
 
         /// <summary>The currently selected entry.</summary>
-        public IMenuEntry? SelectedEntry
+        public IRouteableMenuEntry? SelectedEntry
         {
             get => _selected;
             set { _selected = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedEntry))); }

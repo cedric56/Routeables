@@ -51,7 +51,7 @@ public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
     /// Handles routing link clicks, updating the active routeable item in the manager.
     /// </summary>
     /// <param name="item">The routeable view item selected.</param>
-    public void OnNavClick(IMenuEntry item) => MainViewModel.SelectedEntry = item;
+    public void OnNavClick(IRouteableMenuEntry item) => MainViewModel.SelectedEntry = item;
 
     /// <summary>
     /// Gets the concrete theme service implementation instance.

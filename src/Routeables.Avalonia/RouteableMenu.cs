@@ -69,20 +69,20 @@ public class RouteableMenu : ListBox
     public RouteableMenu()
     {
         // Bindings against the DataContext
-        Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create<IMainViewModel, ObservableCollection<IMenuEntry>>(r => r.Entries));
+        Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create<IMainViewModel, ObservableCollection<IRouteableMenuEntry>>(r => r.Entries));
         Bind(SelectingItemsControl.SelectedItemProperty,
-            CompiledBinding.Create<IMainViewModel, IMenuEntry?>(r => r.SelectedEntry, mode: BindingMode.TwoWay));
+            CompiledBinding.Create<IMainViewModel, IRouteableMenuEntry?>(r => r.SelectedEntry, mode: BindingMode.TwoWay));
 
         // Item template (live bindings)
-        ItemTemplate = new FuncDataTemplate<MenuEntry>((_, _) =>
+        ItemTemplate = new FuncDataTemplate<RouteableMenuEntry>((_, _) =>
         {
             var icon = new ContentControl { VerticalAlignment = VerticalAlignment.Center };
             icon.Bind(ContentControl.ContentProperty,
-                CompiledBinding.Create<IMenuEntry, object?>(r => r.Icon));
+                CompiledBinding.Create<IRouteableMenuEntry, object?>(r => r.Icon));
 
             var name = new TextBlock();
             name.Bind(TextBlock.TextProperty,
-                CompiledBinding.Create<IMenuEntry, string>(r => r.DisplayName));
+                CompiledBinding.Create<IRouteableMenuEntry, string>(r => r.DisplayName));
 
             var description = new TextBlock
             {
@@ -91,9 +91,9 @@ public class RouteableMenu : ListBox
                 TextWrapping = TextWrapping.Wrap
             };
             description.Bind(TextBlock.TextProperty,
-                CompiledBinding.Create<IMenuEntry, string?>(r => r.Description));
+                CompiledBinding.Create<IRouteableMenuEntry, string?>(r => r.Description));
             description.Bind(Visual.IsVisibleProperty,
-                CompiledBinding.Create<IMenuEntry, bool>(r => r.HasDescription));
+                CompiledBinding.Create<IRouteableMenuEntry, bool>(r => r.HasDescription));
 
             var texts = new StackPanel { Spacing = 2, Children = { name, description } };
 
@@ -112,7 +112,7 @@ public class RouteableMenu : ListBox
             Setters =
         {
             new Setter(TemplatedControl.PaddingProperty, new Thickness(10)),
-            new Setter(TemplatedControl.IsEnabledProperty, CompiledBinding.Create<MenuEntry, bool>(r => r.InverseIsLock))
+            new Setter(TemplatedControl.IsEnabledProperty, CompiledBinding.Create<RouteableMenuEntry, bool>(r => r.InverseIsLock))
         }
         });
     }

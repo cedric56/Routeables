@@ -61,8 +61,8 @@ public class MainLayoutBaseTests
 
     private sealed class Menu : IMainViewModel
     {
-        public ObservableCollection<IMenuEntry> Entries { get; } = [];
-        public IMenuEntry? SelectedEntry { get; set; }
+        public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
+        public IRouteableMenuEntry? SelectedEntry { get; set; }
         public object? CurrentView { get; set; }
         public string? Title { get; set; }
         public string? CurrentTitle => Title ?? SelectedEntry?.DisplayName;
@@ -165,9 +165,9 @@ public class MainLayoutBaseTests
         }
     }
 
-    private static IMenuEntry Entry(string name)
+    private static IRouteableMenuEntry Entry(string name)
     {
-        var entry = Substitute.For<IMenuEntry>();
+        var entry = Substitute.For<IRouteableMenuEntry>();
         entry.DisplayName.Returns(name);
         // A route of its own: an entry whose route is empty would match the address "/" and be selected by the address.
         entry.Route.Returns("/" + name.ToLowerInvariant());

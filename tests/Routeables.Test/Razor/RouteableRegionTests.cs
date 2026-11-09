@@ -71,12 +71,12 @@ public class RouteableRegionTests
         await renderer.Render<RouteableRegion>(new() { ["Region"] = "detail" });
         Assert.Empty(renderer.Texts);
 
-        var first = new MenuEntry<FirstViewModel>("First", null, "/first", "/first") { Region = "detail" };
+        var first = new RouteableMenuEntry<FirstViewModel>("First", null, "/first", "/first") { Region = "detail" };
         await renderer.Dispatcher.InvokeAsync(() => provider.GoToAsync(first, TestContext.Current.CancellationToken));
         await WaitFor(renderer, "hello-FirstViewModel");
 
         renderer.Texts.Clear();
-        var second = new MenuEntry<SecondViewModel>("Second", null, "/second", "/second") { Region = "detail" };
+        var second = new RouteableMenuEntry<SecondViewModel>("Second", null, "/second", "/second") { Region = "detail" };
         await renderer.Dispatcher.InvokeAsync(() => provider.GoToAsync(second, TestContext.Current.CancellationToken));
         await WaitFor(renderer, "hello-SecondViewModel");
 

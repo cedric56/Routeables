@@ -305,7 +305,7 @@ public class RouteGuardTests
         var ct = TestContext.Current.CancellationToken;
         using var provider = Build(new Guard(c => IsAdmin(c) ? RouteGuardDecision.Redirect("/guard-login") : RouteGuardDecision.Allow));
         var router = provider.GetRequiredService<IRouter>();
-        var entry = new MenuEntry<GuardAdminVm>("Admin", route: "/guard-admin", template: "/guard-admin");
+        var entry = new RouteableMenuEntry<GuardAdminVm>("Admin", route: "/guard-admin", template: "/guard-admin");
 
         var result = await router.GoToRouteAsync(entry, ct);
 

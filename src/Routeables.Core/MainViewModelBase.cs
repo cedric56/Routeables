@@ -11,10 +11,10 @@ namespace Routeables.Core;
 /// <code>
 /// public sealed class MainViewModel(IRouter router) : MainViewModelBase(router)
 /// {
-///     protected override ObservableCollection&lt;IMenuEntry&gt; GetEntries() =>
+///     protected override ObservableCollection&lt;IRouteableMenuEntry&gt; GetEntries() =>
 ///     [
-///         new MenuEntry&lt;CatsViewModel&gt;("Cats", route: "/cats", template: "/cats"),
-///         new MenuEntry&lt;DogsViewModel&gt;("Dogs", route: "/dogs", template: "/dogs"),
+///         new RouteableMenuEntry&lt;CatsViewModel&gt;("Cats", route: "/cats", template: "/cats"),
+///         new RouteableMenuEntry&lt;DogsViewModel&gt;("Dogs", route: "/dogs", template: "/dogs"),
 ///     ];
 /// }
 /// </code>
@@ -68,9 +68,9 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
 
         _followed = viewModel;
 
-        // The entry of that view model: its route is the type name, or it is a MenuEntry<T> of that type.
+        // The entry of that view model: its route is the type name, or it is a RouteableMenuEntry<T> of that type.
         var type = viewModel.GetType();
-        var entry = Entries.FirstOrDefault(p => p.Route == type.Name || (p as MenuEntry)?.ViewModelType == type);
+        var entry = Entries.FirstOrDefault(p => p.Route == type.Name || (p as RouteableMenuEntry)?.ViewModelType == type);
         if (entry != null)
             _routeable = _confirmed = entry;
         NotifyPropertyChanged(nameof(SelectedEntry));
@@ -123,18 +123,18 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
     /// <param name="propertyName">The name of the property that changed.</param>
     protected abstract void NotifyPropertyChanged(string? propertyName);
 
-    private IMenuEntry? _routeable;
+    private IRouteableMenuEntry? _routeable;
 
     // The entry whose page the router has shown. A selection that a newer one replaced before it started never showed its page, so it is
     // not the entry to go back to when the newer selection is refused.
-    private IMenuEntry? _confirmed;
+    private IRouteableMenuEntry? _confirmed;
     private readonly SemaphoreSlim _selectionGate = new(1, 1);
     private int _selectionVersion;
 
     /// <summary>
     /// The selected entry. Setting it selects that entry without waiting (use <see cref="SelectAsync"/> to wait for the result).
     /// </summary>
-    public IMenuEntry? SelectedEntry
+    public IRouteableMenuEntry? SelectedEntry
     {
         get => _routeable;
         set
@@ -183,7 +183,7 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
     /// The entry the selection asked for. When the menu does not end on it (a guard such as <c>CanLeaveAsync</c> refused, or the route
     /// failed), the selected entry is announced again once the setter has returned.
     /// </param>
-    private async Task ObserveAsync(Task task, IMenuEntry? requested = null)
+    private async Task ObserveAsync(Task task, IRouteableMenuEntry? requested = null)
     {
         try
         {
@@ -217,7 +217,7 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
     /// </summary>
     /// <param name="value">The entry to select.</param>
     /// <param name="old">The previous entry, restored on failure.</param>
-    public async Task SelectAsync(IMenuEntry? value, IMenuEntry? old = null)
+    public async Task SelectAsync(IRouteableMenuEntry? value, IRouteableMenuEntry? old = null)
     {
         var version = Interlocked.Increment(ref _selectionVersion);
 
@@ -238,12 +238,12 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
         }
     }
 
-    private ObservableCollection<IMenuEntry>? _routeables;
+    private ObservableCollection<IRouteableMenuEntry>? _routeables;
 
     /// <summary>
     /// The entries of the menu, built by <see cref="GetEntries"/> on first access.
     /// </summary>
-    public ObservableCollection<IMenuEntry> Entries { get { return _routeables ??= GetEntries(); } }
+    public ObservableCollection<IRouteableMenuEntry> Entries { get { return _routeables ??= GetEntries(); } }
 
     /// <inheritdoc />
     public virtual string? CurrentTitle { get => SelectedEntry?.DisplayName ?? "Application"; }
@@ -252,7 +252,7 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
     /// Returns the entries of the menu.
     /// </summary>
     /// <returns>The entries.</returns>
-    protected abstract ObservableCollection<IMenuEntry> GetEntries();
+    protected abstract ObservableCollection<IRouteableMenuEntry> GetEntries();
 
     /// <summary>
     /// Called when the router did not show the entry (a guard refused it, the route was cancelled, or an exception was thrown):
@@ -261,13 +261,13 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
     /// </summary>
     /// <param name="entry">The entry that was not shown.</param>
     /// <param name="result">The outcome of the router: <see cref="RouteableResult.Cancelled"/> and <see cref="RouteableResult.Exception"/>.</param>
-    protected virtual void OnRoutingFailed(IMenuEntry entry, RouteableResult result)
+    protected virtual void OnRoutingFailed(IRouteableMenuEntry entry, RouteableResult result)
         => System.Diagnostics.Debug.WriteLine(
             $"Routeables: '{entry.Route}' was not shown ({(result.Cancelled ? "cancelled by a guard (CanLeaveAsync / CanEnter) or a newer route" : "failed")}){(result.Exception is null ? "" : ": " + result.Exception)}");
 
     // The entry to select again when a selection is not shown: the one whose page the router shows. The `old` of a selection that a newer
     // one replaced before it started was never shown, so it is only the answer when no page was shown through this menu yet.
-    private IMenuEntry? Previous(IMenuEntry? old, int version) => version != 0 ? _confirmed ?? old : old;
+    private IRouteableMenuEntry? Previous(IRouteableMenuEntry? old, int version) => version != 0 ? _confirmed ?? old : old;
 
     /// <summary>
     /// Shows the view of an entry through the router and announces it with <see cref="CurrentViewChanged"/>; the previous entry is selected again if that fails.
@@ -277,7 +277,7 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
     /// <param name="version">
     /// The selection version this call is running under, as assigned by <see cref="SelectAsync"/>.
     /// </param>
-    public virtual async Task OnRouteableChangedAsync(IMenuEntry? value, IMenuEntry? old, int version = 0)
+    public virtual async Task OnRouteableChangedAsync(IRouteableMenuEntry? value, IRouteableMenuEntry? old, int version = 0)
     {
         try
         {

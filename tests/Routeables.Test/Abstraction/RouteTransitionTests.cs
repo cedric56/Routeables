@@ -59,13 +59,13 @@ public class RouteTransitionTests
         using var host = new RegionBinding(provider.GetRouter("left"), (_, change) => changes.Add(change));
         Assert.Equal(NavigationDirection.None, changes[0].Direction);
 
-        var cats = new MenuEntry<RegionCatsViewModel>("/cats", null, "/cats", "/cats") { Region = "left" };
+        var cats = new RouteableMenuEntry<RegionCatsViewModel>("/cats", null, "/cats", "/cats") { Region = "left" };
         cats.Arguments = RouteableArgs.Create().WithTransition(RouteTransition.Slide);
         await provider.GoToAsync(cats, TestContext.Current.CancellationToken);
         Assert.Equal(NavigationDirection.Forward, changes[1].Direction);
         Assert.Equal("Slide", changes[1].Transition!.Name);
 
-        var dogs = new MenuEntry<RegionDogsViewModel>("/dogs", null, "/dogs", "/dogs") { Region = "left" };
+        var dogs = new RouteableMenuEntry<RegionDogsViewModel>("/dogs", null, "/dogs", "/dogs") { Region = "left" };
         await provider.GoToAsync(dogs, TestContext.Current.CancellationToken);
         Assert.Equal(NavigationDirection.Forward, changes[2].Direction);
         Assert.Null(changes[2].Transition);

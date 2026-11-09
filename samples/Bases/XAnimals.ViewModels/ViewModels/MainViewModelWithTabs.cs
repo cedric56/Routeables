@@ -15,10 +15,10 @@ namespace XAnimals.ViewModels;
 [System.ComponentModel.Bindable(true)]
 public sealed class MainViewModelWithTabs(IRouter router, IRouteCoordinator coordinator, IRouteableRequestedThemeService themes) : MainViewModel(router, coordinator, themes)
 {
-    protected override ObservableCollection<IMenuEntry> GetEntries()
+    protected override ObservableCollection<IRouteableMenuEntry> GetEntries()
     {
         var entries = base.GetEntries();
-        entries.Add(new MenuEntry<TabsViewModel>("Tabs", AnimalIcons.Regions, route: "tabs", template: "tabs", description: string.Join(Environment.NewLine, "AttachRouteables", "The items of a TabControl or NavigationView are routes")));
+        entries.Add(new RouteableMenuEntry<TabsViewModel>("Tabs", AnimalIcons.Regions, route: "tabs", template: "tabs", description: string.Join(Environment.NewLine, "AttachRouteables", "The items of a TabControl or NavigationView are routes")));
         return entries;
     }
 }

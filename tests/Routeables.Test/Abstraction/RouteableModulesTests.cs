@@ -11,7 +11,7 @@ public static class ReflectedModule
     public static IServiceCollection AddReflectedModule(this IServiceCollection services)
     {
         services.RegisterRoute("/reflected", (_, _) => new ReflectedPage());
-        services.AddMenuEntries(() => [new MenuEntry("/reflected", "/reflected", "Reflected")]);
+        services.AddMenuEntries(() => [new RouteableMenuEntry("/reflected", "/reflected", "Reflected")]);
         return services;
     }
 
@@ -28,7 +28,7 @@ public class RouteableModulesTests
     public sealed class AppClock;
     public sealed class OrdersPage(IOrderRepository repository) { public IOrderRepository Repository { get; } = repository; }
 
-    private static IMenuEntry Entry(string name) => new MenuEntry("/" + name, "/" + name, name);
+    private static IRouteableMenuEntry Entry(string name) => new RouteableMenuEntry("/" + name, "/" + name, name);
 
     private static ServiceProvider Application(ServiceLifetime main = ServiceLifetime.Singleton, Action<IServiceCollection>? more = null)
     {
