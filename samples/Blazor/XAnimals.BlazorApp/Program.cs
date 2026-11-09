@@ -33,7 +33,7 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(
-        typeof(Routeables.Blazor.MainLayoutBase).Assembly,
+        typeof(Routeables.Blazor.RouteableMainLayoutBase).Assembly,
         typeof(XAnimals.Blazor.Extensions).Assembly
     );
 

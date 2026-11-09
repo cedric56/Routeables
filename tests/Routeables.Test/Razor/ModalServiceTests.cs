@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Routeables.Abstraction;
+using Routeables.Blazor.Components;
 using Routeables.Blazor.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;

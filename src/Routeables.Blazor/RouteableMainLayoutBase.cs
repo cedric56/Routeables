@@ -12,7 +12,7 @@ namespace Routeables.Blazor;
 /// the refresh on view/lock changes, the first-render initialization and the address synchronization.
 /// A layout inherits it and defines its own structure (<c>MainLayout</c>, or a MudBlazor layout).
 /// </summary>
-public abstract class MainLayoutBase : LayoutComponentBase, IDisposable
+public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
 {
     /// <summary>The service that applies the theme a view model asked for.</summary>
     [Inject] protected IRouteableRequestedThemeService ThemeService { get; set; } = default!;

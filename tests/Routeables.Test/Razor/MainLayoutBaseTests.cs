@@ -14,7 +14,7 @@ using System.Collections.ObjectModel;
 namespace Routeables.Tests.Razor;
 
 /// <summary>
-/// <see cref="MainLayoutBase"/>: what every layout gets without any markup. The first render starts Routeables (address, initialization,
+/// <see cref="RouteableMainLayoutBase"/>: what every layout gets without any markup. The first render starts Routeables (address, initialization,
 /// theme, first page), the title and the menu follow the main view model, and the events are let go when the layout goes.
 /// </summary>
 public class MainLayoutBaseTests
@@ -25,7 +25,7 @@ public class MainLayoutBaseTests
         public Layout? Layout { get; set; }
     }
 
-    private sealed class Layout : MainLayoutBase
+    private sealed class Layout : RouteableMainLayoutBase
     {
         [Inject] public Probe Instances { get; set; } = default!;
 

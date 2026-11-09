@@ -1,8 +1,7 @@
 ﻿@using Routeables.Blazor
-@using Routeables.Blazor.Services
 @using global::MudBlazor
-@* Lifecycle, theme, URL sync, Title, _drawerOpen, DrawerToggle, OnNavClick and Service come from MainLayoutBase. *@
-@inherits MainLayoutBase
+@* Lifecycle, theme, URL sync, Title, _drawerOpen, DrawerToggle, OnNavClick and Service come from RouteableMainLayoutBase. *@
+@inherits RouteableMainLayoutBase
 
 <MudThemeProvider IsDarkMode="Service.IsDarkMode" />
 <MudPopoverProvider />
