@@ -1,4 +1,6 @@
-﻿namespace Routeables.Blazor.Services;
+﻿using Routeables.Blazor.Components;
+
+namespace Routeables.Blazor.Services;
 
 /// <summary>One button of a dialog and the value it completes the dialog with.</summary>
 internal sealed record DialogButton(string Text, int Result, bool IsPrimary = false);

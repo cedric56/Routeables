@@ -1,12 +1,12 @@
-﻿@using Routeables.Blazor
-@using Routeables.Blazor.Services
-@using Microsoft.AspNetCore.Components.Routing
+﻿@using Microsoft.AspNetCore.Components.Routing
+@using Routeables.Blazor
+@using Routeables.Blazor.Components
 
 <Router AppAssembly="typeof(AboutView).Assembly"
-        AdditionalAssemblies="new[] { typeof(MainLayoutBase).Assembly }"
+        AdditionalAssemblies="new[] { typeof(RouteableMainLayoutBase).Assembly }"
         NotFoundPage="typeof(NotFound)">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
+        <RouteView RouteData="routeData" DefaultLayout="typeof(RouteableMainLayout)" />
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>
