@@ -85,7 +85,7 @@ public sealed class VisitorSessions(IServiceScopeFactory scopes) : IDisposable
         // A request that holds the session finishes first. The ones that already found it wait for the gate: they see Retired once they
         // have it, and take another session.
         session.Retired = true;
-        AsyncHelper.FireAndForget(() => Task.Run(async () =>
+        RouteableHelper.FireAndForget(() => Task.Run(async () =>
         {
             await session.Gate.WaitAsync();
             try { session.Dispose(); }

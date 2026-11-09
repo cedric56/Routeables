@@ -255,13 +255,13 @@ public class RouteableModulesTests
 
     private sealed class Tag(string name) { public string Name { get; } = name; }
 
-    private static ModuleServiceProvider ProviderOf(Action<IServiceCollection> application, Action<IServiceCollection>? module = null)
+    private static RouteableModuleServiceProvider ProviderOf(Action<IServiceCollection> application, Action<IServiceCollection>? module = null)
     {
         var app = new ServiceCollection();
         application(app);
         var own = new ServiceCollection();
         module?.Invoke(own);
-        return new ModuleServiceProvider(app.BuildServiceProvider(), new ModuleServices(own));
+        return new RouteableModuleServiceProvider(app.BuildServiceProvider(), new RouteableModuleServices(own));
     }
 
     [Fact]

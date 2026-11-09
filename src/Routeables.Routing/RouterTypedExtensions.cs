@@ -13,11 +13,11 @@ internal static class TypedInitialization
     /// so it is not passed as an extra constructor argument to the view model.
     /// </summary>
     internal static IRouteableArgs CreateArgs<TData>(TData data) =>
-        RouteableArgs.Create().ForValues(new RouteableArgument(new TypedInitializer<TData>(data), Key));
+        RouteableArgs.Create().ForValues(new RouteableArgument(new RouteableTypedInitializer<TData>(data), Key));
 
     /// <summary>Finds the typed initializer carried by <paramref name="args"/>, if any.</summary>
-    internal static ITypedInitializer? Find(IRouteableArgs args) =>
-        args.Values.Select(e => e.value).OfType<ITypedInitializer>().FirstOrDefault();
+    internal static IRouteableTypedInitializer? Find(IRouteableArgs args) =>
+        args.Values.Select(e => e.value).OfType<IRouteableTypedInitializer>().FirstOrDefault();
 }
 
 /// <summary>

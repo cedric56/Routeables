@@ -12,7 +12,7 @@ public class TypedInitializationTests
 
         var carrier = Assert.Single(args.Values);
         Assert.Equal(TypedInitialization.Key, carrier.name);
-        Assert.IsType<TypedInitializer<int>>(carrier.value);
+        Assert.IsType<RouteableTypedInitializer<int>>(carrier.value);
         Assert.Empty(args.ViewModelParameters);
         Assert.Empty(args.ViewParameters);
     }
@@ -25,7 +25,7 @@ public class TypedInitializationTests
         var found = TypedInitialization.Find(args);
 
         Assert.NotNull(found);
-        Assert.IsType<TypedInitializer<string>>(found);
+        Assert.IsType<RouteableTypedInitializer<string>>(found);
     }
 
     [Fact]

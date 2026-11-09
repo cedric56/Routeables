@@ -96,11 +96,11 @@ public class AttributesAndLoadingTests
     [Fact]
     public void A_typed_initializer_accepts_only_a_target_that_takes_its_data_type()
     {
-        var initializer = new TypedInitializer<int>(7);
+        var initializer = new RouteableTypedInitializer<int>(7);
 
         Assert.True(initializer.Accepts(new Receiver()));
         Assert.False(initializer.Accepts(new object()));
-        Assert.False(new TypedInitializer<string>("x").Accepts(new Receiver()));
+        Assert.False(new RouteableTypedInitializer<string>("x").Accepts(new Receiver()));
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class AttributesAndLoadingTests
         var target = new Receiver();
         using var source = new CancellationTokenSource();
 
-        await new TypedInitializer<int>(7).InitializeAsync(target, source.Token);
+        await new RouteableTypedInitializer<int>(7).InitializeAsync(target, source.Token);
 
         Assert.Equal(7, target.Received);
         Assert.Equal(source.Token, target.Token);
@@ -118,7 +118,7 @@ public class AttributesAndLoadingTests
     [Fact]
     public async Task A_typed_initializer_refuses_a_target_that_cannot_take_its_data()
     {
-        await Assert.ThrowsAsync<InvalidCastException>(() => new TypedInitializer<int>(1).InitializeAsync(new object(), CancellationToken.None));
+        await Assert.ThrowsAsync<InvalidCastException>(() => new RouteableTypedInitializer<int>(1).InitializeAsync(new object(), CancellationToken.None));
     }
 
     // ------------------------------------------------------------------------------------------------ singleton cache
@@ -159,7 +159,7 @@ public class AttributesAndLoadingTests
         // The module must exist: the dependency resolver refuses a path that is not an assembly.
         var path = typeof(AttributesAndLoadingTests).Assembly.Location;
 
-        var context = new ModuleLoadContext(path);
+        var context = new RouteableModuleLoadContext(path);
 
         Assert.Equal(Path.GetFileNameWithoutExtension(path), context.Name);
     }
@@ -167,7 +167,7 @@ public class AttributesAndLoadingTests
     [Fact]
     public void An_assembly_the_application_has_comes_from_the_default_context_so_the_types_are_the_same()
     {
-        var context = new ModuleLoadContext(typeof(AttributesAndLoadingTests).Assembly.Location);
+        var context = new RouteableModuleLoadContext(typeof(AttributesAndLoadingTests).Assembly.Location);
 
         var loaded = context.LoadFromAssemblyName(typeof(RouteableAttribute).Assembly.GetName());
 
@@ -177,7 +177,7 @@ public class AttributesAndLoadingTests
     [Fact]
     public void An_assembly_found_nowhere_is_not_loaded()
     {
-        var context = new ModuleLoadContext(typeof(AttributesAndLoadingTests).Assembly.Location);
+        var context = new RouteableModuleLoadContext(typeof(AttributesAndLoadingTests).Assembly.Location);
 
         Assert.Throws<FileNotFoundException>(() => context.LoadFromAssemblyName(new AssemblyName("Routeables.Missing.Module")));
     }

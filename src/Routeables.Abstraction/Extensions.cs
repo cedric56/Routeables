@@ -99,10 +99,10 @@ public static partial class Extensions
         ArgumentNullException.ThrowIfNull(entries);
 
         // A module added twice (a host that calls it and a helper that calls it too) adds its entries once.
-        if (services.Any(d => d.ServiceType == typeof(MenuEntries) && d.ImplementationInstance is MenuEntries known && known.Build.Equals(entries)))
+        if (services.Any(d => d.ServiceType == typeof(RouteableMenuEntries) && d.ImplementationInstance is RouteableMenuEntries known && known.Build.Equals(entries)))
             return services;
 
-        services.AddSingleton(new MenuEntries(entries, index));
+        services.AddSingleton(new RouteableMenuEntries(entries, index));
         return services;
     }
 
@@ -111,7 +111,7 @@ public static partial class Extensions
 
     private static IMainViewModel WithModuleEntries(IMainViewModel mainViewModel, IServiceProvider provider)
     {
-        foreach (var module in provider.GetServices<MenuEntries>())
+        foreach (var module in provider.GetServices<RouteableMenuEntries>())
             module.AddTo(mainViewModel);
 
         // The modules loaded while running: the ones already loaded add their entries now, the next ones when they are loaded.

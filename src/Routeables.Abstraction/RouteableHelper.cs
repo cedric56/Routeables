@@ -4,7 +4,7 @@ namespace Routeables.Abstraction;
 /// Helpers for the two places where a view model cannot simply <c>await</c>: a call it must not wait for (a load started from
 /// <see cref="IRouteable.OnEnteringAsync"/>), and a call it must wait for from synchronous code.
 /// </summary>
-public static class AsyncHelper
+public static class RouteableHelper
 {
     private static readonly TaskFactory Factory = new(
         CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
@@ -76,11 +76,11 @@ public static class AsyncHelper
         if (exception is OperationCanceledException)
             return;
 
-        RouteableErrors.Report(provider, exception, typeof(AsyncHelper), detail, "FireAndForget");
+        RouteableErrors.Report(provider, exception, typeof(RouteableHelper), detail, "FireAndForget");
         if (onError is null)
             return;
 
         try { onError(exception); }
-        catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(AsyncHelper), detail, "FireAndForget.onError"); }
+        catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(RouteableHelper), detail, "FireAndForget.onError"); }
     }
 }

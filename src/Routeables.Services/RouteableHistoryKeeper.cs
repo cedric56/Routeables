@@ -99,7 +99,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             return;
         }
 
-        AsyncHelper.FireAndForget(() => Task.Run(() => RestoreAsync(router, kept)), provider, "RouteableHistoryKeeper.Restore");
+        RouteableHelper.FireAndForget(() => Task.Run(() => RestoreAsync(router, kept)), provider, "RouteableHistoryKeeper.Restore");
     }
 
     private async Task RestoreAsync(IRouter router, IReadOnlyList<RouteableSnapshot> kept)

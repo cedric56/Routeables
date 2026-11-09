@@ -13,15 +13,15 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
     // What AddGeneratedRoutes()/RegisterRoute put in a collection for their own use: the application's copy is the one that counts.
     private static readonly HashSet<Type> Infrastructure =
     [
-        typeof(ScopedViewCache), typeof(WeakDisposableTracker), typeof(SingletonViewCache), typeof(RouteableTable), typeof(MenuEntries),
+        typeof(ScopedViewCache), typeof(WeakDisposableTracker), typeof(SingletonViewCache), typeof(RouteableTable), typeof(RouteableMenuEntries),
     ];
 
     private readonly object _gate = new();
     private readonly List<ModuleEntry> _loaded = [];
-    private readonly Dictionary<object, (Func<IServiceProvider, IRouteableArgs, object> Factory, ModuleServices Services)> _factories = [];
+    private readonly Dictionary<object, (Func<IServiceProvider, IRouteableArgs, object> Factory, RouteableModuleServices Services)> _factories = [];
     private readonly List<WeakReference<IMainViewModel>> _mains = [];
 
-    private sealed record ModuleEntry(RouteableModuleInfo Info, IReadOnlyList<MenuEntries> Menus, ModuleServices Services, Action<IServiceCollection> Add);
+    private sealed record ModuleEntry(RouteableModuleInfo Info, IReadOnlyList<RouteableMenuEntries> Menus, RouteableModuleServices Services, Action<IServiceCollection> Add);
 
     public event EventHandler<RouteableModuleInfo>? ModuleLoaded;
 
@@ -41,7 +41,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
         ArgumentNullException.ThrowIfNull(add);
 
         RouteableModuleInfo info;
-        List<(IMainViewModel Main, IReadOnlyList<IRouteableMenuEntry> Entries, MenuEntries Menu)> pending = [];
+        List<(IMainViewModel Main, IReadOnlyList<IRouteableMenuEntry> Entries, RouteableMenuEntries Menu)> pending = [];
         lock (_gate)
         {
             var known = _loaded.FirstOrDefault(l => string.Equals(l.Info.Name, name, StringComparison.OrdinalIgnoreCase));
@@ -62,8 +62,8 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
 
             var table = collection.Select(d => d.ImplementationInstance).OfType<RouteableTable>().FirstOrDefault();
             var routes = (table?.Entries.Select(e => e.Template) ?? []).ToArray();
-            var menus = collection.Where(d => d.ServiceType == typeof(MenuEntries)).Select(d => (MenuEntries)d.ImplementationInstance!).ToArray();
-            var services = new ModuleServices(collection.Where(d => !Infrastructure.Contains(d.ServiceType) && !IsRouteFactory(d)));
+            var menus = collection.Where(d => d.ServiceType == typeof(RouteableMenuEntries)).Select(d => (RouteableMenuEntries)d.ImplementationInstance!).ToArray();
+            var services = new RouteableModuleServices(collection.Where(d => !Infrastructure.Contains(d.ServiceType) && !IsRouteFactory(d)));
 
             foreach (var main in AliveMains())
                 foreach (var menu in menus)
@@ -103,7 +103,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
     internal bool TryGetFactory(object key, IServiceProvider application,
         out Func<IServiceProvider, IRouteableArgs, object> factory, out IServiceProvider provider)
     {
-        (Func<IServiceProvider, IRouteableArgs, object> Factory, ModuleServices Services) found;
+        (Func<IServiceProvider, IRouteableArgs, object> Factory, RouteableModuleServices Services) found;
         lock (_gate)
         {
             if (!_factories.TryGetValue(key, out found))
@@ -115,14 +115,14 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
         }
 
         factory = found.Factory;
-        provider = new ModuleServiceProvider(application, found.Services);
+        provider = new RouteableModuleServiceProvider(application, found.Services);
         return true;
     }
 
     /// <summary>Adds the entries of the modules already loaded to a main view model, and keeps it to add the ones of the next.</summary>
     internal void Attach(IMainViewModel mainViewModel)
     {
-        List<MenuEntries> menus;
+        List<RouteableMenuEntries> menus;
         lock (_gate)
         {
             _mains.RemoveAll(m => !m.TryGetTarget(out _));
@@ -177,7 +177,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
         if (!File.Exists(path))
             throw new FileNotFoundException($"No module at '{path}'.", path);
 
-        var context = new ModuleLoadContext(path);
+        var context = new RouteableModuleLoadContext(path);
         return Load(context.LoadFromAssemblyPath(Path.GetFullPath(path)));
     }
 

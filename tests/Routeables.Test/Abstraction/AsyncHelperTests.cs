@@ -25,7 +25,7 @@ public class AsyncHelperTests
         using var scope = provider;
         var seen = new TaskCompletionSource<Exception>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        AsyncHelper.FireAndForget(async () =>
+        RouteableHelper.FireAndForget(async () =>
         {
             await Task.Yield();
             throw new InvalidOperationException("load failed");
@@ -44,7 +44,7 @@ public class AsyncHelperTests
         var (provider, sink) = Build();
         using var scope = provider;
 
-        AsyncHelper.FireAndForget(() => throw new InvalidOperationException("at once"), provider);
+        RouteableHelper.FireAndForget(() => throw new InvalidOperationException("at once"), provider);
 
         Assert.Equal("at once", Assert.Single(sink.Reported).Exception.Message);
     }
@@ -58,7 +58,7 @@ public class AsyncHelperTests
         var work = new TaskCompletionSource();
 
         var finished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        AsyncHelper.FireAndForget(async () =>
+        RouteableHelper.FireAndForget(async () =>
         {
             try { await work.Task.WaitAsync(cts.Token); }
             finally { finished.TrySetResult(); }
@@ -88,7 +88,7 @@ public class AsyncHelperTests
         var (provider, sink) = Build();
         using var scope = provider;
 
-        AsyncHelper.FireAndForget(() => throw new InvalidOperationException("first"), provider, onError: _ => throw new InvalidOperationException("second"));
+        RouteableHelper.FireAndForget(() => throw new InvalidOperationException("first"), provider, onError: _ => throw new InvalidOperationException("second"));
 
         Assert.Equal(["first", "second"], sink.Reported.Select(r => r.Exception.Message));
     }

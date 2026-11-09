@@ -5,9 +5,9 @@ namespace Routeables.Routing;
 /// <summary>
 /// Carries typed routing data from <c>GoToRouteAsync&lt;TViewModel, TData&gt;</c> to
 /// <c>RouterLifecycle.InitializeAsync</c> without reflection (AOT friendly): the generic
-/// <see cref="TypedInitializer{TData}"/> knows <c>TData</c>, the lifecycle only sees this interface.
+/// <see cref="RouteableTypedInitializer{TData}"/> knows <c>TData</c>, the lifecycle only sees this interface.
 /// </summary>
-internal interface ITypedInitializer
+internal interface IRouteableTypedInitializer
 {
     /// <summary>Gets whether <paramref name="target"/> implements <c>IInitializeAsync&lt;TData&gt;</c>.</summary>
     bool Accepts(object target);
@@ -16,7 +16,7 @@ internal interface ITypedInitializer
     Task InitializeAsync(object target, CancellationToken ct);
 }
 
-internal sealed class TypedInitializer<TData>(TData data) : ITypedInitializer
+internal sealed class RouteableTypedInitializer<TData>(TData data) : IRouteableTypedInitializer
 {
     public bool Accepts(object target) => target is IInitializeAsync<TData>;
 

@@ -3,7 +3,7 @@ namespace Routeables.Abstraction;
 /// <summary>The entries a module adds to the menu, and where; see <see cref="Extensions.AddMenuEntries"/>.</summary>
 /// <param name="Build">Builds the entries of one main view model.</param>
 /// <param name="Index">The place of the first entry in the menu, or <see langword="null"/> for the end.</param>
-internal sealed record MenuEntries(Func<IEnumerable<IRouteableMenuEntry>> Build, int? Index = null)
+internal sealed record RouteableMenuEntries(Func<IEnumerable<IRouteableMenuEntry>> Build, int? Index = null)
 {
     /// <summary>Builds the entries and puts them in the menu of <paramref name="mainViewModel"/>, at <see cref="Index"/> or at the end.</summary>
     public void AddTo(IMainViewModel mainViewModel) => AddTo(mainViewModel, Build());

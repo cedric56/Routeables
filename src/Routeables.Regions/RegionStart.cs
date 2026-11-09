@@ -76,7 +76,7 @@ public static class RegionStart
             return;
         }
 
-        AsyncHelper.FireAndForget(async () =>
+        RouteableHelper.FireAndForget(async () =>
         {
             var result = await router.GoToAsync(route);
             if (!result.Success)

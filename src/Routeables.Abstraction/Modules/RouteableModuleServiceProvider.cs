@@ -6,7 +6,7 @@ namespace Routeables.Abstraction;
 /// The provider a route of a module loaded while running is built with: the services of the module first, then the ones of the
 /// application. The container of the application cannot take services after it was built, so the module keeps its own.
 /// </summary>
-internal sealed class ModuleServiceProvider(IServiceProvider application, ModuleServices module) : IServiceProvider, IKeyedServiceProvider
+internal sealed class RouteableModuleServiceProvider(IServiceProvider application, RouteableModuleServices module) : IServiceProvider, IKeyedServiceProvider
 {
     public object? GetService(Type serviceType)
         => module.TryGet(serviceType, this, application, out var service) ? service : application.GetService(serviceType);
@@ -21,7 +21,7 @@ internal sealed class ModuleServiceProvider(IServiceProvider application, Module
 }
 
 /// <summary>The services a module registered, built when they are asked for (singletons once, the others each time).</summary>
-internal sealed class ModuleServices(IEnumerable<ServiceDescriptor> descriptors) : IDisposable
+internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> descriptors) : IDisposable
 {
     private readonly Dictionary<Type, ServiceDescriptor> _descriptors = descriptors
         .Where(d => !d.IsKeyedService)
@@ -49,7 +49,7 @@ internal sealed class ModuleServices(IEnumerable<ServiceDescriptor> descriptors)
             if (!_singletons.TryGetValue(serviceType, out var known))
             {
                 // A singleton is built against the application's own container, never against one scope of it.
-                known = Create(descriptor, new ModuleServiceProvider(application, this));
+                known = Create(descriptor, new RouteableModuleServiceProvider(application, this));
                 _singletons[serviceType] = known;
                 if (descriptor.ImplementationInstance is null)          // an instance given by the module is not ours to dispose
                     _created.Add(known);

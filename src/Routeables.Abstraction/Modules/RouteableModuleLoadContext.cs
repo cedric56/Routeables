@@ -10,7 +10,7 @@ namespace Routeables.Abstraction;
 /// to the module.
 /// </summary>
 [RequiresUnreferencedCode("Loads assemblies the trimmer cannot see.")]
-internal sealed class ModuleLoadContext(string path) : AssemblyLoadContext(Path.GetFileNameWithoutExtension(path), isCollectible: false)
+internal sealed class RouteableModuleLoadContext(string path) : AssemblyLoadContext(Path.GetFileNameWithoutExtension(path), isCollectible: false)
 {
     private readonly AssemblyDependencyResolver _resolver = new(path);
     private readonly string _directory = Path.GetDirectoryName(Path.GetFullPath(path)) ?? string.Empty;
