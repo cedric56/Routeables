@@ -364,8 +364,12 @@ public class DialogServiceDeviceTests
                 var id = count++;
                 var parameters = new RouteableContentDialog
                 {
-                    Title = "d" + id, PrimaryButtonText = "Primary " + id, IsPrimaryButtonEnabled = true,
-                    SecondaryButtonText = "Secondary " + id, IsSecondaryButtonEnabled = true, CloseButtonText = "Close " + id,
+                    Title = "d" + id,
+                    PrimaryButtonText = "Primary " + id,
+                    IsPrimaryButtonEnabled = true,
+                    SecondaryButtonText = "Secondary " + id,
+                    IsSecondaryButtonEnabled = true,
+                    CloseButtonText = "Close " + id,
                 };
                 var shown = service.ShowContentDialogAsync(parameters);
                 open.Add((shown, await PopupAsync(open.Count + 1), parameters, id));

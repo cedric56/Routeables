@@ -4,7 +4,7 @@ namespace XAnimals.Common;
 
 /// <summary>
 /// The icon of each page of the menu. A page names its icon by a key (the second argument of <c>RouteableMenuEntry</c>),
-/// and <see cref="IconResolver"/> turns the key into what the platform displays: a glyph (text) for Razor and Avalonia,
+/// and <see cref="RouteableIconResolver"/> turns the key into what the platform displays: a glyph (text) for Razor and Avalonia,
 /// an <c>ImageSource</c> for Maui, built from the key and the glyph by the function given to <see cref="Register"/>.
 /// </summary>
 public static class AnimalIcons
@@ -53,10 +53,10 @@ public static class AnimalIcons
     {
         if (registered) return;
         registered = true;
-        IconResolver.Register(new GlyphResolver(toSource));
+        RouteableIconResolver.Register(new GlyphResolver(toSource));
     }
 
-    private sealed class GlyphResolver(Func<string, string, object?>? toSource) : IIconResolver
+    private sealed class GlyphResolver(Func<string, string, object?>? toSource) : IRouteableIconResolver
     {
         public object? GetIcon(string key) => glyphs.GetValueOrDefault(key);
 

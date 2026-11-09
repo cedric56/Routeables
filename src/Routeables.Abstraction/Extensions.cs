@@ -121,31 +121,31 @@ public static partial class Extensions
     }
 
     /// <summary>
-    /// Registers the factory that builds the <see cref="ILockCoordinator"/> of a main view model (see
+    /// Registers the factory that builds the <see cref="IRouteableLockCoordinator"/> of a main view model (see
     /// <see cref="CreateLockCoordinator"/>). <c>AddLocking()</c> of <c>Routeables.Locking</c> calls it with its own
     /// coordinator and adds the broker it listens to; call it yourself only to supply another coordinator.
     /// </summary>
     /// <typeparam name="TLockCoordinator">The coordinator; it is built with the provider and the main view model.</typeparam>
     public static void RegisterLockCoordinator<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TLockCoordinator>(this IServiceCollection services)
-        where TLockCoordinator : ILockCoordinator
+        where TLockCoordinator : IRouteableLockCoordinator
     {
         // The factory captures the provider it is resolved from. Scoped, so that provider is the router's own scope.
         services.TryAdd(new ServiceDescriptor(
-            typeof(Func<IMainViewModel, ILockCoordinator>),
-            sp => (Func<IMainViewModel, ILockCoordinator>)(manager =>
+            typeof(Func<IMainViewModel, IRouteableLockCoordinator>),
+            sp => (Func<IMainViewModel, IRouteableLockCoordinator>)(manager =>
                 ActivatorUtilities.CreateInstance<TLockCoordinator>(sp, manager)),
             ServiceLifetime.Scoped));
     }
 
     /// <summary>
-    /// Creates a <see cref="ILockCoordinator"/> bound to <paramref name="mainViewModel"/>
+    /// Creates a <see cref="IRouteableLockCoordinator"/> bound to <paramref name="mainViewModel"/>
     /// </summary>
     /// <param name="provider">The provider the factory is resolved from.</param>
     /// <param name="mainViewModel">The MVVM manager the coordinator will work with.</param>
-    /// <returns>A new <see cref="ILockCoordinator"/> instance (one per call).</returns>
-    public static ILockCoordinator GetLockCoordinator(this IServiceProvider provider, IMainViewModel mainViewModel)
+    /// <returns>A new <see cref="IRouteableLockCoordinator"/> instance (one per call).</returns>
+    public static IRouteableLockCoordinator GetLockCoordinator(this IServiceProvider provider, IMainViewModel mainViewModel)
     {
-        var factory = provider.GetRequiredService<Func<IMainViewModel, ILockCoordinator>>();
+        var factory = provider.GetRequiredService<Func<IMainViewModel, IRouteableLockCoordinator>>();
         return factory.Invoke(mainViewModel);
     }
 }

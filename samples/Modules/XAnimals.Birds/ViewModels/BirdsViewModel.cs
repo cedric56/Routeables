@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Routing;
-using XAnimals.Models;
 using XAnimals.Common;
+using XAnimals.Models;
 
 namespace XAnimals.Birds;
 

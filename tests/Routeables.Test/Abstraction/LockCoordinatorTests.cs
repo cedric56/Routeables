@@ -16,7 +16,7 @@ public class LockCoordinatorTests
             .AddSingleton<IMainViewModel>(primary)
             .AddSingleton<IMainViewModel>(other)
             .BuildServiceProvider();
-        var coordinator = new LockCoordinator(provider, broker, primary);
+        var coordinator = new RouteableLockCoordinator(provider, broker, primary);
 
         coordinator.Subscribe();
         broker.Publish(new RouteableLockMessage(IsLocked: true, IsAllLocked: false));
@@ -37,7 +37,7 @@ public class LockCoordinatorTests
             .AddSingleton<IMainViewModel>(primary)
             .AddSingleton<IMainViewModel>(other)
             .BuildServiceProvider();
-        using var coordinator = new LockCoordinator(provider, broker, primary);
+        using var coordinator = new RouteableLockCoordinator(provider, broker, primary);
 
         coordinator.Subscribe();
         broker.Publish(new OtherMessage());
@@ -57,7 +57,7 @@ public class LockCoordinatorTests
         using var provider = new ServiceCollection()
             .AddSingleton<IMainViewModel>(primary)
             .BuildServiceProvider();
-        var coordinator = new LockCoordinator(provider, broker, primary);
+        var coordinator = new RouteableLockCoordinator(provider, broker, primary);
         coordinator.Subscribe();
 
         coordinator.Dispose();
@@ -73,7 +73,7 @@ public class LockCoordinatorTests
         var primary = new RouteablesProbe();
         var broker = new RouteableLockBroker();
         var provider = new CountingProvider();
-        var coordinator = new LockCoordinator(provider, broker, primary);
+        var coordinator = new RouteableLockCoordinator(provider, broker, primary);
 
         coordinator.Subscribe();
         broker.Publish(new RouteableLockMessage(IsLocked: true, IsAllLocked: false));
@@ -92,7 +92,7 @@ public class LockCoordinatorTests
         var primary = new RouteablesProbe();
         var broker = new RouteableLockBroker();
         using var provider = new ServiceCollection().BuildServiceProvider();
-        var coordinator = new LockCoordinator(provider, broker, primary);
+        var coordinator = new RouteableLockCoordinator(provider, broker, primary);
 
         coordinator.Subscribe();
         coordinator.Subscribe();
@@ -108,8 +108,8 @@ public class LockCoordinatorTests
         var second = new RouteablesProbe();
         var broker = new RouteableLockBroker();
         using var provider = new ServiceCollection().BuildServiceProvider();
-        var stopped = new LockCoordinator(provider, broker, first);
-        var listening = new LockCoordinator(provider, broker, second);
+        var stopped = new RouteableLockCoordinator(provider, broker, first);
+        var listening = new RouteableLockCoordinator(provider, broker, second);
         stopped.Subscribe();
         listening.Subscribe();
 
@@ -126,7 +126,7 @@ public class LockCoordinatorTests
         var primary = new RouteablesProbe();
         var broker = new RouteableLockBroker();
         var provider = new ServiceCollection().AddSingleton<IMainViewModel>(primary).BuildServiceProvider();
-        var coordinator = new LockCoordinator(provider, broker, primary);
+        var coordinator = new RouteableLockCoordinator(provider, broker, primary);
         coordinator.Subscribe();
         provider.Dispose();
 

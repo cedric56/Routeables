@@ -11,9 +11,9 @@ using Routeables.Avalonia.Services;
 using Routeables.Generated;
 using System;
 using System.Net.Http;
-using XAnimals.Models;
 using XAnimals.Avalonia.Views;
 using XAnimals.Common;
+using XAnimals.Models;
 using XAnimals.ViewModels;
 
 namespace XAnimals.Avalonia;

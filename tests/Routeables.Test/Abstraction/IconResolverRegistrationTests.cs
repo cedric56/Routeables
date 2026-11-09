@@ -3,11 +3,11 @@ using Routeables.Abstraction;
 namespace Routeables.Tests.Abstraction;
 
 /// <summary>
-/// <see cref="IconResolver"/> is process-wide: every test uses its own GUID key, so none depends on another.
+/// <see cref="RouteableIconResolver"/> is process-wide: every test uses its own GUID key, so none depends on another.
 /// </summary>
 public class IconResolverRegistrationTests
 {
-    private sealed class FixedResolver(string key, object icon) : IIconResolver
+    private sealed class FixedResolver(string key, object icon) : IRouteableIconResolver
     {
         public int Calls { get; private set; }
 
@@ -25,13 +25,13 @@ public class IconResolverRegistrationTests
     {
         var key = $"token-{Guid.NewGuid()}";
         var icon = new object();
-        var token = IconResolver.Register(new FixedResolver(key, icon));
-        Assert.Same(icon, IconResolver.GetIcon(key));
+        var token = RouteableIconResolver.Register(new FixedResolver(key, icon));
+        Assert.Same(icon, RouteableIconResolver.GetIcon(key));
 
         token.Dispose();
         token.Dispose();
 
-        Assert.Null(IconResolver.GetIcon(key));
+        Assert.Null(RouteableIconResolver.GetIcon(key));
     }
 
     [Fact]
@@ -40,14 +40,14 @@ public class IconResolverRegistrationTests
         var key = $"twice-{Guid.NewGuid()}";
         var provider = new FixedResolver(key, new object());
 
-        var first = IconResolver.Register(provider);
-        var second = IconResolver.Register(provider);
-        IconResolver.GetIcon(key);
+        var first = RouteableIconResolver.Register(provider);
+        var second = RouteableIconResolver.Register(provider);
+        RouteableIconResolver.GetIcon(key);
 
         Assert.Equal(1, provider.Calls);
 
         first.Dispose();
-        Assert.Null(IconResolver.GetIcon(key));
+        Assert.Null(RouteableIconResolver.GetIcon(key));
         second.Dispose();
     }
 
@@ -57,9 +57,9 @@ public class IconResolverRegistrationTests
         var keys = Enumerable.Range(0, 100).Select(_ => $"parallel-{Guid.NewGuid()}").ToList();
         var icons = keys.ToDictionary(k => k, _ => new object());
 
-        await Task.WhenAll(keys.Select(k => Task.Run(() => IconResolver.Register(new FixedResolver(k, icons[k])))));
+        await Task.WhenAll(keys.Select(k => Task.Run(() => RouteableIconResolver.Register(new FixedResolver(k, icons[k])))));
 
         foreach (var key in keys)
-            Assert.Same(icons[key], IconResolver.GetIcon(key));
+            Assert.Same(icons[key], RouteableIconResolver.GetIcon(key));
     }
 }

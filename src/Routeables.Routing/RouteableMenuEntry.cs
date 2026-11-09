@@ -32,7 +32,7 @@ public class RouteableMenuEntry : IRouteableMenuEntry, INotifyPropertyChanged
 
     /// <summary>
     /// Gets or sets a value indicating whether the routeable reports it cannot be routed to.
-    /// Updated by <see cref="ILockCoordinator.Subscribe"/>.
+    /// Updated by <see cref="IRouteableLockCoordinator.Subscribe"/>.
     /// </summary>
     public bool IsLock
     {
@@ -88,9 +88,9 @@ public class RouteableMenuEntry : IRouteableMenuEntry, INotifyPropertyChanged
     public string? Path { get; }
 
     /// <summary>
-    /// Gets or sets the resolvers used for this page's icon; <see langword="null"/> uses <see cref="IconResolver.Default"/>.
+    /// Gets or sets the resolvers used for this page's icon; <see langword="null"/> uses <see cref="RouteableIconResolver.Default"/>.
     /// </summary>
-    public IIconResolver? Icons { get; set; }
+    public IRouteableIconResolver? Icons { get; set; }
 
     /// <summary>
     /// Gets or sets a short sentence shown under the display name by the route change menus.

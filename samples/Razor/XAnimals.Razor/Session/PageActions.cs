@@ -2,9 +2,9 @@
 using Routeables.Abstraction;
 using Routeables.AspNetCore;
 using Routeables.Services;
-using IRouter = Routeables.Abstraction.IRouter;
 using XAnimals.Common;
 using XAnimals.ViewModels;
+using IRouter = Routeables.Abstraction.IRouter;
 
 namespace XAnimals.Razor.Session;
 

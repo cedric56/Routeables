@@ -152,7 +152,7 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
         }
     }
 
-    private ILockCoordinator? _coordinator;
+    private IRouteableLockCoordinator? _coordinator;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainViewModelBase"/> class.

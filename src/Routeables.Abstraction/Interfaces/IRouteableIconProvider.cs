@@ -2,9 +2,9 @@
 
 /// <summary>
 /// Gives a page its icon from a key (<see cref="IRouteableMenuEntry.Path"/>). Implement it to draw icons from your own set, a font or
-/// resources, and register it with <see cref="IconResolver.Register"/>; the first resolver that knows a key wins.
+/// resources, and register it with <see cref="RouteableIconResolver.Register"/>; the first resolver that knows a key wins.
 /// </summary>
-public interface IIconResolver
+public interface IRouteableIconResolver
 {
     /// <summary>The icon for <paramref name="key"/> as something the host puts in a view (a menu entry, a header).</summary>
     /// <returns>The icon, or <see langword="null"/> when this resolver does not know the key.</returns>
@@ -20,14 +20,14 @@ public interface IIconResolver
 /// <see cref="Register"/> returns a token that removes it. An application that wants its icons apart from the process-wide
 /// ones (tests, several hosts) creates its own and gives it to its views with <see cref="IRouteableMenuEntry.Icons"/>.
 /// </summary>
-public sealed class IconResolverRegistry : IIconResolver
+public sealed class RouteableIconResolverRegistry : IRouteableIconResolver
 {
     private readonly object _gate = new();
-    private IIconResolver[] _providers = [];
+    private IRouteableIconResolver[] _providers = [];
 
     /// <summary>Adds <paramref name="provider"/> after the ones already registered; the same instance is kept once.</summary>
     /// <returns>A token: disposing it removes the provider again.</returns>
-    public IDisposable Register(IIconResolver provider)
+    public IDisposable Register(IRouteableIconResolver provider)
     {
         ArgumentNullException.ThrowIfNull(provider);
 
@@ -62,13 +62,13 @@ public sealed class IconResolverRegistry : IIconResolver
         return null;
     }
 
-    private void Remove(IIconResolver provider)
+    private void Remove(IRouteableIconResolver provider)
     {
         lock (_gate)
             _providers = _providers.Where(p => !ReferenceEquals(p, provider)).ToArray();
     }
 
-    private sealed class Registration(IconResolverRegistry owner, IIconResolver provider) : IDisposable
+    private sealed class Registration(RouteableIconResolverRegistry owner, IRouteableIconResolver provider) : IDisposable
     {
         private int _disposed;
 
@@ -85,17 +85,17 @@ public sealed class IconResolverRegistry : IIconResolver
 /// A menu entry has no container to ask, so the resolvers of the application are kept here, once for the process, in
 /// <see cref="Default"/>; a view that names its own <see cref="IRouteableMenuEntry.Icons"/> uses those instead.
 /// </summary>
-public static class IconResolver
+public static class RouteableIconResolver
 {
     /// <summary>The process-wide registry used by the views that do not name their own.</summary>
-    public static IconResolverRegistry Default { get; } = new();
+    public static RouteableIconResolverRegistry Default { get; } = new();
 
-    /// <inheritdoc cref="IconResolverRegistry.Register"/>
-    public static IDisposable Register(IIconResolver provider) => Default.Register(provider);
+    /// <inheritdoc cref="RouteableIconResolverRegistry.Register"/>
+    public static IDisposable Register(IRouteableIconResolver provider) => Default.Register(provider);
 
-    /// <inheritdoc cref="IconResolverRegistry.GetIcon"/>
+    /// <inheritdoc cref="RouteableIconResolverRegistry.GetIcon"/>
     public static object? GetIcon(string key) => Default.GetIcon(key);
 
-    /// <inheritdoc cref="IconResolverRegistry.GetSource"/>
+    /// <inheritdoc cref="RouteableIconResolverRegistry.GetSource"/>
     public static object? GetSource(string key) => Default.GetSource(key);
 }

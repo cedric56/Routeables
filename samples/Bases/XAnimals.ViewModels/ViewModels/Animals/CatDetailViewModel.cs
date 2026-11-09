@@ -1,7 +1,7 @@
 ﻿using Routeables.Abstraction;
+using XAnimals.Common;
 using XAnimals.Data;
 using XAnimals.Models;
-using XAnimals.Common;
 
 namespace XAnimals.ViewModels;
 

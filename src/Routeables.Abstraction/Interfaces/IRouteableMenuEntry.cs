@@ -15,8 +15,6 @@ public interface IRouteableMenuEntry
     /// <summary>The view instance of the entry, when one has been assigned or created; <see langword="null"/> before.</summary>
     object? View { get; set; }
 
-    //Type? ViewModelType { get; }
-
     /// <summary>The address of the entry (<c>/cats</c>), as it is given to the router.</summary>
     string Route { get; }
 
@@ -42,14 +40,14 @@ public interface IRouteableMenuEntry
     /// <summary>Whether <see cref="Description"/> has text (bindable, for the menus).</summary>
     bool HasDescription => !string.IsNullOrWhiteSpace(Description);
 
-    /// <summary>The key of the icon of this entry, given to the resolvers (see <see cref="IIconResolver"/>); <see langword="null"/> for none.</summary>
+    /// <summary>The key of the icon of this entry, given to the resolvers (see <see cref="IRouteableIconResolver"/>); <see langword="null"/> for none.</summary>
     string? Path { get; }
 
     /// <summary>
     /// The resolvers that turn <see cref="Path"/> into <see cref="Icon"/> and <see cref="Source"/>; <see langword="null"/>
-    /// uses the process-wide <see cref="IconResolver.Default"/>.
+    /// uses the process-wide <see cref="RouteableIconResolver.Default"/>.
     /// </summary>
-    IIconResolver? Icons => null;
+    IRouteableIconResolver? Icons => null;
 
     /// <summary>The icon of this entry as a control, from <see cref="Path"/>; <see langword="null"/> when there is no key or no resolver knows it.</summary>
     object? Icon
@@ -57,7 +55,7 @@ public interface IRouteableMenuEntry
         get
         {
             if (string.IsNullOrWhiteSpace(Path)) return null;
-            return (Icons ?? IconResolver.Default).GetIcon(Path);
+            return (Icons ?? RouteableIconResolver.Default).GetIcon(Path);
         }
     }
 
@@ -67,7 +65,7 @@ public interface IRouteableMenuEntry
         get
         {
             if (string.IsNullOrWhiteSpace(Path)) return null;
-            return (Icons ?? IconResolver.Default).GetSource(Path);
+            return (Icons ?? RouteableIconResolver.Default).GetSource(Path);
         }
     }
 }

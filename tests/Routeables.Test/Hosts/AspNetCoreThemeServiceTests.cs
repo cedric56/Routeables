@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Routeables.AspNetCore;
+﻿using Routeables.AspNetCore;
 using Routeables.Core;
 using Routeables.Services;
 

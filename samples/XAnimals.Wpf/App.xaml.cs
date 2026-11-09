@@ -3,8 +3,8 @@ using Routeables.Services;
 using Routeables.Wpf;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using XAnimals.Models;
 using XAnimals.Common;
+using XAnimals.Models;
 using XAnimals.ViewModels;
 using XAnimals.Wpf.Views;
 

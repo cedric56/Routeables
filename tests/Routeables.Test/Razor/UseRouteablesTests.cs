@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Routeables.Abstraction;
-using Routeables.Core;
 using Routeables.Blazor;
 using Routeables.Blazor.Services;
+using Routeables.Core;
 using Routeables.Services;
 using Routeables.Tests.Core;
 
@@ -84,7 +84,7 @@ public class UseRouteablesTests
         await registeredCallback(firstScope.ServiceProvider);
         Assert.Equal(1, callbackCalls);
 
-        var injection = firstScope.ServiceProvider.GetRequiredService<IInjection>();
+        var injection = firstScope.ServiceProvider.GetRequiredService<IRouteableInjection>();
         Assert.Collection(
             injection.AttributeTypes,
             entry => Assert.Equal(typeof(InjectAttribute), entry.Type),

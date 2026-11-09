@@ -1,7 +1,7 @@
-using Routeables.Generated;
 using Routeables.Blazor;
-using XAnimals.BlazorApp.Components;
+using Routeables.Generated;
 using XAnimals.Blazor;
+using XAnimals.BlazorApp.Components;
 using XAnimals.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);

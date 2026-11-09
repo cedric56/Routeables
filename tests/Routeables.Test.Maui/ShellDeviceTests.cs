@@ -456,8 +456,8 @@ public class ShellDeviceTests
     {
         var services = new ServiceCollection().BuildServiceProvider();
 
-        Assert.Throws<ArgumentNullException>(() => ShellRoutes.UseShellRoutes(null!, services));
-        Assert.Throws<ArgumentNullException>(() => ShellRoutes.UseShellRoutes(new Shell(), null!));
+        Assert.Throws<ArgumentNullException>(() => RouteableShellRoutes.UseShellRoutes(null!, services));
+        Assert.Throws<ArgumentNullException>(() => RouteableShellRoutes.UseShellRoutes(new Shell(), null!));
     }
 
     /// <summary>Disposing the routing subscription stops it; disposing twice does not throw.</summary>
@@ -476,7 +476,7 @@ public class ShellDeviceTests
     {
         var services = new ServiceCollection().BuildServiceProvider();
 
-        Assert.Throws<ArgumentNullException>(() => ShellItems.AttachRouteables(null!, services));
+        Assert.Throws<ArgumentNullException>(() => RouteableShellItems.AttachRouteables(null!, services));
         Assert.Throws<ArgumentNullException>(() => new Shell().AttachRouteables(null!));
     }
 

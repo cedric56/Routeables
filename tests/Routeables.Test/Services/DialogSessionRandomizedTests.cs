@@ -38,9 +38,12 @@ public class DialogSessionRandomizedTests
             var completed = 0;
             var dialog = new RouteableContentDialog
             {
-                PrimaryButtonText = "Ok", PrimaryButtonCommand = primary,
-                SecondaryButtonText = "No", SecondaryButtonCommand = secondary,
-                CloseButtonText = "Cancel", CloseButtonCommand = close,
+                PrimaryButtonText = "Ok",
+                PrimaryButtonCommand = primary,
+                SecondaryButtonText = "No",
+                SecondaryButtonCommand = secondary,
+                CloseButtonText = "Cancel",
+                CloseButtonCommand = close,
                 Closing = _ => veto,
             };
             var session = new RouteableContentDialogSession(dialog, () => completed++);
@@ -56,7 +59,9 @@ public class DialogSessionRandomizedTests
             {
                 switch (random.Next(6))
                 {
-                    case 0: case 1: case 2:
+                    case 0:
+                    case 1:
+                    case 2:
                         {
                             var i = random.Next(3);
                             var allowed = !done && commands[i].Can;
@@ -113,7 +118,8 @@ public class DialogSessionRandomizedTests
             {
                 switch (random.Next(4))
                 {
-                    case 0: case 1:
+                    case 0:
+                    case 1:
                         {
                             var i = random.Next(3);
                             var before = vetoes;

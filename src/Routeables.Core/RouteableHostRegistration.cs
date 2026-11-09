@@ -20,8 +20,8 @@ internal static class RouteableHostRegistration
     public static void AddRouteableHost(this IServiceCollection services, Runtime runtime, params RouteablePropertyEntry[] otherProperties)
     {
         services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());
-        services.AddSingleton<IInjection>(
-            new PropertyInjection([new RouteablePropertyEntry(typeof(RouteableParameterAttribute), FromContainer: false), .. otherProperties]));
+        services.AddSingleton<IRouteableInjection>(
+            new RouteablePropertyInjection([new RouteablePropertyEntry(typeof(RouteableParameterAttribute), FromContainer: false), .. otherProperties]));
         services.RegisterEnvironments(runtime);
         services.RegisterRouting();
         services.TryAddSingleton(new RouteableHostLifetime(ServiceLifetime.Singleton));

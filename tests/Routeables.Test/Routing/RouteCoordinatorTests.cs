@@ -29,7 +29,7 @@ public class RouteCoordinatorTests
     private static ServiceProvider Build(Action<IServiceCollection>? configure = null)
     {
         var services = new ServiceCollection();
-        services.AddSingleton<IInjection>(new PropertyInjection(new RouteablePropertyEntry(typeof(ParamAttribute))));
+        services.AddSingleton<IRouteableInjection>(new RouteablePropertyInjection(new RouteablePropertyEntry(typeof(ParamAttribute))));
         services.RegisterRouting();
         services.AddRouteCoordinator();
         services.AddRegion("side", ServiceLifetime.Singleton);

@@ -18,12 +18,12 @@ public static partial class Extensions
     /// attribute (<c>[Parameter]</c>, <c>[QueryProperty]</c>) is left unset.</item>
     /// </list>
     /// A property is eligible if it is decorated with one of the attributes registered in
-    /// <see cref="IInjection.AttributeTypes"/> (e.g. [Parameter], [Inject]), or if its name is
+    /// <see cref="IRouteableInjection.AttributeTypes"/> (e.g. [Parameter], [Inject]), or if its name is
     /// produced by a registered attribute's <c>getName</c> selector on the view's type (query properties).
     /// Failures on individual properties are logged to the debug output and do not abort injection.
     /// </summary>
     /// <param name="view">The instance to populate.</param>
-    /// <param name="sp">The provider used for DI resolution and for the <see cref="IInjection"/> configuration.</param>
+    /// <param name="sp">The provider used for DI resolution and for the <see cref="IRouteableInjection"/> configuration.</param>
     /// <param name="parameters">Optional explicit values, keyed by property name (case-insensitive).</param>
     /// <returns>The same <paramref name="view"/> instance, for chaining.</returns>
     internal static TView Inject<[DynamicallyAccessedMembers(InjectableMembers.Properties)] TView>(this TView view, IServiceProvider sp, IDictionary<string, object?>? parameters = null)
@@ -33,7 +33,7 @@ public static partial class Extensions
         parameters = parameters is null ? null : ToLastWins(parameters.Select(p => (p.Key.ToLowerInvariant(), p.Value)));
 
         // No injection configuration registered (or no attributes configured): nothing to do.
-        var injection = sp.GetService<IInjection>();
+        var injection = sp.GetService<IRouteableInjection>();
         if (injection is null || injection.AttributeTypes.Count == 0)
             return view;
 
@@ -105,7 +105,7 @@ public static partial class Extensions
     {
         var parameters = args.ViewParameters.ResolveAttributesParameters();
 
-        var injection = sp.GetService<IInjection>();
+        var injection = sp.GetService<IRouteableInjection>();
         if (injection is not null && injection.AttributeTypes.Count > 0 && args.ViewModelParameters.Any(e => e.attribute && e.name is not null))
         {
             var names = view.InjectablePropertyNames(sp, injection);
@@ -118,7 +118,7 @@ public static partial class Extensions
     }
 
     // The properties a view declares as injectable, ignoring the ones that hold the whole bag or the data context.
-    private static HashSet<string> InjectablePropertyNames<[DynamicallyAccessedMembers(InjectableMembers.Properties)] TView>(this TView view, IServiceProvider sp, IInjection injection)
+    private static HashSet<string> InjectablePropertyNames<[DynamicallyAccessedMembers(InjectableMembers.Properties)] TView>(this TView view, IServiceProvider sp, IRouteableInjection injection)
         where TView : notnull
     {
         var injectable = InjectionTable.Resolve(sp, view);

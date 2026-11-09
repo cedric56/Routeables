@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using Routeables.Generated;
 using Routeables.Blazor;
+using Routeables.Generated;
 using XAnimals.Blazor;
 using XAnimals.ViewModels;
 

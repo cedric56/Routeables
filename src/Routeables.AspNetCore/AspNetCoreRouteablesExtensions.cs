@@ -43,8 +43,8 @@ public static class AspNetCoreRouteablesExtensions
         services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());
         // A template parameter written {name::} goes to a property marked [RouteableParameter] (a Razor view is built by MVC and has none of its own,
         // so it is the property of the view model that receives it).
-        services.AddSingleton<IInjection>(
-            new PropertyInjection(new RouteablePropertyEntry(typeof(RouteableParameterAttribute), FromContainer: false)));
+        services.AddSingleton<IRouteableInjection>(
+            new RouteablePropertyInjection(new RouteablePropertyEntry(typeof(RouteableParameterAttribute), FromContainer: false)));
         services.AddScoped<IRouteableDialogService, RouteableDialogService>();
         services.AddScoped<IRouteableNotificationService, RouteableNotificationService>();
         services.AddScoped<RouteableRequestThemeService>();

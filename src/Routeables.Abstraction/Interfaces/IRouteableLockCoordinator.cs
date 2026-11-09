@@ -4,7 +4,7 @@
 /// Keeps the menu locked while a page refuses to be left: it listens to the lock messages of the broker and locks or unlocks every
 /// entry of the main view model (see <see cref="IMainViewModel.Lock"/>). Created by <c>router.CreateLockCoordinator(menu)</c>.
 /// </summary>
-public interface ILockCoordinator
+public interface IRouteableLockCoordinator
 {
     /// <summary>Starts listening to the lock messages. Calling it again while subscribed does nothing.</summary>
     void Subscribe();

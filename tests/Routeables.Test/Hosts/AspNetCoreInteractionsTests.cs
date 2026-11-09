@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Routeables.AspNetCore;
-using Routeables.Core;
+﻿using Routeables.AspNetCore;
 using Routeables.Services;
 
 namespace Routeables.Tests.Hosts;

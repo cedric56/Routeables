@@ -13,7 +13,7 @@ public static class HostContract
     public static void ProvidesRouterAndInjection(IServiceProvider provider)
     {
         Assert.NotNull(provider.GetRequiredService<IRouter>());
-        Assert.NotNull(provider.GetRequiredService<IInjection>());
+        Assert.NotNull(provider.GetRequiredService<IRouteableInjection>());
         // A view model can reach the thread of the interface on every host.
         Assert.NotNull(provider.GetRequiredService<IRouteableDispatcher>());
         // Locking is optional: no host registers the broker or the lock coordinator (AddLocking does).
@@ -27,7 +27,7 @@ public static class HostContract
     {
         var valueAttributes = new[] { "ParameterAttribute", "RouteableParameterAttribute", "QueryPropertyAttribute" };
 
-        foreach (var entry in provider.GetRequiredService<IInjection>().AttributeTypes)
+        foreach (var entry in provider.GetRequiredService<IRouteableInjection>().AttributeTypes)
             if (valueAttributes.Contains(entry.Type.Name))
                 Assert.True(!entry.FromContainer);
     }

@@ -57,8 +57,8 @@ public static partial class Extensions
         => router.CurrentViewModel as T;
 
     /// <summary>The coordinator that locks <paramref name="mainViewModel"/> while a page blocks leaving; <see langword="null"/> when the router offers none.</summary>
-    public static ILockCoordinator? CreateLockCoordinator(this IRouter router, IMainViewModel mainViewModel)
-        => (router as ILockCoordinatorFactory)?.CreateLockCoordinator(mainViewModel);
+    public static IRouteableLockCoordinator? CreateLockCoordinator(this IRouter router, IMainViewModel mainViewModel)
+        => (router as IRouteableLockCoordinatorFactory)?.CreateLockCoordinator(mainViewModel);
 
     /// <summary>The router that shows <paramref name="view"/>: the one of its <see cref="IRouteableMenuEntry.Region"/>.</summary>
     public static IRouter RouterFor(this IServiceProvider provider, IRouteableMenuEntry view)

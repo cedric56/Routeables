@@ -1,11 +1,11 @@
 #if ANDROID
 
 using Android.App;
-using Microsoft.Maui.ApplicationModel;
 using Android.Content;
 using Android.OS;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
+using Microsoft.Maui.ApplicationModel;
 using Application = Android.App.Application;
 
 namespace Routeables.Native;

@@ -43,7 +43,7 @@ public class LockingRegistrationTests
 
     [Fact]
     public void AddLocking_rejects_null_services()
-        => Assert.Throws<ArgumentNullException>(() => LockingExtensions.AddLocking(null!));
+        => Assert.Throws<ArgumentNullException>(() => RouteableLockingExtensions.AddLocking(null!));
 
     private sealed class Own : IRouteableLockBroker
     {

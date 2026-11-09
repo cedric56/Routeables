@@ -1,5 +1,5 @@
-using XAnimals.Models;
 using XAnimals.Common;
+using XAnimals.Models;
 
 namespace XAnimals.Maui.Views;
 

@@ -7,7 +7,7 @@ namespace Routeables.Locking;
 /// <summary>
 /// Registration of the locking of the main entries: a page that blocks leaving locks the menu while it is shown.
 /// </summary>
-public static class LockingExtensions
+public static class RouteableLockingExtensions
 {
     /// <summary>
     /// Registers the broker (<see cref="IRouteableLockBroker"/>) and the coordinator that listens to it. A main view model
@@ -21,7 +21,7 @@ public static class LockingExtensions
 
         // TryAdd: an application-provided broker registration takes precedence. Scoped, like the router it serves.
         services.TryAdd(new ServiceDescriptor(typeof(IRouteableLockBroker), typeof(RouteableLockBroker), ServiceLifetime.Scoped));
-        services.RegisterLockCoordinator<LockCoordinator>();
+        services.RegisterLockCoordinator<RouteableLockCoordinator>();
         return services;
     }
 }

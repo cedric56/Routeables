@@ -5,7 +5,7 @@ namespace Routeables.Tests.Abstraction;
 
 public class IconRegistryIsolationTests
 {
-    private sealed class Fixed(string key, object icon) : IIconResolver
+    private sealed class Fixed(string key, object icon) : IRouteableIconResolver
     {
         public object? GetIcon(string requested) => requested == key ? icon : null;
         public object? GetSource(string requested) => requested == key ? icon : null;
@@ -16,9 +16,9 @@ public class IconRegistryIsolationTests
     {
         var key = $"own-{Guid.NewGuid()}";
         var global = new object();
-        using var token = IconResolver.Register(new Fixed(key, global));
+        using var token = RouteableIconResolver.Register(new Fixed(key, global));
 
-        var own = new IconResolverRegistry();
+        var own = new RouteableIconResolverRegistry();
         IRouteableMenuEntry view = new RouteableMenuEntry("/a", "/a", "A", key) { Icons = own };
 
         Assert.Null(view.Icon);                                 // its registry is empty
@@ -33,7 +33,7 @@ public class IconRegistryIsolationTests
     {
         var key = $"shared-{Guid.NewGuid()}";
         var icon = new object();
-        using var token = IconResolver.Register(new Fixed(key, icon));
+        using var token = RouteableIconResolver.Register(new Fixed(key, icon));
 
         IRouteableMenuEntry view = new RouteableMenuEntry("/a", "/a", "A", key);
 
@@ -45,8 +45,8 @@ public class IconRegistryIsolationTests
     public void The_own_registry_does_not_leak_into_the_process_wide_one()
     {
         var key = $"leak-{Guid.NewGuid()}";
-        new IconResolverRegistry().Register(new Fixed(key, new object()));
+        new RouteableIconResolverRegistry().Register(new Fixed(key, new object()));
 
-        Assert.Null(IconResolver.GetIcon(key));
+        Assert.Null(RouteableIconResolver.GetIcon(key));
     }
 }

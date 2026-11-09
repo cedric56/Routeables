@@ -1,7 +1,7 @@
-using System.ComponentModel;
-using XAnimals.Models;
-using XAnimals.Common;
 using Microsoft.UI.Xaml.Controls;
+using System.ComponentModel;
+using XAnimals.Common;
+using XAnimals.Models;
 using Visibility = Microsoft.UI.Xaml.Visibility;
 
 namespace XAnimals.WinUI3.Views;

@@ -12,7 +12,7 @@ namespace XAnimals.ViewModels;
 /// <list type="bullet">
 /// <item><description><b>Guard</b>: the Members page is for members (<see cref="MembersGuard"/>). Signed out, it sends you here; sign in, then open it.</description></item>
 /// <item><description><b>Link</b>: an address from outside (<c>xanimals://dogs/Eurohound</c>)followed  through the router (<see cref="RouteableDeepLinks"/>).</description></item>
-/// <item><description><b>Lock</b>: the page locks and unlocks the menu the way an application does while it is busy (a <see cref="RouteableLockMessage"/> on the broker, received by the <see cref="ILockCoordinator"/> of the main view model).</description></item>
+/// <item><description><b>Lock</b>: the page locks and unlocks the menu the way an application does while it is busy (a <see cref="RouteableLockMessage"/> on the broker, received by the <see cref="IRouteableLockCoordinator"/> of the main view model).</description></item>
 /// <item><description><b>Saved values</b>: the draft survives the process being killed (<see cref="IRouteableState"/>, <see cref="RouteableState"/>).</description></item>
 /// <item><description><b>Measures</b>: the time of each route change, published by the router (<see cref="RouteMetrics"/>).</description></item>
 /// </list>

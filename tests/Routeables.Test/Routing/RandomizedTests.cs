@@ -46,7 +46,7 @@ public class RandomizedRouteAndStateTests
             foreach (var (k, v) in vals)
             {
                 if (k == "path") continue;
-                var got = args != null && args.ViewModelParameters != null && args.ViewParameters != null ? 
+                var got = args != null && args.ViewModelParameters != null && args.ViewParameters != null ?
                     args.ViewModelParameters.Concat(args.ViewParameters).FirstOrDefault(p => p.name == k)?.value : null;
                 if (!Equals(got?.ToString(), v?.ToString())) bad.Add($"VALUE {t} {k}: expected [{v}] got [{got}] route={route}");
             }

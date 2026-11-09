@@ -69,7 +69,7 @@ public class RouteableHistoryRandomizedTests
                     trace += op;
                     switch (op)
                     {
-                        case 0: case 1: case 2: await router.GoToAsync(Routes[random.Next(Routes.Length)], cancellationToken:TestContext.Current.CancellationToken); break;
+                        case 0: case 1: case 2: await router.GoToAsync(Routes[random.Next(Routes.Length)], cancellationToken: TestContext.Current.CancellationToken); break;
                         case 3: await router.GoToAsync("/unknown-" + step, cancellationToken: TestContext.Current.CancellationToken); break;           // refused: nothing changes
                         case 4: await router.GoBackAsync(cancellationToken: TestContext.Current.CancellationToken); break;
                         case 5: await router.ForwardAsync(cancellationToken: TestContext.Current.CancellationToken); break;

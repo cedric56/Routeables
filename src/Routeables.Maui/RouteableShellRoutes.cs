@@ -6,7 +6,7 @@ namespace Routeables.Maui;
 /// Lets <c>Shell.Current.GoToAsync("//orders/42")</c> reach the router: an address that matches a route of Routeables is routed by the
 /// default router, an address Shell knows (<c>Routing.RegisterRoute</c>) is left to Shell. Opt-in; nothing changes without it.
 /// </summary>
-public static class ShellRoutes
+public static class RouteableShellRoutes
 {
     /// <summary>
     /// Follows <see cref="Shell.Navigating"/>: for a navigation that Shell was asked to make (not Back, and not a pop of its stack), the
@@ -60,7 +60,7 @@ public static class ShellRoutes
         }
         catch (Exception ex)
         {
-            RouteableErrors.Report(provider, ex, typeof(ShellRoutes));
+            RouteableErrors.Report(provider, ex, typeof(RouteableShellRoutes));
         }
         finally
         {

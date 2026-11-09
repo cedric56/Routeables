@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using XAnimals.Models;
 using XAnimals.Common;
+using XAnimals.Models;
 
 namespace XAnimals.Wpf.Views;
 

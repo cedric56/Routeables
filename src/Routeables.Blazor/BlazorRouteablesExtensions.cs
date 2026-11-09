@@ -2,8 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
-using Routeables.Core;
 using Routeables.Blazor.Services;
+using Routeables.Core;
 using Routeables.Routing;
 using Routeables.Services;
 using System.Diagnostics.CodeAnalysis;
@@ -110,8 +110,8 @@ public static class BlazorRouteablesExtensions
         services.TryAddScoped<Microsoft.AspNetCore.Components.IComponentActivator>(sp => sp.GetRequiredService<RouteableComponentActivator>());
         services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());
 
-        services.AddSingleton<IInjection>(
-            new PropertyInjection(
+        services.AddSingleton<IRouteableInjection>(
+            new RouteablePropertyInjection(
                 new RouteablePropertyEntry(typeof(InjectAttribute)),
                 new RouteablePropertyEntry(typeof(ParameterAttribute), FromContainer: false)));
 

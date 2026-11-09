@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Routeables.Abstraction;
 using Routeables.Generated;
-using Routeables.Routing;
 
 namespace Routeables.Tests.Generated;
 

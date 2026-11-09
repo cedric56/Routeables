@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 namespace Routeables.Abstraction;
 
 /// <summary>
-/// What the injection needs to know about a type to fill it (see <see cref="IInjection"/>): its attributes, and its properties with
+/// What the injection needs to know about a type to fill it (see <see cref="IRouteableInjection"/>): its attributes, and its properties with
 /// the attributes they carry and a way to read and write them. The source generator writes it for the types it registers, which then
 /// are filled without any reflection; a type registered with its own generic type is read from the members the trimmer keeps.
 /// </summary>
@@ -33,7 +33,7 @@ public sealed class InjectableType
     public IReadOnlyList<InjectableProperty> Properties { get; }
 
     /// <summary>The names the type-level attributes give to properties (<c>[QueryProperty("Name", "name")]</c>), whatever the registered attributes make of them.</summary>
-    internal HashSet<string> NamesGivenBy(IInjection injection)
+    internal HashSet<string> NamesGivenBy(IRouteableInjection injection)
     {
         var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var attribute in TypeAttributes)

@@ -1,7 +1,7 @@
 ﻿using Routeables.AspNetCore;
+using Routeables.Generated;
 using XAnimals.Razor;
 using XAnimals.Razor.Session;
-using Routeables.Generated;
 using XAnimals.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);

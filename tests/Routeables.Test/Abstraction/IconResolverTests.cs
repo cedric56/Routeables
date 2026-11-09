@@ -4,7 +4,7 @@ using Routeables.Abstraction;
 namespace Routeables.Test.Abstraction;
 
 /// <summary>
-/// <see cref="IconResolver"/> holds a single, process-wide, append-only list of providers with no way
+/// <see cref="RouteableIconResolver"/> holds a single, process-wide, append-only list of providers with no way
 /// to unregister them, so every test here uses a GUID-based key that is unique to that test. This keeps
 /// tests independent of each other and safe to run in parallel, even though they all share the same
 /// static registry.
@@ -16,8 +16,8 @@ public class IconResolverTests
     {
         var key = $"unknown-{Guid.NewGuid()}";
 
-        Assert.Null(IconResolver.GetIcon(key));
-        Assert.Null(IconResolver.GetSource(key));
+        Assert.Null(RouteableIconResolver.GetIcon(key));
+        Assert.Null(RouteableIconResolver.GetSource(key));
     }
 
     [Fact]
@@ -25,12 +25,12 @@ public class IconResolverTests
     {
         var key = $"icon-{Guid.NewGuid()}";
         var icon = new object();
-        var provider = Substitute.For<IIconResolver>();
+        var provider = Substitute.For<IRouteableIconResolver>();
         provider.GetIcon(key).Returns(icon);
 
-        IconResolver.Register(provider);
+        RouteableIconResolver.Register(provider);
 
-        Assert.Same(icon, IconResolver.GetIcon(key));
+        Assert.Same(icon, RouteableIconResolver.GetIcon(key));
     }
 
     [Fact]
@@ -38,12 +38,12 @@ public class IconResolverTests
     {
         var key = $"source-{Guid.NewGuid()}";
         var source = new object();
-        var provider = Substitute.For<IIconResolver>();
+        var provider = Substitute.For<IRouteableIconResolver>();
         provider.GetSource(key).Returns(source);
 
-        IconResolver.Register(provider);
+        RouteableIconResolver.Register(provider);
 
-        Assert.Same(source, IconResolver.GetSource(key));
+        Assert.Same(source, RouteableIconResolver.GetSource(key));
     }
 
     [Fact]
@@ -52,15 +52,15 @@ public class IconResolverTests
         var key = $"fallback-{Guid.NewGuid()}";
         var icon = new object();
 
-        var first = Substitute.For<IIconResolver>();
+        var first = Substitute.For<IRouteableIconResolver>();
         first.GetIcon(key).Returns((object?)null);
 
-        var second = Substitute.For<IIconResolver>();
+        var second = Substitute.For<IRouteableIconResolver>();
         second.GetIcon(key).Returns(icon);
 
-        IconResolver.Register(first);
-        IconResolver.Register(second);
+        RouteableIconResolver.Register(first);
+        RouteableIconResolver.Register(second);
 
-        Assert.Same(icon, IconResolver.GetIcon(key));
+        Assert.Same(icon, RouteableIconResolver.GetIcon(key));
     }
 }

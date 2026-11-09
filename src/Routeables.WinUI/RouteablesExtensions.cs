@@ -12,7 +12,6 @@ using Routeables.Uno.Services;
 using HostExtensions = Routeables.Uno.UnoRouteablesExtensions;
 #endif
 using System.Diagnostics.CodeAnalysis;
-using Application = Microsoft.UI.Xaml.Application;
 
 #if WINUI3
 namespace Routeables.WinUI3;
@@ -324,7 +323,7 @@ public static class UnoRouteablesExtensions
     {
         var services = new ServiceCollection();
 
-        #if WINUI3
+#if WINUI3
         services.AddRouteableHost(Runtime.WinUI3,
 #else
         services.AddRouteableHost(Runtime.Uno,

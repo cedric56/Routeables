@@ -19,7 +19,7 @@ public class MauiRegistrationTests
 
         Assert.Same(builder, returned);
         Assert.NotNull(provider.GetRequiredService<IRouter>());
-        Assert.NotNull(provider.GetRequiredService<IInjection>());
+        Assert.NotNull(provider.GetRequiredService<IRouteableInjection>());
         Assert.IsType<RouteableDialogService>(provider.GetRequiredService<IRouteableDialogService>());
         Assert.Same(provider.GetRequiredService<IRouteableDialogService>(), provider.GetRequiredService<RouteableDialogService>());
         Assert.NotNull(provider.GetRequiredService<IMessageBoxService>());

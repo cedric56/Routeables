@@ -8,7 +8,7 @@ namespace Routeables.Locking;
 /// It listens with its own subscription: disposing it (or calling <see cref="Unsubscribe"/>) stops this coordinator only,
 /// not the others that listen to the same broker.
 /// </summary>
-internal sealed class LockCoordinator : ILockCoordinator, IDisposable
+internal sealed class RouteableLockCoordinator : IRouteableLockCoordinator, IDisposable
 {
     private readonly object _gate = new();
     private readonly IServiceProvider _provider;
@@ -17,7 +17,7 @@ internal sealed class LockCoordinator : ILockCoordinator, IDisposable
     private IDisposable? _subscription;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LockCoordinator"/> class.
+    /// Initializes a new instance of the <see cref="RouteableLockCoordinator"/> class.
     /// </summary>
     /// <param name="provider">
     /// The service provider used to resolve the other <see cref="IMainViewModel"/> instances. It is only used when a message
@@ -26,7 +26,7 @@ internal sealed class LockCoordinator : ILockCoordinator, IDisposable
     /// </param>
     /// <param name="broker">The broker service used for subscribing to lock change messages.</param>
     /// <param name="manager">The primary routeable manager instance.</param>
-    public LockCoordinator(IServiceProvider provider, IRouteableLockBroker broker, IMainViewModel manager)
+    public RouteableLockCoordinator(IServiceProvider provider, IRouteableLockBroker broker, IMainViewModel manager)
     {
         _provider = provider;
         _broker = broker;

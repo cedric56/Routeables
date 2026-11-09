@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using System.Diagnostics.CodeAnalysis;
 using Routeables.Abstraction;
 using Routeables.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Routeables.Blazor;
 

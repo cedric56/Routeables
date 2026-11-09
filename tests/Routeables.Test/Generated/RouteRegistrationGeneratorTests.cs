@@ -244,7 +244,7 @@ public class RouteRegistrationGeneratorTests
             var assembly = Emit(source);
             var services = new ServiceCollection();
             services.RegisterRouting();
-            services.AddSingleton<IInjection>(new PropertyInjection(new RouteablePropertyEntry(assembly.GetType("ParamAttribute")!, FromContainer: false)));
+            services.AddSingleton<IRouteableInjection>(new RouteablePropertyInjection(new RouteablePropertyEntry(assembly.GetType("ParamAttribute")!, FromContainer: false)));
             var greeter = assembly.GetType("Greeter")!;
             services.AddSingleton(assembly.GetType("IGreeter")!, greeter);
             assembly.GetType("Setup")!.GetMethod(useGenerated ? "Generated" : "Manual")!.Invoke(null, [services]);
@@ -347,7 +347,7 @@ public class RouteRegistrationGeneratorTests
             var services = new ServiceCollection();
             services.RegisterRouting();
             library.Assembly.GetType("LibraryServices")!.GetMethod("Add")!.Invoke(null, [services]);
-            services.AddSingleton<IInjection>(new PropertyInjection(new RouteablePropertyEntry(library.Assembly.GetType("InjAttribute")!)));
+            services.AddSingleton<IRouteableInjection>(new RouteablePropertyInjection(new RouteablePropertyEntry(library.Assembly.GetType("InjAttribute")!)));
             application.GetType("Setup")!.GetMethod(useGenerated ? "Generated" : "Manual")!.Invoke(null, [services]);
 
             using var provider = services.BuildServiceProvider();

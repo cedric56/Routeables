@@ -12,7 +12,7 @@ internal class Router(
     RouterHistory history,
     RouterGate gate,
     RouterLifecycle lifecycle,
-    IServiceProvider provider) : IRouter, ILockCoordinatorFactory
+    IServiceProvider provider) : IRouter, IRouteableLockCoordinatorFactory
 {
     /// <summary>
     /// Occurs when a routing operation is about to begin.
@@ -495,10 +495,10 @@ internal class Router(
     }
 
     /// <inheritdoc />
-    public ILockCoordinator? CreateLockCoordinator(IMainViewModel mainViewModel)
+    public IRouteableLockCoordinator? CreateLockCoordinator(IMainViewModel mainViewModel)
     {
         // Locking is optional: without a registered factory (AddLocking) there is nothing to lock.
-        return provider.GetService<Func<IMainViewModel, ILockCoordinator>>()?.Invoke(mainViewModel);
+        return provider.GetService<Func<IMainViewModel, IRouteableLockCoordinator>>()?.Invoke(mainViewModel);
     }
 
     /// <inheritdoc />

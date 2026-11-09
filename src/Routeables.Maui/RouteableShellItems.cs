@@ -17,7 +17,7 @@ namespace Routeables.Maui;
 /// &lt;/Shell&gt;
 /// </code>
 /// </summary>
-public static class ShellItems
+public static class RouteableShellItems
 {
     /// <summary>
     /// Gives each <c>ShellContent</c> that has no content of its own a <see cref="RouteableRegion"/>, and routes it when it is selected.
@@ -28,7 +28,7 @@ public static class ShellItems
     /// A <c>ShellContent</c> without a <c>Route</c>, or that has a <c>Content</c> or a <c>ContentTemplate</c>, is left to Shell. The items are
     /// read when this is called: call it once the shell is built and before it is shown.
     /// <para>
-    /// Do not combine it with <see cref="ShellRoutes.UseShellRoutes"/>: the address Shell gives to an item (<c>//about</c>) is also the route
+    /// Do not combine it with <see cref="RouteableShellRoutes.UseShellRoutes"/>: the address Shell gives to an item (<c>//about</c>) is also the route
     /// <c>/about</c>, so the router would take the selection and Shell would cancel it.
     /// </para>
     /// </remarks>
@@ -100,7 +100,7 @@ public static class ShellItems
         }
         catch (Exception ex)
         {
-            RouteableErrors.Report(provider, ex, typeof(ShellItems), route);
+            RouteableErrors.Report(provider, ex, typeof(RouteableShellItems), route);
         }
 
         static string Trim(string? value) => (value ?? string.Empty).Trim('/');

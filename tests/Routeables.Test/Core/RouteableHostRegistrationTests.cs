@@ -12,7 +12,7 @@ public class RouteableHostRegistrationTests
         services.AddRouteableHost(Runtime.Uno, new RouteablePropertyEntry(typeof(InjectPropertyAttribute)));
 
         var provider = services.BuildRouteableProvider();
-        var attributes = provider.GetRequiredService<IInjection>().AttributeTypes;
+        var attributes = provider.GetRequiredService<IRouteableInjection>().AttributeTypes;
 
         Assert.Equal(Runtime.Uno, provider.GetRequiredService<IRuntime>().Current);
         Assert.Equal([typeof(RouteableParameterAttribute), typeof(InjectPropertyAttribute)], attributes.Select(a => a.Type));

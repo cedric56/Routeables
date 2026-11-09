@@ -5,17 +5,17 @@
 /// Marker attributes used by <c>InjectProperties</c> when assigning
 /// DI services and routing/view parameters on a created view.
 /// </summary>
-internal interface IInjection
+internal interface IRouteableInjection
 {
     /// <summary>Attribute types that identify injectable properties (e.g. [Inject], [Parameter]).</summary>
     IReadOnlyList<RouteablePropertyEntry> AttributeTypes { get; }
 }
 
-internal sealed class PropertyInjection : IInjection
+internal sealed class RouteablePropertyInjection : IRouteableInjection
 {
     public IReadOnlyList<RouteablePropertyEntry> AttributeTypes { get; }
 
-    public PropertyInjection(params RouteablePropertyEntry[] attributeTypes)
+    public RouteablePropertyInjection(params RouteablePropertyEntry[] attributeTypes)
     {
         ArgumentNullException.ThrowIfNull(attributeTypes);
         if (attributeTypes.Length == 0)

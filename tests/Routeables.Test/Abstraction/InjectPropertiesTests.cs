@@ -27,7 +27,7 @@ public class InjectPropertiesTests
     }
 
     private static IServiceProvider Provider() => new ServiceCollection()
-        .AddSingleton<IInjection>(new PropertyInjection(
+        .AddSingleton<IRouteableInjection>(new RouteablePropertyInjection(
             new RouteablePropertyEntry(typeof(ParamAttribute))))
         .AddSingleton<Service>()
         .BuildServiceProvider();
@@ -55,7 +55,7 @@ public class InjectPropertiesTests
     public void A_value_attribute_never_falls_back_to_the_container()
     {
         var provider = new ServiceCollection()
-            .AddSingleton<IInjection>(new PropertyInjection(
+            .AddSingleton<IRouteableInjection>(new RouteablePropertyInjection(
                 new RouteablePropertyEntry(typeof(ValueAttribute), FromContainer: false),
                 new RouteablePropertyEntry(typeof(ParamAttribute))))
             .AddSingleton<Service>()

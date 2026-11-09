@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Routeables.Generated;
 using Routeables.Blazor;
+using Routeables.Generated;
 using XAnimals.Blazor;
 using XAnimals.Blazor.Components;
 using XAnimals.ViewModels;
