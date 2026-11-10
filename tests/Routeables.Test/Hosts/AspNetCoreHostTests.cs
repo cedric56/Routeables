@@ -125,4 +125,23 @@ public class AspNetCoreHostTests
             Assert.Empty(service.ActiveNotifications());
         }
     }
+
+    [Theory]
+    [InlineData("cats", "/cats")]
+    [InlineData("/cats?x=1", "/cats?x=1")]
+    [InlineData("//evil.example", "/evil.example")]
+    [InlineData("\\evil.example", "/evil.example")]
+    [InlineData("/\\/evil.example", "/evil.example")]
+    [InlineData("", "/")]
+    [InlineData(null, "/")]
+    public void A_route_becomes_a_local_path_that_never_starts_like_another_site(string? route, string expected)
+        => Assert.Equal(expected, RouteableAddress.Of(route));
+
+    [Fact]
+    public void The_base_path_of_the_application_goes_in_front()
+    {
+        Assert.Equal("/app/cats?x=1", RouteableAddress.Of("cats?x=1", "/app"));
+        Assert.Equal("/app/", RouteableAddress.Of("", "/app"));
+        Assert.Equal("/app/evil.example", RouteableAddress.Of("//evil.example", "/app"));
+    }
 }

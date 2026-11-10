@@ -27,8 +27,6 @@ public class RouteableDeepLinksTests
     }
 
     [Theory]
-    [InlineData("https://example.com/orders/42?x=1#top", "/orders/42?x=1")]
-    [InlineData("HTTPS://example.com/orders", "/orders")]
     [InlineData("myapp://orders/42?x=1", "/orders/42?x=1")]
     [InlineData("myapp:///orders/42", "/orders/42")]
     [InlineData("myapp://orders", "/orders")]
@@ -39,10 +37,19 @@ public class RouteableDeepLinksTests
     }
 
     [Theory]
+    [InlineData("https://example.com/orders/42?x=1#top", "/orders/42?x=1")]
+    [InlineData("HTTPS://example.com/orders", "/orders")]
+    public void A_web_address_of_a_listed_host_gives_its_route(string address, string expected)
+    {
+        Assert.True(RouteableDeepLinks.TryGetRoute(new Uri(address), null, ["example.com"], out var route));
+        Assert.Equal(expected, route);
+    }
+
+    [Theory]
     [InlineData("myapp://")]
     [InlineData("https://example.com/")]
     public void An_address_with_no_path_has_no_route(string address)
-        => Assert.False(RouteableDeepLinks.TryGetRoute(new Uri(address), out _));
+        => Assert.False(RouteableDeepLinks.TryGetRoute(new Uri(address), null, ["example.com"], out _));
 
     [Theory]
     [InlineData("https://example.com/orders/42", true)]
@@ -54,8 +61,13 @@ public class RouteableDeepLinksTests
         => Assert.Equal(accepted, RouteableDeepLinks.TryGetRoute(new Uri(address), ["https", "myapp"], ["example.com"], out _));
 
     [Fact]
-    public void NoHostsAcceptsAnyHost()
-        => Assert.True(RouteableDeepLinks.TryGetRoute(new Uri("https://evil.example/orders/42"), ["https"], null, out _));
+    public void Without_hosts_no_web_address_is_accepted_and_an_own_scheme_still_is()
+    {
+        Assert.False(RouteableDeepLinks.TryGetRoute(new Uri("https://evil.example/orders/42"), ["https"], null, out _));
+        Assert.False(RouteableDeepLinks.TryGetRoute(new Uri("https://example.com/orders/42"), ["https"], [], out _));
+        Assert.False(RouteableDeepLinks.TryGetRoute(new Uri("https://example.com/orders/42"), out _));
+        Assert.True(RouteableDeepLinks.TryGetRoute(new Uri("myapp://orders/42"), ["myapp"], null, out _));
+    }
 
     [Fact]
     public void A_relative_or_missing_address_has_no_route()

@@ -14,13 +14,15 @@ public class RouteableMenuTagHelperTests
     private sealed class Cats;
     private sealed class Dogs;
 
-    private static string Render(FakeMenuViewModel main, string path, Action<RouteableMenuTagHelper>? configure = null)
+    private static string Render(FakeMenuViewModel main, string path, Action<RouteableMenuTagHelper>? configure = null, string? pathBase = null)
     {
         var services = new ServiceCollection();
         services.AddSingleton<Routeables.Abstraction.Bases.IRouteableMenuViewModel>(main);
         using var provider = services.BuildServiceProvider();
         var http = new DefaultHttpContext { RequestServices = provider };
         http.Request.Path = path;
+        if (pathBase is not null)
+            http.Request.PathBase = pathBase;
 
         var helper = new RouteableMenuTagHelper { ViewContext = new ViewContext { HttpContext = http } };
         configure?.Invoke(helper);
@@ -52,6 +54,30 @@ public class RouteableMenuTagHelperTests
         Assert.Contains("All the cats", html);
         Assert.Single(html.Split("aria-current=\"page\"").Skip(1));
         Assert.Contains("rt-menu-active", html);
+    }
+
+    [Fact]
+    public void An_application_under_a_sub_path_links_below_it_and_still_marks_the_current_entry()
+    {
+        var html = Render(Menu(), "/cats/Tom", pathBase: "/app");
+
+        Assert.Contains("href=\"/app/cats\"", html);
+        Assert.Contains("href=\"/app/dogs\"", html);
+        Assert.Single(html.Split("aria-current=\"page\"").Skip(1));
+    }
+
+    [Fact]
+    public void A_route_that_starts_with_slashes_never_links_to_another_site()
+    {
+        var main = new FakeMenuViewModel();
+        main.Entries.Add(new RouteableMenuEntry<Cats>("Evil", null, "\\evil.example", "\\evil.example"));
+        main.Entries.Add(new RouteableMenuEntry<Dogs>("Evil2", null, "//evil.example", "//evil.example"));
+
+        var html = Render(main, "/");
+
+        Assert.DoesNotContain("href=\"//", html);
+        Assert.DoesNotContain("href=\"/\\", html);
+        Assert.Contains("href=\"/evil.example\"", html);
     }
 
     [Fact]

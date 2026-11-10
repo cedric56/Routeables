@@ -11,9 +11,9 @@ namespace Routeables.Abstraction.Errors;
 /// <remarks>
 /// <list type="bullet">
 /// <item><description><b>Activity</b> <c>Routeables.Route</c> (source <see cref="Name"/>), one per route change, with the tags <c>routeables.kind</c>,
-/// <c>routeables.route</c> (the address), <c>routeables.view_model</c> and <c>routeables.outcome</c>.</description></item>
+/// <c>routeables.route</c> (the template of the route, <c>/clients/{id:int}</c>), <c>routeables.view_model</c> and <c>routeables.outcome</c>.</description></item>
 /// <item><description><b>Histogram</b> <c>routeables.route.duration</c> (ms), the time of a route change, with the tags <c>routeables.kind</c> and <c>routeables.outcome</c>.</description></item>
-/// <item><description><b>Counter</b> <c>routeables.route.redirects</c>, the redirects a <see cref="IRouteGuard"/> made.</description></item>
+/// <item><description><b>Counter</b> <c>routeables.route.redirects</c>, the redirects a <see cref="IRouteGuard"/> made, with the tag <c>routeables.route</c> (the template of the route they lead to).</description></item>
 /// </list>
 /// The duration is the one of the router (guards, creation, initialization, lifecycle). The layout and drawing of the new view belong to the host.
 /// </remarks>
@@ -24,6 +24,12 @@ public static class RouteableDiagnostics
 
     /// <summary>The activity source: subscribe to it by this name.</summary>
     public static ActivitySource ActivitySource { get; } = new(Name);
+
+    /// <summary>
+    /// Adds the tag <c>routeables.address</c> (the address of the route, without its query) to the activity. Off by default: an address holds identifiers
+    /// of the user's data. The metrics never carry it.
+    /// </summary>
+    public static bool IncludeAddress { get; set; }
 
     /// <summary>The meter: subscribe to it by this name.</summary>
     public static Meter Meter { get; } = new(Name);

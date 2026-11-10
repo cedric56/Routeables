@@ -16,14 +16,14 @@ namespace Routeables.Services;
 public static class RouteableDeepLinks
 {
     /// <summary>
-    /// The route of an address. <c>https://example.com/orders/42?x=1</c> is <c>/orders/42?x=1</c>; for an application's own scheme the
+    /// The route of an address. <c>https://example.com/orders/42?x=1</c> is <c>/orders/42?x=1</c> once <c>example.com</c> is given as a host (see the overload with the hosts); for an application's own scheme the
     /// first segment is the name after the scheme: <c>myapp://orders/42?x=1</c> is <c>/orders/42?x=1</c>, and so is <c>myapp:///orders/42?x=1</c>.
     /// The fragment is left out; the characters stay escaped, as the router reads them.
     /// </summary>
     /// <param name="uri">The address.</param>
     /// <param name="schemes">The schemes that are accepted (<c>"myapp"</c>, <c>"https"</c>); <see langword="null"/> or empty accepts any.</param>
     /// <param name="route">The route, when the address has one.</param>
-    /// <returns><see langword="false"/> for a relative address, a scheme that is not accepted, or an address with no path (<c>myapp://</c>).</returns>
+    /// <returns><see langword="false"/> for a relative address, a scheme that is not accepted, a web address (no host is given here: use the overload with the hosts), or an address with no path (<c>myapp://</c>).</returns>
     public static bool TryGetRoute(Uri? uri, IReadOnlyCollection<string>? schemes, out string route)
         => TryGetRoute(uri, schemes, null, out route);
 
@@ -34,10 +34,11 @@ public static class RouteableDeepLinks
     /// </summary>
     /// <param name="uri">The address.</param>
     /// <param name="schemes">The schemes that are accepted (<c>"myapp"</c>, <c>"https"</c>); <see langword="null"/> or empty accepts any.</param>
-    /// <param name="hosts">The hosts of the <c>http</c> and <c>https</c> addresses that are accepted (<c>"example.com"</c>); <see langword="null"/> or empty accepts any.
-    /// The address of an own scheme (<c>myapp://</c>) has no host in this sense and is not limited by it.</param>
+    /// <param name="hosts">The hosts of the <c>http</c> and <c>https</c> addresses that are accepted (<c>"example.com"</c>). <see langword="null"/> or empty
+    /// accepts <b>no</b> web address: they are refused until the hosts are given. The address of an own scheme (<c>myapp://</c>) has no host in this
+    /// sense and is not limited by it.</param>
     /// <param name="route">The route, when the address has one.</param>
-    /// <returns><see langword="false"/> for a relative address, a scheme or a host that is not accepted, or an address with no path.</returns>
+    /// <returns><see langword="false"/> for a relative address, a scheme or a host that is not accepted, a web address when no host is given, or an address with no path.</returns>
     public static bool TryGetRoute(Uri? uri, IReadOnlyCollection<string>? schemes, IReadOnlyCollection<string>? hosts, out string route)
     {
         route = string.Empty;
@@ -47,8 +48,10 @@ public static class RouteableDeepLinks
         if (schemes is { Count: > 0 } && !schemes.Contains(uri.Scheme, StringComparer.OrdinalIgnoreCase))
             return false;
 
+        // The host of a web address is not part of the route: without the hosts that are the application's own, any web page or message
+        // could send the address of another site and open a page of the application.
         var isWeb = uri.Scheme is "http" or "https";
-        if (isWeb && hosts is { Count: > 0 } && !hosts.Contains(uri.Host, StringComparer.OrdinalIgnoreCase))
+        if (isWeb && (hosts is not { Count: > 0 } || !hosts.Contains(uri.Host, StringComparer.OrdinalIgnoreCase)))
             return false;
 
         var path = isWeb || string.IsNullOrEmpty(uri.Host)
@@ -89,7 +92,7 @@ public static class RouteableDeepLinks
     /// <param name="uri">The address.</param>
     /// <param name="schemes">The schemes that are accepted; <see langword="null"/> or empty accepts any.</param>
     /// <param name="cancellationToken">Cancels the route change.</param>
-    /// <param name="hosts">The hosts of the <c>http</c> and <c>https</c> addresses that are accepted; <see langword="null"/> or empty accepts any (see <see cref="TryGetRoute(Uri?, IReadOnlyCollection{string}?, IReadOnlyCollection{string}?, out string)"/>).</param>
+    /// <param name="hosts">The hosts of the <c>http</c> and <c>https</c> addresses that are accepted; <see langword="null"/> or empty accepts no web address (see <see cref="TryGetRoute(Uri?, IReadOnlyCollection{string}?, IReadOnlyCollection{string}?, out string)"/>).</param>
     /// <returns>The result of the route change; failed (with an <see cref="ArgumentException"/>) when the address has no route or is not accepted.</returns>
     public static async Task<RouteableResult> GoToAsync(
         IServiceProvider provider, Uri uri, IReadOnlyCollection<string>? schemes = null, CancellationToken cancellationToken = default,

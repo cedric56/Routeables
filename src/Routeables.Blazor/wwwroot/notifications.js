@@ -38,7 +38,8 @@ export async function register(url) {
     registered = true;
     if (!url || !('serviceWorker' in navigator)) return false;
     try {
-        await navigator.serviceWorker.register(url, { scope: '/' });
+        // The scope is the base address of the application (<base href>): '/' for a site at the root, '/app/' for one hosted below it.
+        await navigator.serviceWorker.register(url, { scope: new URL('./', document.baseURI).pathname });
         registration = await navigator.serviceWorker.ready;
         return true;
     } catch {

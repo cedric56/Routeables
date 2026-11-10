@@ -657,6 +657,35 @@ public class RouteRegistrationGeneratorTests
         return driver.GetRunResult();
     }
 
+    /// <summary>
+    /// An edit that changes no view and no route (a new unrelated class) must not make the generator work again: what it read from the compilation
+    /// compares equal, and the pipeline reuses it. Without that, the generator regenerates its file on every keystroke of the IDE.
+    /// </summary>
+    [Fact]
+    public void An_edit_that_changes_no_route_leaves_what_the_generator_read_unchanged()
+    {
+        var first = CSharpCompilation.Create(
+            assemblyName: "Routeables.Generated.Tests",
+            syntaxTrees: [CSharpSyntaxTree.ParseText("""
+                using Routeables.Abstraction;
+                [Routeable("/simple")] public class SimpleViewModel { }
+                [RouteableView(typeof(SimpleViewModel))] public class SimpleView { }
+                """)],
+            references: GetMetadataReferences(),
+            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(
+            generators: [new RouteRegistrationGenerator().AsSourceGenerator()],
+            driverOptions: new GeneratorDriverOptions(IncrementalGeneratorOutputKind.None, trackIncrementalGeneratorSteps: true));
+        driver = driver.RunGenerators(first);
+
+        var second = first.AddSyntaxTrees(CSharpSyntaxTree.ParseText("public class Unrelated { public int Value; }"));
+        driver = driver.RunGenerators(second);
+
+        var steps = driver.GetRunResult().Results[0].TrackedSteps["RouteablesCompiled"];
+        Assert.Equal(IncrementalStepRunReason.Unchanged, steps.Single().Outputs.Single().Reason);
+    }
+
     private static GeneratorDriverRunResult RunGenerator(string source, params MetadataReference[] more)
     {
         var compilation = CSharpCompilation.Create(

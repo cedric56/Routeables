@@ -7,11 +7,11 @@ namespace Routeables.Blazor.Services;
 public sealed class AppNotificationOptions
 {
     /// <summary>
-    /// The address of the service worker (<c>routeables-notifications-worker.js</c> of this package, copied to the root of the site): it gives a notification
+    /// The address of the service worker (<c>routeables-notifications-worker.js</c> of this package, copied to the root of the application, next to its <c>&lt;base href&gt;</c>; the address is relative to it, so an application hosted below a sub-path works): it gives a notification
     /// action buttons and a reply field. When it cannot be registered (not served, not a secure page), the notifications are made by the page itself, with
     /// no buttons. <see langword="null"/> never uses a service worker.
     /// </summary>
-    public string? ServiceWorkerUrl { get; set; } = "/routeables-notifications-worker.js";
+    public string? ServiceWorkerUrl { get; set; } = "routeables-notifications-worker.js";
 
     /// <summary>The icon of a notification that has none (the address of an image); <see langword="null"/> for the one of the browser.</summary>
     public string? DefaultIcon { get; set; }

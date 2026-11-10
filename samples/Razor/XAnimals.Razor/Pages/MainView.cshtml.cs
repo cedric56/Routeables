@@ -37,8 +37,8 @@ public class MainViewPageModel(IRouteableMenuViewModel main, IRouter router, ISe
     /// <summary>The entries the menu links to.</summary>
     public IEnumerable<IRouteableMenuEntry> MenuEntries => main.Entries.Where(e => !Unserved.Contains(Address(e.Route), StringComparer.OrdinalIgnoreCase));
 
-    /// <summary>Turns a route into an absolute path starting with <c>/</c>.</summary>
-    public static string Address(string route) => "/" + route.TrimStart('/');
+    /// <summary>Turns a route into an absolute path starting with <c>/</c>, never with <c>//</c> or <c>/\</c> (see <see cref="RouteableAddress.Of"/>).</summary>
+    public static string Address(string route) => RouteableAddress.Of(route);
 
     /// <summary>
     /// Serves the page for the given path. Reloads keep the current view; a new address navigates.
@@ -74,12 +74,13 @@ public class MainViewPageModel(IRouteableMenuViewModel main, IRouter router, ISe
         await PageActions.RunAsync(provider, form["target"].ToString(), form["do"].ToString(), form["value"].ToString());
 
         // A button can move the router (Open Members, Sign out): the address follows the page that is shown.
-        var url = "/" + (path?.TrimStart('/') ?? "") + Request.QueryString.Value;
+        var url = Address(path ?? "") + Request.QueryString.Value;
         if (!ReferenceEquals(before, router.CurrentViewModel) && router.History.Current?.Args.Route is { Length: > 0 } route)
             url = Address(route);
 
         state.ServedUrl = url;
-        return Redirect(url);
+        // LocalRedirect refuses an address of another site, and the base path of the application is put in front when it has one.
+        return LocalRedirect(RouteableAddress.Of(url, Request.PathBase));
     }
 
     /// <summary>

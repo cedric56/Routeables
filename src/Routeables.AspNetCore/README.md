@@ -17,7 +17,7 @@ builder.Services.AddRouteablesAspNetCore();   // or AddRouteablesAspNetCore<Main
 
 The routes the generator finds are registered for you at startup. The optional block is for your own services: `AddRouteablesAspNetCore(r => r.AddSingleton<IClock, Clock>())`.
 
-Everything is **scoped**. A request that has no scope of its own to share would start from an empty history every time, so an application keeps one service scope per visitor (a cookie holds its identifier) and runs each request in it, one at a time. The Razor sample does it with `VisitorSessions` and `UseVisitorSessions()` ([`samples/Razor`](../../samples/Razor)); copy it, or use your own session store, as long as the routers and the view models of a visitor live in the same scope from one request to the next.
+Everything is **scoped**. A request that has no scope of its own to share would start from an empty history every time, so an application keeps one service scope per visitor (a cookie holds its identifier) and runs each request in it, one at a time. The Razor sample does it with `VisitorSessions` and `UseVisitorSessions()` ([`samples/Razor`](../../samples/Razor)); copy it as a starting point, or use your own session store, as long as the routers and the view models of a visitor live in the same scope from one request to the next. **`VisitorSessions` is a sample, not a production store**: it keeps at most 1 000 sessions in memory and drops the oldest when a new one comes, so a client that sends requests without its cookie can push the others out; a real application creates the session after a first interaction (or a sign-in), limits the rate per client and keeps the sessions in a store of its own.
 
 ## What the host registers
 

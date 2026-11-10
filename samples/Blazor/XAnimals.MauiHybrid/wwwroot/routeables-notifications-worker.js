@@ -25,7 +25,7 @@ self.addEventListener('notificationclick', event => {
         const clients = await tell(message);
         const open = clients.find(client => 'focus' in client);
         if (open) await open.focus();
-        else await self.clients.openWindow('/');
+        else await self.clients.openWindow(self.registration.scope);
     })());
 });
 

@@ -83,7 +83,10 @@ internal class Router(
         if (activity is not null)
         {
             activity.SetTag("routeables.kind", kind.ToString());
-            activity.SetTag("routeables.route", to.Args.Route);
+            // The template (/clients/{id:int}), as http.route: a bounded set of values, and no identifier or token of the address.
+            activity.SetTag("routeables.route", RouteTag(to.Args.Route));
+            if (RouteableDiagnostics.IncludeAddress)
+                activity.SetTag("routeables.address", PathOf(to.Args.Route));
             activity.SetTag("routeables.view_model", to.ViewModel.GetType().Name);
         }
 
@@ -160,7 +163,9 @@ internal class Router(
         var change = new RouteableRoutingEventArgs(kind, from, to);
         foreach (var guard in guards)
         {
-            var decision = await guard.CanEnterAsync(change, ct) ?? RouteGuardDecision.Allow;
+            // A guard that answers nothing is a bug of the guard: it is not taken for a yes (a guard that fails opens the door), the route change fails and says which one.
+            var decision = await guard.CanEnterAsync(change, ct)
+                ?? throw new InvalidOperationException($"The route guard {guard.GetType().FullName} returned null: it must return RouteGuardDecision.Allow, Cancel or Redirect.");
             if (!decision.IsAllowed)
                 return decision;
         }
@@ -175,7 +180,8 @@ internal class Router(
             return RouteableResult.Fail(new InvalidOperationException(
                 $"More than {MaxRedirects} redirects in a row, the last one to \"{route}\": a route guard sends the user to a route that another guard (or the same one) refuses."));
 
-        RouteableDiagnostics.Redirects.Add(1, new KeyValuePair<string, object?>("routeables.route", route));
+        if (RouteableDiagnostics.Redirects.Enabled)
+            RouteableDiagnostics.Redirects.Add(1, new KeyValuePair<string, object?>("routeables.route", RouteTag(route)));
 
         Redirects.Value++;
         try
@@ -611,6 +617,12 @@ internal class Router(
             route, template, keys.viewKey, keys.viewModelKey,
             args ?? RouteableArgs.Create(), null, null, cancellationToken, viewKeys);
     }
+
+    // What a route is called in the telemetry: its template, never the address (an address holds identifiers, and one series per address is unbounded).
+    private string RouteTag(string? route) => string.IsNullOrWhiteSpace(route) ? string.Empty : PathOf(TemplateOf(route));
+
+    // The address without its query (the query can hold a token).
+    private static string PathOf(string? route) => (route ?? string.Empty).Split('?')[0];
 
     // The template registered for a route: the one that is the route, the one that matches it, the one of a menu entry, or the route itself.
     private string TemplateOf(string route)

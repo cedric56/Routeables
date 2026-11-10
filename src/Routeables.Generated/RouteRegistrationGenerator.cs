@@ -158,7 +158,7 @@ namespace Routeables.Generated
                 var conventionViews = new List<INamedTypeSymbol>();
 
                 if (routeableAttr is null && routeableViewAttr is null)
-                    return (views: (IReadOnlyList<ViewReg>)views, routes: (IReadOnlyList<Route>)routes, candidates: (IReadOnlyList<ViewCandidate>)candidates);
+                    return CompiledModel.Empty;
 
                 foreach (var type in GetAllTypes(compilation))
                 {
@@ -203,8 +203,13 @@ namespace Routeables.Generated
                         Build: wanted.Contains(type.Name) ? RouteBuilds.Analyze(compilation, type) : null));
                 }
 
-                return (views: (IReadOnlyList<ViewReg>)views, routes: (IReadOnlyList<Route>)routes, candidates: (IReadOnlyList<ViewCandidate>)candidates);
-            });
+                // Values that compare equal when their content is equal: the pipeline then sees an unchanged model after an edit that
+                // changes none of the views and routes, and does not generate the file again.
+                return new CompiledModel(
+                    new EquatableArray<ViewReg>(views.ToArray()),
+                    new EquatableArray<Route>(routes.ToArray()),
+                    new EquatableArray<ViewCandidate>(candidates.ToArray()));
+            }).WithTrackingName("RouteablesCompiled");
 
             // An executable hands its routes to the host through a module initializer, so that the application does not call
             // AddGeneratedRoutes() itself. RouteablesAutoRegister=false switches it off, and =true switches it on for a project the compiler
@@ -239,15 +244,14 @@ namespace Routeables.Generated
 
                 // Multiple [Routeable] per type are allowed
                 void AddRoute(Route r) =>
-                                        //routesByKey[r.TypeName + "|" + r.Path + "|" + r.Region + "|" + r.Contract] = r;
-                                        routesByKey[r.TypeName + "|" + r.Path + "|" + r.Region] = r;
+                    routesByKey[r.TypeName + "|" + r.Path + "|" + r.Region] = r;
 
-                foreach (var v in compiled.views) AddView(v);
-                foreach (var r in compiled.routes) AddRoute(r);
+                foreach (var v in compiled.Views) AddView(v);
+                foreach (var r in compiled.Routes) AddRoute(r);
                 foreach (var v in localV) AddView(v);
                 foreach (var r in localR) AddRoute(r);
 
-                Generate(spc, viewsByKey.Values, routesByKey.Values, compiled.candidates, autoRegisterRoutes);
+                Generate(spc, viewsByKey.Values, routesByKey.Values, compiled.Candidates.ToList(), autoRegisterRoutes);
             });
         }
 
@@ -262,7 +266,9 @@ namespace Routeables.Generated
 
         private static IEnumerable<INamedTypeSymbol> GetAllTypes(Compilation compilation)
         {
-            foreach (var t in GetTypesInNamespace(compilation.GlobalNamespace))
+            // The assembly being compiled only: compilation.GlobalNamespace is the merge of this assembly and of every reference
+            // (the framework included), which the loop below would then walk a second time.
+            foreach (var t in GetTypesInNamespace(compilation.Assembly.GlobalNamespace))
                 yield return t;
 
             foreach (var reference in compilation.References)
@@ -780,6 +786,15 @@ namespace Routeables.Generated
 
                 return new RegLocation(location.SourceTree.FilePath, location.SourceSpan, location.GetLineSpan().Span);
             }
+        }
+
+        // What the compilation holds, with value equality (see the Select that builds it).
+        private sealed record CompiledModel(
+            EquatableArray<ViewReg> Views,
+            EquatableArray<Route> Routes,
+            EquatableArray<ViewCandidate> Candidates)
+        {
+            public static readonly CompiledModel Empty = new(default, default, default);
         }
 
         private sealed record ViewCandidate(string Name, string FullName, bool IsLocal, RouteBuilds.BuildInfo? Build);

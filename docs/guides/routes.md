@@ -131,3 +131,12 @@ A button can go to a route with no code in the view model. `RouteableLink.Route`
 ```
 
 The click goes to the route in the router of `RouteableLink.Region` (the default router without it), like `provider.GoToAsync(route, region)`. The route is a fixed address: for one that depends on the view model, bind a command that calls the typed routing method. A failed or refused route change is reported to the `IRouteableErrorSink`, as the other errors that have no caller to throw to; the button does not need `CanExecute` because a guard decides. On Blazor, an `<a href="/hello/World">` already does this through the URL.
+
+## Route values are untrusted input
+
+An address comes from the user, a link or another application: treat each value the route gives to a view model as input that anyone can write.
+
+- A segment is decoded before it reaches the parser: `%2F` is `/`, and `{**path}` joins decoded segments, so a value can contain `../`. Never use it as a file name or a path without checking it.
+- A value is converted to its declared type (`{id:int}`) and a value that does not convert does not match. A string, a `{**path}` and a registered JSON type are not otherwise limited: check their size and content in the view model.
+- A registered JSON type is read from the address with no limit on its size or its depth other than the one of the address; keep such types small, and do not put a secret in an address.
+- The history that is restored (persisted state, a deep link, a saved list) is read the same way: only routes the application registered are followed, and each one goes through the guards.

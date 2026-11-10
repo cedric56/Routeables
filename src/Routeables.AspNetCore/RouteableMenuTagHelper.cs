@@ -53,7 +53,8 @@ public sealed class RouteableMenuTagHelper : TagHelper
 
         foreach (var entry in entries)
         {
-            var address = Address(entry.Route);
+            var address = RouteableAddress.Of(entry.Route);
+            var href = RouteableAddress.Of(entry.Route, ViewContext.HttpContext.Request.PathBase);
             var active = string.Equals(FirstSegment(address), current, StringComparison.OrdinalIgnoreCase);
             var link = new TagBuilder(entry.IsLock ? "span" : "a");
             link.AddCssClass("rt-menu-link");
@@ -65,7 +66,7 @@ public sealed class RouteableMenuTagHelper : TagHelper
             }
             else
             {
-                link.Attributes["href"] = address;
+                link.Attributes["href"] = href;
                 if (active)
                 {
                     link.AddCssClass("rt-menu-active");
@@ -96,9 +97,6 @@ public sealed class RouteableMenuTagHelper : TagHelper
         span.InnerHtml.Append(text);
         return span;
     }
-
-    /// <summary>Turns a route into an absolute path starting with <c>/</c>.</summary>
-    private static string Address(string route) => "/" + route.TrimStart('/');
 
     private static string FirstSegment(string? address)
         => "/" + (address?.Split('?')[0].Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "");

@@ -207,6 +207,20 @@ public class RouteGuardTests
     }
 
     [Fact]
+    public async Task A_guard_that_returns_null_does_not_let_the_route_change_through()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        using var provider = Build(new Guard(c => IsAdmin(c) ? null! : RouteGuardDecision.Allow));
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/guard-home", cancellationToken: ct);
+
+        var failure = await Assert.ThrowsAsync<InvalidOperationException>(() => router.GoToAsync("/guard-admin", cancellationToken: ct));
+
+        Assert.Contains("returned null", failure.Message);
+        Assert.False(router.CurrentViewModel is GuardAdminVm);   // the page was not entered
+    }
+
+    [Fact]
     public async Task A_guard_that_throws_fails_the_route_change_and_releases_the_router()
     {
         var ct = TestContext.Current.CancellationToken;
@@ -317,6 +331,50 @@ public class RouteGuardTests
         Assert.IsType<GuardLoginVm>(router.CurrentViewModel);
         Assert.Null(entry.View);
         Assert.Null(entry.ViewModel);
+    }
+
+    public sealed class MeterItemView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class MeterItemVm(int id) { public int Id { get; } = id; }
+
+    /// <summary>The telemetry names a route by its template: an address holds identifiers and tokens, and one series per address has no bound.</summary>
+    [Fact]
+    public async Task The_activity_is_tagged_with_the_template_and_not_with_the_address()
+    {
+        var activities = new List<Activity>();
+        using var activityListener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == RouteableDiagnostics.Name,
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+            ActivityStopped = activity => { lock (activities) activities.Add(activity); }
+        };
+        ActivitySource.AddActivityListener(activityListener);
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<MeterItemView, MeterItemVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/meter-item/{id:int}");
+        services.AddTransient<MeterItemVm>();
+        using var provider = services.BuildServiceProvider();
+
+        await provider.GetRequiredService<IRouter>().GoToAsync("/meter-item/4242?token=secret", cancellationToken: TestContext.Current.CancellationToken);
+
+        Activity mine;
+        lock (activities) mine = Assert.Single(activities, a => a.GetTagItem("routeables.view_model")?.ToString() == nameof(MeterItemVm));
+        var tag = Assert.IsType<string>(mine.GetTagItem("routeables.route"));
+        Assert.Equal("/meter-item/{id:int}", tag.StartsWith('/') ? tag : "/" + tag);
+        Assert.DoesNotContain("4242", tag);
+        Assert.DoesNotContain("secret", tag);
+        Assert.Null(mine.GetTagItem("routeables.address"));   // the address is opt-in
+
+        RouteableDiagnostics.IncludeAddress = true;
+        try
+        {
+            await provider.GetRequiredService<IRouter>().GoToAsync("/meter-item/77?token=secret", cancellationToken: TestContext.Current.CancellationToken);
+            Activity second;
+            lock (activities) second = activities.Last(a => a.GetTagItem("routeables.view_model")?.ToString() == nameof(MeterItemVm));
+            var address = Assert.IsType<string>(second.GetTagItem("routeables.address"));
+            Assert.Contains("77", address);
+            Assert.DoesNotContain("secret", address);   // never the query
+        }
+        finally { RouteableDiagnostics.IncludeAddress = false; }
     }
 
     [Fact]

@@ -149,7 +149,7 @@ public sealed class AccountViewModel : IRouteable { }
 public sealed class SignInViewModel : IRouteable { }
 ```
 
-The application registers its own authentication (an `AuthenticationStateProvider`, logging) as any Blazor application with sign-in does; Routeables does not choose it. Only a new page is redirected; Back and Forward are cancelled. A sign-in page that forgot `[AllowAnonymous]` is cancelled instead of being redirected to itself. For a rule that is not about the signed-in user, write an `IRouteGuard` as above. A guard is resolved once per router, so a guard that needs a scoped service must be scoped itself.
+The application registers its own authentication (an `AuthenticationStateProvider`, logging) as any Blazor application with sign-in does; Routeables does not choose it. Only a new page is redirected; Back and Forward are cancelled. A sign-in page that forgot `[AllowAnonymous]` is cancelled instead of being redirected to itself. **`[AllowAnonymous]` counts on the view as well as on the view model**: a view shared by several pages and marked `[AllowAnonymous]` opens a view model marked `[Authorize]`; mark the page you want to open, and not a shared view. **This is not a security boundary in WebAssembly.** The check runs in the browser, which the user controls: authorize the data and the actions again on the server (the API, the hub), where nobody can skip the guard. For a rule that is not about the signed-in user, write an `IRouteGuard` as above. A guard is resolved once per router, so a guard that needs a scoped service must be scoped itself.
 
 ## What to know before choosing it
 
