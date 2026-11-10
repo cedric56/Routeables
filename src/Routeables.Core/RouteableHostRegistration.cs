@@ -33,10 +33,15 @@ internal static class RouteableHostRegistration
     /// <summary>
     /// Builds the container. While developing, a registration that cannot be built (a missing dependency of a view or view
     /// model) fails at start with its name, instead of at the first route change to it. Scopes are not validated: the hosts
-    /// resolve everything from the root provider.
+    /// resolve everything from the root provider. An application that chose its own container (<see cref="RouteableContainer.UseRouteablesContainer{TContainerBuilder}"/>)
+    /// gets that one, built the way its library builds it.
     /// </summary>
     public static IServiceProvider BuildRouteableProvider(this IServiceCollection services)
     {
+        var own = RouteableContainer.Find(services);
+        if (own is not null)
+            return own(services).StartRouteableHistory();
+
 #if DEBUG
         var provider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true });
 #else

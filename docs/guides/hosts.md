@@ -46,6 +46,36 @@ The Blazor, MAUI, Avalonia and Uno hosts share one contract, checked by `HostCon
 
 `Runtime` identifies the host (`Runtime.Avalonia`, `Uno`, `WinUI3`, `Wpf`, `Maui`, `MauiHybrid`, `BlazorServer`, `BlazorWebAssembly`, `AspNetCore`) and is available through `IRuntime`.
 
+## Your own container
+
+Routeables registers everything on an `IServiceCollection`, before any container exists, so the container is yours to choose: DryIoc, Autofac, Lamar, Grace, anything that reads that collection (their adapter packages for Microsoft.Extensions.DependencyInjection do). What the container must support: **keyed services** (`IKeyedServiceProvider`; the routes and the regions are registered with a key), scopes (`IServiceScopeFactory`) and the lifetimes of Microsoft.Extensions.DependencyInjection.
+
+| Host | How to give the container |
+|------|---------------------------|
+| WPF, Avalonia, Uno, WinUI 3 (Routeables builds the container) | in the block of `UseRouteables`: `services.UseRouteablesContainer(new DryIocServiceProviderFactory())` |
+| .NET MAUI | `builder.ConfigureContainer(new DryIocServiceProviderFactory());` before `Build()` |
+| ASP.NET Core, Blazor Server | `builder.Host.UseServiceProviderFactory(new DryIocServiceProviderFactory());` |
+
+```csharp
+// Avalonia (the same block on WPF, Uno and WinUI 3)
+AppBuilder.Configure<App>()
+    .UsePlatformDetect()
+    .UseRouteables(r => r.UseRouteablesContainer(new DryIocServiceProviderFactory()));
+```
+
+The factory is the `IServiceProviderFactory<T>` that the library gives. To register in the container of the library as well (with its own API, after the collection), pass a function instead:
+
+```csharp
+r.UseRouteablesContainer(collection =>
+{
+    var container = new Container().WithDependencyInjectionAdapter(collection);
+    container.Register<IClock, Clock>(Reuse.Singleton);
+    return container.BuildServiceProvider();
+});
+```
+
+The last call wins; without one, the default container is built (with `ValidateOnBuild` in Debug builds, which your container does not do: validate with its own tool, for instance `container.Validate()` in DryIoc). Blazor WebAssembly and MAUI Blazor Hybrid build their container in the framework as well; use what the framework offers for them. The tests run Routeables through a provider that is not a `ServiceProvider` (`CustomContainerTests`); **it has not been tried with DryIoc itself**, whose package is not part of this repository: report anything that does not resolve.
+
 ## Samples
 
 The [`Samples`](https://github.com/cedric56/Routeables/tree/master/Samples) folder contains the same Animals app on several stacks, sharing one `XAnimals.ViewModels` project:
