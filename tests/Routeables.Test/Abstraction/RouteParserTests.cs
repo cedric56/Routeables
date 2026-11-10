@@ -204,4 +204,65 @@ public class RouteParserTests
     [Fact]
     public void No_matching_template_gives_an_empty_entry()
         => Assert.Null(RouteParser.BestMatch(Bears, "cats/1").Template);
+
+    [Theory]
+    [InlineData("customers/{id:int}", "not-an-integer")]
+    [InlineData("customers/{id:int}", 3000000000L)]
+    [InlineData("customers/{id:guid}", "42")]
+    [InlineData("customers/{id:bool}", "maybe")]
+    [InlineData("customers?{id:int}", "x")]
+    public void Build_refuses_a_value_that_its_own_constraint_would_refuse(string template, object value)
+    {
+        var error = Assert.Throws<ArgumentException>(() => RouteParser.Build(template, new Dictionary<string, object?> { ["id"] = value }));
+        Assert.Contains("id", error.Message);
+    }
+
+    [Theory]
+    [InlineData("customers/{id:int}", 42)]
+    [InlineData("customers/{id:int}", "42")]
+    [InlineData("customers/{id:long}", 3000000000L)]
+    [InlineData("customers/{id:guid}", "8f1b8d5e-0d64-4b0e-9d6c-0a0b6a6c3a11")]
+    [InlineData("customers/{id:decimal}", 12.5)]
+    [InlineData("customers/{id:double}", 0.1)]
+    [InlineData("customers/{id}", "any text/with slash")]
+    public void What_Build_writes_matches_the_template(string template, object value)
+    {
+        var address = RouteParser.Build(template, new Dictionary<string, object?> { ["id"] = value });
+        Assert.True(RouteParser.TryMatch(template, address));
+    }
+
+    [Fact]
+    public void An_optional_placeholder_that_is_not_last_never_matches_says_why_and_cannot_be_built()
+    {
+        Assert.Contains("last segment", RouteParser.Mismatch("tabs/{tab?}/end", "tabs/x/end"));
+        Assert.Contains("last segment", RouteParser.Mismatch("tabs/{tab?}/end", "tabs/end"));
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("tabs/{tab?}/end", new Dictionary<string, object?>()));
+        Assert.Null(RouteParser.Mismatch("tabs/{tab?}", "tabs"));
+    }
+
+    [Fact]
+    public void RegisterSerializer_refuses_information_for_another_type()
+    {
+        var other = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() }
+            .GetTypeInfo(typeof(global::HomonymSales.Customer));
+        Assert.Throws<ArgumentException>(() => RouteParser.RegisterSerializer<global::HomonymSupport.Customer>(other));
+    }
+
+    [Fact]
+    public void Two_types_with_one_simple_name_are_told_apart_by_their_full_name()
+    {
+        var options = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() };
+        RouteParser.RegisterSerializer<global::HomonymSales.Customer>(options.GetTypeInfo(typeof(global::HomonymSales.Customer)));
+        RouteParser.RegisterSerializer<global::HomonymSupport.Customer>(options.GetTypeInfo(typeof(global::HomonymSupport.Customer)));
+
+        Assert.Contains("several registered types", RouteParser.Mismatch("c/{who:Customer}", "c/%7B%7D"));
+
+        var sales = RouteableArgs.Create();
+        Assert.True(RouteParser.TryMatch("c/{who:" + typeof(global::HomonymSales.Customer).FullName + "}", "c/" + Uri.EscapeDataString("{\"Name\":\"a\"}"), sales));
+        Assert.IsType<global::HomonymSales.Customer>(sales.ViewModelParameters.Single().value);
+
+        var support = RouteableArgs.Create();
+        Assert.True(RouteParser.TryMatch("c/{who:" + typeof(global::HomonymSupport.Customer).FullName + "}", "c/" + Uri.EscapeDataString("{\"Name\":\"a\"}"), support));
+        Assert.IsType<global::HomonymSupport.Customer>(support.ViewModelParameters.Single().value);
+    }
 }

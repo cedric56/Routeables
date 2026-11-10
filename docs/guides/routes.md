@@ -12,7 +12,9 @@ A **route** is the concrete string you go to (`/dogs/Eurohound`). A **template**
 | `{panda::}` | Segment bound to the **view** instead of the view model (`/pandas/{panda::}`, see [Arguments](arguments.md)) |
 | `?{tab}` / `?{tab?}` | Query-string value, required / optional |
 
-A type that is not in the table is a registered one (`RouteParser.RegisterSerializer`, trim-safe JSON). A template with any other type never matches, and the reason says so (`the constraint "foo" of {id} is unknown`): it does not throw while the router looks for a route.
+A type that is not in the table is a registered one (`RouteParser.RegisterSerializer`, trim-safe JSON). The registry is global to the process: write a type by its simple name (`{c:Customer}`) or its full name (`{c:Sales.Customer}`). If two registered types share a simple name, only the full names are accepted and the route says so. The information given must be the one of the type (`RegisterSerializer<Customer>` refuses another type's). A template with any other type never matches, and the reason says so (`the constraint "foo" of {id} is unknown`): it does not throw while the router looks for a route.
+
+An optional placeholder (`{tab?}`) must be the last segment of the path: a template with one in the middle never matches, and the reason says so. A route written from a template (`GoTo…Async(router, values)`) is checked the way it is read: a value that its constraint would refuse (a text for `{id:int}`) is an error, never an address the router would then reject.
 
 ### Which route wins
 

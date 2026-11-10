@@ -16,17 +16,50 @@ public static class RouteParser
 {
     // Serialization information for complex route parameters (System.Text.Json), by type name, case-insensitive.
     // Private: callers register through RegisterSerializer, nobody can replace or empty the table.
+    // A type is known by its full name (always) and by its simple name (until another type takes it: the simple name is then ambiguous).
     private static readonly ConcurrentDictionary<string, JsonTypeInfo> SerializationInfos =
         new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<string, Type> SerializationTypes = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<string, bool> AmbiguousNames = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly object RegistryLock = new();
 
     /// <summary>
     /// Teaches the parser to read <c>{name:typeName}</c> parameters as <paramref name="info"/>'s type (trim-safe JSON, no reflection).
-    /// A later registration under the same name replaces the earlier one.
+    /// The registry is global to the process. A type is written in a template by its simple name (<c>{c:Customer}</c>) or its full name
+    /// (<c>{c:Sales.Customer}</c>). Registering the same type again replaces its information; when two types share a simple name, the simple
+    /// name no longer stands for either of them and only the full names are accepted.
     /// </summary>
+    /// <exception cref="ArgumentException"><paramref name="info"/> describes another type than <typeparamref name="T"/>.</exception>
     public static void RegisterSerializer<T>(JsonTypeInfo info)
     {
         ArgumentNullException.ThrowIfNull(info);
-        SerializationInfos[typeof(T).Name] = info;
+        if (info.Type != typeof(T))
+            throw new ArgumentException($"The JSON information is for {info.Type}, not for {typeof(T)}.", nameof(info));
+
+        lock (RegistryLock)
+        {
+            var type = typeof(T);
+            if (type.FullName is { } full)
+            {
+                SerializationInfos[full] = info;
+                SerializationTypes[full] = type;
+            }
+
+            var simple = type.Name;
+            if (AmbiguousNames.ContainsKey(simple))
+                return;
+            if (SerializationTypes.TryGetValue(simple, out var owner) && owner != type)
+            {
+                // A second type with this simple name: nobody owns it any more.
+                SerializationInfos.TryRemove(simple, out _);
+                SerializationTypes.TryRemove(simple, out _);
+                AmbiguousNames[simple] = true;
+                return;
+            }
+
+            SerializationInfos[simple] = info;
+            SerializationTypes[simple] = type;
+        }
     }
 
     // {Id:int}  {Tab?}  {Tab::?}  {animate::bool}  {person:Person}  {**path}
@@ -73,6 +106,8 @@ public static class RouteParser
         var restAt = Array.FindIndex(tSegs, segment => Param.Match(segment) is { Success: true } found && found.Groups["rest"].Success);
         if (restAt >= 0 && restAt != tSegs.Length - 1)
             return $"the catch-all placeholder {tSegs[restAt]} must be the last segment of the template";
+        if (OptionalNotLast(tSegs) is { } notLast)
+            return $"the optional placeholder {notLast} must be the last segment of the template";
         if (restAt < 0 && uSegs.Length > tSegs.Length)
             return $"the route has {uSegs.Length} segment(s), the template only {tSegs.Length} (unexpected \"{uSegs[tSegs.Length]}\")";
 
@@ -132,6 +167,9 @@ public static class RouteParser
         var attribute = m.Groups["attribute"].Success;
         var optional = m.Groups["opt"].Success || m.Groups["rest"].Success;   // a catch-all may be empty
 
+        if (AmbiguousNames.ContainsKey(type))
+            return $"the constraint \"{type}\" of {{{name}}} stands for several registered types: write the full name of the type";
+
         // A constraint that is neither built in nor registered is a mistake in the template: it never matches, and says so (instead of throwing
         // while the router looks for a route).
         if (!IsKnownConstraint(type))
@@ -161,6 +199,16 @@ public static class RouteParser
             args.ForView(new RouteableArgument(value, name, attribute ?? true));
         else
             args.ForViewModel(new RouteableArgument(value, name, attribute ?? false));
+    }
+
+    // The first optional path placeholder (not a catch-all) that has a segment after it: such a template cannot be written back (tabs/{tab?}/end
+    // without a tab is tabs/end, which does not match), so it never matches.
+    private static string? OptionalNotLast(string[] segments)
+    {
+        for (var i = 0; i < segments.Length - 1; i++)
+            if (Param.Match(segments[i]) is { Success: true } m && m.Groups["opt"].Success && !m.Groups["rest"].Success)
+                return segments[i];
+        return null;
     }
 
     private static readonly string[] BuiltInConstraints = ["string", "int", "long", "bool", "guid", "decimal", "double"];
@@ -279,6 +327,8 @@ public static class RouteParser
     {
         ArgumentNullException.ThrowIfNull(template);
         var bag = ValuesOf(values);
+        if (OptionalNotLast(Split(template).path.Split('/', StringSplitOptions.RemoveEmptyEntries)) is { } notLast)
+            throw new ArgumentException($"The optional placeholder {notLast} of \"{template}\" must be the last segment of the template.", nameof(template));
 
         string? Fill(Match m, string where)
         {
@@ -292,7 +342,12 @@ public static class RouteParser
                 throw new ArgumentException($"The route \"{template}\" needs a value for {{{name}}} ({where}).", nameof(values));
             }
 
-            return Uri.EscapeDataString(Format(value, type));
+            var text = Format(value, type);
+            // What is written must be read back: the router would refuse a route that its own template does not accept.
+            if (!TryConvert(text, type, out _))
+                throw new ArgumentException(
+                    $"The value \"{text}\" is not a valid {(type.Length == 0 ? "value" : type)} for {{{name}}} in \"{template}\".", nameof(values));
+            return Uri.EscapeDataString(text);
         }
 
         var (path, query) = Split(template);
