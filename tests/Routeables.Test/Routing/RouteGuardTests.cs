@@ -283,7 +283,7 @@ public class RouteGuardTests
         {
             InstrumentPublished = (instrument, listener) =>
             {
-                if (instrument.Meter.Name == RouteableDiagnostics.Name)
+                if (instrument.Meter.Name == RouteableDiagnostics.Name && instrument.Name == "routeables.route.duration")
                     listener.EnableMeasurementEvents(instrument);
             }
         };
@@ -375,6 +375,37 @@ public class RouteGuardTests
             Assert.DoesNotContain("secret", address);   // never the query
         }
         finally { RouteableDiagnostics.IncludeAddress = false; }
+    }
+
+    /// <summary>How long each guard takes is measured (every route change waits for all of them), with the guard and what it decided.</summary>
+    [Fact]
+    public async Task The_time_of_each_guard_is_measured_with_its_decision()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var measures = new List<(string Guard, string Decision)>();
+        using var meterListener = new MeterListener
+        {
+            InstrumentPublished = (instrument, listener) =>
+            {
+                if (instrument.Meter.Name == RouteableDiagnostics.Name && instrument.Name == "routeables.guard.duration")
+                    listener.EnableMeasurementEvents(instrument);
+            }
+        };
+        meterListener.SetMeasurementEventCallback<double>((_, value, tags, _) =>
+        {
+            var t = tags.ToArray();
+            Assert.True(value >= 0);
+            lock (measures) measures.Add((t.Single(x => x.Key == "routeables.guard").Value!.ToString()!, t.Single(x => x.Key == "routeables.decision").Value!.ToString()!));
+        });
+        meterListener.Start();
+        using var provider = Build(new Guard(c => IsAdmin(c) ? RouteGuardDecision.Cancel : RouteGuardDecision.Allow));
+        var router = provider.GetRequiredService<IRouter>();
+
+        await router.GoToAsync("/guard-home", cancellationToken: ct);
+        await router.GoToAsync("/guard-admin", cancellationToken: ct);
+
+        lock (measures)
+            Assert.Equal([(nameof(Guard), "allow"), (nameof(Guard), "cancel")], measures);
     }
 
     [Fact]

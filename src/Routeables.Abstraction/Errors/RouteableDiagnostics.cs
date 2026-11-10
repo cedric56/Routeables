@@ -37,6 +37,9 @@ public static class RouteableDiagnostics
     internal static readonly Histogram<double> RouteDuration =
         Meter.CreateHistogram<double>("routeables.route.duration", "ms", "The time a route change takes.");
 
+    internal static readonly Histogram<double> GuardDuration =
+        Meter.CreateHistogram<double>("routeables.guard.duration", "ms", "The time a route guard takes to decide, tagged with the guard (routeables.guard) and its decision (routeables.decision: allow, cancel, redirect).");
+
     internal static readonly Counter<long> Redirects =
         Meter.CreateCounter<long>("routeables.route.redirects", description: "The redirects made by route guards.");
 }

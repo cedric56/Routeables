@@ -147,6 +147,7 @@ Every route change is an activity and a measure, with no setup in the framework.
 | Name | Kind | Content |
 | --- | --- | --- |
 | `Routeables.Route` | Activity | tags `routeables.kind` (Push, Back, Forward, Pop, Root), `routeables.route` (the template, `/clients/{id:int}`; the address is added as `routeables.address`, without its query, when `RouteableDiagnostics.IncludeAddress` is `true`), `routeables.view_model`, `routeables.outcome` (Success, Cancelled, Failed). A change that a guard redirects ends as Cancelled; the redirect is a change of its own |
+| `routeables.guard.duration` | Histogram (ms) | the time a guard takes to decide, tagged with `routeables.guard` (the name of the guard type) and `routeables.decision` (`allow`, `cancel` or `redirect`): it shows a guard that is slow, since every route change waits for all of them |
 | `routeables.route.duration` | Histogram (ms) | the time of a route change, tagged with `routeables.kind` and `routeables.outcome` only (the route is left out to keep the number of series small; read it from the activity) |
 | `routeables.route.redirects` | Counter | the redirects made by guards, tagged with `routeables.route` (the template of the route they lead to) |
 

@@ -1,0 +1,7 @@
+@using Routeables.Blazor
+<Router AppAssembly="typeof(Program).Assembly"
+        AdditionalAssemblies="new[] { typeof(RouteableMainLayoutBase).Assembly }">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(RouteableMainLayout)" />
+    </Found>
+</Router>

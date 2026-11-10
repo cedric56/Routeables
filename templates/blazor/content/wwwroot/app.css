@@ -1,0 +1,9 @@
+.page {
+    padding: 1.5rem;
+}
+
+.blazor-error-boundary {
+    padding: 1rem;
+    background: #b32121;
+    color: white;
+}

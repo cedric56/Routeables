@@ -670,7 +670,7 @@ public class RouteRegistrationGeneratorTests
                 using Routeables.Abstraction;
                 [Routeable("/simple")] public class SimpleViewModel { }
                 [RouteableView(typeof(SimpleViewModel))] public class SimpleView { }
-                """, cancellationToken:TestContext.Current.CancellationToken)],
+                """,cancellationToken:TestContext.Current.CancellationToken)],
             references: GetMetadataReferences(),
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 

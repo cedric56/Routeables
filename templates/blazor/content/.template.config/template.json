@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Routeables",
+  "classifications": [ "Web", "Blazor", "Routeables" ],
+  "identity": "Routeables.Blazor.App",
+  "name": "Routeables Blazor application",
+  "shortName": "routeables-blazor",
+  "sourceName": "RouteablesApp",
+  "preferNameDirectory": true,
+  "tags": { "language": "C#", "type": "project" }
+}

@@ -161,11 +161,17 @@ internal class Router(
             return RouteGuardDecision.Allow;
 
         var change = new RouteableRoutingEventArgs(kind, from, to);
+        var measure = RouteableDiagnostics.GuardDuration.Enabled;
         foreach (var guard in guards)
         {
+            var started = measure ? Stopwatch.GetTimestamp() : 0;
             // A guard that answers nothing is a bug of the guard: it is not taken for a yes (a guard that fails opens the door), the route change fails and says which one.
             var decision = await guard.CanEnterAsync(change, ct)
                 ?? throw new InvalidOperationException($"The route guard {guard.GetType().FullName} returned null: it must return RouteGuardDecision.Allow, Cancel or Redirect.");
+            if (measure)
+                RouteableDiagnostics.GuardDuration.Record(Stopwatch.GetElapsedTime(started).TotalMilliseconds,
+                    new KeyValuePair<string, object?>("routeables.guard", guard.GetType().Name),
+                    new KeyValuePair<string, object?>("routeables.decision", decision.IsAllowed ? "allow" : decision.RedirectTo is null ? "cancel" : "redirect"));
             if (!decision.IsAllowed)
                 return decision;
         }
