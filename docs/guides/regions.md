@@ -165,6 +165,11 @@ services.AddRegion("dogs");
 
 Each tab shows a `RouteableRegion` of its region and goes to its route the first time it is selected, while its region has no page. Pages opened inside a tab (`provider.GoToAsync("/cats/Rex", region: "cats")`) stay on its pile when you go to the other tab and come back. A tab without `Region` keeps sharing the region of the control. A region that is not registered is reported as an error naming it.
 
+The other hosts:
+
+- **WinUI 3 and Uno** (`NavigationView.AttachRouteables`): the same attached property, `<NavigationViewItem rt:RouteableItem.Route="/cats" rt:RouteableItem.Region="cats" />`. The view shows the host of the region of the selected item.
+- **.NET MAUI** (`Shell.AttachRouteables`): nothing to write. The route of a `Tab` or `ShellSection` that is also the name of a registered region (`services.AddRegion("cats")` for `Route="cats"`) gives that tab a region of its own, which goes to the route of the tab the first time only and keeps its pages when you come back; a tab whose route names no region uses the default router, as before.
+
 ### Choosing the region in the arguments
 
 Give the region to the arguments, and let the provider pick the router of that region:

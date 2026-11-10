@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml.Controls;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Errors;
 using Routeables.Abstraction.Routing;
 using Routeables.Regions;
 
@@ -41,18 +42,51 @@ public static class RouteableNavigation
 
         var router = provider.GetRouter(region);
         var items = Items(view.MenuItems).Concat(Items(view.FooterMenuItems)).ToList();
-        view.Content = new RouteableRegion { Region = region, Services = provider };
+        var shared = new RouteableRegion { Region = region, Services = provider };
+        view.Content = shared;
+
+        // An item with a region of its own shows a host of that region, which keeps its pile of pages while another item is selected.
+        var hosts = new Dictionary<string, RouteableRegion>(StringComparer.Ordinal);
+
+        // The item is shown: its host in the content, and its route, the first time for an item with a region of its own.
+        void Open(NavigationViewItem item)
+        {
+            if (RouteableItem.GetRoute(item) is not { } route)
+                return;
+
+            if (RouteableItem.GetRegion(item) is not { Length: > 0 } own)
+            {
+                view.Content = shared;
+                _ = RouteTarget.GoAsync(provider, router, route, typeof(RouteableNavigation));
+                return;
+            }
+
+            if (!hosts.TryGetValue(own, out var host))
+                hosts[own] = host = new RouteableRegion { Region = own, Services = provider };
+            view.Content = host;
+            try
+            {
+                var ownRouter = provider.GetRouter(own);
+                if (ownRouter.History.Count == 0)
+                    _ = RouteTarget.GoAsync(provider, ownRouter, route, typeof(RouteableNavigation));
+            }
+            catch (InvalidOperationException ex)
+            {
+                RouteableErrors.Report(provider, ex, typeof(RouteableNavigation), own);   // a region that is not registered: AddRegion
+            }
+        }
 
         void OnSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e)
         {
-            if (e.SelectedItem is NavigationViewItem item && items.Contains(item) && RouteableItem.GetRoute(item) is { } route)
-                _ = RouteTarget.GoAsync(provider, router, route, typeof(RouteableNavigation));
+            if (e.SelectedItem is NavigationViewItem item && items.Contains(item))
+                Open(item);
         }
 
         // The router holds its gate while it signals: the item is selected after, and does not route again (the route is the current one).
         void OnChanged(object? sender, EventArgs e) => view.DispatcherQueue.TryEnqueue(() =>
         {
-            var item = items.FirstOrDefault(item => RouteTarget.IsCurrent(router, RouteableItem.GetRoute(item)));
+            // The router of the view follows the items that share it; an item with a region of its own is selected by the user only.
+            var item = items.FirstOrDefault(item => RouteableItem.GetRegion(item) is not { Length: > 0 } && RouteTarget.IsCurrent(router, RouteableItem.GetRoute(item)));
             if (item is not null && !ReferenceEquals(item, view.SelectedItem))
                 view.SelectedItem = item;
         });
@@ -65,8 +99,8 @@ public static class RouteableNavigation
         {
             if (view.SelectedItem is null && items.Count > 0)
                 view.SelectedItem = items[0];
-            else if (view.SelectedItem is NavigationViewItem item && items.Contains(item) && RouteableItem.GetRoute(item) is { } route)
-                _ = RouteTarget.GoAsync(provider, router, route, typeof(RouteableNavigation));
+            else if (view.SelectedItem is NavigationViewItem item && items.Contains(item))
+                Open(item);
         });
 
         return new Subscription(() =>

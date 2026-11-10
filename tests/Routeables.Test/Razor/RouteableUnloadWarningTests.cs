@@ -95,7 +95,7 @@ public class RouteableUnloadWarningTests
 
         await router.GoToAsync("/form", cancellationToken: ct);
         var form = (FormVm)router.CurrentViewModel!;
-        await Task.Delay(50);
+        await Task.Delay(50, ct);
         Assert.Equal(0, scripts.Imports);                            // a page with nothing to lose does not load the script either
 
         form.Edit(true);
@@ -107,7 +107,7 @@ public class RouteableUnloadWarningTests
         Assert.False(scripts.Warn[^1]);
 
         form.Edit(false);                                              // an old page no longer speaks for the tab
-        await Task.Delay(50);
+        await Task.Delay(50, ct);
         Assert.Equal(2, scripts.Warn.Count);
 
         await sync.DisposeAsync();

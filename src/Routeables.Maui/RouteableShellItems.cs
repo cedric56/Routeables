@@ -97,6 +97,11 @@ public static class RouteableShellItems
             if (string.Equals(Trim(router.History.Current?.Args.Route), Trim(route), StringComparison.OrdinalIgnoreCase))
                 return;
 
+            // A tab with a region of its own goes to its route the first time only: coming back to it shows the pile of pages it left,
+            // not its route pushed again on top of them.
+            if (region is not null && router.History.Count > 0)
+                return;
+
             await router.GoToAsync(route);
         }
         catch (Exception ex)
