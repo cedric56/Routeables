@@ -131,10 +131,6 @@ Routeables is the navigation layer, dialogs and notifications included. It ships
 
 The host package already holds the dialogs, modals and notifications of its framework. For MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs, add a package of [`Reshapes`](reshapes/README.md). Everything else is in the one `Routeables` package that every host brings; its parts ([`Abstraction`](src/Routeables.Abstraction/README.md), [`Routing`](src/Routeables.Routing/README.md), [`Core`](src/Routeables.Core/README.md), [`Regions`](src/Routeables.Regions/README.md), [`Segments`](src/Routeables.Segments/README.md), [`Locking`](src/Routeables.Locking/README.md), [`Services`](src/Routeables.Services/README.md)) are separate projects of this repository.
 
-## Status
-
-Routeables is young: the first commit is from October 2026, it has one maintainer, and the API is still evolving, so a few breaking changes can come with the next versions. They are named in the release notes of each version: pin the version you use and read the notes before you update. What is documented works as described, and CI tests it on every host.
-
 ## Learn more
 
 - [Getting started](docs/getting-started.md) and the [guides](docs/guides/routes.md): routes, typed routing, arguments, lifecycle, history, regions, modules, hosts.

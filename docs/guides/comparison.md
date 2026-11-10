@@ -12,10 +12,6 @@ This page is written from the public documentation of each project. Projects cha
 - **Dialogs and notifications included.** One dialog service (message boxes, content dialogs, task dialogs, modals) and one notification service on every host, replaceable at startup, with system notifications on Avalonia, Blazor and MAUI. The `Reshapes` packages draw them with MudBlazor, CommunityToolkit.Maui or FluentAvalonia.
 - **Tested where it runs.** Unit tests on the shared core, headless, browser and on-device tests on each host, benchmarks with memory-leak checks (see [Benchmarks](../benchmarks.md)), and a guide for [migrating from Prism](migrating-from-prism.md).
 
-## Maturity
-
-Routeables is a young project with one maintainer, and its API can still change between versions: breaking changes are named in the release notes. Libraries that have been used in production for years have a community, answers and examples that Routeables does not have yet.
-
 ## Against each alternative
 
 ### Prism

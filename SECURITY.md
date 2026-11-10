@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Routeables is young and has one maintainer: security fixes go to the latest release only. Pin the version you use and read the release notes before you update.
+Security fixes go to the latest release only.
 
 ## Reporting a vulnerability
 
