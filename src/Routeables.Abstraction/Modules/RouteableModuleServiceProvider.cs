@@ -21,41 +21,59 @@ internal sealed class RouteableModuleServiceProvider(IServiceProvider applicatio
 }
 
 /// <summary>The services a module registered, built when they are asked for (singletons once, the others each time).</summary>
-internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> descriptors) : IDisposable
+internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> descriptors) : IDisposable, IAsyncDisposable
 {
-    private readonly Dictionary<Type, ServiceDescriptor> _descriptors = descriptors
+    // Every registration of a type, in the order they were made: the last one answers GetService, all of them answer IEnumerable<T>, as in the container.
+    private readonly Dictionary<Type, List<ServiceDescriptor>> _descriptors = descriptors
         .Where(d => !d.IsKeyedService)
         .GroupBy(d => d.ServiceType)
-        .ToDictionary(g => g.Key, g => g.Last());          // the last registration wins, as in the container
+        .ToDictionary(g => g.Key, g => g.ToList());
 
-    private readonly Dictionary<Type, object> _singletons = [];
+    private readonly Dictionary<ServiceDescriptor, object> _singletons = [];
     private readonly List<object> _created = [];
     private readonly object _gate = new();
 
     public bool TryGet(Type serviceType, IServiceProvider scope, IServiceProvider application, out object? service)
     {
         service = null;
-        if (!_descriptors.TryGetValue(serviceType, out var descriptor))
-            return false;
-
-        if (descriptor.Lifetime != ServiceLifetime.Singleton)
+        if (_descriptors.TryGetValue(serviceType, out var registered))
         {
-            service = Create(descriptor, scope);
+            service = Resolve(registered[^1], scope, application);
             return true;
         }
 
+        // IEnumerable<T> of a type the module registers: all its registrations (the application's are not mixed in).
+        if (serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+            && _descriptors.TryGetValue(serviceType.GetGenericArguments()[0], out var all))
+        {
+            var items = Array.CreateInstance(serviceType.GetGenericArguments()[0], all.Count);
+            for (var i = 0; i < all.Count; i++)
+                items.SetValue(Resolve(all[i], scope, application), i);
+            service = items;
+            return true;
+        }
+
+        return false;
+    }
+
+    // Transient: built at each request, and owned by whoever asked. Singleton and Scoped: built once. A module loaded while running has no scope
+    // of its own (see IRouteableModules), so a scoped service lives as long as the application, which is what the guide says.
+    private object Resolve(ServiceDescriptor descriptor, IServiceProvider scope, IServiceProvider application)
+    {
+        if (descriptor.Lifetime == ServiceLifetime.Transient)
+            return Create(descriptor, scope);
+
         lock (_gate)
         {
-            if (!_singletons.TryGetValue(serviceType, out var known))
+            if (!_singletons.TryGetValue(descriptor, out var known))
             {
-                // A singleton is built against the application's own container, never against one scope of it.
+                // Built against the application's own container, never against one scope of it.
                 known = Create(descriptor, new RouteableModuleServiceProvider(application, this));
-                _singletons[serviceType] = known;
+                _singletons[descriptor] = known;
                 if (descriptor.ImplementationInstance is null)          // an instance given by the module is not ours to dispose
                     _created.Add(known);
             }
-            service = known;
-            return true;
+            return known;
         }
     }
 
@@ -71,14 +89,27 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         throw new InvalidOperationException($"The module registered '{descriptor.ServiceType}' without a way to build it.");
     }
 
-    public void Dispose()
+    // The services the module built once are disposed in the reverse order of their creation, IAsyncDisposable included (a service that
+    // has only DisposeAsync is waited for here: prefer DisposeAsync of the module services when you can).
+    public void Dispose() => DisposeAsync().AsTask().GetAwaiter().GetResult();
+
+    public async ValueTask DisposeAsync()
     {
+        object[] toDispose;
         lock (_gate)
         {
-            foreach (var service in _created.OfType<IDisposable>())
-                service.Dispose();
+            toDispose = [.. _created];
             _created.Clear();
             _singletons.Clear();
+        }
+
+        for (var i = toDispose.Length - 1; i >= 0; i--)
+        {
+            switch (toDispose[i])
+            {
+                case IAsyncDisposable asyncService: await asyncService.DisposeAsync(); break;
+                case IDisposable service: service.Dispose(); break;
+            }
         }
     }
 }

@@ -21,7 +21,8 @@ public sealed record RouteableModuleInfo(string Name, string? Assembly, IReadOnl
 /// </para>
 /// <para>
 /// Limits of a module loaded while running: it adds routes, menu entries and services (singleton or transient: a scoped service of the
-/// module lives as long as the application, and a keyed service or a region of the module is not registered). The container is not rebuilt,
+/// module is built once and lives as long as the application, a transient one is built at each request and belongs to whoever asked, several
+/// registrations of a type are all returned by <c>IEnumerable&lt;T&gt;</c>, and a keyed service or a region of the module is not registered). The container is not rebuilt,
 /// so a service of the application that was already built does not see the module. A module is never unloaded. Call <c>Load</c>
 /// from the UI thread: the menu is an observable collection.
 /// </para>
