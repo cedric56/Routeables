@@ -12,5 +12,12 @@ else
     <img src="@Model.Animal.PhotoUrl" alt="@Model.Animal.Name" width="260" height="330" />
     <p class="body-text">@Model.Animal.Details</p>
 }
-<a class="back-btn" href="/@species">Back</a>
+@if (ViewData["Region"] is string region)
+{
+    <form method="post"><input type="hidden" name="target" value="@region" /><button type="submit" name="do" value="back" class="back-btn">Back</button></form>
+}
+else
+{
+    <a class="back-btn" href="/@species">Back</a>
+}
 </div>

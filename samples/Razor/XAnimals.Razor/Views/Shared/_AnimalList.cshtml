@@ -2,7 +2,9 @@
 @{ var species = (string)(ViewData["Species"] ?? "cats"); var title = (string)(ViewData["Title"] ?? "Animals"); }
 <div class="animals-page">
     <h1>@title</h1>
-    @* A list that a region shows (HostsDetail is false) does not leave the page: no search address, no link to a detail. *@
+    @* A list that a region shows (HostsDetail is false) does not leave the page: no search address, no link to a detail; each animal is
+       a button that posts to the region, which opens the detail in it. *@
+    @{ var region = Model.HostsDetail ? null : ViewData["Region"] as string; }
     @if (Model.HostsDetail)
     {
     <form method="get" action="/@species">
@@ -12,10 +14,22 @@
     </form>
     }
     @if (!Model.FilteredAnimals.Any()) { <p class="no-results">No @species found.</p> }
-    <div class="animal-list">
+    @{ var index = 0; }
+    @* The list is a template: a form element of its own around it (a real element, so that the form tag helper adds the antiforgery token). *@
+    @{ Func<object?, Microsoft.AspNetCore.Html.IHtmlContent> list = @<div class="animal-list">
     @foreach (var animal in Model.FilteredAnimals)
     {
-        if (Model.HostsDetail)
+        if (region is not null)
+        {
+            <button type="submit" name="do" value="open:@(index++)" class="animal-item">
+                <img src="@animal.ThumbnailUrl" alt="" width="56" height="68" loading="lazy" />
+                <span class="animal-text">
+                    <span class="animal-name">@animal.Name</span>
+                    <span class="animal-location">@animal.Location</span>
+                </span>
+            </button>
+        }
+        else if (Model.HostsDetail)
         {
             <a class="animal-item" href="/@species/@Uri.EscapeDataString(animal.Name)">
                 <img src="@animal.ThumbnailUrl" alt="@animal.Name" width="56" height="68" loading="lazy" />
@@ -36,5 +50,16 @@
             </div>
         }
     }
-    </div>
+    </div>; }
+    @if (region is not null)
+    {
+        <form method="post" class="animal-form">
+            <input type="hidden" name="target" value="@region" />
+            @list(null)
+        </form>
+    }
+    else
+    {
+        @list(null)
+    }
 </div>

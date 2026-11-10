@@ -86,6 +86,12 @@ public static class PageActions
             case TabsViewModel when name == "tab" && index >= 0 && index < TabRoutes.Count:
                 await provider.GetRouter(TabsViewModel.Region).GoToAsync(TabRoutes[index].Route);
                 break;
+            case AnimalsViewModel animals when name == "open" && index >= 0 && index < animals.FilteredAnimals.Count:
+                await animals.OnSelectedAnimalAsync(animals.FilteredAnimals[index]);
+                break;
+            case AnimalDetailViewModel detail when name == "back":
+                await detail.GoBackAsync();
+                break;
             case MembersViewModel members when name == "signout":
                 await members.SignOutAsync();
                 break;

@@ -14,6 +14,7 @@
 @if (router.CurrentView is { } view)
 {
     <div class="@transition.CssClass" style="@(transition.Animated ? transition.Style : null)">
-        @await Html.PartialAsync(MainViewPageModel.ViewName(view), router.CurrentViewModel)
+        @* The page knows the region it is shown in: its buttons post to it (ViewData["Region"]). *@
+        @await Html.PartialAsync(MainViewPageModel.ViewName(view), router.CurrentViewModel, new ViewDataDictionary(ViewData) { ["Region"] = Model })
     </div>
 }
