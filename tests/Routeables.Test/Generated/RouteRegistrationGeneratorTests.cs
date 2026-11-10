@@ -670,17 +670,17 @@ public class RouteRegistrationGeneratorTests
                 using Routeables.Abstraction;
                 [Routeable("/simple")] public class SimpleViewModel { }
                 [RouteableView(typeof(SimpleViewModel))] public class SimpleView { }
-                """)],
+                """, cancellationToken:TestContext.Current.CancellationToken)],
             references: GetMetadataReferences(),
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
         GeneratorDriver driver = CSharpGeneratorDriver.Create(
             generators: [new RouteRegistrationGenerator().AsSourceGenerator()],
             driverOptions: new GeneratorDriverOptions(IncrementalGeneratorOutputKind.None, trackIncrementalGeneratorSteps: true));
-        driver = driver.RunGenerators(first);
+        driver = driver.RunGenerators(first, cancellationToken: TestContext.Current.CancellationToken);
 
-        var second = first.AddSyntaxTrees(CSharpSyntaxTree.ParseText("public class Unrelated { public int Value; }"));
-        driver = driver.RunGenerators(second);
+        var second = first.AddSyntaxTrees(CSharpSyntaxTree.ParseText("public class Unrelated { public int Value; }", cancellationToken: TestContext.Current.CancellationToken));
+        driver = driver.RunGenerators(second, cancellationToken: TestContext.Current.CancellationToken);
 
         var steps = driver.GetRunResult().Results[0].TrackedSteps["RouteablesCompiled"];
         Assert.Equal(IncrementalStepRunReason.Unchanged, steps.Single().Outputs.Single().Reason);
