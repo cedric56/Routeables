@@ -1,10 +1,19 @@
+#if WPF
+using System.Windows;
+using System.Windows.Controls.Primitives;
+#else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls.Primitives;
+#endif
 using Routeables.Abstraction;
 using Routeables.Abstraction.Errors;
 using Routeables.Abstraction.Routing;
 
-#if WINUI3
+// One file for the three XAML hosts that have a DependencyProperty: Routeables.Wpf links it (and defines WPF), Routeables.Uno and
+// Routeables.WinUI3 compile this folder.
+#if WPF
+namespace Routeables.Wpf;
+#elif WINUI3
 namespace Routeables.WinUI3;
 #else
 namespace Routeables.Uno;

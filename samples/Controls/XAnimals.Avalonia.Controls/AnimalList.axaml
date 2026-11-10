@@ -3,7 +3,7 @@
              xmlns:vm="clr-namespace:XAnimals.Common;assembly=XAnimals.Common"
              xmlns:models="using:XAnimals.Models"
              xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
-             x:Class="XAnimals.Avalonia.AnimalList"
+             x:Class="XAnimals.Avalonia.Controls.AnimalList"
              x:DataType="vm:AnimalsViewModel"
              Background="{DynamicResource AnPaper}">
 

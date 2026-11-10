@@ -2,7 +2,7 @@ using Avalonia.Controls;
 using XAnimals.Common;
 using XAnimals.Models;
 
-namespace XAnimals.Avalonia;
+namespace XAnimals.Avalonia.Controls;
 
 /// <summary>
 /// The list of any animal kind (search, selection, hosting of the detail view). The view that contains it

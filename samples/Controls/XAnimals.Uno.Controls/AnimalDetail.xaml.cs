@@ -1,6 +1,6 @@
 using XAnimals.Common;
 
-namespace XAnimals.Uno.Views;
+namespace XAnimals.Uno.Controls;
 
 /// <summary>The detail of any animal kind; the view that contains it provides the view model as DataContext.</summary>
 public sealed partial class AnimalDetail : UserControl

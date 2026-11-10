@@ -1,6 +1,6 @@
 using XAnimals.Common;
 
-namespace XAnimals.Maui.Views;
+namespace XAnimals.Maui.Controls;
 
 /// <summary>The detail of any animal kind; the view that contains it provides the view model as BindingContext.</summary>
 public partial class AnimalDetail : ContentView

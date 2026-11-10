@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:app="clr-namespace:XAnimals.Maui"
     xmlns:vm="clr-namespace:XAnimals.Common;assembly=XAnimals.Common"
-    x:Class="XAnimals.Maui.Views.AnimalDetail"
+    x:Class="XAnimals.Maui.Controls.AnimalDetail"
     x:DataType="vm:AnimalDetailViewModel"
     BackgroundColor="{AppThemeBinding Light={StaticResource Paper}, Dark={StaticResource OffBlack}}">
 

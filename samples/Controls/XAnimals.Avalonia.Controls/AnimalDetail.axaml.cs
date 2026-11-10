@@ -4,7 +4,7 @@ using System;
 using XAnimals.Common;
 using RoutedEventArgs = Avalonia.Interactivity.RoutedEventArgs;
 
-namespace XAnimals.Avalonia;
+namespace XAnimals.Avalonia.Controls;
 
 /// <summary>The detail of any animal kind; the view that contains it provides the view model as DataContext.</summary>
 public partial class AnimalDetail : UserControl

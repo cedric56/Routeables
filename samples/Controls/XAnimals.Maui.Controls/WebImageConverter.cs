@@ -1,7 +1,7 @@
 using System.Globalization;
 using XAnimals.ViewModels;
 
-namespace XAnimals.Maui;
+namespace XAnimals.Maui.Controls;
 
 /// <summary>
 /// Loads an image URL with a User-Agent: Wikimedia answers 403 Forbidden to the HttpClient used by

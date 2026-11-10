@@ -5,7 +5,7 @@
     xmlns:app="clr-namespace:XAnimals.Maui"
     xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
     xmlns:models="clr-namespace:XAnimals.Models;assembly=XAnimals.Common"
-    x:Class="XAnimals.Maui.Views.AnimalList">
+    x:Class="XAnimals.Maui.Controls.AnimalList">
 
     <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Paper}, Dark={StaticResource OffBlack}}">
         <!-- The detail view, once the router has navigated to it: it fades in on load (see AnimalDetail). -->

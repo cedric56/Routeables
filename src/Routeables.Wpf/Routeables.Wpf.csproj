@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
@@ -15,7 +15,12 @@
     <Description>Routeables for WPF: view-model-first routing, routed views, regions, dialogs and notifications.</Description>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);WPF</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
+    <!-- The same file as Uno and WinUI 3 (the WPF branch of its #if). -->
     <InternalsVisibleTo Include="Routeables.Test" />
   </ItemGroup>
 

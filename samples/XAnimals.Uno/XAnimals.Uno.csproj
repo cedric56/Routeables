@@ -38,7 +38,6 @@
     <ProjectReference Include="..\..\src\Routeables.Uno\Routeables.Uno.csproj" />
     <ProjectReference Include="..\..\src\Routeables.Generated\Routeables.Generated.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Bases\XAnimals.ViewModels\XAnimals.ViewModels.csproj" />
-    <ProjectReference Include="..\Controls\XAnimals.Uno.Controls\XAnimals.Uno.Controls.csproj" />
     <ProjectReference Include="..\Modules\XAnimals.Uno.Birds\XAnimals.Uno.Birds.csproj" />
   </ItemGroup>
 

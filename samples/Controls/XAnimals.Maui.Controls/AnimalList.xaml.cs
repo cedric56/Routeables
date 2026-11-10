@@ -1,7 +1,7 @@
 using XAnimals.Common;
 using XAnimals.Models;
 
-namespace XAnimals.Maui.Views;
+namespace XAnimals.Maui.Controls;
 
 /// <summary>
 /// The list of any animal kind (search, selection, hosting of the detail view). The view that contains it

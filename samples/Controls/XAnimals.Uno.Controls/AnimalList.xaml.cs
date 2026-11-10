@@ -2,7 +2,7 @@ using System.ComponentModel;
 using XAnimals.Common;
 using XAnimals.Models;
 
-namespace XAnimals.Uno.Views;
+namespace XAnimals.Uno.Controls;
 
 /// <summary>
 /// The list of any animal kind (search, selection, hosting of the detail view). The view that contains it
