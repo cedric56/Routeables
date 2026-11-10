@@ -43,17 +43,27 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         }
 
         // IEnumerable<T> of a type the module registers: all its registrations (the application's are not mixed in).
+        // Only for a reference type T: the array of T[] of a value type would need code that Native AOT may not have generated.
         if (serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IEnumerable<>)
-            && _descriptors.TryGetValue(serviceType.GetGenericArguments()[0], out var all))
+            && serviceType.GetGenericArguments()[0] is { IsValueType: false } element
+            && _descriptors.TryGetValue(element, out var all))
         {
-            var items = Array.CreateInstance(serviceType.GetGenericArguments()[0], all.Count);
-            for (var i = 0; i < all.Count; i++)
-                items.SetValue(Resolve(all[i], scope, application), i);
-            service = items;
+            service = BuildArray(element, all, scope, application);
             return true;
         }
 
         return false;
+    }
+
+    // An array of a reference type is the same code for every T (shared generics), so it exists even when Native AOT compiled the application.
+    [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("AOT", "IL3050:RequiresDynamicCode",
+        Justification = "Only called for a reference type: arrays of reference types use the canonical shared code, which AOT always has.")]
+    private Array BuildArray(Type element, List<ServiceDescriptor> all, IServiceProvider scope, IServiceProvider application)
+    {
+        var items = Array.CreateInstance(element, all.Count);
+        for (var i = 0; i < all.Count; i++)
+            items.SetValue(Resolve(all[i], scope, application), i);
+        return items;
     }
 
     // Transient: built at each request, and owned by whoever asked. Singleton and Scoped: built once. A module loaded while running has no scope
