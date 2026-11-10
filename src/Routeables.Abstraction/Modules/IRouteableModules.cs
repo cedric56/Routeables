@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Routeables.Abstraction.Bases;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 

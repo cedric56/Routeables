@@ -4,6 +4,7 @@ using Avalonia.Headless;
 using Avalonia.Media;
 using Avalonia.Themes.Fluent;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Avalonia;
 using System.Collections.ObjectModel;
 using Xunit;

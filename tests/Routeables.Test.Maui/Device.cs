@@ -1,5 +1,6 @@
 using Microsoft.Maui.Platform;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Routing;
 using Xunit;
 

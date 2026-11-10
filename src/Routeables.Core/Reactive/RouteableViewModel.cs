@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 

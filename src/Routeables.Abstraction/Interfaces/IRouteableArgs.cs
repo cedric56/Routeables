@@ -1,4 +1,7 @@
-﻿namespace Routeables.Abstraction;
+﻿using Routeables.Abstraction.Lifecycle;
+using Routeables.Abstraction.Transitions;
+
+namespace Routeables.Abstraction;
 
 /// <summary>Creates the arguments of a route change. Replace how <see cref="IRouteableArgs"/> are built with <see cref="Extensions.RegisterRouteableArgsFactory"/>.</summary>
 internal interface IRouteableArgsFactory

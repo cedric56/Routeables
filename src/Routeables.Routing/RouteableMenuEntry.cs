@@ -1,4 +1,6 @@
 ﻿using Routeables.Abstraction;
+using Routeables.Abstraction.Icons;
+using Routeables.Abstraction.Locking;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 

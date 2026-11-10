@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.Lifecycle;
 
 internal sealed class WeakDisposableTracker : IDisposable, IAsyncDisposable
 {

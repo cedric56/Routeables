@@ -1,6 +1,6 @@
 ﻿using Routeables.Abstraction;
 
-namespace Routeables.Routing;
+namespace Routeables.Abstraction.Initializers;
 
 /// <summary>
 /// Carries typed routing data from <c>GoToRouteAsync&lt;TViewModel, TData&gt;</c> to

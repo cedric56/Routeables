@@ -1,6 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Injections;
 using Routeables.Generated;
 using Routeables.Routing;
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Lifecycle;
 
 /// <summary>
 /// What a host says about the objects that live as long as its routers (the main view model, the route coordinator):

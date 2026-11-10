@@ -1,4 +1,5 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Regions;
 using Routeables.Routing;
 
@@ -31,7 +32,7 @@ public class RouteTransitionTests
     [Fact]
     public void The_navigation_wins_over_the_region_and_the_region_wins_over_the_old_duration()
     {
-        var fromNavigation = new RegionChange(NavigationDirection.Forward, RouteTransition.Slide).Resolve(RouteTransition.Fade, TimeSpan.FromSeconds(1));
+        var fromNavigation = new RegionChange(RouteableDirection.Forward, RouteTransition.Slide).Resolve(RouteTransition.Fade, TimeSpan.FromSeconds(1));
         Assert.Equal("Slide", fromNavigation.Transition.Name);
         Assert.True(fromNavigation.Declared);
         Assert.Equal(TimeSpan.FromSeconds(1), fromNavigation.Duration);
@@ -48,7 +49,7 @@ public class RouteTransitionTests
         Assert.True(nothing.IsNone);
         Assert.False(nothing.Declared);
 
-        Assert.True(new RegionChange(NavigationDirection.Forward, RouteTransition.None).Resolve(RouteTransition.Fade, TimeSpan.Zero).IsNone);
+        Assert.True(new RegionChange(RouteableDirection.Forward, RouteTransition.None).Resolve(RouteTransition.Fade, TimeSpan.Zero).IsNone);
     }
 
     [Fact]
@@ -57,21 +58,21 @@ public class RouteTransitionTests
         using var provider = RegionTestServices.Build(services => services.AddRegion("left"));
         var changes = new List<RegionChange>();
         using var host = new RegionBinding(provider.GetRouter("left"), (_, change) => changes.Add(change));
-        Assert.Equal(NavigationDirection.None, changes[0].Direction);
+        Assert.Equal(RouteableDirection.None, changes[0].Direction);
 
         var cats = new RouteableMenuEntry<RegionCatsViewModel>("/cats", null, "/cats", "/cats") { Region = "left" };
         cats.Arguments = RouteableArgs.Create().WithTransition(RouteTransition.Slide);
         await provider.GoToAsync(cats, TestContext.Current.CancellationToken);
-        Assert.Equal(NavigationDirection.Forward, changes[1].Direction);
+        Assert.Equal(RouteableDirection.Forward, changes[1].Direction);
         Assert.Equal("Slide", changes[1].Transition!.Name);
 
         var dogs = new RouteableMenuEntry<RegionDogsViewModel>("/dogs", null, "/dogs", "/dogs") { Region = "left" };
         await provider.GoToAsync(dogs, TestContext.Current.CancellationToken);
-        Assert.Equal(NavigationDirection.Forward, changes[2].Direction);
+        Assert.Equal(RouteableDirection.Forward, changes[2].Direction);
         Assert.Null(changes[2].Transition);
 
         await provider.GetRouter("left").GoBackAsync(TestContext.Current.CancellationToken);
-        Assert.Equal(NavigationDirection.Back, changes[3].Direction);
+        Assert.Equal(RouteableDirection.Back, changes[3].Direction);
     }
 
     [Fact]
@@ -92,11 +93,11 @@ public class RouteTransitionTests
     [Fact]
     public void None_and_a_custom_transition_have_no_start_state_and_every_other_one_has_one()
     {
-        Assert.Null(RouteTransition.None.Start(NavigationDirection.Forward));
-        Assert.Null(RouteTransition.Named("Grow").Start(NavigationDirection.Forward));
+        Assert.Null(RouteTransition.None.Start(RouteableDirection.Forward));
+        Assert.Null(RouteTransition.Named("Grow").Start(RouteableDirection.Forward));
 
         foreach (var transition in RouteTransition.BuiltIn.Where(t => !t.IsNone))
-            Assert.NotNull(transition.Start(NavigationDirection.Forward));
+            Assert.NotNull(transition.Start(RouteableDirection.Forward));
     }
 
     [Theory]
@@ -105,8 +106,8 @@ public class RouteTransitionTests
     [InlineData("Swipe")]
     public void A_slide_starts_on_the_side_the_history_moves_from(string name)
     {
-        var forward = RouteTransition.Named(name).Start(NavigationDirection.Forward)!;
-        var back = RouteTransition.Named(name).Start(NavigationDirection.Back)!;
+        var forward = RouteTransition.Named(name).Start(RouteableDirection.Forward)!;
+        var back = RouteTransition.Named(name).Start(RouteableDirection.Back)!;
 
         Assert.True(forward.TranslateX > 0);
         Assert.Equal(-forward.TranslateX, back.TranslateX);
@@ -115,20 +116,20 @@ public class RouteTransitionTests
     [Fact]
     public void SlideUp_moves_vertically_and_Swipe_does_not_fade()
     {
-        Assert.True(RouteTransition.SlideUp.Start(NavigationDirection.Forward)!.TranslateY > 0);
-        Assert.True(RouteTransition.SlideUp.Start(NavigationDirection.Back)!.TranslateY < 0);
-        Assert.Equal(1, RouteTransition.Swipe.Start(NavigationDirection.Forward)!.Opacity);
-        Assert.Equal(0, RouteTransition.Fade.Start(NavigationDirection.Forward)!.Opacity);
+        Assert.True(RouteTransition.SlideUp.Start(RouteableDirection.Forward)!.TranslateY > 0);
+        Assert.True(RouteTransition.SlideUp.Start(RouteableDirection.Back)!.TranslateY < 0);
+        Assert.Equal(1, RouteTransition.Swipe.Start(RouteableDirection.Forward)!.Opacity);
+        Assert.Equal(0, RouteTransition.Fade.Start(RouteableDirection.Forward)!.Opacity);
     }
 
     [Fact]
     public void Pop_overshoots_and_Reveal_and_Curtain_grow_from_opposite_edges()
     {
-        Assert.True(RouteTransition.Pop.Start(NavigationDirection.Forward)!.Overshoot);
-        Assert.False(RouteTransition.Scale.Start(NavigationDirection.Forward)!.Overshoot);
+        Assert.True(RouteTransition.Pop.Start(RouteableDirection.Forward)!.Overshoot);
+        Assert.False(RouteTransition.Scale.Start(RouteableDirection.Forward)!.Overshoot);
 
-        var reveal = RouteTransition.Reveal.Start(NavigationDirection.Forward)!;
-        var curtain = RouteTransition.Curtain.Start(NavigationDirection.Forward)!;
+        var reveal = RouteTransition.Reveal.Start(RouteableDirection.Forward)!;
+        var curtain = RouteTransition.Curtain.Start(RouteableDirection.Forward)!;
         Assert.Equal(1, reveal.OriginY);
         Assert.Equal(0, curtain.OriginY);
         Assert.True(reveal.EffectiveScaleY < 0.1 && curtain.EffectiveScaleY < 0.1);
@@ -136,12 +137,12 @@ public class RouteTransitionTests
 
     [Fact]
     public void Fade_only_changes_the_opacity()
-        => Assert.False(RouteTransition.Fade.Start(NavigationDirection.Forward)!.Moves);
+        => Assert.False(RouteTransition.Fade.Start(RouteableDirection.Forward)!.Moves);
 
     [Fact]
     public void A_start_state_that_is_scaled_translated_or_turned_moves()
     {
         foreach (var name in new[] { "Slide", "SlideUp", "Pop", "Scale", "Lift", "Flip", "Rotate", "Reveal", "Curtain", "Spotlight", "Blur", "Swipe", "SlideFade" })
-            Assert.True(RouteTransition.Named(name).Start(NavigationDirection.Forward)!.Moves, name);
+            Assert.True(RouteTransition.Named(name).Start(RouteableDirection.Forward)!.Moves, name);
     }
 }

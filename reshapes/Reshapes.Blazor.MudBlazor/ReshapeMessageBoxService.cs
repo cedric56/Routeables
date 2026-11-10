@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Reshapes.Blazor.MudBlazor.Components;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Blazor.Services;
 using Routeables.Services;
 

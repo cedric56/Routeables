@@ -1,4 +1,5 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Regions;
 using System.Collections.Concurrent;
 
@@ -11,7 +12,7 @@ namespace Routeables.Maui;
 /// </summary>
 public static class RouteTransitions
 {
-    private static readonly ConcurrentDictionary<string, Func<View, NavigationDirection, TimeSpan, Task>> Custom =
+    private static readonly ConcurrentDictionary<string, Func<View, RouteableDirection, TimeSpan, Task>> Custom =
         new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
@@ -20,7 +21,7 @@ public static class RouteTransitions
     /// </summary>
     /// <param name="name">The name of the transition.</param>
     /// <param name="play">Animates the region once its new view is shown: the way the history moved, and how long it should take.</param>
-    public static void Register(string name, Func<View, NavigationDirection, TimeSpan, Task> play)
+    public static void Register(string name, Func<View, RouteableDirection, TimeSpan, Task> play)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentNullException.ThrowIfNull(play);

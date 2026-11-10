@@ -1,4 +1,5 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Services;
 using Routeables.Tests.Core;
 using Routeables.Tests.Hosts;

@@ -2,6 +2,7 @@
 using CommunityToolkit.Maui.Views;
 using Reshapes.Maui.CommunityToolkit;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Maui.Services;
 using Routeables.Services;
 

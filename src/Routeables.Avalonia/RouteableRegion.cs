@@ -5,6 +5,7 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Regions;
 
 namespace Routeables.Avalonia;
@@ -166,7 +167,7 @@ public class RouteableRegion : TransitioningContentControl
         var custom = RouteTransitions.CreateCustom(transition);
         if (!ReferenceEquals(PageTransition, custom))
             PageTransition = custom;
-        var reversed = custom is not null && transition.Direction == NavigationDirection.Back;
+        var reversed = custom is not null && transition.Direction == RouteableDirection.Back;
         if (IsTransitionReversed != reversed)
             IsTransitionReversed = reversed;
 

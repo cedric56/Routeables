@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Guards;
 
 namespace Routeables.Blazor;
 

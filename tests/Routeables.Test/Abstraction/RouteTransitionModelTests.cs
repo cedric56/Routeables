@@ -1,4 +1,5 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Regions;
 
 namespace Routeables.Tests.Abstraction;
@@ -185,10 +186,10 @@ public class RouteTransitionModelTests
     // ------------------------------------------------------------------------------------------------ the start state
 
     [Theory]
-    [InlineData(NavigationDirection.Forward)]
-    [InlineData(NavigationDirection.Back)]
-    [InlineData(NavigationDirection.None)]
-    public void The_start_state_of_a_built_in_transition_is_never_the_rest_state_unless_the_transition_is_none(NavigationDirection direction)
+    [InlineData(RouteableDirection.Forward)]
+    [InlineData(RouteableDirection.Back)]
+    [InlineData(RouteableDirection.None)]
+    public void The_start_state_of_a_built_in_transition_is_never_the_rest_state_unless_the_transition_is_none(RouteableDirection direction)
     {
         foreach (var transition in RouteTransition.BuiltIn.Where(t => !t.IsNone))
         {
@@ -202,7 +203,7 @@ public class RouteTransitionModelTests
     public void A_direction_of_none_starts_like_a_forward_move()
     {
         foreach (var transition in RouteTransition.BuiltIn.Where(t => !t.IsNone))
-            Assert.Equal(transition.Start(NavigationDirection.Forward), transition.Start(NavigationDirection.None));
+            Assert.Equal(transition.Start(RouteableDirection.Forward), transition.Start(RouteableDirection.None));
     }
 
     [Fact]
@@ -211,7 +212,7 @@ public class RouteTransitionModelTests
         foreach (var transition in RouteTransition.BuiltIn.Where(t => !t.IsNone))
         {
             var lower = RouteTransition.Named(transition.Name.ToLowerInvariant());
-            Assert.Equal(transition.Start(NavigationDirection.Forward), lower.Start(NavigationDirection.Forward));
+            Assert.Equal(transition.Start(RouteableDirection.Forward), lower.Start(RouteableDirection.Forward));
         }
     }
 
@@ -220,15 +221,15 @@ public class RouteTransitionModelTests
     {
         foreach (var transition in RouteTransition.BuiltIn.Where(t => !t.IsNone))
             Assert.Equal(
-                transition.Start(NavigationDirection.Forward),
-                transition.WithDuration(TimeSpan.FromSeconds(3)).Start(NavigationDirection.Forward));
+                transition.Start(RouteableDirection.Forward),
+                transition.WithDuration(TimeSpan.FromSeconds(3)).Start(RouteableDirection.Forward));
     }
 
     [Fact]
     public void Only_the_slides_depend_on_the_direction()
     {
         var directional = RouteTransition.BuiltIn
-            .Where(t => !t.IsNone && !Equals(t.Start(NavigationDirection.Forward), t.Start(NavigationDirection.Back)))
+            .Where(t => !t.IsNone && !Equals(t.Start(RouteableDirection.Forward), t.Start(RouteableDirection.Back)))
             .Select(t => t.Name)
             .OrderBy(n => n, StringComparer.Ordinal)
             .ToArray();
@@ -246,7 +247,7 @@ public class RouteTransitionModelTests
     [InlineData("Flip", 0.0, 1.0, 0.02, 0.0, 0.0, 0.0)]
     public void The_start_state_of_a_forward_transition_is_the_one_documented(string name, double opacity, double scale, double effectiveX, double translateX, double translateY, double rotate)
     {
-        var start = RouteTransition.Named(name).Start(NavigationDirection.Forward)!;
+        var start = RouteTransition.Named(name).Start(RouteableDirection.Forward)!;
 
         Assert.Equal(opacity, start.Opacity);
         Assert.Equal(scale, start.Scale, 3);
@@ -259,7 +260,7 @@ public class RouteTransitionModelTests
     [Fact]
     public void Lift_moves_down_a_little_and_shrinks_a_little()
     {
-        var start = RouteTransition.Lift.Start(NavigationDirection.Forward)!;
+        var start = RouteTransition.Lift.Start(RouteableDirection.Forward)!;
 
         Assert.True(start.TranslateY > 0 && start.TranslateY < 0.1);
         Assert.True(start.Scale < 1 && start.Scale > 0.9);
@@ -268,20 +269,20 @@ public class RouteTransitionModelTests
     [Fact]
     public void Blur_and_Spotlight_start_larger_than_rest_and_the_others_that_scale_start_smaller()
     {
-        Assert.True(RouteTransition.Blur.Start(NavigationDirection.Forward)!.Scale > 1);
-        Assert.True(RouteTransition.Spotlight.Start(NavigationDirection.Forward)!.Scale > 1);
+        Assert.True(RouteTransition.Blur.Start(RouteableDirection.Forward)!.Scale > 1);
+        Assert.True(RouteTransition.Spotlight.Start(RouteableDirection.Forward)!.Scale > 1);
         foreach (var smaller in new[] { RouteTransition.Pop, RouteTransition.Scale, RouteTransition.Lift, RouteTransition.Rotate })
-            Assert.True(smaller.Start(NavigationDirection.Forward)!.Scale < 1, smaller.Name);
+            Assert.True(smaller.Start(RouteableDirection.Forward)!.Scale < 1, smaller.Name);
     }
 
     [Fact]
     public void The_transitions_that_slide_in_from_nothing_start_at_full_opacity()
     {
         foreach (var name in new[] { "Swipe", "Reveal", "Curtain" })
-            Assert.Equal(1, RouteTransition.Named(name).Start(NavigationDirection.Forward)!.Opacity);
+            Assert.Equal(1, RouteTransition.Named(name).Start(RouteableDirection.Forward)!.Opacity);
 
         foreach (var name in new[] { "Fade", "Slide", "SlideUp", "SlideFade", "Pop", "Scale", "Lift", "Blur", "Spotlight", "Flip", "Rotate" })
-            Assert.Equal(0, RouteTransition.Named(name).Start(NavigationDirection.Forward)!.Opacity);
+            Assert.Equal(0, RouteTransition.Named(name).Start(RouteableDirection.Forward)!.Opacity);
     }
 
     [Fact]
@@ -289,7 +290,7 @@ public class RouteTransitionModelTests
     {
         foreach (var transition in RouteTransition.BuiltIn.Where(t => !t.IsNone))
         {
-            var start = transition.Start(NavigationDirection.Forward)!;
+            var start = transition.Start(RouteableDirection.Forward)!;
             Assert.InRange(start.OriginX, 0, 1);
             Assert.InRange(start.OriginY, 0, 1);
         }
@@ -300,7 +301,7 @@ public class RouteTransitionModelTests
     {
         foreach (var transition in RouteTransition.BuiltIn.Where(t => !t.IsNone))
         {
-            var start = transition.Start(NavigationDirection.Forward)!;
+            var start = transition.Start(RouteableDirection.Forward)!;
             Assert.True(start.EffectiveScaleX > 0 && start.EffectiveScaleY > 0, transition.Name);
         }
     }
@@ -309,7 +310,7 @@ public class RouteTransitionModelTests
     public void A_translation_is_a_fraction_of_the_size_of_the_view_never_more_than_a_whole_view()
     {
         foreach (var transition in RouteTransition.BuiltIn.Where(t => !t.IsNone))
-            foreach (var direction in new[] { NavigationDirection.Forward, NavigationDirection.Back })
+            foreach (var direction in new[] { RouteableDirection.Forward, RouteableDirection.Back })
             {
                 var start = transition.Start(direction)!;
                 Assert.InRange(start.TranslateX, -1, 1);
@@ -377,21 +378,21 @@ public class RouteTransitionModelTests
     [Fact]
     public void An_unknown_change_has_no_direction_and_no_transition()
     {
-        Assert.Equal(NavigationDirection.None, RegionChange.Unknown.Direction);
+        Assert.Equal(RouteableDirection.None, RegionChange.Unknown.Direction);
         Assert.Null(RegionChange.Unknown.Transition);
     }
 
     [Theory]
-    [InlineData(NavigationDirection.None)]
-    [InlineData(NavigationDirection.Forward)]
-    [InlineData(NavigationDirection.Back)]
-    public void The_direction_of_the_change_goes_to_the_resolved_transition(NavigationDirection direction)
+    [InlineData(RouteableDirection.None)]
+    [InlineData(RouteableDirection.Forward)]
+    [InlineData(RouteableDirection.Back)]
+    public void The_direction_of_the_change_goes_to_the_resolved_transition(RouteableDirection direction)
         => Assert.Equal(direction, new RegionChange(direction, RouteTransition.Slide).Resolve(null, TimeSpan.Zero).Direction);
 
     [Fact]
     public void The_transition_of_the_navigation_wins_over_the_one_of_the_region()
     {
-        var resolved = new RegionChange(NavigationDirection.Forward, RouteTransition.Slide).Resolve(RouteTransition.Fade, TimeSpan.Zero);
+        var resolved = new RegionChange(RouteableDirection.Forward, RouteTransition.Slide).Resolve(RouteTransition.Fade, TimeSpan.Zero);
 
         Assert.Same(RouteTransition.Slide, resolved.Transition);
         Assert.True(resolved.Declared);
@@ -409,7 +410,7 @@ public class RouteTransitionModelTests
     [Fact]
     public void A_navigation_that_asks_for_none_stops_the_transition_of_the_region()
     {
-        var resolved = new RegionChange(NavigationDirection.Forward, RouteTransition.None).Resolve(RouteTransition.Slide, TimeSpan.FromSeconds(1));
+        var resolved = new RegionChange(RouteableDirection.Forward, RouteTransition.None).Resolve(RouteTransition.Slide, TimeSpan.FromSeconds(1));
 
         Assert.True(resolved.IsNone);
         Assert.True(resolved.Declared);
@@ -456,7 +457,7 @@ public class RouteTransitionModelTests
     [Fact]
     public void A_transition_with_its_own_duration_ignores_the_duration_of_the_region()
     {
-        var change = new RegionChange(NavigationDirection.Forward, RouteTransition.Slide.WithDuration(TimeSpan.FromMilliseconds(500)));
+        var change = new RegionChange(RouteableDirection.Forward, RouteTransition.Slide.WithDuration(TimeSpan.FromMilliseconds(500)));
 
         Assert.Equal(TimeSpan.FromMilliseconds(500), change.Resolve(null, TimeSpan.FromSeconds(3)).Duration);
     }
@@ -464,7 +465,7 @@ public class RouteTransitionModelTests
     [Fact]
     public void A_transition_without_a_duration_takes_the_duration_of_the_region_then_the_default()
     {
-        var change = new RegionChange(NavigationDirection.Forward, RouteTransition.Slide);
+        var change = new RegionChange(RouteableDirection.Forward, RouteTransition.Slide);
 
         Assert.Equal(TimeSpan.FromSeconds(3), change.Resolve(null, TimeSpan.FromSeconds(3)).Duration);
         Assert.Equal(RouteTransition.DefaultDuration, change.Resolve(null, TimeSpan.Zero).Duration);
@@ -474,7 +475,7 @@ public class RouteTransitionModelTests
     [Fact]
     public void A_transition_whose_own_duration_is_zero_plays_nothing()
     {
-        var change = new RegionChange(NavigationDirection.Forward, RouteTransition.Slide.WithDuration(TimeSpan.Zero));
+        var change = new RegionChange(RouteableDirection.Forward, RouteTransition.Slide.WithDuration(TimeSpan.Zero));
 
         Assert.True(change.Resolve(null, TimeSpan.FromSeconds(1)).IsNone);
     }
@@ -482,17 +483,17 @@ public class RouteTransitionModelTests
     [Fact]
     public void A_region_transition_of_the_navigation_is_a_custom_name_when_it_is_not_built_in()
     {
-        var resolved = new RegionChange(NavigationDirection.Back, RouteTransition.Named("Grow")).Resolve(null, TimeSpan.Zero);
+        var resolved = new RegionChange(RouteableDirection.Back, RouteTransition.Named("Grow")).Resolve(null, TimeSpan.Zero);
 
         Assert.Equal("Grow", resolved.Transition.Name);
         Assert.False(resolved.IsNone);
-        Assert.Equal(NavigationDirection.Back, resolved.Direction);
+        Assert.Equal(RouteableDirection.Back, resolved.Direction);
     }
 
     [Fact]
     public void A_region_transition_is_a_value_two_equal_results_are_equal()
     {
-        var change = new RegionChange(NavigationDirection.Forward, RouteTransition.Fade);
+        var change = new RegionChange(RouteableDirection.Forward, RouteTransition.Fade);
 
         Assert.Equal(change.Resolve(null, TimeSpan.Zero), change.Resolve(null, TimeSpan.Zero));
     }
@@ -501,7 +502,7 @@ public class RouteTransitionModelTests
     public void Resolving_every_built_in_name_with_every_direction_never_throws_and_always_has_a_positive_duration_unless_none()
     {
         foreach (var transition in RouteTransition.BuiltIn)
-            foreach (var direction in Enum.GetValues<NavigationDirection>())
+            foreach (var direction in Enum.GetValues<RouteableDirection>())
             {
                 var resolved = new RegionChange(direction, transition).Resolve(null, TimeSpan.Zero);
                 if (transition.IsNone)

@@ -1,4 +1,7 @@
-﻿namespace Routeables.Abstraction;
+﻿using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Icons;
+
+namespace Routeables.Abstraction;
 
 /// <summary>
 /// An entry of the menu, and a destination of the router: a name, a route, the view and view model it shows, and an icon. The main

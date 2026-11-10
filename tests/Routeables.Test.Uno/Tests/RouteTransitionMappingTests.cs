@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml.Media.Animation;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Regions;
 using Routeables.Uno;
 
@@ -10,7 +11,7 @@ namespace Routeables.Test.Uno.Tests;
 public class RouteTransitionMappingTests
 {
     /// <summary>Builds a <see cref="RegionTransition"/> for the given name, direction and duration.</summary>
-    private static RegionTransition Of(string name, NavigationDirection direction = NavigationDirection.Forward, int ms = 250)
+    private static RegionTransition Of(string name, RouteableDirection direction = RouteableDirection.Forward, int ms = 250)
         => new(RouteTransition.Named(name), TimeSpan.FromMilliseconds(ms), direction, Declared: true);
 
     /// <summary>Asserts that the collection contains a single <see cref="EntranceThemeTransition"/> and returns it.</summary>
@@ -52,14 +53,14 @@ public class RouteTransitionMappingTests
     [TestMethod]
     public void Slide_comes_from_the_right_going_forward_and_from_the_left_going_back()
     {
-        Assert.IsTrue(Entrance(RouteTransitions.Create(Of("Slide", NavigationDirection.Forward), 400, 300)).FromHorizontalOffset > 0);
-        Assert.IsTrue(Entrance(RouteTransitions.Create(Of("Slide", NavigationDirection.Back), 400, 300)).FromHorizontalOffset < 0);
+        Assert.IsTrue(Entrance(RouteTransitions.Create(Of("Slide", RouteableDirection.Forward), 400, 300)).FromHorizontalOffset > 0);
+        Assert.IsTrue(Entrance(RouteTransitions.Create(Of("Slide", RouteableDirection.Back), 400, 300)).FromHorizontalOffset < 0);
     }
 
     /// <summary>Slide with no direction behaves like going forward.</summary>
     [TestMethod]
     public void Slide_with_no_direction_comes_like_going_forward()
-        => Assert.IsTrue(Entrance(RouteTransitions.Create(Of("Slide", NavigationDirection.None), 400, 300)).FromHorizontalOffset > 0);
+        => Assert.IsTrue(Entrance(RouteTransitions.Create(Of("Slide", RouteableDirection.None), 400, 300)).FromHorizontalOffset > 0);
 
     /// <summary>The horizontal offset grows with the width and never goes under forty.</summary>
     [TestMethod]
@@ -83,7 +84,7 @@ public class RouteTransitionMappingTests
     public void Every_built_in_transition_but_none_has_a_transition_in_both_directions()
     {
         foreach (var transition in RouteTransition.BuiltIn.Where(t => !t.IsNone))
-            foreach (var direction in Enum.GetValues<NavigationDirection>())
+            foreach (var direction in Enum.GetValues<RouteableDirection>())
                 Assert.IsNotNull(RouteTransitions.Create(Of(transition.Name, direction), 400, 300), $"{transition.Name} {direction}");
     }
 
@@ -93,7 +94,7 @@ public class RouteTransitionMappingTests
     {
         foreach (var name in new[] { "Pop", "Scale", "Flip", "Rotate", "Reveal", "Curtain" })
         {
-            var start = RouteTransition.Named(name).Start(NavigationDirection.Forward);
+            var start = RouteTransition.Named(name).Start(RouteableDirection.Forward);
             if (start is { TranslateX: 0, TranslateY: 0, Moves: true })
                 Assert.AreEqual(24, Entrance(RouteTransitions.Create(Of(name), 400, 300)).FromVerticalOffset, name);
         }
@@ -103,14 +104,14 @@ public class RouteTransitionMappingTests
     [TestMethod]
     public void A_custom_transition_is_asked_for_the_direction_and_wins_over_a_built_in_one()
     {
-        NavigationDirection? seen = null;
+        RouteableDirection? seen = null;
         var made = new TransitionCollection { new ContentThemeTransition() };
         RouteTransitions.Register("MappingCustomSeen", direction => { seen = direction; return made; });
 
-        var result = RouteTransitions.Create(Of("MappingCustomSeen", NavigationDirection.Back), 400, 300);
+        var result = RouteTransitions.Create(Of("MappingCustomSeen", RouteableDirection.Back), 400, 300);
 
         Assert.AreSame(made, result);
-        Assert.AreEqual(NavigationDirection.Back, seen);
+        Assert.AreEqual(RouteableDirection.Back, seen);
     }
 
     /// <summary>A custom transition name is resolved case-insensitively.</summary>

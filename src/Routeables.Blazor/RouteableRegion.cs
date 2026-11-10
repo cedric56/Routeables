@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Regions;
 
 namespace Routeables.Blazor;
@@ -106,7 +107,7 @@ public class RouteableRegion : ComponentBase, IDisposable
         {
             // A new key makes a new element for each view shown: the browser plays the CSS animation when it is added.
             builder.SetKey(_version);
-            var direction = transition.Direction == NavigationDirection.Back ? "back" : transition.Direction == NavigationDirection.Forward ? "forward" : "none";
+            var direction = transition.Direction == RouteableDirection.Back ? "back" : transition.Direction == RouteableDirection.Forward ? "forward" : "none";
             var classes = $"rt-enter rt-{CssName(transition.Transition.Name)} rt-{direction}";
             builder.AddAttribute(1, "class", string.IsNullOrWhiteSpace(Class) ? classes : $"{Class} {classes}");
             builder.AddAttribute(3, "style", $"--rt-duration:{(int)transition.Duration.TotalMilliseconds}ms");

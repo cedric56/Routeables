@@ -2,10 +2,10 @@
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Injections;
 
 /// <summary>Injection of the view and view model properties and constructors from the route arguments.</summary>
-public static partial class Extensions
+internal static partial class InjectionsExtensions
 {
     /// <summary>
     /// Populates the injectable properties of <paramref name="view"/> (view or view model):
@@ -154,7 +154,7 @@ public static partial class Extensions
     /// Extracts the positional (non-attribute) values, skipping nulls, to be passed as extra
     /// constructor arguments to <see cref="ActivatorUtilities"/>.
     /// </summary>
-    private static object[] ResolveViewParameters(this IList<RouteableArgument> parameters)
+    internal static object[] ResolveViewParameters(this IList<RouteableArgument> parameters)
         => parameters.Where(p => p.attribute == false && p.value is not null).Select(p => p.value!).ToArray();
 
     /// <summary>
@@ -162,7 +162,7 @@ public static partial class Extensions
     /// </summary>
     /// <exception cref="ArgumentException"><paramref name="index"/> is out of range.</exception>
     /// <exception cref="InvalidCastException">The value is null or not a <typeparamref name="T"/>.</exception>
-    private static T Resolve<T>(this IList<RouteableArgument> args, int index)
+    internal static T Resolve<T>(this IList<RouteableArgument> args, int index)
     {
         if (index < 0 || index >= args.Count)
             throw new ArgumentException($"Invalid index: {index}, but there are {args.Count} argument(s).");

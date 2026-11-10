@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.History;
 using Routeables.Routing;
 
 namespace Routeables.Blazor;

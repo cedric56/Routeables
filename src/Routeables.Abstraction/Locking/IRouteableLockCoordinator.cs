@@ -1,4 +1,6 @@
-﻿namespace Routeables.Abstraction;
+﻿using Routeables.Abstraction.Bases;
+
+namespace Routeables.Abstraction.Locking;
 
 /// <summary>
 /// Keeps the menu locked while a page refuses to be left: it listens to the lock messages of the broker and locks or unlocks every

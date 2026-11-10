@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Generated;
 
 namespace Routeables.Tests.Generated;

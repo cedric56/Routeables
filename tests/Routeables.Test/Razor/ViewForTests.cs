@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Blazor;
 using Routeables.Routing;
 using System.Collections.ObjectModel;

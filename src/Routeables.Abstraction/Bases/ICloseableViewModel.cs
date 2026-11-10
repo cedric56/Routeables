@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Bases;
 
 /// <summary>
 /// A view model shown in a modal: a dialog-like view that gives a result back. It names itself, offers its buttons and asks to be

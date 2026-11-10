@@ -1,4 +1,5 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Maui;
 using Routeables.Regions;
 using Xunit;
@@ -12,7 +13,7 @@ namespace Routeables.Test.Maui;
 public class TransitionDeviceTests
 {
     /// <summary>Builds a declared <see cref="RegionTransition"/> for the given name, direction and duration.</summary>
-    private static RegionTransition Declared(string name, NavigationDirection direction = NavigationDirection.Forward, int ms = 80)
+    private static RegionTransition Declared(string name, RouteableDirection direction = RouteableDirection.Forward, int ms = 80)
         => new(RouteTransition.Named(name), TimeSpan.FromMilliseconds(ms), direction, Declared: true);
 
     /// <summary>Creates a hosted content view suitable for playing transitions.</summary>
@@ -34,10 +35,10 @@ public class TransitionDeviceTests
     {
         using var host = Host();
 
-        await RouteTransitions.PlayAsync(host.View, Declared(name, NavigationDirection.Forward));
+        await RouteTransitions.PlayAsync(host.View, Declared(name, RouteableDirection.Forward));
         Assert.True(Device.IsAtRest(host.View));
 
-        await RouteTransitions.PlayAsync(host.View, Declared(name, NavigationDirection.Back));
+        await RouteTransitions.PlayAsync(host.View, Declared(name, RouteableDirection.Back));
         Assert.True(Device.IsAtRest(host.View));
     }
 
@@ -49,7 +50,7 @@ public class TransitionDeviceTests
         host.View.Opacity = 0.3;
         host.View.TranslationX = 12;
 
-        await RouteTransitions.PlayAsync(host.View, new RegionTransition(RouteTransition.None, TimeSpan.Zero, NavigationDirection.Forward, Declared: false));
+        await RouteTransitions.PlayAsync(host.View, new RegionTransition(RouteTransition.None, TimeSpan.Zero, RouteableDirection.Forward, Declared: false));
 
         Assert.Equal(0.3, host.View.Opacity);
         Assert.Equal(12, host.View.TranslationX);
@@ -63,7 +64,7 @@ public class TransitionDeviceTests
         host.View.Opacity = 0.3;
         host.View.TranslationX = 12;
 
-        await RouteTransitions.PlayAsync(host.View, new RegionTransition(RouteTransition.None, TimeSpan.Zero, NavigationDirection.Forward, Declared: true));
+        await RouteTransitions.PlayAsync(host.View, new RegionTransition(RouteTransition.None, TimeSpan.Zero, RouteableDirection.Forward, Declared: true));
 
         Assert.True(Device.IsAtRest(host.View));
     }
@@ -87,10 +88,10 @@ public class TransitionDeviceTests
     {
         using var host = Host();
 
-        var forward = RouteTransitions.PlayAsync(host.View, Declared("Slide", NavigationDirection.Forward, 400));
+        var forward = RouteTransitions.PlayAsync(host.View, Declared("Slide", RouteableDirection.Forward, 400));
         var fromRight = host.View.TranslationX;
         await forward;
-        var back = RouteTransitions.PlayAsync(host.View, Declared("Slide", NavigationDirection.Back, 400));
+        var back = RouteTransitions.PlayAsync(host.View, Declared("Slide", RouteableDirection.Back, 400));
         var fromLeft = host.View.TranslationX;
         await back;
 
@@ -131,7 +132,7 @@ public class TransitionDeviceTests
     {
         using var host = Host();
         View? seenView = null;
-        NavigationDirection? seenDirection = null;
+        RouteableDirection? seenDirection = null;
         TimeSpan? seenDuration = null;
         RouteTransitions.Register("DeviceCustomSeen", (view, direction, duration) =>
         {
@@ -139,10 +140,10 @@ public class TransitionDeviceTests
             return Task.CompletedTask;
         });
 
-        await RouteTransitions.PlayAsync(host.View, Declared("DeviceCustomSeen", NavigationDirection.Back, 321));
+        await RouteTransitions.PlayAsync(host.View, Declared("DeviceCustomSeen", RouteableDirection.Back, 321));
 
         Assert.Same(host.View, seenView);
-        Assert.Equal(NavigationDirection.Back, seenDirection);
+        Assert.Equal(RouteableDirection.Back, seenDirection);
         Assert.Equal(TimeSpan.FromMilliseconds(321), seenDuration);
     }
 

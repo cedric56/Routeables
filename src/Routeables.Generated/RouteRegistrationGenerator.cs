@@ -628,7 +628,7 @@ namespace Routeables.Generated
 
                 // How the injection fills the types that were described, known to it before the provider is built.
                 foreach (var description in _descriptions.All)
-                    _sb.AppendLine($"        global::Routeables.Abstraction.RouteableBuild.Describe(services, typeof({description.Info.TypeName}), {description.Name}());");
+                    _sb.AppendLine($"        global::Routeables.Abstraction.Injections.RouteableBuild.Describe(services, typeof({description.Info.TypeName}), {description.Name}());");
 
                 _sb.AppendLine("        return services;");
                 _sb.AppendLine("    }");

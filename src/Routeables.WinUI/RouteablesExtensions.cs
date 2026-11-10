@@ -4,6 +4,8 @@ using Microsoft.UI.Xaml;
 using Routeables.Abstraction;
 using Routeables.Core;
 using Routeables.Services;
+using Routeables.Abstraction.Bases;
+
 #if WINUI3
 using Routeables.WinUI3.Services;
 using HostExtensions = Routeables.WinUI3.WinUI3RouteablesExtensions;

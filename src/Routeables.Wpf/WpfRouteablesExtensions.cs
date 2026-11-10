@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Core;
 using Routeables.Services;
 using Routeables.Wpf.Services;

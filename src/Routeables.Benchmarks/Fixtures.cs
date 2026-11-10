@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Lifecycle;
 using Routeables.Routing;
 
 namespace Routeables.Benchmarks;

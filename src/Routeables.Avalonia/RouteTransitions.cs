@@ -3,7 +3,7 @@ using Avalonia.Animation;
 using Avalonia.Animation.Easings;
 using Avalonia.Media.Transformation;
 using Avalonia.Threading;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Regions;
 using System.Collections.Concurrent;
 
@@ -16,7 +16,7 @@ namespace Routeables.Avalonia;
 /// </summary>
 public static class RouteTransitions
 {
-    private static readonly ConcurrentDictionary<string, Func<NavigationDirection, TimeSpan, IPageTransition?>> Custom =
+    private static readonly ConcurrentDictionary<string, Func<RouteableDirection, TimeSpan, IPageTransition?>> Custom =
         new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
@@ -25,7 +25,7 @@ public static class RouteTransitions
     /// </summary>
     /// <param name="name">The name of the transition.</param>
     /// <param name="create">Builds the transition for a change: the way the history moved, and how long it should take.</param>
-    public static void Register(string name, Func<NavigationDirection, TimeSpan, IPageTransition?> create)
+    public static void Register(string name, Func<RouteableDirection, TimeSpan, IPageTransition?> create)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentNullException.ThrowIfNull(create);

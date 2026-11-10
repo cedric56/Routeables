@@ -1,4 +1,6 @@
 ﻿using Routeables.Abstraction;
+using Routeables.Abstraction.History;
+using Routeables.Abstraction.Transitions;
 
 namespace Routeables.Regions;
 
@@ -92,25 +94,25 @@ public sealed class RegionBinding : IDisposable
         lock (_lock) _pending = null;
     }
 
-    private NavigationDirection DirectionOf(RouteableRoutingEventArgs e)
+    private RouteableDirection DirectionOf(RouteableRoutingEventArgs e)
     {
         switch (e.Kind)
         {
             case RouteableKind.Push:
             case RouteableKind.Forward:
-                return NavigationDirection.Forward;
+                return RouteableDirection.Forward;
             case RouteableKind.Back:
             case RouteableKind.Pop:
             case RouteableKind.Root:
-                return NavigationDirection.Back;
+                return RouteableDirection.Back;
             case RouteableKind.MoveTo:
                 var entries = Router.History.Entries;
                 var from = e.From is null ? -1 : IndexOf(entries, e.From);
                 var to = IndexOf(entries, e.To);
-                return from < 0 || to < 0 || from == to ? NavigationDirection.None
-                     : to > from ? NavigationDirection.Forward : NavigationDirection.Back;
+                return from < 0 || to < 0 || from == to ? RouteableDirection.None
+                     : to > from ? RouteableDirection.Forward : RouteableDirection.Back;
             default:
-                return NavigationDirection.None;
+                return RouteableDirection.None;
         }
     }
 

@@ -1,4 +1,6 @@
-namespace Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
+
+namespace Routeables.Abstraction.Locking;
 
 /// <summary>
 /// What a router offers to a menu view model: the coordinator that locks the menu while a page blocks leaving. Separate from

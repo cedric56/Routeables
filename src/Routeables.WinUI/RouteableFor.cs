@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Lifecycle;
 using Routeables.Services;
 
 #if WINUI3

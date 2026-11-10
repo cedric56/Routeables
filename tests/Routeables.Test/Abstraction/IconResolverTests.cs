@@ -1,5 +1,5 @@
 ﻿using NSubstitute;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Icons;
 
 namespace Routeables.Test.Abstraction;
 

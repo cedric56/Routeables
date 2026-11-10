@@ -2,6 +2,7 @@ using MudBlazor;
 using NSubstitute;
 using Reshapes.Blazor.MudBlazor;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Blazor.Services;
 using Routeables.Services;
 using Extensions = Reshapes.Blazor.MudBlazor.MudBlazorReshapeExtensions;

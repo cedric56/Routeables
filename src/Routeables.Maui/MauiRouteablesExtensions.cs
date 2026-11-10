@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Maui.LifecycleEvents;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Core;
 using Routeables.Maui.Services;
 using Routeables.Native;

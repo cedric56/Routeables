@@ -1,4 +1,5 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Regions;
 
 namespace Routeables.AspNetCore;
@@ -120,8 +121,8 @@ public readonly record struct RouteableTransitionStyle(string CssClass, string S
 
     internal static RouteableTransitionStyle Of(RegionTransition transition)
     {
-        var direction = transition.Direction == NavigationDirection.Back ? "back"
-            : transition.Direction == NavigationDirection.Forward ? "forward" : "none";
+        var direction = transition.Direction == RouteableDirection.Back ? "back"
+            : transition.Direction == RouteableDirection.Forward ? "forward" : "none";
         var name = new string(transition.Transition.Name.ToLowerInvariant()
             .Select(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_' ? c : '-').ToArray());
         return new($"rt-enter rt-{name} rt-{direction}", $"--rt-duration:{(int)transition.Duration.TotalMilliseconds}ms");

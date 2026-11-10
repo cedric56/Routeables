@@ -1,4 +1,4 @@
-using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Regions;
 using System.Collections.Concurrent;
 using System.Windows;
@@ -15,7 +15,7 @@ namespace Routeables.Wpf;
 /// </summary>
 public static class RouteTransitions
 {
-    private static readonly ConcurrentDictionary<string, Action<FrameworkElement, NavigationDirection, TimeSpan>> Custom =
+    private static readonly ConcurrentDictionary<string, Action<FrameworkElement, RouteableDirection, TimeSpan>> Custom =
         new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
@@ -24,7 +24,7 @@ public static class RouteTransitions
     /// </summary>
     /// <param name="name">The name of the transition.</param>
     /// <param name="play">Starts the animation on the region, once its new view is shown: the way the history moved, and how long it should take.</param>
-    public static void Register(string name, Action<FrameworkElement, NavigationDirection, TimeSpan> play)
+    public static void Register(string name, Action<FrameworkElement, RouteableDirection, TimeSpan> play)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentNullException.ThrowIfNull(play);

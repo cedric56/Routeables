@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Services;
 
 #if WINUI3

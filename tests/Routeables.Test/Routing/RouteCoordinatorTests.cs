@@ -1,4 +1,5 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Injections;
 using Routeables.Routing;
 using Routeables.Segments;
 using RouteableArgument = Routeables.Abstraction.RouteableArgument;

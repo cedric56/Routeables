@@ -1,7 +1,7 @@
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Transitions;
 
 /// <summary>Which way a route change moves in the history: what a transition needs to slide the right way.</summary>
-public enum NavigationDirection
+public enum RouteableDirection
 {
     /// <summary>No direction: the history was emptied or replaced, or the route change is not known.</summary>
     None,
@@ -102,9 +102,9 @@ public sealed class RouteTransition : IEquatable<RouteTransition>
     /// </summary>
     /// <param name="direction">The way the history moved: it decides which side a slide starts from.</param>
     /// <returns>The starting state, or <see langword="null"/> for <see cref="None"/> and for a custom transition.</returns>
-    public RouteTransitionStart? Start(NavigationDirection direction)
+    public RouteTransitionStart? Start(RouteableDirection direction)
     {
-        var s = direction == NavigationDirection.Back ? -1.0 : 1.0;
+        var s = direction == RouteableDirection.Back ? -1.0 : 1.0;
         return Name.ToUpperInvariant() switch
         {
             "FADE" => new(),

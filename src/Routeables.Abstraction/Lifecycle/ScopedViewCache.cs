@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.Lifecycle;
 
 /// <summary>
 /// Keeps what a registration created, by key, for as long as the cache lives, and disposes it with the cache.

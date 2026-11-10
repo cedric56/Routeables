@@ -1,3 +1,5 @@
+using Routeables.Abstraction.Bases;
+
 namespace Routeables.Abstraction;
 
 /// <summary>The entries a module adds to the menu, and where; see <see cref="Extensions.AddMenuEntries"/>.</summary>

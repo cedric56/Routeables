@@ -2,6 +2,7 @@ using Microsoft.Maui.Controls.Shapes;
 using Reshapes.Maui.Community;
 using Reshapes.Maui.CommunityToolkit;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Maui.Services;
 using Routeables.Services;
 using System.Collections.ObjectModel;

@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Headless;
 using Avalonia.Themes.Fluent;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Avalonia;
 using Routeables.Routing;
 using System.Collections.ObjectModel;

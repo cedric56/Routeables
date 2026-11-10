@@ -1,4 +1,5 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Icons;
 using Routeables.Routing;
 
 namespace Routeables.Tests.Abstraction;

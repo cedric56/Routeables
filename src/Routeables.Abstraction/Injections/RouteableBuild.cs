@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Injections;
 
 /// <summary>
 /// What the code the source generator writes calls to finish what it built: the injection of the attributes, and the description of
@@ -11,13 +11,13 @@ namespace Routeables.Abstraction;
 [EditorBrowsable(EditorBrowsableState.Never)]
 public static class RouteableBuild
 {
-    /// <summary>Injects a view as <see cref="Extensions"/> does for the views it builds itself: its attribute entries, and the ones routed to its view model it asks for.</summary>
+    /// <summary>Injects a view as <see cref="InjectionsExtensions"/> does for the views it builds itself: its attribute entries, and the ones routed to its view model it asks for.</summary>
     public static T InjectView<[DynamicallyAccessedMembers(InjectableMembers.Properties)] T>(T view, IServiceProvider provider, IRouteableArgs args) where T : notnull
     {
         ArgumentNullException.ThrowIfNull(view);
         ArgumentNullException.ThrowIfNull(provider);
         ArgumentNullException.ThrowIfNull(args);
-        return Extensions.InjectView(view, provider, args);
+        return InjectionsExtensions.InjectView(view, provider, args);
     }
 
     /// <summary>Injects a view model with the attribute entries routed to it.</summary>
@@ -26,7 +26,7 @@ public static class RouteableBuild
         ArgumentNullException.ThrowIfNull(viewModel);
         ArgumentNullException.ThrowIfNull(provider);
         ArgumentNullException.ThrowIfNull(args);
-        return viewModel.Inject(provider, Extensions.ResolveAttributesParameters(args.ViewModelParameters));
+        return viewModel.Inject(provider, InjectionsExtensions.ResolveAttributesParameters(args.ViewModelParameters));
     }
 
     /// <summary>Tells the injection how <paramref name="type"/> is filled, so that it is not read by reflection.</summary>

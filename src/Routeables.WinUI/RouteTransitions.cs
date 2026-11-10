@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml.Media.Animation;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Regions;
 using System.Collections.Concurrent;
 
@@ -19,7 +20,7 @@ namespace Routeables.Uno;
 /// </summary>
 public static class RouteTransitions
 {
-    private static readonly ConcurrentDictionary<string, Func<NavigationDirection, TransitionCollection?>> Custom =
+    private static readonly ConcurrentDictionary<string, Func<RouteableDirection, TransitionCollection?>> Custom =
         new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
@@ -28,7 +29,7 @@ public static class RouteTransitions
     /// </summary>
     /// <param name="name">The name of the transition.</param>
     /// <param name="create">Builds the transitions the region plays when its content changes: the way the history moved.</param>
-    public static void Register(string name, Func<NavigationDirection, TransitionCollection?> create)
+    public static void Register(string name, Func<RouteableDirection, TransitionCollection?> create)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentNullException.ThrowIfNull(create);

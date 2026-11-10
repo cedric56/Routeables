@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Injections;
 
 /// <summary>
 /// What the injection needs to know about a type to fill it (see <see cref="IRouteableInjection"/>): its attributes, and its properties with

@@ -1,14 +1,15 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 
 namespace Routeables.Regions;
 
 /// <summary>What a region host knows about the route change that put a view on screen: which way it moved, and the transition asked for.</summary>
 /// <param name="Direction">Which way the history moved.</param>
 /// <param name="Transition">The transition given with the navigation (<see cref="IRouteableArgs.Transition"/>); <see langword="null"/> when none was.</param>
-public sealed record RegionChange(NavigationDirection Direction, RouteTransition? Transition)
+public sealed record RegionChange(RouteableDirection Direction, RouteTransition? Transition)
 {
     /// <summary>A change nobody asked a transition for (the history was emptied, or the first view).</summary>
-    public static RegionChange Unknown { get; } = new(NavigationDirection.None, null);
+    public static RegionChange Unknown { get; } = new(RouteableDirection.None, null);
 
     /// <summary>
     /// The transition to play: the one of the navigation, else the one of the region, else (to keep the old
@@ -31,7 +32,7 @@ public sealed record RegionChange(NavigationDirection Direction, RouteTransition
 /// <param name="Duration">How long it takes.</param>
 /// <param name="Direction">Which way the history moved.</param>
 /// <param name="Declared">Whether a navigation or the region asked for it (otherwise it only comes from the old <c>TransitionDuration</c> or from nothing).</param>
-public readonly record struct RegionTransition(RouteTransition Transition, TimeSpan Duration, NavigationDirection Direction, bool Declared)
+public readonly record struct RegionTransition(RouteTransition Transition, TimeSpan Duration, RouteableDirection Direction, bool Declared)
 {
     /// <summary>Whether the view appears at once.</summary>
     public bool IsNone => Transition.IsNone || Duration <= TimeSpan.Zero;

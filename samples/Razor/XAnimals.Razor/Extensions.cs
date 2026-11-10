@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Guards;
 using XAnimals.Common;
 using XAnimals.Razor.Session;
 using XAnimals.ViewModels;

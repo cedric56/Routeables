@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.Lifecycle;
 
 /// <summary>
 /// The lifecycle of a page, all of it optional: a view model implements the members it needs, and the router calls them around a

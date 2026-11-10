@@ -1,4 +1,5 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Regions;
 using Routeables.Routing;
 using Routeables.Test.Abstraction;
@@ -79,7 +80,7 @@ public class RegionBindingDirectionTests
         var page = await GoToAsync(router, "A", log);
 
         Assert.Same(page.View, shown.Last.View);
-        Assert.Equal(NavigationDirection.Forward, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Forward, shown.Last.Change.Direction);
         Assert.Null(shown.Last.Change.Transition);
     }
 
@@ -92,11 +93,11 @@ public class RegionBindingDirectionTests
 
         await router.GoBackAsync(Ct);
         Assert.Same(pages[0].View, shown.Last.View);
-        Assert.Equal(NavigationDirection.Back, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Back, shown.Last.Change.Direction);
 
         await router.ForwardAsync(Ct);
         Assert.Same(pages[1].View, shown.Last.View);
-        Assert.Equal(NavigationDirection.Forward, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Forward, shown.Last.Change.Direction);
     }
 
     [Fact]
@@ -109,7 +110,7 @@ public class RegionBindingDirectionTests
         await router.PopAsync(Ct);
 
         Assert.Same(pages[0].View, shown.Last.View);
-        Assert.Equal(NavigationDirection.Back, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Back, shown.Last.Change.Direction);
     }
 
     [Fact]
@@ -122,7 +123,7 @@ public class RegionBindingDirectionTests
         await router.GoBackToRootAsync(Ct);
 
         Assert.Same(pages[0].View, shown.Last.View);
-        Assert.Equal(NavigationDirection.Back, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Back, shown.Last.Change.Direction);
     }
 
     [Fact]
@@ -133,12 +134,12 @@ public class RegionBindingDirectionTests
         var pages = await GoToAllAsync(router, log, "A", "B", "C");
         await router.MoveToAsync(0, Ct);
         Assert.Same(pages[0].View, shown.Last.View);
-        Assert.Equal(NavigationDirection.Back, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Back, shown.Last.Change.Direction);
 
         await router.MoveToAsync(2, Ct);
 
         Assert.Same(pages[2].View, shown.Last.View);
-        Assert.Equal(NavigationDirection.Forward, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Forward, shown.Last.Change.Direction);
     }
 
     [Fact]
@@ -178,7 +179,7 @@ public class RegionBindingDirectionTests
         var page = await GoToAsync(router, "C", log);
 
         Assert.Same(page.View, shown.Last.View);
-        Assert.Equal(NavigationDirection.Forward, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Forward, shown.Last.Change.Direction);
     }
 
     // ------------------------------------------------------------------------------------------------ the transition of the navigation
@@ -239,11 +240,11 @@ public class RegionBindingDirectionTests
 
         await router.GoBackAsync(Ct);
         Assert.Null(shown.Last.Change.Transition);
-        Assert.Equal(NavigationDirection.Back, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Back, shown.Last.Change.Direction);
 
         await router.ForwardAsync(Ct);
         Assert.Same(RouteTransition.Slide, shown.Last.Change.Transition);
-        Assert.Equal(NavigationDirection.Forward, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Forward, shown.Last.Change.Direction);
     }
 
     // ------------------------------------------------------------------------------------------------ refused, failed, cancelled
@@ -277,7 +278,7 @@ public class RegionBindingDirectionTests
         await GoToAsync(router, "C", log);
 
         Assert.Null(shown.Last.Change.Transition);
-        Assert.Equal(NavigationDirection.Forward, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Forward, shown.Last.Change.Direction);
     }
 
     [Fact]
@@ -295,7 +296,7 @@ public class RegionBindingDirectionTests
         pages[1].ViewModel.CanLeave = true;
         await router.GoBackAsync(Ct);
         Assert.Same(pages[0].View, shown.Last.View);
-        Assert.Equal(NavigationDirection.Back, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Back, shown.Last.Change.Direction);
     }
 
     [Fact]
@@ -315,7 +316,7 @@ public class RegionBindingDirectionTests
         await GoToAsync(router, "B", log);
 
         Assert.Null(shown.Last.Change.Transition);
-        Assert.Equal(NavigationDirection.Forward, shown.Last.Change.Direction);
+        Assert.Equal(RouteableDirection.Forward, shown.Last.Change.Direction);
     }
 
     [Fact]
@@ -450,7 +451,7 @@ public class RegionBindingDirectionTests
 
         var views = shown.Calls.Skip(1).Select(c => c.View!).ToList();
         Assert.Equal(pages.Select(p => (object)p.View), views);
-        Assert.All(shown.Calls.Skip(1), c => Assert.Equal(NavigationDirection.Forward, c.Change.Direction));
+        Assert.All(shown.Calls.Skip(1), c => Assert.Equal(RouteableDirection.Forward, c.Change.Direction));
     }
 
     [Fact]
@@ -463,9 +464,9 @@ public class RegionBindingDirectionTests
         for (var i = 0; i < 5; i++)
         {
             await router.GoBackAsync(Ct);
-            Assert.Equal(NavigationDirection.Back, shown.Last.Change.Direction);
+            Assert.Equal(RouteableDirection.Back, shown.Last.Change.Direction);
             await router.ForwardAsync(Ct);
-            Assert.Equal(NavigationDirection.Forward, shown.Last.Change.Direction);
+            Assert.Equal(RouteableDirection.Forward, shown.Last.Change.Direction);
         }
     }
 
@@ -479,7 +480,7 @@ public class RegionBindingDirectionTests
             .WaitAsync(TimeSpan.FromSeconds(20), Ct);
 
         Assert.Equal(10, shown.Calls.Count(c => c.View is not null));
-        Assert.All(shown.Calls.Skip(1), c => Assert.Equal(NavigationDirection.Forward, c.Change.Direction));
+        Assert.All(shown.Calls.Skip(1), c => Assert.Equal(RouteableDirection.Forward, c.Change.Direction));
     }
 
     [Fact]

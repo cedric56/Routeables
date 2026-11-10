@@ -2,6 +2,7 @@ using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Transitions;
 using Routeables.Avalonia;
 using Routeables.Routing;
 using Xunit;
@@ -197,7 +198,7 @@ public sealed class HeadlessTransitionTests(HeadlessApp app)
     [Fact]
     public Task A_custom_transition_is_built_with_the_direction_and_the_duration_of_the_change() => RunAsync(async (provider, screen) =>
     {
-        var seen = new List<(NavigationDirection Direction, TimeSpan Duration)>();
+        var seen = new List<(RouteableDirection Direction, TimeSpan Duration)>();
         RouteTransitions.Register("TestCustomSeen", (direction, duration) =>
         {
             seen.Add((direction, duration));
@@ -211,9 +212,9 @@ public sealed class HeadlessTransitionTests(HeadlessApp app)
         await UntilAsync(() => screen.Main.Content is PageBView);
         await Default(provider).GoBackAsync();
         await UntilAsync(() => screen.Main.Content is PageAView);
-        Assert.Contains(seen, s => s.Direction == NavigationDirection.Forward);
-        Assert.Contains(seen, s => s.Direction == NavigationDirection.Back);
-        Assert.All(seen.Where(s => s.Direction == NavigationDirection.Forward), s => Assert.Equal(TimeSpan.FromMilliseconds(120), s.Duration));
+        Assert.Contains(seen, s => s.Direction == RouteableDirection.Forward);
+        Assert.Contains(seen, s => s.Direction == RouteableDirection.Back);
+        Assert.All(seen.Where(s => s.Direction == RouteableDirection.Forward), s => Assert.Equal(TimeSpan.FromMilliseconds(120), s.Duration));
     });
 
     /// <summary>A custom transition requested by the navigation becomes the control's <see cref="RouteableRegion.Transition"/>.</summary>

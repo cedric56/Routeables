@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Bases;
 
 /// <summary>
 /// The main view model of an application: the menu entries, the one that is selected and the view it shows. Each host binds its

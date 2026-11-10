@@ -408,13 +408,13 @@ namespace Routeables.Generated
                     var names = string.Join(", ", Enumerable.Range(0, info.Parameters.Count).Select(i => Quote(info.Parameters[i].Name)));
                     sb.AppendLine($"        var c = global::Routeables.Abstraction.ConstructorArguments.ForViewModel(sp, args, {shortName}, new string[] {{ {names} }}, {(info.TakesRouter ? "true" : "false")});");
                 }
-                sb.AppendLine($"        return global::Routeables.Abstraction.RouteableBuild.InjectViewModel(new {info.TypeName}({arguments}), sp, args);");
+                sb.AppendLine($"        return global::Routeables.Abstraction.Injections.RouteableBuild.InjectViewModel(new {info.TypeName}({arguments}), sp, args);");
             }
             else
             {
                 if (info.Parameters.Count > 0)
                     sb.AppendLine($"        var c = global::Routeables.Abstraction.ConstructorArguments.ForView(sp, args, {shortName});");
-                sb.AppendLine($"        return global::Routeables.Abstraction.RouteableBuild.InjectView(new {info.TypeName}({arguments}), sp, args);");
+                sb.AppendLine($"        return global::Routeables.Abstraction.Injections.RouteableBuild.InjectView(new {info.TypeName}({arguments}), sp, args);");
             }
             sb.AppendLine("    }");
             sb.AppendLine();
@@ -423,13 +423,13 @@ namespace Routeables.Generated
         /// <summary>The method that describes how the injection fills a type.</summary>
         public static void EmitDescription(StringBuilder sb, string methodName, BuildInfo info)
         {
-            sb.AppendLine($"    private static global::Routeables.Abstraction.InjectableType {methodName}() => new(");
+            sb.AppendLine($"    private static global::Routeables.Abstraction.Injections.InjectableType {methodName}() => new(");
             if (info.TypeAttributes.Count == 0)
                 sb.AppendLine("        global::System.Array.Empty<global::System.Attribute>(),");
             else
                 sb.AppendLine("        new global::System.Attribute[] { " + string.Join(", ", info.TypeAttributes) + " },");
 
-            sb.AppendLine("        new global::Routeables.Abstraction.InjectableProperty[]");
+            sb.AppendLine("        new global::Routeables.Abstraction.Injections.InjectableProperty[]");
             sb.AppendLine("        {");
             foreach (var p in info.Properties)
             {
