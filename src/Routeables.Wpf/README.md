@@ -25,7 +25,7 @@ public partial class App : Application
 }
 ```
 
-An application with a menu gives its main view model: `this.UseRouteables<MainViewModel>(services => ...)`.
+An application with a menu gives its menu view model: `this.UseRouteables<MainViewModel>(services => ...)`.
 
 The two calls can be one: `this.UseRouteables(services => { /* your own services */ }, () => new MainView(), window => window.Title = "My app");` builds the container now and opens the window as the application runs, so it works from the constructor of `App`, from `OnStartup` or from a `Startup` handler.
 
@@ -45,9 +45,9 @@ Leave `StartupUri` out of `App.xaml`: the container must exist before the first 
 public partial class DogDetailView : RouteableFor { public DogDetailView() => InitializeComponent(); }
 ```
 
-A XAML root cannot be generic, so XAML views use `RouteableFor`; views written in code can use `RouteableFor<TViewModel>`. `IsLocked` is a read-only dependency property that follows the lock of the main view model.
+A XAML root cannot be generic, so XAML views use `RouteableFor`; views written in code can use `RouteableFor<TViewModel>`. `IsLocked` is a read-only dependency property that follows the lock of the menu view model.
 
-The menu is a `MainViewModelBase` and `<routeables:RouteableMenu />` (its items are disabled while the menu is locked); the page is shown by `<routeables:RouteableRegion />`.
+The menu is a `RouteableMenuViewModelBase` and `<routeables:RouteableMenu />` (its items are disabled while the menu is locked); the page is shown by `<routeables:RouteableRegion />`.
 
 ## Regions
 

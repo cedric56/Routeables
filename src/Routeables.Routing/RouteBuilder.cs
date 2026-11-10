@@ -46,7 +46,7 @@ public sealed class RouteBuilder
     }
 
     /// <summary>
-    /// Declares a tab: a page, and its entry in the menu of the main view model (<see cref="IMainViewModel.Entries"/>).
+    /// Declares a tab: a page, and its entry in the menu of the menu view model (<see cref="IRouteableMenuViewModel.Entries"/>).
     /// </summary>
     /// <typeparam name="TView">The view.</typeparam>
     /// <typeparam name="TViewModel">The view model.</typeparam>

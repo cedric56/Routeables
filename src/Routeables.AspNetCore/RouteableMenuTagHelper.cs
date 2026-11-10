@@ -7,7 +7,7 @@ using Routeables.Abstraction.Bases;
 namespace Routeables.AspNetCore;
 
 /// <summary>
-/// The menu of the application: a <c>nav</c> with one link per entry of the main view model (<see cref="IMainViewModel.Entries"/>), the
+/// The menu of the application: a <c>nav</c> with one link per entry of the menu view model (<see cref="IRouteableMenuViewModel.Entries"/>), the
 /// entry of the current address marked, an entry that a page locked shown without a link. It is the <c>RouteableMenu</c> of the other platforms.
 /// <code>
 /// @addTagHelper *, Routeables.AspNetCore      &lt;!-- once, in _ViewImports.cshtml --&gt;
@@ -21,7 +21,7 @@ namespace Routeables.AspNetCore;
 [HtmlTargetElement("routeable-menu")]
 public sealed class RouteableMenuTagHelper : TagHelper
 {
-    /// <summary>The entries to draw; those of the main view model when not set (give a list to leave some out).</summary>
+    /// <summary>The entries to draw; those of the menu view model when not set (give a list to leave some out).</summary>
     [HtmlAttributeName("entries")]
     public IEnumerable<IRouteableMenuEntry>? Entries { get; set; }
 
@@ -41,7 +41,7 @@ public sealed class RouteableMenuTagHelper : TagHelper
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
         ArgumentNullException.ThrowIfNull(output);
-        var entries = Entries ?? ViewContext.HttpContext.RequestServices.GetService<IMainViewModel>()?.Entries ?? [];
+        var entries = Entries ?? ViewContext.HttpContext.RequestServices.GetService<IRouteableMenuViewModel>()?.Entries ?? [];
 
         // The menu marks the first segment of the address: /cats/Tom is still in Cats.
         var current = FirstSegment(Current ?? ViewContext.HttpContext.Request.Path.Value);

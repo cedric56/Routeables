@@ -14,9 +14,9 @@ The package brings `Routeables` (routing, abstractions and the source generator)
 services.UseRouteablesServer();      // or UseRouteablesWebAssembly, UseRouteablesHybrid
 ```
 
-An application with a menu gives its main view model: `services.UseRouteablesServer<MainViewModel>();`.
+An application with a menu gives its menu view model: `services.UseRouteablesServer<MainViewModel>();`.
 
-Everything is scoped, so each Blazor Server circuit has its own history, and so has its menu. Nothing is discovered for you: the main view model and the routes are what you give.
+Everything is scoped, so each Blazor Server circuit has its own history, and so has its menu. Nothing is discovered for you: the menu view model and the routes are what you give.
 
 ## A view
 
@@ -33,7 +33,7 @@ Everything is scoped, so each Blazor Server circuit has its own history, and so 
 
 A layout inherits `RouteableMainLayoutBase`: it follows the current view, the lock and the theme. The ready-made `RouteableMainLayout` comes with the [dialogs and notifications](#dialogs-modals-and-notifications).
 
-`<RouteableMenu />` is the menu of the layout as a component of its own: one button per entry of the main view model, the current one marked, the locked ones disabled (`Closed`, `Class` and `Label` are its parameters). Put it in a layout of your own the same way.
+`<RouteableMenu />` is the menu of the layout as a component of its own: one button per entry of the menu view model, the current one marked, the locked ones disabled (`Closed`, `Class` and `Label` are its parameters). Put it in a layout of your own the same way.
 
 For a route declared with an explicit address (`/customers/{id:int}`), the browser address and the router stay in step: a route change updates the address, a typed address or the browser's back button route the router, and a refused change puts the address back.
 

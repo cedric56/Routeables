@@ -169,7 +169,7 @@ These two are patterns, not features of the router, and the framework does not a
 
 - **A history per tab**: give each tab its own region (`services.AddRegion("orders")`, a `RouteableRegion` in the tab, see [Regions](regions.md)) and set `Region = "orders"` on its menu entry. A region has its own history, so Back inside a tab stays in the tab, and the tab keeps its page when the user leaves it and comes back. The Back request of the system (see above) goes through the router of the selected tab first, and through the default router when the tab is on its first page: `RouteableBack.Target` tells which one. A host of your own uses `RouteableBack.CanGoBack` to enable its Back button.
 
-  The menu of the router (`MainViewModelBase`) keeps one history for the pages it shows itself; it does not hold a stack per entry, because Back, Forward, Pop, deep links and the saved pages all rely on one ordered history. A tab that needs a stack of its own is a region.
+  The menu of the router (`RouteableMenuViewModelBase`) keeps one history for the pages it shows itself; it does not hold a stack per entry, because Back, Forward, Pop, deep links and the saved pages all rely on one ordered history. A tab that needs a stack of its own is a region.
 - **Transitions**: how a page appears is the job of the control that shows it, so the option is on `RouteableRegion`.
 
 | Host | Option |

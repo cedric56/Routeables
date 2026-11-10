@@ -85,7 +85,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             return false;
         }
 
-        if (result.Success && router.CurrentViewModel is { } current && provider.GetService<IMainViewModel>() is { } main)
+        if (result.Success && router.CurrentViewModel is { } current && provider.GetService<IRouteableMenuViewModel>() is { } main)
         {
             main.OnRouterMoved(current);
         }
@@ -226,10 +226,10 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             result = await router.ForwardAsync();
             Moved(result);
         }
-        else if (provider.GetService<IMainViewModel>() is { } mainViewModel
-                 && mainViewModel.Entries.FirstOrDefault(r => Same(r.Route, path)) is { } item)
+        else if (provider.GetService<IRouteableMenuViewModel>() is { } menuViewModel
+                 && menuViewModel.Entries.FirstOrDefault(r => Same(r.Route, path)) is { } item)
         {
-            mainViewModel.SelectedEntry = item;       // keeps the layout's selection (menu highlight) in step; it navigates the router
+            menuViewModel.SelectedEntry = item;       // keeps the layout's selection (menu highlight) in step; it navigates the router
             return Outcome.Done;
         }
         else if (RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], path).Template is { } template)
@@ -244,7 +244,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
                 result = RouteableResult.Fail(ex);
             }
             // The page was not chosen in the menu: the menu follows it, and the layout displays it.
-            if (result.Success && provider.GetService<IMainViewModel>() is { } shown)
+            if (result.Success && provider.GetService<IRouteableMenuViewModel>() is { } shown)
                 shown.OnRouterMoved(router.CurrentViewModel);
         }
         else
@@ -264,7 +264,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     // The browser's Back and Forward moved the router, not the menu: it shows the page that is now current and selects its entry.
     private void Moved(RouteableResult result)
     {
-        if (result.Success && provider.GetService<IMainViewModel>() is { } main)
+        if (result.Success && provider.GetService<IRouteableMenuViewModel>() is { } main)
             main.OnRouterMoved(router.CurrentViewModel);
     }
 

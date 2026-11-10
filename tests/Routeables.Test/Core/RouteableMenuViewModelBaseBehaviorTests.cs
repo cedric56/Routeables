@@ -8,7 +8,7 @@ using static Routeables.Test.Abstraction.RouterTestKit;
 
 namespace Routeables.Tests.Core;
 
-public class MainViewModelBaseBehaviorTests
+public class RouteableMenuViewModelBaseBehaviorTests
 {
     private sealed class Entry(string route) : IRouteableMenuEntry
     {

@@ -10,9 +10,9 @@ namespace XAnimals.Wpf;
 
 /// <summary>
 /// The menu of the WPF sample: the pages that have a WPF view. The view models are those of the other samples;
-/// <see cref="MainViewModelBase"/> does the rest (selected entry, current view, lock, notifications).
+/// <see cref="RouteableMenuViewModelBase"/> does the rest (selected entry, current view, lock, notifications).
 /// </summary>
-public sealed class MenuViewModel(IRouter router) : MainViewModelBase(router, initialize: false), INotifyPropertyChanged
+public sealed class MenuViewModel(IRouter router) : RouteableMenuViewModelBase(router, initialize: false), INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 

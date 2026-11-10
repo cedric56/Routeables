@@ -15,10 +15,10 @@ public partial class RouteableFor : ContentView, IRouteableFor, IRouteable, IDis
     private static readonly BindablePropertyKey IsLockedPropertyKey =
         BindableProperty.CreateReadOnly(nameof(IsLocked), typeof(bool), typeof(RouteableFor), false);
 
-    /// <summary>Whether every entry of the main view model is locked (a page is blocking the route change). Bindable.</summary>
+    /// <summary>Whether every entry of the menu view model is locked (a page is blocking the route change). Bindable.</summary>
     public static readonly BindableProperty IsLockedProperty = IsLockedPropertyKey.BindableProperty;
 
-    // Follows the lock of the main view model; one subscription, however many times the view is initialized.
+    // Follows the lock of the menu view model; one subscription, however many times the view is initialized.
     private RouteableLockWatcher? _lock;
 
     private RouteableLockWatcher Lock => _lock ??= new RouteableLockWatcher(locked =>
@@ -37,7 +37,7 @@ public partial class RouteableFor : ContentView, IRouteableFor, IRouteable, IDis
         set => BindingContext = value;
     }
 
-    /// <summary>Whether every entry of the main view model is locked. It only means something on the view of the main view model.</summary>
+    /// <summary>Whether every entry of the menu view model is locked. It only means something on the view of the menu view model.</summary>
     public bool IsLocked => (bool)GetValue(IsLockedProperty);
 
     /// <inheritdoc />
@@ -95,7 +95,7 @@ public partial class RouteableFor : ContentView, IRouteableFor, IRouteable, IDis
         return Task.CompletedTask;
     }
 
-    /// <summary>Stops following the lock of the main view model.</summary>
+    /// <summary>Stops following the lock of the menu view model.</summary>
     public void Dispose()
     {
         Unsubscribe();

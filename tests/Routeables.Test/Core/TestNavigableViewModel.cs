@@ -6,10 +6,10 @@ using System.Collections.ObjectModel;
 namespace Routeables.Tests.Core;
 
 /// <summary>
-/// Concrete <see cref="MainViewModelBase"/> used to test routing/history/caching behavior.
+/// Concrete <see cref="RouteableMenuViewModelBase"/> used to test routing/history/caching behavior.
 /// </summary>
 /// <remarks>
-/// <see cref="MainViewModelBase"/>'s own constructor can, when <c>initialize</c> is
+/// <see cref="RouteableMenuViewModelBase"/>'s own constructor can, when <c>initialize</c> is
 /// <see langword="true"/>, synchronously select the first navigable item - which calls the abstract
 /// <see cref="GetEntries"/> *before* any field assigned in this type's constructor body has run
 /// (base constructors always execute before derived constructor bodies). A normal constructor
@@ -19,7 +19,7 @@ namespace Routeables.Tests.Core;
 /// populated immediately before construction and read by <see cref="GetEntries"/> for as long as
 /// it is set, falling back to the (by-then-assigned) field afterwards.
 /// </remarks>
-public class TestNavigableViewModel : MainViewModelBase
+public class TestNavigableViewModel : RouteableMenuViewModelBase
 {
     [ThreadStatic]
     private static ObservableCollection<IRouteableMenuEntry>? _pending;

@@ -18,8 +18,8 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
 {
     /// <summary>The service that applies the theme a view model asked for.</summary>
     [Inject] protected IRouteableRequestedThemeService ThemeService { get; set; } = default!;
-    /// <summary>The main view model: the menu entries and the selected one.</summary>
-    [Inject] protected IMainViewModel MainViewModel { get; set; } = default!;
+    /// <summary>The menu view model: the menu entries and the selected one.</summary>
+    [Inject] protected IRouteableMenuViewModel MainViewModel { get; set; } = default!;
     /// <summary>The container of the circuit.</summary>
     [Inject] protected IServiceProvider Provider { get; set; } = default!;
     /// <summary>The view of the page the router shows.</summary>
@@ -172,7 +172,7 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
         {
             // The saved history first: the address that follows is then the one of the page it shows, not a new push.
             var restored = _restorable && _persistence is not null && await _persistence.RestoreAsync();
-            if (restored && Provider.GetService<IMainViewModel>() is { } main)
+            if (restored && Provider.GetService<IRouteableMenuViewModel>() is { } main)
                 main.OnRouterMoved(Provider.GetRequiredService<IRouter>().CurrentViewModel);
             var addressChosen = await UrlSync.StartAsync();
             addressChosen |= restored;

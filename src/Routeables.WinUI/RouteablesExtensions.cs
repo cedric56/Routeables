@@ -42,7 +42,7 @@ public static class UnoRouteablesExtensions
 #endif
 
     /// <summary>
-    /// <c>UseRouteables&lt;TMain&gt;</c> for an application that has no menu: no main view model to write. The first page is the one the
+    /// <c>UseRouteables&lt;TMenu&gt;</c> for an application that has no menu: no menu view model to write. The first page is the one the
     /// <c>RouteableRegion</c> of the main view opens (<c>Route="/hello/World"</c>).
     /// <code>
     /// Services = this.UseRouteables();
@@ -56,10 +56,10 @@ public static class UnoRouteablesExtensions
         this Microsoft.UI.Xaml.Application application,
         Action<IServiceCollection>? configure = null,
         Action<IServiceProvider>? afterBuild = null)
-        => application.UseRouteables<DefaultMainViewModel>(configure, afterBuild);
+        => application.UseRouteables<DefaultRouteableMenuViewModel>(configure, afterBuild);
 
     /// <summary>
-    /// Builds the container with the router, the property injection, the theme service and <typeparamref name="TMain"/> as the main view
+    /// Builds the container with the router, the property injection, the theme service and <typeparamref name="TMenu"/> as the main view
     /// model (the menu), and keeps it for the views.
     /// Call it once, from the constructor of the <see cref="Microsoft.UI.Xaml.Application"/>: the container is then ready when
     /// <c>OnLaunched</c> creates the window. The dialogs, content dialogs, task dialogs and notifications are registered too;
@@ -68,23 +68,23 @@ public static class UnoRouteablesExtensions
     /// Services = this.UseRouteables&lt;MainViewModel&gt;();
     /// </code>
     /// </summary>
-    /// <typeparam name="TMain">The main view model.</typeparam>
+    /// <typeparam name="TMenu">The menu view model.</typeparam>
     /// <param name="application">The application.</param>
     /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
     /// <param name="afterBuild">Optional callback executed immediately after the service provider is built.</param>
     /// <returns>The container, which <see cref="GetRouteableServices"/> returns too.</returns>
-    public static IServiceProvider UseRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
+    public static IServiceProvider UseRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMenu>(
         this Microsoft.UI.Xaml.Application application,
         Action<IServiceCollection>? configure = null,
         Action<IServiceProvider>? afterBuild = null)
-        where TMain : class, IMainViewModel
+        where TMenu : class, IRouteableMenuViewModel
     {
         ArgumentNullException.ThrowIfNull(application);
-        return StartRouteables<TMain>(configure, afterBuild);
+        return StartRouteables<TMenu>(configure, afterBuild);
     }
 
     /// <summary>
-    /// <c>UseRouteables&lt;TMain&gt;</c> that opens the main window, for an application that has no menu: no main view model to write.
+    /// <c>UseRouteables&lt;TMenu&gt;</c> that opens the main window, for an application that has no menu: no menu view model to write.
     /// The first page is the one the <c>RouteableRegion</c> of the main view opens (<c>Route="/hello/World"</c>).
     /// </summary>
     /// <param name="application">The application.</param>
@@ -101,7 +101,7 @@ public static class UnoRouteablesExtensions
         Action<Window>? configureWindow = null,
         Action<IServiceProvider>? afterBuild = null,
         Action? onDispose = null)
-        => application.UseRouteables<DefaultMainViewModel>(configure, view, configureWindow, afterBuild, onDispose);
+        => application.UseRouteables<DefaultRouteableMenuViewModel>(configure, view, configureWindow, afterBuild, onDispose);
 
     /// <summary>
     /// Adds Routeables to the application and opens its main window, in one call, so the application has no <c>OnLaunched</c> to write.
@@ -111,23 +111,23 @@ public static class UnoRouteablesExtensions
     /// Services = this.UseRouteables&lt;MainViewModel&gt;(services => { }, () => new MainPage(), window => window.Title = "My app");
     /// </code>
     /// </summary>
-    /// <typeparam name="TMain">The main view model.</typeparam>
+    /// <typeparam name="TMenu">The menu view model.</typeparam>
     /// <param name="application">The application.</param>
     /// <param name="configure">Your own registrations (routes, modules, services), the same block as on the other hosts.</param>
-    /// <param name="view">Creates the root of the window, usually the page that shows the menu and the current view; it gets the main view model as its data context when it has none.</param>
+    /// <param name="view">Creates the root of the window, usually the page that shows the menu and the current view; it gets the menu view model as its data context when it has none.</param>
     /// <param name="configureWindow">Optional, to set the title, the size or anything else before the window is activated.</param>
     /// <param name="afterBuild">Optional callback executed immediately after the service provider is built.</param>
     /// <param name="onDispose">Optional callback executed when the window closes.</param>
     /// <returns>The container.</returns>
     /// <exception cref="InvalidOperationException">The application has no dispatcher yet: create the window in <c>OnLaunched</c> with <see cref="OpenMainWindow"/>.</exception>
-    public static IServiceProvider UseRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
+    public static IServiceProvider UseRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMenu>(
         this Microsoft.UI.Xaml.Application application,
         Action<IServiceCollection> configure,
         Func<FrameworkElement> view,
         Action<Window>? configureWindow = null,
         Action<IServiceProvider>? afterBuild = null,
         Action? onDispose = null)
-        where TMain : class, IMainViewModel
+        where TMenu : class, IRouteableMenuViewModel
     {
         ArgumentNullException.ThrowIfNull(application);
         ArgumentNullException.ThrowIfNull(configure);
@@ -137,7 +137,7 @@ public static class UnoRouteablesExtensions
             ?? throw new InvalidOperationException(
                 "The application has no dispatcher yet, so the window cannot be opened for it. Create the window in OnLaunched with OpenMainWindow.");
 
-        var provider = StartRouteables<TMain>(configure, afterBuild);
+        var provider = StartRouteables<TMenu>(configure, afterBuild);
         queue.TryEnqueue(() => application.OpenMainWindow(view(), configureWindow, onDispose));
         return provider;
     }
@@ -192,13 +192,13 @@ public static class UnoRouteablesExtensions
 
 #endif
     // What UseRouteables does, without an Application: the tests of the contract of the hosts call it, as an Application cannot be created outside Uno.
-    internal static IServiceProvider StartRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
+    internal static IServiceProvider StartRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMenu>(
         Action<IServiceCollection>? configure = null,
         Action<IServiceProvider>? afterBuild = null)
-        where TMain : class, IMainViewModel
+        where TMenu : class, IRouteableMenuViewModel
         => BuildProvider(services =>
         {
-            services.RegisterMainViewModel<TMain>();
+            services.RegisterMenuViewModel<TMenu>();
             services.UseRouteablesServices();
             configure?.Invoke(services);
             // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
@@ -215,7 +215,7 @@ public static class UnoRouteablesExtensions
     }
 
     /// <summary>
-    /// Opens the main window of the application: creates it with <paramref name="content"/>, gives the content the main view model
+    /// Opens the main window of the application: creates it with <paramref name="content"/>, gives the content the menu view model
     /// as its <c>DataContext</c> (unless it already has one), connects it to Routeables (see <see cref="AttachRouteables"/>) and
     /// activates it. Call it from <c>OnLaunched</c>.
     /// <code>
@@ -240,7 +240,7 @@ public static class UnoRouteablesExtensions
 
         var provider = application.GetRouteableServices();
         if (content.DataContext is null)
-            content.DataContext = provider.GetService<IMainViewModel>();
+            content.DataContext = provider.GetService<IRouteableMenuViewModel>();
 
         var window = new Window { Content = content };
         configure?.Invoke(window);
@@ -251,7 +251,7 @@ public static class UnoRouteablesExtensions
 
     /// <summary>
     /// Connects a window to Routeables. <see cref="OpenMainWindow"/> does it for the main window; call this one for the others. Call it once the window has its content, before <c>Activate()</c>.
-    /// The first time the window is activated the first entry of the main view model is selected; the dialogs and notifications of
+    /// The first time the window is activated the first entry of the menu view model is selected; the dialogs and notifications of
     /// <c>Routeables.Uno.Services</c> are shown in the window the user last worked in; the theme service changes the theme of its content;
     /// and when the window closes <paramref name="onDispose"/> runs and the container is disposed.
     /// </summary>
@@ -288,9 +288,9 @@ public static class UnoRouteablesExtensions
 
             selected = true;
 
-            // The main view model is a singleton (RegisterMainViewModel refuses a transient one), so this is the
+            // The menu view model is a singleton (RegisterMenuViewModel refuses a transient one), so this is the
             // instance the window displays.
-            try { provider.GetService<IMainViewModel>()?.SelectFirst(); }
+            try { provider.GetService<IRouteableMenuViewModel>()?.SelectFirst(); }
             catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(HostExtensions)); }   // raised from an event: it must not end the application
         }
 

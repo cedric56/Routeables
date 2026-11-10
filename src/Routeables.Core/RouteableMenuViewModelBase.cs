@@ -10,10 +10,10 @@ using System.ComponentModel;
 namespace Routeables.Core;
 
 /// <summary>
-/// A main view model that works as it is: derive from it, return the entries of the menu, and register it with
-/// <c>services.RegisterMainViewModel&lt;T&gt;()</c>. It does not implement <see cref="INotifyPropertyChanged"/>: the class that derives from it does (see the remarks).
+/// A menu view model that works as it is: derive from it, return the entries of the menu, and register it with
+/// <c>services.RegisterMenuViewModel&lt;T&gt;()</c>. It does not implement <see cref="INotifyPropertyChanged"/>: the class that derives from it does (see the remarks).
 /// <code>
-/// public sealed class MainViewModel(IRouter router) : MainViewModelBase(router)
+/// public sealed class MainViewModel(IRouter router) : RouteableMenuViewModelBase(router)
 /// {
 ///     protected override ObservableCollection&lt;IRouteableMenuEntry&gt; GetEntries() =>
 ///     [
@@ -26,9 +26,9 @@ namespace Routeables.Core;
 /// <remarks>
 /// <b>This class does not implement <see cref="INotifyPropertyChanged"/>: a class derived from it must.</b> Put <c>[INotifyPropertyChanged]</c>
 /// (or <c>[ObservableObject]</c>) of CommunityToolkit.Mvvm or <c>[IReactiveObject]</c> of ReactiveUI on your <c>partial</c> class, or implement the
-/// interface by hand and raise the event from <see cref="MainViewModelBase.NotifyPropertyChanged(string?)"/>:
+/// interface by hand and raise the event from <see cref="RouteableMenuViewModelBase.NotifyPropertyChanged(string?)"/>:
 /// <code>
-/// public sealed class MainViewModel(IRouter router) : MainViewModelBase(router), INotifyPropertyChanged
+/// public sealed class MainViewModel(IRouter router) : RouteableMenuViewModelBase(router), INotifyPropertyChanged
 /// {
 ///     public event PropertyChangedEventHandler? PropertyChanged;
 ///     protected override void NotifyPropertyChanged(string? propertyName)
@@ -36,13 +36,13 @@ namespace Routeables.Core;
 /// }
 /// </code>
 /// <para>
-/// <see cref="MainViewModelBase.GetEntries"/> runs while the base class is being constructed, before the fields of
+/// <see cref="RouteableMenuViewModelBase.GetEntries"/> runs while the base class is being constructed, before the fields of
 /// the derived class exist: build the entries from the code alone (as above), not from a field or a constructor parameter.
 /// </para>
 /// </remarks>
-public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposable, IRouteable, IMainViewModel
+public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, IDisposable, IRouteable, IRouteableMenuViewModel
 {
-    /// <summary>Nothing to refresh: a main view model has no commands. Override it to refresh yours.</summary>
+    /// <summary>Nothing to refresh: a menu view model has no commands. Override it to refresh yours.</summary>
     protected override void RaiseCanExecutesChanged()
     {
     }
@@ -159,13 +159,13 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
     private IRouteableLockCoordinator? _coordinator;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MainViewModelBase"/> class.
+    /// Initializes a new instance of the <see cref="RouteableMenuViewModelBase"/> class.
     /// </summary>
     /// <param name="router">The router that shows the views.</param>
     /// <param name="initialize">
     /// If <see langword="true"/>, the first entry of <see cref="Entries"/> is selected on construction.
     /// </param>
-    public MainViewModelBase(IRouter router, bool initialize = true)
+    public RouteableMenuViewModelBase(IRouter router, bool initialize = true)
         : base(router)
     {
         _coordinator = router.CreateLockCoordinator(this);
@@ -214,7 +214,7 @@ public abstract partial class MainViewModelBase : RouterViewModelBase, IDisposab
     /// </summary>
     /// <param name="exception">The exception that caused the failure.</param>
     protected virtual void OnSelectionFailed(Exception exception)
-        => RouteableErrors.Report<MainViewModelBase>(null, exception);
+        => RouteableErrors.Report<RouteableMenuViewModelBase>(null, exception);
 
     /// <summary>
     /// Selects an entry and waits for its view to be shown. Selections run one at a time; a selection that a newer one has replaced does nothing.

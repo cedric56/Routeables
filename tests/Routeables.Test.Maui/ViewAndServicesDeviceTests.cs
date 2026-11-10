@@ -203,7 +203,7 @@ public class ViewAndServicesDeviceTests
         var services = Device.Services;
 
         Assert.NotNull(services.GetService(typeof(IRouter)));
-        Assert.NotNull(services.GetService(typeof(IMainViewModel)));
+        Assert.NotNull(services.GetService(typeof(IRouteableMenuViewModel)));
         Assert.NotNull(services.GetService(typeof(IRouteableDispatcher)));
         Assert.NotNull(services.GetService(typeof(IRouteableRequestedThemeService)));
         Assert.NotNull(services.GetService(typeof(IRouteableDialogService)));
@@ -228,10 +228,10 @@ public class ViewAndServicesDeviceTests
         Assert.Same(dialogs, Device.Services.GetService(typeof(IMessageBoxService)));
     }
 
-    /// <summary>The main view model is a singleton for the application.</summary>
+    /// <summary>The menu view model is a singleton for the application.</summary>
     [UIFact]
     public void The_main_view_model_is_one_for_the_application()
-        => Assert.Same(Device.Services.GetService(typeof(IMainViewModel)), Device.Services.GetService(typeof(IMainViewModel)));
+        => Assert.Same(Device.Services.GetService(typeof(IRouteableMenuViewModel)), Device.Services.GetService(typeof(IRouteableMenuViewModel)));
 
     /// <summary>The routers of named regions are distinct from the default router and stable.</summary>
     [UIFact]

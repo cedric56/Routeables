@@ -13,7 +13,7 @@ internal sealed class BackRequests : IDisposable
 {
     private readonly IServiceProvider _provider;
     private readonly IRouter? _router;
-    private readonly IMainViewModel? _menu;
+    private readonly IRouteableMenuViewModel? _menu;
     private readonly HashSet<IRouter> _followed = [];
     private bool _listening;
 
@@ -25,7 +25,7 @@ internal sealed class BackRequests : IDisposable
             Follow(_router);
 
         // A tab with its own history (an entry with a region) answers Back first: its router is followed once the tab is selected.
-        _menu = provider.GetService<IMainViewModel>();
+        _menu = provider.GetService<IRouteableMenuViewModel>();
         if (_menu is not null)
             _menu.CurrentViewChanged += OnSelectionChanged;
 

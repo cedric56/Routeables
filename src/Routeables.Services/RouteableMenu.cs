@@ -5,7 +5,7 @@ using Routeables.Abstraction.Routing;
 namespace Routeables.Services;
 
 /// <summary>
-/// Tells the main view model that the router moved by something other than a selection of its menu (the Back button, a link, the
+/// Tells the menu view model that the router moved by something other than a selection of its menu (the Back button, a link, the
 /// pages restored after the system closed the application): the menu then shows the page that is current and selects its entry.
 /// </summary>
 internal static class RouteableMenu
@@ -16,13 +16,13 @@ internal static class RouteableMenu
     /// </summary>
     public static void Moved(IServiceProvider provider, IRouter router)
     {
-        if (!ReferenceEquals(router, provider.GetService<IRouter>()) || provider.GetService<IMainViewModel>() is not { } mainViewModel)
+        if (!ReferenceEquals(router, provider.GetService<IRouter>()) || provider.GetService<IRouteableMenuViewModel>() is not { } menuViewModel)
             return;
 
         var viewModel = router.CurrentViewModel;
         if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
-            dispatcher.Post(() => mainViewModel.OnRouterMoved(viewModel));
+            dispatcher.Post(() => menuViewModel.OnRouterMoved(viewModel));
         else
-            mainViewModel.OnRouterMoved(viewModel);
+            menuViewModel.OnRouterMoved(viewModel);
     }
 }

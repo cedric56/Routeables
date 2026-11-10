@@ -114,7 +114,7 @@ The targets are Android on every machine, iOS and Mac Catalyst off Linux, and Wi
 
 | In the app | What it shows | Where the code is |
 | --- | --- | --- |
-| Menu | The entries of the main view model, the theme | `ViewModels/MainViewModel.cs` |
+| Menu | The entries of the menu view model, the theme | `ViewModels/MainViewModel.cs` |
 | Cats, Dogs, Monkeys, Pandas... | A list, a detail with parameters in the route, a typed route | `ViewModels/Animals/` |
 | History | Push, back, forward, move to an entry; the transitions | `ViewModels/HistoryViewModel.cs` |
 | Regions, Tabs | Several routers at once, a router per tab | `ViewModels/RegionsViewModel.cs`, `TabsViewModel.cs` |

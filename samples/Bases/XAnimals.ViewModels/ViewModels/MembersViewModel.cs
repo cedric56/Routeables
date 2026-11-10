@@ -15,10 +15,10 @@ namespace XAnimals.ViewModels;
 public class MembersViewModel : ViewModelBase
 {
     private readonly IRouter _router;
-    private readonly IMainViewModel _main;
+    private readonly IRouteableMenuViewModel _main;
     private readonly MemberSession _session;
 
-    public MembersViewModel(IRouter router, IMainViewModel main, MemberSession session)
+    public MembersViewModel(IRouter router, IRouteableMenuViewModel main, MemberSession session)
     {
         _router = router;
         _main = main;

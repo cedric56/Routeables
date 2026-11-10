@@ -21,7 +21,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args) =>
     _window = this.OpenMainWindow(new MainPage());
 ```
 
-An application with a menu gives its main view model: `this.UseRouteables<MainViewModel>(r => ...)`. The window can be opened by the same call, `this.UseRouteables(r => ..., () => new MainPage(), window => window.Title = "My app")`, when the application already has a dispatcher in its constructor; in a WinUI 3 application it may not, and the call then says so: use `OpenMainWindow` in `OnLaunched`, as above. For another window, call `window.AttachRouteables()`.
+An application with a menu gives its menu view model: `this.UseRouteables<MainViewModel>(r => ...)`. The window can be opened by the same call, `this.UseRouteables(r => ..., () => new MainPage(), window => window.Title = "My app")`, when the application already has a dispatcher in its constructor; in a WinUI 3 application it may not, and the call then says so: use `OpenMainWindow` in `OnLaunched`, as above. For another window, call `window.AttachRouteables()`.
 
 ## A view
 
@@ -36,7 +36,7 @@ An application with a menu gives its main view model: `this.UseRouteables<MainVi
 public sealed partial class HelloView : RouteableFor { public HelloView() => InitializeComponent(); }
 ```
 
-A XAML root cannot be generic in WinUI, so XAML views use `RouteableFor`; views written in code can use `RouteableFor<TViewModel>`. The menu is a `MainViewModelBase` and `<routeables:RouteableListView />` (or a `NavigationView` whose items name a route with `routeables:RouteableItem.Route`); the page is shown by `<routeables:RouteableRegion />`.
+A XAML root cannot be generic in WinUI, so XAML views use `RouteableFor`; views written in code can use `RouteableFor<TViewModel>`. The menu is a `RouteableMenuViewModelBase` and `<routeables:RouteableListView />` (or a `NavigationView` whose items name a route with `routeables:RouteableItem.Route`); the page is shown by `<routeables:RouteableRegion />`.
 
 ## Dialogs and notifications
 

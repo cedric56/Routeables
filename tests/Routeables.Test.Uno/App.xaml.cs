@@ -11,7 +11,7 @@ public partial class App : Application
     /// <summary>The name of the second region of the test application.</summary>
     public const string Side = "side";
 
-    /// <summary>Configures Routeables with the test main view model, registers routes and the side region, and sets the window title.</summary>
+    /// <summary>Configures Routeables with the test menu view model, registers routes and the side region, and sets the window title.</summary>
     public App()
     {
         InitializeComponent();
@@ -30,6 +30,6 @@ public partial class App : Application
             window => window.Title = "Routeables.Test.Uno");
     }
 
-    /// <summary>The service provider built by <see cref="Routeables.Uno.UnoRouteablesExtensions.UseRouteables{TMain}(Application, Action{Microsoft.Extensions.DependencyInjection.IServiceCollection}, Func{FrameworkElement}, Action{Window}?, Action{IServiceProvider}?, Action?)"/>.</summary>
+    /// <summary>The service provider built by <see cref="Routeables.Uno.UnoRouteablesExtensions.UseRouteables{TMenu}(Application, Action{Microsoft.Extensions.DependencyInjection.IServiceCollection}, Func{FrameworkElement}, Action{Window}?, Action{IServiceProvider}?, Action?)"/>.</summary>
     public IServiceProvider Services { get; }
 }

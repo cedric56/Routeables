@@ -8,16 +8,16 @@ using System.Text.Encodings.Web;
 
 namespace Routeables.Tests.Hosts;
 
-/// <summary><c>&lt;routeable-menu&gt;</c>: the menu of the ASP.NET Core host, one link per entry of the main view model.</summary>
+/// <summary><c>&lt;routeable-menu&gt;</c>: the menu of the ASP.NET Core host, one link per entry of the menu view model.</summary>
 public class RouteableMenuTagHelperTests
 {
     private sealed class Cats;
     private sealed class Dogs;
 
-    private static string Render(FakeMainViewModel main, string path, Action<RouteableMenuTagHelper>? configure = null)
+    private static string Render(FakeMenuViewModel main, string path, Action<RouteableMenuTagHelper>? configure = null)
     {
         var services = new ServiceCollection();
-        services.AddSingleton<Routeables.Abstraction.Bases.IMainViewModel>(main);
+        services.AddSingleton<Routeables.Abstraction.Bases.IRouteableMenuViewModel>(main);
         using var provider = services.BuildServiceProvider();
         var http = new DefaultHttpContext { RequestServices = provider };
         http.Request.Path = path;
@@ -33,9 +33,9 @@ public class RouteableMenuTagHelperTests
         return writer.ToString();
     }
 
-    private static FakeMainViewModel Menu()
+    private static FakeMenuViewModel Menu()
     {
-        var main = new FakeMainViewModel();
+        var main = new FakeMenuViewModel();
         main.Entries.Add(new RouteableMenuEntry<Cats>("Cats", null, "/cats", "/cats", "All the cats"));
         main.Entries.Add(new RouteableMenuEntry<Dogs>("Dogs", null, "dogs", "/dogs"));
         return main;

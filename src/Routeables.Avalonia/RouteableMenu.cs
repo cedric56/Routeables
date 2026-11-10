@@ -16,7 +16,7 @@ namespace Routeables.Avalonia;
 
 /// <summary>
 /// Represents a specialized Avalonia <see cref="ListBox"/> designed to bind directly against 
-/// <see cref="IMainViewModel"/> collections and manage routeable view routing items.
+/// <see cref="IRouteableMenuViewModel"/> collections and manage routeable view routing items.
 /// </summary>
 public class RouteableMenu : ListBox
 {
@@ -31,7 +31,7 @@ public class RouteableMenu : ListBox
     protected override void OnDataContextBeginUpdate()
     {
         if (_source is not null)
-            _source.PropertyChanged -= OnMainViewModelChanged;
+            _source.PropertyChanged -= OnMenuViewModelChanged;
         _source = null;
         base.OnDataContextBeginUpdate();
     }
@@ -40,24 +40,24 @@ public class RouteableMenu : ListBox
     protected override void OnDataContextEndUpdate()
     {
         base.OnDataContextEndUpdate();
-        if (DataContext is IMainViewModel and INotifyPropertyChanged source)
+        if (DataContext is IRouteableMenuViewModel and INotifyPropertyChanged source)
         {
             _source = source;
-            source.PropertyChanged += OnMainViewModelChanged;
+            source.PropertyChanged += OnMenuViewModelChanged;
         }
     }
 
     // The entry that was clicked stays selected in the list when the page refused to be left (CanLeaveAsync) and the view model took
     // the previous entry back: the binding does not always push that value to the list. Whenever the view model announces its entry,
     // the list shows it, once the current update of the selection is over.
-    private void OnMainViewModelChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnMenuViewModelChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(IMainViewModel.SelectedEntry))
+        if (e.PropertyName != nameof(IRouteableMenuViewModel.SelectedEntry))
             return;
 
         Dispatcher.UIThread.Post(() =>
         {
-            if (DataContext is IMainViewModel main && !ReferenceEquals(SelectedItem, main.SelectedEntry))
+            if (DataContext is IRouteableMenuViewModel main && !ReferenceEquals(SelectedItem, main.SelectedEntry))
                 SetCurrentValue(SelectingItemsControl.SelectedItemProperty, main.SelectedEntry);
         }, DispatcherPriority.Background);
     }
@@ -69,9 +69,9 @@ public class RouteableMenu : ListBox
     public RouteableMenu()
     {
         // Bindings against the DataContext
-        Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create<IMainViewModel, ObservableCollection<IRouteableMenuEntry>>(r => r.Entries));
+        Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create<IRouteableMenuViewModel, ObservableCollection<IRouteableMenuEntry>>(r => r.Entries));
         Bind(SelectingItemsControl.SelectedItemProperty,
-            CompiledBinding.Create<IMainViewModel, IRouteableMenuEntry?>(r => r.SelectedEntry, mode: BindingMode.TwoWay));
+            CompiledBinding.Create<IRouteableMenuViewModel, IRouteableMenuEntry?>(r => r.SelectedEntry, mode: BindingMode.TwoWay));
 
         // Item template (live bindings)
         ItemTemplate = new FuncDataTemplate<RouteableMenuEntry>((_, _) =>

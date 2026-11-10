@@ -10,7 +10,7 @@ namespace Routeables.Tests.Hosts;
 
 /// <summary>
 /// What every host (Blazor, Avalonia, MAUI, Uno, and WPF through <see cref="HostContract"/>) must give the application, whatever its platform: the same services, the same
-/// injection rules and a main view model that is one instance for the whole host. A host that drifts from the others fails here.
+/// injection rules and a menu view model that is one instance for the whole host. A host that drifts from the others fails here.
 /// </summary>
 public class HostContractTests
 {
@@ -22,7 +22,7 @@ public class HostContractTests
 
     private sealed class TestApplication : AvaloniaApplication;
 
-    /// <summary>A host as the contract sees it: how to build its container, and the lifetime its main view model must have.</summary>
+    /// <summary>A host as the contract sees it: how to build its container, and the lifetime its menu view model must have.</summary>
     public sealed record Host(string Name, ServiceLifetime MainLifetime, Func<Action<IServiceCollection>, (IServiceProvider Provider, IDisposable Owner)> Build)
     {
         public override string ToString() => Name;
@@ -47,27 +47,27 @@ public class HostContractTests
         {
             var services = new ServiceCollection();
             services.AddSingleton<NavigationManager>(new TestNavigationManager());
-            services.UseRouteablesServer<FakeMainViewModel>();
+            services.UseRouteablesServer<FakeMenuViewModel>();
             routes(services);
             return (Scoped(services, out var owner), owner);
         }),
         new Host("Avalonia", ServiceLifetime.Singleton, routes =>
         {
             IServiceProvider? provider = null;
-            global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMainViewModel>(
+            global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMenuViewModel>(
                 configure: routes, afterBuild: p => provider = p);
             return (provider!, (IDisposable)provider!);
         }),
         new Host("Uno", ServiceLifetime.Singleton, routes =>
         {
             IServiceProvider? provider = null;
-            Routeables.Uno.UnoRouteablesExtensions.StartRouteables<FakeMainViewModel>(routes, p => provider = p);
+            Routeables.Uno.UnoRouteablesExtensions.StartRouteables<FakeMenuViewModel>(routes, p => provider = p);
             return (provider!, (IDisposable)provider!);
         }),
         new Host("Maui", ServiceLifetime.Singleton, routes =>
         {
             var builder = MauiApp.CreateBuilder();
-            Routeables.Maui.MauiRouteablesExtensions.UseRouteables<FakeMainViewModel>(builder);
+            Routeables.Maui.MauiRouteablesExtensions.UseRouteables<FakeMenuViewModel>(builder);
             routes(builder.Services);
             var root = builder.Services.BuildServiceProvider();
             return (root, root);
@@ -82,7 +82,7 @@ public class HostContractTests
         new Host("AspNetCore", ServiceLifetime.Scoped, routes =>
             {
                 var services = new ServiceCollection();
-                services.AddRouteablesAspNetCore<FakeMainViewModel>(routes);
+                services.AddRouteablesAspNetCore<FakeMenuViewModel>(routes);
                 return (Scoped(services, out var owner), owner);
             }));
         return hosts;
@@ -111,7 +111,7 @@ public class HostContractTests
     public void The_main_view_model_is_one_instance_for_the_whole_host(Host host)
     {
         var (provider, owner) = host.Build(_ => { });
-        using (owner) HostContract.MainViewModelIsOneInstance(provider);
+        using (owner) HostContract.MenuViewModelIsOneInstance(provider);
     }
 
     [Theory]

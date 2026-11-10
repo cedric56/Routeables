@@ -6,17 +6,17 @@ using System.Windows.Data;
 namespace Routeables.Wpf;
 
 /// <summary>
-/// The menu of the application: one item per entry of the main view model (<see cref="IMainViewModel.Entries"/>), the
-/// selected item is the current entry (<see cref="IMainViewModel.SelectedEntry"/>). Its items are disabled while the menu is
-/// locked. Its data context must be the main view model.
+/// The menu of the application: one item per entry of the menu view model (<see cref="IRouteableMenuViewModel.Entries"/>), the
+/// selected item is the current entry (<see cref="IRouteableMenuViewModel.SelectedEntry"/>). Its items are disabled while the menu is
+/// locked. Its data context must be the menu view model.
 /// </summary>
 public class RouteableMenu : ListBox
 {
     /// <summary>Creates the menu.</summary>
     public RouteableMenu()
     {
-        SetBinding(ItemsSourceProperty, new Binding(nameof(IMainViewModel.Entries)));
-        SetBinding(SelectedItemProperty, new Binding(nameof(IMainViewModel.SelectedEntry)) { Mode = BindingMode.TwoWay });
+        SetBinding(ItemsSourceProperty, new Binding(nameof(IRouteableMenuViewModel.Entries)));
+        SetBinding(SelectedItemProperty, new Binding(nameof(IRouteableMenuViewModel.SelectedEntry)) { Mode = BindingMode.TwoWay });
 
         var name = new FrameworkElementFactory(typeof(TextBlock));
         name.SetBinding(TextBlock.TextProperty, new Binding(nameof(IRouteableMenuEntry.DisplayName)));

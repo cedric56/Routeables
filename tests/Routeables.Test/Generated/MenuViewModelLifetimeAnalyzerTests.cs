@@ -6,7 +6,7 @@ using Routeables.Generated;
 
 namespace Routeables.Tests.Generated;
 
-public class MainViewModelLifetimeAnalyzerTests
+public class MenuViewModelLifetimeAnalyzerTests
 {
     private const string Declarations = """
         using System;
@@ -16,7 +16,7 @@ public class MainViewModelLifetimeAnalyzerTests
         using Microsoft.Extensions.DependencyInjection.Extensions;
         using Routeables.Abstraction;
         using Routeables.Abstraction.Bases;
-        public class Main : IMainViewModel
+        public class Main : IRouteableMenuViewModel
         {
             public ObservableCollection<IRouteableMenuEntry> Entries { get; } = new();
             public IRouteableMenuEntry? SelectedEntry { get; set; }
@@ -46,24 +46,24 @@ public class MainViewModelLifetimeAnalyzerTests
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable));
 
         var diagnostics = await compilation
-            .WithAnalyzers([new MainViewModelLifetimeAnalyzer()])
+            .WithAnalyzers([new MenuViewModelLifetimeAnalyzer()])
             .GetAnalyzerDiagnosticsAsync();
 
         return diagnostics.Select(d => d.Id).ToArray();
     }
 
     [Theory]
-    [InlineData("services.AddTransient<IMainViewModel, Main>();")]
-    [InlineData("services.AddTransient<IMainViewModel>(sp => new Main());")]
-    [InlineData("services.AddTransient(typeof(IMainViewModel), typeof(Main));")]
-    [InlineData("services.TryAddTransient<IMainViewModel, Main>();")]
-    public async Task A_transient_IMainViewModel_is_reported(string statement)
+    [InlineData("services.AddTransient<IRouteableMenuViewModel, Main>();")]
+    [InlineData("services.AddTransient<IRouteableMenuViewModel>(sp => new Main());")]
+    [InlineData("services.AddTransient(typeof(IRouteableMenuViewModel), typeof(Main));")]
+    [InlineData("services.TryAddTransient<IRouteableMenuViewModel, Main>();")]
+    public async Task A_transient_IRouteableMenuViewModel_is_reported(string statement)
         => Assert.Equal(["ROUT301"], await Analyze(statement));
 
     [Theory]
-    [InlineData("services.AddSingleton<IMainViewModel, Main>();")]
-    [InlineData("services.AddScoped<IMainViewModel, Main>();")]
-    [InlineData("services.RegisterMainViewModel<Main>(ServiceLifetime.Singleton);")]
+    [InlineData("services.AddSingleton<IRouteableMenuViewModel, Main>();")]
+    [InlineData("services.AddScoped<IRouteableMenuViewModel, Main>();")]
+    [InlineData("services.RegisterMenuViewModel<Main>(ServiceLifetime.Singleton);")]
     [InlineData("services.AddTransient<Main>();")]
     public async Task Other_registrations_are_not_reported(string statement)
         => Assert.Empty(await Analyze(statement));
@@ -73,7 +73,7 @@ public class MainViewModelLifetimeAnalyzerTests
             .Where(a => !a.IsDynamic && !string.IsNullOrWhiteSpace(a.Location))
             .Select(a => MetadataReference.CreateFromFile(a.Location))
             .Concat([
-                MetadataReference.CreateFromFile(typeof(IMainViewModel).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(IRouteableMenuViewModel).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location)])
             .DistinctBy(r => r.Display);
 }

@@ -1,6 +1,6 @@
 # Routeables.Maui
 
-The .NET MAUI host of Routeables: the setup call, a routed `ContentView` base, a `Shell` driven by the main view model, and the region control. Targets `net10.0` and the Android, iOS, Mac Catalyst and Windows frameworks (the MAUI workload is required).
+The .NET MAUI host of Routeables: the setup call, a routed `ContentView` base, a `Shell` driven by the menu view model, and the region control. Targets `net10.0` and the Android, iOS, Mac Catalyst and Windows frameworks (the MAUI workload is required).
 
 ```bash
 dotnet add package Routeables.Maui
@@ -15,7 +15,7 @@ var builder = MauiApp.CreateBuilder();
 builder.UseMauiApp<App>().UseRouteables();
 ```
 
-An application with a menu gives its main view model: `.UseRouteables<MainViewModel>()`.
+An application with a menu gives its menu view model: `.UseRouteables<MainViewModel>()`.
 
 ## A view
 
@@ -31,11 +31,11 @@ An application with a menu gives its main view model: `.UseRouteables<MainViewMo
 
 ## The menu
 
-`RouteableMenu` (a `ContentView`) lists the entries of the main view model, selects the current one and disables the locked ones; its binding context is the main view model. Use it in a page of your own; `RouteablesShell` draws the same entries as its flyout.
+`RouteableMenu` (a `ContentView`) lists the entries of the menu view model, selects the current one and disables the locked ones; its binding context is the menu view model. Use it in a page of your own; `RouteablesShell` draws the same entries as its flyout.
 
 ## The shell
 
-`RouteablesShell` is a `Shell` whose tabs or flyout entries come from the main view model, and it follows entries added later (modules). Shell owns the top level and Routeables the route changes inside each item: do not also use `Shell.GoToAsync` on those pages.
+`RouteablesShell` is a `Shell` whose tabs or flyout entries come from the menu view model, and it follows entries added later (modules). Shell owns the top level and Routeables the route changes inside each item: do not also use `Shell.GoToAsync` on those pages.
 
 ### A Shell written in XAML
 

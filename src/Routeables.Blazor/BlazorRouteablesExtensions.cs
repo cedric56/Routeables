@@ -20,92 +20,92 @@ namespace Routeables.Blazor;
 public static class BlazorRouteablesExtensions
 {
     /// <summary>
-    /// <c>UseRouteablesServer&lt;TMain&gt;</c> for an application that has no menu: no main view model to write. The first page is the
+    /// <c>UseRouteablesServer&lt;TMenu&gt;</c> for an application that has no menu: no menu view model to write. The first page is the
     /// one the <c>RouteableRegion</c> of the layout opens (<c>&lt;RouteableRegion Route="/hello/World" /&gt;</c>) when the address does not choose one.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
-    /// <param name="onCircuitProviderChanged">Called with the provider of a circuit that takes over, as for <c>UseRouteablesServer&lt;TMain&gt;</c>.</param>
+    /// <param name="onCircuitProviderChanged">Called with the provider of a circuit that takes over, as for <c>UseRouteablesServer&lt;TMenu&gt;</c>.</param>
     public static IServiceCollection UseRouteablesServer(this IServiceCollection services,
         Action<IServiceCollection>? configure = null,
         Func<IServiceProvider, Task>? onCircuitProviderChanged = null)
-        => services.UseRouteablesServer<DefaultMainViewModel>(configure, onCircuitProviderChanged);
+        => services.UseRouteablesServer<DefaultRouteableMenuViewModel>(configure, onCircuitProviderChanged);
 
     /// <summary>
     /// Starts Routeables in a Blazor Server application: registers the router, the property injection, the address synchronization,
-    /// the environment information and the theme, and <typeparamref name="TMain"/> as the main view model (the menu), scoped: one per circuit.
+    /// the environment information and the theme, and <typeparamref name="TMenu"/> as the menu view model (the menu), scoped: one per circuit.
     /// It registers the dialogs (message boxes, content dialogs and task dialogs), modals and notifications too (<c>UseRouteablesServices()</c> of
     /// <c>Routeables.Blazor.Services</c>); call that one again only to replace a service or to move the notifications.
     /// <code>
     /// services.UseRouteablesServer&lt;MainViewModel&gt;();
     /// </code>
     /// </summary>
-    /// <typeparam name="TMain">The main view model.</typeparam>
+    /// <typeparam name="TMenu">The menu view model.</typeparam>
     /// <param name="services">The service collection to add services to.</param>
     /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
     /// <param name="onCircuitProviderChanged">Optional callback executed when the circuit provider initializes.</param>
-    public static IServiceCollection UseRouteablesServer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(this IServiceCollection services,
+    public static IServiceCollection UseRouteablesServer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMenu>(this IServiceCollection services,
         Action<IServiceCollection>? configure = null,
         Func<IServiceProvider, Task>? onCircuitProviderChanged = null)
-        where TMain : class, IMainViewModel
-        => services.UseRouteablesCore<TMain>(Runtime.BlazorServer, configure, onCircuitProviderChanged);
+        where TMenu : class, IRouteableMenuViewModel
+        => services.UseRouteablesCore<TMenu>(Runtime.BlazorServer, configure, onCircuitProviderChanged);
 
     /// <summary>
-    /// <c>UseRouteablesWebAssembly&lt;TMain&gt;</c> for an application that has no menu: no main view model to write.
+    /// <c>UseRouteablesWebAssembly&lt;TMenu&gt;</c> for an application that has no menu: no menu view model to write.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
     public static IServiceCollection UseRouteablesWebAssembly(this IServiceCollection services, Action<IServiceCollection>? configure = null)
-        => services.UseRouteablesWebAssembly<DefaultMainViewModel>(configure);
+        => services.UseRouteablesWebAssembly<DefaultRouteableMenuViewModel>(configure);
 
     /// <summary>
-    /// Starts Routeables in a Blazor WebAssembly application: the same as <see cref="UseRouteablesServer{TMain}"/>, for the browser.
+    /// Starts Routeables in a Blazor WebAssembly application: the same as <see cref="UseRouteablesServer{TMenu}"/>, for the browser.
     /// <code>
     /// builder.Services.UseRouteablesWebAssembly&lt;MainViewModel&gt;();
     /// </code>
     /// </summary>
-    /// <typeparam name="TMain">The main view model.</typeparam>
+    /// <typeparam name="TMenu">The menu view model.</typeparam>
     /// <param name="services">The service collection to add services to.</param>
     /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
-    public static IServiceCollection UseRouteablesWebAssembly<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(this IServiceCollection services,
+    public static IServiceCollection UseRouteablesWebAssembly<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMenu>(this IServiceCollection services,
         Action<IServiceCollection>? configure = null)
-        where TMain : class, IMainViewModel
-        => services.UseRouteablesCore<TMain>(Runtime.BlazorWebAssembly, configure, null);
+        where TMenu : class, IRouteableMenuViewModel
+        => services.UseRouteablesCore<TMenu>(Runtime.BlazorWebAssembly, configure, null);
 
     /// <summary>
-    /// <c>UseRouteablesHybrid&lt;TMain&gt;</c> for an application that has no menu: no main view model to write.
+    /// <c>UseRouteablesHybrid&lt;TMenu&gt;</c> for an application that has no menu: no menu view model to write.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
     public static IServiceCollection UseRouteablesHybrid(this IServiceCollection services, Action<IServiceCollection>? configure = null)
-        => services.UseRouteablesHybrid<DefaultMainViewModel>(configure);
+        => services.UseRouteablesHybrid<DefaultRouteableMenuViewModel>(configure);
 
     /// <summary>
-    /// Starts Routeables in a MAUI Blazor Hybrid application: the same as <see cref="UseRouteablesServer{TMain}"/>, in a web view.
+    /// Starts Routeables in a MAUI Blazor Hybrid application: the same as <see cref="UseRouteablesServer{TMenu}"/>, in a web view.
     /// <code>
     /// builder.Services.UseRouteablesHybrid&lt;MainViewModel&gt;();
     /// </code>
     /// </summary>
-    /// <typeparam name="TMain">The main view model.</typeparam>
+    /// <typeparam name="TMenu">The menu view model.</typeparam>
     /// <param name="services">The service collection to add services to.</param>
     /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
-    public static IServiceCollection UseRouteablesHybrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(this IServiceCollection services,
+    public static IServiceCollection UseRouteablesHybrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMenu>(this IServiceCollection services,
         Action<IServiceCollection>? configure = null)
-        where TMain : class, IMainViewModel
-        => services.UseRouteablesCore<TMain>(Runtime.MauiHybrid, configure, null);
+        where TMenu : class, IRouteableMenuViewModel
+        => services.UseRouteablesCore<TMenu>(Runtime.MauiHybrid, configure, null);
 
-    private static IServiceCollection UseRouteablesCore<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(this IServiceCollection services,
+    private static IServiceCollection UseRouteablesCore<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMenu>(this IServiceCollection services,
         Runtime runtime,
         Action<IServiceCollection>? configure,
         Func<IServiceProvider, Task>? onCircuitProviderChanged)
-        where TMain : class, IMainViewModel
+        where TMenu : class, IRouteableMenuViewModel
     {
         ArgumentNullException.ThrowIfNull(services);
         if (runtime == Runtime.BlazorServer
-            && services.Any(d => d.ServiceType == typeof(IMainViewModel) && d.Lifetime != ServiceLifetime.Scoped))
+            && services.Any(d => d.ServiceType == typeof(IRouteableMenuViewModel) && d.Lifetime != ServiceLifetime.Scoped))
             throw new InvalidOperationException(
-                "RegisterMainViewModel ran before UseRouteablesServer and registered the main view model as a singleton, which Blazor Server shares between circuits. "
-                + "Remove it: UseRouteablesServer<TMain>() registers the main view model.");
+                "RegisterMenuViewModel ran before UseRouteablesServer and registered the menu view model as a singleton, which Blazor Server shares between circuits. "
+                + "Remove it: UseRouteablesServer<TMenu>() registers the menu view model.");
         services.TryAddSingleton(new RouteableHostLifetime(ServiceLifetime.Scoped));
 
         services.AddScoped<RouteableUrlSync>();
@@ -124,7 +124,7 @@ public static class BlazorRouteablesExtensions
         services.RegisterEnvironments(runtime);
         services.AddScoped<IRouteableRequestedThemeService, RouteableRequestThemeService>();
         services.AddScoped<IRouteableDispatcher, RouteableDispatcher>();
-        services.RegisterMainViewModel<TMain>();
+        services.RegisterMenuViewModel<TMenu>();
         services.UseRouteablesServices();
         configure?.Invoke(services);
         // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).

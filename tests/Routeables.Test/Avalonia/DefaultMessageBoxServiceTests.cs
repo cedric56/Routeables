@@ -16,7 +16,7 @@ public class DefaultMessageBoxServiceTests
     {
         IServiceProvider? provider = null;
 
-        global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMainViewModel>(
+        global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMenuViewModel>(
             configure: services => services.UseRouteablesServices(icon: string.Empty),
             afterBuild: services => provider = services);
 

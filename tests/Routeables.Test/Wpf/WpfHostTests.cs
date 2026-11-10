@@ -20,7 +20,7 @@ public class WpfHostTests
         IServiceProvider? provider = null;
         try
         {
-            await WpfHarness.Run(() => provider = Application.Current.UseRouteables<FakeMainViewModel>());
+            await WpfHarness.Run(() => provider = Application.Current.UseRouteables<FakeMenuViewModel>());
             await test(provider!);
         }
         finally
@@ -34,9 +34,9 @@ public class WpfHostTests
     public Task UseRouteables_meets_the_host_contract() => WithHostAsync(provider =>
     {
         HostContract.ProvidesRouterAndInjection(provider);
-        HostContract.MainViewModelIsOneInstance(provider);
+        HostContract.MenuViewModelIsOneInstance(provider);
         HostContract.ValueAttributesNeverComeFromTheContainer(provider);
-        Assert.IsType<FakeMainViewModel>(provider.GetRequiredService<IMainViewModel>());
+        Assert.IsType<FakeMenuViewModel>(provider.GetRequiredService<IRouteableMenuViewModel>());
         return Task.CompletedTask;
     });
 
@@ -46,7 +46,7 @@ public class WpfHostTests
         IServiceProvider? provider = null;
         try
         {
-            await WpfHarness.Run(() => provider = Application.Current.UseRouteables<FakeMainViewModel>(HostContractTests.RegisterPages));
+            await WpfHarness.Run(() => provider = Application.Current.UseRouteables<FakeMenuViewModel>(HostContractTests.RegisterPages));
             await Routeables.Test.RouterContract.RunAsync(provider!);
         }
         finally

@@ -41,7 +41,7 @@ Its compiled class is named after its path (`Views_DogDetailView`). The page mod
 
 ## The menu
 
-`<routeable-menu />` (`@addTagHelper *, Routeables.AspNetCore` once, in `_ViewImports.cshtml`) draws a `nav` with a link per entry of the main view model, marks the entry of the current address and shows a locked entry without a link. `entries` gives another list, `current` another address, and a `class` goes to the `nav`; the classes of the links are `rt-menu-link`, `rt-menu-active`, `rt-menu-locked`, `rt-menu-icon`, `rt-menu-text`, `rt-menu-name` and `rt-menu-description`.
+`<routeable-menu />` (`@addTagHelper *, Routeables.AspNetCore` once, in `_ViewImports.cshtml`) draws a `nav` with a link per entry of the menu view model, marks the entry of the current address and shows a locked entry without a link. `entries` gives another list, `current` another address, and a `class` goes to the `nav`; the classes of the links are `rt-menu-link`, `rt-menu-active`, `rt-menu-locked`, `rt-menu-icon`, `rt-menu-text`, `rt-menu-name` and `rt-menu-description`.
 
 ## Transitions
 

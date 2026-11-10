@@ -4,7 +4,7 @@ namespace Routeables.Abstraction.Locking;
 
 /// <summary>
 /// Keeps the menu locked while a page refuses to be left: it listens to the lock messages of the broker and locks or unlocks every
-/// entry of the main view model (see <see cref="IMainViewModel.Lock"/>). Created by <c>router.CreateLockCoordinator(menu)</c>.
+/// entry of the menu view model (see <see cref="IRouteableMenuViewModel.Lock"/>). Created by <c>router.CreateLockCoordinator(menu)</c>.
 /// </summary>
 public interface IRouteableLockCoordinator
 {

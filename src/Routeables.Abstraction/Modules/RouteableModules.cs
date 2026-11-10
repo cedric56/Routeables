@@ -24,7 +24,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
     private readonly object _gate = new();
     private readonly List<ModuleEntry> _loaded = [];
     private readonly Dictionary<object, (Func<IServiceProvider, IRouteableArgs, object> Factory, RouteableModuleServices Services)> _factories = [];
-    private readonly List<WeakReference<IMainViewModel>> _mains = [];
+    private readonly List<WeakReference<IRouteableMenuViewModel>> _mains = [];
 
     private sealed record ModuleEntry(RouteableModuleInfo Info, IReadOnlyList<RouteableMenuEntries> Menus, RouteableModuleServices Services, Action<IServiceCollection> Add);
 
@@ -46,7 +46,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
         ArgumentNullException.ThrowIfNull(add);
 
         RouteableModuleInfo info;
-        List<(IMainViewModel Main, IReadOnlyList<IRouteableMenuEntry> Entries, RouteableMenuEntries Menu)> pending = [];
+        List<(IRouteableMenuViewModel Main, IReadOnlyList<IRouteableMenuEntry> Entries, RouteableMenuEntries Menu)> pending = [];
         lock (_gate)
         {
             var known = _loaded.FirstOrDefault(l => string.Equals(l.Info.Name, name, StringComparison.OrdinalIgnoreCase));
@@ -124,25 +124,25 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
         return true;
     }
 
-    /// <summary>Adds the entries of the modules already loaded to a main view model, and keeps it to add the ones of the next.</summary>
-    internal void Attach(IMainViewModel mainViewModel)
+    /// <summary>Adds the entries of the modules already loaded to a menu view model, and keeps it to add the ones of the next.</summary>
+    internal void Attach(IRouteableMenuViewModel menuViewModel)
     {
         List<RouteableMenuEntries> menus;
         lock (_gate)
         {
             _mains.RemoveAll(m => !m.TryGetTarget(out _));
-            _mains.Add(new WeakReference<IMainViewModel>(mainViewModel));
+            _mains.Add(new WeakReference<IRouteableMenuViewModel>(menuViewModel));
             menus = _loaded.SelectMany(l => l.Menus).ToList();
         }
 
         foreach (var menu in menus)
-            menu.AddTo(mainViewModel);
+            menu.AddTo(menuViewModel);
     }
 
-    private List<IMainViewModel> AliveMains()
+    private List<IRouteableMenuViewModel> AliveMains()
     {
         _mains.RemoveAll(m => !m.TryGetTarget(out _));
-        return _mains.Select(m => m.TryGetTarget(out var mainViewModel) ? mainViewModel : null).OfType<IMainViewModel>().ToList();
+        return _mains.Select(m => m.TryGetTarget(out var menuViewModel) ? menuViewModel : null).OfType<IRouteableMenuViewModel>().ToList();
     }
 
     [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Finds the methods of the module by reflection.")]

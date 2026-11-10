@@ -30,7 +30,7 @@ public static class RegionEntries
 
     /// <summary>The animal pages of the main menu, in the order of the menu.</summary>
     public static IReadOnlyList<IRouteableMenuEntry> Pages(IServiceProvider provider)
-        => provider.GetRequiredService<IMainViewModel>().Entries
+        => provider.GetRequiredService<IRouteableMenuViewModel>().Entries
             .Where(entry => PageRoutes.Contains(entry.Route))
             .ToList();
 

@@ -8,13 +8,13 @@ using System.Collections.ObjectModel;
 using Routeables.Abstraction.Registrations;
 namespace Routeables.Tests.Core;
 
-public class MainViewModelBaseTests
+public class RouteableMenuViewModelBaseTests
 {
     private sealed class PageA;
     private sealed class PageB;
 
-    // The whole of a main view model: only the entries.
-    private sealed class Menu(IRouter router, bool initialize = false) : MainViewModelBase(router, initialize)
+    // The whole of a menu view model: only the entries.
+    private sealed class Menu(IRouter router, bool initialize = false) : RouteableMenuViewModelBase(router, initialize)
     {
         public void ViewModelBecameCurrent(object viewModel) => OnViewModelChanged(viewModel);
 
@@ -68,7 +68,7 @@ public class MainViewModelBaseTests
     public sealed class OtherView : IRouteableFor { public object? Context { get; set; } }
     public sealed class OtherVm;
 
-    private sealed class GuardedMenu(IRouter router) : MainViewModelBase(router, initialize: false)
+    private sealed class GuardedMenu(IRouter router) : RouteableMenuViewModelBase(router, initialize: false)
     {
         public bool InSetter { get; set; }
         public int AnnouncedInSetter { get; private set; }

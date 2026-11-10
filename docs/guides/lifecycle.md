@@ -134,7 +134,7 @@ If the view overrides `InitializeAsync`, call `base.InitializeAsync(args, ct)` s
 
 ## Finding out why a route did not show
 
-`GoToRouteAsync` returns a `RouteableResult` (`Success`, `Cancelled`, `Exception`) instead of throwing. `MainViewModelBase` writes the reason to the debug output when an entry is not shown, and calls the virtual `OnRoutingFailed(entry, result)`: override it to log, or put a breakpoint in it.
+`GoToRouteAsync` returns a `RouteableResult` (`Success`, `Cancelled`, `Exception`) instead of throwing. `RouteableMenuViewModelBase` writes the reason to the debug output when an entry is not shown, and calls the virtual `OnRoutingFailed(entry, result)`: override it to log, or put a breakpoint in it.
 
 ```csharp
 protected override void OnRoutingFailed(IRouteableMenuEntry entry, RouteableResult result)

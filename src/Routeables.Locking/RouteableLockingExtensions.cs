@@ -11,8 +11,8 @@ namespace Routeables.Locking;
 public static class RouteableLockingExtensions
 {
     /// <summary>
-    /// Registers the broker (<see cref="IRouteableLockBroker"/>), the coordinator that listens to it and the lock of forms (<see cref="IRouteableFormLock"/>). A main view model
-    /// that derives from <c>MainViewModelBase</c> then locks and unlocks its entries when a
+    /// Registers the broker (<see cref="IRouteableLockBroker"/>), the coordinator that listens to it and the lock of forms (<see cref="IRouteableFormLock"/>). A menu view model
+    /// that derives from <c>RouteableMenuViewModelBase</c> then locks and unlocks its entries when a
     /// <see cref="RouteableLockMessage"/> is published. Without this call nothing is locked and no broker exists.
     /// </summary>
     /// <param name="services">The service collection to add to.</param>

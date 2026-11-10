@@ -24,7 +24,7 @@ public static class RouteableBuilder
     /// <summary>
     /// Adds Routeables to an <see cref="AppBuilder"/> the usual Avalonia way: the application keeps its own constructor
     /// (<c>AppBuilder.Configure&lt;App&gt;()</c>), and this builds the container with the router, the property injection, the
-    /// theme service and <typeparamref name="TMain"/> as the main view model (the menu), then attaches it. An <see cref="Application"/>
+    /// theme service and <typeparamref name="TMenu"/> as the menu view model (the menu), then attaches it. An <see cref="Application"/>
     /// that needs the container reads it with <see cref="GetRouteableServices"/>.
     /// It registers the dialogs, content dialogs, task dialogs and notifications too; the dialog windows take the icon of the window that opens them.
     /// To draw them another way, register your own <c>IMessageBoxService</c> in <paramref name="configure"/>.
@@ -34,7 +34,7 @@ public static class RouteableBuilder
     ///     .UsePlatformDetect();
     /// </code>
     /// </summary>
-    /// <typeparam name="TMain">The main view model.</typeparam>
+    /// <typeparam name="TMenu">The menu view model.</typeparam>
     /// <param name="builder">The builder to configure.</param>
     /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
     /// <param name="afterBuild">Optional callback executed immediately after the service provider is built.</param>
@@ -46,19 +46,19 @@ public static class RouteableBuilder
     /// otherwise once the application runs.
     /// </param>
     /// <returns>The same <see cref="AppBuilder"/>, ready for further setup.</returns>
-    public static AppBuilder UseRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
+    public static AppBuilder UseRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMenu>(
         this AppBuilder builder,
         Action<IServiceCollection>? configure = null,
         Action<IServiceProvider>? afterBuild = null,
         Action? onDispose = null,
         Func<IApplicationLifetime?, Control>? view = null)
-        where TMain : class, IMainViewModel
+        where TMenu : class, IRouteableMenuViewModel
     {
         ArgumentNullException.ThrowIfNull(builder);
 
         var provider = BuildProvider(services =>
         {
-            services.RegisterMainViewModel<TMain>();
+            services.RegisterMenuViewModel<TMenu>();
             services.UseRouteablesServices();
             configure?.Invoke(services);
             // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
@@ -68,7 +68,7 @@ public static class RouteableBuilder
     }
 
     /// <summary>
-    /// <see cref="UseRouteables{TMain}"/> for an application that has no menu: no main view model to write. The first page is the one the
+    /// <see cref="UseRouteables{TMenu}"/> for an application that has no menu: no menu view model to write. The first page is the one the
     /// <c>RouteableRegion</c> of the main view opens (<c>&lt;routeables:RouteableRegion Route="/hello/World" /&gt;</c>).
     /// <code>
     /// AppBuilder.Configure&lt;App&gt;()
@@ -79,7 +79,7 @@ public static class RouteableBuilder
     /// <param name="configure">Optional: your own registrations (routes, modules, services).</param>
     /// <param name="afterBuild">Optional callback executed immediately after the service provider is built.</param>
     /// <param name="onDispose">Optional callback executed when the application window closes and disposes.</param>
-    /// <param name="view">Optional: creates the main view from the lifetime of the application, as for <see cref="UseRouteables{TMain}"/>.</param>
+    /// <param name="view">Optional: creates the main view from the lifetime of the application, as for <see cref="UseRouteables{TMenu}"/>.</param>
     /// <returns>The same <see cref="AppBuilder"/>, ready for further setup.</returns>
     public static AppBuilder UseRouteables(
         this AppBuilder builder,
@@ -87,11 +87,11 @@ public static class RouteableBuilder
         Action<IServiceProvider>? afterBuild = null,
         Action? onDispose = null,
         Func<IApplicationLifetime?, Control>? view = null)
-        => builder.UseRouteables<DefaultMainViewModel>(configure, afterBuild, onDispose, view);
+        => builder.UseRouteables<DefaultRouteableMenuViewModel>(configure, afterBuild, onDispose, view);
 
     /// <summary>
     /// The container of the running Routeables host, for an <see cref="Application"/> built with
-    /// <see cref="UseRouteables{TMain}"/> that has no constructor parameter to receive it.
+    /// <see cref="UseRouteables{TMenu}"/> that has no constructor parameter to receive it.
     /// </summary>
     /// <exception cref="InvalidOperationException">No Routeables host is running.</exception>
     public static IServiceProvider GetRouteableServices(this Application application)
@@ -134,7 +134,7 @@ public static class RouteableBuilder
 
     /// <summary>
     /// Shows the main view of the application: the <see cref="Window"/> on a desktop, the view on a single-view platform
-    /// (browser) or in the activity of an Android application. The view gets the main view model as its <c>DataContext</c> unless it already has one.
+    /// (browser) or in the activity of an Android application. The view gets the menu view model as its <c>DataContext</c> unless it already has one.
     /// The Back request of the system (the button or gesture of Android, the mouse back button and Alt+Left of a desktop) goes back one page of the router when it has one, see <see cref="RouteableBack"/>.
     /// Call it from <c>OnFrameworkInitializationCompleted</c>, before <c>base.OnFrameworkInitializationCompleted()</c>.
     /// <code>
@@ -150,7 +150,7 @@ public static class RouteableBuilder
         ArgumentNullException.ThrowIfNull(view);
 
         var provider = application.GetRouteableServices();
-        view.DataContext ??= provider.GetService<IMainViewModel>();
+        view.DataContext ??= provider.GetService<IRouteableMenuViewModel>();
 
         switch (application.ApplicationLifetime)
         {
@@ -227,9 +227,9 @@ public static class RouteableBuilder
 
                         var topLevel = TopLevelStateManager.Default.GetActive(false);
 
-                        // The main view model is a singleton (RegisterMainViewModel refuses a transient one), so this is the
+                        // The menu view model is a singleton (RegisterMenuViewModel refuses a transient one), so this is the
                         // instance the window displays.
-                        try { provider.GetService<IMainViewModel>()?.SelectFirst(); }
+                        try { provider.GetService<IRouteableMenuViewModel>()?.SelectFirst(); }
                         catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(RouteableBuilder)); }   // raised from an event: it must not end the application
 
                         topLevel?.Closed += OnClosed;

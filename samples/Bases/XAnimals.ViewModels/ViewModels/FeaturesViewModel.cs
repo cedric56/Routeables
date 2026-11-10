@@ -15,7 +15,7 @@ namespace XAnimals.ViewModels;
 /// <list type="bullet">
 /// <item><description><b>Guard</b>: the Members page is for members (<see cref="MembersGuard"/>). Signed out, it sends you here; sign in, then open it.</description></item>
 /// <item><description><b>Link</b>: an address from outside (<c>xanimals://dogs/Eurohound</c>)followed  through the router (<see cref="RouteableDeepLinks"/>).</description></item>
-/// <item><description><b>Lock</b>: the page locks and unlocks the menu the way an application does while it is busy (a <see cref="RouteableLockMessage"/> on the broker, received by the <see cref="IRouteableLockCoordinator"/> of the main view model).</description></item>
+/// <item><description><b>Lock</b>: the page locks and unlocks the menu the way an application does while it is busy (a <see cref="RouteableLockMessage"/> on the broker, received by the <see cref="IRouteableLockCoordinator"/> of the menu view model).</description></item>
 /// <item><description><b>Saved values</b>: the draft survives the process being killed (<see cref="IRouteableState"/>, <see cref="RouteableState"/>).</description></item>
 /// <item><description><b>Measures</b>: the time of each route change, published by the router (<see cref="RouteMetrics"/>).</description></item>
 /// </list>
@@ -28,7 +28,7 @@ public class FeaturesViewModel : ViewModelBase, IRouteableState, IDisposable
     public const string SampleLink = "xanimals://dogs/Eurohound";
 
     private readonly IRouter _router;
-    private readonly IMainViewModel _main;
+    private readonly IRouteableMenuViewModel _main;
     private readonly IServiceProvider _provider;
     private readonly MemberSession _session;
     private readonly IRouteableLockBroker _broker;
@@ -39,7 +39,7 @@ public class FeaturesViewModel : ViewModelBase, IRouteableState, IDisposable
     private string? _status;
     private string _measures = string.Empty;
 
-    public FeaturesViewModel(IRouter router, IMainViewModel main, IServiceProvider provider, MemberSession session, IRouteableLockBroker broker)
+    public FeaturesViewModel(IRouter router, IRouteableMenuViewModel main, IServiceProvider provider, MemberSession session, IRouteableLockBroker broker)
     {
         _router = router;
         _main = main;
@@ -85,7 +85,7 @@ public class FeaturesViewModel : ViewModelBase, IRouteableState, IDisposable
         set { _draft = value ?? string.Empty; OnPropertyChanged(); }
     }
 
-    // ---- Lock: the page publishes a RouteableLockMessage; the coordinator of the main view model disables the menu entries.
+    // ---- Lock: the page publishes a RouteableLockMessage; the coordinator of the menu view model disables the menu entries.
 
     /// <summary>How long "Lock for a few seconds" keeps the menu locked.</summary>
     public const int LockSeconds = 5;
@@ -179,7 +179,7 @@ public class FeaturesViewModel : ViewModelBase, IRouteableState, IDisposable
         }
     }
 
-    // IsAllLocked: false = this main view model only; true would also lock the other IMainViewModel of the application.
+    // IsAllLocked: false = this menu view model only; true would also lock the other IRouteableMenuViewModel of the application.
     private void Publish(bool locked)
     {
         _broker.Publish(new RouteableLockMessage(locked, IsAllLocked: false));

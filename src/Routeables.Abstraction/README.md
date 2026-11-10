@@ -34,7 +34,7 @@ The types are in sub-namespaces of `Routeables.Abstraction`; add the `using` of 
 | --- | --- |
 | `Routeables.Abstraction` | `[Routeable]`, `[RouteableView]`, `[RouteableViewModel]`, `[RouteableParameter]`, modules (`IRouteableModules`), menu entries (`AddMenuEntries`) |
 | `.Routing` | `IRouter`, `IRouteableArgs`, `RouteableResult`, `IRouteableReturnsResult<T>`, the routing events, `RouterExtensions` |
-| `.Bases` | `IRouteableMenuEntry`, `IMainViewModel`, `ICloseableViewModel` |
+| `.Bases` | `IRouteableMenuEntry`, `IRouteableMenuViewModel`, `ICloseableViewModel` |
 | `.Lifecycle` | `IRouteable`, `IRouteableViewBinder`, `RouteableHostLifetime` |
 | `.History` | `IHistoryEntry` |
 | `.Guards` | `IRouteGuard`, `RouteGuardDecision` |
@@ -54,7 +54,7 @@ The types are in sub-namespaces of `Routeables.Abstraction`; add the `using` of 
 | Routes | `[Routeable]`, `[RouteableView]`, `[RouteableViewModel]`, `RegisterRoute<TView, TViewModel>` |
 | Lifecycle | `IRouteable` (every member has a default), `IInitializeAsync`, `IRouteableReturnsResult<T>` |
 | Arguments | `IRouteableArgs` (values for the view model, for the view, neutral ones), `RouteableParameterAttribute` |
-| Menu | `IRouteableMenuEntry`, `IMainViewModel`, `AddMenuEntries`, `IRouteableModules` (modules loaded while running) |
+| Menu | `IRouteableMenuEntry`, `IRouteableMenuViewModel`, `AddMenuEntries`, `IRouteableModules` (modules loaded while running) |
 | Errors and locks | `IRouteableErrorSink`, `RouteableErrors`, `IRouteableLockCoordinator`, `IRouteableFormLock` (lock the menu while a form is edited) |
 
 The dialogs, notifications and theme are in [`Routeables.Services`](../Routeables.Services/README.md), regions in [`Routeables.Regions`](../Routeables.Regions/README.md), segments in [`Routeables.Segments`](../Routeables.Segments/README.md): a project that only routes carries none of them.

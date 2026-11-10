@@ -19,7 +19,7 @@ namespace Routeables.Maui;
 public static class MauiRouteablesExtensions
 {
     /// <summary>
-    /// <c>UseRouteables&lt;TMain&gt;</c> for an application that has no menu: no main view model to write. The first page is the one the
+    /// <c>UseRouteables&lt;TMenu&gt;</c> for an application that has no menu: no menu view model to write. The first page is the one the
     /// <c>RouteableRegion</c> of the main page opens (<c>Route="/hello/World"</c>).
     /// <code>
     /// builder.UseMauiApp&lt;App&gt;().UseRouteables();
@@ -29,11 +29,11 @@ public static class MauiRouteablesExtensions
     /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
     /// <returns>The same <paramref name="builder"/>, for chaining.</returns>
     public static MauiAppBuilder UseRouteables(this MauiAppBuilder builder, Action<IServiceCollection>? configure = null)
-        => builder.UseRouteables<DefaultMainViewModel>(configure);
+        => builder.UseRouteables<DefaultRouteableMenuViewModel>(configure);
 
     /// <summary>
     /// Starts Routeables on MAUI: registers the router, the arguments factory, the property injection, the environment information and the
-    /// theme service, and <typeparamref name="TMain"/> as the main view model (the menu), one for the application.
+    /// theme service, and <typeparamref name="TMenu"/> as the menu view model (the menu), one for the application.
     /// <code>
     /// builder.UseMauiApp&lt;App&gt;().UseRouteables&lt;MainViewModel&gt;();
     /// </code>
@@ -42,13 +42,13 @@ public static class MauiRouteablesExtensions
     /// It registers the dialog (message boxes, content dialogs and task dialogs), modal and notification services too (<c>UseRouteablesServices()</c> of
     /// <c>Routeables.Maui.Services</c>); call that one again only to replace a service.
     /// </remarks>
-    /// <typeparam name="TMain">The main view model.</typeparam>
+    /// <typeparam name="TMenu">The menu view model.</typeparam>
     /// <param name="builder">The MAUI app builder to configure.</param>
     /// <param name="configure">Optional: your own registrations (routes, modules, services), the same block as on the other hosts.</param>
     /// <returns>The same <paramref name="builder"/>, for chaining.</returns>
-    public static MauiAppBuilder UseRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMain>(
+    public static MauiAppBuilder UseRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMenu>(
         this MauiAppBuilder builder, Action<IServiceCollection>? configure = null)
-        where TMain : class, IMainViewModel
+        where TMenu : class, IRouteableMenuViewModel
     {
         ArgumentNullException.ThrowIfNull(builder);
         builder.Services.AddRouteableHost(Runtime.Maui,
@@ -56,7 +56,7 @@ public static class MauiRouteablesExtensions
         builder.Services.AddSingleton<IRouteableRequestedThemeService, RouteableRequestThemeService>();
         builder.Services.AddSingleton<IRouteableDispatcher, RouteableDispatcher>();
         builder.Services.AddSingleton<IRouteableViewBinder, RouteableViewBinder>();
-        builder.Services.RegisterMainViewModel<TMain>();
+        builder.Services.RegisterMenuViewModel<TMenu>();
         builder.UseRouteablesServices();
         // The history of the previous run is put back once the app is built, when the application asked for it (AddRouteableHistory).
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<Microsoft.Maui.Hosting.IMauiInitializeService, RouteableHistoryInitializer>());

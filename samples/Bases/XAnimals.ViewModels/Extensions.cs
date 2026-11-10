@@ -27,7 +27,7 @@ public static class Extensions
 
     public static void RegisterViewModels(this IServiceCollection services)
     {
-        // The main view model is registered by the head, with UseRouteables<MainViewModel>(...).
+        // The menu view model is registered by the head, with UseRouteables<MainViewModel>(...).
 
         // The coordinator that MainViewModel uses for segments; it lives as long as the routers it drives.
         services.AddRouteCoordinator();

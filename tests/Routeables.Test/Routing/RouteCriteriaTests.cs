@@ -143,7 +143,7 @@ public class RouteCriteriaTests
         Assert.True(await provider.ShowModalAsync<ConfirmVm, bool>());
     }
 
-    public sealed class MenuMain : IMainViewModel
+    public sealed class MenuMain : IRouteableMenuViewModel
     {
         public System.Collections.ObjectModel.ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
         public IRouteableMenuEntry? SelectedEntry { get; set; }
@@ -155,11 +155,11 @@ public class RouteCriteriaTests
     public void A_tab_is_a_page_and_an_entry_of_the_menu()
     {
         var services = new ServiceCollection();
-        services.RegisterMainViewModel<MenuMain>(ServiceLifetime.Singleton);
+        services.RegisterMenuViewModel<MenuMain>(ServiceLifetime.Singleton);
         services.AddRoutes(n => n.Tab<HomeView, HomeVm>("Home", route: "/home", icon: "house"));
         using var provider = services.BuildServiceProvider();
 
-        var entry = Assert.Single(provider.GetRequiredService<IMainViewModel>().Entries);
+        var entry = Assert.Single(provider.GetRequiredService<IRouteableMenuViewModel>().Entries);
 
         Assert.Equal("Home", entry.DisplayName);
         Assert.Equal("/home", entry.Route);

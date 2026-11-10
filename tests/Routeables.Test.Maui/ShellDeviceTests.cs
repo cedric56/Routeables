@@ -31,7 +31,7 @@ public class ShellDeviceTests
     }
 
     /// <summary>The menu of the fixture: entries, a selection, and every event a host raises, by hand.</summary>
-    private sealed class Menu : IMainViewModel
+    private sealed class Menu : IRouteableMenuViewModel
     {
         private IRouteableMenuEntry? _selected;
         private object? _view;
@@ -74,9 +74,9 @@ public class ShellDeviceTests
         public void NotifyLockChanged() => LockChanged?.Invoke(this, EventArgs.Empty);
 
         // Lock and Unlock are default members of the interface: they are reached through it.
-        public void LockAll() => ((IMainViewModel)this).Lock();
+        public void LockAll() => ((IRouteableMenuViewModel)this).Lock();
 
-        public void UnlockAll() => ((IMainViewModel)this).Unlock();
+        public void UnlockAll() => ((IRouteableMenuViewModel)this).Unlock();
 
         /// <summary>A menu with one entry per given name, in order.</summary>
         public static Menu With(params string[] names)
@@ -107,10 +107,10 @@ public class ShellDeviceTests
         public void PlatformArrange(Microsoft.Maui.Graphics.Rect frame) { }
     }
 
-    /// <summary>Register the test menu as the application's main view model before constructing the shell.</summary>
+    /// <summary>Register the test menu as the application's menu view model before constructing the shell.</summary>
     private static RouteablesShell ShellOf(Menu menu)
     {
-        var services = new ServiceCollection().AddSingleton<IMainViewModel>(menu).BuildServiceProvider();
+        var services = new ServiceCollection().AddSingleton<IRouteableMenuViewModel>(menu).BuildServiceProvider();
         return new RouteablesShell(services);
     }
 
@@ -374,7 +374,7 @@ public class ShellDeviceTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.RegisterRoute<PageAView, PageAViewModel>(route: "/a");
-        services.AddSingleton<IMainViewModel>(menu);
+        services.AddSingleton<IRouteableMenuViewModel>(menu);
         var provider = services.BuildServiceProvider();
         var shell = new RouteablesShell(provider);
         await provider.GetRequiredService<IRouter>().GoToAsync("/a");

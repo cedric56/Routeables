@@ -40,7 +40,7 @@ public abstract partial class CloseableViewModel<TResult>
 /// </param>
 [INotifyPropertyChanged]
 public abstract partial class RouteableViewModel(IRouter router, bool initialize = true)
-    : MainViewModelBase(router, initialize)
+    : RouteableMenuViewModelBase(router, initialize)
 {
     /// <summary>
     /// Navigates backward in the route change history asynchronously.

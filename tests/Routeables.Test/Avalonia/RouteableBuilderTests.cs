@@ -32,7 +32,7 @@ public class RouteableBuilderTests
     {
         IServiceProvider? provider = null;
 
-        var builder = global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMainViewModel>(
+        var builder = global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMenuViewModel>(
             configure: services => services.UseRouteablesServices(messageBoxService is null ? null : _ => messageBoxService, icon: string.Empty),
             afterBuild: services => provider = services);
 
@@ -79,7 +79,7 @@ public class RouteableBuilderTests
         IServiceProvider? provider = null;
 
         var builder = global::Avalonia.AppBuilder.Configure<TestApplication>()
-            .UseRouteables<FakeMainViewModel>(
+            .UseRouteables<FakeMenuViewModel>(
                 configure: services => services.UseRouteablesServices(icon: string.Empty),
                 afterBuild: services => provider = services);
 
@@ -97,7 +97,7 @@ public class RouteableBuilderTests
         IServiceProvider? provider = null;
         var custom = new MessageBoxService();
 
-        global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMainViewModel>(
+        global::Avalonia.AppBuilder.Configure<TestApplication>().UseRouteables<FakeMenuViewModel>(
             configure: services =>
             {
                 services.AddSingleton<Marker>();
@@ -118,7 +118,7 @@ public class RouteableBuilderTests
         IServiceProvider? provider = null;
 
         global::Avalonia.AppBuilder.Configure<TestApplication>()
-            .UseRouteables<FakeMainViewModel>(afterBuild: services => provider = services);
+            .UseRouteables<FakeMenuViewModel>(afterBuild: services => provider = services);
 
         using (provider as IDisposable)
         {

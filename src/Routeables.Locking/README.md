@@ -23,6 +23,6 @@ Several forms can lock at once: the menu is unlocked when the last token is disp
 ## To know
 
 - `IRouteableLockBroker`: publish and subscribe between components. A subscriber that throws does not stop the others.
-- `RouteableLockMessage(isLocked, isAllLocked)`: locks or unlocks the main entries (every main view model when `isAllLocked`).
+- `RouteableLockMessage(isLocked, isAllLocked)`: locks or unlocks the main entries (every menu view model when `isAllLocked`).
 
 See [lifecycle and guards](../../docs/guides/lifecycle.md).

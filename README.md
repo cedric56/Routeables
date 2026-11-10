@@ -83,7 +83,7 @@ The complete first page, step by step, with the other way to register a page (on
 | WinUI 3 | [`Routeables.WinUI3`](src/Routeables.WinUI3/README.md) | `this.UseRouteables(r => { ... })` |
 | WPF | [`Routeables.Wpf`](src/Routeables.Wpf/README.md) | `this.UseRouteables(r => { ... })` |
 
-The generated routes are added for you: in an application, the generator writes a module initializer and the host registers the routes after your block. The block is for your own services and routes, the same on every host: `r => r.AddSingleton<IClock, Clock>()`. An application with a menu gives its main view model, `UseRouteables<MainViewModel>(...)` (`UseRouteablesServer<MainViewModel>` on Blazor). To start from a template: `dotnet new install Routeables.Templates`, then `dotnet new routeables-avalonia -n MyApp` (Avalonia only for now).
+The generated routes are added for you: in an application, the generator writes a module initializer and the host registers the routes after your block. The block is for your own services and routes, the same on every host: `r => r.AddSingleton<IClock, Clock>()`. An application with a menu gives its menu view model, `UseRouteables<MainViewModel>(...)` (`UseRouteablesServer<MainViewModel>` on Blazor). To start from a template: `dotnet new install Routeables.Templates`, then `dotnet new routeables-avalonia -n MyApp` (Avalonia only for now).
 
 The same view models drive the Animals sample on each host: only the views differ.
 

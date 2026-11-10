@@ -9,4 +9,4 @@ ROUT202 | Routeables | Warning | Several views match the naming convention
 ROUT203 | Routeables | Warning | Several views for the same view model and route
 ROUT204 | Routeables | Warning | [RouteableView] in a .razor file is ignored here
 ROUT205 | Routeables | Info | No view found for a view model
-ROUT301 | Routeables | Warning | IMainViewModel registered as transient
+ROUT301 | Routeables | Warning | IRouteableMenuViewModel registered as transient

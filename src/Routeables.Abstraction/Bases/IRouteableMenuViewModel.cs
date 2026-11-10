@@ -3,11 +3,11 @@
 namespace Routeables.Abstraction.Bases;
 
 /// <summary>
-/// The main view model of an application: the menu entries, the one that is selected and the view it shows. Each host binds its
+/// The menu view model of an application: the menu entries, the one that is selected and the view it shows. Each host binds its
 /// menu to <see cref="Entries"/> and <see cref="SelectedEntry"/>; the page itself is shown by a <c>RouteableRegion</c> (the view is <c>IRouter.CurrentView</c>). Register it with
-/// <c>RegisterMainViewModel</c>: one instance per host (a singleton on Avalonia, MAUI and Uno, scoped on Blazor).
+/// <c>RegisterMenuViewModel</c>: one instance per host (a singleton on Avalonia, MAUI and Uno, scoped on Blazor).
 /// </summary>
-public interface IMainViewModel
+public interface IRouteableMenuViewModel
 {
     /// <summary>The entries of the menu, in the order they are shown.</summary>
     ObservableCollection<IRouteableMenuEntry> Entries { get; }

@@ -17,7 +17,7 @@ namespace Routeables.AspNetCore;
 public static class AspNetCoreRouteablesExtensions
 {
     /// <summary>
-    /// <c>AddRouteablesAspNetCore&lt;TMain&gt;</c> for an application that has no menu: no main view model to write.
+    /// <c>AddRouteablesAspNetCore&lt;TMenu&gt;</c> for an application that has no menu: no menu view model to write.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
     /// <param name="configure">Optional callback to register additional services after the defaults.</param>
@@ -25,23 +25,23 @@ public static class AspNetCoreRouteablesExtensions
     public static IServiceCollection AddRouteablesAspNetCore(
         this IServiceCollection services,
         Action<IServiceCollection>? configure = null)
-        => services.AddRouteablesAspNetCore<DefaultMainViewModel>(configure);
+        => services.AddRouteablesAspNetCore<DefaultRouteableMenuViewModel>(configure);
 
     /// <summary>
-    /// Registers the core Routeables services for ASP.NET Core, using <typeparamref name="TMain"/> as the main view-model.
+    /// Registers the core Routeables services for ASP.NET Core, using <typeparamref name="TMenu"/> as the menu view-model.
     /// </summary>
-    /// <typeparam name="TMain">The main view-model type. Must implement <see cref="IMainViewModel"/>.</typeparam>
+    /// <typeparam name="TMenu">The menu view-model type. Must implement <see cref="IRouteableMenuViewModel"/>.</typeparam>
     /// <param name="services">The service collection to configure.</param>
     /// <param name="configure">Optional callback to register additional services after the defaults.</param>
     /// <returns>The same <paramref name="services"/> instance for chaining.</returns>
     public static IServiceCollection
-        AddRouteablesAspNetCore<TMain>(
+        AddRouteablesAspNetCore<TMenu>(
             this IServiceCollection services,
             Action<IServiceCollection>? configure = null)
-        where TMain : class, IMainViewModel
+        where TMenu : class, IRouteableMenuViewModel
     {
         services.RegisterEnvironments(Runtime.AspNetCore);
-        services.RegisterMainViewModel<TMain>(ServiceLifetime.Scoped);
+        services.RegisterMenuViewModel<TMenu>(ServiceLifetime.Scoped);
         services.AddRouteCoordinator(ServiceLifetime.Scoped);
         services.AddScoped<RouteableInteractions>();
         services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());

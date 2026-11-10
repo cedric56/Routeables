@@ -10,8 +10,8 @@ using Xunit;
 
 namespace Routeables.Test.Avalonia;
 
-/// <summary>The main view model of the test application: the controls under test need one, not its menu.</summary>
-public sealed class TestMain : IMainViewModel
+/// <summary>The menu view model of the test application: the controls under test need one, not its menu.</summary>
+public sealed class TestMain : IRouteableMenuViewModel
 {
     /// <summary>The collection of available routeable entries.</summary>
     public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];

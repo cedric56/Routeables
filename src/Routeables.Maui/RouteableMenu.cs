@@ -4,9 +4,9 @@ using System.Globalization;
 namespace Routeables.Maui;
 
 /// <summary>
-/// The menu of the application: one row per entry of the main view model (<see cref="IMainViewModel.Entries"/>), the selected row is the
-/// current entry (<see cref="IMainViewModel.SelectedEntry"/>). Its rows are disabled while the menu is locked. Its binding context must be the
-/// main view model (it is, in a page of the application, when the page gets it from the container).
+/// The menu of the application: one row per entry of the menu view model (<see cref="IRouteableMenuViewModel.Entries"/>), the selected row is the
+/// current entry (<see cref="IRouteableMenuViewModel.SelectedEntry"/>). Its rows are disabled while the menu is locked. Its binding context must be the
+/// menu view model (it is, in a page of the application, when the page gets it from the container).
 /// <code>
 /// &lt;routeables:RouteableMenu BindingContext="{Binding MainViewModel}" /&gt;
 /// </code>
@@ -21,8 +21,8 @@ public class RouteableMenu : ContentView
             SelectionMode = SelectionMode.Single,
             ItemTemplate = new DataTemplate(CreateRow)
         };
-        list.SetBinding(ItemsView.ItemsSourceProperty, new Binding(nameof(IMainViewModel.Entries)));
-        list.SetBinding(SelectableItemsView.SelectedItemProperty, new Binding(nameof(IMainViewModel.SelectedEntry), BindingMode.TwoWay));
+        list.SetBinding(ItemsView.ItemsSourceProperty, new Binding(nameof(IRouteableMenuViewModel.Entries)));
+        list.SetBinding(SelectableItemsView.SelectedItemProperty, new Binding(nameof(IRouteableMenuViewModel.SelectedEntry), BindingMode.TwoWay));
         Content = list;
     }
 

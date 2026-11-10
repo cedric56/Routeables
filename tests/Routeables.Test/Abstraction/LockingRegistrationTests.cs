@@ -15,7 +15,7 @@ public class LockingRegistrationTests
         var services = new ServiceCollection();
         var router = CreateRouter(services);
 
-        Assert.Null(router.CreateLockCoordinator(new FakeMainViewModel()));
+        Assert.Null(router.CreateLockCoordinator(new FakeMenuViewModel()));
         Assert.Null(services.BuildServiceProvider().GetService<IRouteableLockBroker>());
     }
 
@@ -27,7 +27,7 @@ public class LockingRegistrationTests
         services.AddLocking();
 
         Assert.Equal(1, services.Count(d => d.ServiceType == typeof(IRouteableLockBroker)));
-        Assert.NotNull(CreateRouter(services).CreateLockCoordinator(new FakeMainViewModel()));
+        Assert.NotNull(CreateRouter(services).CreateLockCoordinator(new FakeMenuViewModel()));
     }
 
     [Fact]

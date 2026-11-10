@@ -14,24 +14,24 @@ internal sealed class RouteableLockCoordinator : IRouteableLockCoordinator, IDis
     private readonly object _gate = new();
     private readonly IServiceProvider _provider;
     private readonly IRouteableLockBroker _broker;
-    private readonly IMainViewModel _mainViewModel;
+    private readonly IRouteableMenuViewModel _menuViewModel;
     private IDisposable? _subscription;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RouteableLockCoordinator"/> class.
     /// </summary>
     /// <param name="provider">
-    /// The service provider used to resolve the other <see cref="IMainViewModel"/> instances. It is only used when a message
+    /// The service provider used to resolve the other <see cref="IRouteableMenuViewModel"/> instances. It is only used when a message
     /// is addressed to all of them, never while the coordinator is created: resolving them here would build the main
     /// view model that is creating this coordinator again.
     /// </param>
     /// <param name="broker">The broker service used for subscribing to lock change messages.</param>
     /// <param name="manager">The primary routeable manager instance.</param>
-    public RouteableLockCoordinator(IServiceProvider provider, IRouteableLockBroker broker, IMainViewModel manager)
+    public RouteableLockCoordinator(IServiceProvider provider, IRouteableLockBroker broker, IRouteableMenuViewModel manager)
     {
         _provider = provider;
         _broker = broker;
-        _mainViewModel = manager;
+        _menuViewModel = manager;
     }
 
     /// <summary>
@@ -49,15 +49,15 @@ internal sealed class RouteableLockCoordinator : IRouteableLockCoordinator, IDis
         if (message is not RouteableLockMessage m)
             return;
 
-        Apply(_mainViewModel, m.IsLocked);
+        Apply(_menuViewModel, m.IsLocked);
 
         if (!m.IsAllLocked)
             return;
 
-        IEnumerable<IMainViewModel> all;
+        IEnumerable<IRouteableMenuViewModel> all;
         try
         {
-            all = _provider.GetServices<IMainViewModel>().ToList();
+            all = _provider.GetServices<IRouteableMenuViewModel>().ToList();
         }
         catch (ObjectDisposedException)
         {
@@ -67,17 +67,17 @@ internal sealed class RouteableLockCoordinator : IRouteableLockCoordinator, IDis
 
         foreach (var manager in all)
         {
-            if (!ReferenceEquals(manager, _mainViewModel))
+            if (!ReferenceEquals(manager, _menuViewModel))
                 Apply(manager, m.IsLocked);
         }
     }
 
-    private static void Apply(IMainViewModel mainViewModel, bool isLocked)
+    private static void Apply(IRouteableMenuViewModel menuViewModel, bool isLocked)
     {
         if (isLocked)
-            mainViewModel.Lock();
+            menuViewModel.Lock();
         else
-            mainViewModel.Unlock();
+            menuViewModel.Unlock();
     }
 
     /// <summary>

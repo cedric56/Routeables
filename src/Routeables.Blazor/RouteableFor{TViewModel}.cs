@@ -29,10 +29,10 @@ public partial class RouteableFor<[DynamicallyAccessedMembers(DynamicallyAccesse
     /// </summary>
     public bool IsLocked
     {
-        get => ViewModel is IMainViewModel mainViewModel &&
-            mainViewModel.Entries != null &&
-            mainViewModel.Entries.Count > 0 &&
-            mainViewModel.Entries.All(r => r.IsLock);
+        get => ViewModel is IRouteableMenuViewModel menuViewModel &&
+            menuViewModel.Entries != null &&
+            menuViewModel.Entries.Count > 0 &&
+            menuViewModel.Entries.All(r => r.IsLock);
     }
 
     /// <summary>
@@ -95,8 +95,8 @@ public partial class RouteableFor<[DynamicallyAccessedMembers(DynamicallyAccesse
         _subscribed = vm;
         if (vm is not null)
         {
-            if (vm is IMainViewModel mainViewModel)
-                mainViewModel.LockChanged += OnLockChanged;
+            if (vm is IRouteableMenuViewModel menuViewModel)
+                menuViewModel.LockChanged += OnLockChanged;
 
             OnSubscribe();
         }
@@ -122,8 +122,8 @@ public partial class RouteableFor<[DynamicallyAccessedMembers(DynamicallyAccesse
         if (_subscribed is null)
             return;
 
-        if (_subscribed is IMainViewModel mainViewModel)
-            mainViewModel.LockChanged -= OnLockChanged;
+        if (_subscribed is IRouteableMenuViewModel menuViewModel)
+            menuViewModel.LockChanged -= OnLockChanged;
 
         OnUnsubscribe();
         _subscribed = null;

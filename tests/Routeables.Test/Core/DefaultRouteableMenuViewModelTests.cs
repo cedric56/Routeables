@@ -8,8 +8,8 @@ using Routeables.Routing;
 
 namespace Routeables.Tests.Core;
 
-/// <summary>An application without a menu: the main view model the hosts register for <c>UseRouteables()</c>, and the region that starts the routing.</summary>
-public class DefaultMainViewModelTests
+/// <summary>An application without a menu: the menu view model the hosts register for <c>UseRouteables()</c>, and the region that starts the routing.</summary>
+public class DefaultRouteableMenuViewModelTests
 {
     public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
     public sealed class HomeVm;
@@ -23,7 +23,7 @@ public class DefaultMainViewModelTests
         services.AddRegion("detail");
         services.RegisterRoute<HomeView, HomeVm>(route: homeRoute);
         services.RegisterRoute<DetailView, DetailVm>(route: "/empty");
-        services.RegisterMainViewModel<DefaultMainViewModel>(ServiceLifetime.Singleton);
+        services.RegisterMenuViewModel<DefaultRouteableMenuViewModel>(ServiceLifetime.Singleton);
         return services.BuildServiceProvider();
     }
 
@@ -42,14 +42,14 @@ public class DefaultMainViewModelTests
     {
         using var provider = Build();
 
-        Assert.Empty(provider.GetRequiredService<IMainViewModel>().Entries);
+        Assert.Empty(provider.GetRequiredService<IRouteableMenuViewModel>().Entries);
     }
 
     [Fact]
     public async Task The_root_is_opened_when_the_default_region_starts_the_routing()
     {
         using var provider = Build();
-        var main = provider.GetRequiredService<IMainViewModel>();
+        var main = provider.GetRequiredService<IRouteableMenuViewModel>();
 
         Assert.True(main.Start());
 
@@ -61,7 +61,7 @@ public class DefaultMainViewModelTests
     public void Selecting_the_first_entry_does_not_start_an_application_without_a_menu()
     {
         using var provider = Build();
-        var main = provider.GetRequiredService<IMainViewModel>();
+        var main = provider.GetRequiredService<IRouteableMenuViewModel>();
 
         Assert.False(main.SelectFirst());
         Assert.Null(provider.GetRequiredService<IRouter>().CurrentView);
@@ -71,7 +71,7 @@ public class DefaultMainViewModelTests
     public async Task The_same_main_view_model_starts_only_once()
     {
         using var provider = Build();
-        var main = provider.GetRequiredService<IMainViewModel>();
+        var main = provider.GetRequiredService<IRouteableMenuViewModel>();
 
         Assert.True(main.Start());
         Assert.False(main.Start());     // two regions, or the region attached again, before the first page is there

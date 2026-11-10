@@ -3,8 +3,8 @@ using System.Collections.ObjectModel;
 
 namespace Routeables.Tests.Core;
 
-/// <summary>An <see cref="IMainViewModel"/> that does nothing: the main view model of a host, in tests that are about something else.</summary>
-public sealed class FakeMainViewModel : IMainViewModel
+/// <summary>An <see cref="IRouteableMenuViewModel"/> that does nothing: the menu view model of a host, in tests that are about something else.</summary>
+public sealed class FakeMenuViewModel : IRouteableMenuViewModel
 {
     public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
     public IRouteableMenuEntry? SelectedEntry { get; set; }

@@ -5,8 +5,8 @@
 `Routeables.Core` provides routing-aware view-model bases so a page that hosts other pages does not rebuild the plumbing:
 
 - `RouterViewModelBase`: back/forward routing through the router's history.
-- `MainViewModelBase`: a ready-to-use main view model; you only return the entries.
-- `MainViewModelBase`: the abstract base under it; manages routing between a set of `IRouteableMenuEntry` items (menus, tab bars), implements `IMainViewModel` and guards the change of the current item.
+- `RouteableMenuViewModelBase`: a ready-to-use menu view model; you only return the entries.
+- `RouteableMenuViewModelBase`: the abstract base under it; manages routing between a set of `IRouteableMenuEntry` items (menus, tab bars), implements `IRouteableMenuViewModel` and guards the change of the current item.
 - `CloseableViewModelBase<TResult>`: a view model that can be closed and returns a result (dialogs).
 
 The CommunityToolkit.Mvvm and ReactiveUI flavours are opt-in sources: they are not in the assembly. Declare the feature in your project file; `Routeables.targets` (in the `Routeables` package) adds the matching source files and the packages they use:
@@ -42,7 +42,7 @@ These interfaces live in `Routeables.Services` (namespace `Routeables.Services`)
 | WinUI 3 ([`Routeables.WinUI3`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.WinUI3/README.md)) | `Application.UseRouteables(r => ..., () => new MainPage())`, the same calls as Uno (Windows only; system notifications with `WithAppNotifications()`) | `RouteableFor`, `RouteableFor<TViewModel>`, `RouteableRegion`, `RouteableListView`, `ContentDialog` dialogs, `InfoBar` notifications, themes, replaceable `IMessageBoxService` |
 | WPF ([`Routeables.Wpf`](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Wpf/README.md)) | `Application.UseRouteables(r => ..., () => new MainView())` (`UseRouteables<MainViewModel>(...)` with a menu; or `UseRouteables(r => ...)` and `Application.OpenMainWindow(view)`) | `net10.0-windows`. `RouteableFor`, `RouteableFor<TViewModel>`, `RouteableRegion`, `RouteableRegionItems`, `RouteableMenu`, dialogs in owned windows, notifications in small windows, Fluent themes, replaceable `IMessageBoxService`. Shares the dialog and notification logic with the other hosts (`Routeables.Services`) |
 
-The Blazor, MAUI, Avalonia and Uno hosts share one contract, checked by `HostContractTests`, and ASP.NET Core runs the same routing scenario there (WPF has its own tests, `WpfHostTests`, built with the test project on Windows only; WinUI 3 has no test project): the same services (router, injection rules), the same injection rule (a value attribute never falls back to the container) and one main view model for the whole host. While developing, the Avalonia host (Debug builds) and the MAUI sample build the container with `ValidateOnBuild`, so a registration that cannot be built fails at start with its name; ASP.NET Core does the same by default in the Development environment.
+The Blazor, MAUI, Avalonia and Uno hosts share one contract, checked by `HostContractTests`, and ASP.NET Core runs the same routing scenario there (WPF has its own tests, `WpfHostTests`, built with the test project on Windows only; WinUI 3 has no test project): the same services (router, injection rules), the same injection rule (a value attribute never falls back to the container) and one menu view model for the whole host. While developing, the Avalonia host (Debug builds) and the MAUI sample build the container with `ValidateOnBuild`, so a registration that cannot be built fails at start with its name; ASP.NET Core does the same by default in the Development environment.
 
 `Runtime` identifies the host (`Runtime.Avalonia`, `Uno`, `WinUI3`, `Wpf`, `Maui`, `MauiHybrid`, `BlazorServer`, `BlazorWebAssembly`, `AspNetCore`) and is available through `IRuntime`.
 

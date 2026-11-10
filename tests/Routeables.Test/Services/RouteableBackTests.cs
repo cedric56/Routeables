@@ -98,7 +98,7 @@ public class RouteableBackTests
     [Fact]
     public void A_provider_is_required() => Assert.Throws<ArgumentNullException>(() => RouteableBack.TryGoBack(null!));
 
-    private sealed class TabMenu : IMainViewModel
+    private sealed class TabMenu : IRouteableMenuViewModel
     {
         public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
         public IRouteableMenuEntry? SelectedEntry { get; set; }
@@ -117,7 +117,7 @@ public class RouteableBackTests
         using var provider = Build(services =>
         {
             services.AddRegion("back-tab");
-            services.AddSingleton<IMainViewModel>(menu);
+            services.AddSingleton<IRouteableMenuViewModel>(menu);
         });
         var ct = TestContext.Current.CancellationToken;
         var main = provider.GetRequiredService<IRouter>();
@@ -141,7 +141,7 @@ public class RouteableBackTests
     public async Task The_menu_is_told_which_page_is_shown_after_the_router_went_back()
     {
         var menu = new TabMenu();
-        using var provider = Build(services => services.AddSingleton<IMainViewModel>(menu));
+        using var provider = Build(services => services.AddSingleton<IRouteableMenuViewModel>(menu));
         var ct = TestContext.Current.CancellationToken;
         var router = provider.GetRequiredService<IRouter>();
         await router.GoToAsync("/back-first", cancellationToken: ct);

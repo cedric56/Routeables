@@ -64,7 +64,7 @@ public class MenuAndNavigationTests
     }
 
     /// <summary>A menu a list can bind to.</summary>
-    private sealed class Menu : IMainViewModel, INotifyPropertyChanged
+    private sealed class Menu : IRouteableMenuViewModel, INotifyPropertyChanged
     {
         private IRouteableMenuEntry? _selected;
 

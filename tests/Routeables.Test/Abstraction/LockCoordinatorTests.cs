@@ -13,8 +13,8 @@ public class LockCoordinatorTests
         var other = new RouteablesProbe();
         var broker = new RouteableLockBroker();
         using var provider = new ServiceCollection()
-            .AddSingleton<IMainViewModel>(primary)
-            .AddSingleton<IMainViewModel>(other)
+            .AddSingleton<IRouteableMenuViewModel>(primary)
+            .AddSingleton<IRouteableMenuViewModel>(other)
             .BuildServiceProvider();
         var coordinator = new RouteableLockCoordinator(provider, broker, primary);
 
@@ -34,8 +34,8 @@ public class LockCoordinatorTests
         var other = new RouteablesProbe();
         var broker = new RouteableLockBroker();
         using var provider = new ServiceCollection()
-            .AddSingleton<IMainViewModel>(primary)
-            .AddSingleton<IMainViewModel>(other)
+            .AddSingleton<IRouteableMenuViewModel>(primary)
+            .AddSingleton<IRouteableMenuViewModel>(other)
             .BuildServiceProvider();
         using var coordinator = new RouteableLockCoordinator(provider, broker, primary);
 
@@ -55,7 +55,7 @@ public class LockCoordinatorTests
         var primary = new RouteablesProbe();
         var broker = new RouteableLockBroker();
         using var provider = new ServiceCollection()
-            .AddSingleton<IMainViewModel>(primary)
+            .AddSingleton<IRouteableMenuViewModel>(primary)
             .BuildServiceProvider();
         var coordinator = new RouteableLockCoordinator(provider, broker, primary);
         coordinator.Subscribe();
@@ -125,7 +125,7 @@ public class LockCoordinatorTests
     {
         var primary = new RouteablesProbe();
         var broker = new RouteableLockBroker();
-        var provider = new ServiceCollection().AddSingleton<IMainViewModel>(primary).BuildServiceProvider();
+        var provider = new ServiceCollection().AddSingleton<IRouteableMenuViewModel>(primary).BuildServiceProvider();
         var coordinator = new RouteableLockCoordinator(provider, broker, primary);
         coordinator.Subscribe();
         provider.Dispose();
@@ -142,13 +142,13 @@ public class LockCoordinatorTests
         public object? GetService(Type serviceType)
         {
             Requests++;
-            return Array.CreateInstance(typeof(IMainViewModel), 0);
+            return Array.CreateInstance(typeof(IRouteableMenuViewModel), 0);
         }
     }
 
     private sealed record OtherMessage() : RouteableMessage("LockChanged");
 
-    private sealed class RouteablesProbe : IMainViewModel
+    private sealed class RouteablesProbe : IRouteableMenuViewModel
     {
         public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
         public IRouteableMenuEntry? SelectedEntry { get; set; }

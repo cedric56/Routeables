@@ -15,9 +15,9 @@ public class AboutViewModel : ViewModelBase
 {
     public const string LearnMoreUrl = "https://github.com/cedric56/Routeables";
 
-    private readonly IMainViewModel _main;
+    private readonly IRouteableMenuViewModel _main;
 
-    public AboutViewModel(IMainViewModel main)
+    public AboutViewModel(IRouteableMenuViewModel main)
     {
         _main = main;
 

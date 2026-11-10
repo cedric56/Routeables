@@ -25,7 +25,7 @@ public class ScopeRetentionTests
         services.RegisterRouting(ServiceLifetime.Scoped);
         services.RegisterRouteableArgsFactory(() => new RouteableArgs());
         services.RegisterRoute("/page", (_, _) => new Page(), ServiceLifetime.Scoped);
-        services.AddScoped<IMainViewModel>(sp =>
+        services.AddScoped<IRouteableMenuViewModel>(sp =>
         {
             var main = TestNavigableViewModel.Create(sp.GetRequiredService<IRouter>(), [], initialize: false);
             Mains.Add(new WeakReference(main));
@@ -41,7 +41,7 @@ public class ScopeRetentionTests
         for (var i = 0; i < count; i++)
         {
             await using var scope = root.CreateAsyncScope();
-            var main = scope.ServiceProvider.GetRequiredService<IMainViewModel>();
+            var main = scope.ServiceProvider.GetRequiredService<IRouteableMenuViewModel>();
             var router = scope.ServiceProvider.GetRequiredService<IRouter>();
             for (var p = 0; p < 3; p++)
                 await router.GoToAsync("/page", template: "/page");
@@ -64,7 +64,7 @@ public class ScopeRetentionTests
         var pages = Pages.Count(w => w.IsAlive);
 
         Assert.Equal(50, Mains.Count);
-        Assert.True(mains <= 1, $"{mains} main view models of disposed scopes are still alive");
+        Assert.True(mains <= 1, $"{mains} menu view models of disposed scopes are still alive");
         Assert.True(pages <= 1, $"{pages} pages of disposed scopes are still alive");
     }
 

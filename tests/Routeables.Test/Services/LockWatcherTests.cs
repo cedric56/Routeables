@@ -19,9 +19,9 @@ public class LockWatcherTests
         public string? Path => null;
     }
 
-    private static FakeMainViewModel MainWith(params bool[] locked)
+    private static FakeMenuViewModel MainWith(params bool[] locked)
     {
-        var main = new FakeMainViewModel();
+        var main = new FakeMenuViewModel();
         foreach (var isLocked in locked)
         {
             main.Entries.Add(new Entry(isLocked));
@@ -30,7 +30,7 @@ public class LockWatcherTests
         return main;
     }
 
-    private static void Lock(FakeMainViewModel main, bool locked)
+    private static void Lock(FakeMenuViewModel main, bool locked)
     {
         foreach (var entry in main.Entries)
             entry.IsLock = locked;
@@ -84,7 +84,7 @@ public class LockWatcherTests
         var count = 0;
         var watcher = new RouteableLockWatcher(_ => count++);
 
-        Assert.False(watcher.Follow("not a main view model"));
+        Assert.False(watcher.Follow("not a menu view model"));
 
         watcher.Follow(main);
         watcher.Dispose();

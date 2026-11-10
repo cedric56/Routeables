@@ -17,16 +17,16 @@ namespace Routeables.Tests.Wpf;
 [Collection(WpfCollection.Name)]
 public class WpfControlsTests
 {
-    private static FakeMainViewModel Menu(params string[] names)
+    private static FakeMenuViewModel Menu(params string[] names)
     {
-        var main = new FakeMainViewModel();
+        var main = new FakeMenuViewModel();
         foreach (var name in names)
             main.Entries.Add(new RouteableMenuEntry<FakeViewModel>(name, route: $"/{name}", template: $"/{name}"));
         return main;
     }
 
     // A list that is not in a window: its items are made when it is measured.
-    private static ListBox Shown(FakeMainViewModel main)
+    private static ListBox Shown(FakeMenuViewModel main)
     {
         var list = new RouteableMenu { DataContext = main };
         list.Measure(new Size(400, 600));

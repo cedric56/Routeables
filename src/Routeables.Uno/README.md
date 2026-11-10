@@ -21,7 +21,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args) =>
     _window = this.OpenMainWindow(new MainPage());
 ```
 
-An application with a menu gives its main view model: `this.UseRouteables<MainViewModel>(r => ...)`.
+An application with a menu gives its menu view model: `this.UseRouteables<MainViewModel>(r => ...)`.
 
 The window can be opened by the same call: `Services = this.UseRouteables(r => { /* your own services */ }, () => new MainPage(), window => window.Title = "My app");` in the constructor of `App` builds the container and creates the window as the application runs, with no `OnLaunched` to write.
 
@@ -43,7 +43,7 @@ public sealed partial class DogDetailView : RouteableFor { public DogDetailView(
 
 A XAML root cannot be generic in WinUI, so XAML views use `RouteableFor`; views written in code can use `RouteableFor<TViewModel>`.
 
-The menu is a `MainViewModelBase` and `<routeables:RouteableListView />`; the page is shown by `<routeables:RouteableRegion />`. A region is `<routeables:RouteableRegion Region="detail" />`.
+The menu is a `RouteableMenuViewModelBase` and `<routeables:RouteableListView />`; the page is shown by `<routeables:RouteableRegion />`. A region is `<routeables:RouteableRegion Region="detail" />`.
 
 ## Navigation
 

@@ -23,7 +23,7 @@ public class ViewForTests
         }
     }
 
-    private sealed class RouteablesViewModel : TestViewModel, IMainViewModel
+    private sealed class RouteablesViewModel : TestViewModel, IRouteableMenuViewModel
     {
         public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
         public event EventHandler? LockChanged { add { } remove { } }

@@ -11,13 +11,13 @@ public class FormLockTests
 {
     private sealed class Page;
 
-    private static (IRouteableFormLock Lock, FakeMainViewModel Menu, ServiceProvider Provider) Build()
+    private static (IRouteableFormLock Lock, FakeMenuViewModel Menu, ServiceProvider Provider) Build()
     {
         var services = new ServiceCollection();
         services.AddLocking();
-        var menu = new FakeMainViewModel();
+        var menu = new FakeMenuViewModel();
         menu.Entries.Add(new RouteableMenuEntry<Page>("Page", null, "/page", "/page"));
-        services.AddSingleton<IMainViewModel>(menu);
+        services.AddSingleton<IRouteableMenuViewModel>(menu);
         var provider = services.BuildServiceProvider();
         provider.GetRequiredService<IRouteableLockBroker>();
         var coordinator = new RouteableLockCoordinator(provider, provider.GetRequiredService<IRouteableLockBroker>(), menu);

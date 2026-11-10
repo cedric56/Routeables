@@ -22,8 +22,8 @@ public static class HostContract
         Assert.Null(provider.GetService<IRouteableLockBroker>());
     }
 
-    public static void MainViewModelIsOneInstance(IServiceProvider provider)
-        => Assert.Same(provider.GetRequiredService<IMainViewModel>(), provider.GetRequiredService<IMainViewModel>());
+    public static void MenuViewModelIsOneInstance(IServiceProvider provider)
+        => Assert.Same(provider.GetRequiredService<IRouteableMenuViewModel>(), provider.GetRequiredService<IRouteableMenuViewModel>());
 
     public static void ValueAttributesNeverComeFromTheContainer(IServiceProvider provider)
     {

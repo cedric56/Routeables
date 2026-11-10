@@ -3,44 +3,44 @@
 namespace Routeables.Services;
 
 /// <summary>
-/// What the base views of the hosts share to follow the lock of the main view model: a single subscription to
-/// <see cref="IMainViewModel.LockChanged"/>, however many times the view is initialized again, and the rule that decides
-/// whether the main view model is locked.
+/// What the base views of the hosts share to follow the lock of the menu view model: a single subscription to
+/// <see cref="IRouteableMenuViewModel.LockChanged"/>, however many times the view is initialized again, and the rule that decides
+/// whether the menu view model is locked.
 /// </summary>
 /// <remarks>
-/// The main view model is a singleton that outlives the views: the watcher unsubscribes from the one it subscribed to, even
+/// The menu view model is a singleton that outlives the views: the watcher unsubscribes from the one it subscribed to, even
 /// if the data context of the view has been replaced since. The callback runs on the thread that asked for the route change;
 /// the host puts the value on its own thread.
 /// </remarks>
-/// <param name="changed">Called with the new value whenever the lock of the main view model changes.</param>
+/// <param name="changed">Called with the new value whenever the lock of the menu view model changes.</param>
 internal sealed class RouteableLockWatcher(Action<bool> changed) : IDisposable
 {
-    private IMainViewModel? _followed;
+    private IRouteableMenuViewModel? _followed;
 
-    /// <summary>Whether every entry of <paramref name="mainViewModel"/> is locked (a page is blocking the route change); <see langword="false"/> without entries.</summary>
-    /// <param name="mainViewModel">The main view model, or <see langword="null"/>.</param>
-    public static bool AllLocked(IMainViewModel? mainViewModel) =>
-        mainViewModel?.Entries is { Count: > 0 } entries && entries.All(entry => entry.IsLock);
+    /// <summary>Whether every entry of <paramref name="menuViewModel"/> is locked (a page is blocking the route change); <see langword="false"/> without entries.</summary>
+    /// <param name="menuViewModel">The menu view model, or <see langword="null"/>.</param>
+    public static bool AllLocked(IRouteableMenuViewModel? menuViewModel) =>
+        menuViewModel?.Entries is { Count: > 0 } entries && entries.All(entry => entry.IsLock);
 
     /// <summary>
-    /// Follows the lock of <paramref name="context"/> when it is a main view model, and stops following the previous one.
+    /// Follows the lock of <paramref name="context"/> when it is a menu view model, and stops following the previous one.
     /// A view initialized again (a cached view shown again) therefore keeps one subscription.
     /// </summary>
     /// <param name="context">The data context of the view.</param>
-    /// <returns>Whether the main view model is locked now; <see langword="false"/> when <paramref name="context"/> is not one.</returns>
+    /// <returns>Whether the menu view model is locked now; <see langword="false"/> when <paramref name="context"/> is not one.</returns>
     public bool Follow(object? context)
     {
         Dispose();
 
-        if (context is not IMainViewModel mainViewModel)
+        if (context is not IRouteableMenuViewModel menuViewModel)
             return false;
 
-        _followed = mainViewModel;
-        mainViewModel.LockChanged += OnLockChanged;
-        return AllLocked(mainViewModel);
+        _followed = menuViewModel;
+        menuViewModel.LockChanged += OnLockChanged;
+        return AllLocked(menuViewModel);
     }
 
-    /// <summary>Stops following the lock of the main view model.</summary>
+    /// <summary>Stops following the lock of the menu view model.</summary>
     public void Dispose()
     {
         if (_followed is not null)
@@ -51,7 +51,7 @@ internal sealed class RouteableLockWatcher(Action<bool> changed) : IDisposable
 
     private void OnLockChanged(object? sender, EventArgs e)
     {
-        if ((sender as IMainViewModel ?? _followed) is { } mainViewModel)
-            changed(AllLocked(mainViewModel));
+        if ((sender as IRouteableMenuViewModel ?? _followed) is { } menuViewModel)
+            changed(AllLocked(menuViewModel));
     }
 }

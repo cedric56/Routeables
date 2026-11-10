@@ -9,8 +9,8 @@ namespace Routeables.Abstraction.Locking;
 /// </summary>
 internal interface IRouteableLockCoordinatorFactory
 {
-    /// <summary>Creates the coordinator that locks and unlocks the entries of <paramref name="mainViewModel"/>.</summary>
-    /// <param name="mainViewModel">The main view model, whose entries the coordinator locks.</param>
+    /// <summary>Creates the coordinator that locks and unlocks the entries of <paramref name="menuViewModel"/>.</summary>
+    /// <param name="menuViewModel">The menu view model, whose entries the coordinator locks.</param>
     /// <returns>The coordinator, or <see langword="null"/> when the router has none.</returns>
-    IRouteableLockCoordinator? CreateLockCoordinator(IMainViewModel mainViewModel);
+    IRouteableLockCoordinator? CreateLockCoordinator(IRouteableMenuViewModel menuViewModel);
 }

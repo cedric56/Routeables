@@ -6,14 +6,14 @@ using Routeables.Tests.Core;
 
 namespace Routeables.Test.Abstraction;
 
-public class MainViewModelTests
+public class MenuViewModelTests
 {
     private static IRouteableMenuEntry View(string name) => new RouteableMenuEntry("/" + name, "/" + name, name);
 
     [Fact]
     public void SelectFirst_selects_the_first_entry_once()
     {
-        IMainViewModel main = new FakeMainViewModel { Entries = { View("a"), View("b") } };
+        IRouteableMenuViewModel main = new FakeMenuViewModel { Entries = { View("a"), View("b") } };
 
         Assert.True(main.SelectFirst());
         Assert.Equal("a", main.SelectedEntry!.DisplayName);
@@ -26,7 +26,7 @@ public class MainViewModelTests
     [Fact]
     public void SelectFirst_does_nothing_without_entries()
     {
-        IMainViewModel main = new FakeMainViewModel();
+        IRouteableMenuViewModel main = new FakeMenuViewModel();
 
         Assert.True(!main.SelectFirst());
         Assert.Null(main.SelectedEntry);
@@ -36,24 +36,24 @@ public class MainViewModelTests
     public void A_scoped_or_singleton_main_is_one_instance_per_scope_or_provider()
     {
         var services = new ServiceCollection();
-        services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Scoped);
+        services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Scoped);
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
 
-        Assert.Same(scope.ServiceProvider.GetRequiredService<IMainViewModel>(), scope.ServiceProvider.GetRequiredService<IMainViewModel>());
+        Assert.Same(scope.ServiceProvider.GetRequiredService<IRouteableMenuViewModel>(), scope.ServiceProvider.GetRequiredService<IRouteableMenuViewModel>());
     }
 
     [Fact]
     public void Without_a_lifetime_the_main_follows_the_host()
     {
         var singleton = new ServiceCollection();
-        singleton.RegisterMainViewModel<FakeMainViewModel>();                       // no host: Singleton
+        singleton.RegisterMenuViewModel<FakeMenuViewModel>();                       // no host: Singleton
         var scoped = new ServiceCollection();
         scoped.AddSingleton(new RouteableHostLifetime(ServiceLifetime.Scoped));     // what the Blazor host registers
-        scoped.RegisterMainViewModel<FakeMainViewModel>();
+        scoped.RegisterMenuViewModel<FakeMenuViewModel>();
 
-        Assert.Equal(ServiceLifetime.Singleton, singleton.Last(d => d.ServiceType == typeof(IMainViewModel)).Lifetime);
-        Assert.Equal(ServiceLifetime.Scoped, scoped.Last(d => d.ServiceType == typeof(IMainViewModel)).Lifetime);
+        Assert.Equal(ServiceLifetime.Singleton, singleton.Last(d => d.ServiceType == typeof(IRouteableMenuViewModel)).Lifetime);
+        Assert.Equal(ServiceLifetime.Scoped, scoped.Last(d => d.ServiceType == typeof(IRouteableMenuViewModel)).Lifetime);
     }
 
     [Fact]
@@ -61,15 +61,15 @@ public class MainViewModelTests
     {
         var services = new ServiceCollection();
         services.AddSingleton(new RouteableHostLifetime(ServiceLifetime.Scoped));
-        services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Singleton);
+        services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Singleton);
 
-        Assert.Equal(ServiceLifetime.Singleton, services.Last(d => d.ServiceType == typeof(IMainViewModel)).Lifetime);
+        Assert.Equal(ServiceLifetime.Singleton, services.Last(d => d.ServiceType == typeof(IRouteableMenuViewModel)).Lifetime);
     }
 
     [Fact]
     public void A_transient_main_is_refused()
     {
-        Assert.Throws<ArgumentException>(() => new ServiceCollection().RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Transient));
+        Assert.Throws<ArgumentException>(() => new ServiceCollection().RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Transient));
     }
 
     // ---------------------------------------------------------------- the entries of a module
@@ -78,12 +78,12 @@ public class MainViewModelTests
     public void A_module_adds_its_entries_to_the_menu_in_the_order_it_was_added()
     {
         var services = new ServiceCollection();
-        services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Singleton);
+        services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Singleton);
         services.AddMenuEntries(() => [View("orders"), View("invoices")]);
         services.AddMenuEntries(() => [View("customers")]);
         using var provider = services.BuildServiceProvider();
 
-        var main = provider.GetRequiredService<IMainViewModel>();
+        var main = provider.GetRequiredService<IRouteableMenuViewModel>();
 
         Assert.Equal(["orders", "invoices", "customers"], main.Entries.Select(entry => entry.DisplayName));
     }
@@ -92,14 +92,14 @@ public class MainViewModelTests
     public void A_module_can_choose_where_its_entries_go_in_the_menu()
     {
         var services = new ServiceCollection();
-        services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Singleton);
+        services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Singleton);
         services.AddMenuEntries(() => [View("first"), View("second")], index: 0);
         services.AddMenuEntries(() => [View("middle")], index: 1);
         services.AddMenuEntries(() => [View("far")], index: 99);          // past the end: last
         services.AddMenuEntries(() => [View("last")]);
         using var provider = services.BuildServiceProvider();
 
-        var main = provider.GetRequiredService<IMainViewModel>();
+        var main = provider.GetRequiredService<IRouteableMenuViewModel>();
 
         Assert.Equal(["first", "middle", "second", "far", "last"], main.Entries.Select(entry => entry.DisplayName));
     }
@@ -108,10 +108,10 @@ public class MainViewModelTests
     public void A_module_loaded_while_running_goes_where_it_asked()
     {
         var services = new ServiceCollection();
-        services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Singleton);
+        services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Singleton);
         services.AddMenuEntries(() => [View("home"), View("about")]);
         using var provider = services.BuildServiceProvider();
-        var main = provider.GetRequiredService<IMainViewModel>();
+        var main = provider.GetRequiredService<IRouteableMenuViewModel>();
 
         provider.GetRequiredService<IRouteableModules>().Load("Orders", s => s.AddMenuEntries(() => [View("orders")], index: 1));
 
@@ -122,31 +122,31 @@ public class MainViewModelTests
     public void The_entries_of_a_module_are_added_once_to_the_one_main_of_a_scope()
     {
         var services = new ServiceCollection();
-        services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Scoped);
+        services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Scoped);
         services.AddMenuEntries(() => [View("orders")]);
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
 
-        var first = scope.ServiceProvider.GetRequiredService<IMainViewModel>();
-        var second = scope.ServiceProvider.GetRequiredService<IMainViewModel>();
+        var first = scope.ServiceProvider.GetRequiredService<IRouteableMenuViewModel>();
+        var second = scope.ServiceProvider.GetRequiredService<IRouteableMenuViewModel>();
 
         Assert.Same(first, second);
         Assert.Single(first.Entries);
-        Assert.Same(scope.ServiceProvider.GetRequiredService<FakeMainViewModel>(), first);   // the main itself is the same instance
+        Assert.Same(scope.ServiceProvider.GetRequiredService<FakeMenuViewModel>(), first);   // the main itself is the same instance
     }
 
     [Fact]
     public void The_menu_is_the_same_whether_the_main_or_its_interface_is_asked_for_first()
     {
         var services = new ServiceCollection();
-        services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Singleton);
+        services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Singleton);
         services.AddMenuEntries(() => [View("orders")]);
         using var provider = services.BuildServiceProvider();
 
-        var main = provider.GetRequiredService<FakeMainViewModel>();       // the class first, not the interface
+        var main = provider.GetRequiredService<FakeMenuViewModel>();       // the class first, not the interface
 
         Assert.Single(main.Entries);
-        Assert.Same(main, provider.GetRequiredService<IMainViewModel>());
+        Assert.Same(main, provider.GetRequiredService<IRouteableMenuViewModel>());
         Assert.Single(main.Entries);
     }
 
@@ -156,12 +156,12 @@ public class MainViewModelTests
         static IEnumerable<IRouteableMenuEntry> Orders() => [View("orders")];
 
         var services = new ServiceCollection();
-        services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Singleton);
+        services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Singleton);
         services.AddMenuEntries(Orders);
         services.AddMenuEntries(Orders);
         using var provider = services.BuildServiceProvider();
 
-        Assert.Single(provider.GetRequiredService<IMainViewModel>().Entries);
+        Assert.Single(provider.GetRequiredService<IRouteableMenuViewModel>().Entries);
     }
 
     [Fact]
@@ -174,26 +174,26 @@ public class MainViewModelTests
         static IServiceCollection AddOrdersModule(IServiceCollection services) => AddCustomersModule(services).AddMenuEntries(OrdersEntries);
 
         var services = new ServiceCollection();
-        services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Singleton);
+        services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Singleton);
         AddOrdersModule(services);
         AddCustomersModule(services);
         using var provider = services.BuildServiceProvider();
 
-        Assert.Equal(["customers", "orders"], provider.GetRequiredService<IMainViewModel>().Entries.Select(entry => entry.DisplayName));
+        Assert.Equal(["customers", "orders"], provider.GetRequiredService<IRouteableMenuViewModel>().Entries.Select(entry => entry.DisplayName));
     }
 
     [Fact]
     public void The_container_still_checks_the_dependencies_of_the_main_when_it_is_built()
     {
         var services = new ServiceCollection();
-        services.RegisterMainViewModel<MainWithDependency>(ServiceLifetime.Singleton);
+        services.RegisterMenuViewModel<MainWithDependency>(ServiceLifetime.Singleton);
 
         Assert.Throws<AggregateException>(() => services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true }));
     }
 
     private interface IMissing;
 
-    private sealed class MainWithDependency(IMissing missing) : IMainViewModel
+    private sealed class MainWithDependency(IMissing missing) : IRouteableMenuViewModel
     {
         public IMissing Missing { get; } = missing;
         public System.Collections.ObjectModel.ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
@@ -208,14 +208,14 @@ public class MainViewModelTests
     public void Each_scope_gets_entries_of_its_own()
     {
         var services = new ServiceCollection();
-        services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Scoped);
+        services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Scoped);
         services.AddMenuEntries(() => [View("orders")]);
         using var provider = services.BuildServiceProvider();
 
         using var one = provider.CreateScope();
         using var other = provider.CreateScope();
-        var entryOfOne = one.ServiceProvider.GetRequiredService<IMainViewModel>().Entries.Single();
-        var entryOfOther = other.ServiceProvider.GetRequiredService<IMainViewModel>().Entries.Single();
+        var entryOfOne = one.ServiceProvider.GetRequiredService<IRouteableMenuViewModel>().Entries.Single();
+        var entryOfOther = other.ServiceProvider.GetRequiredService<IRouteableMenuViewModel>().Entries.Single();
 
         entryOfOne.IsLock = true;                       // a lock in one circuit...
 
@@ -227,10 +227,10 @@ public class MainViewModelTests
     public void Without_a_module_the_menu_is_left_as_it_is()
     {
         var services = new ServiceCollection();
-        services.RegisterMainViewModel<FakeMainViewModel>(ServiceLifetime.Singleton);
+        services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Singleton);
         using var provider = services.BuildServiceProvider();
 
-        Assert.Empty(provider.GetRequiredService<IMainViewModel>().Entries);
+        Assert.Empty(provider.GetRequiredService<IRouteableMenuViewModel>().Entries);
     }
 
     [Fact]

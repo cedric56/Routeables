@@ -17,8 +17,8 @@ namespace Routeables.Uno;
 #endif
 
 /// <summary>
-/// A <see cref="Microsoft.UI.Xaml.Controls.ListView"/> that shows the entries of an <see cref="IMainViewModel"/> and selects the current one.
-/// Give it the main view model as <c>DataContext</c> directly or by inheritance:
+/// A <see cref="Microsoft.UI.Xaml.Controls.ListView"/> that shows the entries of an <see cref="IRouteableMenuViewModel"/> and selects the current one.
+/// Give it the menu view model as <c>DataContext</c> directly or by inheritance:
 /// <code>
 /// &lt;routeables:RouteableListView /&gt;
 /// </code>
@@ -33,23 +33,23 @@ public partial class RouteableMenu : Microsoft.UI.Xaml.Controls.ListView
 #if WINUI3
         // WinUI 3: XamlReader cannot find a control of a library (it has no XAML metadata for it), and the containers are not
         // reliably given a content in code. So the list holds the controls themselves (one RouteableMenuItem per entry), which a
-        // ListView shows as they are, and the binding to the main view model is done here.
-        DataContextChanged += (_, _) => Attach(DataContext as IMainViewModel);
+        // ListView shows as they are, and the binding to the menu view model is done here.
+        DataContextChanged += (_, _) => Attach(DataContext as IRouteableMenuViewModel);
         SelectionChanged += OnSelectionChanged;
         Unloaded += (_, _) => Attach(null);
-        Loaded += (_, _) => Attach(DataContext as IMainViewModel);
+        Loaded += (_, _) => Attach(DataContext as IRouteableMenuViewModel);
 #else
-        SetBinding(ItemsSourceProperty, new Binding { Path = new PropertyPath(nameof(IMainViewModel.Entries)) });
-        SetBinding(SelectedItemProperty, new Binding { Path = new PropertyPath(nameof(IMainViewModel.SelectedEntry)), Mode = BindingMode.TwoWay });
+        SetBinding(ItemsSourceProperty, new Binding { Path = new PropertyPath(nameof(IRouteableMenuViewModel.Entries)) });
+        SetBinding(SelectedItemProperty, new Binding { Path = new PropertyPath(nameof(IRouteableMenuViewModel.SelectedEntry)), Mode = BindingMode.TwoWay });
         ItemTemplate = (DataTemplate)XamlReader.Load(MenuItemTemplate);
 #endif
     }
 
 #if WINUI3
-    private IMainViewModel? _main;
+    private IRouteableMenuViewModel? _main;
     private bool _syncing;
 
-    private void Attach(IMainViewModel? main)
+    private void Attach(IRouteableMenuViewModel? main)
     {
         if (ReferenceEquals(main, _main))
         {
@@ -87,7 +87,7 @@ public partial class RouteableMenu : Microsoft.UI.Xaml.Controls.ListView
 
     private void OnMainPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is null or nameof(IMainViewModel.SelectedEntry))
+        if (e.PropertyName is null or nameof(IRouteableMenuViewModel.SelectedEntry))
         {
             OnUi(SyncSelection);
         }

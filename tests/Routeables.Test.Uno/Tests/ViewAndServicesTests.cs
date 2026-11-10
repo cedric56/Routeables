@@ -136,7 +136,7 @@ public class ViewAndServicesTests
         var services = TestHost.Services;
 
         Assert.IsNotNull(services.GetService(typeof(IRouter)));
-        Assert.IsNotNull(services.GetService(typeof(IMainViewModel)));
+        Assert.IsNotNull(services.GetService(typeof(IRouteableMenuViewModel)));
         Assert.IsNotNull(services.GetService(typeof(IRouteableDialogService)));
         Assert.IsNotNull(services.GetService(typeof(IMessageBoxService)));
         Assert.IsNotNull(services.GetService(typeof(IRouteableNotificationService)));

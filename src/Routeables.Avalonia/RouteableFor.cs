@@ -10,7 +10,7 @@ namespace Routeables.Avalonia;
 /// <summary>The base of the views of Routeables for Avalonia, a <see cref="UserControl"/>.</summary>
 public abstract class RouteableFor : UserControl
 {
-    /// <summary>Whether every entry of the main view model is locked (a page is blocking the route change).</summary>
+    /// <summary>Whether every entry of the menu view model is locked (a page is blocking the route change).</summary>
     public abstract bool IsLocked { get; }
 }
 
@@ -35,7 +35,7 @@ public class RouteableFor<TViewModel> : RouteableFor, IRouteableFor, IRouteable,
         o => o.IsLocked);
 
     /// <inheritdoc />
-    public override bool IsLocked => RouteableLockWatcher.AllLocked(Context as IMainViewModel);
+    public override bool IsLocked => RouteableLockWatcher.AllLocked(Context as IRouteableMenuViewModel);
 
     /// <inheritdoc />
     public virtual Task<bool> CanLeaveAsync(CancellationToken ct = default)
@@ -43,7 +43,7 @@ public class RouteableFor<TViewModel> : RouteableFor, IRouteableFor, IRouteable,
         return Task.FromResult(result: true);
     }
 
-    // Follows the lock of the main view model; one subscription, however many times the view is initialized.
+    // Follows the lock of the menu view model; one subscription, however many times the view is initialized.
     private RouteableLockWatcher? _lock;
 
     private RouteableLockWatcher Lock => _lock ??= new RouteableLockWatcher(_ => RaisePropertyChanged(IsLockedProperty, false, true));

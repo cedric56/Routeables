@@ -75,7 +75,7 @@ AppBuilder.Configure<App>()
 
 The region starts the routing: when it appears and its router shows nothing yet, it opens its `Route`. Without a `Route`, the default region opens `/`.
 
-On Blazor the region goes in your own layout, which inherits `RouteableMainLayoutBase`; the ready-made `RouteableMainLayout` has no menu to draw without a main view model and opens `/`.
+On Blazor the region goes in your own layout, which inherits `RouteableMainLayoutBase`; the ready-made `RouteableMainLayout` has no menu to draw without a menu view model and opens `/`.
 
 **4. Go to another page**, from any view model that asks for an `IRouter`:
 
@@ -115,7 +115,7 @@ AppBuilder.Configure<App>()
 
 The router gives the view model to the view as its `DataContext` (`BindingContext` on MAUI) even though the view is not a `RouteableFor`. A page registered this way has no lifecycle (initialization, disposal), and nothing checks the names before the program runs: `RouteableFor<T>` and the generator add both.
 
-That is all: the rest of this page is what you add when you need it. A main view model (a menu, a tab bar) is only needed for a menu: write one when you have one, and use `UseRouteables<MainViewModel>(...)` (see below).
+That is all: the rest of this page is what you add when you need it. A menu view model (a menu, a tab bar) is only needed for a menu: write one when you have one, and use `UseRouteables<MainViewModel>(...)` (see below).
 
 ## In detail
 
@@ -162,7 +162,7 @@ You can also register routes by hand with `services.RegisterRoute<DogDetailView,
 
 ### 2. Set up your host
 
-One call per host starts Routeables, registers your main view model (its lifetime is the host's choice; without a menu, call it with no type: the `Route` of the main `RouteableRegion` chooses the first page) and takes a block `r => ...` for your own registrations. The block is the same on every host. The same call registers the dialogs and notifications of the host. Only the shape of the call differs, because each framework has its own way to start.
+One call per host starts Routeables, registers your menu view model (its lifetime is the host's choice; without a menu, call it with no type: the `Route` of the main `RouteableRegion` chooses the first page) and takes a block `r => ...` for your own registrations. The block is the same on every host. The same call registers the dialogs and notifications of the host. Only the shape of the call differs, because each framework has its own way to start.
 
 ```csharp
 // Blazor (Program.cs)
@@ -189,7 +189,7 @@ Services = this.UseRouteables(r => { }, () => new MainPage());
 this.UseRouteables(r => { }, () => new MainView());
 ```
 
-With a menu, give the main view model: `UseRouteables<MainViewModel>(...)` on MAUI, Avalonia, Uno, WinUI 3 and WPF, `UseRouteablesServer<MainViewModel>(...)` on Blazor, `AddRouteablesAspNetCore<MainViewModel>()` on ASP.NET Core.
+With a menu, give the menu view model: `UseRouteables<MainViewModel>(...)` on MAUI, Avalonia, Uno, WinUI 3 and WPF, `UseRouteablesServer<MainViewModel>(...)` on Blazor, `AddRouteablesAspNetCore<MainViewModel>()` on ASP.NET Core.
 
 Create the project with the template of your framework, add the host package, then follow the setup above. See each host's README for the details ([Blazor](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Blazor/README.md), [MAUI](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Maui/README.md), [Avalonia](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Avalonia/README.md), [Uno](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Uno/README.md), which has its own quick start, [WPF](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Wpf/README.md)).
 
@@ -204,15 +204,15 @@ A few names look alike. They are different things:
 | `[RouteableView(typeof(VM))]` | Attribute on a **view**: pairs it with a view model when the names do not match |
 | `RouteableFor<…>` | The **base class of a view** (page, user control) |
 | `IRouteable` | Optional **lifecycle hooks** (`CanLeaveAsync`, `OnEnteringAsync`…) of a view model or a view |
-| `IRouteableMenuEntry`, `RouteableMenuEntry<T>` | A **menu entry** (a title, an icon, a route) listed by the main view model |
-| `IMainViewModel`, `MainViewModelBase` | The **menu** (or tab bar): the list of entries and the selected one |
+| `IRouteableMenuEntry`, `RouteableMenuEntry<T>` | A **menu entry** (a title, an icon, a route) listed by the menu view model |
+| `IRouteableMenuViewModel`, `RouteableMenuViewModelBase` | The **menu** (or tab bar): the list of entries and the selected one |
 
 The verbs of the setup calls follow one rule:
 
 | Verb | Means | Examples |
 | --- | --- | --- |
 | `Use` | Starts Routeables on the host (once, at startup) | `UseRouteables`, `UseRouteablesServices` |
-| `Register` | Declares **one thing** of your application | `RegisterRoute`, `RegisterMainViewModel`, `RegisterSegment` |
+| `Register` | Declares **one thing** of your application | `RegisterRoute`, `RegisterMenuViewModel`, `RegisterSegment` |
 | `Add` | Turns **a feature** on | `AddGeneratedRoutes`, `AddLocking`, `AddRegion`, `AddRouteCoordinator` |
 
 ### 3. Route from a view model

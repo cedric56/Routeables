@@ -9,7 +9,7 @@ namespace Routeables.Wpf;
 
 /// <summary>
 /// Base class of a routed WPF view. Derive a <see cref="UserControl"/> from it in XAML (<c>&lt;routeables:RouteableFor ...&gt;</c>).
-/// The view model is its <see cref="FrameworkElement.DataContext"/>; <see cref="IsLocked"/> follows the lock of the main view model.
+/// The view model is its <see cref="FrameworkElement.DataContext"/>; <see cref="IsLocked"/> follows the lock of the menu view model.
 /// </summary>
 public class RouteableFor : UserControl, IRouteableFor, IRouteable, IDisposable, IInitializeAsync
 {
@@ -19,7 +19,7 @@ public class RouteableFor : UserControl, IRouteableFor, IRouteable, IDisposable,
     /// <summary>Identifies <see cref="IsLocked"/>, usable in a binding.</summary>
     public static readonly DependencyProperty IsLockedProperty = IsLockedKey.DependencyProperty;
 
-    // Follows the lock of the main view model; one subscription, however many times the view is initialized.
+    // Follows the lock of the menu view model; one subscription, however many times the view is initialized.
     private RouteableLockWatcher? _lock;
 
     private RouteableLockWatcher Lock => _lock ??= new RouteableLockWatcher(locked =>

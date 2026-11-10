@@ -1,9 +1,9 @@
 @using Routeables.Abstraction.Bases
 @implements IDisposable
-@inject IMainViewModel MainViewModel
-@* The menu of the application: one button per entry of the main view model (IMainViewModel.Entries), the current entry marked, the
+@inject IRouteableMenuViewModel MainViewModel
+@* The menu of the application: one button per entry of the menu view model (IRouteableMenuViewModel.Entries), the current entry marked, the
    entries disabled while the menu is locked. The layout of the package draws it; put it in a layout of your own the same way. It draws
-   nothing while the main view model has no entry. *@
+   nothing while the menu view model has no entry. *@
 @if (MainViewModel.Entries.Count > 0)
 {
     <nav class="rt-drawer @(Closed ? "rt-drawer-closed" : "") @Class" aria-label="@Label">
@@ -45,7 +45,7 @@
     [Parameter]
     public string Label { get; set; } = "Menu";
 
-    /// <summary>Selects the entry: the main view model routes to it.</summary>
+    /// <summary>Selects the entry: the menu view model routes to it.</summary>
     private void OnNavClick(IRouteableMenuEntry item) => MainViewModel.SelectedEntry = item;
 
     protected override void OnInitialized()

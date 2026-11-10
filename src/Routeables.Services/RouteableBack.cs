@@ -21,7 +21,7 @@ public static class RouteableBack
     {
         ArgumentNullException.ThrowIfNull(provider);
 
-        if (provider.GetService<IMainViewModel>()?.SelectedEntry?.Region is { Length: > 0 } region)
+        if (provider.GetService<IRouteableMenuViewModel>()?.SelectedEntry?.Region is { Length: > 0 } region)
         {
             IRouter? tab = null;
             try

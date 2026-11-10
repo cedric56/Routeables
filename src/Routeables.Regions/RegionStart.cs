@@ -9,7 +9,7 @@ namespace Routeables.Regions;
 /// <summary>
 /// What the <c>RouteableRegion</c> of each platform does when it appears: it starts the routing where the pages are shown. A region that
 /// has a <c>Route</c> opens that page when its router shows nothing yet; the default region (the one with no name) without a route asks
-/// the main view model to start (<see cref="IMainViewModel.Start"/>), which an application without a menu answers by opening "/".
+/// the menu view model to start (<see cref="IRouteableMenuViewModel.Start"/>), which an application without a menu answers by opening "/".
 /// A named region without a route starts nothing: a page routes it. The start happens once for a router, so a region that is attached
 /// again, or two regions that show the same router, do not open the page twice.
 /// </summary>
@@ -64,7 +64,7 @@ public static class RegionStart
     }
 
     /// <summary>
-    /// Starts the default region with the route it declared, or through the main view model when it declared none. For the host that
+    /// Starts the default region with the route it declared, or through the menu view model when it declared none. For the host that
     /// waited (<c>wait: true</c>) once it knows that no address chose the first page.
     /// </summary>
     /// <param name="provider">The container of the application.</param>
@@ -74,7 +74,7 @@ public static class RegionStart
     {
         if (route is null)
         {
-            if (provider.GetService(typeof(IMainViewModel)) is IMainViewModel main)
+            if (provider.GetService(typeof(IRouteableMenuViewModel)) is IRouteableMenuViewModel main)
                 main.Start();
             return;
         }
@@ -89,8 +89,8 @@ public static class RegionStart
                 return;
             }
 
-            // The menu, or the layout that follows the main view model, shows the page that is now current.
-            if (name is null && provider.GetService(typeof(IMainViewModel)) is IMainViewModel main)
+            // The menu, or the layout that follows the menu view model, shows the page that is now current.
+            if (name is null && provider.GetService(typeof(IRouteableMenuViewModel)) is IRouteableMenuViewModel main)
                 main.OnRouterMoved(router.CurrentViewModel);
         }, provider, route);
     }

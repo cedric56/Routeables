@@ -14,13 +14,13 @@ namespace XAnimals.Razor.Pages;
 /// of the session of the visitor, so they are still there on the next request: a button posts, the page does what was asked, and the
 /// visitor is sent back to a GET of the page that is now shown.
 /// </summary>
-public class MainViewPageModel(IMainViewModel main, IRouter router, IServiceProvider provider, RouteableInteractions interactions, RouteablePageState state) : PageModel
+public class MainViewPageModel(IRouteableMenuViewModel main, IRouter router, IServiceProvider provider, RouteableInteractions interactions, RouteablePageState state) : PageModel
 {
     /// <summary>The entries of the menu that have no view in this sample: the Birds module has views for the other platforms only.</summary>
     private static readonly string[] Unserved = ["/birds"];
 
-    /// <summary>The main view-model of the application.</summary>
-    public IMainViewModel Main => main;
+    /// <summary>The menu view-model of the application.</summary>
+    public IRouteableMenuViewModel Main => main;
 
     /// <summary>The router that owns the current page and its history.</summary>
     public IRouter Router => router;

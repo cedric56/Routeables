@@ -17,7 +17,7 @@ public static AppBuilder BuildAvaloniaApp() =>
         .UsePlatformDetect();
 ```
 
-An application with a menu gives its main view model: `.UseRouteables<MainViewModel>()`.
+An application with a menu gives its menu view model: `.UseRouteables<MainViewModel>()`.
 
 Or let the builder show it: `.UseRouteables<MainViewModel>(view: lifetime => lifetime is IClassicDesktopStyleApplicationLifetime ? new MainWindow() : new MainView())` shows the view as soon as the lifetime is known, and the application needs no `OnFrameworkInitializationCompleted`. Otherwise, show the main view from `OnFrameworkInitializationCompleted`: `this.OpenMainView(...)` takes the window on desktop, or the view on Android (activity) and single-view platforms (browser), and gives it the menu as `DataContext`. `this.GetRouteableServices()` returns the container.
 
@@ -33,7 +33,7 @@ public partial class DogDetailView : RouteableFor<DogDetailViewModel> { public D
 <routeables:RouteableRegion Region="shell-content" />
 ```
 
-`RouteableMenu` lists the entries of the main view model, selects the current one and disables locked ones.
+`RouteableMenu` lists the entries of the menu view model, selects the current one and disables locked ones.
 
 ## Tabs
 

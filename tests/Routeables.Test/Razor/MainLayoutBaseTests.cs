@@ -15,7 +15,7 @@ namespace Routeables.Tests.Razor;
 
 /// <summary>
 /// <see cref="RouteableMainLayoutBase"/>: what every layout gets without any markup. The first render starts Routeables (address, initialization,
-/// theme, first page), the title and the menu follow the main view model, and the events are let go when the layout goes.
+/// theme, first page), the title and the menu follow the menu view model, and the events are let go when the layout goes.
 /// </summary>
 public class MainLayoutBaseTests
 {
@@ -46,7 +46,7 @@ public class MainLayoutBaseTests
             builder.CloseElement();
         }
 
-        public void Attach(IMainViewModel menu, IRouteableRequestedThemeService theme)
+        public void Attach(IRouteableMenuViewModel menu, IRouteableRequestedThemeService theme)
         {
             MainViewModel = menu;
             ThemeService = theme;
@@ -59,7 +59,7 @@ public class MainLayoutBaseTests
         public void ToggleDrawer() => DrawerToggle();
     }
 
-    private sealed class Menu : IMainViewModel
+    private sealed class Menu : IRouteableMenuViewModel
     {
         public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
         public IRouteableMenuEntry? SelectedEntry { get; set; }
@@ -119,7 +119,7 @@ public class MainLayoutBaseTests
             services.RegisterRouting();
             services.AddSingleton<NavigationManager>(new Navigation());
             services.AddSingleton<IRouteableRequestedThemeService>(Theme);
-            services.AddSingleton<IMainViewModel>(Menu);
+            services.AddSingleton<IRouteableMenuViewModel>(Menu);
             services.AddSingleton<IJSRuntime>(Js);
             services.AddSingleton<Func<IServiceProvider, Task>>(sp => p => { Initialized.Add(p); return Task.CompletedTask; });
             services.AddSingleton<RouteableUrlSync>();

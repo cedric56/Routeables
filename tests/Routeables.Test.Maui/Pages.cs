@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 
 namespace Routeables.Test.Maui;
 
-/// <summary>The main view model of the test application: the controls under test need one, not its menu.</summary>
-public sealed class TestMain : IMainViewModel
+/// <summary>The menu view model of the test application: the controls under test need one, not its menu.</summary>
+public sealed class TestMain : IRouteableMenuViewModel
 {
-    /// <summary>The entries of the menu: empty, since only the presence of a main view model matters to the tests.</summary>
+    /// <summary>The entries of the menu: empty, since only the presence of a menu view model matters to the tests.</summary>
     public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
 
     /// <summary>The selected entry: never set by the tests, the controls under test do not drive it here.</summary>
