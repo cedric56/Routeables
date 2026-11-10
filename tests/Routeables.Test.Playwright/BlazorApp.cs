@@ -87,8 +87,8 @@ public sealed class BlazorApp : IAsyncLifetime
         }
     }
 
-    /// <summary>Returns the remembered process output as a single string.</summary>
-    private string Output()
+    /// <summary>Returns the remembered process output (the last 80 lines) as a single string.</summary>
+    public string Output()
     {
         lock (_output) return string.Join(Environment.NewLine, _output);
     }

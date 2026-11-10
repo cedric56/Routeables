@@ -1,4 +1,4 @@
-using Microsoft.Playwright;
+﻿using Microsoft.Playwright;
 using System.Text.RegularExpressions;
 using Xunit;
 using static Microsoft.Playwright.Assertions;
@@ -33,9 +33,30 @@ public abstract class BlazorTest(BlazorApp app) : IAsyncLifetime
         Page = await _context.NewPageAsync();
         Page.SetDefaultTimeout(15_000);
         Page.PageError += (_, message) => _errors.Add(message);
+        var console = new List<string>();
+        Page.Console += (_, message) => { if (message.Type is "error" or "warning") console.Add($"{message.Type}: {message.Text}"); };
 
         await Page.GotoAsync(app.BaseUrl);
-        await Menu.First.WaitForAsync();   // the circuit is connected: nothing is drawn before
+        try
+        {
+            await Menu.First.WaitForAsync();   // the circuit is connected: nothing is drawn before
+        }
+        catch (TimeoutException timeout)
+        {
+            // Say what the page shows and what the sample wrote, so that a failure on a machine nobody sits at can be understood.
+            var body = await Page.InnerTextAsync("body");
+            var navs = await Page.Locator("nav").CountAsync();
+            var buttons = await Page.Locator("button.rt-nav-link").CountAsync();
+            var content = await Page.ContentAsync();
+            var html = content.Length > 3000 ? content[..3000] : content;
+            throw new InvalidOperationException(
+                $"The menu was not drawn in 15 seconds. nav elements: {navs}, menu buttons: {buttons}.{Environment.NewLine}"
+                + $"Page errors: {string.Join(" | ", _errors)}{Environment.NewLine}"
+                + $"Console: {string.Join(" | ", console)}{Environment.NewLine}"
+                + $"Text of the page: {body}{Environment.NewLine}"
+                + $"Sample output:{Environment.NewLine}{app.Output()}{Environment.NewLine}"
+                + $"HTML (start):{Environment.NewLine}{html}", timeout);
+        }
     }
 
     /// <summary>Closes the browser context of the test.</summary>
