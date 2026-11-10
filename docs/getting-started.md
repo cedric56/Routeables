@@ -4,7 +4,7 @@
 
 The packages target **.NET 10** (`net10.0`), so you need a .NET 10 SDK. MAUI also needs the MAUI workload.
 
-Add the package of your host (`Routeables.Blazor`, `Routeables.Maui`, `Routeables.Avalonia`, `Routeables.Uno` or `Routeables.Wpf`) to your application project:
+Add the package of your host (`Routeables.Avalonia`, `Routeables.Wpf`, `Routeables.Maui`, `Routeables.Uno`, `Routeables.WinUI3`, `Routeables.Blazor` or `Routeables.AspNetCore`) to your application project:
 
 ```bash
 dotnet add package Routeables.Avalonia

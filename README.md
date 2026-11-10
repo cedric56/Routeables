@@ -28,7 +28,7 @@ Moving an existing Prism application to .NET 10? [Migrating from Prism](docs/gui
 dotnet add package Routeables.Avalonia   # or Routeables.Blazor, .Maui, .Uno, .WinUI3, .Wpf
 ```
 
-The host package brings everything else, the source generator included. You need the .NET 10 SDK.
+The host package brings everything else, the source generator included. You need the .NET 10 SDK. A class library that only holds view models (or a module) takes `Routeables` itself: `dotnet add package Routeables`.
 
 ## Your first page
 
