@@ -45,6 +45,19 @@ A XAML root cannot be generic in WinUI, so XAML views use `RouteableFor`; views 
 
 The menu is a `RouteableMenuViewModelBase` and `<routeables:RouteableListView />`; the page is shown by `<routeables:RouteableRegion />`. A region is `<routeables:RouteableRegion Region="detail" />`.
 
+### Bindable view models
+
+Put `[System.ComponentModel.Bindable(true)]` above every view model a view binds to. It takes the place of the `[Bindable]` of the platform and lets the XAML compiler generate the binding code, so `{Binding}` and `{x:Bind}` do not use reflection at run time (needed for trimming and Native AOT).
+
+```csharp
+// samples/Bases/XAnimals.Common/ViewModels/AnimalsViewModel.cs
+[System.ComponentModel.Bindable(true)]
+[Routeable("/hello")]
+public class HelloViewModel : ViewModelBase { public string Greeting => "Hello"; }
+```
+
+Without it a binding to the view model still works through reflection, which the trimmer may remove.
+
 ## Navigation
 
 A `NavigationView` written in XAML: each item names its route, and the router builds the page.
