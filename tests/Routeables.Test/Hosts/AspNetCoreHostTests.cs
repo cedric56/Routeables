@@ -25,7 +25,7 @@ public class AspNetCoreHostTests
     public async Task A_value_by_attribute_reaches_the_property_of_the_view_model()
     {
         var services = new ServiceCollection();
-        services.AddRouteablesAspNetCore(r => r.RegisterRoute<ThingView, ThingViewModel>(route: "/things/{thing::}"));
+        services.UseRouteables(r => r.RegisterRoute<ThingView, ThingViewModel>(route: "/things/{thing::}"));
         using var root = services.BuildServiceProvider();
         using var scope = root.CreateScope();
         var router = scope.ServiceProvider.GetRequiredService<IRouter>();
@@ -36,10 +36,27 @@ public class AspNetCoreHostTests
         Assert.Equal("Red Panda", Assert.IsType<ThingViewModel>(router.CurrentViewModel).Name);
     }
 
+    /// <summary>The old name keeps working for one minor version and does exactly what <c>UseRouteables</c> does.</summary>
+    [Fact]
+    public void The_old_name_AddRouteablesAspNetCore_still_registers_the_same_services()
+    {
+        var current = new ServiceCollection();
+        current.UseRouteables();
+        var old = new ServiceCollection();
+#pragma warning disable CS0618 // the point of the test
+        old.AddRouteablesAspNetCore();
+        var oldWithMenu = new ServiceCollection();
+        oldWithMenu.AddRouteablesAspNetCore<Routeables.Core.DefaultRouteableMenuViewModel>();
+#pragma warning restore CS0618
+
+        Assert.Equal(current.Select(d => d.ServiceType).OrderBy(t => t.FullName).ToList(), old.Select(d => d.ServiceType).OrderBy(t => t.FullName).ToList());
+        Assert.Equal(current.Count, oldWithMenu.Count);
+    }
+
     private static (IRouteableNotificationService Service, RouteableInteractions Interactions, IServiceScope Scope) Notifications()
     {
         var services = new ServiceCollection();
-        services.AddRouteablesAspNetCore();
+        services.UseRouteables();
         var scope = services.BuildServiceProvider().CreateScope();
         return (scope.ServiceProvider.GetRequiredService<IRouteableNotificationService>(), scope.ServiceProvider.GetRequiredService<RouteableInteractions>(), scope);
     }

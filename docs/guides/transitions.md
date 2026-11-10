@@ -77,7 +77,7 @@ Animation is native to each host, so a custom transition is registered per host 
 - **Uno** uses the theme transitions of the platform (`ContentThemeTransition`, `EntranceThemeTransition`), which decide how long they last: the effects it cannot reproduce become a short rise from below (Uno does not implement `PopupThemeTransition`). Register a name to play your own animation.
 - **Blazor** gives the element the classes `rt-enter rt-{name} rt-{forward|back|none}` and the variable `--rt-duration`; the animations of the built-in names are in `theme.css`, and `prefers-reduced-motion` turns them off.
 
-- **ASP.NET Core** sends a whole page for each request, so the view of a region is a new element each time and the browser plays the CSS animation when the page loads. `RouteableTransitions` (registered by `AddRouteablesAspNetCore`) follows each region and gives, where the region is written, the classes and the style of the element: `rt-enter rt-{name} rt-{forward|back|none}` and `--rt-duration`, the same as on Blazor.
+- **ASP.NET Core** sends a whole page for each request, so the view of a region is a new element each time and the browser plays the CSS animation when the page loads. `RouteableTransitions` (registered by `UseRouteables`) follows each region and gives, where the region is written, the classes and the style of the element: `rt-enter rt-{name} rt-{forward|back|none}` and `--rt-duration`, the same as on Blazor.
 
   ```cshtml
   @{ var transition = Context.RequestServices.GetRequiredService<RouteableTransitions>().Next("detail", RouteTransition.Slide); }

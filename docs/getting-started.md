@@ -172,7 +172,7 @@ app.MapRazorComponents<App>()
    .AddAdditionalAssemblies(typeof(RouteableMainLayoutBase).Assembly);    // Routeables.Blazor: catch-all page, layout, not-found page
 
 // ASP.NET Core, Razor Pages (Program.cs)
-builder.Services.AddRouteablesAspNetCore();
+builder.Services.UseRouteables();
 
 // .NET MAUI (MauiProgram.cs)
 builder.UseMauiApp<App>()
@@ -189,7 +189,7 @@ Services = this.UseRouteables(r => { }, () => new MainPage());
 this.UseRouteables(r => { }, () => new MainView());
 ```
 
-With a menu, give the menu view model: `UseRouteables<MainViewModel>(...)` on MAUI, Avalonia, Uno, WinUI 3 and WPF, `UseRouteablesServer<MainViewModel>(...)` on Blazor, `AddRouteablesAspNetCore<MainViewModel>()` on ASP.NET Core.
+With a menu, give the menu view model: `UseRouteables<MainViewModel>(...)` on MAUI, Avalonia, Uno, WinUI 3 and WPF, `UseRouteablesServer<MainViewModel>(...)` on Blazor, `UseRouteables<MainViewModel>()` on ASP.NET Core.
 
 Create the project with the template of your framework, add the host package, then follow the setup above. See each host's README for the details ([Blazor](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Blazor/README.md), [MAUI](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Maui/README.md), [Avalonia](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Avalonia/README.md), [Uno](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Uno/README.md), which has its own quick start, [WPF](https://github.com/cedric56/Routeables/blob/master/src/Routeables.Wpf/README.md)).
 

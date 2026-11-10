@@ -1,0 +1,69 @@
+﻿{
+    "date":  "2026-11-10T22:52:37",
+    "os":  "Microsoft Windows NT 10.0.26100.0",
+    "hosts":  {
+                  "Wpf":  {
+                              "started":  false,
+                              "pages":  {
+
+                                        },
+                              "dialogs":  {
+
+                                          },
+                              "problems":  [
+                                               "executable not found: samples/XAnimals.Wpf/bin/Debug/net10.0-windows/XAnimals.Wpf.exe (build the sample in Debug)"
+                                           ]
+                          },
+                  "Avalonia":  {
+                                   "started":  false,
+                                   "pages":  {
+
+                                             },
+                                   "dialogs":  {
+
+                                               },
+                                   "problems":  [
+                                                    "executable not found: samples/XAnimals.Avalonia.Desktop/bin/Debug/net10.0/XAnimals.Avalonia.Desktop.exe (build the sample in Debug)"
+                                                ]
+                               },
+                  "Maui":  {
+                               "started":  false,
+                               "pages":  {
+
+                                         },
+                               "dialogs":  {
+
+                                           },
+                               "problems":  [
+                                                "executable not found: samples/XAnimals.Maui/bin/Debug/net10.0-windows10.0.19041.0/win-x64/XAnimals.Maui.exe (build the sample in Debug)"
+                                            ]
+                           },
+                  "Uno":  {
+                              "started":  false,
+                              "pages":  {
+
+                                        },
+                              "dialogs":  {
+
+                                          },
+                              "problems":  [
+                                               "executable not found: samples/XAnimals.Uno/bin/Debug/net10.0-desktop/XAnimals.Uno.exe (build the sample in Debug)"
+                                           ]
+                          },
+                  "WinUI3":  {
+                                 "started":  false,
+                                 "pages":  {
+
+                                           },
+                                 "dialogs":  {
+
+                                             },
+                                 "problems":  [
+                                                  "executable not found: samples/XAnimals.WinUI3/bin/Debug/net10.0-windows10.0.19041.0/win-x64/XAnimals.WinUI3.exe (build the sample in Debug)"
+                                              ]
+                             }
+              },
+    "templates":  {
+
+                  }
+}

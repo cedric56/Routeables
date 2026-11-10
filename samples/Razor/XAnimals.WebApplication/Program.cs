@@ -7,7 +7,7 @@ using XAnimals.ViewModels;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
-builder.Services.AddRouteablesAspNetCore<MainViewModelWithTabs>();
+builder.Services.UseRouteables<MainViewModelWithTabs>();
 // The view models of the sample, the dialogs and notifications of a web page, and one session in memory per visitor.
 builder.Services.AddAnimalsWeb();
 builder.Services.AddGeneratedRoutes();

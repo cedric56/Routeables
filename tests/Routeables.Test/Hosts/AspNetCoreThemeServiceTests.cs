@@ -28,10 +28,10 @@ public class AspNetCoreThemeServiceTests
     }
 
     [Fact]
-    public void AddRouteablesAspNetCore_registers_one_service_per_scope_under_both_types()
+    public void UseRouteables_registers_one_service_per_scope_under_both_types()
     {
         var services = new ServiceCollection();
-        services.AddRouteablesAspNetCore();
+        services.UseRouteables();
         using var provider = services.BuildServiceProvider();
 
         using var first = provider.CreateScope();
@@ -46,10 +46,10 @@ public class AspNetCoreThemeServiceTests
     }
 
     [Fact]
-    public void AddRouteablesAspNetCore_registers_the_environments()
+    public void UseRouteables_registers_the_environments()
     {
         var services = new ServiceCollection();
-        services.AddRouteablesAspNetCore();
+        services.UseRouteables();
         using var provider = services.BuildServiceProvider();
 
         Assert.Equal(Runtime.AspNetCore, provider.GetRequiredService<IRuntime>().Current);

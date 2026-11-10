@@ -374,7 +374,7 @@ public class AspNetCoreInteractionsTests
     public async Task The_service_of_the_visitor_is_the_one_the_view_models_get()
     {
         var services = new ServiceCollection();
-        services.AddRouteablesAspNetCore();
+        services.UseRouteables();
         await using var provider = services.BuildServiceProvider();
 
         await using var first = provider.CreateAsyncScope();

@@ -82,7 +82,7 @@ public class HostContractTests
         new Host("AspNetCore", ServiceLifetime.Scoped, routes =>
             {
                 var services = new ServiceCollection();
-                services.AddRouteablesAspNetCore<FakeMenuViewModel>(routes);
+                services.UseRouteables<FakeMenuViewModel>(routes);
                 return (Scoped(services, out var owner), owner);
             }));
         return hosts;

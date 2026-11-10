@@ -75,7 +75,7 @@ The complete first page, step by step, with the other way to register a page (on
 | Host | Package | Setup |
 | --- | --- | --- |
 | Blazor | [`Routeables.Blazor`](src/Routeables.Blazor/README.md) | `services.UseRouteablesServer(r => { ... })`; the region goes in your own layout, which inherits `RouteableMainLayoutBase` (the ready-made `RouteableMainLayout` has no menu and opens `/`) |
-| ASP.NET Core (Razor Pages, MVC) | [`Routeables.AspNetCore`](src/Routeables.AspNetCore/README.md) | `services.AddRouteablesAspNetCore(r => { ... })` |
+| ASP.NET Core (Razor Pages, MVC) | [`Routeables.AspNetCore`](src/Routeables.AspNetCore/README.md) | `services.UseRouteables(r => { ... })` |
 | .NET MAUI | [`Routeables.Maui`](src/Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables(r => { ... })` |
 | Avalonia | [`Routeables.Avalonia`](src/Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables(r => { ... })` |
 | Uno Platform | [`Routeables.Uno`](src/Routeables.Uno/README.md) | `this.UseRouteables(r => { ... })` |

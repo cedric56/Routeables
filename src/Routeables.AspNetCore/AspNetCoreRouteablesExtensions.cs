@@ -18,15 +18,15 @@ namespace Routeables.AspNetCore;
 public static class AspNetCoreRouteablesExtensions
 {
     /// <summary>
-    /// <c>AddRouteablesAspNetCore&lt;TMenu&gt;</c> for an application that has no menu: no menu view model to write.
+    /// <c>UseRouteables&lt;TMenu&gt;</c> for an application that has no menu: no menu view model to write.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
     /// <param name="configure">Optional callback to register additional services after the defaults.</param>
     /// <returns>The same <paramref name="services"/> instance for chaining.</returns>
-    public static IServiceCollection AddRouteablesAspNetCore(
+    public static IServiceCollection UseRouteables(
         this IServiceCollection services,
         Action<IServiceCollection>? configure = null)
-        => services.AddRouteablesAspNetCore<DefaultRouteableMenuViewModel>(configure);
+        => services.UseRouteables<DefaultRouteableMenuViewModel>(configure);
 
     /// <summary>
     /// Registers the core Routeables services for ASP.NET Core, using <typeparamref name="TMenu"/> as the menu view-model.
@@ -36,7 +36,7 @@ public static class AspNetCoreRouteablesExtensions
     /// <param name="configure">Optional callback to register additional services after the defaults.</param>
     /// <returns>The same <paramref name="services"/> instance for chaining.</returns>
     public static IServiceCollection
-        AddRouteablesAspNetCore<TMenu>(
+        UseRouteables<TMenu>(
             this IServiceCollection services,
             Action<IServiceCollection>? configure = null)
         where TMenu : class, IRouteableMenuViewModel
@@ -65,4 +65,17 @@ public static class AspNetCoreRouteablesExtensions
 
         return services;
     }
+
+    /// <summary>Old name of <see cref="UseRouteables(IServiceCollection, Action{IServiceCollection}?)"/>, kept for one minor version.</summary>
+    [Obsolete("Renamed: use UseRouteables(...), the name the other hosts use.")]
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public static IServiceCollection AddRouteablesAspNetCore(this IServiceCollection services, Action<IServiceCollection>? configure = null)
+        => services.UseRouteables(configure);
+
+    /// <summary>Old name of <see cref="UseRouteables{TMenu}(IServiceCollection, Action{IServiceCollection}?)"/>, kept for one minor version.</summary>
+    [Obsolete("Renamed: use UseRouteables<TMenu>(...), the name the other hosts use.")]
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public static IServiceCollection AddRouteablesAspNetCore<TMenu>(this IServiceCollection services, Action<IServiceCollection>? configure = null)
+        where TMenu : class, IRouteableMenuViewModel
+        => services.UseRouteables<TMenu>(configure);
 }
