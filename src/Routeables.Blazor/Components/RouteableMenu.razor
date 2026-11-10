@@ -1,0 +1,78 @@
+@using Routeables.Abstraction.Bases
+@implements IDisposable
+@inject IMainViewModel MainViewModel
+@* The menu of the application: one button per entry of the main view model (IMainViewModel.Entries), the current entry marked, the
+   entries disabled while the menu is locked. The layout of the package draws it; put it in a layout of your own the same way. It draws
+   nothing while the main view model has no entry. *@
+@if (MainViewModel.Entries.Count > 0)
+{
+    <nav class="rt-drawer @(Closed ? "rt-drawer-closed" : "") @Class" aria-label="@Label">
+        @foreach (var item in MainViewModel.Entries)
+        {
+            var current = ReferenceEquals(item, MainViewModel.SelectedEntry);
+            <button type="button"
+                    class="rt-nav-link @(current ? "rt-active" : "")"
+                    disabled="@item.IsLock"
+                    aria-current="@(current ? "page" : null)"
+                    @onclick="() => OnNavClick(item)">
+                @if (item.Icon is string glyph)
+                {
+                    <span class="rt-nav-icon" aria-hidden="true">@glyph</span>
+                }
+                <span class="rt-nav-text">
+                    <span class="rt-nav-name">@item.DisplayName</span>
+                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                    {
+                        <span class="rt-nav-description">@item.Description</span>
+                    }
+                </span>
+            </button>
+        }
+    </nav>
+}
+
+@code
+{
+    /// <summary>Hides the menu (the drawer of the layout when it is closed); it keeps its place in the page.</summary>
+    [Parameter]
+    public bool Closed { get; set; }
+
+    /// <summary>An extra CSS class of the <c>nav</c> element.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>The accessible name of the menu.</summary>
+    [Parameter]
+    public string Label { get; set; } = "Menu";
+
+    /// <summary>Selects the entry: the main view model routes to it.</summary>
+    private void OnNavClick(IRouteableMenuEntry item) => MainViewModel.SelectedEntry = item;
+
+    protected override void OnInitialized()
+    {
+        MainViewModel.LockChanged += Changed;
+        MainViewModel.CurrentViewChanged += ViewChanged;
+        MainViewModel.Entries.CollectionChanged += EntriesChanged;
+    }
+
+    private void ViewChanged(object? sender, object? view) => Refresh();
+
+    private void EntriesChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) => Refresh();
+
+    private void Changed(object? sender, EventArgs e) => Refresh();
+
+    // A router event can come from any thread, and a menu removed between the event and the render is not an error.
+    private void Refresh() => _ = InvokeAsync(() =>
+    {
+        try { StateHasChanged(); }
+        catch (ObjectDisposedException) { }
+    });
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        MainViewModel.LockChanged -= Changed;
+        MainViewModel.CurrentViewChanged -= ViewChanged;
+        MainViewModel.Entries.CollectionChanged -= EntriesChanged;
+    }
+}

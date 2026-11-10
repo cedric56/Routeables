@@ -119,7 +119,7 @@ Nothing below is needed for a first page. Each line has its own guide.
 | Deep links | Open a route from a URL or a system activation | [System integration](docs/guides/system-integration.md) |
 | Modules | A feature is one extension method, loaded at startup or on demand | [Hosts](docs/guides/hosts.md) |
 | Locking | Pages that block leaving, a locked menu | [Locking](src/Routeables.Locking/README.md) |
-| Menu | `RouteableMenu` on Avalonia and WPF, items bound to routes | [Hosts](docs/guides/hosts.md) |
+| Menu | `RouteableMenu` on every host (a `<routeable-menu />` tag helper on ASP.NET Core), items bound to routes | [Hosts](docs/guides/hosts.md) |
 | Errors | `RouteableResult`, `IRouteableErrorSink` | [Lifecycle](docs/guides/lifecycle.md) |
 | Diagnostics | Tracing and metrics for route changes | [Diagnostics](docs/guides/diagnostics.md) |
 | Native AOT | Source generated; nothing scans assemblies at run time | [AOT](docs/guides/aot.md) |

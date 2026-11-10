@@ -29,28 +29,7 @@ else
 
         @if (hasMenu)
         {
-            <nav class="rt-drawer @(_drawerOpen ? "" : "rt-drawer-closed")" aria-label="Menu">
-                @foreach (var item in MainViewModel.Entries)
-                {
-                    <button type="button"
-                            class="rt-nav-link @(ReferenceEquals(item, MainViewModel.SelectedEntry) ? "rt-active" : "")"
-                    disabled="@item.IsLock"
-                            aria-current="@(ReferenceEquals(item, MainViewModel.SelectedEntry) ? "page" : null)"
-                    @onclick="() => OnNavClick(item)">
-                        @if (item.Icon is string glyph)
-                        {
-                            <span class="rt-nav-icon" aria-hidden="true">@glyph</span>
-                        }
-                        <span class="rt-nav-text">
-                            <span class="rt-nav-name">@item.DisplayName</span>
-                            @if (!string.IsNullOrWhiteSpace(item.Description))
-                            {
-                                <span class="rt-nav-description">@item.Description</span>
-                            }
-                        </span>
-                    </button>
-                }
-            </nav>
+            <RouteableMenu Closed="!_drawerOpen" />
         }
 
         <main class="rt-content">

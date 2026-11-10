@@ -39,6 +39,10 @@ A view is a Razor view under `Views/` that names its view model and its route, a
 
 Its compiled class is named after its path (`Views_DogDetailView`). The page model of the sample (`MainView.cshtml.cs`) takes the address of the request to the router, and the `_Region.cshtml` partial draws `router.CurrentView` with `Html.PartialAsync`, giving it the view model as its model. Copy those two files as a starting point.
 
+## The menu
+
+`<routeable-menu />` (`@addTagHelper *, Routeables.AspNetCore` once, in `_ViewImports.cshtml`) draws a `nav` with a link per entry of the main view model, marks the entry of the current address and shows a locked entry without a link. `entries` gives another list, `current` another address, and a `class` goes to the `nav`; the classes of the links are `rt-menu-link`, `rt-menu-active`, `rt-menu-locked`, `rt-menu-icon`, `rt-menu-text`, `rt-menu-name` and `rt-menu-description`.
+
 ## Transitions
 
 A page is a whole new document for each request, so the browser plays a CSS animation when the view of a region arrives. `RouteableTransitions.Next(region, regionTransition)` gives the classes (`rt-enter rt-{name} rt-{forward|back|none}`) and `--rt-duration`; the animations of the built-in names are in an embedded `transitions.css`, and `prefers-reduced-motion` turns them off. The first page has none and a reload plays none. See [transitions](../../docs/guides/transitions.md).

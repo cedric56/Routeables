@@ -2,6 +2,7 @@
 @model XAnimals.Razor.Pages.MainViewPageModel
 @using Routeables.Abstraction
 @using XAnimals.Razor.Pages
+@addTagHelper *, Routeables.AspNetCore
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -16,31 +17,7 @@
 
 <div class="shell">
     @* The side panel: one entry per entry of the main view model, as in the other samples. It slides away with the button of the header. *@
-    <nav class="drawer" id="drawer" aria-label="Menu">
-        @foreach (var entry in Model.MenuEntries)
-        {
-            var route = MainViewPageModel.Address(entry.Route);
-            var active = string.Equals(route, current, StringComparison.OrdinalIgnoreCase);
-            if (entry.IsLock)
-            {
-                @* A page published a lock (Features): the entry cannot be followed until it publishes the unlock. *@
-                <span class="drawer-link locked" title="Locked">
-                    @if (entry.Icon is string lockedGlyph) { <span class="drawer-icon" aria-hidden="true">@lockedGlyph</span> }
-                    <span class="drawer-name">@entry.DisplayName</span>
-                </span>
-            }
-            else
-            {
-                <a href="@route" class="drawer-link @(active ? "active" : null)" aria-current="@(active ? "page" : null)">
-                    @if (entry.Icon is string glyph) { <span class="drawer-icon" aria-hidden="true">@glyph</span> }
-                    <span class="drawer-text">
-                        <span class="drawer-name">@entry.DisplayName</span>
-                        @if (entry.HasDescription) { <span class="drawer-description">@entry.Description</span> }
-                    </span>
-                </a>
-            }
-        }
-    </nav>
+    <routeable-menu class="drawer" id="drawer" entries="Model.MenuEntries" current="@Model.Url" />
 
     <div class="shell-content">
 <div style="padding: 20px;">

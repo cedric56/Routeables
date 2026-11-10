@@ -29,6 +29,10 @@ An application with a menu gives its main view model: `.UseRouteables<MainViewMo
 
 `RouteableFor` maps the context to `BindingContext`. A zone that shows a region is `<routeables:RouteableRegion Region="shell-content" />`.
 
+## The menu
+
+`RouteableMenu` (a `ContentView`) lists the entries of the main view model, selects the current one and disables the locked ones; its binding context is the main view model. Use it in a page of your own; `RouteablesShell` draws the same entries as its flyout.
+
 ## The shell
 
 `RouteablesShell` is a `Shell` whose tabs or flyout entries come from the main view model, and it follows entries added later (modules). Shell owns the top level and Routeables the route changes inside each item: do not also use `Shell.GoToAsync` on those pages.

@@ -33,6 +33,8 @@ Everything is scoped, so each Blazor Server circuit has its own history, and so 
 
 A layout inherits `RouteableMainLayoutBase`: it follows the current view, the lock and the theme. The ready-made `RouteableMainLayout` comes with the [dialogs and notifications](#dialogs-modals-and-notifications).
 
+`<RouteableMenu />` is the menu of the layout as a component of its own: one button per entry of the main view model, the current one marked, the locked ones disabled (`Closed`, `Class` and `Label` are its parameters). Put it in a layout of your own the same way.
+
 For a route declared with an explicit address (`/customers/{id:int}`), the browser address and the router stay in step: a route change updates the address, a typed address or the browser's back button route the router, and a refused change puts the address back.
 
 Who decides the route: Routeables. The package ships `Main.razor`, whose two `@page` routes (`/` and `/{*path}`) only give the Blazor router a page for every address so that it never shows `NotFound`; it draws nothing, and the layout shows the current view of the Routeables router. Declare the routes of the application on its view models (`[Routeable("about")]`) or with `RegisterRoute`, not with `@page`: a page of your own with an `@page` is rendered by Blazor, outside the router, and neither its history nor its guards apply to it. A layout of your own can use `NavLink` with the route as `href`, since the address follows the route.

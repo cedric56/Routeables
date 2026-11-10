@@ -97,18 +97,18 @@ a.back-btn { display:inline-flex; align-items:center; text-decoration:none; font
 .drawer { flex: none; width: 15rem; position: sticky; top: 0; align-self: stretch; padding: .5rem 0; border-right: 1px solid rgba(128, 128, 128, .25); background: var(--an-paper); overflow-x: hidden; transition: width .2s ease, padding .2s ease; }
 .drawer-closed .drawer { width: 0; padding: 0; border-right: 0; visibility: hidden; }
 .shell-content { flex: 1; min-width: 0; }
-.drawer-link { display: flex; overflow: hidden; align-items: center; gap: .75rem; padding: .6rem 1rem; color: inherit; text-decoration: none; }
-a.drawer-link:hover { background: rgba(128, 128, 128, .15); }
-a.drawer-link:focus-visible { outline: 2px solid var(--an-canopy); outline-offset: -2px; }
-.drawer-link.active { color: var(--an-active, var(--an-canopy)); font-weight: 600; background: var(--an-lichen); }
+.rt-menu-link { display: flex; overflow: hidden; align-items: center; gap: .75rem; padding: .6rem 1rem; color: inherit; text-decoration: none; }
+a.rt-menu-link:hover { background: rgba(128, 128, 128, .15); }
+a.rt-menu-link:focus-visible { outline: 2px solid var(--an-canopy); outline-offset: -2px; }
+.rt-menu-link.rt-menu-active { color: var(--an-active, var(--an-canopy)); font-weight: 600; background: var(--an-lichen); }
 /* The description keeps its full colour on the selected entry: with the opacity of the others it falls under the contrast of 4.5:1. */
-.drawer-link.active .drawer-description { opacity: 1; }
-.drawer-link.locked { color: #999; cursor: not-allowed; }
-.drawer-icon { flex: none; width: 1.5rem; font-size: 1.25rem; text-align: center; }
-.drawer-text { display: grid; min-width: 0; }
-.drawer-name { overflow-wrap: anywhere; }
+.rt-menu-link.rt-menu-active .rt-menu-description { opacity: 1; }
+.rt-menu-link.rt-menu-locked { color: #999; cursor: not-allowed; }
+.rt-menu-icon { flex: none; width: 1.5rem; font-size: 1.25rem; text-align: center; }
+.rt-menu-text { display: grid; min-width: 0; }
+.rt-menu-name { overflow-wrap: anywhere; }
 /* The description wraps like in the Blazor menu (it was cut with an ellipsis). */
-.drawer-description { font-size: .75rem; line-height: 1.3; opacity: .7; white-space: normal; }
+.rt-menu-description { font-size: .75rem; line-height: 1.3; opacity: .7; white-space: normal; }
 @media (max-width: 759px) {
     /* On a narrow screen the panel covers the page instead of pushing it. */
     .drawer { position: fixed; top: 4.2rem; bottom: 0; z-index: 900; box-shadow: 4px 0 12px rgba(0, 0, 0, .25); }
