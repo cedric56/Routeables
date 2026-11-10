@@ -20,6 +20,7 @@ public sealed class RouteableLinkInbox
     private static readonly TimeSpan FirstPageTimeout = TimeSpan.FromSeconds(30);
 
     private readonly IReadOnlyCollection<string>? schemes;
+    private readonly IReadOnlyCollection<string>? hosts;
     private IServiceProvider? provider;
     private readonly object gate = new();
     private readonly Queue<Uri> links = new();
@@ -32,12 +33,18 @@ public sealed class RouteableLinkInbox
     /// What it receives waits for <see cref="Attach"/>.
     /// </summary>
     /// <param name="schemes">The schemes that are accepted (<c>"myapp"</c>, <c>"https"</c>); <see langword="null"/> or empty accepts any.</param>
-    public RouteableLinkInbox(IReadOnlyCollection<string>? schemes = null) => this.schemes = schemes;
+    /// <param name="hosts">The hosts of the <c>http</c> and <c>https</c> links that are accepted; <see langword="null"/> or empty accepts any. Set it when <c>https</c> is accepted.</param>
+    public RouteableLinkInbox(IReadOnlyCollection<string>? schemes = null, IReadOnlyCollection<string>? hosts = null)
+    {
+        this.schemes = schemes;
+        this.hosts = hosts;
+    }
 
     /// <summary>Creates the inbox for a container and starts it.</summary>
     /// <param name="provider">The container of the host.</param>
     /// <param name="schemes">The schemes that are accepted; <see langword="null"/> or empty accepts any.</param>
-    public RouteableLinkInbox(IServiceProvider provider, IReadOnlyCollection<string>? schemes = null) : this(schemes)
+    /// <param name="hosts">The hosts of the <c>http</c> and <c>https</c> links that are accepted; <see langword="null"/> or empty accepts any.</param>
+    public RouteableLinkInbox(IServiceProvider provider, IReadOnlyCollection<string>? schemes = null, IReadOnlyCollection<string>? hosts = null) : this(schemes, hosts)
     {
         ArgumentNullException.ThrowIfNull(provider);
         Attach(provider);
@@ -128,7 +135,7 @@ public sealed class RouteableLinkInbox
                         if (await RouteableState.RestoreSnapshotsAsync(router, restoring))
                             RouteableMenu.Moved(services, router);
                     }
-                : async () => await RouteableDeepLinks.GoToAsync(services, uri!, schemes));
+                : async () => await RouteableDeepLinks.GoToAsync(services, uri!, schemes, hosts: hosts));
             }
         }
         catch (Exception ex)

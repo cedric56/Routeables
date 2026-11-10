@@ -12,6 +12,7 @@
             "Routeables.Segments/*.csproj",
             "Routeables.Routing/*.csproj",
             "Routeables.Core/*.csproj",
+            "Routeables.AspNetCore/*.csproj",
             "Routeables.Blazor/*.csproj",
             "Routeables.Maui/*.csproj",
             "Routeables.Avalonia/*.csproj",

@@ -77,7 +77,10 @@ jobs:
       - name: Restore the documented projects
         shell: pwsh
         run: |
-          foreach ($p in 'Abstraction','Routing','Core','Razor','Maui','Avalonia','Uno') {
+          # PowerShell reports only the exit code of the last native call: a failed restore must stop the job.
+          $PSNativeCommandUseErrorActionPreference = $true
+          $ErrorActionPreference = 'Stop'
+          foreach ($p in 'Abstraction','Routing','Core','AspNetCore','Blazor','Maui','Avalonia','Uno') {
             dotnet restore "src/Routeables.$p/Routeables.$p.csproj" -p:CiBuild=true
           }
 

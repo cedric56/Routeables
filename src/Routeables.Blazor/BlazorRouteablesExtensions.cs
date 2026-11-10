@@ -143,12 +143,12 @@ public static class BlazorRouteablesExtensions
     /// <param name="messageBoxService">Builds the <see cref="IMessageBoxService"/> that draws the dialogs; <see cref="DefaultMessageBoxService"/> (plain Razor, shown by the hosts of the layout) when not set. Give another one to draw them with a UI library, such as the MudBlazor one of the Reshapes.</param>
     /// <param name="notificationService">Factory of the <see cref="IRouteableNotificationService"/>; null keeps Routeables' own.</param>
     /// <param name="position">The screen position where toast notifications appear, bottom-left by default.</param>
-    /// <param name="maxDispayments">The maximum number of notifications displayed at once, 5 by default.</param>
+    /// <param name="maxDisplayed">The maximum number of notifications displayed at once, 5 by default.</param>
     public static IServiceCollection UseRouteablesServices(this IServiceCollection services,
         Func<IServiceProvider, IMessageBoxService>? messageBoxService = null,
         Func<IServiceProvider, IRouteableNotificationService>? notificationService = null,
         RouteableNotificationPosition position = RouteableNotificationPosition.BottomLeft,
-        int maxDispayments = 5)
+        int maxDisplayed = 5)
     {
         ArgumentNullException.ThrowIfNull(services);
 
@@ -179,7 +179,7 @@ public static class BlazorRouteablesExtensions
         services.AddSingleton(new RouteableNotificationOptions
         {
             Position = position,
-            MaxDisplayed = maxDispayments
+            MaxDisplayed = maxDisplayed
         });
         services.RegisterServices<IRouteableNotificationService, RouteableNotificationService>(
             sp => new RouteableNotificationService(sp.GetRequiredService<RouteableNotificationOptions>(), sp.GetService<IRouteableSystemNotificationSource>()),

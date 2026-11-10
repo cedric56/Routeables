@@ -107,7 +107,7 @@ public class UseRouteablesTests
         services.AddSingleton<NavigationManager>(new TestNavigationManager());
 
         services.UseRouteablesServer<FakeMenuViewModel>();
-        services.UseRouteablesServices(position: position, maxDispayments: 3);
+        services.UseRouteablesServices(position: position, maxDisplayed: 3);
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
 

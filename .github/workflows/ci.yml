@@ -284,6 +284,29 @@ jobs:
   # libraries as if it were a package of its own. The packages that need a MAUI or Uno workload are not packed here.
   # ---------------------------------------------------------------------------------------------------------------------------
 
+  minimum-sdk:
+    name: Generator with the oldest supported SDK
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.100
+
+      # A source generator loads only into a compiler at least as new as the Roslyn it references: with an older one the build warns (CS8032)
+      # and no route is generated. The runner has newer SDKs too, so this one is the only one global.json accepts.
+      - name: Use exactly SDK 10.0.100
+        run: |
+          dotnet new globaljson --sdk-version 10.0.100 --roll-forward disable --force
+          test "$(dotnet --version)" = "10.0.100"
+
+      - name: Build the sample view models, which are generated
+        run: dotnet build samples/Bases/XAnimals.ViewModels/XAnimals.ViewModels.csproj -c Release -warnaserror:CS8032
+  # ---------------------------------------------------------------------------------------------------------------------------
+
   packages:
     name: Pack and check the packages
     runs-on: ubuntu-latest

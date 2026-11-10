@@ -6,7 +6,7 @@ Each router keeps a history of entries (view model, view and arguments):
 
 | Operation | Effect |
 | --- | --- |
-| `GoToAsync` (or `GoToRouteAsync`) | Pushes a new entry. Forward entries are cut off. The history has no limit by default: it grows until entries are popped or erased (see below to set one) |
+| `GoToAsync` (or `GoToRouteAsync`) | Pushes a new entry. Forward entries are cut off. The history has no limit by default (a scoped router keeps 50): it grows until entries are popped or erased (see below to set one) |
 | `GoBackAsync` / `ForwardAsync` | Moves the cursor. Nothing is removed, so a page you went back from stays alive for `Forward` |
 | `MoveToAsync(index)` | Moves the cursor to an entry |
 | `PopAsync` | Goes back and removes the entry you left |
@@ -15,7 +15,7 @@ Each router keeps a history of entries (view model, view and arguments):
 
 ### Limiting the history
 
-By default a history keeps every entry. In an application that stays open for a long time, set a limit at startup:
+By default a history keeps every entry, except the one of a scoped router (Blazor Server, ASP.NET Core: one history per user session), which keeps the last 50. In an application that stays open for a long time, set a limit at startup (it also replaces the 50 of a scoped router):
 
 ```csharp
 services.LimitHistory(50);                    // the default router

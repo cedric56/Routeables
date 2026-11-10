@@ -82,4 +82,38 @@ public class RouterFailureTests
         // Each page left exactly once, in a sequence: 49 of them were left for the next one.
         Assert.Equal(49, viewModels.Count(vm => vm.Events.Contains("From")));
     }
+    /// <summary>Starts a route change without waiting for it, from the callback of a page, like <c>Task.Run</c> or <c>FireAndForget</c> do.</summary>
+    private sealed class BackgroundNavigator(IRouter router, TaskCompletionSource<RouteableResult> done) : IRouteable
+    {
+        public Task<bool> CanLeaveAsync(CancellationToken ct = default) => Task.FromResult(true);
+        public Task OnLeavingAsync(IRouteableArgs context, CancellationToken ct = default) => Task.CompletedTask;
+
+        public Task OnEnteredAsync(IRouteableArgs context, CancellationToken ct = default)
+        {
+            // The copy of the execution context taken here carries what the router knew of this route change, for as long as the work lives.
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await Task.Delay(100, ct);
+                    done.SetResult(await router.GoAsync(new TestView(), new TestViewModel(), cancellationToken: ct));
+                }
+                catch (Exception ex) { done.SetException(ex); }
+            }, ct);
+            return Task.CompletedTask;
+        }
+    }
+
+    [Fact]
+    public async Task A_route_change_started_by_work_that_was_not_awaited_is_not_called_reentrant()
+    {
+        var router = CreateRouter();
+        var done = new TaskCompletionSource<RouteableResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await router.GoAsync(new TestView(), new BackgroundNavigator(router, done), cancellationToken: Ct);
+        var result = await done.Task.WaitAsync(TimeSpan.FromSeconds(5), Ct);
+
+        // The first route change was over when the work routed: it is a route change like any other.
+        Assert.True(result.Success);
+    }
 }

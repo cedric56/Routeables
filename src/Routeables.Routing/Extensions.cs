@@ -10,6 +10,9 @@ namespace Routeables.Routing;
 /// </summary>
 public static class Extensions
 {
+    /// <summary>The history limit of a <see cref="ServiceLifetime.Scoped"/> router (a server session) when <see cref="LimitHistory"/> was not called.</summary>
+    internal const int DefaultScopedHistoryLimit = 50;
+
     /// <summary>
     /// Registers the default (unkeyed) routing stack: <see cref="IRouter"/> plus its
     /// history, gate, and lifecycle helpers, the broker service and the lock-coordinator factory.
@@ -38,7 +41,7 @@ public static class Extensions
                 "A Transient router is not supported: each resolve would get a separate history use Regions instead.");
 
         // Router collaborators share the router's lifetime so they live and die together.
-        services.Add(new ServiceDescriptor(typeof(RouterHistory), sp => new RouterHistory(sp.GetService<HistoryLimits>()?.For(null)), lifetime));
+        services.Add(new ServiceDescriptor(typeof(RouterHistory), sp => new RouterHistory(sp.GetService<HistoryLimits>()?.For(null) ?? (lifetime == ServiceLifetime.Scoped ? DefaultScopedHistoryLimit : null)), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterGate), _ => new RouterGate(), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterLifecycle), sp => new RouterLifecycle(sp), lifetime));
         services.Add(new ServiceDescriptor(typeof(IRouter), sp =>

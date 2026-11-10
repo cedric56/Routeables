@@ -1,6 +1,6 @@
 <Solution>
   <Folder Name="/reshapes/">
-    <File Path="../../../Downloads/host-services/Reshapes/README.md" />
+    <File Path="reshapes/README.md" />
     <Project Path="reshapes/Reshapes.Avalonia.Fluent/Reshapes.Avalonia.Fluent.csproj" Id="f65cd93b-7463-46ca-ba50-b5292491503b" />
     <Project Path="reshapes/Reshapes.Blazor.MudBlazor/Reshapes.Blazor.MudBlazor.csproj" Id="4b5f66a3-73fb-44ed-8f1e-733fac24cd35" />
     <Project Path="reshapes/Reshapes.Maui.Community/Reshapes.Maui.Community.csproj" Id="90e9e577-6f0e-458d-ad04-37914db4b98e" />
@@ -58,10 +58,10 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/Solution Items/Images/">
-    <File Path="icon.ico" />
-    <File Path="logo-icon-512.png" />
-    <File Path="logo-icon.svg" />
-    <File Path="logo.svg" />
+    <File Path="images/icon.ico" />
+    <File Path="images/logo-icon-512.png" />
+    <File Path="images/logo-icon.svg" />
+    <File Path="images/logo.svg" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Routeables.Abstraction/Routeables.Abstraction.csproj" />

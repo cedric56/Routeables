@@ -71,4 +71,29 @@ public class RouterHistoryLimitTests
         Assert.False(first.Disposed);
         Assert.False(second.Disposed);
     }
+
+    [Theory]
+    [InlineData(ServiceLifetime.Scoped, 50)]
+    [InlineData(ServiceLifetime.Singleton, null)]
+    public void A_scoped_router_keeps_50_entries_unless_a_limit_is_set(ServiceLifetime lifetime, int? expected)
+    {
+        var services = new ServiceCollection();
+        services.RegisterRouting(lifetime);
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        Assert.Equal(expected, scope.ServiceProvider.GetRequiredService<RouterHistory>().MaxSize);
+    }
+
+    [Fact]
+    public void A_limit_replaces_the_default_of_a_scoped_router()
+    {
+        var services = new ServiceCollection();
+        services.RegisterRouting(ServiceLifetime.Scoped);
+        services.LimitHistory(7);
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        Assert.Equal(7, scope.ServiceProvider.GetRequiredService<RouterHistory>().MaxSize);
+    }
 }

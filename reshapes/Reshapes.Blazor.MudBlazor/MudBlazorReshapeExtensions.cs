@@ -22,10 +22,10 @@ public static class MudBlazorReshapeExtensions
     /// </summary>
     /// <param name="services">The service collection to add services to.</param>
     /// <param name="position">The screen position where toast notifications should appear, defaulting to bottom-left.</param>
-    /// <param name="maxDispayments">The maximum number of simultaneous notifications displayed, defaulting to 5.</param>
+    /// <param name="maxDisplayed">The maximum number of simultaneous notifications displayed, defaulting to 5.</param>
     public static IServiceCollection UseReshapeMudBlazor(this IServiceCollection services,
         RouteableNotificationPosition position = RouteableNotificationPosition.BottomLeft,
-        int maxDispayments = 5)
+        int maxDisplayed = 5)
     {
         ArgumentNullException.ThrowIfNull(services);
 
@@ -44,7 +44,7 @@ public static class MudBlazorReshapeExtensions
                     RouteableNotificationPosition.BottomRight => Defaults.Classes.Position.BottomRight,
                     _ => Defaults.Classes.Position.TopRight
                 },
-                MaxDisplayedSnackbars = maxDispayments
+                MaxDisplayedSnackbars = maxDisplayed
             };
         });
 
@@ -53,6 +53,6 @@ public static class MudBlazorReshapeExtensions
             sp => new ReshapeMessageBoxService(sp.GetRequiredService<IDialogService>()),
             sp => new ReshapeNotificationService(sp.GetRequiredService<ISnackbar>(), sp.GetService<RouteableSystemNotifications>()),
             position,
-            maxDispayments);
+            maxDisplayed);
     }
 }

@@ -87,7 +87,7 @@ public static partial class RegistrationExtensions
 
     /// <summary>
     /// Builds a factory that creates the instance once and returns it on every later call
-    /// (thread-safe, double-checked locking). Note that only the first call's provider and
+    /// (thread-safe, double-checked locking), once per scope on a host whose routers are scoped. Note that only the first call's provider and
     /// arguments are used; subsequent calls ignore theirs. If creation throws, nothing is
     /// cached and the next call retries.
     /// </summary>
@@ -100,11 +100,17 @@ public static partial class RegistrationExtensions
     {
         // The instance is kept by the provider (SingletonViewCache), not by this delegate: a delegate registered in the
         // collection is shared by every provider built from it, and nobody disposes what it holds.
+        // On a host whose routers live in a scope (Blazor Server: one per circuit) the page is built from the services of that
+        // scope (the user, the JS runtime, the router): a page shared by every circuit would show the first user's data to the others.
+        // There a Singleton page is kept per scope, like a Scoped one.
         return (sp, args) =>
         {
             try
             {
-                return sp.GetRequiredService<SingletonViewCache>().GetOrCreate(route, () => create(sp, args));
+                ScopedViewCache cache = sp.GetService<RouteableHostLifetime>() is { Lifetime: ServiceLifetime.Scoped }
+                    ? sp.GetRequiredService<ScopedViewCache>()
+                    : sp.GetRequiredService<SingletonViewCache>();
+                return cache.GetOrCreate(route, () => create(sp, args));
             }
             catch (Exception ex)
             {

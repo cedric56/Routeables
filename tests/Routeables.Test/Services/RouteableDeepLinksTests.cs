@@ -44,6 +44,19 @@ public class RouteableDeepLinksTests
     public void An_address_with_no_path_has_no_route(string address)
         => Assert.False(RouteableDeepLinks.TryGetRoute(new Uri(address), out _));
 
+    [Theory]
+    [InlineData("https://example.com/orders/42", true)]
+    [InlineData("HTTPS://EXAMPLE.COM/orders/42", true)]
+    [InlineData("https://evil.example/orders/42", false)]
+    [InlineData("https://example.com.evil.example/orders/42", false)]
+    [InlineData("myapp://orders/42", true)]
+    public void HostsLimitTheWebAddresses(string address, bool accepted)
+        => Assert.Equal(accepted, RouteableDeepLinks.TryGetRoute(new Uri(address), ["https", "myapp"], ["example.com"], out _));
+
+    [Fact]
+    public void NoHostsAcceptsAnyHost()
+        => Assert.True(RouteableDeepLinks.TryGetRoute(new Uri("https://evil.example/orders/42"), ["https"], null, out _));
+
     [Fact]
     public void A_relative_or_missing_address_has_no_route()
     {

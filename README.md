@@ -47,7 +47,7 @@ public partial class HelloView : UserControl { public HelloView() => InitializeC
 
 The router gives the view model to the view as its `DataContext` (`BindingContext` on MAUI). For the lifecycle of a page (initialization, disposal, leaving guards), derive the view from the base class `RouteableFor<T>` of your host: it is described in [Getting started](docs/getting-started.md) and the [lifecycle guide](docs/guides/lifecycle.md).
 
-**2. The start of Routeables** (Avalonia shown; each host has its own line, see below):
+**2. Start Routeables** (Avalonia shown; each host has its own line, see below):
 
 ```csharp
 AppBuilder.Configure<App>()
@@ -110,7 +110,7 @@ Nothing below is needed for a first page. Each line has its own guide.
 | Declarative navigation | `routeables:RouteableLink.Route="/hello/World"` on a button, in XAML, no code in the view model (Avalonia, WPF, Uno, MAUI) | [Routes](docs/guides/routes.md) |
 | Typed routing | `GoToMonkeyDetailAsync(router, name)` generated from the constructor | [Typed routes](docs/guides/typed-routes.md) |
 | Arguments | Route values, query values and objects passed to the target | [Arguments](docs/guides/arguments.md) |
-| History | Back, forward, pop, back to root, move to an entry, erase; no limit by default, `LimitHistory` to set one | [History](docs/guides/history.md) |
+| History | Back, forward, pop, back to root, move to an entry, erase; no limit by default (50 per server session), `LimitHistory` to set one | [History](docs/guides/history.md) |
 | Regions | Several zones, each with its own router and history | [Regions](docs/guides/regions.md) |
 | Lifecycle | Initialize, entering, leaving, `CanLeaveAsync` veto, `OnSubscribe`/`OnUnsubscribe`, destroy | [Lifecycle](docs/guides/lifecycle.md) |
 | Guards | `IRouteGuard` with an order; allow, redirect or cancel a route change | [Routes](docs/guides/routes.md) |

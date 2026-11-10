@@ -15,6 +15,7 @@
     <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" PrivateAssets="all" />
+    <!-- The lowest Roslyn the generator needs: a generator loads only into a compiler at least as new as the one it references, and the SDK 10.0.1xx ships 5.0. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" PrivateAssets="all" />
   </ItemGroup>
 </Project>

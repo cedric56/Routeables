@@ -53,9 +53,8 @@ public static class AspNetCoreRouteablesExtensions
         services.AddScoped<IRouteableNotificationService, RouteableNotificationService>();
         services.AddScoped<RouteableRequestThemeService>();
         services.AddScoped<IRouteableRequestedThemeService>(p => p.GetRequiredService<RouteableRequestThemeService>());
-        services.AddScoped(
-            _ => new RouteableHostLifetime(
-                ServiceLifetime.Scoped));
+        // An instance, as Blazor registers it: GetRouteableLifetime() reads the collection and does not see a factory.
+        services.TryAddSingleton(new RouteableHostLifetime(ServiceLifetime.Scoped));
         services.RegisterRouting(ServiceLifetime.Scoped);
         services.AddScoped<RouteablePageState>();
         services.AddScoped<RouteableTransitions>();

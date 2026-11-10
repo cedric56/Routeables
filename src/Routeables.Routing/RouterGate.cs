@@ -2,12 +2,16 @@
 
 /// <summary>
 /// Provides asynchronous reentrancy protection and serialization for routing operations per router instance
-/// using a semaphore combined with an <see cref="AsyncLocal{T}"/> flag.
+/// using a semaphore combined with an <see cref="AsyncLocal{T}"/> token of the operation in progress.
 /// </summary>
 internal sealed class RouterGate
 {
     private readonly SemaphoreSlim _gate = new(1, 1);
-    private readonly AsyncLocal<bool> _inProgress = new();
+    // The token of the operation that holds the gate, and the one each flow carries. A flow is reentrant only while the token it carries is
+    // the one in progress: work started without waiting (Task.Run, FireAndForget) copies the token of the operation that was running, and
+    // keeps it for ever, so a boolean would call every later route change from that work "reentrant".
+    private readonly AsyncLocal<object?> _inProgress = new();
+    private object? _current;
 
     /// <summary>
     /// Asynchronously enters the route change gate, throwing an exception if reentrant routing is attempted.
@@ -23,25 +27,40 @@ internal sealed class RouterGate
     /// <exception cref="InvalidOperationException">Thrown if reentrant routing is detected.</exception>
     public Task EnterAsync(CancellationToken cancellationToken = default)
     {
-        if (_inProgress.Value)
+        if (_inProgress.Value is { } carried && ReferenceEquals(carried, Volatile.Read(ref _current)))
             throw new InvalidOperationException("Reentrant route changes are not supported.");
 
         var wait = _gate.WaitAsync(cancellationToken);
-        _inProgress.Value = true;
-        return wait;
+        var token = new object();
+        _inProgress.Value = token;
+        if (wait.IsCompletedSuccessfully)
+        {
+            Volatile.Write(ref _current, token);
+            return wait;
+        }
+
+        return Acquire(wait, token);
+    }
+
+    // The operation holds the gate only once the wait is over: another caller that waits must not take its place as the one in progress.
+    private async Task Acquire(Task wait, object token)
+    {
+        await wait.ConfigureAwait(false);
+        Volatile.Write(ref _current, token);
     }
 
     /// <summary>
-    /// Exits the route change gate, resetting the in-progress flag and releasing the underlying semaphore.
+    /// Exits the route change gate, clearing the in-progress token and releasing the underlying semaphore.
     /// </summary>
     public void Exit()
     {
-        _inProgress.Value = false;
+        Volatile.Write(ref _current, null);
+        _inProgress.Value = null;
         _gate.Release();
     }
 
     /// <summary>
-    /// Clears the in-progress flag after a failed (for example, cancelled) <see cref="EnterAsync"/> operation.
+    /// Clears the in-progress token after a failed (for example, cancelled) <see cref="EnterAsync"/> operation.
     /// </summary>
-    public void Abort() => _inProgress.Value = false;
+    public void Abort() => _inProgress.Value = null;
 }

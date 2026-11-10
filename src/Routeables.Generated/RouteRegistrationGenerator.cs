@@ -748,8 +748,8 @@ namespace Routeables.Generated
             _ => "ServiceLifetime.Transient",
         };
 
-        private static string Escape(string value) =>
-            value.Replace("\\", "\\\\").Replace("\"", "\\\"");
+        // The text of a C# string literal, without its quotes: a new line or any control character is escaped too.
+        private static string Escape(string value) => Microsoft.CodeAnalysis.CSharp.SymbolDisplay.FormatLiteral(value, quote: false);
 
         private enum ServiceLifetime
         {
