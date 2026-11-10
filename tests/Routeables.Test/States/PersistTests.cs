@@ -14,6 +14,9 @@ public class PersistTests
 {
     public enum Colour { Red, Green }
 
+    [Flags]
+    public enum Access { None = 0, Read = 1, Write = 2 }
+
     public sealed record Filter(string Text, int Page);
 
     public sealed class FormView : IRouteableFor { public object? Context { get; set; } }
@@ -248,5 +251,19 @@ public class PersistTests
     {
         public string? Write(Filter value) => null;
         public bool TryRead(string text, out Filter value) { value = null!; return false; }
+    }
+
+    [Fact]
+    public void A_flags_enum_comes_back_with_its_combination_but_a_number_that_names_nothing_is_refused()
+    {
+        var into = new Dictionary<string, string>();
+        new PersistBag((IDictionary<string, string>)into).Set("A", Access.Read | Access.Write);
+        var read = new PersistBag((IReadOnlyDictionary<string, string>)into);
+
+        Assert.True(read.TryGet<Access>("A", out var back));
+        Assert.Equal(Access.Read | Access.Write, back);
+
+        var odd = new PersistBag((IReadOnlyDictionary<string, string>)new Dictionary<string, string> { ["persist:A"] = "v8" });
+        Assert.False(odd.TryGet<Access>("A", out _));
     }
 }

@@ -139,6 +139,19 @@ internal static class PersistCodec
         return false;
     }
 
+    // A named member, or (for [Flags]) a combination of named members; a bare number that names nothing is refused.
+    private static bool IsKnown(Type type, object value)
+    {
+        if (Enum.IsDefined(type, value))
+            return true;
+
+        if (!type.IsDefined(typeof(FlagsAttribute), inherit: false))
+            return false;
+
+        var name = value.ToString();
+        return !string.IsNullOrEmpty(name) && !char.IsDigit(name[0]) && name[0] != '-';
+    }
+
     internal static bool TryRead<T>(string text, IPersistConverter<T>? converter, out T value)
     {
         value = default!;
@@ -171,7 +184,7 @@ internal static class PersistCodec
         else if (type == typeof(TimeSpan)) read = TimeSpan.TryParse(text, inv, out var ts) ? ts : null;
         else if (type == typeof(DateOnly)) read = DateOnly.TryParse(text, inv, DateTimeStyles.None, out var d1) ? d1 : null;
         else if (type == typeof(TimeOnly)) read = TimeOnly.TryParse(text, inv, DateTimeStyles.None, out var t1) ? t1 : null;
-        else if (type.IsEnum) read = Enum.TryParse(type, text, ignoreCase: false, out var e) && Enum.IsDefined(type, e!) ? e : null;
+        else if (type.IsEnum) read = Enum.TryParse(type, text, ignoreCase: false, out var e) && IsKnown(type, e!) ? e : null;
 
         if (read is null)
             return false;

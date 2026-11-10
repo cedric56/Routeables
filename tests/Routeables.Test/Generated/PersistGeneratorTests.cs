@@ -108,6 +108,55 @@ public class PersistGeneratorTests
         Assert.Contains("no parameter", Assert.Single(result.Diagnostics).GetMessage());
     }
 
+    /// <summary>The generated code and the run-time classes must agree on every name: the generated registration is compiled, loaded and run.</summary>
+    [Fact]
+    public void The_generated_registration_saves_and_restores_the_properties_of_a_real_view_model()
+    {
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(new PersistGenerator());
+        driver.RunGeneratorsAndUpdateCompilation(Compilation("""
+            using Routeables.Abstraction.States;
+            namespace Shop;
+            public enum Sort { Name, Price }
+            public class Base { [Persist] public string Title { get; set; } = ""; }
+            public class SearchViewModel : Base
+            {
+                [Persist] public string Query { get; set; } = "";
+                [Persist] public int Page { get; set; }
+                [Persist] public Sort Order { get; set; }
+                [Persist] public int? Limit { get; set; }
+                [Persist] internal bool Open { get; set; }
+                public string Skipped { get; set; } = "";
+            }
+            """), out var output, out _);
+
+        using var stream = new MemoryStream();
+        var emitted = output.Emit(stream);
+        Assert.True(emitted.Success, string.Join(Environment.NewLine, emitted.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error)));
+        var assembly = System.Reflection.Assembly.Load(stream.ToArray());
+        assembly.GetType("Routeables.Generated.RouteablePersistRegistration")!
+            .GetMethod("Register", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!.Invoke(null, null);
+
+        var type = assembly.GetType("Shop.SearchViewModel")!;
+        var vm = Activator.CreateInstance(type)!;
+        void Set(string name, object? value) => type.GetProperty(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)!.SetValue(vm, value);
+        object? Get(object o, string name) => o.GetType().GetProperty(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)!.GetValue(o);
+        Set("Title", "from the base"); Set("Query", "red shoes"); Set("Page", 3); Set("Order", Enum.ToObject(assembly.GetType("Shop.Sort")!, 1)); Set("Limit", 20); Set("Open", true); Set("Skipped", "no");
+
+        var saved = new Dictionary<string, string>();
+        Assert.True(Routeables.Abstraction.States.RouteablePersistence.Save(vm, saved));
+        Assert.False(saved.ContainsKey("persist:Skipped"));
+
+        var back = Activator.CreateInstance(type)!;
+        Assert.True(Routeables.Abstraction.States.RouteablePersistence.Load(back, saved));
+        Assert.Equal("from the base", Get(back, "Title"));
+        Assert.Equal("red shoes", Get(back, "Query"));
+        Assert.Equal(3, Get(back, "Page"));
+        Assert.Equal("Price", Get(back, "Order")!.ToString());
+        Assert.Equal(20, Get(back, "Limit"));
+        Assert.Equal(true, Get(back, "Open"));
+        Assert.Equal("", Get(back, "Skipped"));
+    }
+
     [Fact]
     public void A_generic_class_is_reported()
     {
