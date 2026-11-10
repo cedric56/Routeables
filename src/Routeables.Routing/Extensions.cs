@@ -61,7 +61,7 @@ public static class Extensions
     /// routing histories.
     /// </summary>
     /// <param name="services">The service collection to add to.</param>
-    /// <param name="route">The region's identifier, e.g. "main" or "side". Resolve it later with <see cref="Abstraction.Extensions.GetRouter"/></param>
+    /// <param name="route">The region's identifier, e.g. "main" or "side". Resolve it later with <see cref="RouterExtensions.GetRouter"/></param>
     /// <param name="lifetime"><see cref="ServiceLifetime.Scoped"/></param>
     /// <returns>The same <paramref name="services"/> instance, for chaining.</returns>
     public static IServiceCollection AddRegion(

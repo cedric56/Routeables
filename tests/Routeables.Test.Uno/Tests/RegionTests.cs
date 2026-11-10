@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml.Media.Animation;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Abstraction.Transitions;
 using Routeables.Uno;
 using Uno.UI.RuntimeTests;

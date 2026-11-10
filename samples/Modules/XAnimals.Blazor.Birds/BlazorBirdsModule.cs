@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Registrations;
 using XAnimals.Blazor.Components.Animals;
 
 namespace XAnimals.Blazor.Birds;

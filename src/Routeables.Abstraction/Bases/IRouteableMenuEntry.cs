@@ -33,7 +33,7 @@ public interface IRouteableMenuEntry
     /// <summary>
     /// The region this entry is shown in: the name given to <c>AddRegion</c>, which is also the name a <c>RouteableRegion</c>
     /// of a view is given. <see langword="null"/> is the default router (the main area). See
-    /// <see cref="Extensions.RouterFor(IServiceProvider, IRouteableMenuEntry)"/>.
+    /// <see cref="RouterExtensions.RouterFor(IServiceProvider, IRouteableMenuEntry)"/>.
     /// </summary>
     string? Region => null;
 

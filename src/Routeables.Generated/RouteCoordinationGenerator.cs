@@ -18,7 +18,7 @@ namespace Routeables.Generated
     {
         private const string ViewModelAttributeMetadataName = "Routeables.Abstraction.RouteableViewModelAttribute";
         private const string RouteableAttributeMetadataName = "Routeables.Abstraction.RouteableAttribute";
-        private const string RouterMetadataName = "Routeables.Abstraction.IRouter";
+        private const string RouterMetadataName = "Routeables.Abstraction.Routing.IRouter";
         private const string FromContainerMetadataName = "Routeables.Abstraction.FromContainerAttribute";
         private const string FromKeyedServicesMetadataName = "Microsoft.Extensions.DependencyInjection.FromKeyedServicesAttribute";
         private const string FromServicesMetadataName = "Microsoft.AspNetCore.Mvc.FromServicesAttribute";

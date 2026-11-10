@@ -126,7 +126,7 @@ public static partial class Extensions
 
     /// <summary>
     /// Registers the factory that builds the <see cref="IRouteableLockCoordinator"/> of a main view model (see
-    /// <see cref="CreateLockCoordinator"/>). <c>AddLocking()</c> of <c>Routeables.Locking</c> calls it with its own
+    /// <see cref="RouterExtensions.CreateLockCoordinator"/>). <c>AddLocking()</c> of <c>Routeables.Locking</c> calls it with its own
     /// coordinator and adds the broker it listens to; call it yourself only to supply another coordinator.
     /// </summary>
     /// <typeparam name="TLockCoordinator">The coordinator; it is built with the provider and the main view model.</typeparam>

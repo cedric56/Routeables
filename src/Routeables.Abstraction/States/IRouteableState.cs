@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.States;
 
 /// <summary>
 /// Implemented by a view model that wants its values to come back after the system killed the process of the application.

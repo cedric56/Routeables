@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml.Automation.Peers;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Uno;
 using Uno.UI.RuntimeTests;
 
