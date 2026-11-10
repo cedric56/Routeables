@@ -1,2 +1,0 @@
-﻿{"version":"2.6","ok":true,"command":"status","data":{"permissions":{"accessibility":{"state":"granted"},"automation":{"state":"not_required"},"screen_recording":{"state":"not_required"}},"platform":"windows","ref_count":33,"session_id":null,"snapshot_id":"s1lmt2721ktd9s","state_root":"C:\\Users\\cedri\\AppData\\Local\\Temp\\agent-desktop-routeables-cedri","supported_surfaces":["window","focused","sheet","menu","start-menu","taskbar","system-tray","system-tray-overflow","action-center"],"tracing":false,"version":"1.2.0"}}
-
