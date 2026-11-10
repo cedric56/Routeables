@@ -384,4 +384,14 @@ public class RouteableDeepLinksTests
         Assert.True(RouteableDeepLinks.TryGetRoute(new Uri(address), null, out var route));
         Assert.Equal(expected, route);
     }
+
+    [Fact]
+    public void An_address_longer_than_MaxLength_is_refused_before_it_is_read()
+    {
+        var long_ = new Uri("myapp://orders/" + new string('a', RouteableDeepLinks.MaxLength));
+        Assert.False(RouteableDeepLinks.TryGetRoute(long_, ["myapp"], out _));
+
+        var fine = new Uri("myapp://orders/" + new string('a', 100));
+        Assert.True(RouteableDeepLinks.TryGetRoute(fine, ["myapp"], out _));
+    }
 }

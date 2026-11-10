@@ -102,6 +102,8 @@ A tab bound to a route (`RouteableTabs`, `RegionTabs`) changes page through the 
 
 ## Events
 
+An observer of `Routing`, `Routed` or `IRouterHistory.Changed` that throws never fails the route change or hides the observers after it: the exception goes to the `IRouteableErrorSink` (a trace without one). `OnEnteredAsync` and `OnLeftAsync` are treated the same way.
+
 ```csharp
 router.Routing += (_, e) => { /* about to navigate */ };
 router.Routed  += (_, e) => { /* navigation finished */ };

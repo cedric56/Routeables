@@ -193,7 +193,17 @@ internal sealed class RouterHistory : IRouterHistory
     /// <summary>
     /// Invokes the <see cref="Changed"/> event.
     /// </summary>
-    private void OnChanged() => Changed?.Invoke(this, EventArgs.Empty);
+    // The observers are code of the application (a menu, a tab control, the history keeper): one that throws must not make a route change fail
+    // after the history has already changed, nor hide the observers that come after it. It is reported (RouteableErrors), as for Routing and Routed.
+    private void OnChanged()
+    {
+        if (Changed is not { } handlers) return;
+        foreach (EventHandler handler in handlers.GetInvocationList())
+        {
+            try { handler(this, EventArgs.Empty); }
+            catch (Exception ex) { Routeables.Abstraction.Errors.RouteableErrors.Report(null, ex, typeof(RouterHistory), "Changed"); }
+        }
+    }
 
     /// <summary>
     /// Retrieves the entry at the specified index, or <see langword="null"/> if the index is out of bounds.

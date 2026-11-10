@@ -2,6 +2,7 @@ using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Test.Abstraction;
 using static Routeables.Test.Abstraction.RouterTestKit;
+using Page = Routeables.Test.Abstraction.Page;
 
 namespace Routeables.Tests.Core;
 
@@ -107,11 +108,11 @@ public class RouterStackTests
     {
         var (router, pages) = await ThreePagesAsync();
 
-        Assert.True((await router.GoToAsync("-")).Success);
+        Assert.True((await router.GoToAsync("-",cancellationToken:TestContext.Current.CancellationToken)).Success);
         Assert.Same(pages[1].ViewModel, router.CurrentViewModel);
 
-        Assert.True((await router.GoToAsync(" - ")).Success);          // spaces are ignored
-        Assert.True((await router.GoToAsync("-")).Cancelled);          // first page: nothing to go back to
+        Assert.True((await router.GoToAsync(" - ", cancellationToken: TestContext.Current.CancellationToken)).Success);          // spaces are ignored
+        Assert.True((await router.GoToAsync("-", cancellationToken: TestContext.Current.CancellationToken)).Cancelled);          // first page: nothing to go back to
     }
 
     [Fact]
@@ -119,7 +120,7 @@ public class RouterStackTests
     {
         var (router, pages) = await ThreePagesAsync();
 
-        var result = await router.GoToAsync("-/not-registered");
+        var result = await router.GoToAsync("-/not-registered", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.False(result.Success);                                  // the route is unknown...
         Assert.Same(pages[1].ViewModel, router.CurrentViewModel);      // ...but the back part was done

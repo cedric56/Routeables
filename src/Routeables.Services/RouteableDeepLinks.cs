@@ -15,6 +15,9 @@ namespace Routeables.Services;
 /// </remarks>
 public static class RouteableDeepLinks
 {
+    /// <summary>The longest address (<see cref="Uri.OriginalString"/>) that is accepted, 4096 characters by default; a longer one is refused. Set it once at startup.</summary>
+    public static int MaxLength { get; set; } = 4096;
+
     /// <summary>
     /// The route of an address. <c>https://example.com/orders/42?x=1</c> is <c>/orders/42?x=1</c> once <c>example.com</c> is given as a host (see the overload with the hosts); for an application's own scheme the
     /// first segment is the name after the scheme: <c>myapp://orders/42?x=1</c> is <c>/orders/42?x=1</c>, and so is <c>myapp:///orders/42?x=1</c>.
@@ -43,6 +46,10 @@ public static class RouteableDeepLinks
     {
         route = string.Empty;
         if (uri is null || !uri.IsAbsoluteUri)
+            return false;
+
+        // An address comes from outside the application (a message, a web page, another app): a huge one is refused before it is parsed.
+        if (uri.OriginalString.Length > MaxLength)
             return false;
 
         if (schemes is { Count: > 0 } && !schemes.Contains(uri.Scheme, StringComparer.OrdinalIgnoreCase))

@@ -182,14 +182,29 @@ internal class Router(
     /// <inheritdoc />
     public async Task<RouteableResult> RefreshGuardsAsync(CancellationToken cancellationToken = default)
     {
-        if (history.Current is not { } current)
-            return RouteableResult.Ok();
+        // Like every route change, one at a time: the page asked about is the one that is shown when the guards answer, and a refresh
+        // that comes in the middle of a route change waits for it.
+        var enter = gate.EnterAsync(cancellationToken);
+        try { await enter; } catch { gate.Abort(); throw; }
 
-        var decision = await AskGuardsAsync(RouteableKind.MoveTo, current, current, cancellationToken);
+        RouterEntry? asked;
+        RouteGuardDecision decision;
+        try
+        {
+            asked = history.Current;
+            if (asked is null)
+                return RouteableResult.Ok();
+            decision = await AskGuardsAsync(RouteableKind.MoveTo, asked, asked, cancellationToken);
+        }
+        finally { gate.Exit(); }
+
         if (decision.IsAllowed)
             return RouteableResult.Ok();
-        // Nowhere to send the user: the page stays, as for any guard that cancels.
-        return decision.RedirectTo is { } route ? await RedirectAsync(route, cancellationToken) : RouteableResult.Cancel();
+        // Nowhere to send the user: the page stays, as for any guard that cancels. A page that is no longer the one shown (a route change came
+        // between the answer and now) is not redirected: the answer was about another page.
+        if (decision.RedirectTo is not { } route || !ReferenceEquals(history.Current, asked))
+            return RouteableResult.Cancel();
+        return await RedirectAsync(route, cancellationToken);
     }
 
     // Goes where a guard sent the user, once the route change that was refused has ended and released the gate.
