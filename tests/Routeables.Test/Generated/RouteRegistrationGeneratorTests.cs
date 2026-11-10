@@ -387,7 +387,7 @@ public class RouteRegistrationGeneratorTests
         var result = RunGenerator("""
             using Microsoft.Extensions.DependencyInjection;
             using Routeables.Abstraction;
-
+            using Routeables.Abstraction.Lifecycle;
             [Routeable("/orders/{id:int}", region: "detail", serviceLifetime: ServiceLifetime.Transient)]
             public class OrderViewModel(int id) { public int Id { get; } = id; }
 
@@ -407,6 +407,7 @@ public class RouteRegistrationGeneratorTests
     {
         var result = RunGenerator("""
             using Routeables.Abstraction;
+            using Routeables.Abstraction.Lifecycle;
 
             [Routeable("/orders")]
             public class OrderViewModel { }
@@ -425,6 +426,7 @@ public class RouteRegistrationGeneratorTests
     {
         var result = RunGenerator("""
             using Routeables.Abstraction;
+            using Routeables.Abstraction.Lifecycle;
 
             [Routeable("/orders")]
             public class OrderViewModel { }
@@ -446,6 +448,7 @@ public class RouteRegistrationGeneratorTests
     {
         var result = RunGenerator("""
             using Routeables.Abstraction;
+            using Routeables.Abstraction.Lifecycle;
 
             [Routeable("/orders")]
             public class OrderViewModel { }
@@ -468,7 +471,7 @@ public class RouteRegistrationGeneratorTests
     {
         var result = RunGenerator("""
             using Routeables.Abstraction;
-
+            using Routeables.Abstraction.Lifecycle;
             [Routeable("/dogs")]
             public class DogDetailsViewModel { }
 
@@ -503,7 +506,7 @@ public class RouteRegistrationGeneratorTests
     {
         var result = RunGenerator("""
             using Routeables.Abstraction;
-
+            using Routeables.Abstraction.Lifecycle;
             [Routeable("/orders")]
             public class OrderViewModel { }
 
@@ -562,7 +565,7 @@ public class RouteRegistrationGeneratorTests
     {
         var result = RunGenerator("""
             using Routeables.Abstraction;
-
+            using Routeables.Abstraction.Lifecycle;
             [Routeable("/cats")]
             [Routeable("/felines")]
             public class CatsViewModel { }

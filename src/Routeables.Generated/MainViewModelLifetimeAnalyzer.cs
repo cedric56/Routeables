@@ -32,7 +32,7 @@ public sealed class MainViewModelLifetimeAnalyzer : DiagnosticAnalyzer
         context.EnableConcurrentExecution();
         context.RegisterCompilationStartAction(start =>
         {
-            var main = start.Compilation.GetTypeByMetadataName("Routeables.Abstraction.IMainViewModel");
+            var main = start.Compilation.GetTypeByMetadataName("Routeables.Abstraction.Bases.IMainViewModel");
             if (main is null)
                 return;
 

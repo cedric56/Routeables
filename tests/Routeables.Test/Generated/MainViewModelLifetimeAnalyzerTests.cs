@@ -15,7 +15,7 @@ public class MainViewModelLifetimeAnalyzerTests
         using Microsoft.Extensions.DependencyInjection;
         using Microsoft.Extensions.DependencyInjection.Extensions;
         using Routeables.Abstraction;
-
+        using Routeables.Abstraction.Bases;
         public class Main : IMainViewModel
         {
             public ObservableCollection<IRouteableMenuEntry> Entries { get; } = new();
