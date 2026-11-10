@@ -83,6 +83,7 @@ public static class RouteableState
             var values = new Dictionary<string, string>();
             if (entries[i].ViewModel is IRouteableState keeper)
                 keeper.SaveState(values);
+            RouteablePersistence.Save(entries[i].ViewModel, values);   // the [Persist] properties
             CaptureValues(entries[i].Args, route, values);
             snapshots.Add(new RouteableSnapshot(route, values));
         }
@@ -113,9 +114,14 @@ public static class RouteableState
             // Not when a guard sent the user to another page: those values are not for it.
             if (snapshot.State.Count > 0
                 && string.Equals(router.History.Current?.Args.Route, snapshot.Route, StringComparison.Ordinal)
-                && router.CurrentViewModel is IRouteableState keeper)
-                keeper.LoadState(snapshot.State.Where(pair => !pair.Key.StartsWith(ValuePrefix, StringComparison.Ordinal))
-                    .ToDictionary(pair => pair.Key, pair => pair.Value));
+                && router.CurrentViewModel is { } shown)
+            {
+                if (shown is IRouteableState keeper)
+                    keeper.LoadState(snapshot.State.Where(pair => !pair.Key.StartsWith(ValuePrefix, StringComparison.Ordinal)
+                            && !pair.Key.StartsWith(RouteablePersistence.KeyPrefix, StringComparison.Ordinal))
+                        .ToDictionary(pair => pair.Key, pair => pair.Value));
+                RouteablePersistence.Load(shown, snapshot.State);   // the [Persist] properties, after LoadState
+            }
         }
 
         return true;

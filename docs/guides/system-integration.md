@@ -127,6 +127,32 @@ await RouteableState.RestoreSnapshotsAsync(router, RouteableState.DeserializeSna
 
 `LoadState` runs after the view model is initialized from its address, so it wins over the initialization. Keep to text that is small (a search, a draft, a selected tab): the Android bundle is limited to about 500 KB for the whole application. `RouteableLinkInbox.Save` and `Restore` do this for you, and a text made by the routes-only `Serialize` is read by `DeserializeSnapshots` (pages with no values).
 
+#### `[Persist]`: no code to write
+
+For plain properties, mark them and a source generator writes the `SaveState`/`LoadState` equivalent for you (direct property access, no reflection, safe for trimming and Native AOT):
+
+```csharp
+public class SearchViewModel
+{
+    [Persist] public string Query { get; set; } = "";
+    [Persist] public int Page { get; set; } = 1;
+    [Persist] public SortOrder Order { get; set; }      // enums are kept by name
+}
+```
+
+The values are saved in the same snapshots as above (`CaptureSnapshots`, the Blazor `PersistentComponentState`, `RouteableLinkInbox`) under the keys `persist:{Name}`, and read back after `LoadState`, once the page is shown. It is best effort: a value that cannot be read back (a renamed enum member, a text that changed) leaves the property as the view model built it, and never fails the route change.
+
+- **Kept types:** `string`, `bool`, the numbers, `char`, `Guid`, enums, `DateTime`, `DateTimeOffset`, `TimeSpan`, `DateOnly`, `TimeOnly`, and their `Nullable` forms.
+- **Other types** (a record for a form, a list) need a format, and the choice is yours. Three ways, from the most local:
+  - **For one property:** `[Persist(Converter = typeof(DraftConverter))]`, where `DraftConverter` implements `IPersistConverter<T>` (`string? Write(T)` and `bool TryRead(string, out T)`) and has a public constructor with no parameter. CSV, an identifier, base64, a custom string: whatever you write.
+  - **For every property of a type:** `RouteablePersistence.RegisterConverter<T>(converter)` (or the two-delegate overload), once at start. It also replaces a built-in format (a `DateTime` kept as ticks, say).
+  - **JSON, ready-made:** `RouteablePersistence.RegisterJson(MyJsonContext.Default.SearchFilter)` uses System.Text.Json's own generator (no reflection, trim-safe). It is one converter among the others, not a requirement.
+
+  The property's own converter wins over the one of the type, which wins over the built-in formats. A converter that returns `null` from `Write`, or a type with no format at all, leaves the property out (the rest is kept).
+- **Limit:** a value whose text is longer than `RouteablePersistence.MaxValueLength` (64 KB by default) is left out.
+- **Rules:** an instance property of a non-generic class, with a getter and a setter that are public or internal (not `init`). Otherwise, or when the `Converter` does not implement `IPersistConverter<T>` for the property's type or has no public parameterless constructor, the generator reports `ROUT401` and skips the property. Properties of base classes are kept too. A view model that also implements `IRouteableState` keeps working; it never sees the `persist:` keys.
+- **Not kept:** secrets. The values go wherever the snapshots go (a file, a bundle, the page sent to the browser by Blazor).
+
 ## The history between two runs
 
 Every host keeps the pages the user had open, and what they saved, from one run of the application to the next. One line registers it:

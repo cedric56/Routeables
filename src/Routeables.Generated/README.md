@@ -5,6 +5,7 @@ The source generators of Routeables. They are inside the `Routeables` package, w
 ## What it does
 
 - **Registers routes.** A `[Routeable("/path")]` view model is paired with the view of the same name (`DogDetailViewModel` → `DogDetailView`), or with `[RouteableView(typeof(NoteViewModel))]` on `NoteView`. `services.AddGeneratedRoutes()` is generated in each project.
+- **Keeps the values of a page.** `[Persist]` on a view-model property saves and restores it with the history snapshots (no reflection); see [System integration](../../docs/guides/system-integration.md).
 - **Types the routing methods.** `[RouteableViewModel(typeof(Caller))]` generates `GoTo{Name}Async(...)` on `Caller`, with the constructor parameters as arguments, checked at compile time.
 
-Works the same on Blazor, ASP.NET Core, MAUI, Avalonia, Uno, WinUI 3 and WPF. The warnings and errors (`ROUT101` to `ROUT301`) are explained in [Diagnostics](../../docs/guides/diagnostics.md).
+Works the same on Blazor, ASP.NET Core, MAUI, Avalonia, Uno, WinUI 3 and WPF. The warnings and errors (`ROUT101` to `ROUT401`) are explained in [Diagnostics](../../docs/guides/diagnostics.md).
