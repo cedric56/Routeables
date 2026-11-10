@@ -13,7 +13,7 @@ builder.Services.UseRouteablesServer(services =>
 {
     services.RegisterRoute<HomeView, HomeViewModel>(route: "/");
     services.RegisterRoute<HelloView, HelloViewModel>(route: "/hello/{name}");
-});
+}); 
 
 var app = builder.Build();
 
