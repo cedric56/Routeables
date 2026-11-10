@@ -17,6 +17,7 @@ public class PersistGeneratorTests
                 [Persist] public int? Page { get; set; }
                 public string NotKept { get; set; } = "";
             }
+
             """);
 
         var code = Generated(result);
@@ -127,10 +128,10 @@ public class PersistGeneratorTests
                 [Persist] internal bool Open { get; set; }
                 public string Skipped { get; set; } = "";
             }
-            """), out var output, out _);
+            """), out var output, out _, cancellationToken: TestContext.Current.CancellationToken);
 
         using var stream = new MemoryStream();
-        var emitted = output.Emit(stream);
+        var emitted = output.Emit(stream, cancellationToken: TestContext.Current.CancellationToken);
         Assert.True(emitted.Success, string.Join(Environment.NewLine, emitted.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error)));
         var assembly = System.Reflection.Assembly.Load(stream.ToArray());
         assembly.GetType("Routeables.Generated.RouteablePersistRegistration")!
@@ -185,10 +186,10 @@ public class PersistGeneratorTests
         GeneratorDriver driver = CSharpGeneratorDriver.Create(
             generators: [new PersistGenerator().AsSourceGenerator()],
             driverOptions: new GeneratorDriverOptions(IncrementalGeneratorOutputKind.None, trackIncrementalGeneratorSteps: true));
-        driver = driver.RunGenerators(first);
+        driver = driver.RunGenerators(first, cancellationToken: TestContext.Current.CancellationToken);
 
-        var second = first.AddSyntaxTrees(CSharpSyntaxTree.ParseText("public class Other { }"));
-        driver = driver.RunGenerators(second);
+        var second = first.AddSyntaxTrees(CSharpSyntaxTree.ParseText("public class Other { }", cancellationToken: TestContext.Current.CancellationToken));
+        driver = driver.RunGenerators(second, cancellationToken: TestContext.Current.CancellationToken);
 
         var outputs = driver.GetRunResult().Results.Single().TrackedSteps["RouteablesPersist"].SelectMany(s => s.Outputs).ToList();
         Assert.NotEmpty(outputs);

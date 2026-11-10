@@ -10,12 +10,19 @@
   Needs: agent-desktop (npm install -g agent-desktop), the samples built in Debug, PowerShell 5.1 or 7.
   Run from the repository root:  pwsh agent-desktop/run.ps1 -Hosts Wpf,Avalonia
 
+  The dotnet new templates (templates/) can be tried too, on Windows: -Templates avalonia,maui,uno,winui3 installs them, makes an
+  application of each in out/native-smoke/templates, builds it, starts it and follows its two pages (Hello, then About through the
+  button, then back). The packages the templates ask for must be restorable: publish them, or give a folder that holds the
+  packages built here with -PackageSource (dotnet pack, then -PackageSource artifacts).
+
   The result is out/native-smoke/report.json and one snapshot per step: send report.json to be read.
   The script was written from the documented commands of agent-desktop and has not been run: the first thing it records is the
   help of each command (out/native-smoke/help-*.txt), which is what to send if a step fails.
 #>
 param(
-  [string[]] $Hosts = @('Wpf', 'Avalonia', 'Maui', 'Uno'),
+  [string[]] $Hosts = @('Wpf', 'Avalonia', 'Maui', 'Uno', 'WinUI3'),
+  [string[]] $Templates = @(),
+  [string] $PackageSource = '',
   [string] $OutDir = 'out/native-smoke',
   [int] $StartTimeoutSeconds = 60
 )
@@ -23,7 +30,18 @@ param(
 $ErrorActionPreference = 'Continue'
 # With -File, "-Hosts Wpf,Avalonia" arrives as one string: split it.
 $Hosts = @($Hosts | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
+$Templates = @($Templates | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
+# Asked for templates only: the samples are not run unless -Hosts is given too.
+if ($Templates.Count -and -not $PSBoundParameters.ContainsKey('Hosts')) { $Hosts = @() }
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
+
+# A statement that fails is written to crash.txt with the line of the script, and the run goes on with the next statement: send that file.
+trap {
+  $text = "$(Get-Date -Format s)`n$($_ | Out-String)`n$($_.ScriptStackTrace)`n$($_.InvocationInfo.PositionMessage)`n----`n"
+  Add-Content -Path (Join-Path $OutDir 'crash.txt') -Value $text -Encoding UTF8
+  Write-Host "ERROR: $($_.Exception.Message)  ($($_.InvocationInfo.ScriptLineNumber): $($_.InvocationInfo.Line.Trim()))" -ForegroundColor Red
+  continue
+}
 
 # agent-desktop refuses a state folder owned by another principal (a folder made by an elevated shell, a copy, another user).
 # Unless the caller chose one, it works in a folder made now, by this process.
@@ -39,6 +57,7 @@ $catalog = @{
   Avalonia = @{ App = 'XAnimals.Avalonia.Desktop'; Exe = 'samples/XAnimals.Avalonia.Desktop/bin/Debug/net10.0/XAnimals.Avalonia.Desktop.exe' }
   Maui     = @{ App = 'XAnimals.Maui';            Exe = 'samples/XAnimals.Maui/bin/Debug/net10.0-windows10.0.19041.0/win-x64/XAnimals.Maui.exe' }
   Uno      = @{ App = 'XAnimals.Uno';             Exe = 'samples/XAnimals.Uno/bin/Debug/net10.0-desktop/XAnimals.Uno.exe' }
+  WinUI3   = @{ App = 'XAnimals.WinUI3';          Exe = 'samples/XAnimals.WinUI3/bin/Debug/net10.0-windows10.0.19041.0/win-x64/XAnimals.WinUI3.exe' }
 }
 
 $pages = 'Cats', 'Dogs', 'Monkeys', 'Elephants', 'Bears', 'Pandas', 'History', 'Regions', 'Adopt a pet', 'Dialogs', 'Features', 'Members', 'About'
@@ -142,7 +161,7 @@ $report = [ordered]@{ date = (Get-Date).ToString('s'); os = [Environment]::OSVer
 
 foreach ($name in $Hosts) {
   $host_ = $catalog[$name]
-  if (-not $host_) { Write-Warning "Unknown host '$name' (Wpf, Avalonia, Maui, Uno)"; continue }
+  if (-not $host_) { Write-Warning "Unknown host '$name' (Wpf, Avalonia, Maui, Uno, WinUI3)"; continue }
   $dir = Join-Path $OutDir $name
   New-Item -ItemType Directory -Force -Path $dir | Out-Null
   $entry = [ordered]@{ started = $false; pages = [ordered]@{}; dialogs = [ordered]@{}; problems = @() }
@@ -208,6 +227,88 @@ foreach ($name in $Hosts) {
     }
   } else { $entry.problems += 'Dialogs entry not found' }
 
+  Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+}
+
+# ---------------------------------------------------------------------------------------------------------------------------------
+# The templates: dotnet new, build, start, and follow the two pages they hold.
+# ---------------------------------------------------------------------------------------------------------------------------------
+# Where the executable of each template is once built in Debug (the application is called RouteablesApp).
+$templateExe = @{
+  avalonia = 'bin/Debug/net10.0/RouteablesApp.exe'
+  maui     = 'bin/Debug/net10.0-windows10.0.19041.0/win-x64/RouteablesApp.exe'
+  uno      = 'bin/Debug/net10.0-desktop/RouteablesApp.exe'
+  winui3   = 'bin/Debug/net10.0-windows10.0.19041.0/win-x64/RouteablesApp.exe'
+}
+
+# True when a node of the tree shows this text (a label, a button, a text block).
+function Test-Text($snapshot, [string] $text) {
+  [bool]($snapshot.Nodes | Where-Object { $_.name -and $_.name.Contains($text) } | Select-Object -First 1)
+}
+
+# Waits until the window shows the text, or until the time is over.
+function Wait-Text([string] $app, [string] $text, [string] $label, [string] $dir, [int] $seconds = 20) {
+  $deadline = (Get-Date).AddSeconds($seconds)
+  do {
+    $snapshot = Get-Snapshot $app $label $dir
+    if ($snapshot.Ok -and (Test-Text $snapshot $text)) { return $true }
+    Start-Sleep -Milliseconds 800
+  } while ((Get-Date) -lt $deadline)
+  $false
+}
+
+# Presses a button by its name: the accessibility press first, a physical click when the page does not change.
+function Invoke-Button([string] $app, [string] $name, [string] $expected, [string] $dir) {
+  $node = Find-Node (Get-Snapshot $app 'button' $dir) $name
+  if (-not $node) { return "button '$name' not found" }
+  Invoke-Click $node | Out-Null
+  if (Wait-Text $app $expected ('after-' + ($name -replace '\W', '_')) $dir 6) { return $null }
+  $ref = [string]$node.ref_id
+  if (-not $ref.StartsWith('@')) { $ref = '@' + $ref }
+  Invoke-Ad --headed click $ref | Out-Null
+  if (Wait-Text $app $expected ('after-headed-' + ($name -replace '\W', '_')) $dir 10) { return $null }
+  "the page did not show '$expected' after the click on '$name'"
+}
+
+$report['templates'] = [ordered]@{}
+foreach ($template in $Templates) {
+  $name = $template.ToLowerInvariant()
+  $entry = [ordered]@{ created = $false; built = $false; started = $false; steps = [ordered]@{}; problems = @() }
+  $report['templates'][$name] = $entry
+  if (-not $templateExe.ContainsKey($name)) { $entry.problems += "unknown template '$template' (avalonia, maui, uno, winui3)"; continue }
+
+  $root = Join-Path $OutDir (Join-Path 'templates' $name)
+  if (Test-Path $root) { Remove-Item -Recurse -Force $root }
+  New-Item -ItemType Directory -Force -Path $root | Out-Null
+  $log = Join-Path $root 'log'
+  New-Item -ItemType Directory -Force -Path $log | Out-Null
+
+  # The templates of this repository, installed from the folder (no package needed to try them).
+  & dotnet new install (Resolve-Path 'templates').Path *>&1 | Out-File (Join-Path $log 'install.txt')
+  & dotnet new "routeables-$name" -n RouteablesApp -o (Join-Path $root 'app') --force *>&1 | Out-File (Join-Path $log 'new.txt')
+  $app = Join-Path $root 'app'
+  $entry.created = Test-Path (Join-Path $app 'RouteablesApp.csproj')
+  if (-not $entry.created) { $entry.problems += 'dotnet new did not make the project (see log/new.txt)'; continue }
+
+  $build = @('build', (Join-Path $app 'RouteablesApp.csproj'), '-c', 'Debug')
+  if ($PackageSource) { $build += @('--source', (Resolve-Path $PackageSource).Path, '--source', 'https://api.nuget.org/v3/index.json') }
+  & dotnet @build *>&1 | Out-File (Join-Path $log 'build.txt')
+  $exe = Join-Path $app $templateExe[$name]
+  $entry.built = ($LASTEXITCODE -eq 0) -and (Test-Path $exe)
+  if (-not $entry.built) { $entry.problems += 'the build failed or the executable is missing (see log/build.txt)'; continue }
+
+  $process = Start-Process -FilePath $exe -PassThru
+  $entry.started = Wait-Text 'RouteablesApp' 'Hello, World!' 'start' $root $StartTimeoutSeconds
+  if (-not $entry.started) { $entry.problems += "the first page did not show 'Hello, World!' in time"; Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue; continue }
+  $entry['steps']['hello'] = 'ok'
+
+  $failure = Invoke-Button 'RouteablesApp' 'About' 'the page is chosen by an address' $root
+  $entry['steps']['about'] = if ($failure) { $failure } else { 'ok' }
+  if (-not $failure) {
+    $failure = Invoke-Button 'RouteablesApp' 'Hello' 'Hello, again!' $root
+    $entry['steps']['back'] = if ($failure) { $failure } else { 'ok' }
+  }
+  Write-Host ("[template {0}] {1}" -f $name, (($entry['steps'].GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '))
   Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
 }
 
