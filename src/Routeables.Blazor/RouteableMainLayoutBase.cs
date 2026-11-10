@@ -170,21 +170,33 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
-            // The saved history first: the address that follows is then the one of the page it shows, not a new push.
-            var restored = _restorable && _persistence is not null && await _persistence.RestoreAsync();
-            if (restored && Provider.GetService<IRouteableMenuViewModel>() is { } main)
-                main.OnRouterMoved(Provider.GetRequiredService<IRouter>().CurrentViewModel);
-            var addressChosen = await UrlSync.StartAsync();
-            addressChosen |= restored;
-            await Initialize(Provider);
-            await ApplyThemeAsync();
-            // The default page only when the address did not already choose one (a link to /elephants/Mammoth).
-            // Through SelectedEntry: it is what selects the entry in the menu, and it shows the page.
-            // An application without a menu opens its home route here and not from the region: the address decides, and it is applied above.
-            if (!addressChosen && !MainViewModel.SelectFirst())
-                RegionStart.StartDefault(Provider);
+            try
+            {
+                await FirstRenderAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+                // The circuit closed (page reloaded or closed) while the first render was still going: there is nobody left to start for.
+            }
         }
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task FirstRenderAsync()
+    {
+        // The saved history first: the address that follows is then the one of the page it shows, not a new push.
+        var restored = _restorable && _persistence is not null && await _persistence.RestoreAsync();
+        if (restored && Provider.GetService<IRouteableMenuViewModel>() is { } main)
+            main.OnRouterMoved(Provider.GetRequiredService<IRouter>().CurrentViewModel);
+        var addressChosen = await UrlSync.StartAsync();
+        addressChosen |= restored;
+        await Initialize(Provider);
+        await ApplyThemeAsync();
+        // The default page only when the address did not already choose one (a link to /elephants/Mammoth).
+        // Through SelectedEntry: it is what selects the entry in the menu, and it shows the page.
+        // An application without a menu opens its home route here and not from the region: the address decides, and it is applied above.
+        if (!addressChosen && !MainViewModel.SelectFirst())
+            RegionStart.StartDefault(Provider);
     }
 
     private async void ThemeChanged(object? sender, RouteableRequestedTheme theme)

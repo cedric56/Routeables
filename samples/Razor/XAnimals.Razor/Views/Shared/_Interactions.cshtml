@@ -49,27 +49,43 @@
         </form>
     </div>
 }
-@* The system notifications that a view model asked for (CreateNotificationAsync): the browser shows them, if the visitor allows it. The server is
-   not told what he does with them. The permission is asked with a click, as the browsers require. *@
+@* The system notifications that a view model asked for (CreateNotificationAsync): the browser shows them, if the visitor allows it. The page
+   tells the server when one is clicked or closed (a post of the form above). The permission is asked with a click, as the browsers require. *@
 @if (Model.TakeSystemNotificationsJson() is { } system)
 {
     <script type="application/json" id="web-system-notifications">@Html.Raw(system)</script>
+    @* The form carries the anti-forgery token: the script posts it to tell the server that a notification was clicked or closed. *@
+    <form method="post" id="web-system-report" hidden>
+        <input type="hidden" name="target" value="system" />
+        <input type="hidden" name="do" value="" />
+    </form>
     <script>
         (function () {
             if (!('Notification' in window)) return;
             var commands = JSON.parse(document.getElementById('web-system-notifications').textContent);
             var live = {};
+            // Tells the server what the visitor did (once per notification: a click closes it, and the close must not be reported again).
+            function report(id, what) {
+                if (!live[id]) return;
+                delete live[id];
+                var form = document.getElementById('web-system-report');
+                var data = new FormData(form);
+                data.set('do', what + ':' + id);
+                fetch(window.location.href, { method: 'POST', body: data, credentials: 'same-origin', redirect: 'manual' }).catch(function () { });
+            }
             function run() {
                 commands.forEach(function (c) {
                     if (c.op === 'show') {
                         var n = new Notification(c.title || '', { body: c.message, icon: c.icon, tag: c.tag || ('routeables-' + c.id) });
-                        n.onclick = function () { window.focus(); n.close(); };
                         live[c.id] = n;
+                        n.onclick = function () { window.focus(); report(c.id, 'click'); n.close(); };
+                        n.onclose = function () { report(c.id, 'close'); };
                         if (c.expirationMs > 0) setTimeout(function () { n.close(); }, c.expirationMs);
                     } else if (c.op === 'close') {
-                        if (live[c.id]) live[c.id].close();
+                        // Closed by the server: it knows, nothing to report.
+                        if (live[c.id]) { var n2 = live[c.id]; delete live[c.id]; n2.close(); }
                     } else if (c.op === 'closeAll') {
-                        Object.keys(live).forEach(function (id) { live[id].close(); });
+                        Object.keys(live).forEach(function (id) { var n3 = live[id]; delete live[id]; n3.close(); });
                     }
                 });
             }

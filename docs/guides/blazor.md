@@ -43,6 +43,17 @@ Routeables does not replace `Router` in `Routes.razor`: the sample keeps it.
 - **History across prerender and reconnection:** with `RouteablePrerenderOptions` registered (`PersistHistory`, on by default), the history and the state of the pages (`IRouteableState`, `WithValue`) are saved with `PersistentComponentState` and restored by the circuit or WebAssembly runtime that takes over. Without prerendering, register `services.AddSingleton(new RouteableHistoryOptions())` for the same hand-over (a paused circuit, a persisted state).
 - A page registered without an explicit route has no address of its own: the address goes back to `/`.
 
+### Stylesheets to link
+
+The layout, the menu and the dialog hosts (Modal, ContentDialog, TaskDialog, Snack) are styled by **scoped CSS** (`*.razor.css`) that Blazor gathers in the bundle of your application, plus `theme.css` for the transitions. Both must be linked in the `<head>` of `App.razor` (or `index.html`/`_Host.cshtml`):
+
+```html
+<link rel="stylesheet" href="@Assets["MyApp.styles.css"]" />            @* scoped CSS of the app AND of Routeables.Blazor *@
+<link rel="stylesheet" href="_content/Routeables.Blazor/theme.css" />   @* transitions and shared rules *@
+```
+
+`MyApp` is the name of your project. Without `MyApp.styles.css` the dialogs are not overlays: they are drawn inline, without a backdrop, under the page. If the dialogs look like that, check this link first (the file must be reachable at `/MyApp.styles.css`, and `MapStaticAssets()`/`UseStaticFiles()` must be enabled).
+
 Everything is scoped: with Blazor Server, each circuit has its own router and history.
 
 ## Write a page

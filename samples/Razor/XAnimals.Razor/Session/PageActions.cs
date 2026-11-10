@@ -21,6 +21,9 @@ public static class PageActions
     /// <summary>The target of the buttons of the notifications.</summary>
     public const string Toast = "toast";
 
+    /// <summary>The target of the report of a system notification of the browser (clicked or closed).</summary>
+    public const string System = "system";
+
     /// <summary>The target of the button of the theme.</summary>
     public const string Theme = "theme";
 
@@ -49,6 +52,9 @@ public static class PageActions
                 return;
             case Toast:
                 interactions.Dismiss(index, click: name == "click");
+                return;
+            case System:
+                interactions.CompleteSystemNotification((uint)index, activated: name == "click");
                 return;
             case Theme:
                 // Default (the browser decides), then light, then dark.

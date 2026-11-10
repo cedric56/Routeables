@@ -94,4 +94,35 @@ public class AspNetCoreHostTests
             Assert.Contains("closeAll", interactions.TakeSystemNotificationsJson());
         }
     }
+
+    /// <summary>The page reports a click or a close: the notification leaves the active ones and NotificationCompleted is raised once.</summary>
+    [Fact]
+    public async Task A_click_or_a_close_reported_by_the_page_raises_NotificationCompleted_once()
+    {
+        var (service, interactions, scope) = Notifications();
+        using (scope)
+        {
+            var events = new List<RouteableSystemNotificationEventArgs>();
+            service.NotificationCompleted += (_, e) => events.Add(e);
+
+            var clicked = (await service.CreateNotificationAsync(null))!;
+            await clicked.ShowAsync();
+            var closed = (await service.CreateNotificationAsync(null))!;
+            await closed.ShowAsync();
+
+            Assert.True(interactions.CompleteSystemNotification(clicked.Id, activated: true));
+            Assert.False(interactions.CompleteSystemNotification(clicked.Id, activated: false));   // a second report is ignored
+            Assert.True(interactions.CompleteSystemNotification(closed.Id, activated: false));
+            Assert.False(interactions.CompleteSystemNotification(9999, activated: true));          // an unknown one too
+
+            Assert.Equal(2, events.Count);
+            Assert.Equal(clicked.Id, events[0].NotificationId);
+            Assert.True(events[0].IsActivated);
+            Assert.False(events[0].IsCancelled);
+            Assert.Equal(closed.Id, events[1].NotificationId);
+            Assert.True(events[1].IsCancelled);
+            Assert.False(events[1].IsActivated);
+            Assert.Empty(service.ActiveNotifications());
+        }
+    }
 }

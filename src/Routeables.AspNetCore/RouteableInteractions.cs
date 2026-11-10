@@ -127,6 +127,29 @@ public sealed class RouteableInteractions : IDisposable
             _systemCommands.Add(new RouteableBrowserNotificationCommand("close", id));
     }
 
+    /// <summary>Raised when the visitor clicked a system notification of the browser or closed it (<see cref="CompleteSystemNotification"/>).</summary>
+    public event EventHandler<RouteableSystemNotificationEventArgs>? SystemNotificationCompleted;
+
+    /// <summary>
+    /// What the page tells the server once the visitor clicked a system notification (<paramref name="activated"/>) or closed it: the
+    /// notification is no longer active and <see cref="SystemNotificationCompleted"/> is raised. A notification that is not active (already
+    /// reported, or closed by the server) is ignored, so a report that arrives twice raises one event.
+    /// </summary>
+    /// <returns><see langword="true"/> when the notification was active.</returns>
+    public bool CompleteSystemNotification(uint id, bool activated, string? actionTag = null)
+    {
+        if (!_systemActive.Remove(id))
+            return false;
+        SystemNotificationCompleted?.Invoke(this, new RouteableSystemNotificationEventArgs
+        {
+            NotificationId = id,
+            ActionTag = actionTag,
+            IsActivated = activated,
+            IsCancelled = !activated
+        });
+        return true;
+    }
+
     /// <summary>Closes every system notification that is active.</summary>
     public void CloseAllSystemNotifications()
     {

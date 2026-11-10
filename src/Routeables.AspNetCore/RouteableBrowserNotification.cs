@@ -5,8 +5,9 @@ namespace Routeables.AspNetCore;
 /// <summary>
 /// A system notification of the web host: the notification center of the visitor's browser (its Notification API). The server only
 /// asks: <see cref="ShowAsync"/> queues the notification, and the page that is rendered next hands it to the browser (see
-/// <see cref="RouteableInteractions.TakeSystemNotificationsJson"/>). The browser decides: the visitor must have allowed notifications, and the
-/// server is not told what he did with it (<see cref="IRouteableNotificationService.NotificationCompleted"/> is never raised).
+/// <see cref="RouteableInteractions.TakeSystemNotificationsJson"/>). The browser decides: the visitor must have allowed notifications. The page
+/// tells the server when the visitor clicks the notification or closes it, with a request
+/// (<see cref="RouteableInteractions.CompleteSystemNotification"/>), and <see cref="IRouteableNotificationService.NotificationCompleted"/> is raised then.
 /// </summary>
 public sealed class RouteableBrowserNotification : IRouteableSystemNotification
 {
