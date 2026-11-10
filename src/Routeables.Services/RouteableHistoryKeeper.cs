@@ -157,6 +157,12 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             SaveNow(allowEmpty: true);
     }
 
+    /// <summary>Writes the history now, without waiting for the next route change (the application is going to sleep). Does nothing before <see cref="Start"/> has put the previous history back.</summary>
+    public void Flush()
+    {
+        if (_active) SaveNow();
+    }
+
     private void SaveNow() => SaveNow(allowEmpty: false);
 
     private void SaveNow(bool allowEmpty)

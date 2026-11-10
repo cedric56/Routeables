@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
@@ -212,6 +212,10 @@ public static class WpfRouteablesExtensions
             window.Activated -= OnActivated;
             window.Closed -= OnClosed;
             RouteableWindows.Remove(window);
+
+            // The last window closing is the application leaving: the pages are told, and the history is saved with what they wrote.
+            if (RouteableWindows.Active is null)
+                provider.GetService<RouteableAppLifecycle>()?.SleepNow();
 
             try { onDispose?.Invoke(); }
             catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(WpfRouteablesExtensions)); }   // the provider is still disposed below

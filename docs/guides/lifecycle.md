@@ -82,6 +82,20 @@ services.AddTransient<IFormatter, Formatter>();         // not disposable: fine
 
 If a page needs its own instance of a disposable service, create it inside the page and dispose it in the page's `Dispose`, which the router calls when the page leaves the history.
 
+### Tabs and regions: active and inactive
+
+A tab bound to a route (`RouteableTabs`, `RegionTabs`) changes page through the router, so `OnLeftAsync` is called on the page of the tab that is left and `OnEnteredAsync` on the page of the tab that is selected, each time, including when you come back to a cached page. Use them as the "active / inactive" notification (Prism's `IActiveAware`); there is nothing more to implement. A tab that holds its own content, with no route, is outside the router and is not told.
+
+### The application goes to sleep or comes back
+
+`IRouteableAppLifecycle` (`OnSleepAsync`, `OnResumeAsync`) is about the application, not the route. `RouteableAppLifecycle` tells the page shown in the main router and in each region, then saves the history, so the `[Persist]` properties a page updates in `OnSleepAsync` are kept even if the system kills the process. Closing the last window is a sleep too (a mobile system gives no other notice).
+
+| Host | What raises it |
+|---|---|
+| WPF, Avalonia | The window closing (`SleepNow`: waits at most 2 seconds, a page must not await work that needs the interface thread there) |
+| MAUI | `Window.UseRouteablesLifecycle(services)` in `CreateWindow`: `Stopped`, `Resumed`, `Destroying` |
+| Others | Call `provider.GetRequiredService<RouteableAppLifecycle>().SleepAsync()` / `ResumeAsync()` from the host's own suspend and resume events |
+
 ## Events
 
 ```csharp

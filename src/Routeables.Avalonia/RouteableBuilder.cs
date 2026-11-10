@@ -238,6 +238,9 @@ public static class RouteableBuilder
                         {
                             topLevel?.Closed -= OnClosed;
 
+                            // The application leaving: the pages are told, and the history is saved with what they wrote.
+                            provider.GetService<RouteableAppLifecycle>()?.SleepNow();
+
                             try { onDispose?.Invoke(); }
                             catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(RouteableBuilder)); }   // the provider is still disposed below
 

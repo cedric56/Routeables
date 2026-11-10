@@ -12,6 +12,9 @@ Routeables does the route change part of Prism: views and view models, routes wi
 | `INavigationService.NavigateAsync("Dogs")` | `router.GoToAsync("/dogs")` |
 | `NavigateAsync("DogDetail?name=Eurohound")` or `NavigationParameters` | A template parameter, `"/dogs/{name}"`, matched to a constructor parameter of the view model. Other values go in `RouteableArgs.Create().ForViewModel(...)`. See [Passing arguments](arguments.md). |
 | `GoBackAsync()` | `router.GoBackAsync()` (keeps the entry for `ForwardAsync`), or `router.PopAsync()` to leave a page for good |
+| `NavigateAsync("A/B/C")`, `GoBackToAsync("A")` | `router.GoToStackAsync(["/a", "/b", "/c"])`, `router.GoBackToAsync("/a")` ([History](history.md)) |
+| `IApplicationLifecycleAware` (`OnSleep`, `OnResume`) | `IRouteableAppLifecycle` ([lifecycle](lifecycle.md)) |
+| `IActiveAware` | `OnEnteredAsync` / `OnLeftAsync` fire on every tab switch |
 | `INavigationAware.OnNavigatedTo` / `OnNavigatedFrom` | `IRouteable.OnEnteredAsync` / `OnLeftAsync`; `OnEnteringAsync` / `OnLeavingAsync` run just before |
 | `IConfirmNavigation.CanNavigate` | `IRouteable.CanLeaveAsync` for the page that is left; `IRouteGuard` for a rule on the page that is entered, with redirect. See [Back, deep links, guards and diagnostics](system-integration.md). |
 | `IInitializeAsync` | `IInitializeAsync` (same idea, with the arguments) |

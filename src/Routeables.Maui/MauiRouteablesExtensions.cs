@@ -125,6 +125,26 @@ public static class MauiRouteablesExtensions
     }
 
     /// <summary>
+    /// Tells the pages shown that the application goes to the background or comes back (<see cref="IRouteableAppLifecycle"/>), from the events of the
+    /// window: <c>Stopped</c> sleeps (the history is then saved), <c>Resumed</c> resumes, <c>Destroying</c> sleeps once more. Call it where the window is made:
+    /// <c>protected override Window CreateWindow(IActivationState? state) =&gt; base.CreateWindow(state).UseRouteablesLifecycle(Handler!.MauiContext!.Services);</c>
+    /// </summary>
+    /// <param name="window">The window of the application.</param>
+    /// <param name="services">The services of the application.</param>
+    /// <returns>The same <paramref name="window"/>, for chaining.</returns>
+    public static Microsoft.Maui.Controls.Window UseRouteablesLifecycle(this Microsoft.Maui.Controls.Window window, IServiceProvider services)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+        ArgumentNullException.ThrowIfNull(services);
+        var lifecycle = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetService<RouteableAppLifecycle>(services);
+        if (lifecycle is null) return window;
+        window.Stopped += (_, _) => _ = lifecycle.SleepAsync();
+        window.Resumed += (_, _) => _ = lifecycle.ResumeAsync();
+        window.Destroying += (_, _) => lifecycle.SleepNow();
+        return window;
+    }
+
+    /// <summary>
     /// Turns on the system notifications of <see cref="IRouteableNotificationService"/> (<c>CreateNotificationAsync</c>, <c>ActiveNotifications</c>,
     /// <c>CloseAll</c>, <c>NotificationCompleted</c>, <c>InitializeAsync</c>): Android, iOS, Mac Catalyst and Windows use their notification center.
     /// It is the counterpart of <c>WithAppNotifications</c> of Avalonia.Labs.Notifications, and separate from <c>UseRouteables</c>: without this call the

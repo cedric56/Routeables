@@ -9,6 +9,9 @@ Each router keeps a history of entries (view model, view and arguments):
 | `GoToAsync` (or `GoToRouteAsync`) | Pushes a new entry. Forward entries are cut off. The history has no limit by default (a scoped router keeps 50): it grows until entries are popped or erased (see below to set one) |
 | `GoBackAsync` / `ForwardAsync` | Moves the cursor. Nothing is removed, so a page you went back from stays alive for `Forward` |
 | `MoveToAsync(index)` | Moves the cursor to an entry |
+| `GoBackToAsync("/orders")`, `GoBackToAsync<TViewModel>()`, `GoBackToAsync(entry => ...)` | Moves the cursor to the nearest earlier entry that matches (route compared without the leading `/`, the query and the case); cancelled when none does. Later entries stay, as with `GoBackAsync` |
+| `GoBackAsync(steps)` | Moves the cursor back several entries in one move (one lifecycle change); cancelled when the history is shorter |
+| `GoToStackAsync(["/orders", "/orders/42"])` | Goes to each route in order, so the history gets one entry per route (deep link, wizard). Each page runs its guards and lifecycle, the intermediate pages included; stops at the first route that fails or is cancelled and returns that result |
 | `PopAsync` | Goes back and removes the entry you left |
 | `GoBackToRootAsync` | Returns to the first entry |
 | `EraseHistoryAsync` | Clears the history |

@@ -28,6 +28,7 @@ internal static class RouteableHostRegistration
         services.RegisterEnvironments(runtime);
         services.RegisterRouting();
         services.TryAddSingleton(new RouteableHostLifetime(ServiceLifetime.Singleton));
+        services.TryAddSingleton<RouteableAppLifecycle>();
     }
 
     /// <summary>
