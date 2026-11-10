@@ -17,7 +17,7 @@ public static class MudBlazorReshapeExtensions
     /// Call it after <c>UseRouteables</c>; there is no need to call <c>UseRouteablesServices</c> as well.
     /// <code>
     /// services.UseRouteablesServer&lt;MainViewModel&gt;(r => r.AddGeneratedRoutes());
-    /// services.UseMudBlazor();
+    /// services.UseReshapeMudBlazor();
     /// </code>
     /// </summary>
     /// <param name="services">The service collection to add services to.</param>

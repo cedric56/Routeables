@@ -41,7 +41,7 @@ Keep your own `Shell` (flyout, tabs, routes in XAML) and let Routeables build ea
 xamlShell.AttachRouteables(provider);   // "cats" opens the route "/cats"
 ```
 
-`ShellItems.AttachRouteables(Shell, IServiceProvider)` returns an `IDisposable`. Each `ShellContent` with a `Route` gets the view of that route, and the router stays in step with what the user selects.
+`RouteableShellItems.AttachRouteables(Shell, IServiceProvider)` returns an `IDisposable`. Each `ShellContent` with a `Route` gets the view of that route, and the router stays in step with what the user selects.
 
 ## Dialogs and notifications
 

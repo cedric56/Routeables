@@ -11,7 +11,7 @@ It is a package of its own, `Routeables.Abstraction`, for a library that only de
 A view model depends only on `IRouter`:
 
 ```csharp
-using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 
 public class DogsViewModel(IRouter router)
 {
@@ -26,16 +26,36 @@ public class DogsViewModel(IRouter router)
 
 `IRouter` also offers `GoBackAsync`, `ForwardAsync`, `PopAsync`, `GoBackToRootAsync`, `MoveToAsync` and `EraseHistoryAsync`. A route change that cannot happen (an unknown address, a page that vetoes leaving) returns a failed or cancelled `RouteableResult` and does not throw.
 
+## Namespaces
+
+The types are in sub-namespaces of `Routeables.Abstraction`; add the `using` of the area you touch.
+
+| Namespace | Holds |
+| --- | --- |
+| `Routeables.Abstraction` | `[Routeable]`, `[RouteableView]`, `[RouteableViewModel]`, `[RouteableParameter]`, modules (`IRouteableModules`), menu entries (`AddMenuEntries`) |
+| `.Routing` | `IRouter`, `IRouteableArgs`, `RouteableResult`, `IRouteableReturnsResult<T>`, the routing events, `RouterExtensions` |
+| `.Bases` | `IRouteableMenuEntry`, `IMainViewModel`, `ICloseableViewModel` |
+| `.Lifecycle` | `IRouteable`, `IRouteableViewBinder`, `RouteableHostLifetime` |
+| `.History` | `IHistoryEntry` |
+| `.Guards` | `IRouteGuard`, `RouteGuardDecision` |
+| `.Transitions` | `RouteTransition` |
+| `.Injections` | `IRouteableInjection` and the property injection |
+| `.Initializers` | `IRouteableTypedInitializer` |
+| `.Registrations` | `RegisterRoute<TView, TViewModel>`, `RouteableAutoRegistration` |
+| `.Errors` | `IRouteableErrorSink`, `RouteableErrors` |
+| `.Locking` | `IRouteableLockCoordinator`, `IRouteableLockCoordinatorFactory` |
+| `.Icons` | `IRouteableIconProvider` |
+
 ## What is in it
 
 | Area | Main types |
 | --- | --- |
 | Router | `IRouter`, `IRouterHistory`, `RouteableResult`, `RouteableRoutingEventArgs`, `RouteableRoutedEventArgs` |
 | Routes | `[Routeable]`, `[RouteableView]`, `[RouteableViewModel]`, `RegisterRoute<TView, TViewModel>` |
-| Lifecycle | `IRouteable` (every member has a default), `IInitializeAsync`, `IReturnsResult<T>` |
+| Lifecycle | `IRouteable` (every member has a default), `IInitializeAsync`, `IRouteableReturnsResult<T>` |
 | Arguments | `IRouteableArgs` (values for the view model, for the view, neutral ones), `RouteableParameterAttribute` |
 | Menu | `IRouteableMenuEntry`, `IMainViewModel`, `AddMenuEntries`, `IRouteableModules` (modules loaded while running) |
-| Errors and locks | `IRouteableErrorSink`, `RouteableErrors`, `ILockCoordinator` |
+| Errors and locks | `IRouteableErrorSink`, `RouteableErrors`, `IRouteableLockCoordinator` |
 
 The dialogs, notifications and theme are in [`Routeables.Services`](../Routeables.Services/README.md), regions in [`Routeables.Regions`](../Routeables.Regions/README.md), segments in [`Routeables.Segments`](../Routeables.Segments/README.md): a project that only routes carries none of them.
 

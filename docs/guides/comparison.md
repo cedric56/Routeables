@@ -34,7 +34,7 @@ Routeables does not depend on Rx: a route is a text with parameters matched to a
 
 Shell is part of MAUI, needs nothing more, and is maintained with it. For an application that is only on MAUI, it can be all you need.
 
-Routeables adds view-model-first routes and the other hosts. The two live together: `ShellRoutes.UseShellRoutes` lets `Shell.Current.GoToAsync("//orders/42")` reach the router, and an address the router does not know is left to Shell. See [Hosts, services and samples](hosts.md).
+Routeables adds view-model-first routes and the other hosts. The two live together: `RouteableShellRoutes.UseShellRoutes` lets `Shell.Current.GoToAsync("//orders/42")` reach the router, and an address the router does not know is left to Shell. See [Hosts, services and samples](hosts.md).
 
 ### Uno.Extensions Navigation
 

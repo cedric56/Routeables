@@ -40,7 +40,7 @@ A region is one router for as long as its scope lives, which is the whole applic
 
 ```csharp
 // AdoptViewModel.cs: an entry says which region shows it (null: the default router)...
-var entry = new MenuEntry<PetViewModel>("Pet", null, route: "pet", template: "pet")
+var entry = new RouteableMenuEntry<PetViewModel>("Pet", null, route: "pet", template: "pet")
 {
     Region = "adopt",
     Arguments = RouteableArgs.Create().ForViewModel(pet)
@@ -78,7 +78,7 @@ framework. The *Adopt a pet* page of the samples shows it: click an animal and i
 ### Routing with a result
 
 A page the user comes back from (a picker, a form, a confirmation) gives a value to whoever opened it. The caller waits; the page
-implements `IReturnsResult<T>`; the router needs nothing more.
+implements `IRouteableReturnsResult<T>`; the router needs nothing more.
 
 ```csharp
 // No sample page returns a result: this one is the shape. (The modals of the samples, NoteViewModel, use ICloseableViewModel.)
@@ -87,7 +87,7 @@ var picked = await router.GoToForResultAsync<Color>("/colors");
 if (picked.Returned) Apply(picked.Value);                           // picked.OpenResult says whether the page opened
 
 // The page
-public sealed class ColorsViewModel(IRouter router) : IReturnsResult<Color>
+public sealed class ColorsViewModel(IRouter router) : IRouteableReturnsResult<Color>
 {
     private Color? _picked;
     public Task PickAsync(Color color) { _picked = color; return router.PopAsync(); }
@@ -101,7 +101,7 @@ token (`Cancelled`; the page stays). It works on the router of a region too.
 
 ### Following a region: `RegionFollower`
 
-`RegionFollower`, `RegionLayout` and `RegionBinding` are in `Routeables.Regions` (namespace `Routeables.Regions`); the regions themselves (`AddRegion`, `GetRouter`) are part of routing.
+`RegionFollower`, `RegionLayout` and `RegionBinding` are in `Routeables.Regions` (namespace `Routeables.Regions`), with what the hosts share: `RegionConnection` (connect when the control appears, let go when it leaves), `RegionTabs<TTab>` (the tabs of a tab control are routes) and `RegionErrors`; the regions themselves (`AddRegion`, `GetRouter`) are part of routing.
 
 The history of a router changes while the router holds its gate, so a handler of `History.Changed` must not route that
 router. To make other regions follow one (a header that says what the content shows, a menu that selects its entry), create a

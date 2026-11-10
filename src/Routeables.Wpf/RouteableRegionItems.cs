@@ -18,8 +18,7 @@ public class RouteableRegionItems : ItemsControl
         DependencyProperty.Register(nameof(Region), typeof(string), typeof(RouteableRegionItems),
             new PropertyMetadata(null, (d, _) => ((RouteableRegionItems)d).Reconnect()));
 
-    private RegionItemsBinding? _binding;
-    private bool _active;
+    private readonly RegionConnection _connection = new();
 
     static RouteableRegionItems()
     {
@@ -47,7 +46,7 @@ public class RouteableRegionItems : ItemsControl
 
     private void Reconnect()
     {
-        if (_binding is null) return;
+        if (!_connection.IsConnected) return;
 
         Disconnect();
         Connect();
@@ -55,22 +54,14 @@ public class RouteableRegionItems : ItemsControl
 
     private void Connect()
     {
-        if (_binding is not null) return;
-
-        var provider = Services ?? ServiceLocator.Services;
-        if (provider is null) return;
-
-        // Set before the binding exists: it gives the views of now as soon as it is built.
-        _active = true;
-        _binding = new RegionItemsBinding(provider.GetRouter(Region), Show);
+        // The binding gives the views of now as soon as it is built.
+        _connection.Connect(Services ?? ServiceLocator.Services, Region, router => new RegionItemsBinding(router, Show));
     }
 
     // A view has one parent: they are released when the control is unloaded, so another control can display them.
     private void Disconnect()
     {
-        _active = false;
-        _binding?.Dispose();
-        _binding = null;
+        _connection.Disconnect();
         ItemsSource = null;
     }
 
@@ -85,13 +76,11 @@ public class RouteableRegionItems : ItemsControl
     private void Apply(IReadOnlyList<object> views)
     {
         // A late post after the control was disconnected must not show the views again.
-        if (!_active) return;
+        if (!_connection.Active) return;
 
         foreach (var view in views)
             if (view is DependencyObject shown && LogicalTreeHelper.GetParent(shown) is { } holder && !ReferenceEquals(holder, this))
-                throw new InvalidOperationException(
-                    $"{view.GetType().Name} is already displayed by {holder.GetType().Name}, so region '{Region ?? "(default)"}' cannot show it too. " +
-                    "A page shown by a region must not also host its own current view: let the region display it.");
+                throw RegionErrors.AlreadyDisplayed(view, holder, Region);
 
         // A copy: the list belongs to the binding, and the control must not follow a list that is replaced.
         // The views are released first: one that stays is a child of the control until its container is cleared.

@@ -27,16 +27,16 @@ Routeables does not replace `Router` in `Routes.razor`: the sample keeps it.
 ```razor
 @* samples/XAnimals.Razor/Components/Routes.razor *@
 <Router AppAssembly="typeof(AboutView).Assembly"
-        AdditionalAssemblies="new[] { typeof(MainLayoutBase).Assembly }"
+        AdditionalAssemblies="new[] { typeof(RouteableMainLayoutBase).Assembly }"
         NotFoundPage="typeof(NotFound)">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
+        <RouteView RouteData="routeData" DefaultLayout="typeof(RouteableMainLayout)" />
     </Found>
 </Router>
 ```
 
 - `Routeables.Blazor` ships `Main.razor`, whose two `@page` routes (`/` and `/{*path}`) give the Blazor router a page for every address. It draws nothing.
-- What the user sees is drawn by the layout (`MainLayout`, or your own inheriting `MainLayoutBase`) from the **current view of the Routeables router**.
+- What the user sees is drawn by the layout (`RouteableMainLayout`, or your own inheriting `RouteableMainLayoutBase`) from the **current view of the Routeables router**.
 - `RouteableUrlSync` keeps the address and the router in step: a route change updates the address (a push adds a browser history entry, the other moves replace it); a typed address, a link or the browser's Back and Forward route the router; if a guard or a page refuses, the address stays on the current page. The router is asked before the address changes (a location changing handler), so a refused Back of the browser is cancelled and the browser history keeps its entries. One limit remains: `GoBackAsync` called from a view model replaces the address instead of going back in the browser history, so the browser's Back does not follow it.
 - `RouteableLink` (`Routeables.Blazor.Components`) is the anchor that goes to a route: `<RouteableLink Route="/dogs/12">Rex</RouteableLink>`. A plain click is routed by the router (guards, history); a click with Ctrl, Shift, Alt or Meta, a `target`, or a `download` is left to the browser. It renders a real `<a href>`, so it works before the circuit starts, and it adds the `active` class on the page that is shown.
 - **GoBack from a view model:** when the router goes back, forward or pops by itself, the browser does the same move in its history (`history.go`; after a `PopAsync` the Forward button of the browser opens the page again as a new one, since the router forgot it), as long as it holds that entry; otherwise the address is replaced. The Back button of the browser and the one of the application stay in step.

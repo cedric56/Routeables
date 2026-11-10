@@ -75,7 +75,7 @@ AppBuilder.Configure<App>()
 
 The region starts the routing: when it appears and its router shows nothing yet, it opens its `Route`. Without a `Route`, the default region opens `/`.
 
-On Blazor the region goes in your own layout, which inherits `MainLayoutBase`; the ready-made `MainLayout` has no menu to draw without a main view model and opens `/`.
+On Blazor the region goes in your own layout, which inherits `RouteableMainLayoutBase`; the ready-made `RouteableMainLayout` has no menu to draw without a main view model and opens `/`.
 
 **4. Go to another page**, from any view model that asks for an `IRouter`:
 
@@ -126,6 +126,7 @@ Put `[Routeable]` on the view model to give it a route. The view is the class na
 ```csharp
 // samples/Bases/XAnimals.ViewModels/ViewModels/Animals/DogDetailViewModel.cs
 using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 
 [Routeable("/dogs/{name}")]
 public class DogDetailViewModel(IRouter router, string name, Action? back = null)
@@ -168,7 +169,7 @@ One call per host starts Routeables, registers your main view model (its lifetim
 builder.Services.UseRouteablesServer();      // or UseRouteablesWebAssembly, UseRouteablesHybrid
 app.MapRazorComponents<App>()
    .AddInteractiveServerRenderMode()
-   .AddAdditionalAssemblies(typeof(MainLayoutBase).Assembly);    // Routeables.Blazor: catch-all page, layout, not-found page
+   .AddAdditionalAssemblies(typeof(RouteableMainLayoutBase).Assembly);    // Routeables.Blazor: catch-all page, layout, not-found page
 
 // ASP.NET Core, Razor Pages (Program.cs)
 builder.Services.AddRouteablesAspNetCore();
@@ -203,7 +204,7 @@ A few names look alike. They are different things:
 | `[RouteableView(typeof(VM))]` | Attribute on a **view**: pairs it with a view model when the names do not match |
 | `RouteableFor<…>` | The **base class of a view** (page, user control) |
 | `IRouteable` | Optional **lifecycle hooks** (`CanLeaveAsync`, `OnEnteringAsync`…) of a view model or a view |
-| `IMenuEntry`, `MenuEntry<T>` | A **menu entry** (a title, an icon, a route) listed by the main view model |
+| `IRouteableMenuEntry`, `RouteableMenuEntry<T>` | A **menu entry** (a title, an icon, a route) listed by the main view model |
 | `IMainViewModel`, `MainViewModelBase` | The **menu** (or tab bar): the list of entries and the selected one |
 
 The verbs of the setup calls follow one rule:

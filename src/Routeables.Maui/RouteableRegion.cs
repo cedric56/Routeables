@@ -41,8 +41,7 @@ public class RouteableRegion : ContentView
     public static readonly BindableProperty TransitionProperty =
         BindableProperty.Create(nameof(Transition), typeof(string), typeof(RouteableRegion), null);
 
-    private RegionBinding? _binding;
-    private bool _active;
+    private readonly RegionConnection _connection = new();
 
     /// <summary>
     /// The name of the transition that brings in each view of this region (<c>None</c>, <c>Fade</c>, <c>Slide</c>, <c>SlideUp</c> or a name
@@ -97,21 +96,18 @@ public class RouteableRegion : ContentView
         // application. MAUI gives each window a scope of its own: resolving the router there would give the control another router,
         // with another history, than the one that is routed, and the zone would stay empty. The application's provider is the one.
         var provider = Services ?? IPlatformApplication.Current?.Services ?? Handler?.MauiContext?.Services;
-        if (provider is null) return;
+        // The binding shows the current view as soon as it is built.
+        if (!_connection.Connect(provider, Region, router => new RegionBinding(router, Show)))
+            return;
 
-        // Set before the binding exists: it shows the current view as soon as it is built.
-        _active = true;
-        _binding = new RegionBinding(provider.GetRouter(Region), Show);
         // The default region starts the routing of an application that has no menu (the binding is there to show the first page).
-        RegionStart.Begin(provider, Region, Route);
+        RegionStart.Begin(provider!, Region, Route);
     }
 
     // A view has one parent: it is released when the control is no longer displayed, so another control can display it.
     private void Disconnect()
     {
-        _active = false;
-        _binding?.Dispose();
-        _binding = null;
+        _connection.Disconnect();
         Content = null;
     }
 
@@ -125,7 +121,7 @@ public class RouteableRegion : ContentView
 
     private void Apply(object? view, RegionChange change)
     {
-        if (!_active)
+        if (!_connection.Active)
             return;
 
         var shown = view as View;

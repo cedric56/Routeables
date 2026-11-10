@@ -29,8 +29,7 @@ public class RouteableRegionItems : ContentView
     public static readonly BindableProperty MinItemWidthProperty =
         BindableProperty.Create(nameof(MinItemWidth), typeof(double), typeof(RouteableRegionItems), 200.0);
 
-    private RegionItemsBinding? _binding;
-    private bool _active;
+    private readonly RegionConnection _connection = new();
 
     /// <summary>The name given to <c>AddRegion</c>; <see langword="null"/> shows the views of the default router.</summary>
     public string? Region
@@ -73,18 +72,13 @@ public class RouteableRegionItems : ContentView
 
         // The application's provider, as for RouteableRegion: a window's scope would give another router, with another history.
         var provider = Services ?? IPlatformApplication.Current?.Services ?? Handler?.MauiContext?.Services;
-        if (provider is null) return;
-
-        _active = true;
-        _binding = new RegionItemsBinding(provider.GetRouter(Region), Show);
+        _connection.Connect(provider, Region, router => new RegionItemsBinding(router, Show));
     }
 
     // A view has one parent: they are released when the control is no longer displayed, so another control can display them.
     private void Disconnect()
     {
-        _active = false;
-        _binding?.Dispose();
-        _binding = null;
+        _connection.Disconnect();
         Release();
     }
 
@@ -110,7 +104,7 @@ public class RouteableRegionItems : ContentView
 
     private void Apply(IReadOnlyList<object> views)
     {
-        if (!_active) return;
+        if (!_connection.Active) return;
 
         // The views leave the old layout before they enter the new one.
         Release();

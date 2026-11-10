@@ -6,7 +6,7 @@
 
 - `RouterViewModelBase`: back/forward routing through the router's history.
 - `MainViewModelBase`: a ready-to-use main view model; you only return the entries.
-- `MainViewModelBase`: the abstract base under it; manages routing between a set of `IMenuEntry` items (menus, tab bars), implements `IMainViewModel` and guards the change of the current item.
+- `MainViewModelBase`: the abstract base under it; manages routing between a set of `IRouteableMenuEntry` items (menus, tab bars), implements `IMainViewModel` and guards the change of the current item.
 - `CloseableViewModelBase<TResult>`: a view model that can be closed and returns a result (dialogs).
 
 The CommunityToolkit.Mvvm and ReactiveUI flavours are opt-in sources: they are not in the assembly. Declare the feature in your project file; `Routeables.targets` (in the `Routeables` package) adds the matching source files and the packages they use:

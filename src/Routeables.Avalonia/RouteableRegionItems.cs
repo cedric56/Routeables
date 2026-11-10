@@ -28,8 +28,7 @@ public class RouteableRegionItems : ItemsControl
     public static readonly StyledProperty<string?> RegionProperty =
         AvaloniaProperty.Register<RouteableRegionItems, string?>(nameof(Region));
 
-    private RegionItemsBinding? _binding;
-    private bool _active;
+    private readonly RegionConnection _connection = new();
 
     /// <summary>The name given to <c>AddRegion</c>; <see langword="null"/> shows the views of the default router.</summary>
     public string? Region
@@ -66,7 +65,7 @@ public class RouteableRegionItems : ItemsControl
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if (change.Property == RegionProperty && _binding is not null)
+        if (change.Property == RegionProperty && _connection.IsConnected)
         {
             Disconnect();
             Connect();
@@ -75,22 +74,14 @@ public class RouteableRegionItems : ItemsControl
 
     private void Connect()
     {
-        if (_binding is not null) return;
-
-        var provider = Services ?? ServiceLocator.Services;
-        if (provider is null) return;
-
-        // Set before the binding exists: it gives the views of now as soon as it is built.
-        _active = true;
-        _binding = new RegionItemsBinding(provider.GetRouter(Region), Show);
+        // The binding gives the views of now as soon as it is built.
+        _connection.Connect(Services ?? ServiceLocator.Services, Region, router => new RegionItemsBinding(router, Show));
     }
 
     // A view has one parent: they are released when the control leaves the tree, so another control can display them.
     private void Disconnect()
     {
-        _active = false;
-        _binding?.Dispose();
-        _binding = null;
+        _connection.Disconnect();
         ItemsSource = null;
     }
 
@@ -105,13 +96,11 @@ public class RouteableRegionItems : ItemsControl
     private void Apply(IReadOnlyList<object> views)
     {
         // A late post after the control was disconnected must not show the views again.
-        if (!_active) return;
+        if (!_connection.Active) return;
 
         foreach (var view in views)
             if (view is Visual shown && shown.GetVisualParent() is { } holder && !this.IsVisualAncestorOf(shown))
-                throw new InvalidOperationException(
-                    $"{view.GetType().Name} is already displayed by {holder.GetType().Name}, so region '{Region ?? "(default)"}' cannot show it too. " +
-                    "A page shown by a region must not also host its own current view: let the region display it.");
+                throw RegionErrors.AlreadyDisplayed(view, holder, Region);
 
         // A copy: the list belongs to the binding, and the control must not follow a list that is replaced.
         ItemsSource = views.ToList();

@@ -49,8 +49,7 @@ public partial class RouteableRegion : ContentControl
     public static readonly DependencyProperty RouteTransitionProperty =
         DependencyProperty.Register(nameof(RouteTransition), typeof(string), typeof(RouteableRegion), new PropertyMetadata(null));
 
-    private RegionBinding? _binding;
-    private bool _active;
+    private readonly RegionConnection _connection = new();
 
     /// <summary>
     /// Gets or sets whether the new view comes in with the theme transition of the platform: any value above zero turns it on, zero (the
@@ -103,7 +102,7 @@ public partial class RouteableRegion : ContentControl
 
     private void Reconnect()
     {
-        if (_binding is null)
+        if (!_connection.IsConnected)
             return;
 
         Disconnect();
@@ -112,26 +111,19 @@ public partial class RouteableRegion : ContentControl
 
     private void Connect()
     {
-        if (_binding is not null) return;
-
         var provider = Services ?? ServiceLocator.Services;
-        if (provider is null) return;
+        // The binding shows the current view as soon as it is built.
+        if (!_connection.Connect(provider, Region, router => new RegionBinding(router, Show)))
+            return;
 
-        var name = string.IsNullOrEmpty(Region) ? null : Region;
-
-        // Set before the binding exists: it shows the current view as soon as it is built.
-        _active = true;
-        _binding = new RegionBinding(provider.GetRouter(name), Show);
         // The default region starts the routing of an application that has no menu (the binding is there to show the first page).
-        RegionStart.Begin(provider, name, Route);
+        RegionStart.Begin(provider!, Region, Route);
     }
 
     // A view has one parent: it is released when the control leaves the tree, so another control can display it.
     private void Disconnect()
     {
-        _active = false;
-        _binding?.Dispose();
-        _binding = null;
+        _connection.Disconnect();
         Content = null;
     }
 
@@ -146,13 +138,11 @@ public partial class RouteableRegion : ContentControl
     private void Apply(object? view, RegionChange change)
     {
         // A late post after the control was disconnected must not show a view again.
-        if (!_active) return;
+        if (!_connection.Active) return;
 
         // A view has one parent. Say who holds it instead of the bare error of the framework.
         if (view is DependencyObject shown && VisualTreeHelper.GetParent(shown) is { } holder && !IsAncestorOf(shown))
-            throw new InvalidOperationException(
-                $"{view.GetType().Name} is already displayed by {holder.GetType().Name}, so region '{Region ?? "(default)"}' cannot show it too. " +
-                "A page shown by a region must not also host its own current view: let the region display it.");
+            throw RegionErrors.AlreadyDisplayed(view, holder, Region);
 
         // The transition of the navigation, else the one of the region, else the theme transition of TransitionDuration: set before the
         // content changes, which is what plays it.

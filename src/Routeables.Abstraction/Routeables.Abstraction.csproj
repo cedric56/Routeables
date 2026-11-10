@@ -27,7 +27,7 @@
     <InternalsVisibleTo Include="Routeables.WinUI3" />
     <InternalsVisibleTo Include="Routeables.Wpf" />
     <InternalsVisibleTo Include="Routeables.Benchmarks" />
-    <!-- Lets NSubstitute/Castle build proxies of the internal interfaces (e.g. ILockCoordinatorFactory) in tests. -->
+    <!-- Lets NSubstitute/Castle build proxies of the internal interfaces (e.g. IRouteableLockCoordinatorFactory) in tests. -->
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 

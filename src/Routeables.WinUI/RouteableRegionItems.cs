@@ -35,8 +35,7 @@ public partial class RouteableRegionItems : ContentControl
     public static readonly DependencyProperty MinItemWidthProperty =
         DependencyProperty.Register(nameof(MinItemWidth), typeof(double), typeof(RouteableRegionItems), new PropertyMetadata(200.0));
 
-    private RegionItemsBinding? _binding;
-    private bool _active;
+    private readonly RegionConnection _connection = new();
 
     /// <summary>Creates the region.</summary>
     public RouteableRegionItems()
@@ -76,7 +75,7 @@ public partial class RouteableRegionItems : ContentControl
 
     private void Reconnect()
     {
-        if (_binding is null)
+        if (!_connection.IsConnected)
             return;
 
         Disconnect();
@@ -85,22 +84,14 @@ public partial class RouteableRegionItems : ContentControl
 
     private void Connect()
     {
-        if (_binding is not null) return;
-
-        var provider = Services ?? ServiceLocator.Services;
-        if (provider is null) return;
-
-        var name = string.IsNullOrEmpty(Region) ? null : Region;
-        _active = true;
-        _binding = new RegionItemsBinding(provider.GetRouter(name), Show);
+        // The binding gives the views of now as soon as it is built.
+        _connection.Connect(Services ?? ServiceLocator.Services, Region, router => new RegionItemsBinding(router, Show));
     }
 
     // A view has one parent: they are released when the control leaves the tree, so another control can display them.
     private void Disconnect()
     {
-        _active = false;
-        _binding?.Dispose();
-        _binding = null;
+        _connection.Disconnect();
         Release();
     }
 
@@ -123,7 +114,7 @@ public partial class RouteableRegionItems : ContentControl
     private void Apply(IReadOnlyList<object> views)
     {
         // A late post after the control was disconnected must not show the views again.
-        if (!_active) return;
+        if (!_connection.Active) return;
 
         // The views leave the old layout before they enter the new one.
         Release();

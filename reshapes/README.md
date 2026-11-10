@@ -4,7 +4,7 @@ Optional projects that change how dialogs, notifications and modals look, by bui
 
 | Project | Host | Setup |
 | --- | --- | --- |
-| `Reshapes.Blazor.MudBlazor` | [Blazor](../src/Routeables.Blazor/README.md) | `services.UseMudBlazor()` |
+| `Reshapes.Blazor.MudBlazor` | [Blazor](../src/Routeables.Blazor/README.md) | `services.UseReshapeMudBlazor()` |
 | `Reshapes.Maui.Community` | [MAUI](../src/Routeables.Maui/README.md) | `builder.UseCommunityToolkit()` |
 | `Reshapes.Avalonia.Fluent` | [Avalonia](../src/Routeables.Avalonia/README.md) | `services.UseFluentAvalonia(icon)` |
 

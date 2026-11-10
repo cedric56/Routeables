@@ -45,8 +45,7 @@ public class RouteableRegion : TransitioningContentControl
     public static readonly StyledProperty<string?> TransitionProperty =
         AvaloniaProperty.Register<RouteableRegion, string?>(nameof(Transition));
 
-    private RegionBinding? _binding;
-    private bool _active;
+    private readonly RegionConnection _connection = new();
     private IPageTransition? _userTransition;
     private bool _overridden;
 
@@ -102,7 +101,7 @@ public class RouteableRegion : TransitioningContentControl
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if (change.Property == RegionProperty && _binding is not null)
+        if (change.Property == RegionProperty && _connection.IsConnected)
         {
             Disconnect();
             Connect();
@@ -111,24 +110,19 @@ public class RouteableRegion : TransitioningContentControl
 
     private void Connect()
     {
-        if (_binding is not null) return;
-
         var provider = Services ?? ServiceLocator.Services;
-        if (provider is null) return;
+        // The binding shows the current view as soon as it is built.
+        if (!_connection.Connect(provider, Region, router => new RegionBinding(router, Show)))
+            return;
 
-        // Set before the binding exists: it shows the current view as soon as it is built.
-        _active = true;
-        _binding = new RegionBinding(provider.GetRouter(Region), Show);
         // The default region starts the routing of an application that has no menu (the binding is there to show the first page).
-        RegionStart.Begin(provider, Region, Route);
+        RegionStart.Begin(provider!, Region, Route);
     }
 
     // A view has one parent: it is released when the control leaves the tree, so another control can display it.
     private void Disconnect()
     {
-        _active = false;
-        _binding?.Dispose();
-        _binding = null;
+        _connection.Disconnect();
         Content = null;
     }
 
@@ -178,7 +172,7 @@ public class RouteableRegion : TransitioningContentControl
     private void Apply(object? view, RegionChange change)
     {
         // A late post after the control was disconnected must not show a view again.
-        if (!_active) return;
+        if (!_connection.Active) return;
 
         // A view has one parent. A host that has left the screen can still hold the view of the router (its transition never ends, so
         // its presenter keeps the page): that one is released. Any other holder is a real duplicate: say who it is instead of the
@@ -188,9 +182,7 @@ public class RouteableRegion : TransitioningContentControl
             if (this.IsVisualAncestorOf(shown))
                 ReleaseFromTransition(holder, view);
             else if (!ReleaseFromLeftHost(holder))
-                throw new InvalidOperationException(
-                    $"{view.GetType().Name} is already displayed by {holder.GetType().Name}, so region '{Region ?? "(default)"}' cannot show it too. " +
-                    "A page shown by a region must not also host its own current view: let the region display it.");
+                throw RegionErrors.AlreadyDisplayed(view, holder, Region);
         }
 
         var animate = ApplyTransition(change, out var transition);
@@ -214,7 +206,7 @@ public class RouteableRegion : TransitioningContentControl
     private static bool ReleaseFromLeftHost(Visual holder)
     {
         var other = holder as RouteableRegion ?? holder.FindAncestorOfType<RouteableRegion>();
-        if (other is null || other._active || holder is not ContentPresenter presenter)
+        if (other is null || other._connection.Active || holder is not ContentPresenter presenter)
             return false;
 
         presenter.Content = null;
