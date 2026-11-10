@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="transitions.css" LogicalName="Routeables.AspNetCore.transitions.css" />
+    <EmbeddedResource Include="wwwroot\transitions.css" LogicalName="Routeables.AspNetCore.transitions.css" />
   </ItemGroup>
 
   <ItemGroup>

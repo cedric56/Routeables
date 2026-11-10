@@ -84,7 +84,7 @@ Animation is native to each host, so a custom transition is registered per host 
   <div class="@transition.CssClass" style="@(transition.Animated ? transition.Style : null)"> ... </div>
   ```
 
-  `Next(region, regionTransition, regionDuration)` resolves as the other hosts do (the navigation wins over the region). A transition plays once, for the request that follows the route change: a reload plays none, and the first page of a region comes in without one. The animations of the built-in names are in `RouteableTransitions.Css` (put it in a `<style>` or copy it into your stylesheet); `prefers-reduced-motion` turns them off.
+  `Next(region, regionTransition, regionDuration)` resolves as the other hosts do (the navigation wins over the region). A transition plays once, for the request that follows the route change: a reload plays none, and the first page of a region comes in without one. The animations of the built-in names are in `transitions.css`, a static web asset of the package: link it in the layout with `<link rel="stylesheet" href="~/_content/Routeables.AspNetCore/transitions.css" />` (it needs `app.UseStaticFiles()`; the assets of a package are served from the package when the application runs in Development, and from the published output in production). Without a link, `RouteableTransitions.Css` holds the same text to put in a `<style>` or to copy into your stylesheet. `prefers-reduced-motion` turns the animations off.
 
 `RouteableRegionItems` and the controls that do not show a router's current view (menus, tabs) play no transition.
 

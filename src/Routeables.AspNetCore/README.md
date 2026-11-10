@@ -45,7 +45,7 @@ Its compiled class is named after its path (`Views_DogDetailView`). The page mod
 
 ## Transitions
 
-A page is a whole new document for each request, so the browser plays a CSS animation when the view of a region arrives. `RouteableTransitions.Next(region, regionTransition)` gives the classes (`rt-enter rt-{name} rt-{forward|back|none}`) and `--rt-duration`; the animations of the built-in names are in an embedded `transitions.css`, and `prefers-reduced-motion` turns them off. The first page has none and a reload plays none. See [transitions](../../docs/guides/transitions.md).
+A page is a whole new document for each request, so the browser plays a CSS animation when the view of a region arrives. `RouteableTransitions.Next(region, regionTransition)` gives the classes (`rt-enter rt-{name} rt-{forward|back|none}`) and `--rt-duration`; the animations of the built-in names are in `transitions.css`, a static web asset of the package: `<link rel="stylesheet" href="~/_content/Routeables.AspNetCore/transitions.css" />` (it needs `app.UseStaticFiles()`; in production run the published application, or call `builder.WebHost.UseStaticWebAssets()`), and `prefers-reduced-motion` turns them off. The first page has none and a reload plays none. See [transitions](../../docs/guides/transitions.md).
 
 ## Good to know
 
