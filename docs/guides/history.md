@@ -10,6 +10,7 @@ Each router keeps a history of entries (view model, view and arguments):
 | `GoBackAsync` / `ForwardAsync` | Moves the cursor. Nothing is removed, so a page you went back from stays alive for `Forward` |
 | `MoveToAsync(index)` | Moves the cursor to an entry |
 | `GoBackToAsync("/orders")`, `GoBackToAsync<TViewModel>()`, `GoBackToAsync(entry => ...)` | Moves the cursor to the nearest earlier entry that matches (route compared without the leading `/`, the query and the case); cancelled when none does. Later entries stay, as with `GoBackAsync` |
+| `GoToAsync("-")`, `GoToAsync("-/orders")` | The qualifier `-` goes back one page; `-/orders` goes back, then to `/orders`. It makes a back button declarative on the XAML hosts: `<Button rt:RouteableLink.Route="-" />` |
 | `GoBackAsync(steps)` | Moves the cursor back several entries in one move (one lifecycle change); cancelled when the history is shorter |
 | `GoToStackAsync(["/orders", "/orders/42"])` | Goes to each route in order, so the history gets one entry per route (deep link, wizard). Each page runs its guards and lifecycle, the intermediate pages included; stops at the first route that fails or is cancelled and returns that result |
 | `PopAsync` | Goes back and removes the entry you left |

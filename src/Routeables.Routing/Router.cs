@@ -482,6 +482,16 @@ internal class Router(
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(url);
 
+        // Qualifiers: "-" goes back one page, "-/orders" goes back and then to /orders (a page replaces the one being left in the user's mind).
+        // Checked first: they are not routes, and a back button (RouteableLink Route="-") needs no code.
+        var trimmed = url.Trim();
+        if (trimmed == "-")
+            return await GoBackAsync(cancellationToken);
+        if (trimmed.StartsWith("-/", StringComparison.Ordinal) && trimmed.Length > 2)
+        {
+            var back = await GoBackAsync(cancellationToken);
+            return back.Success ? await GoToAsync(trimmed[1..], args, template, cancellationToken) : back;
+        }
 
         // A route registered with an explicit template (RegisterRoute(route: "/orders/{id:int}"), [Routeable]): the template
         // reads the parameters from the address. Given a template, it is the registered route with that template.

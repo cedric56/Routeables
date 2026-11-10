@@ -68,6 +68,7 @@ public interface IRouter
     /// Goes to a registered route by its address, as a browser would: <c>GoToAsync("/orders/42")</c>. The route is looked up in
     /// the routes registered with an explicit route (<c>RouteableTable</c>) and in the main routeables; its parameters
     /// (<c>{id:int}</c>, query) are read from <paramref name="url"/>. The leading <c>/</c> is optional. Fails (without throwing) when no route matches.
+    /// Two qualifiers are not routes: <c>"-"</c> goes back one page (<see cref="GoBackAsync"/>), and <c>"-/orders"</c> goes back, then to <c>/orders</c>.
     /// </summary>
     /// <param name="url">The address to go to.</param>
     /// <param name="args">The arguments of the route change, or <see langword="null"/> for none.</param>
