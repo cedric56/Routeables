@@ -27,6 +27,7 @@ public sealed class RegionTabs<TTab> where TTab : class
     private readonly Func<TTab?> _selected;
     private readonly Action<TTab> _select;
     private readonly Action<Action> _post;
+    private volatile bool _disposed;
     private readonly Type _owner;
     private readonly Func<TTab, string?>? _regionOf;
     private readonly Func<string, object>? _createHost;
@@ -89,6 +90,7 @@ public sealed class RegionTabs<TTab> where TTab : class
         _router.History.Changed += OnHistoryChanged;
         _post(() =>
         {
+            if (_disposed) return;      // disposed before the interface ran this: it must not put the host or route again
             MoveHost();
             GoSelected();
         });
@@ -104,6 +106,7 @@ public sealed class RegionTabs<TTab> where TTab : class
     /// <summary>Stops following the router and takes the host out of its tab.</summary>
     public void Dispose()
     {
+        _disposed = true;
         foreach (var tab in _stacked)
             _setContent(tab, null);
         _router.History.Changed -= OnHistoryChanged;
@@ -146,6 +149,7 @@ public sealed class RegionTabs<TTab> where TTab : class
     // The router holds its gate while it signals: the tab is selected after, and does not route again (the route is the current one).
     private void OnHistoryChanged(object? sender, EventArgs e) => _post(() =>
     {
+        if (_disposed) return;
         var tab = _owned.FirstOrDefault(tab => RouteTarget.IsCurrent(_router, _routeOf(tab)));
         if (tab is not null && !ReferenceEquals(tab, _selected()))
             _select(tab);

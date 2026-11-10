@@ -74,6 +74,8 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
     private readonly object _gate = new();
     private IRouter? _router;
     private volatile bool _active;
+    private volatile bool _disposed;
+    private readonly CancellationTokenSource _stopped = new();
     private string? _last;
 
     /// <summary>Starts keeping the history: reads what was kept, and writes the history after each route change from then on. Safe to call twice.</summary>
@@ -108,7 +110,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
     {
         try
         {
-            if (!await RouteableLinkInbox.WaitForFirstPageAsync(router))
+            if (!await RouteableLinkInbox.WaitForFirstPageAsync(router, _stopped.Token) || _disposed)
                 return;
 
             async Task Restore()
@@ -128,11 +130,17 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         }
         finally
         {
-            _active = true;
+            // A keeper that was disposed while it restored stays off: it must not write the history again.
+            if (!_disposed)
+                _active = true;
             try
             {
                 // The history belongs to the thread of the interface: read it there, as the route changes that save it do.
-                if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
+                if (_disposed)
+                {
+                    // nothing is written by a keeper that is over
+                }
+                else if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
                     await dispatcher.InvokeAsync(SaveNow);
                 else
                     SaveNow();
@@ -196,7 +204,9 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
     /// <summary>Stops keeping the history.</summary>
     public void Dispose()
     {
+        _disposed = true;
         _active = false;
+        try { _stopped.Cancel(); } catch (ObjectDisposedException) { }
         if (_router is { } router)
             router.Routed -= OnRouted;
         if (_router is { } erased)

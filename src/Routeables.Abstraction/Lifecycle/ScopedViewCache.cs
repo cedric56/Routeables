@@ -33,20 +33,39 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
 
     public void Dispose()
     {
+        List<Exception>? failures = null;
         foreach (var item in Drain())
         {
-            if (item is IDisposable disposable) disposable.Dispose();
-            else if (item is IAsyncDisposable asyncDisposable) AsyncDisposal.Start<ScopedViewCache>(asyncDisposable);
+            // One view that fails to dispose does not keep the others alive.
+            try
+            {
+                if (item is IDisposable disposable) disposable.Dispose();
+                else if (item is IAsyncDisposable asyncDisposable) AsyncDisposal.Start<ScopedViewCache>(asyncDisposable);
+            }
+            catch (Exception ex) { (failures ??= []).Add(ex); }
         }
+        Raise(failures);
+    }
+
+    private static void Raise(List<Exception>? failures)
+    {
+        if (failures is not null)
+            throw failures.Count == 1 ? failures[0] : new AggregateException(failures);
     }
 
     public async ValueTask DisposeAsync()
     {
+        List<Exception>? failures = null;
         foreach (var item in Drain())
         {
-            if (item is IAsyncDisposable asyncDisposable) await asyncDisposable.DisposeAsync();
-            else if (item is IDisposable disposable) disposable.Dispose();
+            try
+            {
+                if (item is IAsyncDisposable asyncDisposable) await asyncDisposable.DisposeAsync();
+                else if (item is IDisposable disposable) disposable.Dispose();
+            }
+            catch (Exception ex) { (failures ??= []).Add(ex); }
         }
+        Raise(failures);
     }
 
     // The cache created these views and view models (outside the container's tracking), so it owns them.

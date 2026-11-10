@@ -18,6 +18,7 @@ internal abstract class DialogQueue<TRequest, TResult> : IDisposable
 {
     private readonly Queue<TRequest> pending = new();
     private readonly object gate = new();
+    private bool disposed;
 
     /// <summary>Raised when <see cref="Current"/> changes. The host subscribes to it to re-render.</summary>
     public event Action? Changed;
@@ -40,6 +41,13 @@ internal abstract class DialogQueue<TRequest, TResult> : IDisposable
 
         lock (gate)
         {
+            // Asked after the circuit ended: no host is left to show it, so it is answered now and not left to wait for ever.
+            if (disposed)
+            {
+                request.Completion.TrySetResult(ResultWhenDisposed(request));
+                return request.Completion.Task;
+            }
+
             if (Current is null) Current = request;
             else pending.Enqueue(request);
         }
@@ -92,6 +100,7 @@ internal abstract class DialogQueue<TRequest, TResult> : IDisposable
         List<TRequest> unfinished = [];
         lock (gate)
         {
+            disposed = true;
             if (Current is not null) unfinished.Add(Current);
             unfinished.AddRange(pending);
             pending.Clear();

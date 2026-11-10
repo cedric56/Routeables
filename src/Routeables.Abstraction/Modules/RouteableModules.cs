@@ -188,10 +188,20 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
 
     public void Dispose()
     {
+        // Taken under the lock and disposed outside it: a service that waits for something must not hold every other call to the modules.
+        // A module that fails to dispose does not keep the next ones alive.
+        RouteableModuleServices[] services;
         lock (_gate)
+            services = [.. _loaded.Select(m => m.Services)];
+
+        List<Exception>? failures = null;
+        foreach (var service in services)
         {
-            foreach (var module in _loaded)
-                module.Services.Dispose();
+            try { service.Dispose(); }
+            catch (Exception ex) { (failures ??= []).Add(ex); }
         }
+
+        if (failures is not null)
+            throw new AggregateException(failures);
     }
 }

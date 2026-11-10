@@ -42,7 +42,7 @@ services.AddSingleton<IRouteGuard, SignedInGuard>();
 A guard that sends the user to `/sign-in` loses the page they wanted. `RouteableReturn` keeps it:
 
 ```csharp
-services.AddRouteableReturn();
+services.AddRouteableReturn();      // after the registration of the host: one for each visitor on Blazor and ASP.NET Core
 
 // in the guard: remembers the route of the change and redirects (only a Push is remembered)
 return returns.RedirectFrom(change, "/sign-in");

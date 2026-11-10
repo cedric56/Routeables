@@ -16,6 +16,7 @@ public sealed partial class SystemNotificationCenter
     private const string DismissAction = "com.apple.UNNotificationDismissActionIdentifier";
 
     private bool _delegateSet;
+    private NotificationDelegate? _delegate;     // the center keeps its delegate weakly: this field is what keeps it alive
 
     private partial async Task<bool> RequestPermissionAsync()
     {
@@ -64,7 +65,7 @@ public sealed partial class SystemNotificationCenter
             return;
 
         _delegateSet = true;
-        center.Delegate = new NotificationDelegate(this);
+        center.Delegate = _delegate = new NotificationDelegate(this);
 
         // A category that reports the dismissal: without it the system says nothing when the user swipes a notification away.
         var category = UNNotificationCategory.FromIdentifier(CategoryId, [], [], UNNotificationCategoryOptions.CustomDismissAction);

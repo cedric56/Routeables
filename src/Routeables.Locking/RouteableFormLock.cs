@@ -22,7 +22,20 @@ internal sealed class RouteableFormLock(IRouteableLockBroker broker) : IRouteabl
         lock (_gate)
         {
             if (++_holders == 1)
-                broker.Publish(new RouteableLockMessage(IsLocked: true, IsAllLocked: false));
+            {
+                try
+                {
+                    broker.Publish(new RouteableLockMessage(IsLocked: true, IsAllLocked: false));
+                }
+                catch
+                {
+                    // A subscriber that throws leaves no token to give back: the lock is taken back, or the form would stay locked for ever.
+                    _holders = 0;
+                    try { broker.Publish(new RouteableLockMessage(IsLocked: false, IsAllLocked: false)); }
+                    catch { /* the subscribers that were told are told again; the first failure is the one raised */ }
+                    throw;
+                }
+            }
         }
 
         return new Token(this);

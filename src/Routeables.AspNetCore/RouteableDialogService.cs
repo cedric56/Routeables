@@ -1,4 +1,5 @@
-﻿using Routeables.Services;
+﻿using Routeables.Abstraction.Errors;
+using Routeables.Services;
 
 namespace Routeables.AspNetCore;
 
@@ -27,14 +28,14 @@ public sealed class RouteableDialogService(RouteableInteractions interactions) :
             choices.Add((@params.SecondaryButtonText, RouteableContentDialogResult.Secondary, @params.SecondaryButtonClick));
         choices.Add((string.IsNullOrEmpty(@params.CloseButtonText) ? "Close" : @params.CloseButtonText, RouteableContentDialogResult.None, @params.CloseButtonClick));
 
-        @params.Opening?.Invoke();
+        RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpening, @params.Opening);
         var dialog = new RouteableDialog(@params.Title ?? string.Empty, null, @params.Content?.ToString(), [.. choices.Select(c => c.Text)]);
         var answer = interactions.AskAsync(dialog);
-        @params.Opened?.Invoke();
+        RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpened, @params.Opened);
 
         var chosen = choices[await answer];
-        chosen.Click?.Invoke();
-        @params.Closed?.Invoke();
+        RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogClick, chosen.Click);
+        RouteableErrors.Guard(null, RouteableCallbackSources.DialogClosed, @params.Closed);
         return chosen.Result;
     }
 
@@ -45,17 +46,17 @@ public sealed class RouteableDialogService(RouteableInteractions interactions) :
     {
         RouteableTaskDialogResult[] buttons = results.Length > 0 ? results : [RouteableTaskDialogResult.OK];
 
-        @params.Opening?.Invoke();
+        RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpening, @params.Opening);
         var dialog = new RouteableDialog(@params.Title ?? string.Empty, @params.Header, @params.Content?.ToString(), [.. buttons.Select(b => b.ToString())])
         {
             Footer = @params.ShowsFooter ? @params.Footer?.ToString() : null,
             ShowProgress = @params.ShowProgressBar
         };
         var answer = interactions.AskAsync(dialog);
-        @params.Opened?.Invoke();
+        RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpened, @params.Opened);
 
         var result = buttons[await answer];
-        @params.Closed?.Invoke();
+        RouteableErrors.Guard(null, RouteableCallbackSources.DialogClosed, @params.Closed);
         return result;
     }
 }

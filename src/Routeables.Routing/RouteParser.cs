@@ -368,7 +368,16 @@ public static class RouteParser
                 // {**path}: the slashes of the value stay, each segment is escaped.
                 if (bag.TryGetValue(m.Groups["name"].Value, out var restValue) && restValue is not null
                     && Format(restValue, m.Groups["type"].Value) is { Length: > 0 } restText)
+                {
+                    // What is written must be read back, as for the other placeholders: the whole value is checked against the constraint.
+                    var restType = m.Groups["type"].Value;
+                    if (!IsKnownConstraint(restType))
+                        throw new ArgumentException($"The constraint \"{restType}\" of {{**{m.Groups["name"].Value}}} in \"{template}\" is unknown.", nameof(template));
+                    if (!TryConvert(restText, restType, out _))
+                        throw new ArgumentException(
+                            $"The value \"{restText}\" is not a valid {(restType.Length == 0 ? "value" : restType)} for {{**{m.Groups["name"].Value}}} in \"{template}\".", nameof(values));
                     segments.AddRange(restText.Split('/', StringSplitOptions.RemoveEmptyEntries).Select(Uri.EscapeDataString));
+                }
                 continue;
             }
             if (Fill(m, "path") is { } text)

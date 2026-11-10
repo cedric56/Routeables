@@ -156,6 +156,23 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         }
     }
 
+    /// <summary>
+    /// Selects an entry like the <see cref="SelectedEntry"/> setter does, and waits for the result.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> when the entry is selected once its page is shown; <see langword="false"/> when a guard refused it or its route failed
+    /// (the menu is then back on the entry it was on).
+    /// </returns>
+    public async Task<bool> SelectEntryAsync(IRouteableMenuEntry? value)
+    {
+        if (Equals(_routeable, value))
+            return true;
+        var old = _routeable;
+        _routeable = value;
+        await ObserveAsync(SelectAsync(value, old), value);
+        return ReferenceEquals(_routeable, value);
+    }
+
     private IRouteableLockCoordinator? _coordinator;
 
     /// <summary>

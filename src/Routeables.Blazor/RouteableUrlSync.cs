@@ -36,6 +36,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     private const string UnloadModule = "./_content/Routeables.Blazor/routeables-unload.js";
 
     private bool _started;
+    private volatile bool _ended;      // Dispose ran: no script is imported from now on, and one that arrives late is let go of by DisposeAsync
     private int _back;             // the entries of the browser history behind the current one that this application pushed
     private int _forward;          // the ones ahead of it, left by a Back
     private Task<IJSObjectReference>? _history;
@@ -56,6 +57,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         if (!_started)
         {
             _started = true;
+            _ended = false;
             router.Routed += OnRouted;
             navigation.LocationChanged += OnLocationChanged;
             try { _changing = navigation.RegisterLocationChangingHandler(OnLocationChanging); }
@@ -153,6 +155,8 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     private async Task TellBrowserAsync()
     {
         var warn = _watched?.HasUnsavedChanges == true;
+        if (_ended)
+            return;
         if (!warn && _unload is null)
             return;                     // nothing was ever asked: no script to load for "no warning"
         if (provider.GetService<IJSRuntime>() is not { } js)
@@ -161,6 +165,8 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         {
             _unload ??= js.InvokeAsync<IJSObjectReference>("import", UnloadModule).AsTask();
             var module = await _unload;
+            if (_ended)
+                return;                 // the circuit ended while the script was loading: DisposeAsync lets go of it
             await module.InvokeVoidAsync("setWarn", warn);
         }
         catch (Exception ex) when (ex is InvalidOperationException or JSException or JSDisconnectedException or TaskCanceledException)
@@ -225,8 +231,12 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         _pending = path;
         try
         {
-            if (await ApplyAsync(path, restore: false) == Outcome.Refused)
+            if (await ApplyAsync(path, restore: false, context.CancellationToken) == Outcome.Refused)
                 context.PreventNavigation();
+        }
+        catch (OperationCanceledException) when (context.CancellationToken.IsCancellationRequested)
+        {
+            // Blazor dropped this navigation for a newer one: nothing to report, and nothing to prevent.
         }
         catch (Exception ex)
         {
@@ -235,7 +245,9 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         }
         finally
         {
-            _pending = null;
+            // Another navigation may have replaced the address in the meantime: only the one that set it clears it.
+            if (ReferenceEquals(_pending, path))
+                _pending = null;
         }
     }
 
@@ -251,7 +263,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         }
     }
 
-    private async Task<Outcome> ApplyAsync(string path, bool restore = true)
+    private async Task<Outcome> ApplyAsync(string path, bool restore = true, CancellationToken cancellationToken = default)
     {
         var history = router.History;
         if (Same(AddressOf(history.Current), path))
@@ -260,25 +272,39 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         RouteableResult result;
         if (history.CanGoBack && Same(AddressOf(history.Entries[history.CurrentIndex - 1]), path))
         {
-            result = await router.GoBackAsync();
+            result = await router.GoBackAsync(cancellationToken);
             Moved(result);
         }
         else if (history.CanGoForward && Same(AddressOf(history.Entries[history.CurrentIndex + 1]), path))
         {
-            result = await router.ForwardAsync();
+            result = await router.ForwardAsync(cancellationToken);
             Moved(result);
         }
         else if (provider.GetService<IRouteableMenuViewModel>() is { } menuViewModel
                  && menuViewModel.Entries.FirstOrDefault(r => Same(r.Route, path)) is { } item)
         {
-            menuViewModel.SelectedEntry = item;       // keeps the layout's selection (menu highlight) in step; it navigates the router
+            // Keeps the layout's selection (menu highlight) in step; it navigates the router. The guards answer before the address is accepted.
+            if (menuViewModel is Routeables.Core.RouteableMenuViewModelBase selectable)
+            {
+                if (await selectable.SelectEntryAsync(item))
+                    return Outcome.Done;
+                if (restore && AddressOf(history.Current) is { } shownNow)
+                    Show(shownNow, replace: true);
+                return Outcome.Refused;
+            }
+
+            menuViewModel.SelectedEntry = item;
             return Outcome.Done;
         }
         else if (RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], path).Template is { } template)
         {
             try
             {
-                result = await router.GoToAsync(path, RouteableArgs.Create(), template, CancellationToken.None);
+                result = await router.GoToAsync(path, RouteableArgs.Create(), template, cancellationToken);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return Outcome.Refused;     // the browser asked for another address meanwhile: this one is no longer wanted
             }
             catch (Exception ex)    // a typed or refreshed address the page cannot be built for must not take the app down
             {
@@ -341,21 +367,58 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
     // The browser reports an address escaped ("/dogs/Afghan%20Hound") and a route is kept as it was asked ("/dogs/Afghan Hound"): both are
     // the same address, so they are compared unescaped. Without it the two never match and the address is shown again and again.
+    // The path ignores the case and a closing slash; the query is data: the names ignore the case, the values do not, and a slash that ends a
+    // value is part of it ("/search?q=ABC" is not "/search?q=abc", "?path=a/" is not "?path=a").
     internal static bool Same(string? a, string? b)
-        => a is not null && b is not null
-           && string.Equals(Normalize(a), Normalize(b), StringComparison.OrdinalIgnoreCase);
-
-    private static string Normalize(string address)
     {
-        var path = Url(address).TrimEnd('/');
+        if (a is null || b is null)
+            return false;
+        var (pathA, queryA) = SplitQuery(Url(a));
+        var (pathB, queryB) = SplitQuery(Url(b));
+        return string.Equals(Unescape(pathA.TrimEnd('/')), Unescape(pathB.TrimEnd('/')), StringComparison.OrdinalIgnoreCase)
+               && SameQuery(queryA, queryB);
+    }
+
+    private static (string Path, string? Query) SplitQuery(string address)
+    {
+        var at = address.IndexOf('?');
+        return at < 0 ? (address, null) : (address[..at], address[(at + 1)..]);
+    }
+
+    private static bool SameQuery(string? a, string? b)
+    {
+        var pairsA = (a ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries);
+        var pairsB = (b ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries);
+        if (pairsA.Length != pairsB.Length)
+            return false;
+        for (var i = 0; i < pairsA.Length; i++)
+        {
+            var (nameA, valueA) = SplitPair(pairsA[i]);
+            var (nameB, valueB) = SplitPair(pairsB[i]);
+            if (!string.Equals(Unescape(nameA), Unescape(nameB), StringComparison.OrdinalIgnoreCase)
+                || !string.Equals(Unescape(valueA), Unescape(valueB), StringComparison.Ordinal))
+                return false;
+        }
+        return true;
+    }
+
+    private static (string Name, string Value) SplitPair(string pair)
+    {
+        var at = pair.IndexOf('=');
+        return at < 0 ? (pair, string.Empty) : (pair[..at], pair[(at + 1)..]);
+    }
+
+    private static string Unescape(string text)
+    {
         // An escaped slash is not a separator: "/files/a%2Fb" is one segment and "/files/a/b" is two, so the first must stay escaped.
-        try { return Uri.UnescapeDataString(path.Replace("%2F", "%252F", StringComparison.OrdinalIgnoreCase)); }
-        catch (UriFormatException) { return path; }
+        try { return Uri.UnescapeDataString(text.Replace("%2F", "%252F", StringComparison.OrdinalIgnoreCase)); }
+        catch (UriFormatException) { return text; }
     }
 
     /// <inheritdoc />
     public void Dispose()
     {
+        _ended = true;
         if (!_started) return;
         _started = false;
         _changing?.Dispose();
@@ -373,14 +436,16 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         Dispose();
         foreach (var module in new[] { _history, _unload })
         {
-            if (module is { IsCompletedSuccessfully: true })
+            if (module is not null)
             {
                 try
                 {
-                    if (ReferenceEquals(module, _unload)) await module.Result.InvokeVoidAsync("dispose");   // the listener of the tab must not outlive the circuit
-                    await module.Result.DisposeAsync();
+                    // A script still loading is waited for: it would otherwise install its listener with nobody left to remove it.
+                    var loaded = await module;
+                    if (ReferenceEquals(module, _unload)) await loaded.InvokeVoidAsync("dispose");   // the listener of the tab must not outlive the circuit
+                    await loaded.DisposeAsync();
                 }
-                catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException) { }   // the circuit is already gone
+                catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or JSException or TaskCanceledException) { }   // the circuit is already gone
             }
         }
         _history = null;

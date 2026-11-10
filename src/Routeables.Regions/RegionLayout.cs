@@ -1,3 +1,4 @@
+using Routeables.Abstraction.Errors;
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Routing;
 
@@ -152,7 +153,17 @@ public abstract class RegionLayout : IDisposable
     }
 
     /// <summary>Tells <see cref="Changed"/> listeners that the layout moved without the primary region moving.</summary>
-    protected void RaiseChanged() => Changed?.Invoke(this, EventArgs.Empty);
+    protected void RaiseChanged()
+    {
+        // One listener that throws must not stop the others, nor the regions that follow the primary one (OnMovedAsync runs this first).
+        if (Changed is not { } handlers)
+            return;
+        foreach (var handler in handlers.GetInvocationList().Cast<EventHandler>())
+        {
+            try { handler(this, EventArgs.Empty); }
+            catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(RegionLayout), "Changed"); }
+        }
+    }
 
     private Task OnMovedAsync()
     {

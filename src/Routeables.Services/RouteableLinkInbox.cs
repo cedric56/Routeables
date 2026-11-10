@@ -107,11 +107,19 @@ public sealed class RouteableLinkInbox
 
     private async Task PumpAsync()
     {
+        var noFirstPage = false;
         try
         {
             var services = provider!;
-            if (services.GetService<IRouter>() is not { } router || !await WaitForFirstPageAsync(router))
+            if (services.GetService<IRouter>() is not { } router)
                 return;
+            if (!await WaitForFirstPageAsync(router))
+            {
+                // No page after the wait: the links stay, and the next one that arrives (or the next Attach) tries again. Starting again here
+                // would poll for ever in an application that never shows a page.
+                noFirstPage = true;
+                return;
+            }
 
             while (true)
             {
@@ -152,20 +160,21 @@ public sealed class RouteableLinkInbox
                 again = saved is not null || links.Count > 0;
             }
 
-            if (again)
+            if (again && !noFirstPage)
                 Kick();
         }
     }
 
     // The menu selects its first entry when the window opens: before that the history is empty.
-    internal static async Task<bool> WaitForFirstPageAsync(IRouter router)
+    internal static async Task<bool> WaitForFirstPageAsync(IRouter router, CancellationToken cancellationToken = default)
     {
         var until = DateTime.UtcNow + FirstPageTimeout;
         while (router.History.Count == 0)
         {
-            if (DateTime.UtcNow > until)
+            if (DateTime.UtcNow > until || cancellationToken.IsCancellationRequested)
                 return false;
-            await Task.Delay(50);
+            try { await Task.Delay(50, cancellationToken); }
+            catch (OperationCanceledException) { return false; }
         }
 
         return true;

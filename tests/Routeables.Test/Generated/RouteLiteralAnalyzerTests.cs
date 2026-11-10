@@ -41,7 +41,7 @@ public class RouteLiteralAnalyzerTests
             References(),
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable));
 
-        var diagnostics = await compilation.WithAnalyzers([new RouteLiteralAnalyzer()]).GetAnalyzerDiagnosticsAsync();
+        var diagnostics = await compilation.WithAnalyzers([new RouteLiteralAnalyzer()]).GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
         return diagnostics.Select(d => d.Id).ToArray();
     }
 
@@ -90,10 +90,10 @@ public class RouteLiteralAnalyzerTests
             [CSharpSyntaxTree.ParseText("""
                 using Routeables.Abstraction.Routing;
                 public static class C { public static void M(IRouter r) => r.GoToAsync("/x"); }
-                """,  cancellationToken: TestContext.Current.CancellationToken)],
+                """)],
             References(),
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-        var diagnostics = await compilation.WithAnalyzers([new RouteLiteralAnalyzer()]).GetAnalyzerDiagnosticsAsync(cancellationToken: TestContext.Current.CancellationToken);
+        var diagnostics = await compilation.WithAnalyzers([new RouteLiteralAnalyzer()]).GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
         Assert.Empty(diagnostics);
     }
 

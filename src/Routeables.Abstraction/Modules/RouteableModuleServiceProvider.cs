@@ -9,7 +9,21 @@ namespace Routeables.Abstraction;
 internal sealed class RouteableModuleServiceProvider(IServiceProvider application, RouteableModuleServices module) : IServiceProvider, IKeyedServiceProvider
 {
     public object? GetService(Type serviceType)
-        => module.TryGet(serviceType, this, application, out var service) ? service : application.GetService(serviceType);
+    {
+        // A service of the module that asks for IServiceProvider gets this provider, not the application's: what it resolves later
+        // must find the services of the module too.
+        if (serviceType == typeof(IServiceProvider))
+            return this;
+        if (serviceType == typeof(IServiceProviderIsService))
+            return new ModuleIsService(module, application.GetService<IServiceProviderIsService>());
+        return module.TryGet(serviceType, this, application, out var service) ? service : application.GetService(serviceType);
+    }
+
+    // ActivatorUtilities asks which parameters the container can fill: the services of the module count, as well as the application's.
+    private sealed class ModuleIsService(RouteableModuleServices module, IServiceProviderIsService? application) : IServiceProviderIsService
+    {
+        public bool IsService(Type serviceType) => module.Has(serviceType) || application?.IsService(serviceType) == true;
+    }
 
     // The keyed services of a module are not registered (see IRouteableModules); the application's are reachable.
     public object? GetKeyedService(Type serviceType, object? serviceKey)
@@ -32,6 +46,8 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
     private readonly Dictionary<ServiceDescriptor, object> _singletons = [];
     private readonly List<object> _created = [];
     private readonly object _gate = new();
+
+    public bool Has(Type serviceType) => _descriptors.ContainsKey(serviceType);
 
     public bool TryGet(Type serviceType, IServiceProvider scope, IServiceProvider application, out object? service)
     {
@@ -113,13 +129,25 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
             _singletons.Clear();
         }
 
+        // One service that fails to dispose must not keep the others (created before it) alive: every one is tried, the failures are raised together.
+        List<Exception>? failures = null;
         for (var i = toDispose.Length - 1; i >= 0; i--)
         {
-            switch (toDispose[i])
+            try
             {
-                case IAsyncDisposable asyncService: await asyncService.DisposeAsync(); break;
-                case IDisposable service: service.Dispose(); break;
+                switch (toDispose[i])
+                {
+                    case IAsyncDisposable asyncService: await asyncService.DisposeAsync(); break;
+                    case IDisposable service: service.Dispose(); break;
+                }
+            }
+            catch (Exception ex)
+            {
+                (failures ??= []).Add(ex);
             }
         }
+
+        if (failures is not null)
+            throw failures.Count == 1 ? failures[0] : new AggregateException(failures);
     }
 }

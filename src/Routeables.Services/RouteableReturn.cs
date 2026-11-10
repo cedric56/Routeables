@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Routeables.Abstraction;
 using Routeables.Abstraction.Guards;
 using Routeables.Abstraction.Routing;
 
@@ -63,11 +64,15 @@ public sealed class RouteableReturn
 /// <summary>Registration of <see cref="RouteableReturn"/>.</summary>
 public static class RouteableReturnExtensions
 {
-    /// <summary>Registers <see cref="RouteableReturn"/> as a singleton.</summary>
+    /// <summary>
+    /// Registers <see cref="RouteableReturn"/> with the lifetime of the routers of the host (<c>GetRouteableLifetime</c>):
+    /// one for each visitor on Blazor and ASP.NET Core, one for the application elsewhere. Call it after the host's own registration
+    /// (<c>AddRouteables…</c>), which says what that lifetime is.
+    /// </summary>
     public static IServiceCollection AddRouteableReturn(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
-        services.TryAddSingleton<RouteableReturn>();
+        services.TryAdd(new ServiceDescriptor(typeof(RouteableReturn), typeof(RouteableReturn), services.GetRouteableLifetime()));
         return services;
     }
 }
