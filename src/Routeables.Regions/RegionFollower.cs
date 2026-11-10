@@ -88,7 +88,7 @@ public sealed class RegionFollower : IDisposable
         }
     }
 
-    /// <summary>Stops following: updates already queued do not run.</summary>
+    /// <summary>Stops following: updates queued and not yet started do not run. An update that has started is not interrupted, and this does not wait for it (<see cref="SettledAsync"/> does).</summary>
     public void Dispose()
     {
         lock (_lock)

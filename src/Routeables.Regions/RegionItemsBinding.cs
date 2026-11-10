@@ -33,7 +33,15 @@ public sealed class RegionItemsBinding : IDisposable
         Router = router;
         _show = show;
         router.History.Changed += OnChanged;
-        Refresh();
+        try
+        {
+            Refresh();
+        }
+        catch
+        {
+            Dispose();      // the constructor fails: nobody has the binding to dispose
+            throw;
+        }
     }
 
     /// <summary>The router of the region.</summary>
@@ -51,7 +59,20 @@ public sealed class RegionItemsBinding : IDisposable
             _shown = views;
         }
 
-        _show(views);
+        try
+        {
+            _show(views);
+        }
+        catch
+        {
+            // Views that could not be shown are not shown: the next Refresh, even for the same views, tries again.
+            lock (_lock)
+            {
+                if (ReferenceEquals(_shown, views))
+                    _shown = null;
+            }
+            throw;
+        }
     }
 
     private static IReadOnlyList<object> ViewsOf(IRouterHistory history)

@@ -33,7 +33,15 @@ public sealed class RegionConnection
             return false;
 
         Active = true;
-        _binding = bind(provider.GetRouter(string.IsNullOrEmpty(region) ? null : region));
+        try
+        {
+            _binding = bind(provider.GetRouter(string.IsNullOrEmpty(region) ? null : region));
+        }
+        catch
+        {
+            Active = false;     // no binding: nothing is connected, and a late show must not be applied
+            throw;
+        }
         return true;
     }
 

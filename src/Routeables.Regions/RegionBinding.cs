@@ -51,7 +51,16 @@ public sealed class RegionBinding : IDisposable
         router.Routing += OnRouting;
         router.Routed += OnRouted;
         router.History.Changed += OnChanged;
-        Refresh();
+        try
+        {
+            Refresh();
+        }
+        catch
+        {
+            // The constructor fails: nobody has the binding to dispose, so the router must not keep calling it.
+            Dispose();
+            throw;
+        }
     }
 
     private static Action<object?, RegionChange> Adapt(Action<object?> show)
@@ -78,7 +87,23 @@ public sealed class RegionBinding : IDisposable
             change = _pending ?? RegionChange.Unknown;
         }
 
-        _show(view, change);
+        try
+        {
+            _show(view, change);
+        }
+        catch
+        {
+            // A view that could not be shown is not shown: the next Refresh, even for the same view, tries again.
+            lock (_lock)
+            {
+                if (ReferenceEquals(_shown, view))
+                {
+                    _hasShown = false;
+                    _shown = null;
+                }
+            }
+            throw;
+        }
     }
 
     private void OnChanged(object? sender, EventArgs e) => Refresh();
