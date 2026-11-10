@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Routeables",
+  "classifications": [ "Desktop", "Uno", "Routeables" ],
+  "identity": "Routeables.Uno.App",
+  "name": "Routeables Uno Platform application",
+  "shortName": "routeables-uno",
+  "sourceName": "RouteablesApp",
+  "preferNameDirectory": true,
+  "tags": { "language": "C#", "type": "project" }
+}

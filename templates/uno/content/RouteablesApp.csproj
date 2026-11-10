@@ -1,0 +1,26 @@
+<Project Sdk="Uno.Sdk/6.7.30">
+  <PropertyGroup>
+    <!-- The desktop (Skia) head. To add net10.0-android, net10.0-ios or net10.0-browserwasm, list them here and add their folders under Platforms/ (see the Uno documentation). -->
+    <TargetFrameworks>net10.0-desktop</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <UnoSingleProject>true</UnoSingleProject>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>RouteablesApp</RootNamespace>
+    <ApplicationTitle>RouteablesApp</ApplicationTitle>
+    <ApplicationId>com.companyname.routeablesapp</ApplicationId>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+    <!-- No Uno.Extensions, Material or Toolkit: Routeables brings the navigation and the services. -->
+    <UnoFeatures></UnoFeatures>
+    <!-- Routeables.Uno is built on Uno.WinUI 6.7.135: the head must not use an older one. -->
+    <UnoVersion>6.7.135</UnoVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <UnoIcon Include="Assets\Brand\icon.svg" Color="#4A22C8" />
+    <UnoSplashScreen Include="Assets\Brand\splash.svg" BaseSize="128,128" Color="#4A22C8" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Routeables.Uno" Version="2.0.0" />
+  </ItemGroup>
+</Project>

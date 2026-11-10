@@ -27,6 +27,9 @@ public class TemplateFilesTests
         var found = Templates().ToList();
         Assert.Contains(found, d => Path.GetFileName(d) == "avalonia");
         Assert.Contains(found, d => Path.GetFileName(d) == "blazor");
+        Assert.Contains(found, d => Path.GetFileName(d) == "maui");
+        Assert.Contains(found, d => Path.GetFileName(d) == "uno");
+        Assert.Contains(found, d => Path.GetFileName(d) == "winui3");
 
         var pack = File.ReadAllText(Path.Combine(Root(), "templates", "Routeables.Templates.csproj"));
         var shortNames = new List<string>();
@@ -60,5 +63,31 @@ public class TemplateFilesTests
         Assert.Contains("RegisterRoute<HomeView, HomeViewModel>", program);
         Assert.Contains("RegisterRoute<HelloView, HelloViewModel>", program);
         Assert.Contains("MapStaticAssets", program);
+    }
+
+    /// <summary>
+    /// The versions the templates ask for, and the pages they register: a template that names a package at another version than the
+    /// repository, or a view without its view model, would not compile for whoever installs it.
+    /// </summary>
+    [Fact]
+    public void The_templates_use_the_version_of_the_repository_and_each_view_has_its_view_model()
+    {
+        var props = File.ReadAllText(Path.Combine(Root(), "Directory.Build.props"));
+        var version = System.Text.RegularExpressions.Regex.Match(props, "<VersionPrefix>([^<]+)</VersionPrefix>").Groups[1].Value;
+        Assert.False(string.IsNullOrEmpty(version));
+
+        foreach (var dir in Templates())
+        {
+            var name = Path.GetFileName(dir);
+            var content = Path.Combine(dir, "content");
+            var project = File.ReadAllText(Path.Combine(content, "RouteablesApp.csproj"));
+            foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(project, @"Include=""(Routeables\.[A-Za-z0-9]+)"" Version=""([^""]+)"""))
+                Assert.True(m.Groups[2].Value == version, $"{name}: {m.Groups[1].Value} is at {m.Groups[2].Value}, the repository is at {version}");
+
+            // Pages/HelloView.* goes with Pages/HelloViewModel.cs, wherever they are.
+            var files = Directory.EnumerateFiles(content, "*", SearchOption.AllDirectories).Select(Path.GetFileName).ToList();
+            foreach (var view in files.Where(f => f!.Contains("View.", StringComparison.Ordinal) && !f.Contains("ViewModel", StringComparison.Ordinal) && !f.EndsWith(".cs", StringComparison.Ordinal)))
+                Assert.Contains(files, f => f == view!.Split('.')[0] + "Model.cs");
+        }
     }
 }

@@ -1,0 +1,9 @@
+<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="using:Routeables.WinUI3"
+    x:Class="RouteablesApp.MainPage"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <!-- The pages appear here. -->
+    <routeables:RouteableRegion Route="/hello/World" />
+</Page>

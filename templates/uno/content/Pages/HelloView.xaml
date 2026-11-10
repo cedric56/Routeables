@@ -1,0 +1,11 @@
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="using:Routeables.Uno"
+    x:Class="RouteablesApp.HelloView">
+    <StackPanel Margin="24" Spacing="12" VerticalAlignment="Center">
+        <TextBlock Text="{Binding Greeting}" FontSize="24" />
+        <!-- Going to another page needs no code: the button names the route. -->
+        <Button Content="About" routeables:RouteableLink.Route="/about" />
+    </StackPanel>
+</routeables:RouteableFor>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:routeables="clr-namespace:Routeables.Maui;assembly=Routeables.Maui"
+    xmlns:local="clr-namespace:RouteablesApp"
+    x:Class="RouteablesApp.HelloView"
+    x:DataType="local:HelloViewModel">
+    <VerticalStackLayout Padding="24" Spacing="12" VerticalOptions="Center">
+        <Label Text="{Binding Greeting}" FontSize="24" />
+        <!-- Going to another page needs no code: the button names the route. -->
+        <Button Text="About" routeables:RouteableLink.Route="/about" />
+    </VerticalStackLayout>
+</routeables:RouteableFor>

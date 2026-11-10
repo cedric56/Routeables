@@ -4,7 +4,7 @@
     <PackageId>Routeables.Templates</PackageId>
     <PackageType>Template</PackageType>
     <Title>Routeables templates</Title>
-    <Description>dotnet new templates for Routeables: an Avalonia application and a Blazor Web App (Interactive Server), each with a first routed page.</Description>
+    <Description>dotnet new templates for Routeables: an Avalonia, a .NET MAUI, an Uno Platform, a WinUI 3 and a Blazor Web App (Interactive Server) application, each with a first routed page.</Description>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeContentInPack>true</IncludeContentInPack>
     <ContentTargetFolders>content</ContentTargetFolders>
@@ -15,6 +15,9 @@
   <ItemGroup>
     <Content Include="avalonia\**\*" Exclude="avalonia\**\bin\**;avalonia\**\obj\**" PackagePath="content\avalonia" />
     <Content Include="blazor\**\*" Exclude="blazor\**\bin\**;blazor\**\obj\**" PackagePath="content\blazor" />
+    <Content Include="maui\**\*" Exclude="maui\**\bin\**;maui\**\obj\**" PackagePath="content\maui" />
+    <Content Include="uno\**\*" Exclude="uno\**\bin\**;uno\**\obj\**" PackagePath="content\uno" />
+    <Content Include="winui3\**\*" Exclude="winui3\**\bin\**;winui3\**\obj\**" PackagePath="content\winui3" />
     <Compile Remove="**\*" />
   </ItemGroup>
 </Project>

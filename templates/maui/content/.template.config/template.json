@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Routeables",
+  "classifications": [ "Mobile", "Desktop", "MAUI", "Routeables" ],
+  "identity": "Routeables.Maui.App",
+  "name": "Routeables .NET MAUI application",
+  "shortName": "routeables-maui",
+  "sourceName": "RouteablesApp",
+  "preferNameDirectory": true,
+  "tags": { "language": "C#", "type": "project" }
+}

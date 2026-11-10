@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Routeables",
+  "classifications": [ "Desktop", "WinUI", "Windows", "Routeables" ],
+  "identity": "Routeables.WinUI3.App",
+  "name": "Routeables WinUI 3 application",
+  "shortName": "routeables-winui3",
+  "sourceName": "RouteablesApp",
+  "preferNameDirectory": true,
+  "tags": { "language": "C#", "type": "project" }
+}

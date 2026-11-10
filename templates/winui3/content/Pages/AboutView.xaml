@@ -1,0 +1,10 @@
+<routeables:RouteableFor
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:routeables="using:Routeables.WinUI3"
+    x:Class="RouteablesApp.AboutView">
+    <StackPanel Margin="24" Spacing="12" VerticalAlignment="Center">
+        <TextBlock Text="{Binding Text}" FontSize="18" TextWrapping="Wrap" />
+        <Button Content="Hello" routeables:RouteableLink.Route="/hello/again" />
+    </StackPanel>
+</routeables:RouteableFor>

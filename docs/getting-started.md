@@ -16,7 +16,7 @@ The generator must run in **every project that contains attributes it should pro
 
 ## Your first page
 
-To skip the typing: `dotnet new install Routeables.Templates`, then `dotnet new routeables-avalonia -n MyApp` or `dotnet new routeables-blazor -n MyWeb` (see `templates/`).
+To skip the typing: `dotnet new install Routeables.Templates`, then `dotnet new routeables-avalonia`, `routeables-blazor`, `routeables-maui`, `routeables-uno` or `routeables-winui3` with `-n MyApp` (see `templates/`).
 
 Two ways to register a page, both in about a minute and without a menu: with the generator (nothing to call in an application), or by name, one line per page, without the generator. The example is Avalonia; the other hosts start the same way (see [Set up your host](#2-set-up-your-host)).
 
