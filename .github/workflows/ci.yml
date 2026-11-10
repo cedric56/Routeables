@@ -125,6 +125,8 @@ jobs:
           dotnet build samples/Blazor/XAnimals.Blazor/XAnimals.Blazor.csproj -c Debug
           dotnet build samples/Blazor/XAnimals.BlazorApp/XAnimals.BlazorApp.csproj -c Debug
           dotnet build samples/Blazor/XAnimals.BlazorWebAssembly/XAnimals.BlazorWebAssembly.csproj -c Debug
+          # The Razor Pages sample: the web application builds the Razor class library (XAnimals.Razor) it references.
+          dotnet build samples/Razor/XAnimals.WebApplication/XAnimals.WebApplication.csproj -c Debug
 
       - name: Samples, Avalonia
         run: |
