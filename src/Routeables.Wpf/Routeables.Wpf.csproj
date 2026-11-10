@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <!-- The same file as Uno and WinUI 3 (the WPF branch of its #if). -->
+    <Compile Include="..\Routeables.WinUI\RouteableLink.cs" Link="RouteableLink.cs" />
     <InternalsVisibleTo Include="Routeables.Test" />
   </ItemGroup>
 

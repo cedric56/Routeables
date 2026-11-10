@@ -201,13 +201,19 @@ public static class RouteParser
             args.ForViewModel(new RouteableArgument(value, name, attribute ?? false));
     }
 
-    // The first optional path placeholder (not a catch-all) that has a segment after it: such a template cannot be written back (tabs/{tab?}/end
-    // without a tab is tabs/end, which does not match), so it never matches.
+    // The first optional path placeholder (not a catch-all) that is followed by a segment that is not optional itself: such a template cannot
+    // be written back (tabs/{tab?}/end without a tab is tabs/end, which does not match), so it never matches. Optionals one after the other
+    // at the end (cat/{age:int?}/{nick?}) are fine, and so is a catch-all after them.
     private static string? OptionalNotLast(string[] segments)
     {
         for (var i = 0; i < segments.Length - 1; i++)
-            if (Param.Match(segments[i]) is { Success: true } m && m.Groups["opt"].Success && !m.Groups["rest"].Success)
-                return segments[i];
+        {
+            if (Param.Match(segments[i]) is not { Success: true } m || !m.Groups["opt"].Success || m.Groups["rest"].Success)
+                continue;
+            for (var j = i + 1; j < segments.Length; j++)
+                if (Param.Match(segments[j]) is not { Success: true } next || !(next.Groups["opt"].Success || next.Groups["rest"].Success))
+                    return segments[i];
+        }
         return null;
     }
 
@@ -352,6 +358,7 @@ public static class RouteParser
 
         var (path, query) = Split(template);
         var segments = new List<string>();
+        string? skippedOptional = null;
         foreach (var segment in path.Split('/', StringSplitOptions.RemoveEmptyEntries))
         {
             var m = Param.Match(segment);
@@ -364,7 +371,17 @@ public static class RouteParser
                     segments.AddRange(restText.Split('/', StringSplitOptions.RemoveEmptyEntries).Select(Uri.EscapeDataString));
                 continue;
             }
-            if (Fill(m, "path") is { } text) segments.Add(text);
+            if (Fill(m, "path") is { } text)
+            {
+                // cat/{age?}/{nick?} with a nick and no age would be read as the age of the cat.
+                if (skippedOptional is { } skipped)
+                    throw new ArgumentException($"The route \"{template}\" cannot leave out {skipped} and give a later value: give both, or neither.", nameof(values));
+                segments.Add(text);
+            }
+            else if (m.Groups["opt"].Success)
+            {
+                skippedOptional ??= segment;
+            }
         }
 
         var pairs = new List<string>();

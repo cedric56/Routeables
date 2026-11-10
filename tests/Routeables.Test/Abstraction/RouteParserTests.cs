@@ -265,4 +265,19 @@ public class RouteParserTests
         Assert.True(RouteParser.TryMatch("c/{who:" + typeof(global::HomonymSupport.Customer).FullName + "}", "c/" + Uri.EscapeDataString("{\"Name\":\"a\"}"), support));
         Assert.IsType<global::HomonymSupport.Customer>(support.ViewModelParameters.Single().value);
     }
+
+    [Fact]
+    public void Optional_placeholders_one_after_the_other_at_the_end_match_and_build()
+    {
+        Assert.Null(RouteParser.Mismatch("cat/{age:int?}/{nick?}", "cat/7/Tom"));
+        Assert.Null(RouteParser.Mismatch("cat/{age:int?}/{nick?}", "cat/7"));
+        Assert.Null(RouteParser.Mismatch("cat/{age:int?}/{nick?}", "cat"));
+        Assert.Equal("cat/7/Tom", RouteParser.Build("cat/{age:int?}/{nick?}", new Dictionary<string, object?> { ["age"] = 7, ["nick"] = "Tom" }));
+        Assert.Equal("cat/7", RouteParser.Build("cat/{age:int?}/{nick?}", new Dictionary<string, object?> { ["age"] = 7 }));
+        Assert.Equal("cat", RouteParser.Build("cat/{age:int?}/{nick?}", new Dictionary<string, object?>()));
+    }
+
+    [Fact]
+    public void Build_refuses_a_later_value_when_an_earlier_optional_is_left_out()
+        => Assert.Throws<ArgumentException>(() => RouteParser.Build("cat/{age:int?}/{nick?}", new Dictionary<string, object?> { ["nick"] = "Tom" }));
 }
