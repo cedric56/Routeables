@@ -16,6 +16,13 @@ public class RegionHostSharedTests
 
     private static ServiceProvider Build() => RegionTestServices.Build(services => services.AddRegion("tabs"));
 
+    private sealed class RegionTab(string? route, string? region)
+    {
+        public string? Route { get; } = route;
+        public string? Region { get; } = region;
+        public object? Content { get; set; }
+    }
+
     [Fact]
     public void A_connection_is_active_before_its_binding_exists_and_not_after_disconnect()
     {
@@ -105,6 +112,43 @@ public class RegionHostSharedTests
         Assert.Null(cats.Content);
         Assert.Null(dogs.Content);
         Assert.Equal("mine", own.Content);
+    }
+
+    [Fact]
+    public async Task A_tab_with_a_region_of_its_own_keeps_its_pile_of_pages()
+    {
+        using var provider = RegionTestServices.Build(services => { services.AddRegion("tabs"); services.AddRegion("cats"); services.AddRegion("dogs"); });
+        var ct = TestContext.Current.CancellationToken;
+        var shared = new RegionTab("cats", null);
+        var cats = new RegionTab("cats", "cats");
+        var dogs = new RegionTab("dogs", "dogs");
+        RegionTab? selected = cats;
+        var follower = new RegionTabs<RegionTab>(provider, "tabs", new object(), [shared, cats, dogs],
+            tab => tab.Route, tab => tab.Content, (tab, content) => tab.Content = content,
+            () => selected, tab => selected = tab, action => action(), typeof(RegionHostSharedTests),
+            tab => tab.Region, region => "host:" + region);
+
+        follower.Start();
+        Assert.Equal("host:cats", cats.Content);                       // each tab with a region has a host of its region
+        Assert.Equal("host:dogs", dogs.Content);
+        Assert.Null(shared.Content);                                   // the tab without one is not selected: the shared host is not on it
+        await WaitForAsync(() => provider.GetRouter("cats").History.Current?.Args.Route?.Trim('/') == "cats", ct);
+        Assert.Equal(0, provider.GetRouter("dogs").History.Count);     // routed when selected, not before
+
+        await provider.GetRouter("cats").GoToAsync("/dogs", cancellationToken: ct);   // a second page on the pile of the first tab
+        selected = dogs;
+        follower.OnSelectionChanged();
+        await WaitForAsync(() => provider.GetRouter("dogs").History.Count == 1, ct);
+
+        selected = cats;                                               // coming back: nothing is routed again, the pile is as it was
+        follower.OnSelectionChanged();
+        await Task.Delay(50, ct);
+        Assert.Equal(2, provider.GetRouter("cats").History.Count);
+        Assert.Equal(1, provider.GetRouter("dogs").History.Count);
+
+        follower.Dispose();
+        Assert.Null(cats.Content);
+        Assert.Null(dogs.Content);
     }
 
     private static async Task WaitForAsync(Func<bool> condition, CancellationToken ct)

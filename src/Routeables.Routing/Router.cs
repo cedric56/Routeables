@@ -20,7 +20,7 @@ internal class Router(
     RouterHistory history,
     RouterGate gate,
     RouterLifecycle lifecycle,
-    IServiceProvider provider) : IRouter, IRouteableLockCoordinatorFactory
+    IServiceProvider provider) : IRouter, IRouteableLockCoordinatorFactory, IRouteGuardRefresh
 {
     /// <summary>
     /// Occurs when a routing operation is about to begin.
@@ -177,6 +177,19 @@ internal class Router(
         }
 
         return RouteGuardDecision.Allow;
+    }
+
+    /// <inheritdoc />
+    public async Task<RouteableResult> RefreshGuardsAsync(CancellationToken cancellationToken = default)
+    {
+        if (history.Current is not { } current)
+            return RouteableResult.Ok();
+
+        var decision = await AskGuardsAsync(RouteableKind.MoveTo, current, current, cancellationToken);
+        if (decision.IsAllowed)
+            return RouteableResult.Ok();
+        // Nowhere to send the user: the page stays, as for any guard that cancels.
+        return decision.RedirectTo is { } route ? await RedirectAsync(route, cancellationToken) : RouteableResult.Cancel();
     }
 
     // Goes where a guard sent the user, once the route change that was refused has ended and released the gate.
@@ -521,6 +534,14 @@ internal class Router(
         var hint = entries.Any()
             ? string.Empty
             : " No route is registered at all: check that the projects with the [Routeable] view models and the views reference the Routeables package (it carries the source generator). An executable registers its generated routes by itself; a library, or a project built with RouteablesAutoRegister=false, needs its AddGeneratedRoutes() called.";
+        // A page for the addresses nobody serves (UseNotFoundRoute), unless the missing one is that page itself.
+        static string Same(string? route) => (route ?? string.Empty).Split('?')[0].Trim('/');
+        if (provider.GetService<RouteableNotFound>() is { } notFound && !string.Equals(Same(notFound.Route), Same(url), StringComparison.OrdinalIgnoreCase))
+        {
+            var shown = (args ?? RouteableArgs.Create()).WithValue(RouteableNotFound.UrlValue, url);
+            return await GoToAsync(notFound.Route, shown, null, cancellationToken);
+        }
+
         return RouteableResult.Fail(new InvalidOperationException($"No route matches '{url}'. Register it with an explicit route, for instance RegisterRoute<TView, TViewModel>(route: \"/orders/{{id:int}}\")." + hint));
     }
 

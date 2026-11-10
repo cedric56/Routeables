@@ -121,6 +121,10 @@ Without the generator, `services.RegisterRoute<TView, TViewModel>(viewModelLifet
 
 A `Scoped` or `Singleton` instance is cached by its route and built once, with the arguments of the first route change: later route changes to the same route do not pass theirs again. Keep pages that receive a different argument each time (a detail page) `Transient`.
 
+### A page for routes that do not exist
+
+`GoToAsync("/nope")` fails when no route matches. `services.UseNotFoundRoute("/not-found")` shows a page instead, a route like any other (`[Routeable("/not-found")]`); the address that was asked for is in the value `notFoundUrl` of its arguments (`RouteableNotFound.UrlValue`). The result is that of the navigation to the page, so a caller that reports failed results (a `RouteableLink`) does not report the error as well. If the page itself is not registered, the call fails as it does without the option.
+
 ## Going to a route from XAML
 
 A button can go to a route with no code in the view model. `RouteableLink.Route` is an attached property of the button on Avalonia, WPF, Uno and MAUI (the host namespace is the one of `RouteableRegion`):

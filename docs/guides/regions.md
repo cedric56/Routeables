@@ -147,6 +147,24 @@ there already, and the followers run one after the other on the thread that star
 the followers show something else (a credits page), back to `true` to follow again.
 
 
+### A pile of pages for each tab
+
+A `TabControl` with `AttachRouteables(provider)` (WPF, Avalonia) shows one region: choosing another tab goes to the route of that tab in the same region, so the pages of the tab you left are no longer on the pile. Give each tab its own region and it keeps its pile:
+
+```xml
+<TabControl x:Name="Tabs">
+    <TabItem Header="Cats" rt:RouteableItem.Route="/cats" rt:RouteableItem.Region="cats" />
+    <TabItem Header="Dogs" rt:RouteableItem.Route="/dogs" rt:RouteableItem.Region="dogs" />
+</TabControl>
+```
+
+```csharp
+services.AddRegion("cats");
+services.AddRegion("dogs");
+```
+
+Each tab shows a `RouteableRegion` of its region and goes to its route the first time it is selected, while its region has no page. Pages opened inside a tab (`provider.GoToAsync("/cats/Rex", region: "cats")`) stay on its pile when you go to the other tab and come back. A tab without `Region` keeps sharing the region of the control. A region that is not registered is reported as an error naming it.
+
 ### Choosing the region in the arguments
 
 Give the region to the arguments, and let the provider pick the router of that region:

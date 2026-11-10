@@ -39,7 +39,8 @@ public static class RouteableTabs
         var follower = new RegionTabs<TabItem>(provider, region, tabHost, tabs.Items.OfType<TabItem>(),
             RouteableItem.GetRoute, tab => tab.Content, (tab, content) => tab.Content = content,
             () => tabs.SelectedItem as TabItem, tab => tabs.SelectedItem = tab,
-            action => Dispatcher.UIThread.Post(action), typeof(RouteableTabs));
+            action => Dispatcher.UIThread.Post(action), typeof(RouteableTabs),
+            RouteableItem.GetRegion, name => new RouteableRegion { Region = name, Services = provider });
 
         void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
