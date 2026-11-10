@@ -55,7 +55,7 @@ The types are in sub-namespaces of `Routeables.Abstraction`; add the `using` of 
 | Lifecycle | `IRouteable` (every member has a default), `IInitializeAsync`, `IRouteableReturnsResult<T>` |
 | Arguments | `IRouteableArgs` (values for the view model, for the view, neutral ones), `RouteableParameterAttribute` |
 | Menu | `IRouteableMenuEntry`, `IMainViewModel`, `AddMenuEntries`, `IRouteableModules` (modules loaded while running) |
-| Errors and locks | `IRouteableErrorSink`, `RouteableErrors`, `IRouteableLockCoordinator` |
+| Errors and locks | `IRouteableErrorSink`, `RouteableErrors`, `IRouteableLockCoordinator`, `IRouteableFormLock` (lock the menu while a form is edited) |
 
 The dialogs, notifications and theme are in [`Routeables.Services`](../Routeables.Services/README.md), regions in [`Routeables.Regions`](../Routeables.Regions/README.md), segments in [`Routeables.Segments`](../Routeables.Segments/README.md): a project that only routes carries none of them.
 
