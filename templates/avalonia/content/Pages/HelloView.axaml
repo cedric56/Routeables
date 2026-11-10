@@ -1,10 +1,12 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:routeables="using:Routeables.Avalonia"
              xmlns:local="using:RouteablesApp"
              x:Class="RouteablesApp.HelloView"
              x:DataType="local:HelloViewModel">
     <StackPanel Margin="24" Spacing="12" VerticalAlignment="Center">
         <TextBlock Text="{Binding Greeting}" FontSize="24" />
-        <Button Content="About" Click="OnAboutClick" />
+        <!-- Going to another page needs no code: the button names the route. -->
+        <Button Content="About" routeables:RouteableLink.Route="/about" />
     </StackPanel>
 </UserControl>
