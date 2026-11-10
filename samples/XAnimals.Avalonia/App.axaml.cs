@@ -5,7 +5,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Avalonia;
 using Routeables.Avalonia.Services;
 using Routeables.Generated;

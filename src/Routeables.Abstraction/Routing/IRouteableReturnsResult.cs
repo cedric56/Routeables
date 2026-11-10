@@ -1,4 +1,4 @@
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Routing;
 
 /// <summary>
 /// A page that gives a value back to whoever opened it: the view model (or the view) of a page opened with
@@ -13,7 +13,7 @@ namespace Routeables.Abstraction;
 /// </code>
 /// </summary>
 /// <typeparam name="TResult">The type of the value given back.</typeparam>
-public interface IReturnsResult<TResult>
+public interface IRouteableReturnsResult<TResult>
 {
     /// <summary>
     /// Gives the value the page returns. Called once, when the page is left; return <see langword="false"/> when the user left it

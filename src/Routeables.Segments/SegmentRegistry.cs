@@ -1,4 +1,4 @@
-﻿using Routeables.Abstraction;
+﻿using Routeables.Abstraction.Bases;
 
 namespace Routeables.Segments;
 

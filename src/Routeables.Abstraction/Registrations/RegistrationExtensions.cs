@@ -1,22 +1,24 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Routeables.Abstraction.Errors;
 using Routeables.Abstraction.Injections;
 using Routeables.Abstraction.Lifecycle;
+using Routeables.Abstraction.Routing;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Registrations;
 
 /// <summary>Registration of routes, views and view models on <see cref="IServiceCollection"/>.</summary>
-public static partial class Extensions
+public static partial class RegistrationExtensions
 {
     /// <summary>
     /// Registers <paramref name="create"/> as a keyed <em>instance</em>: the resulting
     /// <c>Func&lt;IServiceProvider, RouteableArgs, object&gt;</c> IS the keyed service itself (see the
     /// <c>AddKeyedSingleton&lt;TService&gt;(key, TService instance)</c> overload — not the
     /// <c>Func&lt;IServiceProvider, object?, TService&gt;</c> factory overload). This is
-    /// deliberate: callers (<see cref="GetViewModel(IServiceProvider, string, IRouteableArgs?)"/>,
-    /// <see cref="GetView"/>) invoke the returned delegate themselves, passing whatever
+    /// deliberate: callers (<see cref="Extensions.GetViewModel(IServiceProvider, string, IRouteableArgs?)"/>,
+    /// <see cref="Extensions.GetView"/>) invoke the returned delegate themselves, passing whatever
     /// <see cref="IServiceProvider"/> and arguments they have at hand — the <c>sp</c>/<c>args</c>
     /// below are the delegate's own parameters, supplied per call, never captured from a
     /// DI-resolved registration-time provider.
@@ -470,33 +472,4 @@ public static partial class Extensions
             return ActivatorUtilities.CreateInstance<TViewModel>(sp, [.. parameters])
                 .Inject(sp, args.ViewModelParameters.ResolveAttributesParameters());
         });
-
-    /// <summary>
-    /// Typed convenience wrapper over <see cref="GetViewModel(IServiceProvider, string, IRouteableArgs?)"/>.
-    /// </summary>
-    /// <typeparam name="T">The expected view-model type.</typeparam>
-    /// <exception cref="InvalidCastException">The resolved instance is not a <typeparamref name="T"/>.</exception>
-    public static T? GetViewModel<T>(this IServiceProvider provider, string route, IRouteableArgs? args = null)
-        => (T?)GetViewModel(provider, route, args);
-
-    // The factory of a view or view model: the one of the container, or else the one of a module loaded while running, which is built
-    // with the services of the module on top of the application's.
-    private static Func<IServiceProvider, IRouteableArgs, object>? FindFactory(this IServiceProvider provider, object key, out IServiceProvider factoryProvider)
-    {
-        var factory = provider.GetKeyedService<Func<IServiceProvider, IRouteableArgs, object>>(key);
-        if (factory is not null)
-        {
-            factoryProvider = provider;
-            return factory;
-        }
-
-        if (provider.GetService<RouteableModules>() is { } modules && modules.TryGetFactory(key, provider, out var late, out var moduleProvider))
-        {
-            factoryProvider = moduleProvider;
-            return late;
-        }
-
-        factoryProvider = provider;
-        return null;
-    }
 }

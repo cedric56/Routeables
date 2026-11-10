@@ -1,3 +1,5 @@
+using Routeables.Abstraction.Bases;
+
 namespace Routeables.Abstraction;
 
 /// <summary>An <see cref="IRouteableFor"/> over the data context of a view that is not one: what an <see cref="IRouteableViewBinder"/> returns.</summary>

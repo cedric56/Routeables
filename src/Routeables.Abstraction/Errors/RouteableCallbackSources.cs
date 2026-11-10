@@ -1,4 +1,4 @@
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Errors;
 
 /// <summary>
 /// The sources the callbacks of the application are reported under when they throw (see <see cref="RouteableErrors.Guard(IServiceProvider?, string, Action?)"/>):

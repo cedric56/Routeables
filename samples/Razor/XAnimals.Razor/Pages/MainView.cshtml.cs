@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
 using Routeables.AspNetCore;
 using XAnimals.Common;
 using XAnimals.Razor.Session;
-using IRouter = Routeables.Abstraction.IRouter;
+using IRouter = Routeables.Abstraction.Routing.IRouter;
 
 namespace XAnimals.Razor.Pages;
 

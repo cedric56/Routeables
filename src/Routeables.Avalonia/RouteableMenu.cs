@@ -7,7 +7,6 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
-using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
 using Routeables.Routing;
 using System.Collections.ObjectModel;

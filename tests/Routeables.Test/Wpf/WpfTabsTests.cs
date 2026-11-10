@@ -1,9 +1,10 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Wpf;
 using System.Windows.Controls;
 using Window = System.Windows.Window;
-
+using Routeables.Abstraction.Registrations;
 namespace Routeables.Tests.Wpf;
 
 /// <summary><see cref="RouteableTabs.AttachRouteables"/>: the tabs of a <see cref="TabControl"/> are routes, and follow the router.</summary>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Guards;
+using Routeables.Abstraction.Routing;
 using System.Security.Claims;
 
 namespace Routeables.Blazor;

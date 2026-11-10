@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Errors;
 
 /// <summary>
 /// Receives the errors Routeables deliberately does not let escape: an event handler that throws, a view model whose

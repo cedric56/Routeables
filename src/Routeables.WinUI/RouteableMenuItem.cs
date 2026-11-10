@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using System.ComponentModel;
 
 #if WINUI3

@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.Registrations;
 
 /// <summary>
 /// Represents a composite key used to uniquely identify routeable views and view models within the container 

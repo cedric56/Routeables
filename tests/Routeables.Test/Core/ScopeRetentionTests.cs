@@ -1,8 +1,9 @@
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Routing;
 using Routeables.Locking;
 using Routeables.Routing;
-
+using Routeables.Abstraction.Registrations;
 namespace Routeables.Tests.Core;
 
 /// <summary>A scope is a Blazor circuit: once it is disposed, nothing it created may stay alive.</summary>

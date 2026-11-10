@@ -1,4 +1,5 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Errors;
 
 namespace Routeables.Tests.Abstraction;
 

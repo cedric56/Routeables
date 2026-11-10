@@ -126,7 +126,7 @@ namespace Routeables.Generated
                 if (p.HasExplicitDefaultValue && !TryFormatDefault(p.Type, p.ExplicitDefaultValue, out literal))
                     return false;
 
-                if (p.Type.ToDisplayString(Fq) == "global::Routeables.Abstraction.IRouter")
+                if (p.Type.ToDisplayString(Fq) == "global::Routeables.Abstraction.Routing.IRouter")
                     takesRouter = true;
 
                 parameters.Add(new ParamInfo(p.Name, p.Type.ToDisplayString(FqNullable), p.HasExplicitDefaultValue, literal));
@@ -398,7 +398,7 @@ namespace Routeables.Generated
                 arguments.Append(')');
             }
 
-            sb.AppendLine($"    private static {info.TypeName} {methodName}(global::System.IServiceProvider sp, global::Routeables.Abstraction.IRouteableArgs args)");
+            sb.AppendLine($"    private static {info.TypeName} {methodName}(global::System.IServiceProvider sp, global::Routeables.Abstraction.Routing.IRouteableArgs args)");
             sb.AppendLine("    {");
             var shortName = Quote(info.TypeName.StartsWith("global::", StringComparison.Ordinal) ? info.TypeName.Substring(8) : info.TypeName);
             if (viewModel)
@@ -406,14 +406,14 @@ namespace Routeables.Generated
                 if (info.Parameters.Count > 0)
                 {
                     var names = string.Join(", ", Enumerable.Range(0, info.Parameters.Count).Select(i => Quote(info.Parameters[i].Name)));
-                    sb.AppendLine($"        var c = global::Routeables.Abstraction.ConstructorArguments.ForViewModel(sp, args, {shortName}, new string[] {{ {names} }}, {(info.TakesRouter ? "true" : "false")});");
+                    sb.AppendLine($"        var c = global::Routeables.Abstraction.Registrations.ConstructorArguments.ForViewModel(sp, args, {shortName}, new string[] {{ {names} }}, {(info.TakesRouter ? "true" : "false")});");
                 }
                 sb.AppendLine($"        return global::Routeables.Abstraction.Injections.RouteableBuild.InjectViewModel(new {info.TypeName}({arguments}), sp, args);");
             }
             else
             {
                 if (info.Parameters.Count > 0)
-                    sb.AppendLine($"        var c = global::Routeables.Abstraction.ConstructorArguments.ForView(sp, args, {shortName});");
+                    sb.AppendLine($"        var c = global::Routeables.Abstraction.Registrations.ConstructorArguments.ForView(sp, args, {shortName});");
                 sb.AppendLine($"        return global::Routeables.Abstraction.Injections.RouteableBuild.InjectView(new {info.TypeName}({arguments}), sp, args);");
             }
             sb.AppendLine("    }");

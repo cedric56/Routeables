@@ -1,5 +1,7 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Routing;
+using Routeables.Abstraction.Registrations;
 
 namespace Routeables.Test.Abstraction;
 

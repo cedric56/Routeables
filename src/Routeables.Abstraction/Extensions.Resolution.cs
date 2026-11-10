@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Lifecycle;
+using Routeables.Abstraction.Registrations;
+using Routeables.Abstraction.Routing;
 
 namespace Routeables.Abstraction;
 
@@ -36,6 +39,35 @@ public static partial class Extensions
         }
         return null;
     }
+
+    // The factory of a view or view model: the one of the container, or else the one of a module loaded while running, which is built
+    // with the services of the module on top of the application's.
+    private static Func<IServiceProvider, IRouteableArgs, object>? FindFactory(this IServiceProvider provider, object key, out IServiceProvider factoryProvider)
+    {
+        var factory = provider.GetKeyedService<Func<IServiceProvider, IRouteableArgs, object>>(key);
+        if (factory is not null)
+        {
+            factoryProvider = provider;
+            return factory;
+        }
+
+        if (provider.GetService<RouteableModules>() is { } modules && modules.TryGetFactory(key, provider, out var late, out var moduleProvider))
+        {
+            factoryProvider = moduleProvider;
+            return late;
+        }
+
+        factoryProvider = provider;
+        return null;
+    }
+
+    /// <summary>
+    /// Typed convenience wrapper over <see cref="GetViewModel(IServiceProvider, string, IRouteableArgs?)"/>.
+    /// </summary>
+    /// <typeparam name="T">The expected view-model type.</typeparam>
+    /// <exception cref="InvalidCastException">The resolved instance is not a <typeparamref name="T"/>.</exception>
+    public static T? GetViewModel<T>(this IServiceProvider provider, string route, IRouteableArgs? args = null)
+        => (T?)GetViewModel(provider, route, args);
 
     /// <summary>
     /// Resolves a view through the keyed factory registered for <paramref name="key"/>

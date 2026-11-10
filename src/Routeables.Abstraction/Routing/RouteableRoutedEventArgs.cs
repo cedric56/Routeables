@@ -1,6 +1,6 @@
 ﻿using Routeables.Abstraction.History;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Routing;
 
 /// <summary>Describes a route change that ended: what kind it was, the entries involved and how it ended.</summary>
 /// <param name="kind">The kind of route change.</param>

@@ -1,4 +1,6 @@
-﻿namespace Routeables.Abstraction.Lifecycle;
+﻿using Routeables.Abstraction.Errors;
+
+namespace Routeables.Abstraction.Lifecycle;
 
 /// <summary>Disposes, from a synchronous <c>Dispose</c>, an object that only offers <c>DisposeAsync</c>.</summary>
 internal static class AsyncDisposal

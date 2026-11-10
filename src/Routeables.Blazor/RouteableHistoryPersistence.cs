@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Services;
 using System.Diagnostics.CodeAnalysis;
 

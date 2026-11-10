@@ -1,6 +1,6 @@
 using Routeables.Abstraction.History;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Routing;
 
 /// <summary>
 /// Opens a page and waits for the value it gives back: routing with a result, for a page the user comes back from (a picker,
@@ -15,7 +15,7 @@ public static class RouterResultExtensions
     /// <summary>
     /// Goes to <paramref name="url"/> (see <see cref="IRouter.GoToAsync"/>) and completes when that page is left for good
     /// (<see cref="IRouter.PopAsync"/>, <see cref="IRouter.GoBackAsync"/>, the history cleared), not when it opens another page on top
-    /// of itself. The value comes from the page's <see cref="IReturnsResult{TResult}"/>.
+    /// of itself. The value comes from the page's <see cref="IRouteableReturnsResult{TResult}"/>.
     /// </summary>
     public static Task<RouteableResult<TResult>> GoToForResultAsync<TResult>(
         this IRouter router, string url, IRouteableArgs? args = null, string? template = null, CancellationToken cancellationToken = default)
@@ -83,7 +83,7 @@ public static class RouterResultExtensions
     {
         foreach (var target in new[] { entry.ViewModel, entry.View })
         {
-            if (target is IReturnsResult<TResult> source && source.TryGetResult(out var value))
+            if (target is IRouteableReturnsResult<TResult> source && source.TryGetResult(out var value))
                 return new RouteableResult<TResult> { OpenResult = navigation, Returned = true, Value = value };
         }
 

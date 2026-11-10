@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.AspNetCore;
 using Routeables.Services;
 using XAnimals.Common;
 using XAnimals.ViewModels;
-using IRouter = Routeables.Abstraction.IRouter;
+using IRouter = Routeables.Abstraction.Routing.IRouter;
 
 namespace XAnimals.Razor.Session;
 

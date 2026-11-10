@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
 using Routeables.Blazor.Components;
 using System.Diagnostics.CodeAnalysis;

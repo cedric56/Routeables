@@ -1,6 +1,7 @@
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Errors;
+using Routeables.Abstraction.Routing;
 using Routeables.Regions;
 using Routeables.Routing;
 

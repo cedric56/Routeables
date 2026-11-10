@@ -1,4 +1,6 @@
-﻿namespace Routeables.Abstraction.Guards;
+﻿using Routeables.Abstraction.Routing;
+
+namespace Routeables.Abstraction.Guards;
 
 /// <summary>What a <see cref="IRouteGuard"/> decides: let the route change go on, cancel it, or send the user to another route.</summary>
 public sealed class RouteGuardDecision

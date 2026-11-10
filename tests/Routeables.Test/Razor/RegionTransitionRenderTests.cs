@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Abstraction.Transitions;
 using Routeables.Blazor;
 using Routeables.Routing;

@@ -1,6 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Errors;
+using Routeables.Abstraction.Routing;
 
 #if WINUI3
 namespace Routeables.WinUI3;

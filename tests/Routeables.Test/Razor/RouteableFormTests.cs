@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Routing;
 using Routeables.Blazor.Components;
 using Routeables.Core;
 using Routeables.Tests.Core;

@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Components.Infrastructure;
 using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.Extensions.Logging.Abstractions;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
 using Routeables.Routing;
 using Dispatcher = Microsoft.AspNetCore.Components.Dispatcher;
-
+using Routeables.Abstraction.Registrations;
 namespace Routeables.Tests.Razor;
 
 /// <summary>The history handed from a prerendered page (or a paused circuit) to the one that takes over: <see cref="RouteableHistoryPersistence"/>.</summary>

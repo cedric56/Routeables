@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Routeables.Abstraction;
 using Routeables.Abstraction.Guards;
+using Routeables.Abstraction.Routing;
 
 namespace Routeables.Services;
 

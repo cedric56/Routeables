@@ -3,7 +3,7 @@ using Avalonia.Media;
 using FluentAvalonia.Core;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Windowing;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Errors;
 using Routeables.Avalonia;
 using Routeables.Avalonia.Services;
 using Routeables.Services;

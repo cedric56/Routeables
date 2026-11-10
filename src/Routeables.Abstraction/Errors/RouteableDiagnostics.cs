@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Errors;
 
 /// <summary>
 /// What a route change reports to <c>System.Diagnostics</c>, for dotnet-counters, dotnet-trace, OpenTelemetry or a listener of your

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Errors;
 using Routeables.Blazor.Services;
 using Routeables.Services;
 using System.Net;

@@ -1,5 +1,6 @@
 ﻿using Routeables.Abstraction;
 using Routeables.Abstraction.Guards;
+using Routeables.Abstraction.Routing;
 
 namespace XAnimals.ViewModels;
 

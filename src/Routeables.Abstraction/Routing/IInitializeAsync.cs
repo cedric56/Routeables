@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.Routing;
 
 /// <summary>
 /// Lets a view model (or a view) load what it needs before it is shown. The router calls it on the target once it is built, with the

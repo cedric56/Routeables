@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.DependencyInjection;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 
 namespace Routeables.Benchmarks;
 

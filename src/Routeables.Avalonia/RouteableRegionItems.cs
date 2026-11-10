@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Regions;
 
 namespace Routeables.Avalonia;

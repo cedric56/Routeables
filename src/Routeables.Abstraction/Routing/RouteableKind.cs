@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.Routing;
 
 /// <summary>The kind of a route change.</summary>
 public enum RouteableKind

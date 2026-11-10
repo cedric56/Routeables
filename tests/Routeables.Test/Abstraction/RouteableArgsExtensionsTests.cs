@@ -1,4 +1,4 @@
-using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 
 namespace Routeables.Tests.Abstraction;

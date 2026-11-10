@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.Extensions.Logging.Abstractions;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
 using Routeables.Routing;
 using Dispatcher = Microsoft.AspNetCore.Components.Dispatcher;
-
+using Routeables.Abstraction.Registrations;
 namespace Routeables.Tests.Razor;
 
 /// <summary>The component of a page that receives a region renders what the router of that region displays, and follows it.</summary>

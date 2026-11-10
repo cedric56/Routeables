@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.Routing;
 
 /// <summary>
 /// Reads the neutral <see cref="IRouteableArgs.Values"/> bag by name (or by type when the type is unique),

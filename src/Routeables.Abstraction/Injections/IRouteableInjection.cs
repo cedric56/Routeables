@@ -1,4 +1,6 @@
-﻿namespace Routeables.Abstraction.Injections;
+﻿using Routeables.Abstraction.Routing;
+
+namespace Routeables.Abstraction.Injections;
 
 
 /// <summary>

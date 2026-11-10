@@ -928,13 +928,13 @@ namespace Routeables.Generated
 
         private static void EmitMethod(StringBuilder sb, string indent, NavMethod m)
         {
-            const string returnType = "global::System.Threading.Tasks.Task<global::Routeables.Abstraction.RouteableResult>";
+            const string returnType = "global::System.Threading.Tasks.Task<global::Routeables.Abstraction.Routing.RouteableResult>";
 
             // Only a <summary>: a partial set of <param> tags would raise CS1573 in projects that treat warnings as errors.
             sb.AppendLine(indent + "/// <summary>Goes to <c>" + Xml(m.DestinationDisplay) + "</c> (route <c>" + Xml(m.Template) + "</c>).</summary>");
             sb.AppendLine(indent + "internal static " + returnType + " " + m.MethodName + "(");
             sb.AppendLine(indent + "    this " + m.CallerName + " caller,");
-            sb.AppendLine(indent + "    global::Routeables.Abstraction.IRouter router,");
+            sb.AppendLine(indent + "    global::Routeables.Abstraction.Routing.IRouter router,");
             foreach (var p in m.Parameters)
                 sb.AppendLine(indent + "    " + p.Declaration + ",");
             sb.AppendLine(indent + "    global::System.Threading.CancellationToken cancellationToken = default)");
@@ -956,7 +956,7 @@ namespace Routeables.Generated
             foreach (var e in m.Entries)
             {
                 var value = e.IsRouter ? "router" : e.ParamId;
-                var statement = "__args.ForViewModel(new global::Routeables.Abstraction.RouteableArgument(" + value + "));";
+                var statement = "__args.ForViewModel(new global::Routeables.Abstraction.Routing.RouteableArgument(" + value + "));";
                 sb.AppendLine(body + (e.Conditional ? "if (" + value + " is not null) " : string.Empty) + statement);
             }
 

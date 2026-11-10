@@ -1,8 +1,9 @@
-﻿using Routeables.Abstraction.History;
+﻿using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.History;
 using Routeables.Abstraction.Lifecycle;
 using System.ComponentModel;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Routing;
 
 /// <summary>
 /// The route change of an application, or of one region of it: it keeps a history of entries (a view model and its view) and moves a

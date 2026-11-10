@@ -4,6 +4,7 @@ using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Avalonia;
 using System.Runtime.InteropServices;
 using Xunit;

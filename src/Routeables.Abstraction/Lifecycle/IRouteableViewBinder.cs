@@ -1,4 +1,6 @@
-namespace Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
+
+namespace Routeables.Abstraction.Lifecycle;
 
 /// <summary>
 /// Gives a view that does not implement <see cref="IRouteableFor"/> its view model: each host registers one that knows how its views keep

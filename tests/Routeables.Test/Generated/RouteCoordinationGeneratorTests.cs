@@ -13,6 +13,9 @@ public class RouteCoordinationGeneratorTests
         using System.Threading.Tasks;
         using Microsoft.Extensions.DependencyInjection;
         using Routeables.Abstraction;
+        using Routeables.Abstraction.Bases;
+        using Routeables.Abstraction.Registrations;
+        using Routeables.Abstraction.Routing;
         using Routeables.Routing;
 
         namespace Sample;
@@ -46,8 +49,8 @@ public class RouteCoordinationGeneratorTests
 
         // The IRouter constructor parameter is filled with the router the method is called with:
         // it is not asked from the caller a second time.
-        Assert.Equal(1, CountOccurrences(output.Generated, "global::Routeables.Abstraction.IRouter router"));
-        Assert.Contains("new global::Routeables.Abstraction.RouteableArgument(router)", output.Generated);
+        Assert.Equal(1, CountOccurrences(output.Generated, "global::Routeables.Abstraction.Routing.IRouter router"));
+        Assert.Contains("new global::Routeables.Abstraction.Routing.RouteableArgument(router)", output.Generated);
     }
 
     [Fact]

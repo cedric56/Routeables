@@ -1,6 +1,7 @@
 using DeviceRunners.UITesting;
 using DeviceRunners.VisualRunners;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Registrations;
 using Routeables.Maui;
 using Routeables.Routing;
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Maui.Controls.Shapes;
+using Routeables.Abstraction.Errors;
 using System.Windows.Input;
 
 namespace Routeables.Maui.Services;
@@ -253,7 +254,7 @@ public static class RouteableNativeDialogLook
 
             busy = true;
             try { await b.Tap(); }
-            catch (Exception ex) { Routeables.Abstraction.RouteableErrors.Report(null, ex, typeof(RouteableNativeDialogLook)); }
+            catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(RouteableNativeDialogLook)); }
             finally { busy = false; }
         };
     }

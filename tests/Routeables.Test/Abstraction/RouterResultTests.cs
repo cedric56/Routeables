@@ -1,10 +1,12 @@
-using Routeables.Abstraction;
+using Routeables.Abstraction.Registrations;
+using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 
 namespace Routeables.Tests.Abstraction;
 
 public sealed class PickerView : IRouteableFor { public object? Context { get; set; } }
-public sealed class PickerVm : IReturnsResult<string>
+public sealed class PickerVm : IRouteableReturnsResult<string>
 {
     private string? _picked;
     public void Pick(string value) => _picked = value;

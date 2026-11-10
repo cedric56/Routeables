@@ -1,6 +1,6 @@
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Errors;
 
 namespace Routeables.Maui.Services;
 

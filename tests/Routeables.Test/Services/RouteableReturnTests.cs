@@ -1,6 +1,7 @@
 using NSubstitute;
 using Routeables.Abstraction;
 using Routeables.Abstraction.History;
+using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Services;
 

@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Errors;
+using Routeables.Abstraction.Lifecycle;
+using Routeables.Abstraction.Routing;
 using Routeables.Avalonia.Services;
 using Routeables.Core;
 using Routeables.Services;
@@ -59,7 +62,7 @@ public static class RouteableBuilder
             services.UseRouteablesServices();
             configure?.Invoke(services);
             // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
-            global::Routeables.Abstraction.RouteableAutoRegistration.Apply(services);
+            global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
         }, afterBuild);
         return Attach(builder, provider, onDispose, view);
     }
@@ -183,7 +186,7 @@ public static class RouteableBuilder
 
         configure?.Invoke(services);
         // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
-        global::Routeables.Abstraction.RouteableAutoRegistration.Apply(services);
+        global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
         var provider = services.BuildRouteableProvider();
         ServiceLocator.Services = provider;
         afterBuild?.Invoke(provider);

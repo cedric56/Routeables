@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.Registrations;
 
 /// <summary>
 /// The routes registered with an explicit route, for example

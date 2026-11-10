@@ -2,6 +2,8 @@
 using Microsoft.Maui.LifecycleEvents;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Lifecycle;
+using Routeables.Abstraction.Routing;
 using Routeables.Core;
 using Routeables.Maui.Services;
 using Routeables.Native;
@@ -60,7 +62,7 @@ public static class MauiRouteablesExtensions
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<Microsoft.Maui.Hosting.IMauiInitializeService, RouteableHistoryInitializer>());
         configure?.Invoke(builder.Services);
         // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
-        global::Routeables.Abstraction.RouteableAutoRegistration.Apply(builder.Services);
+        global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(builder.Services);
         return builder;
     }
 

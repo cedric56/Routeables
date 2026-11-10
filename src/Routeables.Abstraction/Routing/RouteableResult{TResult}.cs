@@ -1,4 +1,4 @@
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Routing;
 
 /// <summary>
 /// What <c>GoToForResultAsync</c> completes with, once the page it opened is left: whether the page opened, and the value it gave

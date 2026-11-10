@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Regions;
 
 namespace Routeables.Avalonia;

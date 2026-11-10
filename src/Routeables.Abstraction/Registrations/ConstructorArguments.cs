@@ -1,7 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
+using Routeables.Abstraction.Routing;
 using System.ComponentModel;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Registrations;
 
 /// <summary>
 /// The arguments of a constructor the source generator calls directly: what <see cref="ActivatorUtilities"/> does by reflection,
@@ -39,7 +40,7 @@ public sealed class ConstructorArguments
         for (var i = 0; i < parameterNames.Length; i++)
             positions[parameterNames[i]] = i;
 
-        var values = Extensions.BindByName(
+        var values = RegistrationExtensions.BindByName(
             args.ViewModelParameters.Where(p => p.attribute == false && p.value is not null), [positions]);
 
         if (takesRouter && args.Router is { } router && !values.Any(v => v is IRouter))

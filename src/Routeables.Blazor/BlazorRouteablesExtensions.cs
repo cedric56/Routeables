@@ -5,6 +5,7 @@ using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Injections;
 using Routeables.Abstraction.Lifecycle;
+using Routeables.Abstraction.Routing;
 using Routeables.Blazor.Services;
 using Routeables.Core;
 using Routeables.Routing;
@@ -127,7 +128,7 @@ public static class BlazorRouteablesExtensions
         services.UseRouteablesServices();
         configure?.Invoke(services);
         // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
-        global::Routeables.Abstraction.RouteableAutoRegistration.Apply(services);
+        global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
         return services;
     }
 

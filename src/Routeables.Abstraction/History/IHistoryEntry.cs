@@ -1,4 +1,6 @@
-﻿namespace Routeables.Abstraction.History;
+﻿using Routeables.Abstraction.Routing;
+
+namespace Routeables.Abstraction.History;
 
 /// <summary>Read-only view of one history entry.</summary>
 public interface IHistoryEntry

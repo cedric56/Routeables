@@ -1,8 +1,8 @@
-using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Test.Abstraction;
 using static Routeables.Test.Abstraction.RouterTestKit;
-using RouteableArgument = Routeables.Abstraction.RouteableArgument;
+using RouteableArgument = Routeables.Abstraction.Routing.RouteableArgument;
 
 namespace Routeables.Tests.Core;
 

@@ -1,9 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction.Injections;
+using Routeables.Abstraction.Registrations;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace Routeables.Abstraction;
+namespace Routeables.Abstraction.Registrations;
 
 /// <summary>
 /// The routes the source generator found, handed to the host without the application calling <c>AddGeneratedRoutes()</c>:

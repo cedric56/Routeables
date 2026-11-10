@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.Routing;
 
 /// <summary>
 /// Represents the outcome of a routing or routing operation, indicating success, cancellation, or failure.

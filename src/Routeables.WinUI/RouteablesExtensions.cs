@@ -5,6 +5,12 @@ using Routeables.Abstraction;
 using Routeables.Core;
 using Routeables.Services;
 using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Errors;
+using Routeables.Abstraction.Lifecycle;
+using Routeables.Abstraction.Routing;
+
+
+
 
 #if WINUI3
 using Routeables.WinUI3.Services;
@@ -196,7 +202,7 @@ public static class UnoRouteablesExtensions
             services.UseRouteablesServices();
             configure?.Invoke(services);
             // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
-            global::Routeables.Abstraction.RouteableAutoRegistration.Apply(services);
+            global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
         }, afterBuild);
 
     /// <summary>The container of the running Routeables host.</summary>
@@ -337,7 +343,7 @@ public static class UnoRouteablesExtensions
 
         configure?.Invoke(services);
         // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
-        global::Routeables.Abstraction.RouteableAutoRegistration.Apply(services);
+        global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
         var provider = services.BuildRouteableProvider();
         ServiceLocator.Services = provider;
         afterBuild?.Invoke(provider);

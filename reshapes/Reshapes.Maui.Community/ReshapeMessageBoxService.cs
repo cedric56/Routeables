@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using Reshapes.Maui.CommunityToolkit;
-using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Errors;
 using Routeables.Maui.Services;
 using Routeables.Services;
 

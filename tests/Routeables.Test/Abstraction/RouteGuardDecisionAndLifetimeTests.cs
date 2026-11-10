@@ -1,6 +1,7 @@
 using Routeables.Abstraction;
 using Routeables.Abstraction.Guards;
 using Routeables.Abstraction.Lifecycle;
+using Routeables.Abstraction.Registrations;
 
 namespace Routeables.Test.Abstraction;
 

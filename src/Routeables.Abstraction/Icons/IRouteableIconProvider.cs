@@ -1,4 +1,6 @@
-﻿namespace Routeables.Abstraction.Icons;
+﻿using Routeables.Abstraction.Bases;
+
+namespace Routeables.Abstraction.Icons;
 
 /// <summary>
 /// Gives a page its icon from a key (<see cref="IRouteableMenuEntry.Path"/>). Implement it to draw icons from your own set, a font or

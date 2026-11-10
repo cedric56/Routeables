@@ -1,6 +1,4 @@
-﻿using Routeables.Abstraction.Bases;
-
-namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.Bases;
 
 /// <summary>
 /// A view that is shown as a modal and gives a result back: the base types of each host implement it, with a view model that

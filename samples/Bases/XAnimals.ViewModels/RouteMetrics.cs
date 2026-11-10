@@ -1,4 +1,4 @@
-﻿using Routeables.Abstraction;
+﻿using Routeables.Abstraction.Errors;
 using System.Diagnostics.Metrics;
 
 namespace XAnimals.ViewModels;

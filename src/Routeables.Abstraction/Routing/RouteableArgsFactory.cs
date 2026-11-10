@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.Routing;
 
 internal class RouteableArgsFactory(Func<IRouteableArgs> factory) : IRouteableArgsFactory
 {

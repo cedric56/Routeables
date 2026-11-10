@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Errors;
+using Routeables.Abstraction.Routing;
 
 namespace Routeables.Avalonia;
 

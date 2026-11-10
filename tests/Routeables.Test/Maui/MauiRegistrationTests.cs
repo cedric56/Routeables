@@ -1,6 +1,6 @@
 ﻿using NSubstitute;
-using Routeables.Abstraction;
 using Routeables.Abstraction.Injections;
+using Routeables.Abstraction.Routing;
 using Routeables.Maui.Services;
 using Routeables.Services;
 using Routeables.Tests.Core;

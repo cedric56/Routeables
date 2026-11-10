@@ -1,4 +1,5 @@
 using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Test;
 using Routeables.Wpf;
@@ -16,7 +17,7 @@ using Size = System.Windows.Size;
 using TextBox = System.Windows.Controls.TextBox;
 using Thickness = System.Windows.Thickness;
 using Window = System.Windows.Window;
-
+using Routeables.Abstraction.Registrations;
 namespace Routeables.Tests.Wpf;
 
 /// <summary>

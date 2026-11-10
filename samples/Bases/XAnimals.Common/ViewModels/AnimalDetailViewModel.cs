@@ -1,4 +1,4 @@
-using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using XAnimals.Models;
 
 namespace XAnimals.Common;

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using XAnimals.Common;
 using XAnimals.Models;

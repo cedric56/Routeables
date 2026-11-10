@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction;
+﻿namespace Routeables.Abstraction.Bases;
 
 /// <summary>
 /// A view that is bound to its view model by the router: it gets the view model as its <see cref="Context"/> when it is shown.

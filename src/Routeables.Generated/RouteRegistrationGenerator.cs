@@ -600,6 +600,8 @@ namespace Routeables.Generated
                 _sb.AppendLine("using Routeables.Abstraction;");
                 _sb.AppendLine("using Routeables.Abstraction.Bases;");
                 _sb.AppendLine("using Routeables.Abstraction.Lifecycle;");
+                _sb.AppendLine("using Routeables.Abstraction.Registrations;");
+                _sb.AppendLine("using Routeables.Abstraction.Routing;");
                 _sb.AppendLine("using Routeables.Routing;");
                 _sb.AppendLine();
                 _sb.AppendLine("namespace Routeables.Generated;");

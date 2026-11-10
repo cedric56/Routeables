@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Injections;
+using Routeables.Abstraction.Routing;
 using Routeables.Generated;
 using Routeables.Routing;
 
@@ -155,6 +156,7 @@ public class RouteRegistrationGeneratorTests
     {
         var result = RunGenerator("""
             using Routeables.Abstraction;
+            using Routeables.Abstraction.Routing;
 
             public class CatViewModel { public CatViewModel(IRouter router, int age = 3) { } }
 
@@ -231,7 +233,7 @@ public class RouteRegistrationGeneratorTests
                     => Routeables.Generated.RouteRegistration.AddGeneratedRoutes(services);
 
                 public static void Manual(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
-                    => Routeables.Abstraction.Extensions.RegisterRoute<CatView, CatViewModel>(services, route: "/cat/{age:int?}/{Nick::?}");
+                    => Routeables.Abstraction.Registrations.RegistrationExtensions.RegisterRoute<CatView, CatViewModel>(services, route: "/cat/{age:int?}/{Nick::?}");
             }
             """;
 
@@ -281,6 +283,7 @@ public class RouteRegistrationGeneratorTests
     private const string LibraryWithInternalInjection = """
         using Microsoft.Extensions.DependencyInjection;
         using Routeables.Abstraction;
+        using Routeables.Abstraction.Bases;
 
         [System.AttributeUsage(System.AttributeTargets.Property)]
         public class InjAttribute : System.Attribute { }
@@ -315,7 +318,7 @@ public class RouteRegistrationGeneratorTests
                 => Routeables.Generated.RouteRegistration.AddGeneratedRoutes(services);
 
             public static void Manual(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
-                => Routeables.Abstraction.Extensions.RegisterRoute<ModalView, ModalViewModel>(services, route: "/modal");
+                => Routeables.Abstraction.Registrations.RegistrationExtensions.RegisterRoute<ModalView, ModalViewModel>(services, route: "/modal");
         }
         """;
 

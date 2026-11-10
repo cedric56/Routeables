@@ -1,5 +1,4 @@
-﻿using Routeables.Abstraction;
-using Routeables.Abstraction.Bases;
+﻿using Routeables.Abstraction.Bases;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
