@@ -90,7 +90,7 @@ public class RouteLiteralAnalyzerTests
             [CSharpSyntaxTree.ParseText("""
                 using Routeables.Abstraction.Routing;
                 public static class C { public static void M(IRouter r) => r.GoToAsync("/x"); }
-                """)],
+                """, cancellationToken: TestContext.Current.CancellationToken)],
             References(),
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
         var diagnostics = await compilation.WithAnalyzers([new RouteLiteralAnalyzer()]).GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);

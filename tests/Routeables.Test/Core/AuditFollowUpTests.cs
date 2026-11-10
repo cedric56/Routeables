@@ -21,7 +21,7 @@ public class AuditFollowUpTests
     {
         try { action(); }
         catch (Exception) { return; }
-        Assert.True(false, "An exception was expected.");
+        Assert.Fail("An exception was expected.");
     }
 
     // ---- modules ----------------------------------------------------------------------------------------------------------------
