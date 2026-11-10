@@ -8,10 +8,11 @@
   holds the text of the page.
 
   Needs: agent-desktop (npm install -g agent-desktop), the samples built in Debug, PowerShell 5.1 or 7.
-  Run from the repository root:  pwsh agent-desktop/run.ps1 -Hosts Wpf,Avalonia
+  Run it from anywhere:  pwsh agent-desktop/run.ps1 -Hosts Wpf,Avalonia   (the paths are those of the repository, found from the script).
+  -Build builds the samples that are not built yet, in Debug, before starting them.
 
   The dotnet new templates (templates/) can be tried too, on Windows: -Templates avalonia,maui,uno,winui3 installs them, makes an
-  application of each in out/native-smoke/templates, builds it, starts it and follows its two pages (Hello, then About through the
+  application of each in a temporary folder outside the repository (routeables-templates under the temp folder of the user), builds it, starts it and follows its two pages (Hello, then About through the
   button, then back). The packages the templates ask for must be restorable: publish them, or give a folder that holds the
   packages built here with -PackageSource (dotnet pack, then -PackageSource artifacts).
 
@@ -23,11 +24,16 @@ param(
   [string[]] $Hosts = @('Wpf', 'Avalonia', 'Maui', 'Uno', 'WinUI3'),
   [string[]] $Templates = @(),
   [string] $PackageSource = '',
-  [string] $OutDir = 'out/native-smoke',
+  [switch] $Build,
+  [string] $OutDir = '',
   [int] $StartTimeoutSeconds = 60
 )
 
 $ErrorActionPreference = 'Continue'
+# The repository, whatever the folder the script is started from (the paths below are relative to it).
+$RepoRoot = Split-Path -Parent $PSScriptRoot
+# The results go to out/ at the root of the repository, which git ignores: not to the folder the script was started from.
+if (-not $OutDir) { $OutDir = Join-Path $RepoRoot 'out/native-smoke' }
 # With -File, "-Hosts Wpf,Avalonia" arrives as one string: split it.
 $Hosts = @($Hosts | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
 $Templates = @($Templates | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
@@ -50,6 +56,17 @@ if (-not $env:AGENT_DESKTOP_HOME) {
 }
 New-Item -ItemType Directory -Force -Path $env:AGENT_DESKTOP_HOME | Out-Null
 Write-Host "agent-desktop state: $env:AGENT_DESKTOP_HOME"
+
+# The executable of a sample: the expected path first, then the newest <App>.exe under the bin folder of its project (another target framework,
+# another runtime identifier). $null when the sample was not built.
+function Resolve-Executable([string] $relative, [string] $app) {
+  $expected = Join-Path $RepoRoot $relative
+  if (Test-Path $expected) { return $expected }
+  $bin = Join-Path $RepoRoot (($relative -split '/bin/')[0] + '/bin')
+  if (-not (Test-Path $bin)) { return $null }
+  $found = Get-ChildItem -Path $bin -Recurse -Filter "$app.exe" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+  if ($found) { $found.FullName } else { $null }
+}
 
 # Where each sample is, the process name agent-desktop finds it by, and the executable to start.
 $catalog = @{
@@ -167,8 +184,23 @@ foreach ($name in $Hosts) {
   $entry = [ordered]@{ started = $false; pages = [ordered]@{}; dialogs = [ordered]@{}; problems = @() }
   $report.hosts[$name] = $entry
 
-  if (-not (Test-Path $host_.Exe)) { $entry.problems += "executable not found: $($host_.Exe) (build the sample in Debug)"; continue }
-  $process = Start-Process -FilePath $host_.Exe -PassThru
+  $exePath = Resolve-Executable $host_.Exe $host_.App
+  if (-not $exePath -and $Build) {
+    # -Build: the sample is built in Debug first (the output of dotnet build is kept next to the snapshots).
+    $projectDir = ($host_.Exe -split '/bin/')[0]
+    $csproj = Join-Path $RepoRoot "$projectDir/$($projectDir.Split('/')[-1]).csproj"
+    Write-Host "[$name] building $csproj"
+    & dotnet build $csproj -c Debug *>&1 | Out-File (Join-Path $dir 'build.txt')
+    $exePath = Resolve-Executable $host_.Exe $host_.App
+  }
+  if (-not $exePath) {
+    $project = ($host_.Exe -split '/bin/')[0]
+    $entry.problems += "executable not found under $(Join-Path $RepoRoot $project)/bin (repository: $RepoRoot). Build it first (dotnet build $project/$($project.Split('/')[-1]).csproj -c Debug) or run the script with -Build"
+    Write-Warning "[$name] not built: $($entry.problems[-1])"
+    continue
+  }
+  Write-Host "[$name] starting $exePath"
+  $process = Start-Process -FilePath $exePath -PassThru
 
   # Wait until the tree of the window holds the menu.
   $snapshot = $null
@@ -273,18 +305,22 @@ function Invoke-Button([string] $app, [string] $name, [string] $expected, [strin
 $report['templates'] = [ordered]@{}
 foreach ($template in $Templates) {
   $name = $template.ToLowerInvariant()
-  $entry = [ordered]@{ created = $false; built = $false; started = $false; steps = [ordered]@{}; problems = @() }
+  $entry = [ordered]@{ created = $false; built = $false; started = $false; folder = ''; steps = [ordered]@{}; problems = @() }
   $report['templates'][$name] = $entry
   if (-not $templateExe.ContainsKey($name)) { $entry.problems += "unknown template '$template' (avalonia, maui, uno, winui3)"; continue }
 
-  $root = Join-Path $OutDir (Join-Path 'templates' $name)
+  # Outside the repository: under it, the application would inherit Directory.Build.props, Directory.Packages.props (central package
+  # versions refuse a Version on a PackageReference) and global.json of the repository, which a real user's application does not have.
+  $root = Join-Path ([IO.Path]::GetTempPath()) (Join-Path 'routeables-templates' $name)
   if (Test-Path $root) { Remove-Item -Recurse -Force $root }
   New-Item -ItemType Directory -Force -Path $root | Out-Null
-  $log = Join-Path $root 'log'
+  # The logs and the snapshots stay with the report, the application does not.
+  $log = Join-Path $OutDir (Join-Path 'templates' $name)
   New-Item -ItemType Directory -Force -Path $log | Out-Null
+  $entry['folder'] = $root
 
   # The templates of this repository, installed from the folder (no package needed to try them).
-  & dotnet new install (Resolve-Path 'templates').Path *>&1 | Out-File (Join-Path $log 'install.txt')
+  & dotnet new install (Join-Path $RepoRoot 'templates') *>&1 | Out-File (Join-Path $log 'install.txt')
   & dotnet new "routeables-$name" -n RouteablesApp -o (Join-Path $root 'app') --force *>&1 | Out-File (Join-Path $log 'new.txt')
   $app = Join-Path $root 'app'
   $entry.created = Test-Path (Join-Path $app 'RouteablesApp.csproj')
@@ -298,14 +334,14 @@ foreach ($template in $Templates) {
   if (-not $entry.built) { $entry.problems += 'the build failed or the executable is missing (see log/build.txt)'; continue }
 
   $process = Start-Process -FilePath $exe -PassThru
-  $entry.started = Wait-Text 'RouteablesApp' 'Hello, World!' 'start' $root $StartTimeoutSeconds
+  $entry.started = Wait-Text 'RouteablesApp' 'Hello, World!' 'start' $log $StartTimeoutSeconds
   if (-not $entry.started) { $entry.problems += "the first page did not show 'Hello, World!' in time"; Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue; continue }
   $entry['steps']['hello'] = 'ok'
 
-  $failure = Invoke-Button 'RouteablesApp' 'About' 'the page is chosen by an address' $root
+  $failure = Invoke-Button 'RouteablesApp' 'About' 'the page is chosen by an address' $log
   $entry['steps']['about'] = if ($failure) { $failure } else { 'ok' }
   if (-not $failure) {
-    $failure = Invoke-Button 'RouteablesApp' 'Hello' 'Hello, again!' $root
+    $failure = Invoke-Button 'RouteablesApp' 'Hello' 'Hello, again!' $log
     $entry['steps']['back'] = if ($failure) { $failure } else { 'ok' }
   }
   Write-Host ("[template {0}] {1}" -f $name, (($entry['steps'].GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '))

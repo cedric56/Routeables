@@ -86,6 +86,10 @@ If a page needs its own instance of a disposable service, create it inside the p
 
 A tab bound to a route (`RouteableTabs`, `RegionTabs`) changes page through the router, so `OnLeftAsync` is called on the page of the tab that is left and `OnEnteredAsync` on the page of the tab that is selected, each time, including when you come back to a cached page. Use them as the "active / inactive" notification (Prism's `IActiveAware`); there is nothing more to implement. A tab that holds its own content, with no route, is outside the router and is not told.
 
+### Closing the tab with changes not saved
+
+`CanLeaveAsync` answers when the router is asked to leave a page. A user can also close the browser tab, reload or type another address, which never goes through the router. A view model (or a view) that implements `IRouteableUnsavedChanges` (`HasUnsavedChanges`, and `UnsavedChangesChanged` raised when it changes) makes Blazor ask the browser to confirm (`beforeunload`) while the page shown has unsaved changes. The text of the question is the browser's own. The warning follows the page shown: it ends when the page is left. The script is loaded only once a page reports changes.
+
 ### The application goes to sleep or comes back
 
 `IRouteableAppLifecycle` (`OnSleepAsync`, `OnResumeAsync`) is about the application, not the route. `RouteableAppLifecycle` tells the page shown in the main router and in each region, then saves the history, so the `[Persist]` properties a page updates in `OnSleepAsync` are kept even if the system kills the process. Closing the last window is a sleep too (a mobile system gives no other notice).

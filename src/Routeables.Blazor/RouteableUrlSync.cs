@@ -5,6 +5,7 @@ using Microsoft.JSInterop;
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Errors;
 using Routeables.Abstraction.History;
+using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
@@ -32,11 +33,14 @@ namespace Routeables.Blazor;
 public sealed class RouteableUrlSync(NavigationManager navigation, IRouter router, IServiceProvider provider) : IDisposable, IAsyncDisposable
 {
     private const string HistoryModule = "./_content/Routeables.Blazor/routeables-history.js";
+    private const string UnloadModule = "./_content/Routeables.Blazor/routeables-unload.js";
 
     private bool _started;
     private int _back;             // the entries of the browser history behind the current one that this application pushed
     private int _forward;          // the ones ahead of it, left by a Back
     private Task<IJSObjectReference>? _history;
+    private Task<IJSObjectReference>? _unload;
+    private IRouteableUnsavedChanges? _watched;   // the page whose unsaved changes the browser is told about
     private IDisposable? _changing;
     private string? _pending;      // the address being routed to by the location changing handler
 
@@ -97,6 +101,8 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         if (!e.Succeeded)
             return;
 
+        WatchUnsavedChanges();
+
         var address = AddressOf(e.To);
         if (Same(_pending, address))
         {
@@ -125,6 +131,42 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             _back = _forward = 0;     // the router history no longer follows the one of the browser: replace until it does again
 
         Show(address!, replace: !push);
+    }
+
+    // The browser asks before the tab closes while the page shown says it has unsaved changes (IRouteableUnsavedChanges).
+    private void WatchUnsavedChanges()
+    {
+        var page = router.CurrentViewModel as IRouteableUnsavedChanges ?? router.CurrentView as IRouteableUnsavedChanges;
+        if (ReferenceEquals(page, _watched))
+            return;
+
+        if (_watched is not null)
+            _watched.UnsavedChangesChanged -= OnUnsavedChangesChanged;
+        _watched = page;
+        if (page is not null)
+            page.UnsavedChangesChanged += OnUnsavedChangesChanged;
+        _ = TellBrowserAsync();
+    }
+
+    private void OnUnsavedChangesChanged(object? sender, EventArgs e) => _ = TellBrowserAsync();
+
+    private async Task TellBrowserAsync()
+    {
+        var warn = _watched?.HasUnsavedChanges == true;
+        if (!warn && _unload is null)
+            return;                     // nothing was ever asked: no script to load for "no warning"
+        if (provider.GetService<IJSRuntime>() is not { } js)
+            return;
+        try
+        {
+            _unload ??= js.InvokeAsync<IJSObjectReference>("import", UnloadModule).AsTask();
+            var module = await _unload;
+            await module.InvokeVoidAsync("setWarn", warn);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or JSException or JSDisconnectedException or TaskCanceledException)
+        {
+            _unload = null;             // prerendering or no script: there is no tab to warn about
+        }
     }
 
     private void Track(RouteableKind kind)
@@ -320,18 +362,28 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         _changing = null;
         router.Routed -= OnRouted;
         navigation.LocationChanged -= OnLocationChanged;
+        if (_watched is not null)
+            _watched.UnsavedChangesChanged -= OnUnsavedChangesChanged;
+        _watched = null;
     }
 
     /// <summary>Stops following, and lets go of the script module that moves the history of the browser, which a scope that ends asynchronously owns.</summary>
     public async ValueTask DisposeAsync()
     {
         Dispose();
-        var history = _history;
-        _history = null;
-        if (history is { IsCompletedSuccessfully: true })
+        foreach (var module in new[] { _history, _unload })
         {
-            try { await history.Result.DisposeAsync(); }
-            catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException) { }   // the circuit is already gone
+            if (module is { IsCompletedSuccessfully: true })
+            {
+                try
+                {
+                    if (ReferenceEquals(module, _unload)) await module.Result.InvokeVoidAsync("dispose");   // the listener of the tab must not outlive the circuit
+                    await module.Result.DisposeAsync();
+                }
+                catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException) { }   // the circuit is already gone
+            }
         }
+        _history = null;
+        _unload = null;
     }
 }
