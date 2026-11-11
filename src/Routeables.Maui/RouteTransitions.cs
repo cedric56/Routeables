@@ -37,6 +37,8 @@ public static class RouteTransitions
         // A new route change replaces the animation that is still running, and the region starts from rest.
         region.CancelAnimations();
         Rest(region);
+        var turn = new object();
+        Turns.AddOrUpdate(region, turn);
 
         var name = transition.Transition.Name;
         try
@@ -76,6 +78,11 @@ public static class RouteTransitions
                 region.ScaleYToAsync(1, ms, easing),
                 region.RotateToAsync(0, ms, easing),
                 region.TranslateToAsync(0, 0, ms, easing));
+
+            // The animation ends on rest, but an interpolation does not always land on the exact value (0.94 + (1 - 0.94) is not always 1):
+            // a region that is "almost" at rest is not at rest. Unless a newer route change took over, the end state is set exactly.
+            if (Turns.TryGetValue(region, out var current) && ReferenceEquals(current, turn))
+                Rest(region);
         }
         catch (Exception)
         {
@@ -83,6 +90,9 @@ public static class RouteTransitions
             Rest(region);
         }
     }
+
+    // The last transition started on each region: only that one may put the region at rest when it ends.
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<View, object> Turns = new();
 
     // The region as it is when it is shown: whatever a transition did to it is undone.
     private static void Rest(View region)

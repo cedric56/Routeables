@@ -255,9 +255,9 @@ public class RegionDeviceTests
 
         await Device.Services.GoToAsync("/b");
 
-        await Device.UntilAsync(() => host.View.Content is PageBView && Device.IsAtRest(host.View));
+        await Device.UntilAsync(() => host.View.Content is PageBView && Device.IsAtRest(host.View), describe: () => $"Transition '{name}': {Device.State(host.View)}, region content: {host.View.Content?.GetType().Name}");
         await Device.Router().GoBackAsync();
-        await Device.UntilAsync(() => host.View.Content is PageAView && Device.IsAtRest(host.View));
+        await Device.UntilAsync(() => host.View.Content is PageAView && Device.IsAtRest(host.View), describe: () => $"Transition '{name}' (back): {Device.State(host.View)}, region content: {host.View.Content?.GetType().Name}");
     }
 
     /// <summary>

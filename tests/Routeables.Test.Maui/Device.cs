@@ -42,15 +42,20 @@ internal static class Device
         view.Handler = null;
     }
 
-    public static async Task UntilAsync(Func<bool> condition, int seconds = 5)
+    public static async Task UntilAsync(Func<bool> condition, int seconds = 5, Func<string>? describe = null)
     {
         var deadline = DateTime.UtcNow.AddSeconds(seconds);
         while (!condition())
         {
-            if (DateTime.UtcNow > deadline) throw new TimeoutException($"The condition was not met in {seconds} seconds.");
+            if (DateTime.UtcNow > deadline)
+                throw new TimeoutException($"The condition was not met in {seconds} seconds." + (describe is null ? "" : " " + describe()));
             await Task.Delay(10);
         }
     }
+
+    /// <summary>What a control looks like, for the message of a test that waits for it to be at rest.</summary>
+    public static string State(View view)
+        => $"Content={view.GetType().Name}, Opacity={view.Opacity:R}, Scale={view.Scale:R}, ScaleX={view.ScaleX:R}, ScaleY={view.ScaleY:R}, Rotation={view.Rotation:R}, TranslationX={view.TranslationX:R}, TranslationY={view.TranslationY:R}";
 
     /// <summary>The control as it is when nothing is playing on it.</summary>
     public static bool IsAtRest(View view)
