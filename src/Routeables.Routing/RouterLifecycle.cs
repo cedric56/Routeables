@@ -169,6 +169,13 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
     /// <summary>Whether the router disposed <paramref name="instance"/> when it left the history.</summary>
     public bool WasDestroyed(object? instance) => instance is not null && _destroyed.TryGetValue(instance, out _);
 
+    // The end of the scope disposes the transient pages that are still alive (WeakDisposableTracker): not the ones disposed here.
+    private void Forget(object target)
+    {
+        if (provider?.GetService(typeof(WeakDisposableTracker)) is WeakDisposableTracker tracker)
+            tracker.Forget(target);
+    }
+
     public async Task DestroyAsync(IReadOnlyList<RouterEntry> removed, IReadOnlyList<RouterEntry> remaining)
     {
         if (removed.Count == 0) return;
@@ -192,8 +199,8 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
 
                 try
                 {
-                    if (target is IAsyncDisposable ad) { _destroyed.TryAdd(target, target); await ad.DisposeAsync(); }
-                    else if (target is IDisposable d) { _destroyed.TryAdd(target, target); d.Dispose(); }
+                    if (target is IAsyncDisposable ad) { _destroyed.TryAdd(target, target); Forget(target); await ad.DisposeAsync(); }
+                    else if (target is IDisposable d) { _destroyed.TryAdd(target, target); Forget(target); d.Dispose(); }
                 }
                 catch (Exception ex) { RouteableErrors.Report<RouterLifecycle>(provider, ex); }   // cleanup must never fail a navigation
             }

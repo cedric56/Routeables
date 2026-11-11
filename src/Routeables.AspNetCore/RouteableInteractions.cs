@@ -8,12 +8,15 @@ namespace Routeables.AspNetCore;
 /// it ends or asks something, and <see cref="ContinueAsync(Action)"/> goes on once the visitor has answered.
 /// An instance belongs to one visitor, who runs one flow at a time: two requests of the same visitor that start or answer at the same moment
 /// (two tabs of the browser, a double click) share the signal that says "the action asked something", and one of them may return early.
+/// The lists it keeps (dialogs, toasts, system notifications) are safe to use from such requests: they are changed under a lock, and
+/// no callback of the application runs while it is held.
 /// </summary>
 public sealed class RouteableInteractions : IDisposable
 {
+    private readonly object _gate = new();
     private readonly List<RouteableDialog> _dialogs = [];
     private readonly List<RouteableToast> _toasts = [];
-    private TaskCompletionSource _asked = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private volatile TaskCompletionSource _asked = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     // The action that is running in the flow of the caller: the dialogs it asks belong to it, so that answering one waits for
     // that action, not for another one the visitor started in the meantime.
@@ -25,10 +28,10 @@ public sealed class RouteableInteractions : IDisposable
     private uint _nextSystem;
 
     /// <summary>The dialog that waits for an answer, if any.</summary>
-    public RouteableDialog? Pending => _dialogs.Count > 0 ? _dialogs[0] : null;
+    public RouteableDialog? Pending { get { lock (_gate) return _dialogs.Count > 0 ? _dialogs[0] : null; } }
 
-    /// <summary>The toasts currently shown on the page.</summary>
-    public IReadOnlyList<RouteableToast> Toasts => _toasts;
+    /// <summary>The toasts currently shown on the page (a copy: it does not change while the page reads it).</summary>
+    public IReadOnlyList<RouteableToast> Toasts { get { lock (_gate) return _toasts.ToArray(); } }
 
     // ---------------------------------------------------------------- dialogs
 
@@ -43,7 +46,8 @@ public sealed class RouteableInteractions : IDisposable
     public void Show(RouteableDialog dialog)
     {
         dialog.Owner ??= _current.Value;
-        _dialogs.Add(dialog);
+        lock (_gate)
+            _dialogs.Add(dialog);
         _asked.TrySetResult();
     }
 
@@ -51,7 +55,7 @@ public sealed class RouteableInteractions : IDisposable
     public async Task<int> Close(RouteableDialog dialog)
     {
         try { return await dialog.Answer.Task.ConfigureAwait(false); }
-        finally { _dialogs.Remove(dialog); }
+        finally { lock (_gate) _dialogs.Remove(dialog); }
     }
 
     /// <summary>Runs <paramref name="action"/> until it ends or shows a dialog.</summary>
@@ -80,6 +84,12 @@ public sealed class RouteableInteractions : IDisposable
     public Task AnswerAsync(int index)
     {
         var dialog = Pending;
+
+        // The index comes from the form of the page: anyone can post another number. A button that does not exist is not an answer; the
+        // dialog stays, and the action that waits for it must not be told to go on (nor the signal be replaced: the request would wait for ever).
+        if (dialog is not null && (index < 0 || index >= dialog.Buttons.Count))
+            return Task.CompletedTask;
+
         return ContinueAsync(() => dialog?.Answer.TrySetResult(index), dialog?.Owner as Run);
     }
 
@@ -100,33 +110,48 @@ public sealed class RouteableInteractions : IDisposable
 
     /// <summary>Adds a toast notification that the page will show.</summary>
     public void Notify(string title, string message, RouteableNotificationType type, TimeSpan? expiration, Action? onClick, Action? onClose)
-        => _toasts.Add(new RouteableToast(++_nextToast, title, message, type, expiration, onClick, onClose));
+    {
+        lock (_gate)
+            _toasts.Add(new RouteableToast(++_nextToast, title, message, type, expiration, onClick, onClose));
+    }
 
     // ---------------------------------------------------------------- system notifications (the browser's)
 
     /// <summary>The system notifications that were shown and not closed, by id.</summary>
     public IReadOnlyDictionary<uint, IRouteableSystemNotification> ActiveSystemNotifications
-        => _systemActive.ToDictionary(p => p.Key, p => (IRouteableSystemNotification)p.Value);
+    {
+        get { lock (_gate) return _systemActive.ToDictionary(p => p.Key, p => (IRouteableSystemNotification)p.Value); }
+    }
 
     /// <summary>Creates a system notification of the browser, not shown until <see cref="IRouteableSystemNotification.ShowAsync"/>.</summary>
-    public RouteableBrowserNotification CreateSystemNotification(string? category) => new(this, ++_nextSystem, category);
+    public RouteableBrowserNotification CreateSystemNotification(string? category)
+    {
+        lock (_gate)
+            return new(this, ++_nextSystem, category);
+    }
 
     internal void ShowSystemNotification(RouteableBrowserNotification notification)
     {
-        _systemActive[notification.Id] = notification;
-        _systemCommands.RemoveAll(c => c.Op == "show" && c.Id == notification.Id);
-        _systemCommands.Add(new RouteableBrowserNotificationCommand(
-            "show", notification.Id, notification.Title, notification.Message, notification.Icon, notification.Tag,
-            notification.Expiration is { } span ? (int)Math.Min(span.TotalMilliseconds, int.MaxValue) : null));
+        lock (_gate)
+        {
+            _systemActive[notification.Id] = notification;
+            _systemCommands.RemoveAll(c => c.Op == "show" && c.Id == notification.Id);
+            _systemCommands.Add(new RouteableBrowserNotificationCommand(
+                "show", notification.Id, notification.Title, notification.Message, notification.Icon, notification.Tag,
+                notification.Expiration is { } span ? (int)Math.Min(span.TotalMilliseconds, int.MaxValue) : null));
+        }
     }
 
     internal void CloseSystemNotification(uint id)
     {
-        if (!_systemActive.Remove(id))
-            return;
-        // One that has not reached the browser yet never will.
-        if (_systemCommands.RemoveAll(c => c.Op == "show" && c.Id == id) == 0)
-            _systemCommands.Add(new RouteableBrowserNotificationCommand("close", id));
+        lock (_gate)
+        {
+            if (!_systemActive.Remove(id))
+                return;
+            // One that has not reached the browser yet never will.
+            if (_systemCommands.RemoveAll(c => c.Op == "show" && c.Id == id) == 0)
+                _systemCommands.Add(new RouteableBrowserNotificationCommand("close", id));
+        }
     }
 
     /// <summary>Raised when the visitor clicked a system notification of the browser or closed it (<see cref="CompleteSystemNotification"/>).</summary>
@@ -140,8 +165,12 @@ public sealed class RouteableInteractions : IDisposable
     /// <returns><see langword="true"/> when the notification was active.</returns>
     public bool CompleteSystemNotification(uint id, bool activated, string? actionTag = null)
     {
-        if (!_systemActive.Remove(id))
-            return false;
+        lock (_gate)
+        {
+            if (!_systemActive.Remove(id))
+                return false;
+        }
+
         SystemNotificationCompleted?.Invoke(this, new RouteableSystemNotificationEventArgs
         {
             NotificationId = id,
@@ -155,9 +184,12 @@ public sealed class RouteableInteractions : IDisposable
     /// <summary>Closes every system notification that is active.</summary>
     public void CloseAllSystemNotifications()
     {
-        _systemActive.Clear();
-        _systemCommands.Clear();
-        _systemCommands.Add(new RouteableBrowserNotificationCommand("closeAll", 0));
+        lock (_gate)
+        {
+            _systemActive.Clear();
+            _systemCommands.Clear();
+            _systemCommands.Add(new RouteableBrowserNotificationCommand("closeAll", 0));
+        }
     }
 
     /// <summary>
@@ -166,31 +198,42 @@ public sealed class RouteableInteractions : IDisposable
     /// </summary>
     public string? TakeSystemNotificationsJson()
     {
-        if (_systemCommands.Count == 0)
-            return null;
+        RouteableBrowserNotificationCommand[] commands;
+        lock (_gate)
+        {
+            if (_systemCommands.Count == 0)
+                return null;
+            commands = [.. _systemCommands];
+            _systemCommands.Clear();
+        }
 
-        var json = System.Text.Json.JsonSerializer.Serialize(_systemCommands, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)
+        return System.Text.Json.JsonSerializer.Serialize(commands, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)
         {
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         });
-        _systemCommands.Clear();
-        return json;
     }
 
     /// <summary>Drops the notifications whose time is over, as the page they were shown on has been left.</summary>
     public void Expire()
     {
-        foreach (var toast in _toasts.Where(t => t.Expiration is { } span && DateTime.UtcNow - t.Shown > span).ToList())
+        RouteableToast[] expired;
+        lock (_gate)
+            expired = [.. _toasts.Where(t => t.Expiration is { } span && DateTime.UtcNow - t.Shown > span)];
+        foreach (var toast in expired)
             Dismiss(toast.Id, click: false);
     }
 
     /// <summary>Removes the toast with the given <paramref name="id"/> and optionally raises its click handler.</summary>
     public void Dismiss(int id, bool click)
     {
-        if (_toasts.FirstOrDefault(t => t.Id == id) is not { } toast)
-            return;
+        RouteableToast? toast;
+        lock (_gate)
+        {
+            toast = _toasts.FirstOrDefault(t => t.Id == id);
+            if (toast is null || !_toasts.Remove(toast))
+                return;   // another request took it first: its handlers run once
+        }
 
-        _toasts.Remove(toast);
         if (click)
             toast.OnClick?.Invoke();
         toast.OnClose?.Invoke();
@@ -202,8 +245,14 @@ public sealed class RouteableInteractions : IDisposable
     public void Dispose()
     {
         // A view model that awaits a dialog the visitor will never answer ends with the session.
-        foreach (var dialog in _dialogs)
+        RouteableDialog[] waiting;
+        lock (_gate)
+        {
+            waiting = [.. _dialogs];
+            _dialogs.Clear();
+        }
+
+        foreach (var dialog in waiting)
             dialog.Answer.TrySetCanceled();
-        _dialogs.Clear();
     }
 }

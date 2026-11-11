@@ -48,7 +48,7 @@ public static class RouteableDeepLinks
         if (uri is null || !uri.IsAbsoluteUri)
             return false;
 
-        // An address comes from outside the application (a message, a web page, another app): a huge one is refused before it is parsed.
+        // An address comes from outside the application (a message, a web page, another app): a huge one is refused before its path is read.
         if (uri.OriginalString.Length > MaxLength)
             return false;
 

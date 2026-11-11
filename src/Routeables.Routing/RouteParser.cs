@@ -121,6 +121,10 @@ public static class RouteParser
             StringComparer.OrdinalIgnoreCase);
         var bound = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
+        // The fragment is for the browser, never for the route: "/orders/42#top" is "/orders/42".
+        if (uri.IndexOf('#') is var hash and >= 0)
+            uri = uri[..hash];
+
         var (tPath, tQuery) = Split(template);
         var (uPath, uQuery) = Split(uri);
 

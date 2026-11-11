@@ -38,7 +38,8 @@ public static class RouteGuardRefreshExtensions
         ArgumentNullException.ThrowIfNull(source);
         async void OnChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (properties.Length > 0 && !properties.Contains(e.PropertyName, StringComparer.Ordinal))
+            // A null or empty name means "everything changed" (the INotifyPropertyChanged convention): it concerns every property.
+            if (properties.Length > 0 && !string.IsNullOrEmpty(e.PropertyName) && !properties.Contains(e.PropertyName, StringComparer.Ordinal))
                 return;
             try { await router.RefreshGuardsAsync(); }
             catch (Exception ex) { Errors.RouteableErrors.Report(provider, "RefreshGuardsOn", ex); }

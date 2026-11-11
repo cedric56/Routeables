@@ -15,6 +15,6 @@ await coordinator.CoordinateAsync("/Bears?SearchText=polar");   // MainViewModel
 | `Name?k=v` | Pushes the segment registered under `Name` |
 | `region:Name` | Hands the segment to the router of that region |
 | `..` | Goes back one entry |
-| leading `/` | Absolute: clears the history of the routers involved first |
+| leading `/` | Absolute: clears the history of the routers involved first, once the page each one shows agrees to be left (`CanLeaveAsync`) |
 
 `AddRouteCoordinator()` takes the lifetime of the host, like the menu view model; pass one only to override it. Types: `IRouteCoordinator`, `RouteCoordination` (parsed, or fluent with `RouteCoordination.Create()`), `RouteSegment`.

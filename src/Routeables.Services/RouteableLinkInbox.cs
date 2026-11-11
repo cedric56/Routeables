@@ -19,6 +19,9 @@ public sealed class RouteableLinkInbox
 {
     private static readonly TimeSpan FirstPageTimeout = TimeSpan.FromSeconds(30);
 
+    /// <summary>The most addresses kept while the application is not ready; beyond it the oldest are dropped (the last address is the one the user wants).</summary>
+    internal const int MaxPending = 32;
+
     private readonly IReadOnlyCollection<string>? schemes;
     private readonly IReadOnlyCollection<string>? hosts;
     private IServiceProvider? provider;
@@ -66,14 +69,24 @@ public sealed class RouteableLinkInbox
         Kick();
     }
 
+    /// <summary>The addresses that wait to be followed (for tests).</summary>
+    internal int PendingCount { get { lock (gate) return links.Count; } }
+
     /// <summary>An address received by the host. Safe to call from any thread, before or after <see cref="Attach"/>.</summary>
     public void Push(Uri? uri)
     {
-        if (uri is null)
+        // An address that would be refused when it is followed (see RouteableDeepLinks.MaxLength) is not worth keeping, and what comes
+        // from outside must not be able to fill the memory while the first page is not shown.
+        if (uri is null || uri.OriginalString.Length > RouteableDeepLinks.MaxLength)
             return;
 
         lock (gate)
+        {
             links.Enqueue(uri);
+            while (links.Count > MaxPending)
+                links.Dequeue();
+        }
+
         Kick();
     }
 

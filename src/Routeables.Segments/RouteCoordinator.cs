@@ -2,6 +2,7 @@
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Errors;
+using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 
@@ -36,11 +37,27 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
         var result = RouteableResult.Ok();
         try
         {
-            // 2. Absolute: start from empty histories, once per router.
+            // 2. Absolute: start from empty histories, once per router. Erasing is not leaving: the page shown is asked first, as a route
+            // change would (a page with unsaved changes can say no), and one "no" stops the whole coordination before anything is touched.
+            var shownBefore = new Dictionary<IRouter, string?>();
             if (coordination.Absolute)
             {
-                foreach (var router in steps.Select(s => s.Router).Distinct())
+                var routers = steps.Select(s => s.Router).Distinct().ToList();
+                foreach (var router in routers)
+                {
+                    if (!await CanLeaveAsync(router, cancellationToken))
+                    {
+                        result = RouteableResult.Cancel();
+                        Raise(Coordinated, new RouteCoordinatedEventArgs(coordination, result, 0));
+                        return result;
+                    }
+                }
+
+                foreach (var router in routers)
+                {
+                    shownBefore[router] = router.History.Current?.Args.Route;
                     await router.EraseHistoryAsync(cancellationToken);
+                }
             }
 
             // 3. One coordination per segment, in order, stopping at the first that does not succeed.
@@ -51,6 +68,11 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
                     break;
                 completed++;
             }
+
+            // A segment that did not succeed after the histories were erased: a router that is still empty gets the page it showed back,
+            // so that the application is not left with a blank region (what was applied before the failure stays).
+            if (!result.Success)
+                await BringBackAsync(shownBefore);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -70,6 +92,27 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
 
         Raise(Coordinated, new RouteCoordinatedEventArgs(coordination, result, completed));
         return result;
+    }
+
+    // Whether the page a router shows agrees to be left (its CanLeaveAsync); a router with no page has nothing to ask.
+    private static async Task<bool> CanLeaveAsync(IRouter router, CancellationToken cancellationToken)
+    {
+        if (router.History.Current is not { } current)
+            return true;
+        if (current.ViewModel is IRouteable viewModel && !await viewModel.CanLeaveAsync(cancellationToken))
+            return false;
+        return current.View is not IRouteable view || ReferenceEquals(view, current.ViewModel) || await view.CanLeaveAsync(cancellationToken);
+    }
+
+    private async Task BringBackAsync(Dictionary<IRouter, string?> shownBefore)
+    {
+        foreach (var (router, route) in shownBefore)
+        {
+            if (router.History.Count > 0 || string.IsNullOrWhiteSpace(route))
+                continue;
+            try { await router.GoToAsync(route, null, null, CancellationToken.None); }
+            catch (Exception ex) { RouteableErrors.Report<RouteCoordinator>(provider, ex); }   // the failure of the segment is what the caller gets
+        }
     }
 
     private void ReportFailure(Exception exception)

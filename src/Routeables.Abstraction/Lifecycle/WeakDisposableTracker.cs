@@ -6,6 +6,8 @@ internal sealed class WeakDisposableTracker : IDisposable, IAsyncDisposable
 {
     private readonly List<WeakReference> _refs = new();
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<object, object> _known = new();
+    // What the router disposed already when the page left the history: the end of the scope must not dispose it a second time.
+    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<object, object> _gone = new();
     private bool _disposed;
     private int _pruneAt = 64;
 
@@ -13,6 +15,13 @@ internal sealed class WeakDisposableTracker : IDisposable, IAsyncDisposable
     internal int Count
     {
         get { lock (_refs) return _refs.Count; }
+    }
+
+    /// <summary>Says that <paramref name="instance"/> was disposed by someone else: the end of the scope leaves it alone.</summary>
+    public void Forget(object? instance)
+    {
+        if (instance is not null)
+            _gone.TryAdd(instance, instance);
     }
 
     public void Track(object? instance)
@@ -74,7 +83,7 @@ internal sealed class WeakDisposableTracker : IDisposable, IAsyncDisposable
         {
             if (_disposed) return [];
             _disposed = true;
-            var items = _refs.Select(w => w.Target).OfType<object>().ToList();
+            var items = _refs.Select(w => w.Target).OfType<object>().Where(item => !_gone.TryGetValue(item, out _)).ToList();
             _refs.Clear();
             return items;
         }

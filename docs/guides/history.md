@@ -15,7 +15,7 @@ Each router keeps a history of entries (view model, view and arguments):
 | `GoToStackAsync(["/orders", "/orders/42"])` | Goes to each route in order, so the history gets one entry per route (deep link, wizard). Each page runs its guards and lifecycle, the intermediate pages included; stops at the first route that fails or is cancelled and returns that result |
 | `PopAsync` | Goes back and removes the entry you left |
 | `GoBackToRootAsync` | Returns to the first entry |
-| `EraseHistoryAsync` | Clears the history |
+| `EraseHistoryAsync` | Clears the history. It does not ask the page shown (`CanLeaveAsync`) and raises no `Routed`: it is for the code that owns the session (a sign-out, a restoration), not for a user move |
 
 ### Limiting the history
 

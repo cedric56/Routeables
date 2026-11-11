@@ -73,7 +73,7 @@ public static class Extensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(route);
         RouteableRegionNames.Record(services, route);
-        services.Add(new ServiceDescriptor(typeof(RouterHistory), route, (sp, k) => new RouterHistory(sp.GetService<HistoryLimits>()?.For((string)k!)), lifetime));
+        services.Add(new ServiceDescriptor(typeof(RouterHistory), route, (sp, k) => new RouterHistory(sp.GetService<HistoryLimits>()?.For((string)k!) ?? (lifetime == ServiceLifetime.Scoped ? DefaultScopedHistoryLimit : null)), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterGate), route, (sp, k) => new RouterGate(), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterLifecycle), route, (sp, k) => new RouterLifecycle(sp), lifetime));
         services.Add(new ServiceDescriptor(typeof(IRouter), route, (sp, k) =>

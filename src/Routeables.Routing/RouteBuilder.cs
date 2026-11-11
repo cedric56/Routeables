@@ -100,7 +100,7 @@ public static class RouteBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configure);
-        if (!services.Any(d => d.ServiceType == typeof(IRouter)))
+        if (!services.Any(d => d.ServiceType == typeof(IRouter) && !d.IsKeyedService))
             services.RegisterRouting();
         if (!services.Any(d => d.ServiceType == typeof(IRouteableArgsFactory)))
             services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());

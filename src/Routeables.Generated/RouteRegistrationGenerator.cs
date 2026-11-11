@@ -281,6 +281,10 @@ namespace Routeables.Generated
                 if (name.StartsWith("System", StringComparison.Ordinal) ||
                     name.StartsWith("Microsoft.", StringComparison.Ordinal) ||
                     name.StartsWith("Avalonia", StringComparison.Ordinal) ||
+                    name.StartsWith("Presentation", StringComparison.Ordinal) ||   // WPF: PresentationFramework has a ListView, a TreeView, a GridView...
+                    name.StartsWith("WindowsBase", StringComparison.Ordinal) ||
+                    name.StartsWith("Uno.", StringComparison.Ordinal) ||
+                    name.StartsWith("WinRT.", StringComparison.Ordinal) ||
                     name.StartsWith("MudBlazor", StringComparison.Ordinal) ||
                     name.StartsWith("netstandard", StringComparison.Ordinal))
                     continue;

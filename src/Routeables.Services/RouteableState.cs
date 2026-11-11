@@ -40,7 +40,8 @@ public static class RouteableState
     /// <summary>
     /// Replaces the history by the pages of <paramref name="routes"/>, in order, the last one being the page shown. Nothing changes
     /// when the list is empty. A route that cannot be reached (a page that no longer exists, a refusal of a guard) ends the restoration:
-    /// the pages before it stay.
+    /// the pages before it stay. When it is the first one, nothing is left to stay: the page that was shown before comes back, so that
+    /// the application is not left with an empty window.
     /// </summary>
     /// <returns><see langword="true"/> when every route was reached.</returns>
     public static async Task<bool> RestoreAsync(IRouter router, IEnumerable<string> routes, CancellationToken cancellationToken = default)
@@ -52,15 +53,38 @@ public static class RouteableState
         if (list.Count == 0)
             return true;
 
+        var shownBefore = router.History.Current?.Args.Route;
         await router.EraseHistoryAsync(cancellationToken);
-        foreach (var route in list)
+        try
         {
-            var result = await router.GoToAsync(route, null, null, cancellationToken);
-            if (!result.Success)
-                return false;
+            foreach (var route in list)
+            {
+                var result = await router.GoToAsync(route, null, null, cancellationToken);
+                if (!result.Success)
+                {
+                    await BringBackAsync(router, shownBefore);
+                    return false;
+                }
+            }
+        }
+        catch
+        {
+            await BringBackAsync(router, shownBefore);
+            throw;
         }
 
         return true;
+    }
+
+    // The history was erased and the first page of the restoration could not be shown: the page that was there goes back (an address
+    // goes through the menu or the route table like any other). Best effort: it must not hide why the restoration failed.
+    private static async Task BringBackAsync(IRouter router, string? shownBefore)
+    {
+        if (router.History.Count > 0 || string.IsNullOrWhiteSpace(shownBefore))
+            return;
+
+        try { await router.GoToAsync(shownBefore, null, null, CancellationToken.None); }
+        catch { /* the caller already has the failure */ }
     }
 
     /// <summary>
@@ -104,12 +128,29 @@ public static class RouteableState
         if (list.Count == 0)
             return true;
 
+        var shownBefore = router.History.Current?.Args.Route;
         await router.EraseHistoryAsync(cancellationToken);
+        try
+        {
+            return await RestoreEachAsync(router, list, shownBefore, cancellationToken);
+        }
+        catch
+        {
+            await BringBackAsync(router, shownBefore);
+            throw;
+        }
+    }
+
+    private static async Task<bool> RestoreEachAsync(IRouter router, List<RouteableSnapshot> list, string? shownBefore, CancellationToken cancellationToken)
+    {
         foreach (var snapshot in list)
         {
             var result = await router.GoToAsync(snapshot.Route, ValuesArgs(snapshot.State), null, cancellationToken);
             if (!result.Success)
+            {
+                await BringBackAsync(router, shownBefore);
                 return false;
+            }
 
             // Not when a guard sent the user to another page: those values are not for it.
             if (snapshot.State.Count > 0

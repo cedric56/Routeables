@@ -77,6 +77,8 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
     private volatile bool _disposed;
     private readonly CancellationTokenSource _stopped = new();
     private string? _last;
+    private long _ticket;       // taken before a history is read
+    private long _savedTicket;  // the one of the history that was written last
 
     /// <summary>Starts keeping the history: reads what was kept, and writes the history after each route change from then on. Safe to call twice.</summary>
     public void Start()
@@ -117,6 +119,8 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             {
                 if (await RouteableState.RestoreSnapshotsAsync(router, kept))
                     RouteableMenu.Moved(provider, router);
+                else
+                    SaveNow();   // what was kept cannot be shown: the page that is there replaces it, or the same failure comes back at every start
             }
 
             if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
@@ -180,6 +184,10 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             if (_router is not { } router)
                 return;
 
+            // Two saves may overlap (a route change and a Flush from another thread): the one that read the history last must be the one that is
+            // written last. The history is read outside the lock (a view model saves its state there: user code), so each read takes a number
+            // first, and a read that is older than what is already written is dropped.
+            var ticket = Interlocked.Increment(ref _ticket);
             var snapshots = RouteableState.CaptureSnapshots(router);
             // An empty history is written only when it was erased: the first page of a new run is not yet there when the keeper starts.
             if (snapshots.Count == 0 && !allowEmpty)
@@ -188,10 +196,11 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             var text = snapshots.Count == 0 ? string.Empty : RouteableState.Serialize(snapshots);
             lock (_gate)
             {
-                if (text == _last)
+                if (ticket < _savedTicket || text == _last)
                     return;
                 store.Save(text);
                 _last = text;
+                _savedTicket = ticket;
             }
         }
         catch (Exception ex)

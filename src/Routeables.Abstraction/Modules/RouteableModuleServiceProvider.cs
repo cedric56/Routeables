@@ -117,7 +117,9 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
 
     // The services the module built once are disposed in the reverse order of their creation, IAsyncDisposable included (a service that
     // has only DisposeAsync is waited for here: prefer DisposeAsync of the module services when you can).
-    public void Dispose() => DisposeAsync().AsTask().GetAwaiter().GetResult();
+    // Run on the thread pool: a service whose DisposeAsync resumes on the context of the caller (the interface thread) would otherwise wait
+    // for the thread that waits for it.
+    public void Dispose() => Task.Run(() => DisposeAsync().AsTask()).GetAwaiter().GetResult();
 
     public async ValueTask DisposeAsync()
     {

@@ -31,6 +31,9 @@ public class RouterNotFoundAndGuardRefreshTests
         }
         public event PropertyChangedEventHandler? PropertyChanged;
         public void Other() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Other"));
+
+        // The convention of INotifyPropertyChanged: no name (or an empty one) means that every property changed.
+        public void EverythingChanged(bool signedIn) { _signedIn = signedIn; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null)); }
     }
 
     private sealed class NeedsSession(Session session, List<string> log) : IRouteGuard
@@ -143,6 +146,22 @@ public class RouterNotFoundAndGuardRefreshTests
         session.IsSignedIn = true;
         session.IsSignedIn = false;                                            // no longer followed: no extra route change
         await Task.Delay(50, Ct);
+        Assert.IsType<LoginVm>(router.CurrentViewModel);
+    }
+
+    [Fact]
+    public async Task RefreshGuardsOn_follows_a_change_that_names_no_property()
+    {
+        var session = new Session();
+        await using var provider = Build(notFound: false, session);
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct);
+
+        using var subscription = router.RefreshGuardsOn(session, null, nameof(Session.IsSignedIn));
+        session.EverythingChanged(signedIn: false);                            // "all the properties changed" includes IsSignedIn
+
+        for (var i = 0; i < 200 && router.CurrentViewModel is not LoginVm; i++)
+            await Task.Delay(10, Ct);
         Assert.IsType<LoginVm>(router.CurrentViewModel);
     }
 

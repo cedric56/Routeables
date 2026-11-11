@@ -106,13 +106,13 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         WatchUnsavedChanges();
 
         var address = AddressOf(e.To);
-        if (Same(_pending, address))
+        if (SameAddress(_pending, address))
         {
             Track(e.Kind);      // the browser made this move itself (a link, its Back or Forward button)
             return;
         }
 
-        if (Same(Relative(navigation.Uri), address))
+        if (SameAddress(Relative(navigation.Uri), address))
             return;
 
         // The router goes back or forward by itself (a Pop goes back too: the page it leaves is only forgotten by the router): the browser
@@ -225,7 +225,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             return;     // another site
 
         var path = Relative(context.TargetLocation);
-        if (Same(AddressOf(router.History.Current), path))
+        if (SameAddress(AddressOf(router.History.Current), path))
             return;     // the address of the page that is shown: the router moved first
 
         _pending = path;
@@ -266,22 +266,22 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     private async Task<Outcome> ApplyAsync(string path, bool restore = true, CancellationToken cancellationToken = default)
     {
         var history = router.History;
-        if (Same(AddressOf(history.Current), path))
+        if (SameAddress(AddressOf(history.Current), path))
             return Outcome.Done;
 
         RouteableResult result;
-        if (history.CanGoBack && Same(AddressOf(history.Entries[history.CurrentIndex - 1]), path))
+        if (history.CanGoBack && SameAddress(AddressOf(history.Entries[history.CurrentIndex - 1]), path))
         {
             result = await router.GoBackAsync(cancellationToken);
             Moved(result);
         }
-        else if (history.CanGoForward && Same(AddressOf(history.Entries[history.CurrentIndex + 1]), path))
+        else if (history.CanGoForward && SameAddress(AddressOf(history.Entries[history.CurrentIndex + 1]), path))
         {
             result = await router.ForwardAsync(cancellationToken);
             Moved(result);
         }
         else if (provider.GetService<IRouteableMenuViewModel>() is { } menuViewModel
-                 && menuViewModel.Entries.FirstOrDefault(r => Same(r.Route, path)) is { } item)
+                 && menuViewModel.Entries.FirstOrDefault(r => SameAddress(r.Route, path)) is { } item)
         {
             // Keeps the layout's selection (menu highlight) in step; it navigates the router. The guards answer before the address is accepted.
             if (menuViewModel is Routeables.Core.RouteableMenuViewModelBase selectable)
@@ -369,14 +369,41 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     // the same address, so they are compared unescaped. Without it the two never match and the address is shown again and again.
     // The path ignores the case and a closing slash; the query is data: the names ignore the case, the values do not, and a slash that ends a
     // value is part of it ("/search?q=ABC" is not "/search?q=abc", "?path=a/" is not "?path=a").
-    internal static bool Same(string? a, string? b)
+    internal static bool Same(string? a, string? b, IEnumerable<(string Template, Type? ViewModelType)>? routes = null)
     {
         if (a is null || b is null)
             return false;
         var (pathA, queryA) = SplitQuery(Url(a));
         var (pathB, queryB) = SplitQuery(Url(b));
-        return string.Equals(Unescape(pathA.TrimEnd('/')), Unescape(pathB.TrimEnd('/')), StringComparison.OrdinalIgnoreCase)
+        return SamePath(Unescape(pathA.TrimEnd('/')), Unescape(pathB.TrimEnd('/')), routes)
                && SameQuery(queryA, queryB);
+    }
+
+    private bool SameAddress(string? a, string? b) => Same(a, b, provider.GetService<RouteableTable>()?.Entries);
+
+    // The words of a route ignore the case ("/Orders" is "/orders"), the values of its placeholders do not: "/items/aB" and "/items/Ab" are two
+    // pages when the identifier is a token or a slug. A path whose route is not known has no placeholder to protect.
+    private static bool SamePath(string a, string b, IEnumerable<(string Template, Type? ViewModelType)>? routes)
+    {
+        if (string.Equals(a, b, StringComparison.Ordinal))
+            return true;
+        if (!string.Equals(a, b, StringComparison.OrdinalIgnoreCase))
+            return false;
+        if (routes is null || RouteParser.BestMatch(routes, a).Template is not { } template)
+            return true;
+
+        var templateSegments = template.Split('?')[0].Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var segmentsA = a.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var segmentsB = b.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        for (var i = 0; i < segmentsA.Length && i < segmentsB.Length; i++)
+        {
+            if (string.Equals(segmentsA[i], segmentsB[i], StringComparison.Ordinal))
+                continue;
+            if (i >= templateSegments.Length || templateSegments[i].Contains('{'))
+                return false;   // the case of a value changed: not the same page
+        }
+
+        return true;
     }
 
     private static (string Path, string? Query) SplitQuery(string address)
