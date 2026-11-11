@@ -16,7 +16,6 @@ public static class RouteableItem
     public static readonly DependencyProperty RouteProperty =
         DependencyProperty.RegisterAttached("Route", typeof(string), typeof(RouteableItem), new PropertyMetadata(null));
 
-    /// <summary>Gets the route of <paramref name="item"/>; <see langword="null"/> when it names none.</summary>
     /// <summary>
     /// The region of this item: it then has its own pile of pages, kept when the user goes to another item and comes back, instead of sharing the region
     /// of the navigation view. Register it with <c>AddRegion</c>. The item goes to its <see cref="RouteProperty"/> the first time it is selected.
@@ -24,10 +23,13 @@ public static class RouteableItem
     public static readonly DependencyProperty RegionProperty =
         DependencyProperty.RegisterAttached("Region", typeof(string), typeof(RouteableItem), new PropertyMetadata(null));
 
+    /// <summary>Gets the region of <paramref name="item"/>; <see langword="null"/> when it shares the region of its control.</summary>
     public static string? GetRegion(DependencyObject item) => (string?)item.GetValue(RegionProperty);
 
+    /// <summary>Sets the region of <paramref name="item"/>.</summary>
     public static void SetRegion(DependencyObject item, string? value) => item.SetValue(RegionProperty, value);
 
+    /// <summary>Gets the route of <paramref name="item"/>; <see langword="null"/> when it names none.</summary>
     public static string? GetRoute(DependencyObject item) => (string?)item.GetValue(RouteProperty);
 
     /// <summary>Sets the route of <paramref name="item"/>.</summary>

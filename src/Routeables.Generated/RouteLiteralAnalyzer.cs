@@ -26,7 +26,8 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
         "No route known to this project matches '{0}'. Check the spelling against the [Routeable] paths and RegisterRoute calls, or ignore this message if the route is registered elsewhere.",
         "Routeables",
         DiagnosticSeverity.Info,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        customTags: new[] { WellKnownDiagnosticTags.CompilationEnd });     // reported by the compilation end action, once every literal is known
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Unknown);
 

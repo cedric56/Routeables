@@ -10,5 +10,5 @@ ROUT203 | Routeables | Warning | Several views for the same view model and route
 ROUT204 | Routeables | Warning | [RouteableView] in a .razor file is ignored here
 ROUT205 | Routeables | Info | No view found for a view model
 ROUT301 | Routeables | Warning | IRouteableMenuViewModel registered as transient
-ROUT401 | Routeables | Warning | A [Persist] property cannot be saved
+ROUT401 | Routeables.Persistence | Warning | A [Persist] property cannot be saved
 ROUT501 | Routeables | Info | Route matches no known route

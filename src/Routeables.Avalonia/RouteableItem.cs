@@ -20,8 +20,10 @@ public sealed class RouteableItem : AvaloniaObject
     public static readonly AttachedProperty<string?> RegionProperty =
         AvaloniaProperty.RegisterAttached<RouteableItem, Control, string?>("Region");
 
+    /// <summary>Gets the region of <paramref name="item"/>; <see langword="null"/> when it shares the region of its tab control.</summary>
     public static string? GetRegion(Control item) => item.GetValue(RegionProperty);
 
+    /// <summary>Sets the region of <paramref name="item"/>.</summary>
     public static void SetRegion(Control item, string? value) => item.SetValue(RegionProperty, value);
 
     private RouteableItem()

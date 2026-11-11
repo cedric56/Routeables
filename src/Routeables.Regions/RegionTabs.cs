@@ -45,6 +45,8 @@ public sealed class RegionTabs<TTab> where TTab : class
     /// <param name="select">Selects a tab.</param>
     /// <param name="post">Runs an action on the UI thread, after the current one.</param>
     /// <param name="owner">The type that asks, named in the report of an error.</param>
+    /// <param name="regionOf">The region of a tab, or <see langword="null"/> for a tab that shares the region of the control: a tab with a region has its own host and pile of pages.</param>
+    /// <param name="createHost">Creates the host (<c>RouteableRegion</c>) of a region named by <paramref name="regionOf"/>; required when a tab has one.</param>
     public RegionTabs(IServiceProvider provider, string? region, object host, IEnumerable<TTab> tabs,
         Func<TTab, string?> routeOf, Func<TTab, object?> contentOf, Action<TTab, object?> setContent,
         Func<TTab?> selected, Action<TTab> select, Action<Action> post, Type owner,
