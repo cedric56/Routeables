@@ -16,6 +16,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.*" />
-    <PackageReference Include="Routeables.WinUI3" Version="2.0.0" />
+    <PackageReference Include="Routeables.WinUI3" Version="2.1.0" />
   </ItemGroup>
 </Project>

@@ -6,6 +6,6 @@
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Routeables.Blazor" Version="2.0.0" />
+    <PackageReference Include="Routeables.Blazor" Version="2.1.0" />
   </ItemGroup>
 </Project>
