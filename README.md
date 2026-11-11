@@ -11,7 +11,8 @@
   <a href="https://www.nuget.org/packages/Routeables.Blazor"><img src="https://img.shields.io/nuget/v/Routeables.Blazor?label=Routeables.Blazor" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Maui"><img src="https://img.shields.io/nuget/v/Routeables.Maui?label=Routeables.Maui" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Uno"><img src="https://img.shields.io/nuget/v/Routeables.Uno?label=Routeables.Uno" alt="NuGet"></a>
-  <a href="https://www.nuget.org/packages/Routeables.Wpf"><img src="https://img.shields.io/nuget/v/Routeables.Wpf?label=Routeables.Wpf" alt="NuGet"></a>  
+  <a href="https://www.nuget.org/packages/Routeables.WinUI3"><img src="https://img.shields.io/nuget/v/Routeables.WinUI3?label=Routeables.WinUI3" alt="NuGet"></a>
+  <a href="https://www.nuget.org/packages/Routeables.Wpf"><img src="https://img.shields.io/nuget/v/Routeables.Wpf?label=Routeables.Wpf" alt="NuGet"></a>
 </p>
 
 # Routeables
@@ -130,6 +131,27 @@ Routeables is the navigation layer, dialogs and notifications included. It ships
 ## Packages
 
 The host package already holds the dialogs, modals and notifications of its framework. For MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs, add a package of [`Reshapes`](reshapes/README.md). Everything else is in the one `Routeables` package that every host brings; its parts ([`Abstraction`](src/Routeables.Abstraction/README.md), [`Routing`](src/Routeables.Routing/README.md), [`Core`](src/Routeables.Core/README.md), [`Regions`](src/Routeables.Regions/README.md), [`Segments`](src/Routeables.Segments/README.md), [`Locking`](src/Routeables.Locking/README.md), [`Services`](src/Routeables.Services/README.md)) are separate projects of this repository.
+
+### On NuGet
+
+All the packages are released together (see [VERSIONING.md](VERSIONING.md)); the current version is on each badge.
+
+| Package | Version | What it is |
+|---------|---------|------------|
+| [`Routeables`](https://www.nuget.org/packages/Routeables) | [![Routeables](https://img.shields.io/nuget/v/Routeables?label=)](https://www.nuget.org/packages/Routeables) | The core: router, history, regions, modules, guards, lifecycle, generator. Every host brings it; a class library of view models takes it alone. |
+| [`Routeables.Abstraction`](https://www.nuget.org/packages/Routeables.Abstraction) | [![Routeables.Abstraction](https://img.shields.io/nuget/v/Routeables.Abstraction?label=)](https://www.nuget.org/packages/Routeables.Abstraction) | The contracts and attributes only. |
+| [`Routeables.Avalonia`](https://www.nuget.org/packages/Routeables.Avalonia) | [![Routeables.Avalonia](https://img.shields.io/nuget/v/Routeables.Avalonia?label=)](https://www.nuget.org/packages/Routeables.Avalonia) | Host for Avalonia. |
+| [`Routeables.Blazor`](https://www.nuget.org/packages/Routeables.Blazor) | [![Routeables.Blazor](https://img.shields.io/nuget/v/Routeables.Blazor?label=)](https://www.nuget.org/packages/Routeables.Blazor) | Host for Blazor (Server, WebAssembly, Web App). |
+| [`Routeables.AspNetCore`](https://www.nuget.org/packages/Routeables.AspNetCore) | [![Routeables.AspNetCore](https://img.shields.io/nuget/v/Routeables.AspNetCore?label=)](https://www.nuget.org/packages/Routeables.AspNetCore) | Host for Razor Pages and `.cshtml` views. |
+| [`Routeables.Maui`](https://www.nuget.org/packages/Routeables.Maui) | [![Routeables.Maui](https://img.shields.io/nuget/v/Routeables.Maui?label=)](https://www.nuget.org/packages/Routeables.Maui) | Host for .NET MAUI. |
+| [`Routeables.Uno`](https://www.nuget.org/packages/Routeables.Uno) | [![Routeables.Uno](https://img.shields.io/nuget/v/Routeables.Uno?label=)](https://www.nuget.org/packages/Routeables.Uno) | Host for Uno Platform. |
+| [`Routeables.WinUI3`](https://www.nuget.org/packages/Routeables.WinUI3) | [![Routeables.WinUI3](https://img.shields.io/nuget/v/Routeables.WinUI3?label=)](https://www.nuget.org/packages/Routeables.WinUI3) | Host for WinUI 3. |
+| [`Routeables.Wpf`](https://www.nuget.org/packages/Routeables.Wpf) | [![Routeables.Wpf](https://img.shields.io/nuget/v/Routeables.Wpf?label=)](https://www.nuget.org/packages/Routeables.Wpf) | Host for WPF. |
+| [`Routeables.Native`](https://www.nuget.org/packages/Routeables.Native) | [![Routeables.Native](https://img.shields.io/nuget/v/Routeables.Native?label=)](https://www.nuget.org/packages/Routeables.Native) | System notifications (Windows, Android, Apple). |
+| [`Routeables.Templates`](https://www.nuget.org/packages/Routeables.Templates) | [![Routeables.Templates](https://img.shields.io/nuget/v/Routeables.Templates?label=)](https://www.nuget.org/packages/Routeables.Templates) | `dotnet new` templates: `routeables-avalonia`, `-blazor`, `-maui`, `-uno`, `-winui3`. |
+| [`Reshapes.Avalonia.Fluent`](https://www.nuget.org/packages/Reshapes.Avalonia.Fluent) | [![Reshapes.Avalonia.Fluent](https://img.shields.io/nuget/v/Reshapes.Avalonia.Fluent?label=)](https://www.nuget.org/packages/Reshapes.Avalonia.Fluent) | FluentAvalonia dialogs. |
+| [`Reshapes.Blazor.MudBlazor`](https://www.nuget.org/packages/Reshapes.Blazor.MudBlazor) | [![Reshapes.Blazor.MudBlazor](https://img.shields.io/nuget/v/Reshapes.Blazor.MudBlazor?label=)](https://www.nuget.org/packages/Reshapes.Blazor.MudBlazor) | MudBlazor dialogs and notifications. |
+| [`Reshapes.Maui.Community`](https://www.nuget.org/packages/Reshapes.Maui.Community) | [![Reshapes.Maui.Community](https://img.shields.io/nuget/v/Reshapes.Maui.Community?label=)](https://www.nuget.org/packages/Reshapes.Maui.Community) | CommunityToolkit.Maui popups. |
 
 ## Learn more
 
