@@ -9,6 +9,7 @@
   <a href="https://www.nuget.org/packages/Routeables"><img src="https://img.shields.io/nuget/v/Routeables?label=Routeables" alt="NuGet Routeables"></a>
   <a href="https://www.nuget.org/packages/Routeables.Avalonia"><img src="https://img.shields.io/nuget/v/Routeables.Avalonia?label=Routeables.Avalonia" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Blazor"><img src="https://img.shields.io/nuget/v/Routeables.Blazor?label=Routeables.Blazor" alt="NuGet"></a>
+  <a href="https://www.nuget.org/packages/Routeables.AspNetCore"><img src="https://img.shields.io/nuget/v/Routeables.AspNetCore?label=Routeables.AspNetCore" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Maui"><img src="https://img.shields.io/nuget/v/Routeables.Maui?label=Routeables.Maui" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Uno"><img src="https://img.shields.io/nuget/v/Routeables.Uno?label=Routeables.Uno" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.WinUI3"><img src="https://img.shields.io/nuget/v/Routeables.WinUI3?label=Routeables.WinUI3" alt="NuGet"></a>
