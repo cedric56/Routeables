@@ -240,6 +240,22 @@ public class RouteParserTests
         Assert.Null(RouteParser.Mismatch("tabs/{tab?}", "tabs"));
     }
 
+    public sealed record ScratchPayload(string Name);
+
+    [Fact]
+    public void A_registered_type_can_be_taken_out_again_without_touching_the_others()
+    {
+        var options = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() };
+        RouteParser.RegisterSerializer<ScratchPayload>(options.GetTypeInfo(typeof(ScratchPayload)));
+        var address = "p/" + Uri.EscapeDataString("{\"Name\":\"a\"}");
+        Assert.True(RouteParser.TryMatch("p/{x:ScratchPayload}", address));
+
+        RouteParser.UnregisterSerializer<ScratchPayload>();
+
+        Assert.False(RouteParser.TryMatch("p/{x:ScratchPayload}", address));
+        Assert.True(RouteParser.TryMatch("p/{x:int}", "p/1"));       // the built-in constraints are untouched
+    }
+
     [Fact]
     public void RegisterSerializer_refuses_information_for_another_type()
     {

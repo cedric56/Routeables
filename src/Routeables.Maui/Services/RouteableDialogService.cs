@@ -93,7 +93,7 @@ public class RouteableDialogService(
     /// <param name="secondaryResult">The result returned if the secondary button is selected.</param>
     /// <param name="closeResult">The result returned if the close button is selected.</param>
     /// <returns>The result associated with the button the user selected.</returns>
-    /// <exception cref="NotImplementedException">Thrown on platforms without a supported native dialog implementation, or for unsupported content types.</exception>
+    /// <exception cref="NotImplementedException">Never thrown by the supported targets: a content the native dialog cannot show (a MAUI view on iOS) is shown by the content dialog service.</exception>
 
     public async Task<T?> DisplayThreeButtonsAsync<T>(
          string? title, object? content,
@@ -281,11 +281,12 @@ public class RouteableDialogService(
             }
 
 #endif
-#if ANDROID || WINDOWS || MACCATALYST || IOS
-            throw new NotImplementedException();
+#if ANDROID || WINDOWS
+            throw new NotImplementedException();    // not reached: both branches above return
 #else
-            // No native dialog on this target (the plain net10.0 one, which is what a platform without a MAUI backend of its own
-            // runs): the three buttons are those of a content dialog, drawn by the content dialog service with MAUI views.
+            // No native dialog for this content: the plain net10.0 target (what a platform without a MAUI backend of its own runs),
+            // or, on Apple platforms, a content that is neither text nor a UIView (a MAUI view, say). The three buttons are those
+            // of a content dialog, drawn by the content dialog service with MAUI views.
             var dialog = new RouteableContentDialog
             {
                 Title = title,

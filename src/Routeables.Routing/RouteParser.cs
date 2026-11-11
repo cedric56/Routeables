@@ -62,6 +62,30 @@ public static class RouteParser
         }
     }
 
+    /// <summary>
+    /// Takes one type out of the registry again. For tests that register a type of their own and must leave the process as they found it
+    /// (the registry is global, and tests run in parallel: emptying it would take the registrations of the others). A simple name that was
+    /// already ambiguous stays so.
+    /// </summary>
+    internal static void UnregisterSerializer<T>()
+    {
+        lock (RegistryLock)
+        {
+            var type = typeof(T);
+            if (type.FullName is { } full)
+            {
+                SerializationInfos.TryRemove(full, out _);
+                SerializationTypes.TryRemove(full, out _);
+            }
+
+            if (SerializationTypes.TryGetValue(type.Name, out var owner) && owner == type)
+            {
+                SerializationInfos.TryRemove(type.Name, out _);
+                SerializationTypes.TryRemove(type.Name, out _);
+            }
+        }
+    }
+
     // {Id:int}  {Tab?}  {Tab::?}  {animate::bool}  {person:Person}  {**path}
     // "::" sets the 'attribute' group, "?" sets 'opt', "**" sets 'rest': the placeholder takes what is left of the path, slashes included
     private static readonly Regex Param =
