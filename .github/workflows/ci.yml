@@ -247,7 +247,13 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Native AOT clang
-        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+        # The mirrors of the runner are sometimes unreachable for a while ("Temporary failure resolving"): nothing is installed when the tools are
+        # there already, and apt tries again before it gives up.
+        run: |
+          if ! command -v clang >/dev/null || ! dpkg -s zlib1g-dev >/dev/null 2>&1; then
+            sudo apt-get -o Acquire::Retries=5 update || true
+            sudo apt-get -o Acquire::Retries=5 install -y clang zlib1g-dev
+          fi
 
       - name: Publish Native AOT smoke app
         run: dotnet publish src/Routeables.AotSmoke/Routeables.AotSmoke.csproj -c Release -r linux-x64 -o artifacts/aot-smoke
@@ -537,7 +543,9 @@ jobs:
           restore-keys: nuget-${{ runner.os }}-uno-test-
 
       - name: Screen and fonts for the Skia head
-        run: sudo apt-get update && sudo apt-get install -y xvfb libfontconfig1 libx11-6 libxkbcommon0 libice6 libsm6
+        run: |
+          sudo apt-get -o Acquire::Retries=5 update || true
+          sudo apt-get -o Acquire::Retries=5 install -y xvfb libfontconfig1 libx11-6 libxkbcommon0 libice6 libsm6
 
       - name: Build
         run: dotnet build tests/Routeables.Test.Uno/Routeables.Test.Uno.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
