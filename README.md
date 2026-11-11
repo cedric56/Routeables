@@ -13,6 +13,10 @@
   <a href="https://www.nuget.org/packages/Routeables.Uno"><img src="https://img.shields.io/nuget/v/Routeables.Uno?label=Routeables.Uno" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.WinUI3"><img src="https://img.shields.io/nuget/v/Routeables.WinUI3?label=Routeables.WinUI3" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Wpf"><img src="https://img.shields.io/nuget/v/Routeables.Wpf?label=Routeables.Wpf" alt="NuGet"></a>
+  <a href="https://www.nuget.org/packages/Routeables.Abstraction"><img src="https://img.shields.io/nuget/v/Routeables.Abstraction?label=Routeables.Abstraction" alt="NuGet"></a>
+  <a href="https://www.nuget.org/packages/Reshapes.Avalonia.Fluent"><img src="https://img.shields.io/nuget/v/Reshapes.Avalonia.Fluent?label=Reshapes.Avalonia.Fluent" alt="NuGet"></a>
+  <a href="https://www.nuget.org/packages/Reshapes.Blazor.MudBlazor"><img src="https://img.shields.io/nuget/v/Reshapes.Blazor.MudBlazor?label=Reshapes.Blazor.MudBlazor" alt="NuGet"></a>
+  <a href="https://www.nuget.org/packages/Reshapes.Maui.Community"><img src="https://img.shields.io/nuget/v/Reshapes.Maui.Community?label=Reshapes.Maui.Community" alt="NuGet"></a>
 </p>
 
 # Routeables
