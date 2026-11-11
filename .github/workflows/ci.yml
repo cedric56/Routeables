@@ -716,6 +716,22 @@ jobs:
           xcrun simctl list devices booted
           dotnet msbuild tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-ios -p:Configuration=Debug -p:DeviceRunnersDevice="$DEVICERUNNERS_SIMULATOR"
 
+      # An application that never reports ("TCP listener timed out", Total=0) crashed or stalled at launch: its log says which, so print what matters of it here.
+      - name: Show why the application did not report
+        if: failure()
+        run: |
+          log=tests/Routeables.Test.Maui/test-results/ios-device-log.txt
+          if [ -f "$log" ]; then
+            wc -l "$log"
+            echo "--- errors, crashes, terminations of com.routeables.test.maui ---"
+            grep -iE "routeables|fatal|crash|terminat|exception|jetsam|killed|SIGABRT|SIGKILL|assert" "$log" | tail -n 80
+            echo "--- last 60 lines ---"
+            tail -n 60 "$log"
+          else
+            echo "No device log was written."
+          fi
+          ls ~/Library/Logs/DiagnosticReports 2>/dev/null | grep -i routeables || true
+
       # The log of the simulator (test-results/ios-device-log.txt) says why an application that crashed did: keep it, whatever the outcome.
       - name: Keep the device log and the results
         if: always()
