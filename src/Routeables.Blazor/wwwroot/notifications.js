@@ -77,7 +77,9 @@ export async function show(id, title, body, icon, tag, expirationMs, actions, re
     // Told once to .NET: a click activates the notification, anything else that closes it only closes it.
     let timer = null;
     const done = type => {
-        if (!direct.delete(id)) return;
+        // Another notification may have taken the id since: this one is no longer the one .NET knows, and must not remove the other's entry.
+        if (direct.get(id) !== notification) return;
+        direct.delete(id);
         if (timer) clearTimeout(timer);
         const json = JSON.stringify({ type, id, tag: tag ?? null, action: null });
         callback?.invokeMethodAsync(type === 'HandleNotificationClick' ? 'OnClick' : 'OnClose', json).catch(() => { });

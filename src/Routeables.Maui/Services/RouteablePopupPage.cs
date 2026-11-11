@@ -53,8 +53,10 @@ internal abstract class RouteablePopupPage<TResult> : ContentPage
         ArgumentNullException.ThrowIfNull(host);
 
         _dispatcher = host.Dispatcher;
-        await _dispatcher.DispatchAsync(() => host.Navigation.PushModalAsync(this, animated: false));
+        // Set before the page is pushed: a page that is refused at once loses its handler, and must free the caller then.
         _showing = true;
+        try { await _dispatcher.DispatchAsync(() => host.Navigation.PushModalAsync(this, animated: false)); }
+        catch { _showing = false; throw; }
         return await _completion.Task;
     }
 

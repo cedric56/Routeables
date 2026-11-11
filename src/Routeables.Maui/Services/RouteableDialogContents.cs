@@ -150,7 +150,7 @@ public static class RouteableDialogContents
             if (named is null || string.IsNullOrWhiteSpace(named.Name))
                 continue;
 
-            buttons.Add(new DialogButton(named.Name, i == 0, true, Command: named.Command));
+            buttons.Add(new DialogButton(named.Name, buttons.Count == 0, true, Command: named.Command));   // the first button kept is the default one, whatever its index
         }
 
         // Keep MAUI view hierarchy (no ToPlatform)
