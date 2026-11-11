@@ -23,4 +23,7 @@
     <ProjectReference Include="..\Routeables.Segments\Routeables.Segments.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Routeables.Test" />
+  </ItemGroup>
 </Project>
