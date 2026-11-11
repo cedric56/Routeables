@@ -185,7 +185,7 @@ public class DialogServiceDeviceTests
     }
 
     /// <summary>Waits for the modal stack to be back down to <paramref name="remaining"/> dialogs.</summary>
-    private static async Task ClosedAsync(int remaining = 0) => await Device.UntilAsync(() => Modals.Count == remaining);
+    private static async Task ClosedAsync(int remaining = 0, Func<string>? describe = null) => await Device.UntilAsync(() => Modals.Count == remaining, describe: describe);
 
     // ------------------------------------------------------------------------------------------------ the message box service it was given
 
@@ -489,7 +489,7 @@ public class DialogServiceDeviceTests
         await viewModel.CloseAsync("done");
 
         //Assert.Equal("done", await ResultAsync(shown));
-        await ClosedAsync();
+        await ClosedAsync(describe: () => State(("shown", shown)));
     }
 
     /// <summary>A modal closed from another thread ends as well: the value comes back to the caller.</summary>

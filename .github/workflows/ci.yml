@@ -516,8 +516,18 @@ jobs:
       - name: Build
         run: dotnet build tests/Routeables.Test.Playwright/Routeables.Test.Playwright.csproj -c ${{ env.CONFIGURATION }}
 
+      # --with-deps asks apt for system packages (fonts, libraries): the mirrors of the runner are sometimes unreachable for a while, and the build
+      # of the whole job was lost for that. It tries again, then installs the browser alone: the libraries it needs are on the image already.
       - name: Install Chromium
-        run: pwsh tests/Routeables.Test.Playwright/bin/${{ env.CONFIGURATION }}/net10.0/playwright.ps1 install --with-deps chromium
+        run: |
+          playwright="tests/Routeables.Test.Playwright/bin/${{ env.CONFIGURATION }}/net10.0/playwright.ps1"
+          for attempt in 1 2 3; do
+            pwsh "$playwright" install --with-deps chromium && exit 0
+            echo "Attempt $attempt failed; trying again in 20 seconds."
+            sleep 20
+          done
+          echo "The system packages could not be installed; installing the browser alone."
+          pwsh "$playwright" install chromium
 
       - name: Test
         run: dotnet test --project tests/Routeables.Test.Playwright/Routeables.Test.Playwright.csproj --no-build -c ${{ env.CONFIGURATION }}
