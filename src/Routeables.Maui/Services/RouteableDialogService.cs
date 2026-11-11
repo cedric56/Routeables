@@ -163,7 +163,8 @@ public class RouteableDialogService(
                 CloseButtonText = closeButtonText,
                 XamlRoot = current.Handler?.PlatformView is Microsoft.UI.Xaml.UIElement page ? page.XamlRoot : null
             };
-            dialog.Closed += (s, e) => taskCompletionSource.TrySetResult(default);
+            // Escape or a click outside closes it without a button: that is the close result, like a cancel on Android (a button has already set its own).
+            dialog.Closed += (s, e) => taskCompletionSource.TrySetResult(closeResult);
             dialog.PrimaryButtonClick += (s, e) => taskCompletionSource.TrySetResult(primaryResult);
             dialog.SecondaryButtonClick += (s, e) => taskCompletionSource.TrySetResult(secondaryResult);
             dialog.CloseButtonClick += (s, e) => taskCompletionSource.TrySetResult(closeResult);

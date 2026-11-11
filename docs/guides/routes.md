@@ -7,7 +7,7 @@ A **route** is the concrete string you go to (`/dogs/Eurohound`). A **template**
 | Placeholder | Meaning |
 | --- | --- |
 | `{name}` | Required segment, string (`/dogs/{name}`) |
-| `{id:int}` | Required segment with a type: `string`, `int`, `long`, `bool`, `guid`, `decimal`, `double` |
+| `{id:int}` | Required segment with a type: `string`, `int`, `long`, `bool` (only `true` or `false`, in any case: `1` and `yes` do not match), `guid`, `decimal`, `double` |
 | `{name?}` | Optional segment |
 | `{panda::}` | Segment bound to the **view** instead of the view model (`/pandas/{panda::}`, see [Arguments](arguments.md)) |
 | `?{tab}` / `?{tab?}` | Query-string value, required / optional |
