@@ -29,7 +29,8 @@ public class RouteableDialogService(
 #endif
 
     // WinUI shows one dialog at a time per window, and the alert of a Page is one: it waits for the one that is open (the content
-    // dialog of DisplayThreeButtonsAsync is behind the same gate). Elsewhere the platform queues or stacks them itself.
+    // dialog of DisplayThreeButtonsAsync is behind the same gate). The gate is one for the application, not one for each window: with several
+    // windows a dialog waits for the one of another window, which is slower but never fails. Elsewhere the platform queues or stacks them itself.
     private static async Task<int> OneAtATimeAsync(Func<Task<int>> show)
     {
 #if WINDOWS
@@ -116,7 +117,8 @@ public class RouteableDialogService(
         try
         {
 #if ANDROID
-            var alertBuilder = new Android.App.AlertDialog.Builder(Platform.CurrentActivity);
+            var alertBuilder = new Android.App.AlertDialog.Builder(Platform.CurrentActivity
+                ?? throw new InvalidOperationException("No current activity to show the dialog on (the application is in the background or starting)."));
 
             alertBuilder.SetTitle(title);
             if (content is string message)
@@ -204,6 +206,9 @@ public class RouteableDialogService(
                                     .FirstOrDefault(w => w.IsKeyWindow);
                 var rootViewController = keyWindow?.RootViewController
                     ?? throw new InvalidOperationException("No window to present the alert; the caller would wait for ever.");
+                // An alert with no button cannot be dismissed: the caller would wait for ever. It gets one that gives the close result.
+                if (alert.Actions.Length == 0)
+                    alert.AddAction(UIKit.UIAlertAction.Create("OK", UIKit.UIAlertActionStyle.Default, _ => taskCompletionSource.TrySetResult(closeResult)));
                 rootViewController.PresentViewController(alert, true, null);
                 return await taskCompletionSource.Task;
             }
