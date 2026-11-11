@@ -1,7 +1,12 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:routeables="using:Routeables.Avalonia"
              xmlns:local="using:RouteablesApp"
              x:Class="RouteablesApp.AboutView"
              x:DataType="local:AboutViewModel">
-    <TextBlock Margin="24" Text="{Binding Text}" VerticalAlignment="Center" />
+    <StackPanel Margin="24" Spacing="12" VerticalAlignment="Center">
+        <TextBlock Text="{Binding Text}" FontSize="18" TextWrapping="Wrap" />
+        <!-- The way back is a route too: /hello/again fills the {name} of the first page. -->
+        <Button Content="Hello" routeables:RouteableLink.Route="/hello/again" />
+    </StackPanel>
 </UserControl>
