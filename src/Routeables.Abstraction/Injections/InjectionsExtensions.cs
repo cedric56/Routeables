@@ -112,8 +112,8 @@ internal static partial class InjectionsExtensions
         {
             var names = view.InjectablePropertyNames(sp, injection);
             foreach (var entry in args.ViewModelParameters)
-                if (entry.attribute && entry.name is not null && names.Contains(entry.name) && !parameters.ContainsKey(entry.name))
-                    parameters[entry.name] = entry.value;
+                if (entry.attribute && entry.name is not null && names.Contains(entry.name) && !parameters.Keys.Any(k => string.Equals(k, entry.name, StringComparison.OrdinalIgnoreCase)))
+                    parameters[entry.name] = entry.value;     // a value the view was given under any casing of the name is not overwritten
         }
 
         return view.Inject(sp, parameters);

@@ -1,6 +1,7 @@
 ﻿using Routeables.Abstraction;
 using Routeables.Abstraction.Injections;
 using Routeables.Abstraction.Routing;
+using Routeables.Routing;
 
 namespace Routeables.Test.Abstraction;
 
@@ -41,6 +42,20 @@ public class InjectPropertiesTests
 
         Assert.NotNull(target.Injected);
         Assert.Null(target.Unset);   // no service of that type: left alone, without an exception
+    }
+
+    private sealed class TabTarget { [Param] public string? Tab { get; set; } }
+
+    [Fact]
+    public void A_value_of_the_view_wins_over_one_of_the_view_model_whatever_the_casing_of_the_name()
+    {
+        var args = RouteableArgs.Create()
+            .WithView("tab", "from the view", attribute: true)
+            .WithViewModel("Tab", "from the view model", attribute: true);
+
+        var target = new TabTarget().InjectView(Provider(), args);
+
+        Assert.Equal("from the view", target.Tab);
     }
 
     [AttributeUsage(AttributeTargets.Property)]
