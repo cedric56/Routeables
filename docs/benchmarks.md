@@ -96,8 +96,4 @@ A change that moves the numbers on purpose (the library got faster, or does more
 
 ## Screenshots
 
-The controls of a host are checked with screenshots: each page is drawn in a region, in the light and the dark theme, and compared with the image
-kept in `Snapshots` (`tests/Shared/Snapshot.cs`: a PNG reader and writer, 0.2 % of the pixels may differ). Blazor (Playwright), Avalonia (Skia, headless),
-WPF, MAUI and Uno have them. The images belong to the renderer and fonts of the machine that made them, so CI makes them: a test without an image is skipped and
-writes the screenshot to `Snapshots/_actual`, which the job uploads (`snapshots-actual` (Blazor), `snapshots-avalonia`, `snapshots-wpf`, `snapshots-uno`, `snapshots-maui`).
-Look at the images, and move the right ones to `Snapshots`. `ROUTEABLES_UPDATE_SNAPSHOTS=1` replaces them after a change that is wanted.
+There are no screenshot tests. They compared each page with an image kept in the repository, and no image was ever kept: every one of those tests was skipped, so they checked nothing a functional test does not. The behaviour of the controls is tested by the headless tests of Avalonia, the Playwright tests of Blazor, the WPF tests and the contract of `Shared/RouterContract.cs`.

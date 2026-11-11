@@ -62,14 +62,6 @@ jobs:
       - name: Test
         run: dotnet test --project tests/Routeables.Test/Routeables.Test.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
-      # The screenshots of WPF (tests/Routeables.Test/Snapshots): without an image the test is skipped; the new ones are here.
-      - name: Upload screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: snapshots-wpf
-          path: tests/Routeables.Test/Snapshots/_actual
-          if-no-files-found: ignore
 
       # The two flavours of the modal view model are shipped as source: these projects compile them with their packages and test them.
       - name: Flavours (CommunityToolkit.Mvvm and ReactiveUI)
@@ -497,37 +489,6 @@ jobs:
       - name: Test
         run: dotnet test --project tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
-  # Screenshots of the Avalonia controls (Skia, Inter font) against tests/Routeables.Test.Avalonia.Visual/Snapshots. Without an image the test is skipped:
-  # take the images from the artifact snapshots-avalonia and move them to Snapshots/.
-  ui-avalonia-visual:
-    name: UI tests (Avalonia screenshots)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 10.0.x
-
-      - name: Fonts for Skia
-        run: sudo apt-get update && sudo apt-get install -y libfontconfig1
-
-      - name: Build
-        run: dotnet build tests/Routeables.Test.Avalonia.Visual/Routeables.Test.Avalonia.Visual.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
-
-      - name: Test
-        run: dotnet test --project tests/Routeables.Test.Avalonia.Visual/Routeables.Test.Avalonia.Visual.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
-
-      - name: Upload screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: snapshots-avalonia
-          path: tests/Routeables.Test.Avalonia.Visual/Snapshots/_actual
-          if-no-files-found: ignore
-
   ui-playwright:
     name: UI tests (Playwright, Blazor)
     runs-on: ubuntu-24.04
@@ -555,15 +516,6 @@ jobs:
       - name: Test
         run: dotnet test --project tests/Routeables.Test.Playwright/Routeables.Test.Playwright.csproj --no-build -c ${{ env.CONFIGURATION }}
 
-      # The screenshots that have no image yet, or that differ from it (tests/Routeables.Test.Playwright/Snapshots/_actual): look at them,
-      # and move the right ones to Snapshots.
-      - name: Upload screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: snapshots-actual
-          path: tests/Routeables.Test.Playwright/Snapshots/_actual
-          if-no-files-found: ignore
 
   ui-uno:
     name: UI tests (Uno, desktop)
@@ -605,13 +557,6 @@ jobs:
           path: uno-results.xml
           if-no-files-found: warn
 
-      - name: Upload screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: snapshots-uno
-          path: tests/Routeables.Test.Uno/Snapshots/_actual
-          if-no-files-found: ignore
 
   # ---------------------------------------------------------------------------------------------------------------------------
   # Device tests of the MAUI host (Routeables.Test.Maui): the application runs the tests on the platform. `dotnet msbuild -t:VSTest`
@@ -685,13 +630,6 @@ jobs:
       - name: Test
         run: dotnet msbuild tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-windows10.0.19041.0 -p:Configuration=Debug
 
-      - name: Upload screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: snapshots-maui
-          path: tests/Routeables.Test.Maui/Snapshots/_actual
-          if-no-files-found: ignore
 
   device-apple:
     name: Device tests (MAUI, Mac Catalyst and iOS simulator)

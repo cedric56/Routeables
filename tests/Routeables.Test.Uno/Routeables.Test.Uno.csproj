@@ -43,7 +43,6 @@
 
   <ItemGroup>
     <Compile Include="..\Shared\RouterContract.cs" Link="Shared\RouterContract.cs" />
-    <Compile Include="..\Shared\Snapshot.cs" Link="Shared\Snapshot.cs" />
   </ItemGroup>
 
   <ItemGroup>
