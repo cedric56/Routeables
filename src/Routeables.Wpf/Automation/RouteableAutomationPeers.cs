@@ -36,7 +36,7 @@ internal sealed class RouteableRegionAutomationPeer : FrameworkElementAutomation
     protected override string GetAutomationIdCore() => PeerNames.Named(base.GetAutomationIdCore(), "Region." + PeerNames.Region(_owner.Region));
 }
 
-internal sealed class RouteableRegionItemsAutomationPeer : ItemsControlAutomationPeer
+internal sealed class RouteableRegionItemsAutomationPeer : FrameworkElementAutomationPeer
 {
     private readonly RouteableRegionItems _owner;
 

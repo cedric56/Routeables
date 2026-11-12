@@ -24,7 +24,7 @@ internal static class PeerNames
     public static string Region(string? region) => string.IsNullOrEmpty(region) ? "main" : region;
 }
 
-internal sealed class RouteableRegionAutomationPeer : FrameworkElementAutomationPeer
+internal sealed partial class RouteableRegionAutomationPeer : FrameworkElementAutomationPeer
 {
     private readonly RouteableRegion _owner;
 
@@ -40,7 +40,7 @@ internal sealed class RouteableRegionAutomationPeer : FrameworkElementAutomation
     internal static string Named(string? given, string fallback) => string.IsNullOrEmpty(given) ? fallback : given;
 }
 
-internal sealed class RouteableRegionItemsAutomationPeer : FrameworkElementAutomationPeer
+internal sealed partial class RouteableRegionItemsAutomationPeer : FrameworkElementAutomationPeer
 {
     private readonly RouteableRegionItems _owner;
 
@@ -54,7 +54,7 @@ internal sealed class RouteableRegionItemsAutomationPeer : FrameworkElementAutom
     protected override string GetAutomationIdCore() => RouteableRegionAutomationPeer.Named(base.GetAutomationIdCore(), "RegionItems." + PeerNames.Region(_owner.Region));
 }
 
-internal sealed class RouteableForAutomationPeer : FrameworkElementAutomationPeer
+internal sealed partial class RouteableForAutomationPeer : FrameworkElementAutomationPeer
 {
     private readonly RouteableFor _owner;
 
@@ -68,7 +68,7 @@ internal sealed class RouteableForAutomationPeer : FrameworkElementAutomationPee
     protected override string GetAutomationIdCore() => RouteableRegionAutomationPeer.Named(base.GetAutomationIdCore(), "View." + PeerNames.ForName(_owner));
 }
 
-internal sealed class RouteableMenuItemAutomationPeer : FrameworkElementAutomationPeer
+internal sealed partial class RouteableMenuItemAutomationPeer : FrameworkElementAutomationPeer
 {
     private readonly RouteableMenuItem _owner;
 
