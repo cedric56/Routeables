@@ -82,7 +82,8 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
     private async void CurrentViewChanged(object? sender, object? view)
     {
         // The title first: the render the refresh asks for must show the title of this view, not the one of the previous view.
-        Title = MainViewModel.CurrentTitle ?? "Application";
+        try { Title = MainViewModel.CurrentTitle ?? "Application"; }
+        catch (Exception ex) { RouteableErrors.Report(Provider, "MainLayout.CurrentViewChanged", ex); }   // async void: it must not reach the circuit
         await RefreshAsync("MainLayout.CurrentViewChanged");
     }
 

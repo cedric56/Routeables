@@ -115,41 +115,87 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         throw new InvalidOperationException($"The module registered '{descriptor.ServiceType}' without a way to build it.");
     }
 
-    // The services the module built once are disposed in the reverse order of their creation, IAsyncDisposable included (a service that
-    // has only DisposeAsync is waited for here: prefer DisposeAsync of the module services when you can).
-    // Run on the thread pool: a service whose DisposeAsync resumes on the context of the caller (the interface thread) would otherwise wait
-    // for the thread that waits for it.
-    public void Dispose() => Task.Run(() => DisposeAsync().AsTask()).GetAwaiter().GetResult();
-
-    public async ValueTask DisposeAsync()
+    // The services the module built once are disposed in the reverse order of their creation. Synchronously, a service that has Dispose is
+    // disposed with it, like the container of the application does; a service that has nothing but DisposeAsync is handled by
+    // DisposeWithoutWaitingForever (prefer DisposeAsync of the module services when you can).
+    public void Dispose()
     {
-        object[] toDispose;
-        lock (_gate)
-        {
-            toDispose = [.. _created];
-            _created.Clear();
-            _singletons.Clear();
-        }
-
-        // One service that fails to dispose must not keep the others (created before it) alive: every one is tried, the failures are raised together.
-        List<Exception>? failures = null;
-        for (var i = toDispose.Length - 1; i >= 0; i--)
+        var failures = new List<Exception>();
+        foreach (var service in TakeCreated())
         {
             try
             {
-                switch (toDispose[i])
+                switch (service)
                 {
-                    case IAsyncDisposable asyncService: await asyncService.DisposeAsync(); break;
-                    case IDisposable service: service.Dispose(); break;
+                    case IDisposable sync: sync.Dispose(); break;
+                    case IAsyncDisposable async: DisposeWithoutWaitingForever(async); break;
                 }
             }
-            catch (Exception ex)
-            {
-                (failures ??= []).Add(ex);
-            }
+            catch (Exception ex) { failures.Add(ex); }
         }
 
-        if (failures is not null)
+        Raise(failures);
+    }
+
+    // A service that has only DisposeAsync. Finished already (most are): nothing to wait for. In the browser there is a single thread, and
+    // waiting for it would be waiting for ourselves (or throw): the disposal is started and its failure reported. Elsewhere it is waited
+    // for, on the thread pool: a service whose DisposeAsync resumes on the context of the caller would otherwise wait for the thread that waits for it.
+    private static void DisposeWithoutWaitingForever(IAsyncDisposable service)
+    {
+        var disposal = service.DisposeAsync();
+        if (disposal.IsCompletedSuccessfully)
+            return;
+
+        if (OperatingSystem.IsBrowser())
+        {
+            _ = Observe(disposal);
+            return;
+        }
+
+        Task.Run(() => disposal.AsTask()).GetAwaiter().GetResult();
+    }
+
+    private static async Task Observe(ValueTask disposal)
+    {
+        try { await disposal; }
+        catch (Exception ex) { Errors.RouteableErrors.Report<RouteableModuleServices>(null, ex); }
+    }
+
+    // The services to dispose, the last created first; the module forgets them.
+    private object[] TakeCreated()
+    {
+        lock (_gate)
+        {
+            var taken = _created.AsEnumerable().Reverse().ToArray();
+            _created.Clear();
+            _singletons.Clear();
+            return taken;
+        }
+    }
+
+    // One service that fails to dispose must not keep the others (created before it) alive: every one is tried, the failures are raised together.
+    private static void Raise(List<Exception> failures)
+    {
+        if (failures.Count > 0)
             throw failures.Count == 1 ? failures[0] : new AggregateException(failures);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        var failures = new List<Exception>();
+        foreach (var service in TakeCreated())
+        {
+            try
+            {
+                switch (service)
+                {
+                    case IAsyncDisposable asyncService: await asyncService.DisposeAsync(); break;
+                    case IDisposable sync: sync.Dispose(); break;
+                }
+            }
+            catch (Exception ex) { failures.Add(ex); }
+        }
+
+        Raise(failures);
     }
 }
