@@ -1,6 +1,6 @@
 # Routeables.Native
 
-The system notifications of the platform for Routeables, with no UI framework: `NotificationCompat` on Android, `UserNotifications` on iOS and Mac Catalyst, `AppNotificationManager` of the Windows App SDK on Windows (a WinUI 3 application included). The plain `net10.0` target has none: `CreateNotificationAsync` returns `null`.
+The system notifications of the platform for Routeables, with no UI framework: `Notification.Builder` on Android (no AndroidX, no MAUI Essentials: the activity in front is followed by the library itself), `UserNotifications` on iOS and Mac Catalyst, `AppNotificationManager` of the Windows App SDK on Windows (a WinUI 3 application included). The plain `net10.0` target has none: `CreateNotificationAsync` returns `null`.
 
 It is the engine behind `WithAppNotifications` of `Routeables.Maui` and of `Routeables.Blazor` in a MAUI Blazor Hybrid application, so you rarely use it directly. In a WinUI 3 application:
 

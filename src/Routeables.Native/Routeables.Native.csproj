@@ -22,16 +22,6 @@
     <Description>The system notifications of the platform (Android, iOS, Mac Catalyst, Windows App SDK) for Routeables: used by Routeables.Maui, by MAUI Blazor Hybrid and by a WinUI 3 application. No UI framework is needed.</Description>
   </PropertyGroup>
 
-  <!-- Android uses Permissions and MainThread of MAUI Essentials (not MAUI Controls). -->
-  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-    <UseMauiEssentials>true</UseMauiEssentials>
-  </PropertyGroup>
-
-  <!-- Since .NET 8 UseMauiEssentials no longer adds the package (warning MA002): it is referenced here, at the version of the other MAUI packages. -->
-  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-    <PackageReference Include="Microsoft.Maui.Essentials" Version="10.0.110" />
-  </ItemGroup>
-
   <!-- Floating 1.8.*: pin the version your WinUI 3 / MAUI applications use. AppNotificationManager comes with the Windows App SDK: a WinUI 3 application already has it, a MAUI one too. -->
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.*" />

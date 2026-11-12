@@ -466,7 +466,7 @@ function New-Context([string] $Name, [string] $App, [hashtable] $Options) {
     ViewModels = $Options.ViewModels; PageNames = @($Options.AllPages)
     # Remembered positions (screen coordinates, the window is maximized and does not move): they spare a find of one to two
     # seconds on Windows each time. A click at a remembered place that does not give the expected result falls back to a find.
-    Overlay = $null; HeaderCenter = $null; MenuMap = @{}; MenuOrder = @($Options.MenuOrder); RankMenu = $null; RankMap = $null; ToggleCenter = $null; BackCenter = $null; ButtonMap = $null; LayerClosed = 0; HiddenId = $null; DialogKeys = $null; MenuMapRead = $false; Slot = $null; Parallel = $false
+    Overlay = $null; HeaderCenter = $null; MenuMap = @{}; MenuOrder = @($Options.MenuOrder); RankMenu = $null; RankMap = $null; ToggleCenter = $null; BackCenter = $null; ButtonMap = $null; LayerClosed = 0; HiddenId = $null; DialogKeys = $null; MenuMapRead = $false; Slot = $null; Parallel = $false; LastNavAt = 0
     PagesOpened = 0; MenuBroken = $null; DialogPlace = $null; DialogHidden = $false; OpenerEvidence = $false; KeysWorked = $false
     Headed = -not $Options.NoHeaded; StepMs = $Options.StepTimeoutMs; Screenshots = [bool]$Options.Screenshots
     Calls = 0; AdMs = 0; StartMs = 0; Clock = [Diagnostics.Stopwatch]::StartNew(); Trace = [Collections.Generic.List[object]]::new()
@@ -720,9 +720,15 @@ function Find-ShownEntry([hashtable] $Ctx, [string] $Page) {
 
 # Opens a menu that hides after each navigation, the way that worked before: at the remembered place of its button when it was
 # opened by a physical click, else by finding the button again.
+# A drawer closes in 350 ms after a navigation: only what is left of that time is waited for (nothing after a detail or dialogs).
+function Wait-DrawerSettled([hashtable] $Ctx) {
+  $left = 350 - ($Ctx.Clock.ElapsedMilliseconds - $Ctx.LastNavAt)
+  if ($left -gt 0) { Start-Sleep -Milliseconds ([int]$left) }
+}
+
 function Open-MenuFast([hashtable] $Ctx, [switch] $Settled) {
   # A drawer that closes by itself after a navigation is animated: its button is pressed once it has closed.
-  if (-not $Ctx.Overlay -and -not $Settled) { Start-Sleep -Milliseconds 350 }
+  if (-not $Ctx.Overlay -and -not $Settled) { Wait-DrawerSettled $Ctx }
   if ($Ctx.OpenHow -eq 'mouse' -and $Ctx.ToggleCenter) {
     $press = Invoke-AdHeaded $Ctx @('mouse-click', '--xy', "$($Ctx.ToggleCenter.X),$($Ctx.ToggleCenter.Y)")
   } else {
@@ -807,7 +813,7 @@ function Open-Page([hashtable] $Ctx, [string] $Page, [string[]] $Titles, [string
     if ($true) {
       $answer = Invoke-AdHeaded $Ctx @('mouse-click', '--xy', "$($remembered.X),$($remembered.Y)")
       if ($answer.ok -and (& $verify)) {
-        $Ctx.PagesOpened++
+        $Ctx.PagesOpened++; $Ctx.LastNavAt = $Ctx.Clock.ElapsedMilliseconds
         Close-Pane $Ctx $script:pageLayout
         return [pscustomobject]@{ Ok = $true; How = 'remembered'; Shown = $script:shown; Detail = $null; Tried = $tried; Item = $script:proofItem }
       }
@@ -820,13 +826,13 @@ function Open-Page([hashtable] $Ctx, [string] $Page, [string[]] $Titles, [string
     # the place of its button, its entry clicked at its remembered place. No look at the menu: the one snapshot after the click
     # proves the page.
     # The wait for a drawer to close is spent before taking the pointer: the other host can click meanwhile.
-    if (-not $Ctx.Overlay) { Start-Sleep -Milliseconds 350 }
+    if (-not $Ctx.Overlay) { Wait-DrawerSettled $Ctx }
     $answer = Invoke-WithUi $Ctx {
       if (Open-MenuFast $Ctx -Settled) { Invoke-AdHeaded $Ctx @('mouse-click', '--xy', "$($remembered.X),$($remembered.Y)") } else { $null }
     }
     if ($answer) {
       if ($answer.ok -and (& $verify)) {
-        $Ctx.PagesOpened++
+        $Ctx.PagesOpened++; $Ctx.LastNavAt = $Ctx.Clock.ElapsedMilliseconds
         Close-Pane $Ctx $script:pageLayout
         return [pscustomobject]@{ Ok = $true; How = 'remembered'; Shown = $script:shown; Detail = $null; Tried = $tried; Item = $script:proofItem }
       }
@@ -850,7 +856,9 @@ function Open-Page([hashtable] $Ctx, [string] $Page, [string[]] $Titles, [string
       $entry = Find-MenuEntry $Ctx $Page
       $answer = $null
       if ($entry) {
-        if (-not $Ctx.MenuMapRead -and $Ctx.Headed) { Update-MenuMap $Ctx; $Ctx.MenuMapRead = $true }
+        # The places of the menu entries, read once the menu shows them (at start, Avalonia's drawer reports them hidden: read again
+        # at the next opening).
+        if (-not $Ctx.MenuMapRead -and $Ctx.Headed) { Update-MenuMap $Ctx; $Ctx.MenuMapRead = $Ctx.MenuMap.Count -gt 0 }
         $answer = Invoke-ClickMatch $Ctx $entry $how
       }
       $script:openStep = @{ Entry = $entry; Answer = $answer }
@@ -866,7 +874,7 @@ function Open-Page([hashtable] $Ctx, [string] $Page, [string[]] $Titles, [string
     if (-not $answer.ok) { continue }
     if (& $verify) {
       $Ctx.MenuHow = $how
-      $Ctx.PagesOpened++
+      $Ctx.PagesOpened++; $Ctx.LastNavAt = $Ctx.Clock.ElapsedMilliseconds
       Close-Pane $Ctx $script:pageLayout
       return [pscustomobject]@{ Ok = $true; How = $how; Shown = $script:shown; Detail = $null; Tried = $tried; Item = $script:proofItem }
     }
@@ -980,7 +988,8 @@ function Normalize-Label([string] $Name) { if ($Name) { $Name.Replace('_', '').R
 # found wins; the places are tried in that order.
 function Find-DialogAnswer([hashtable] $Ctx, [string[]] $Answers) {
   $places = [Collections.Generic.List[object]]::new()
-  $list = Invoke-Ad $Ctx @('list-windows', '--app', $Ctx.App)
+  # Dialogs of this host known to be drawn in its window or in the window in focus: no list of the windows (one call less).
+  $list = if ($Ctx.DialogPlace -in 'focused', 'main') { [pscustomobject]@{ ok = $false } } else { Invoke-Ad $Ctx @('list-windows', '--app', $Ctx.App) }
   if ($list.ok) {
     foreach ($id in @(@($list.data) | Where-Object { $_ } | ForEach-Object { Get-Prop $_ 'id' } | Where-Object { $_ -and $_ -ne $Ctx.WindowId })) {
       $places.Add(@{ Kind = 'other'; Window = $id; Surface = $null; Main = $false })
@@ -1051,8 +1060,16 @@ function Save-DialogProbe([hashtable] $Ctx, [string] $Label) {
 }
 
 # A dialog left open after a failure would block the next ones (and may be in a window list-windows does not show): Escape.
-function Close-StrayDialog([hashtable] $Ctx) {
-  Invoke-AdHeaded $Ctx @('press', 'escape') | Out-Null
+# A dialog left open blocks every next one: its Cancel (or one of its answers) is clicked when it is in the tree, else Escape.
+# Never Tab: in MAUI's task dialog the first stop is its "More Details" link, which only unfolds the footer.
+function Close-StrayDialog([hashtable] $Ctx, [string[]] $Answers) {
+  $answers = @('Cancel') + @($Answers | Where-Object { $_ -and $_ -ne 'Cancel' })
+  $open = Find-DialogAnswer $Ctx $answers
+  if ($open) {
+    Invoke-ClickButton $Ctx $open.Element (Get-PageButtons $Ctx) | Out-Null
+  } else {
+    Invoke-AdHeaded $Ctx @('press', 'escape') | Out-Null
+  }
   Start-Sleep -Milliseconds 300
 }
 
@@ -1098,8 +1115,13 @@ function Test-Dialog([hashtable] $Ctx, [hashtable] $Spec, [string] $Previous) {
   $script:dlg = $null
   # What answered this dialog in an earlier run, when it was not in the tree: keys, tried first (or 'none').
   $known = if ($Ctx.DialogKeys) { $Ctx.DialogKeys[$Spec.Button] } else { $null }
-  # A host whose dialogs are not in the accessibility tree (Uno's ContentDialog) is answered by keys: no search, once it is known.
-  if ($Ctx.DialogHidden -or $known) { Start-Sleep -Milliseconds 700 }
+  # Keys that answered this dialog before: no search. A host where a dialog was not in the tree (Uno's ContentDialog, MAUI's
+  # action sheets): one short look only, since other dialogs of that host may be in it (MAUI's task dialog and modal page are).
+  if ($known -and $known -ne 'none') { Start-Sleep -Milliseconds 700 }
+  elseif ($Ctx.DialogHidden -or $known -eq 'none') {
+    Start-Sleep -Milliseconds 400
+    $null = Wait-Until -TimeoutMs 900 -IntervalMs 200 -Condition { $script:dlg = Find-DialogAnswer $Ctx $Spec.Answers; [bool]$script:dlg }
+  }
   else {
     $null = Wait-Until -TimeoutMs $Ctx.StepMs -IntervalMs 200 -Condition { $script:dlg = Find-DialogAnswer $Ctx $Spec.Answers; [bool]$script:dlg }
     if (-not $script:dlg -and $place) {
@@ -1201,7 +1223,7 @@ function Test-Dialog([hashtable] $Ctx, [hashtable] $Spec, [string] $Previous) {
       $report.detail = if ($expected) { "the Result line never showed '$expected'" } else { "the Result line shows none of: $($candidates -join ' | ')" }
     }
     Save-Evidence $Ctx "dialog-$($Spec.Button)"
-    Close-StrayDialog $Ctx
+    Close-StrayDialog $Ctx $Spec.Answers
   }
   $report.ms = $watch.ElapsedMilliseconds
   $report

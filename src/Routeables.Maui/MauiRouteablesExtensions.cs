@@ -87,6 +87,9 @@ public static class MauiRouteablesExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
+        // The dialogs of the platform follow the activity in front: started before the first one.
+        Routeables.Native.NativeDialogs.Initialize();
+
         builder.Services.RemoveAll<IRouteableDialogService>();
         builder.Services.RemoveAll<RouteableDialogService>();
         builder.Services.RemoveAll<IRouteableDialogWindowContext>();

@@ -96,6 +96,48 @@ Every window is minimized as soon as it shows and restored on its turn: a window
 
 The exit code is 0 when everything passed, 1 otherwise. When a step fails, send `report.md` and the folder of that host.
 
+## Linux hosts in WSL: `run-wsl.ps1`
+
+From Windows, `powershell -File agent-desktop/run-wsl.ps1` tests Avalonia and Uno on Linux, inside WSL, their windows shown
+through WSLg. It runs `lib/wsl-run.sh` in the distribution, which:
+
+- installs what is missing: the .NET 10 SDK (in `~/.dotnet`), PowerShell (a dotnet tool), Node 22 and agent-desktop (in
+  `~/.npm-global`), the AT-SPI bus and the libraries of Avalonia and Uno (apt: `sudo` asks for the password once);
+- builds the samples for Linux with `--artifacts-path ~/.cache/routeables-wsl`: the `bin` and `obj` of the repository stay those
+  of Windows;
+- starts a session bus and the accessibility bus, switches accessibility on, and runs `run.ps1` there.
+
+The report goes to `out/native-smoke-wsl`. Options: `-Distro Ubuntu-24.04`, `-Hosts Uno`, `-Setup` (reinstall the tools),
+`-Build` (rebuild), `-Pages`, `-SkipDialogs`, `-SkipDetails`. Needs WSL 2 with WSLg (`wsl --update`) and a distribution
+(`wsl --install -d Ubuntu`).
+
+## Android: `run-android.ps1`
+
+`pwsh agent-desktop/run-android.ps1` tests MAUI, Uno and Avalonia on Android, in an emulator or on a connected device.
+agent-desktop cannot read Android (the emulator window is a picture to it), so this script drives adb: `uiautomator dump`
+gives the accessibility tree of the screen (text, content description, class, bounds of each node), `input tap` clicks.
+
+- **Device**: the one connected (`-Serial`), else an emulator started from the AVD given (`-Avd`) or the first one;
+  `-CreateAvd` makes an AVD `routeables` (Android 15, x86_64 or arm64 like the machine) with sdkmanager and avdmanager. An
+  emulator started by the script is stopped at the end (`-KeepEmulator` to keep it).
+- **Build**: `dotnet build -f net10.0-android` of each sample that has no APK yet (`-Build` to rebuild), then `adb install`.
+  Needs the android and maui workloads (`dotnet workload install android maui`).
+- **Test**: animations are switched off while it runs (uiautomator waits for an idle screen). The menu is the drawer of the
+  toolbar; a drawer left open after a navigation (Avalonia) is closed by a tap on its scrim. A button or a text below the fold
+  is scrolled to. Dialogs: the answer is a button of that name, in any case (Android shows "OK", "YES"); a dialog that cannot
+  be read is closed with the Back key.
+- **Output**: `out/android-smoke/report.json`, `report.md`, a folder per host with `calls.jsonl`, and for each failed step the
+  screen as uiautomator saw it (`.xml`) and a screenshot (`.png`); `logcat-errors.txt` when the app did not start.
+- `-Density 280` shows more of a page on a phone (`wm density`, reset at the end).
+
+The SDK is found in `-AndroidSdk`, `ANDROID_HOME`, `ANDROID_SDK_ROOT`, or where Android Studio puts it.
+
+## macOS
+
+`run.ps1` runs on a Mac as it is: Avalonia and Uno (`pwsh agent-desktop/run.ps1 -Build`), once agent-desktop has the
+Accessibility permission (`agent-desktop permissions --guide`). `run-android.ps1` runs there too. A macOS virtual machine on a
+PC (OSX-KVM, Sosumi) is not supported here: Apple's licence allows macOS only on Apple hardware.
+
 ## Tried, and not yet
 
 Written from the trees of a real run on Windows 11 (agent-desktop 1.2.0, the five hosts). Run on Linux (Ubuntu 24.04, Xvfb, AT-SPI)

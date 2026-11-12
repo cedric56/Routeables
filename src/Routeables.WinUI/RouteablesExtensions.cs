@@ -161,6 +161,9 @@ public static class UnoRouteablesExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        // The dialogs of the platform follow the activity in front (Android, Uno): started before the first one.
+        Routeables.Native.NativeDialogs.Initialize();
+
         services.RemoveAll<IMessageBoxService>();
         services.RemoveAll<IRouteableNotificationService>();
         services.RemoveAll<IRouteableDialogService>();

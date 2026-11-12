@@ -33,6 +33,9 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     public void Configure(AppNotificationOptions options)
     {
         Options = options;
+#if ANDROID
+        AndroidHost.Start();
+#endif
         if (options.ClearOnAppClose)
             AppDomain.CurrentDomain.ProcessExit += (_, _) => CloseAll();
     }

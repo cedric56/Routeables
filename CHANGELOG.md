@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **`Routeables.Native` no longer depends on MAUI Essentials or AndroidX** on Android: it follows the activity in front itself, asks for the notification permission with it, and uses `Notification.Builder`. No `Platform.Init` is needed outside MAUI. Applications build the services (`UseRouteablesServices`) before the first activity, as they do; `NativeDialogs.Initialize()` starts it for a host that does not.
 - **The three-button dialog is in `Routeables.Native`** (`NativeDialogs.DisplayThreeButtonsAsync`): MAUI, WinUI 3 and Uno use it (Android alert, Windows App SDK `ContentDialog`, iOS alert or sheet) and draw their own where it has nothing to show.
 
 ## 2.1.0 - 2026-11-11

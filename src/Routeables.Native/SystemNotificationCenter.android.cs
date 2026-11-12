@@ -2,15 +2,11 @@
 
 using Android.App;
 using Android.Content;
-using Android.OS;
-using AndroidX.Core.App;
-using AndroidX.Core.Content;
-using Microsoft.Maui.ApplicationModel;
 using Application = Android.App.Application;
 
 namespace Routeables.Native;
 
-// Android: NotificationCompat and NotificationManagerCompat. A tap starts the application with the id of the notification as an extra, which
+// Android: Notification.Builder and NotificationManager (no AndroidX, no MAUI Essentials). A tap starts the application with the id of the notification as an extra, which
 // SystemNotificationCenter.HandleIntent reads (the lifecycle events registered by UseRouteables); a swipe is a broadcast to a receiver of the application.
 public sealed partial class SystemNotificationCenter
 {
@@ -20,20 +16,7 @@ public sealed partial class SystemNotificationCenter
 
     private bool _receiverRegistered;
 
-    private partial async Task<bool> RequestPermissionAsync()
-    {
-        // Before Android 13 a notification needs no permission.
-        if (!OperatingSystem.IsAndroidVersionAtLeast(33))
-            return true;
-
-        return await MainThread.InvokeOnMainThreadAsync(async () =>
-        {
-            var status = await Permissions.CheckStatusAsync<Permissions.PostNotifications>();
-            if (status != PermissionStatus.Granted)
-                status = await Permissions.RequestAsync<Permissions.PostNotifications>();
-            return status == PermissionStatus.Granted;
-        });
-    }
+    private partial Task<bool> RequestPermissionAsync() => AndroidHost.CanPostNotificationsAsync();
 
     private partial void Present(SystemNotification notification)
     {
@@ -55,20 +38,23 @@ public sealed partial class SystemNotificationCenter
         dismissed.PutExtra(ExtraId, id);
         var swipe = PendingIntent.GetBroadcast(context, id, dismissed, flags);
 
-        var builder = new NotificationCompat.Builder(context, ChannelId)
-            .SetContentTitle(notification.Title)!
-            .SetContentText(notification.Message)!
-            .SetSmallIcon(context.ApplicationInfo?.Icon ?? 0)!
-            .SetContentIntent(tap)!
-            .SetDeleteIntent(swipe)!
-            .SetAutoCancel(true)!;
+        // Notification.Builder(context, channel) exists from Android 8, the one with the context alone (no channel) before.
+#pragma warning disable CA1422 // Validate platform compatibility: the constructor without a channel is for the versions that have none.
+        var builder = OperatingSystem.IsAndroidVersionAtLeast(26) ? new Notification.Builder(context, ChannelId) : new Notification.Builder(context);
+#pragma warning restore CA1422
+        builder.SetContentTitle(notification.Title);
+        builder.SetContentText(notification.Message);
+        builder.SetSmallIcon(context.ApplicationInfo?.Icon ?? 0);
+        builder.SetContentIntent(tap);
+        builder.SetDeleteIntent(swipe);
+        builder.SetAutoCancel(true);
 
-        NotificationManagerCompat.From(context)?.Notify(id, builder.Build());
+        (context.GetSystemService(Context.NotificationService) as NotificationManager)?.Notify(id, builder.Build());
     }
 
-    private partial void Cancel(uint id) => NotificationManagerCompat.From(Application.Context)?.Cancel((int)id);
+    private partial void Cancel(uint id) => (Application.Context.GetSystemService(Context.NotificationService) as NotificationManager)?.Cancel((int)id);
 
-    private partial void CancelAll() => NotificationManagerCompat.From(Application.Context)?.CancelAll();
+    private partial void CancelAll() => (Application.Context.GetSystemService(Context.NotificationService) as NotificationManager)?.CancelAll();
 
     /// <summary>Called with the intent that started or came back to an activity: a tap on a notification carries its id.</summary>
     public static void HandleIntent(Intent? intent)
@@ -97,7 +83,11 @@ public sealed partial class SystemNotificationCenter
             return;
 
         _receiverRegistered = true;
-        ContextCompat.RegisterReceiver(context, new DismissReceiver(), new IntentFilter(DismissAction), ContextCompat.ReceiverNotExported);
+        var filter = new IntentFilter(DismissAction);
+        if (OperatingSystem.IsAndroidVersionAtLeast(33))
+            context.RegisterReceiver(new DismissReceiver(), filter, ReceiverFlags.NotExported);
+        else
+            context.RegisterReceiver(new DismissReceiver(), filter);
     }
 
     private sealed class DismissReceiver : BroadcastReceiver

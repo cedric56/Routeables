@@ -22,6 +22,17 @@ public static partial class NativeDialogs
         false;
 #endif
 
+    /// <summary>
+    /// Starts what the platform dialogs need: on Android the follow-up of the activity in front. Call it when the application starts, before the first
+    /// activity (the services of MAUI and of Uno do); nothing elsewhere.
+    /// </summary>
+    public static void Initialize()
+    {
+#if ANDROID
+        AndroidHost.Start();
+#endif
+    }
+
 #if WINDOWS
     // WinUI shows one ContentDialog at a time per window and a second ShowAsync throws. The gate is one for the application, not one for each window:
     // with several windows a dialog waits for the one of another window, which is slower but never fails.

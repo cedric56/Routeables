@@ -9,7 +9,7 @@ public static partial class NativeDialogs
     /// <remarks>
     /// The content the platform can show: a <see cref="string"/> everywhere; an <c>Android.Views.View</c> on Android; a <c>UIKit.UIView</c> on iOS and
     /// Mac Catalyst; any <c>UIElement</c> on Windows. For another content, on the plain <c>net10.0</c> target, and on Android when no activity is known
-    /// (<c>Platform.Init</c> of MAUI Essentials was not called), nothing is shown and
+    /// (<see cref="Initialize"/> came after the first activity), nothing is shown and
     /// <see cref="NativeDialogResult{T}.Shown"/> is <see langword="false"/>: the caller draws its own dialog.
     /// </remarks>
     /// <typeparam name="T">The result type associated with each button.</typeparam>
@@ -36,8 +36,8 @@ public static partial class NativeDialogs
         if (content is not (string or Android.Views.View))
             return new(false, default);
 
-        // No activity (the application is in the background or starting, or Platform.Init was not called outside MAUI): the caller draws its own.
-        if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity is not { } activity)
+        // No activity (the application is in the background or starting, or the host was started after the first activity): the caller draws its own.
+        if (AndroidHost.CurrentActivity is not { } activity)
             return new(false, default);
 
         var alertBuilder = new Android.App.AlertDialog.Builder(activity);
