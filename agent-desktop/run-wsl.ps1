@@ -34,7 +34,12 @@ param(
   # Passed on to run.ps1.
   [string[]] $Pages = @(),
   [switch] $SkipDialogs,
-  [switch] $SkipDetails
+  [switch] $SkipDetails,
+  # No test: each app is started alone and what the accessibility bus sees of it is written to out/native-smoke-wsl/diagnose.txt.
+  [switch] $Diagnose,
+  # The X server of the test: xephyr (default: a window of its own on the desktop of WSLg, with openbox inside), xvfb (nothing shown),
+  # wslg (the display of WSLg itself: agent-desktop cannot tie the apps to their windows there).
+  [ValidateSet('xephyr', 'xvfb', 'wslg')] [string] $Display = 'xephyr'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -76,5 +81,5 @@ Write-Host ("WSL {0}: {1} (report: out/native-smoke-wsl)" -f $(if ($Distro) { $D
 $copy = '/tmp/routeables-wsl-run.sh'
 & wsl.exe @target -e cp $scriptLinux $copy
 & wsl.exe @target -e sed -i 's/\r$//' $copy
-& wsl.exe @target -e bash $copy $repoLinux $hostList $(if ($Setup) { '1' } else { '0' }) $(if ($Build) { '1' } else { '0' }) @forward
+& wsl.exe @target -e env "ROUTEABLES_DIAGNOSE=$(if ($Diagnose) { '1' } else { '0' })" "ROUTEABLES_X=$Display" bash $copy $repoLinux $hostList $(if ($Setup) { '1' } else { '0' }) $(if ($Build) { '1' } else { '0' }) @forward
 exit $LASTEXITCODE

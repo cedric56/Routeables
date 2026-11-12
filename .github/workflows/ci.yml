@@ -461,9 +461,13 @@ jobs:
       # The download sometimes fails with "Unable to connect to simulator" (CoreSimulator not up yet): ask again, a few times.
       - name: Install the iOS runtime of Xcode 26.0
         run: |
-          for attempt in 1 2 3; do
+          for attempt in 1 2 3 4; do
+            # Wake CoreSimulator up (and restart it after a failure): the download talks to it.
+            sudo killall -9 com.apple.CoreSimulator.CoreSimulatorService 2>/dev/null || true
+            xcrun simctl list runtimes >/dev/null 2>&1 || true
+            sleep 10
             sudo xcodebuild -downloadPlatform iOS && exit 0
-            echo "Attempt $attempt failed"; sleep 20
+            echo "Attempt $attempt failed"; sleep 30
           done
           exit 1
 
@@ -673,9 +677,13 @@ jobs:
       # The download sometimes fails with "Unable to connect to simulator" (CoreSimulator not up yet): ask again, a few times.
       - name: Install the iOS runtime of Xcode 26.0
         run: |
-          for attempt in 1 2 3; do
+          for attempt in 1 2 3 4; do
+            # Wake CoreSimulator up (and restart it after a failure): the download talks to it.
+            sudo killall -9 com.apple.CoreSimulator.CoreSimulatorService 2>/dev/null || true
+            xcrun simctl list runtimes >/dev/null 2>&1 || true
+            sleep 10
             sudo xcodebuild -downloadPlatform iOS && exit 0
-            echo "Attempt $attempt failed"; sleep 20
+            echo "Attempt $attempt failed"; sleep 30
           done
           exit 1
 

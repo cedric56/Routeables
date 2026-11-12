@@ -127,7 +127,13 @@ cannot see it there (`-Hosts Avalonia,Uno` tries anyway). It runs `lib/wsl-run.s
   `~/.npm-global`), the AT-SPI bus and the libraries of Avalonia and Uno (apt: `sudo` asks for the password once);
 - builds the samples for Linux with `--artifacts-path ~/.cache/routeables-wsl`: the `bin` and `obj` of the repository stay those
   of Windows;
-- starts a session bus and the accessibility bus, switches accessibility on, and runs `run.ps1` there.
+- starts a session bus and the accessibility bus, switches accessibility on, and runs `run.ps1` there;
+- on an X server of its own: Xephyr, one window on the desktop of WSLg with openbox inside (`-Display xvfb`: nothing shown).
+  Not the display of WSLg itself: its window manager keeps no `_NET_CLIENT_LIST`, so agent-desktop cannot tie an app to its
+  window there ("the native window type ... could not be proven"), and on its Wayland side there is no physical input.
+
+`-Diagnose` runs no test: it starts each app alone and writes what the accessibility bus and agent-desktop see of it to
+`out/native-smoke-wsl/diagnose.txt`.
 
 The report goes to `out/native-smoke-wsl`. Options: `-Distro Ubuntu-24.04`, `-Hosts Uno`, `-Setup` (reinstall the tools),
 `-Build` (rebuild), `-Pages`, `-SkipDialogs`, `-SkipDetails`. Needs WSL 2 with WSLg (`wsl --update`) and a distribution
