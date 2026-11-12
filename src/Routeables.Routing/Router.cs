@@ -186,6 +186,7 @@ internal class Router(
         // that comes in the middle of a route change waits for it.
         var enter = gate.EnterAsync(cancellationToken);
         try { await enter; } catch { gate.Abort(); throw; }
+        cancellationToken = gate.Observe(cancellationToken);
 
         RouterEntry? asked;
         RouteGuardDecision decision;
@@ -262,6 +263,7 @@ internal class Router(
     {
         var enter = gate.EnterAsync(cancellationToken);
         try { await enter; } catch { gate.Abort(); throw; }
+        cancellationToken = gate.Observe(cancellationToken);
         try
         {
             return await MoveAsync(RouteableKind.Back, history.PeekBack(),
@@ -275,6 +277,7 @@ internal class Router(
     {
         var enter = gate.EnterAsync(cancellationToken);
         try { await enter; } catch { gate.Abort(); throw; }
+        cancellationToken = gate.Observe(cancellationToken);
         try
         {
             return await MoveAsync(RouteableKind.Forward, history.PeekForward(),
@@ -288,6 +291,7 @@ internal class Router(
     {
         var enter = gate.EnterAsync(cancellationToken);
         try { await enter; } catch { gate.Abort(); throw; }
+        cancellationToken = gate.Observe(cancellationToken);
         try
         {
             return await MoveAsync(RouteableKind.Root, history.Root,
@@ -301,6 +305,7 @@ internal class Router(
     {
         var enter = gate.EnterAsync(cancellationToken);
         try { await enter; } catch { gate.Abort(); throw; }
+        cancellationToken = gate.Observe(cancellationToken);
         try
         {
             return await MoveAsync(RouteableKind.Pop, history.PeekBack(),
@@ -314,6 +319,7 @@ internal class Router(
     {
         var enter = gate.EnterAsync(cancellationToken);
         try { await enter; } catch { gate.Abort(); throw; }
+        cancellationToken = gate.Observe(cancellationToken);
         try
         {
             return await MoveAsync(RouteableKind.MoveTo, history.At(index),
@@ -327,6 +333,7 @@ internal class Router(
     {
         var enter = gate.EnterAsync(cancellationToken);
         try { await enter; } catch { gate.Abort(); throw; }
+        cancellationToken = gate.Observe(cancellationToken);
         try
         {
             var removed = history.Clear();
@@ -351,6 +358,7 @@ internal class Router(
     {
         var enter = gate.EnterAsync(cancellationToken);
         try { await enter; } catch { gate.Abort(); throw; }
+        cancellationToken = gate.Observe(cancellationToken);
 
         try
         {

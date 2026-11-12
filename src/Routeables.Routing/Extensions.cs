@@ -42,7 +42,7 @@ public static class Extensions
 
         // Router collaborators share the router's lifetime so they live and die together.
         services.Add(new ServiceDescriptor(typeof(RouterHistory), sp => new RouterHistory(sp.GetService<HistoryLimits>()?.For(null) ?? (lifetime == ServiceLifetime.Scoped ? DefaultScopedHistoryLimit : null)), lifetime));
-        services.Add(new ServiceDescriptor(typeof(RouterGate), _ => new RouterGate(), lifetime));
+        services.Add(new ServiceDescriptor(typeof(RouterGate), sp => new RouterGate(sp.GetService<ConcurrencyPolicies>()?.For(null) ?? RouterConcurrency.Queue), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterLifecycle), sp => new RouterLifecycle(sp), lifetime));
         services.Add(new ServiceDescriptor(typeof(IRouter), sp =>
             getRouter is not null ?
@@ -74,7 +74,7 @@ public static class Extensions
         ArgumentException.ThrowIfNullOrWhiteSpace(route);
         RouteableRegionNames.Record(services, route);
         services.Add(new ServiceDescriptor(typeof(RouterHistory), route, (sp, k) => new RouterHistory(sp.GetService<HistoryLimits>()?.For((string)k!) ?? (lifetime == ServiceLifetime.Scoped ? DefaultScopedHistoryLimit : null)), lifetime));
-        services.Add(new ServiceDescriptor(typeof(RouterGate), route, (sp, k) => new RouterGate(), lifetime));
+        services.Add(new ServiceDescriptor(typeof(RouterGate), route, (sp, k) => new RouterGate(sp.GetService<ConcurrencyPolicies>()?.For((string)k!) ?? RouterConcurrency.Queue), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterLifecycle), route, (sp, k) => new RouterLifecycle(sp), lifetime));
         services.Add(new ServiceDescriptor(typeof(IRouter), route, (sp, k) =>
             new Router(
@@ -107,6 +107,28 @@ public static class Extensions
             services.AddSingleton(limits);
         }
         limits.Set(region, maxSize);
+        return services;
+    }
+
+    /// <summary>
+    /// Chooses what a router does with a route change that comes while another is in progress:
+    /// <see cref="RouterConcurrency.Queue"/> (the default) or <see cref="RouterConcurrency.CancelCurrent"/>.
+    /// Call it at startup, before or after <see cref="RegisterRouting"/> / <see cref="AddRegion"/>.
+    /// </summary>
+    /// <param name="services">The service collection to add to.</param>
+    /// <param name="concurrency">The policy.</param>
+    /// <param name="region">The region concerned; the default router when <see langword="null"/>.</param>
+    /// <returns>The same <paramref name="services"/> instance, for chaining.</returns>
+    public static IServiceCollection SetConcurrency(this IServiceCollection services, RouterConcurrency concurrency, string? region = null)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        var policies = (ConcurrencyPolicies?)services.FirstOrDefault(d => d.ServiceType == typeof(ConcurrencyPolicies))?.ImplementationInstance;
+        if (policies is null)
+        {
+            policies = new ConcurrencyPolicies();
+            services.AddSingleton(policies);
+        }
+        policies.Set(region, concurrency);
         return services;
     }
 }
