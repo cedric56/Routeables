@@ -63,7 +63,7 @@ internal static class DialogPresenter
             if (card.Actions.Count <= 3)
                 UseDialogButtons(dialog, card.Actions);
             else
-                DialogCard.AddButtonRow(card.Body, card.Actions);
+                DialogCard.AddButtonSheet(card.Body, card.Actions);
 
             if (fullSize)
             {

@@ -95,13 +95,29 @@ internal static class DialogCard
         return action;
     }
 
-    /// <summary>The buttons in a row under the card: for a dialog with more than the three buttons a <c>ContentDialog</c> has.</summary>
-    public static void AddButtonRow(StackPanel card, IEnumerable<DialogAction> actions)
+    /// <summary>
+    /// The buttons as a sheet under the card, one under the other and as wide as the card (the action sheet of a phone): for a dialog with more than the three buttons a
+    /// <c>ContentDialog</c> has. The last one is the way out (what Escape does), set apart from the choices.
+    /// </summary>
+    public static void AddButtonSheet(StackPanel card, IEnumerable<DialogAction> actions)
     {
-        var row = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, HorizontalAlignment = HorizontalAlignment.Right };
-        foreach (var action in actions)
+        var list = actions.ToList();
+        if (list.Count == 0)
+            return;
+
+        var sheet = new StackPanel { Spacing = 8 };
+        for (var i = 0; i < list.Count; i++)
         {
-            var button = new Button { Content = action.Text, MinWidth = 88, IsEnabled = action.IsEnabled };
+            var action = list[i];
+            var button = new Button
+            {
+                Content = action.Text,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                IsEnabled = action.IsEnabled,
+                // The way out is apart from the choices.
+                Margin = i == list.Count - 1 && list.Count > 1 ? new Thickness(0, 8, 0, 0) : default
+            };
             if (action.IsDefault
                 && Application.Current?.Resources.TryGetValue("AccentButtonStyle", out var style) == true
                 && style is Style accent)
@@ -111,11 +127,10 @@ internal static class DialogCard
 
             button.Click += (_, _) => action.Invoke();
             action.Changed += () => button.IsEnabled = action.IsEnabled;
-            row.Children.Add(button);
+            sheet.Children.Add(button);
         }
 
-        if (row.Children.Count > 0)
-            card.Children.Add(row);
+        card.Children.Add(sheet);
     }
 
     /// <summary>The body for a content: text, an element, or an object the framework shows with its templates.</summary>
