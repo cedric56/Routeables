@@ -25,6 +25,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.13" />
   </ItemGroup>
 
+  <!-- The browser notification center lives in Routeables.Native (a plain SDK project, so that Avalonia Browser can use it); this Razor package serves the same files under its own _content path. -->
+  <ItemGroup>
+    <Content Include="..\Routeables.Native\wwwroot\notifications.js" Link="wwwroot\notifications.js" />
+    <Content Include="..\Routeables.Native\wwwroot\routeables-notifications-worker.js" Link="wwwroot\routeables-notifications-worker.js" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
     <ProjectReference Include="..\Routeables.Native\Routeables.Native.csproj" PrivateAssets="none" />

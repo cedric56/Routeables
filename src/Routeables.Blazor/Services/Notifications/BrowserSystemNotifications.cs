@@ -13,7 +13,7 @@ namespace Routeables.Blazor.Services;
 /// </summary>
 internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationOptions options) : IAsyncDisposable, IRouteableSystemNotificationSource
 {
-    private const string Module = "./_content/Routeables.Native/notifications.js";
+    private const string Module = "./_content/Routeables.Blazor/notifications.js";
 
     private readonly Dictionary<uint, BrowserNotification> _active = [];
     private readonly object _gate = new();

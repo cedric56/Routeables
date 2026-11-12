@@ -35,14 +35,8 @@
     <PackageReference Include="WindowsContracts.Net.Foundation.UniversalApiContract" Version="5.19041.10" PrivateAssets="all" />
   </ItemGroup>
 
-  <!-- The Apple SDK takes the files of wwwroot for resources of the app bundle (and warns that their path is outside it). They are static web assets here, not bundle resources. -->
-  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' Or $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-    <BundleResource Remove="wwwroot\**" />
-  </ItemGroup>
-
   <ItemGroup>
-    <!-- wwwroot/notifications.js is a static web asset (_content/Routeables.Native/notifications.js, imported by Routeables.Blazor) and is also embedded, so that a WebAssembly
-         application that is not Blazor imports it with nothing to serve. The service worker is a static web asset too: copy it to the root of the site for the action buttons. -->
+    <!-- wwwroot/notifications.js is embedded, so that a WebAssembly application imports it with nothing to serve (a plain SDK project: Avalonia Browser does not support a Razor one). Routeables.Blazor serves the same file under its own _content path. -->
     <EmbeddedResource Include="wwwroot\notifications.js" LogicalName="Routeables.Native.notifications.js" />
     <!-- The targets that copy the service worker into the wwwroot of a WebAssembly head, and the worker they copy. -->
     <None Include="build\Routeables.Native.targets" Pack="true" PackagePath="build;buildTransitive" />
