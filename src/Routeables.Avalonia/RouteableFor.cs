@@ -10,6 +10,9 @@ namespace Routeables.Avalonia;
 /// <summary>The base of the views of Routeables for Avalonia, a <see cref="UserControl"/>.</summary>
 public abstract class RouteableFor : UserControl
 {
+    /// <summary>The automation peer: a group named after what the control shows (see <c>RouteableForAutomationPeer</c>).</summary>
+    protected override global::Avalonia.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Automation.RouteableForAutomationPeer(this);
+
     /// <summary>Whether every entry of the menu view model is locked (a page is blocking the route change).</summary>
     public abstract bool IsLocked { get; }
 }

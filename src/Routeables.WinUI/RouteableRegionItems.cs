@@ -22,6 +22,9 @@ namespace Routeables.Uno;
 /// </summary>
 public partial class RouteableRegionItems : ContentControl
 {
+    /// <summary>The automation peer: a group named after what the control shows (see <c>RouteableRegionItemsAutomationPeer</c>).</summary>
+    protected override Microsoft.UI.Xaml.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Automation.RouteableRegionItemsAutomationPeer(this);
+
     /// <summary>The name given to <c>AddRegion</c>; empty or <see langword="null"/> shows the views of the default router.</summary>
     public static readonly DependencyProperty RegionProperty =
         DependencyProperty.Register(nameof(Region), typeof(string), typeof(RouteableRegionItems),

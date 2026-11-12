@@ -31,6 +31,9 @@ namespace Routeables.Uno;
 /// </summary>
 public partial class RouteableRegion : ContentControl
 {
+    /// <summary>The automation peer: a group named after what the control shows (see <c>RouteableRegionAutomationPeer</c>).</summary>
+    protected override Microsoft.UI.Xaml.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Automation.RouteableRegionAutomationPeer(this);
+
     /// <summary>The page the region opens when it appears: see <see cref="Route"/>.</summary>
     public static readonly DependencyProperty RouteProperty =
         DependencyProperty.Register(nameof(Route), typeof(string), typeof(RouteableRegion), new PropertyMetadata(null));

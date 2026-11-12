@@ -13,6 +13,9 @@ namespace Routeables.Wpf;
 /// </summary>
 public class RouteableRegionItems : ItemsControl
 {
+    /// <summary>The automation peer: a group named after what the control shows (see <c>RouteableRegionItemsAutomationPeer</c>).</summary>
+    protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Automation.RouteableRegionItemsAutomationPeer(this);
+
     /// <summary>Identifies <see cref="Region"/>.</summary>
     public static readonly DependencyProperty RegionProperty =
         DependencyProperty.Register(nameof(Region), typeof(string), typeof(RouteableRegionItems),

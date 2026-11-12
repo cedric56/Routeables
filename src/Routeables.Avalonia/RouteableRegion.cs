@@ -33,6 +33,9 @@ namespace Routeables.Avalonia;
 /// </summary>
 public class RouteableRegion : TransitioningContentControl
 {
+    /// <summary>The automation peer: a group named after what the control shows (see <c>RouteableRegionAutomationPeer</c>).</summary>
+    protected override global::Avalonia.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Automation.RouteableRegionAutomationPeer(this);
+
     /// <summary>The <see cref="Region"/> property.</summary>
     public static readonly StyledProperty<string?> RegionProperty =
         AvaloniaProperty.Register<RouteableRegion, string?>(nameof(Region));

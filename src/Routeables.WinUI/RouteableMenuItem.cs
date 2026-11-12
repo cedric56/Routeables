@@ -16,6 +16,9 @@ namespace Routeables.Uno;
 /// </summary>
 public partial class RouteableMenuItem : ContentControl
 {
+    /// <summary>The automation peer: a group named after what the control shows (see <c>RouteableMenuItemAutomationPeer</c>).</summary>
+    protected override Microsoft.UI.Xaml.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Automation.RouteableMenuItemAutomationPeer(this);
+
     /// <summary>The entry shown.</summary>
     public static readonly DependencyProperty ItemProperty =
         DependencyProperty.Register(nameof(Item), typeof(IRouteableMenuEntry), typeof(RouteableMenuItem),

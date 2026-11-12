@@ -24,6 +24,9 @@ namespace Routeables.Avalonia;
 /// </summary>
 public class RouteableRegionItems : ItemsControl
 {
+    /// <summary>The automation peer: a group named after what the control shows (see <c>RouteableRegionItemsAutomationPeer</c>).</summary>
+    protected override global::Avalonia.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Automation.RouteableRegionItemsAutomationPeer(this);
+
     /// <summary>The <see cref="Region"/> property.</summary>
     public static readonly StyledProperty<string?> RegionProperty =
         AvaloniaProperty.Register<RouteableRegionItems, string?>(nameof(Region));

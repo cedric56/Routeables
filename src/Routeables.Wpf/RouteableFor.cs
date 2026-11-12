@@ -13,6 +13,9 @@ namespace Routeables.Wpf;
 /// </summary>
 public class RouteableFor : UserControl, IRouteableFor, IRouteable, IDisposable, IInitializeAsync
 {
+    /// <summary>The automation peer: a group named after what the control shows (see <c>RouteableForAutomationPeer</c>).</summary>
+    protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Automation.RouteableForAutomationPeer(this);
+
     private static readonly DependencyPropertyKey IsLockedKey =
         DependencyProperty.RegisterReadOnly(nameof(IsLocked), typeof(bool), typeof(RouteableFor), new PropertyMetadata(false));
 

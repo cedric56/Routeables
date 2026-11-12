@@ -27,6 +27,9 @@ namespace Routeables.Uno;
 /// </summary>
 public partial class RouteableFor : UserControl, IRouteableFor, IRouteable, IDisposable, IInitializeAsync
 {
+    /// <summary>The automation peer: a group named after what the control shows (see <c>RouteableForAutomationPeer</c>).</summary>
+    protected override Microsoft.UI.Xaml.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Automation.RouteableForAutomationPeer(this);
+
     /// <summary>Whether every entry of the menu view model is locked (a page is blocking the route change). Bindable.</summary>
     public static readonly DependencyProperty IsLockedProperty =
         DependencyProperty.Register(nameof(IsLocked), typeof(bool), typeof(RouteableFor), new PropertyMetadata(false));
