@@ -34,14 +34,14 @@ for candidate in /usr/libexec/at-spi-bus-launcher /usr/lib/at-spi2-core/at-spi-b
 done
 [ -n "$launcher" ] && command -v dbus-launch >/dev/null 2>&1 || missing+=(apt)
 # The X server of the test (see below): Xephyr (a window on the desktop of WSLg) or Xvfb (none), with openbox as window manager.
-{ command -v Xephyr >/dev/null 2>&1 || command -v Xvfb >/dev/null 2>&1; } && command -v openbox >/dev/null 2>&1 || missing+=(apt)
+{ command -v Xephyr >/dev/null 2>&1 || command -v Xvfb >/dev/null 2>&1; } && command -v openbox >/dev/null 2>&1 && command -v xauth >/dev/null 2>&1 || missing+=(apt)
 
 if [ "$setup" = "1" ] || [ ${#missing[@]} -gt 0 ]; then
   say "installing: ${missing[*]:-everything (-Setup)}"
   if [ "$setup" = "1" ] || [[ " ${missing[*]} " == *" apt "* ]] || [[ " ${missing[*]} " == *" node "* ]]; then
     # sudo asks for the password of the WSL user once.
     sudo apt-get update -qq
-    sudo apt-get install -y -qq xserver-xephyr xvfb openbox x11-utils at-spi2-core dbus-x11 curl ca-certificates libfontconfig1 libice6 libsm6 libx11-6 libxrandr2 \
+    sudo apt-get install -y -qq xserver-xephyr xvfb openbox x11-utils xauth at-spi2-core dbus-x11 curl ca-certificates libfontconfig1 libice6 libsm6 libx11-6 libxrandr2 \
       libxi6 libxcursor1 libxext6 libgl1 libegl1 libicu-dev >/dev/null
   fi
   if [[ " ${missing[*]} " == *" node "* ]]; then
@@ -130,24 +130,35 @@ x_pids=()
 cleanup_x() { for p in "${x_pids[@]}"; do kill "$p" 2>/dev/null || true; done; }
 trap cleanup_x EXIT
 if [ "$x_mode" != "wslg" ]; then
-  n=99; while [ -e "/tmp/.X11-unix/X$n" ] || [ -e "/tmp/.X$n-lock" ]; do n=$((n + 1)); done
+  tcp_port() { printf '%04X' $((6000 + $1)); }
+  n=99
+  while [ -e "/tmp/.X11-unix/X$n" ] || [ -e "/tmp/.X$n-lock" ] || grep -q "@/tmp/.X11-unix/X$n\$" /proc/net/unix 2>/dev/null \
+    || grep -qi ":$(tcp_port $n) " /proc/net/tcp 2>/dev/null; do n=$((n + 1)); done
   x_log="$artifacts/xserver.txt"; mkdir -p "$artifacts"
   # WSLg mounts /tmp/.X11-unix read-only (it holds its own X0): when the socket file cannot be made there, the server listens on the
   # abstract socket only (-nolisten unix), which X clients on Linux try first.
-  listen=()
-  if ! [ -w /tmp/.X11-unix ] || [ -L /tmp/.X11-unix ] || grep -q ' /tmp/.X11-unix ' /proc/mounts; then listen=(-nolisten unix); fi
+  # agent-desktop 1.2.0 cannot connect to the abstract socket (it only opens the socket file or TCP, while its display probe accepts
+  # the abstract one): every window then comes back native_window_unproven. So the server listens on TCP too and DISPLAY is
+  # 127.0.0.1:N. A cookie (xauth) instead of -ac: the TCP port is not left open to anyone who reaches the WSL machine.
+  listen=(-listen tcp)
+  if ! [ -w /tmp/.X11-unix ] || [ -L /tmp/.X11-unix ] || grep -q ' /tmp/.X11-unix ' /proc/mounts; then listen+=(-nolisten unix); fi
+  export XAUTHORITY="$artifacts/xauthority"
+  rm -f "$XAUTHORITY"; : >"$XAUTHORITY"
+  cookie="$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
+  xauth -q -f "$XAUTHORITY" add "127.0.0.1:$n" MIT-MAGIC-COOKIE-1 "$cookie"
+  xauth -q -f "$XAUTHORITY" add ":$n" MIT-MAGIC-COOKIE-1 "$cookie"
   if [ "$x_mode" = "xephyr" ] && command -v Xephyr >/dev/null 2>&1; then
-    Xephyr ":$n" -screen 1600x1000 -ac -br -noreset -nolisten tcp "${listen[@]}" -title "Routeables smoke (:$n)" >"$x_log" 2>&1 &
+    Xephyr ":$n" -screen 1600x1000 -auth "$XAUTHORITY" -br -noreset "${listen[@]}" -title "Routeables smoke (:$n)" >"$x_log" 2>&1 &
     x_server=Xephyr
   else
-    Xvfb ":$n" -screen 0 1600x1000x24 -ac -noreset -nolisten tcp "${listen[@]}" >"$x_log" 2>&1 &
+    Xvfb ":$n" -screen 0 1600x1000x24 -auth "$XAUTHORITY" -noreset "${listen[@]}" >"$x_log" 2>&1 &
     x_server=Xvfb
   fi
   x_pids+=($!)
   ready=0
   for _ in $(seq 1 60); do
-    # Listening: its socket in /proc/net/unix (the file one, or the abstract one written with a leading @).
-    if grep -q "/tmp/.X11-unix/X$n\$" /proc/net/unix 2>/dev/null; then ready=1; break; fi
+    # Listening: its TCP port (state 0A, LISTEN) in /proc/net/tcp, what agent-desktop connects to.
+    if grep -Eqi ":$(tcp_port $n) [0-9A-F]+:0000 0A" /proc/net/tcp /proc/net/tcp6 2>/dev/null; then ready=1; break; fi
     kill -0 "${x_pids[-1]}" 2>/dev/null || break
     sleep 0.2
   done
@@ -155,8 +166,21 @@ if [ "$x_mode" != "wslg" ]; then
     tail -n 15 "$x_log" >&2
     fail "the X server :$n ($x_server) did not start (log: $x_log)"
   fi
-  export DISPLAY=":$n"
-  openbox >/dev/null 2>&1 &
+  export DISPLAY="127.0.0.1:$n"
+  # No title bar and the windows at the top left: the client area of a window is then at the same place on the screen as in the
+  # window, whatever coordinates a toolkit gives its accessibility frame (screen or window ones).
+  ob_rc="$artifacts/openbox-rc.xml"
+  cat >"$ob_rc" <<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_config xmlns="http://openbox.org/3.4/rc">
+  <focus><focusNew>yes</focusNew><followMouse>no</followMouse></focus>
+  <placement><policy>Smart</policy></placement>
+  <applications>
+    <application type="normal"><decor>no</decor><position force="yes"><x>0</x><y>0</y></position></application>
+  </applications>
+</openbox_config>
+XML
+  openbox --config-file "$ob_rc" >/dev/null 2>&1 &
   x_pids+=($!)
   sleep 1
   say "X display $DISPLAY ($x_server + openbox)"
@@ -268,6 +292,80 @@ if [ "${ROUTEABLES_DIAGNOSE:-0}" = "1" ]; then
       echo "-- agent-desktop list-apps:"
       "$ad_bin" list-apps 2>&1 | head -c 3000
       echo ""
+      echo "-- X windows ($DISPLAY): _NET_CLIENT_LIST of the window manager, then the windows of the app"
+      xprop -root _NET_CLIENT_LIST _NET_SUPPORTING_WM_CHECK 2>&1 | head -c 600; echo ""
+      app_windows=(); listed_windows=()
+      for w in $(xprop -root _NET_CLIENT_LIST 2>/dev/null | grep -o '0x[0-9a-f]*'); do
+        wpid="$(xprop -id "$w" _NET_WM_PID 2>/dev/null | grep -o '[0-9]*$')"
+        echo "  $w pid=${wpid:-none} $(xprop -id "$w" WM_CLASS 2>/dev/null | cut -d= -f2)"
+        [ "$wpid" = "$app_pid" ] && app_windows+=("$w") && listed_windows+=("$w")
+      done
+      # Windows of the app that the window manager does not list (an override-redirect or unmapped top level).
+      for w in $(xwininfo -root -children 2>/dev/null | grep -o '^ *0x[0-9a-f]*' | tr -d ' '); do
+        wpid="$(xprop -id "$w" _NET_WM_PID 2>/dev/null | grep -o '[0-9]*$')"
+        [ "$wpid" = "$app_pid" ] && [[ " ${app_windows[*]} " != *" $w "* ]] && echo "  $w pid=$wpid (not in _NET_CLIENT_LIST)" && app_windows+=("$w")
+      done
+      for w in "${app_windows[@]}"; do
+        echo "  -- $w"
+        xprop -id "$w" _NET_WM_WINDOW_TYPE _NET_WM_NAME WM_NAME WM_CLASS WM_TRANSIENT_FOR _NET_WM_STATE _NET_WM_PID WM_CLIENT_LEADER _NET_FRAME_EXTENTS 2>&1 | sed 's/^/     /'
+        xwininfo -id "$w" 2>&1 | grep -E 'Absolute|Width|Height|Map State|Override' | sed 's/^/     /'
+      done
+      # The hypothesis: a top level with no _NET_WM_WINDOW_TYPE cannot be proven a normal window. Set, then list again.
+      for w in "${listed_windows[@]}"; do
+        if ! xprop -id "$w" _NET_WM_WINDOW_TYPE 2>/dev/null | grep -q '_NET_WM_WINDOW_TYPE_'; then
+          xprop -id "$w" -f _NET_WM_WINDOW_TYPE 32a -set _NET_WM_WINDOW_TYPE _NET_WM_WINDOW_TYPE_NORMAL
+          echo "  set _NET_WM_WINDOW_TYPE_NORMAL on $w"
+        fi
+      done
+      sleep 1
+      echo "-- the accessibility frames of the app, and their extents (screen, then window coordinates):"
+      app_bus="$(dbus-send --bus="$a11y_address" --dest=org.a11y.atspi.Registry --print-reply /org/a11y/atspi/accessible/root \
+        org.a11y.atspi.Accessible.GetChildren 2>/dev/null | grep -o '":[0-9.]*"' | tr -d '"' | while read -r b; do
+          p="$(dbus-send --bus="$a11y_address" --dest=org.freedesktop.DBus --print-reply /org/freedesktop/DBus \
+            org.freedesktop.DBus.GetConnectionUnixProcessID string:$b 2>/dev/null | grep -o 'uint32 [0-9]*' | cut -d' ' -f2)"
+          [ "$p" = "$app_pid" ] && echo "$b"; done | head -n1)"
+      echo "  app on the AT-SPI bus: ${app_bus:-?}"
+      if [ -n "$app_bus" ]; then
+        for frame in $(dbus-send --bus="$a11y_address" --dest="$app_bus" --print-reply /org/a11y/atspi/accessible/root \
+            org.a11y.atspi.Accessible.GetChildren 2>/dev/null | grep -o 'object path "[^"]*"' | cut -d'"' -f2); do
+          role="$(dbus-send --bus="$a11y_address" --dest="$app_bus" --print-reply "$frame" org.a11y.atspi.Accessible.GetRoleName 2>/dev/null | grep -o 'string "[^"]*"' | head -n1)"
+          name="$(dbus-send --bus="$a11y_address" --dest="$app_bus" --print-reply "$frame" org.freedesktop.DBus.Properties.Get string:org.a11y.atspi.Accessible string:Name 2>/dev/null | grep -o 'string "[^"]*"' | tail -n1)"
+          echo "  $frame role=$role name=$name"
+          for coords in 0 1; do
+            printf '    extents (%s): ' "$([ $coords = 0 ] && echo screen || echo window)"
+            dbus-send --bus="$a11y_address" --dest="$app_bus" --print-reply "$frame" org.a11y.atspi.Component.GetExtents uint32:$coords 2>&1 | grep -o 'int32 -\?[0-9]*' | tr '\n' ' '; echo ""
+          done
+          printf '    attributes: '
+          dbus-send --bus="$a11y_address" --dest="$app_bus" --print-reply "$frame" org.a11y.atspi.Accessible.GetAttributes 2>&1 | grep -o 'string "[^"]*"' | tr '\n' ' ' | head -c 400; echo ""
+        done
+      fi
+      echo "-- agent-desktop list-apps, after that:"
+      "$ad_bin" list-apps 2>&1 | head -c 1500
+      echo ""
+      echo "-- agent-desktop list-windows --app (first one listed):"
+      "$ad_bin" list-windows 2>&1 | head -c 1500
+      echo ""
+      app_name="$("$ad_bin" list-apps 2>/dev/null | node -e 'let t="";process.stdin.on("data",d=>t+=d).on("end",()=>{try{const a=(JSON.parse(t).data||{}).apps||[];const m=a.find(x=>x.pid==process.argv[1]);process.stdout.write(m?m.name:"")}catch(e){}})' "$app_pid")"
+      if [ -n "$app_name" ]; then
+        echo "-- agent-desktop find of the menu button (Toggle navigation drawer), then of the entries Cats and Dogs (app '$app_name'):"
+        "$ad_bin" find --app "$app_name" --name navigation --limit 0 2>&1 | head -c 3000; echo ""
+        "$ad_bin" find --app "$app_name" --native-id PART_PaneButton --limit 0 2>&1 | head -c 3000; echo ""
+        for entry in Cats Dogs; do "$ad_bin" find --app "$app_name" --name "$entry" --exact --limit 0 2>&1 | head -c 4000; echo ""; done
+        echo "-- agent-desktop snapshot (full tree: $out/diagnose-$h-snapshot.json)"
+        "$ad_bin" snapshot --app "$app_name" --compact --max-depth 40 --include-bounds >"$out/diagnose-$h-snapshot.json" 2>&1
+        head -c 2000 "$out/diagnose-$h-snapshot.json"; echo ""
+        echo "-- after pressing the menu button (mouse), the entry Dogs, then the snapshot ($out/diagnose-$h-snapshot-open.json):"
+        toggle_ref="$("$ad_bin" find --app "$app_name" --native-id PART_PaneButton --limit 1 2>/dev/null | grep -o '"ref_id":"[^"]*"' | head -n1 | cut -d'"' -f4)"
+        if [ -n "$toggle_ref" ]; then
+          "$ad_bin" get "$toggle_ref" --property bounds 2>&1 | head -c 600; echo ""
+          "$ad_bin" click "$toggle_ref" 2>&1 | head -c 600; echo ""
+          sleep 1
+          "$ad_bin" find --app "$app_name" --name Dogs --exact --limit 0 2>&1 | head -c 4000; echo ""
+          "$ad_bin" snapshot --app "$app_name" --compact --max-depth 40 --include-bounds >"$out/diagnose-$h-snapshot-open.json" 2>&1
+        else
+          echo "(no PART_PaneButton found)"
+        fi
+      fi
     } >>"$report" 2>&1
     kill "$app_pid" 2>/dev/null || true
     sleep 1

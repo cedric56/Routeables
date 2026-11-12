@@ -119,6 +119,14 @@ Accessibility permission of agent-desktop cannot be granted on a hosted runner w
 
 ## Linux hosts in WSL: `run-wsl.ps1`
 
+**agent-desktop 1.2.0 and the X display.** Under WSLg, `/tmp/.X11-unix` is read-only: the X server of the test (Xephyr or Xvfb)
+can only listen on the abstract socket there, and agent-desktop 1.2.0 cannot connect to that one (its display probe accepts it,
+its connection does not). Every window then came back `native_window_unproven`. The fault is not Avalonia's (an earlier version
+of this README blamed its missing `window-type` attribute: wrong). `lib/wsl-run.sh` therefore starts the X server on TCP too,
+protected by an xauth cookie (no `-ac`), and sets `DISPLAY=127.0.0.1:N`. A fix for agent-desktop itself is proposed separately
+(abstract-socket support in `crates/linux/src/system/x11/bounded.rs`). If the test still reports `native_window_unproven`, it
+says so after 10 s instead of waiting 90 s.
+
 From Windows, `powershell -File agent-desktop/run-wsl.ps1` tests Avalonia on Linux, inside WSL, its window shown through
 WSLg. Uno runs on Linux too, but its Skia renderer has no AT-SPI support yet ("planned" in the Uno documentation): agent-desktop
 cannot see it there (`-Hosts Avalonia,Uno` tries anyway). It runs `lib/wsl-run.sh` in the distribution, which:

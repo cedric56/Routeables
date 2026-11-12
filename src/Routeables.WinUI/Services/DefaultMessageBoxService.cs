@@ -36,6 +36,14 @@ public class DefaultMessageBoxService : IMessageBoxService
                 return native.Value;
         }
 
+        // More than three buttons are the sheet of the platform (Routeables.Native): a ContentDialog with a column of buttons on Windows. Elsewhere, the sheet drawn below.
+        if (texts.Count > 3 && NativeDialogs.IsSupported)
+        {
+            var sheet = await NativeDialogs.DisplaySheetAsync(title, message, [.. texts.Take(texts.Count - 1)], texts[texts.Count - 1], owner, dark: null);
+            if (sheet.Shown)
+                return texts[sheet.Value];
+        }
+
         var controls = texts
             .Select((text, index) => DialogCard.CreateButton(text, () =>
             {

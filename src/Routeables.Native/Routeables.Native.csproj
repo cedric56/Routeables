@@ -40,10 +40,10 @@
 
   <ItemGroup>
     <!-- wwwroot/notifications.js is embedded, so that a WebAssembly application imports it with nothing to serve (a plain SDK project: Avalonia Browser does not support a Razor one). Routeables.Blazor serves the same file under its own _content path. -->
-    <EmbeddedResource Include="wwwroot\notifications.js" LogicalName="Routeables.Native.notifications.js" />
+    <EmbeddedResource Include="..\Routeables.Blazor\wwwroot\notifications.js" Link="wwwroot\notifications.js" LogicalName="Routeables.Native.notifications.js" />
     <!-- The targets that copy the service worker into the wwwroot of a WebAssembly head, and the worker they copy. -->
     <None Include="build\Routeables.Native.targets" Pack="true" PackagePath="build;buildTransitive" />
-    <None Include="wwwroot\routeables-notifications-worker.js" Link="build\routeables-notifications-worker.js" Pack="true" PackagePath="build;buildTransitive" />
+    <None Include="..\Routeables.Blazor\wwwroot\routeables-notifications-worker.js" Link="build\routeables-notifications-worker.js" Pack="true" PackagePath="build;buildTransitive" />
     <InternalsVisibleTo Include="Routeables.Test" />
     <InternalsVisibleTo Include="Routeables.Test.Maui" />
   </ItemGroup>

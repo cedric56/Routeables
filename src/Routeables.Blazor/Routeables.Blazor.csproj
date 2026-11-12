@@ -25,11 +25,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.13" />
   </ItemGroup>
 
-  <!-- The browser notification center lives in Routeables.Native (a plain SDK project, so that Avalonia Browser can use it); this Razor package serves the same files under its own _content path. -->
-  <ItemGroup>
-    <Content Include="..\Routeables.Native\wwwroot\notifications.js" Link="wwwroot\notifications.js" />
-    <Content Include="..\Routeables.Native\wwwroot\routeables-notifications-worker.js" Link="wwwroot\routeables-notifications-worker.js" />
-  </ItemGroup>
+  <!-- The browser notification center lives in Routeables.Native (a plain SDK project, so that Avalonia Browser can use it). Its two
+       script files are kept here, in wwwroot, and served under the _content path of this package: static web assets need the files
+       in the wwwroot of the project that serves them (a linked file is not found by a project that references this one, such as
+       MAUI Blazor Hybrid). Routeables.Native embeds and packs them from here. -->
 
   <ItemGroup>
     <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />

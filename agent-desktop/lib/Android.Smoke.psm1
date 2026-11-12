@@ -387,9 +387,34 @@ function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
       if (@($u | Where-Object { $_.Package -eq $Target.Package }).Count -and (@(Find-Named $u $first).Count -or @(Find-Named $u $Options.FirstAnimal[$first]).Count)) { $true } else { $null }
     }
     if (-not $ready) {
-      $report.problems += "the app did not show '$first' within $($Options.StartTimeoutSeconds) s"
+      # Why: the process died (its crash, from the log), or it runs but shows nothing uiautomator can read (a UI drawn on one
+      # surface, such as a Skia renderer without accessibility), or it shows texts that are not the expected ones.
       Save-AndroidEvidence $ctx 'start'
-      (Invoke-Adb $ctx @('logcat', '-d', '-t', '300', '*:E')).Text | Set-Content -LiteralPath (Join-Path $dir 'logcat-errors.txt') -Encoding utf8
+      $errors = (Invoke-Adb $ctx @('logcat', '-d', '-t', '2000', '*:E')).Text
+      $errors | Set-Content -LiteralPath (Join-Path $dir 'logcat-errors.txt') -Encoding utf8
+      (Invoke-Adb $ctx @('logcat', '-d', '-t', '2000')).Text | Set-Content -LiteralPath (Join-Path $dir 'logcat.txt') -Encoding utf8
+      $alive = [bool]((Invoke-Shell $ctx "pidof $($Target.Package)").Text.Trim())
+      $why = if (-not $alive) {
+        # The crash buffer holds the fatal exception of a Java crash; the .NET runtime writes its own (monodroid, DOTNET, mono-rt).
+        # The system noise of the emulator (FeatureFlags, android.xr ...) is left out.
+        $crashLog = (Invoke-Adb $ctx @('logcat', '-d', '-b', 'crash')).Text
+        $runtime = @("$errors" -split "`r?`n" | Where-Object { $_ -match 'monodroid|DOTNET|mono-rt|MonoDroid|No assemblies|Unhandled|libc\s*:\s*Fatal|AndroidRuntime' -and $_ -notmatch 'FeatureFlags|android\.xr' })
+        @("== crash buffer", $crashLog, "== .NET runtime and AndroidRuntime", $runtime) | Set-Content -LiteralPath (Join-Path $dir 'crash.txt') -Encoding utf8
+        $lines = @("$crashLog" -split "`r?`n" | Where-Object { $_ -match "Exception|Error|$([regex]::Escape($Target.Package))" }) + $runtime
+        $crash = @($lines | ForEach-Object { ($_ -replace '^.*?\s[EFW]\s+[^:]+:\s*', '').Trim() } | Where-Object { $_ } | Select-Object -Unique -First 3) -join ' | '
+        "the process is not running" + $(if ($crash) { ": $crash" } else { ' and the log holds no crash of it (see crash.txt, logcat.txt)' })
+      } else {
+        $ui = Get-Ui $ctx
+        $mine = @($ui | Where-Object { $_.Package -eq $Target.Package })
+        $named = @($mine | Where-Object { $_.Name } | ForEach-Object { $_.Name } | Select-Object -Unique)
+        if (-not $mine.Count) { 'the process runs but its window is not on screen' }
+        elseif (-not $named.Count) {
+          $classes = @($mine | ForEach-Object { ($_.Class -split '\.')[-1] } | Select-Object -Unique) -join ', '
+          "the process runs, its window has $($mine.Count) node(s) ($classes) and no text: the UI is drawn without exposing it to accessibility (see start.png, start.xml)"
+        }
+        else { "the process runs and shows: $(($named | Select-Object -First 8) -join ', ')" }
+      }
+      $report.problems += "the app did not show '$first' within $($Options.StartTimeoutSeconds) s; $why"
       return $report
     }
     $report.startSeconds = [Math]::Round($ctx.Clock.ElapsedMilliseconds / 1000, 1)

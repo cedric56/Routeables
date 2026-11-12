@@ -439,7 +439,14 @@ function Stop-Leftovers([string] $Exe) {
 # The name agent-desktop gives the process (XAnimals.Wpf.exe on Windows, the process name on Linux).
 function Resolve-AppName([hashtable] $Ctx, [int] $ProcessId) {
   $result = Invoke-Ad $Ctx @('list-apps')
-  if (-not $result.ok) { return $null }
+  if (-not $result.ok) {
+    # Linux: agent-desktop refuses the whole list when it cannot prove the window of a frame of this process, which happens for every
+    # window when it cannot read the X display at all (agent-desktop 1.2.0 does not connect to an X server listening only on the
+    # abstract socket; lib/wsl-run.sh gives it a TCP display for that).
+    $detailsKind = Get-Prop (Get-Prop $result.error 'details') 'kind'
+    if ($detailsKind -eq 'native_window_unproven' -and "$(Get-Prop $result.error 'message')" -match "pid $ProcessId\b") { $Ctx.Unproven++ }
+    return $null
+  }
   $app = @(Get-Prop $result.data 'apps') | Where-Object { (Get-Prop $_ 'pid') -eq $ProcessId } | Select-Object -First 1
   if ($app) { Get-Prop $app 'name' } else { $null }
 }
@@ -466,8 +473,8 @@ function New-Context([string] $Name, [string] $App, [hashtable] $Options) {
     ViewModels = $Options.ViewModels; PageNames = @($Options.AllPages)
     # Remembered positions (screen coordinates, the window is maximized and does not move): they spare a find of one to two
     # seconds on Windows each time. A click at a remembered place that does not give the expected result falls back to a find.
-    Overlay = $null; HeaderCenter = $null; MenuMap = @{}; MenuOrder = @($Options.MenuOrder); RankMenu = $null; RankMap = $null; ToggleCenter = $null; BackCenter = $null; ButtonMap = $null; LayerClosed = 0; HiddenId = $null; DialogKeys = $null; MenuMapRead = $false; Slot = $null; Parallel = $false; LastNavAt = 0
-    PagesOpened = 0; MenuBroken = $null; DialogPlace = $null; DialogHidden = $false; OpenerEvidence = $false; KeysWorked = $false
+    Overlay = $null; HeaderCenter = $null; MenuMap = @{}; MenuOrder = @($Options.MenuOrder); RankMenu = $null; RankMap = $null; ToggleCenter = $null; BackCenter = $null; ButtonMap = $null; LayerClosed = 0; HiddenId = $null; DialogKeys = $null; MenuMapRead = $false; Slot = $null; Parallel = $false; LastNavAt = 0; Unproven = 0
+    PagesOpened = 0; MenuBroken = $null; MenuMisses = 0; MenuEvidence = $false; MenuTrace = $null; DialogPlace = $null; DialogHidden = $false; OpenerEvidence = $false; KeysWorked = $false
     Headed = -not $Options.NoHeaded; StepMs = $Options.StepTimeoutMs; Screenshots = [bool]$Options.Screenshots
     Calls = 0; AdMs = 0; StartMs = 0; Clock = [Diagnostics.Stopwatch]::StartNew(); Trace = [Collections.Generic.List[object]]::new()
   }
@@ -497,6 +504,10 @@ function Wait-AppReady([hashtable] $Ctx, [int] $TimeoutSeconds, [scriptblock] $R
     if (-not $resolved) {
       $name = Resolve-AppName $Ctx $Ctx.Pid
       if ($name) { $Ctx.App = $name; $resolved = $true }
+      # Refused the same way for 10 s: it will not change (it is the display connection, not the timing).
+      if ($Ctx.Unproven -ge 20) {
+        return "agent-desktop cannot drive this application here: it registers on the accessibility bus, but agent-desktop cannot tie its frame to an X window (native_window_unproven). Usually agent-desktop cannot read the X display: version 1.2.0 does not connect to an X server listening only on the abstract socket (@/tmp/.X11-unix/Xn). Use a display on TCP (DISPLAY=127.0.0.1:N, what lib/wsl-run.sh does) or a socket file. DISPLAY=$($env:DISPLAY)."
+      }
     }
     if (-not $Ctx.WindowId) { $Ctx.WindowId = Resolve-MainWindow $Ctx $Ctx.Pid }
     if ($Ctx.WindowId -and (& $Ready)) { $Ctx.StartMs = [int]$Ctx.Clock.ElapsedMilliseconds; return $null }
@@ -627,7 +638,9 @@ function Test-MenuShown([hashtable] $Ctx, [string] $Page) {
 # The text of a menu entry; when it is not on screen, the menu is opened first. A menu known to hide after each navigation is opened
 # straight away, at the remembered place of its button (the entry is then looked for once, instead of once before and once after).
 function Find-MenuEntry([hashtable] $Ctx, [string] $Page) {
+  $Ctx.MenuTrace = $null
   if ($Ctx.OpenHow -and $Ctx.Headed -and (Open-MenuFast $Ctx)) {
+    $Ctx.MenuTrace = "menu opened the way that worked before ($($Ctx.OpenHow)), entry not shown"
     $script:fastEntry = $null
     $null = Wait-Until -TimeoutMs $Ctx.StepMs -Condition { $script:fastEntry = Find-ShownEntry $Ctx $Page; [bool]$script:fastEntry }
     if ($script:fastEntry) { return $script:fastEntry }
@@ -646,7 +659,8 @@ function Find-MenuEntry([hashtable] $Ctx, [string] $Page) {
     }
   }
   $toggle = Find-MenuToggle $Ctx
-  if (-not $toggle) { return $null }
+  if (-not $toggle) { $Ctx.MenuTrace = 'no menu button found (native id PaneToggleButton, PART_PaneButton, TogglePaneButton, or a name with "navigation")'; return $null }
+  $Ctx.MenuTrace = "button '$(Get-Prop $toggle 'name')' (role $(Get-Prop $toggle 'role'), found by $(($Ctx.ToggleHow.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join ';'))"
   # Physical first: on Avalonia the semantic click on the drawer button answers ok and leaves the drawer closed. Then the Toggle
   # pattern (the button is a switch there), then the semantic click. The way that opened the menu is tried first the next time.
   $ways = @('mouse', 'toggle', 'click')
@@ -667,9 +681,10 @@ function Find-MenuEntry([hashtable] $Ctx, [string] $Page) {
       }
       default { Invoke-ClickMatch $Ctx $toggle $way }
     }
-    if (-not $press.ok) { continue }
+    if (-not $press.ok) { $Ctx.MenuTrace += "; $way=$(Get-ErrorCode $press)"; continue }
     $script:menuEntry = $null
     $null = Wait-Until -TimeoutMs $Ctx.StepMs -Condition { $script:menuEntry = Find-ShownEntry $Ctx $Page; [bool]$script:menuEntry }
+    if (-not $script:menuEntry) { $Ctx.MenuTrace += "; $way pressed$(if ($center) { " at $($center.X),$($center.Y)" }), entry still not shown" }
     if ($script:menuEntry) {
       $Ctx.OpenHow = $way
       if ($center) { $Ctx.ToggleCenter = $center }
@@ -865,10 +880,22 @@ function Open-Page([hashtable] $Ctx, [string] $Page, [string[]] $Titles, [string
     }
     $entry = $script:openStep.Entry
     if (-not $entry) {
-      # The menu did not open on the first page: it will not on the next ones; what is on screen is kept, for every window.
-      if ($Ctx.PagesOpened -eq 0) { $Ctx.MenuBroken = 'menu entry not found, and its button opened nothing'; Save-AllWindows $Ctx "menu-$Page" }
-      return [pscustomobject]@{ Ok = $false; How = $null; Shown = $null; Detail = 'menu entry not found (and no button to open the menu)'; Tried = $tried; Item = $null }
+      $trace = if ($Ctx.MenuTrace) { $Ctx.MenuTrace } else { 'no entry shown and no button tried' }
+      # The first miss: what is on screen is kept (every window), with what a find of the entry gives unfiltered (its roles, path,
+      # states, bounds: why it did not count as a shown menu entry).
+      if (-not $Ctx.MenuEvidence) {
+        $Ctx.MenuEvidence = $true
+        Save-AllWindows $Ctx "menu-$Page"
+        $probe = [ordered]@{ page = $Page; trace = $trace; window = $Ctx.WindowRect; matches = @(Find-All $Ctx -Name $Page -AnyWindow) }
+        $probe | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $Ctx.Dir "menu-$($Page -replace '[^\w\-]+', '_')-find.json") -Encoding utf8
+      }
+      # The menu did not open on the first page, or on two pages in a row: it will not on the next ones (each miss costs the wait
+      # of every way to open it).
+      $Ctx.MenuMisses++
+      if ($Ctx.PagesOpened -eq 0 -or $Ctx.MenuMisses -ge 2) { $Ctx.MenuBroken = "menu entry not found: $trace" }
+      return [pscustomobject]@{ Ok = $false; How = $null; Shown = $null; Detail = "menu entry not found: $trace"; Tried = $tried; Item = $null }
     }
+    $Ctx.MenuMisses = 0
     $answer = $script:openStep.Answer
     $tried += "$how=$(if ($answer.ok) { 'ok' } else { Get-ErrorCode $answer })"
     if (-not $answer.ok) { continue }

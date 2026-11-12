@@ -240,7 +240,9 @@ foreach ($name in $Hosts) {
     $buildWatch = [Diagnostics.Stopwatch]::StartNew()
     Write-Host "[build] $key (Android) ..." -NoNewline
     # A test build: a warning of the analyzers (CA1416 ...) must not stop it; the CI build of the repository keeps them as errors.
-    & dotnet build $project -c Debug -nologo @($spec.BuildArgs) -p:TreatWarningsAsErrors=false *> $log
+    # EmbedAssembliesIntoApk: a Debug build leaves the .NET assemblies out of the APK by default (fast deployment: Visual Studio
+    # pushes them apart); an APK installed with adb install would then stop at start ("No assemblies found").
+    & dotnet build $project -c Debug -nologo @($spec.BuildArgs) -p:TreatWarningsAsErrors=false -p:EmbedAssembliesIntoApk=true *> $log
     $ok = $LASTEXITCODE -eq 0
     Write-Host (" {0} in {1:0}s" -f $(if ($ok) { 'ok' } else { 'FAILED' }), $buildWatch.Elapsed.TotalSeconds) -ForegroundColor $(if ($ok) { 'Green' } else { 'Red' })
     if (-not $ok) {
@@ -327,4 +329,23 @@ Set-Content -LiteralPath (Join-Path $OutDir 'report.md') -Value $md.ToString() -
 $failed = @($rows | Where-Object { $_.Status -ne 'OK' }).Count
 Write-Host ''
 Write-Host ("{0} in {1:0.0}s. Report: {2}" -f $(if ($failed) { "$failed FAILED" } else { 'All passed' }), $total.Elapsed.TotalSeconds, (Join-Path $OutDir 'report.json')) -ForegroundColor $(if ($failed) { 'Red' } else { 'Green' })
+# The whole report in one file, to send as is: out/android-smoke.zip.
+# A copy first: the emulator keeps its own log files open (emulator.txt, emulator-err.txt); a file that cannot be read is left out.
+try {
+  $zip = "$OutDir.zip"
+  $stage = Join-Path ([IO.Path]::GetTempPath()) "android-smoke-$PID"
+  if (Test-Path -LiteralPath $stage) { Remove-Item -LiteralPath $stage -Recurse -Force }
+  foreach ($file in Get-ChildItem -LiteralPath $OutDir -Recurse -File) {
+    $relative = $file.FullName.Substring($OutDir.Length).TrimStart('\', '/')
+    $copy = Join-Path $stage $relative
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $copy) | Out-Null
+    try {
+      $source = [IO.File]::Open($file.FullName, 'Open', 'Read', 'ReadWrite')
+      try { $target = [IO.File]::Create($copy); try { $source.CopyTo($target) } finally { $target.Dispose() } } finally { $source.Dispose() }
+    } catch { }
+  }
+  Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zip -Force -ErrorAction Stop
+  Remove-Item -LiteralPath $stage -Recurse -Force -ErrorAction SilentlyContinue
+  Write-Host "Report zipped: $zip" -ForegroundColor Cyan
+} catch { Write-Host "The report could not be zipped: $($_.Exception.Message)" -ForegroundColor Yellow }
 exit $(if ($failed) { 1 } else { 0 })

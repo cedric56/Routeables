@@ -82,4 +82,14 @@ $copy = '/tmp/routeables-wsl-run.sh'
 & wsl.exe @target -e cp $scriptLinux $copy
 & wsl.exe @target -e sed -i 's/\r$//' $copy
 & wsl.exe @target -e env "ROUTEABLES_DIAGNOSE=$(if ($Diagnose) { '1' } else { '0' })" "ROUTEABLES_X=$Display" bash $copy $repoLinux $hostList $(if ($Setup) { '1' } else { '0' }) $(if ($Build) { '1' } else { '0' }) @forward
-exit $LASTEXITCODE
+$code = $LASTEXITCODE
+# The whole report in one file, to send as is: out/native-smoke-wsl.zip.
+$reportDir = Join-Path $repo 'out/native-smoke-wsl'
+if (Test-Path -LiteralPath $reportDir) {
+  $zip = Join-Path $repo 'out/native-smoke-wsl.zip'
+  try {
+    Compress-Archive -Path (Join-Path $reportDir '*') -DestinationPath $zip -Force -ErrorAction Stop
+    Write-Host "Report zipped: $zip" -ForegroundColor Cyan
+  } catch { Write-Host "The report could not be zipped: $($_.Exception.Message)" -ForegroundColor Yellow }
+}
+exit $code

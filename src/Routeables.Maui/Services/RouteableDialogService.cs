@@ -28,7 +28,7 @@ public class RouteableDialogService(
     Task<int> IMessageBoxService.ShowMessageAsync(string title, string message, string buttons) => ShowMessageAsync(message, title, buttons);
 
     /// <summary>
-    /// Shows the dialog of the platform (<see cref="DisplayThreeButtonsAsync{T}"/>): one button for one word, two for two, three for three. The confirmations (<see cref="IRouteableDialogService"/>) are written once, in
+    /// Shows the dialog of the platform (<see cref="DisplayThreeButtonsAsync{T}"/>): one button for one word, two for two, three for three, and the sheet of the platform for more. The confirmations (<see cref="IRouteableDialogService"/>) are written once, in
     /// <see cref="RouteableDialogServiceBase"/>.
     /// </summary>
     /// <param name="message">The message to display.</param>
@@ -55,9 +55,39 @@ public class RouteableDialogService(
                 return 0;
             case 2:
                 return await DisplayThreeButtonsAsync(title, message, words[0], words[1], null, 0, 1, 1);
-            default:
+            case 3:
                 return await DisplayThreeButtonsAsync(title, message, words[0], words[1], words[2], 0, 1, 2);
+            default:
+                // More than three buttons do not fit a dialog of the platform: they are a sheet (an action sheet), the last one being the way out.
+                return await DisplaySheetAsync(title, message, words);
         }
+    }
+
+    /// <summary>
+    /// Shows the buttons as the sheet of the platform (<see cref="Routeables.Native.NativeDialogs.DisplaySheetAsync"/>, shared with WinUI 3 and Uno), or as MAUI's own action sheet
+    /// (<c>DisplayActionSheetAsync</c>) where the platform has none (the plain <c>net10.0</c> target): the last word is the cancel button, the others the choices, and the message is under
+    /// the title. Dismissing the sheet without a choice gives the last button, like the dialogs of up to three buttons.
+    /// </summary>
+    private async Task<int> DisplaySheetAsync(string title, string message, IReadOnlyList<string> words)
+    {
+        var page = windowContext.CurrentPage ?? throw new InvalidOperationException("No active Page to host the sheet.");
+        var choices = words.Take(words.Count - 1).ToArray();
+        var cancel = words[words.Count - 1];
+
+        object? owner = null;
+        bool? dark = null;
+#if WINDOWS
+        owner = page.Handler?.PlatformView is Microsoft.UI.Xaml.UIElement element ? element.XamlRoot : null;
+        dark = Application.Current?.RequestedTheme == AppTheme.Dark ? true : Application.Current?.RequestedTheme == AppTheme.Light ? false : null;
+#endif
+        var native = await Routeables.Native.NativeDialogs.DisplaySheetAsync(title, message, choices, cancel, owner, dark);
+        if (native.Shown)
+            return native.Value;
+
+        var heading = string.IsNullOrEmpty(message) ? title : string.IsNullOrEmpty(title) ? message : $"{title}\n{message}";
+        var chosen = await page.DisplayActionSheetAsync(heading, cancel, null, choices);
+        var index = chosen is null ? -1 : Array.IndexOf(choices, chosen);
+        return index >= 0 ? index : words.Count - 1;
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Automation.Peers;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
@@ -62,6 +63,41 @@ public class RouteableMenu : ListBox
             if (DataContext is IRouteableMenuViewModel main && !ReferenceEquals(SelectedItem, main.SelectedEntry))
                 SetCurrentValue(SelectingItemsControl.SelectedItemProperty, main.SelectedEntry);
         }, DispatcherPriority.Background);
+    }
+
+    /// <inheritdoc />
+    protected override AutomationPeer OnCreateAutomationPeer() => new RouteableMenuAutomationPeer(this);
+
+    /// <summary>
+    /// The accessibility peer of the menu. Avalonia's AT-SPI bridge (Linux) shows the entries of a list as the list's own children
+    /// and keeps that list until the peer of the list reports a change; the entries are created by the panel inside the list, whose
+    /// changes it does not follow. Without this, screen readers and test tools on Linux see only the entries that existed when the
+    /// menu was first read (often the selected one). Each entry created, removed or moved reports a change of the list, once per
+    /// layout pass.
+    /// </summary>
+    private sealed class RouteableMenuAutomationPeer : SelectingItemsControlAutomationPeer
+    {
+        private bool _pending;
+
+        public RouteableMenuAutomationPeer(RouteableMenu owner)
+            : base(owner)
+        {
+            owner.ContainerPrepared += (_, _) => ScheduleInvalidate();
+            owner.ContainerClearing += (_, _) => ScheduleInvalidate();
+            owner.ContainerIndexChanged += (_, _) => ScheduleInvalidate();
+        }
+
+        private void ScheduleInvalidate()
+        {
+            if (_pending)
+                return;
+            _pending = true;
+            Dispatcher.UIThread.Post(() =>
+            {
+                _pending = false;
+                InvalidateChildren();
+            }, DispatcherPriority.Background);
+        }
     }
 
     /// <summary>

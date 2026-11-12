@@ -33,6 +33,12 @@
     <PackageReference Include="Uno.WinUI" Version="6.7.135" />
   </ItemGroup>
 
+  <!-- The Android resources of Uno.WinUI use those of AndroidX AppCompat (anim/abc_popup_enter ...): an application gets it through
+       Uno.Sdk (Uno.WinUI.Runtime.Skia.Android depends on it), this library has to name it, else aapt2 stops on APT2260. -->
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.7.0.7" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
     <!-- The system notifications and the three-button dialog of the platform (Android, iOS); the plain net10.0 target has none and the library draws its own. -->
