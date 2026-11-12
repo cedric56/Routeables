@@ -153,10 +153,13 @@ function Find-Scrolling([hashtable] $Ctx, [scriptblock] $Pick, [int] $Swipes = 4
 # ------------------------------------------------------------------------------------------------------------------------------
 
 # The drawer is open when several entries of the menu are on screen at once.
+# The drawer is open when several entries of the menu are on screen at once, one of them not an animal page: the Regions page
+# shows a menu of its own with Cats, Dogs ... Pandas, and the toolbar shows the title of the current page (left out).
 function Test-DrawerOpen([hashtable] $Ctx, $Ui) {
   $names = @($Ui | Where-Object { $_.Name } | ForEach-Object { ($_.Name -split "`r?`n")[0].Trim() })
-  $shown = @($Ctx.MenuNames | Where-Object { $names -contains $_ })
-  $shown.Count -ge 4
+  $shown = @($Ctx.MenuNames | Where-Object { $names -contains $_ -and $_ -notin @($Ctx.CurrentTitles) })
+  $others = @($shown | Where-Object { $_ -notin $Ctx.AnimalPages })
+  $shown.Count -ge 4 -and $others.Count -ge 1
 }
 
 # Where the drawer is: the median X of the menu entries on screen (the toolbar title, of the same name as an entry, is elsewhere).
@@ -227,6 +230,8 @@ function Open-AndroidPage([hashtable] $Ctx, [string] $Page, [string[]] $Titles, 
     return [pscustomobject]@{ Ok = $false; Detail = "'$Page' is not in the menu (on screen: $($seen -join ' | '))"; Shown = $null }
   }
   Invoke-Tap $Ctx $entry.X $entry.Y
+  # From here the toolbar shows the title of the page asked for: not an entry of the drawer.
+  $Ctx.CurrentTitles = @($Titles)
   $state = @{ Closed = $false }
   $result = Wait-Ui $Ctx $Ctx.StepMs {
     param($u)
@@ -364,7 +369,7 @@ function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
   $ctx = @{
     Name = $Target.Name; Dir = $dir; Clock = [Diagnostics.Stopwatch]::StartNew(); Trace = [Collections.Generic.List[object]]::new()
     Calls = 0; AdbMs = 0; LastXml = $null; StepMs = $Options.StepTimeoutMs; Width = $Options.Width; Height = $Options.Height
-    MenuNames = @($Options.MenuOrder)
+    MenuNames = @($Options.MenuOrder); AnimalPages = @($Options.FirstAnimal.Keys); CurrentTitles = @()
   }
   $report = [ordered]@{ kind = 'android'; package = $Target.Package; apk = $Target.Apk; status = 'fail'; startSeconds = $null
     pages = [ordered]@{}; details = [ordered]@{}; dialogs = [ordered]@{}; problems = @() }
@@ -395,6 +400,7 @@ function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
       $animal = $Options.FirstAnimal[$page]
       $proof = if ($animal -and -not $Options.SkipDetails) { $animal } else { $null }
       $open = Open-AndroidPage $ctx $page @($Options.Titles[$page]) $proof
+      if ($open.Ok) { $ctx.CurrentTitles = @($Options.Titles[$page]) + @($open.Shown) }
       $entry = [ordered]@{ status = $(if ($open.Ok) { 'ok' } else { 'fail' }); shown = $open.Shown; ms = $watch.ElapsedMilliseconds; detail = $open.Detail }
       if ($open.Ok -and $open.Shown -ne $page) { $entry.detail = "a guard sent it to $($open.Shown)" }
       if (-not $open.Ok) { Save-AndroidEvidence $ctx "page-$page" }

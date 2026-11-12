@@ -96,6 +96,27 @@ Every window is minimized as soon as it shows and restored on its turn: a window
 
 The exit code is 0 when everything passed, 1 otherwise. When a step fails, send `report.md` and the folder of that host.
 
+## Everything at once: `run-all.ps1`
+
+`pwsh agent-desktop/run-all.ps1` runs, one after the other (they all take the screen), every test this machine can run:
+`run.ps1` on Windows or macOS, `run-wsl.ps1` when WSL is there, `lib/wsl-run.sh` on Linux, `run-android.ps1` when an Android SDK
+is found. A suite that cannot run here (no SDK, no WSL) is shown as NOT RUN, not as a failure. The summary is in
+`out/all-smoke/summary.md` (and on the page of the run in GitHub Actions); each suite keeps its own report. Options: `-Only
+Desktop,Wsl,Linux,Android`, `-Skip ...`, `-Build`, `-Pages`, `-SkipDialogs`, `-SkipDetails`, `-AndroidSerial`, `-Avd`.
+
+## In CI: `ci/native-smoke.yml`
+
+A GitHub Actions workflow to copy to `.github/workflows/`: three jobs, on demand and every night (not on each push: 5 to 20
+minutes each, real windows).
+
+- **windows** (windows-latest): WPF, Avalonia, MAUI, Uno, WinUI 3. The hosted Windows runners have an interactive desktop, where
+  UI Automation and physical clicks work; the screen is enlarged to 1920x1080 first.
+- **linux** (ubuntu-24.04): Avalonia, under Xvfb with openbox and the AT-SPI bus, through `lib/wsl-run.sh`.
+- **android** (ubuntu-24.04, KVM): MAUI, Uno, Avalonia in an emulator started by `reactivecircus/android-emulator-runner`.
+
+Each job uploads its report and evidence as an artifact. Not in CI: Uno on Linux (no AT-SPI in Uno yet) and macOS (the
+Accessibility permission of agent-desktop cannot be granted on a hosted runner without a screen).
+
 ## Linux hosts in WSL: `run-wsl.ps1`
 
 From Windows, `powershell -File agent-desktop/run-wsl.ps1` tests Avalonia on Linux, inside WSL, its window shown through
@@ -136,10 +157,7 @@ Without one, `-InstallSdk` installs it (and a JDK) with the `InstallAndroidDepen
 `-CreateAvd` then installs the emulator and an Android 15 image: `pwsh agent-desktop/run-android.ps1 -InstallSdk -CreateAvd`.
 The emulator needs hardware virtualization (on Windows: the Windows Hypervisor Platform feature).
 
-The Android builds of this script pass `-p:TreatWarningsAsErrors=false`: an analyzer warning must not stop a test. One such
-warning is a real one in the repository at the time of writing: CA1416 in `src/Routeables.Native/AndroidHost.cs`
-(`RequestPermissions` inside a lambda the analyzer does not see guarded). `patches/android-ca1416.patch` fixes it:
-`git apply agent-desktop/patches/android-ca1416.patch`.
+The Android builds of this script pass `-p:TreatWarningsAsErrors=false`: an analyzer warning must not stop a test.
 
 ## macOS
 

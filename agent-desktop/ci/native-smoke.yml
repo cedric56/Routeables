@@ -1,0 +1,122 @@
+name: Native smoke
+
+# The native smoke tests of the XAnimals samples (agent-desktop/): each page of the menu, the first animal of each list and
+# Back, each dialog of the Dialogs page. They drive real windows with physical clicks and take 5 to 20 minutes per platform,
+# so they run on demand and every night, not on each push.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 2 * * *"
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  # WPF, Avalonia, MAUI, Uno, WinUI 3. A hosted Windows runner has an interactive desktop: UI Automation and physical clicks work
+  # there. Its screen is small (1024x768): it is enlarged first.
+  windows:
+    name: Windows (WPF, Avalonia, MAUI, Uno, WinUI 3)
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tools
+        run: |
+          dotnet workload install maui --skip-manifest-update
+          npm install -g agent-desktop
+      - name: Screen 1920x1080
+        shell: pwsh
+        continue-on-error: true
+        run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
+      - name: Smoke
+        shell: pwsh
+        run: ./agent-desktop/run-all.ps1 -Only Desktop -Build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-smoke-windows
+          path: |
+            out/native-smoke
+            out/all-smoke
+
+  # Avalonia on Linux, on a virtual screen (Xvfb) with a window manager (openbox: maximize) and the AT-SPI bus. The same script
+  # as in WSL. Uno is not tested on Linux: its Skia renderer has no AT-SPI support yet.
+  linux:
+    name: Linux (Avalonia)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb openbox at-spi2-core dbus-x11 libfontconfig1 libice6 libsm6 libx11-6 libxrandr2 libxi6 libxcursor1 libgl1 libegl1
+          npm config set prefix ~/.npm-global
+          npm install -g agent-desktop
+      - name: Smoke
+        run: |
+          xvfb-run -a -s "-screen 0 1920x1080x24" bash -c 'openbox & sleep 1; bash agent-desktop/lib/wsl-run.sh "$PWD" Avalonia 0 1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-smoke-linux
+          path: out/native-smoke-wsl
+
+  # MAUI, Uno, Avalonia on Android, in an emulator with hardware acceleration (KVM, enabled on the hosted Linux runners).
+  android:
+    name: Android (MAUI, Uno, Avalonia)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: microsoft
+          java-version: 21
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Workloads
+        run: dotnet workload install android maui-android --skip-manifest-update
+      # Built before the emulator starts: run-android.ps1 then finds the APKs and only installs them.
+      - name: Build the APKs
+        run: |
+          dotnet build samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-android -p:TreatWarningsAsErrors=false
+          dotnet build samples/XAnimals.Uno/XAnimals.Uno.csproj -c Debug -f net10.0-android -p:TreatWarningsAsErrors=false
+          dotnet build samples/XAnimals.Avalonia.Android/XAnimals.Avalonia.Android.csproj -c Debug -p:TreatWarningsAsErrors=false
+      - name: Smoke
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          profile: pixel_7
+          disable-animations: true
+          emulator-options: -no-window -no-snapshot-save -no-boot-anim -gpu swiftshader_indirect -noaudio
+          script: pwsh agent-desktop/run-android.ps1 -Serial emulator-5554 -AndroidSdk "$ANDROID_HOME"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-smoke
+          path: out/android-smoke

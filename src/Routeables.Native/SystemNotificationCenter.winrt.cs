@@ -45,6 +45,25 @@ public sealed partial class SystemNotificationCenter
     [SupportedOSPlatform("windows10.0.17763.0")]
     private static bool WindowsCheck() => ToastNotificationManager.CreateToastNotifier(WindowsAppId()) is not null;
 
+    // No toast where the system or the Windows runtime types cannot show one (a session with no desktop, the types missing): the notification completes as dismissed.
+    private void WindowsShow(SystemNotification notification)
+    {
+        try
+        {
+            if (WindowsIsAvailable())
+            {
+                WindowsPresent(notification);
+                return;
+            }
+        }
+        catch (Exception ex) when (ex is FileNotFoundException or TypeLoadException or System.Runtime.InteropServices.COMException)
+        {
+            System.Diagnostics.Trace.TraceWarning($"Routeables: Windows could not show the notification: {ex.Message}");
+        }
+
+        Complete(notification.Id, activated: false, action: null);
+    }
+
     [MethodImpl(MethodImplOptions.NoInlining)]
     [SupportedOSPlatform("windows10.0.17763.0")]
     private void WindowsPresent(SystemNotification notification)

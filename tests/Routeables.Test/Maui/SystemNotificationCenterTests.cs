@@ -60,7 +60,7 @@ public class SystemNotificationCenterTests
     [Fact]
     public async Task A_notification_that_is_shown_is_active_until_the_platform_completes_it()
     {
-        var center = new SystemNotificationCenter();
+        var center = new SystemNotificationCenter { PresentOverride = _ => { }, CancelOverride = _ => { } };
         var notification = new SystemNotification(center, 7, "animals") { Title = "t", Message = "m" };
         var completed = new List<RouteableSystemNotificationEventArgs>();
         center.NotificationCompleted += (_, e) => completed.Add(e);
@@ -82,7 +82,7 @@ public class SystemNotificationCenterTests
     [Fact]
     public async Task Closing_a_notification_tells_it_was_cancelled()
     {
-        var center = new SystemNotificationCenter();
+        var center = new SystemNotificationCenter { PresentOverride = _ => { }, CancelOverride = _ => { } };
         var notification = new SystemNotification(center, 3, null);
         await notification.ShowAsync();
         var completed = new List<RouteableSystemNotificationEventArgs>();

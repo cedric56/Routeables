@@ -88,13 +88,21 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
             Complete(id, activated: false, action: null);
     }
 
+    // Tests replace the platform (a toast, a D-Bus call, a browser) so that the bookkeeping is tested on any operating system without showing anything.
+    internal Action<SystemNotification>? PresentOverride { get; set; }
+
+    internal Action<uint>? CancelOverride { get; set; }
+
     /// <summary>Shows the notification in the system center and schedules its expiration when one is set.</summary>
     internal Task ShowAsync(SystemNotification notification)
     {
         lock (_gate) _active[notification.Id] = notification;
         try
         {
-            Present(notification);
+            if (PresentOverride is { } present)
+                present(notification);
+            else
+                Present(notification);
         }
         catch
         {
@@ -116,7 +124,10 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
         lock (_gate) known = _active.ContainsKey(id);
         if (known)
         {
-            Cancel(id);
+            if (CancelOverride is { } cancel)
+                cancel(id);
+            else
+                Cancel(id);
             Complete(id, activated: false, action: null);
         }
 

@@ -118,7 +118,22 @@ for h in "${wanted[@]}"; do
     mkdir -p "$artifacts"
     # shellcheck disable=SC2086
     if ! dotnet build "$repo/${project[$h]}" -c Debug --artifacts-path "$artifacts" ${extra[$h]} -nologo >"$log" 2>&1; then
-      if grep -q 'Uno.Sdk.Services.PackageManifest' "$log"; then
+      if grep -q 'NETSDK1147' "$log"; then
+        # A library of the repository also targets net10.0-android (Routeables.Native on Linux): restoring it needs the android
+        # workload, even to build the desktop app. A distribution's .NET (apt, /usr/lib/dotnet) cannot install workloads: the
+        # Microsoft one goes to ~/.dotnet (no sudo), and the workload into it.
+        if [ ! -x "$HOME/.dotnet/dotnet" ] || ! "$HOME/.dotnet/dotnet" --list-sdks | grep -q '^10\.'; then
+          say "the android workload is needed: installing the .NET 10 SDK of Microsoft into ~/.dotnet"
+          curl -fsSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh
+          bash /tmp/dotnet-install.sh --channel 10.0 --install-dir "$HOME/.dotnet" >/dev/null
+        fi
+        say "dotnet workload install android ..."
+        "$HOME/.dotnet/dotnet" workload install android >"$artifacts/workload.txt" 2>&1 || { tail -n 5 "$artifacts/workload.txt" >&2; fail "the android workload could not be installed (see $artifacts/workload.txt)"; }
+        export PATH="$HOME/.dotnet:$PATH" DOTNET_ROOT="$HOME/.dotnet"
+        hash -r
+        # shellcheck disable=SC2086
+        dotnet build "$repo/${project[$h]}" -c Debug --artifacts-path "$artifacts" ${extra[$h]} -nologo >"$log" 2>&1 && built=1 || built=0
+      elif grep -q 'Uno.Sdk.Services.PackageManifest' "$log"; then
         # A broken copy of the Uno.Sdk package in the NuGet cache of WSL (its packages.json cannot be read): the fix that Uno
         # documents is to delete it, so that the restore takes it again.
         say "the Uno.Sdk package of the NuGet cache is broken: deleted, built again"

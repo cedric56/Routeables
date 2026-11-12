@@ -23,7 +23,7 @@ public sealed partial class SystemNotificationCenter
         else if (OperatingSystem.IsLinux())
             LinuxPresent(notification);
         else if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17763))
-            WindowsPresent(notification);
+            WindowsShow(notification);
         else if (OperatingSystem.IsMacOS())
             MacPresent(notification);
     }

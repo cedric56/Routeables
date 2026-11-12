@@ -29,10 +29,11 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.*" />
   </ItemGroup>
 
-  <!-- The Windows runtime types for the toasts of the plain net10.0 target (the desktop of Avalonia, WPF, a console). PrivateAssets="all": compile-time only, they do not flow to the
-       applications that reference Routeables.Native. -->
+  <!-- The Windows runtime types for the toasts of the plain net10.0 target (the desktop of Avalonia, WPF, a console). Hidden at compile time (a head that uses the Windows SDK has
+       the same types: no clash) but not at run time: with PrivateAssets="all" the assembly would not reach the output of the applications and the tests, and the first toast would
+       fail with FileNotFoundException (Windows.Foundation.UniversalApiContract). -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-    <PackageReference Include="WindowsContracts.Net.Foundation.UniversalApiContract" Version="5.19041.10" PrivateAssets="all" />
+    <PackageReference Include="WindowsContracts.Net.Foundation.UniversalApiContract" Version="5.19041.10" PrivateAssets="compile;analyzers;build;contentfiles" />
   </ItemGroup>
 
   <ItemGroup>
