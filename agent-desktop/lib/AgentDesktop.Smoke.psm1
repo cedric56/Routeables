@@ -1196,6 +1196,11 @@ function Test-Dialog([hashtable] $Ctx, [hashtable] $Spec, [string] $Previous) {
     if ($known -and $known -ne 'none') {
       $sequences = @(, @($known -split '\+')) + @($sequences | Where-Object { ($_ -join '+') -ne $known })
     }
+    # The Result line already shows one of the texts this dialog can write (Ok / Abort after Ok / Cancel: Enter writes
+    # "Answer: OK." both times): Escape first, whose answer (Abort, Cancel) changes the line, so the check proves something.
+    if ($Previous -and ($candidates -contains $Previous) -and $known -ne 'escape') {
+      $sequences = @(, @('escape')) + @($sequences | Where-Object { ($_ -join '+') -ne 'escape' })
+    }
     $budget = if ($known -eq 'none') { 800 } else { 1200 }
     foreach ($keys in $sequences) {
       $failed = $false

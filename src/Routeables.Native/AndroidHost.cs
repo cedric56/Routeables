@@ -63,6 +63,9 @@ internal static class AndroidHost
 
         return await OnMainThreadAsync(async () =>
         {
+            // The version check at the top of the method does not reach into this lambda for the analyzer (CA1416): made again here.
+            if (!OperatingSystem.IsAndroidVersionAtLeast(33))
+                return true;
             if (CurrentActivity is not { } activity)
                 return Granted();
 

@@ -130,7 +130,15 @@ gives the accessibility tree of the screen (text, content description, class, bo
   screen as uiautomator saw it (`.xml`) and a screenshot (`.png`); `logcat-errors.txt` when the app did not start.
 - `-Density 280` shows more of a page on a phone (`wm density`, reset at the end).
 
-The SDK is found in `-AndroidSdk`, `ANDROID_HOME`, `ANDROID_SDK_ROOT`, or where Android Studio puts it.
+The SDK is found in `-AndroidSdk`, `ANDROID_HOME`, `ANDROID_SDK_ROOT`, or where Android Studio or Visual Studio put it.
+Without one, `-InstallSdk` installs it (and a JDK) with the `InstallAndroidDependencies` target of .NET for Android, and
+`-CreateAvd` then installs the emulator and an Android 15 image: `pwsh agent-desktop/run-android.ps1 -InstallSdk -CreateAvd`.
+The emulator needs hardware virtualization (on Windows: the Windows Hypervisor Platform feature).
+
+The Android builds of this script pass `-p:TreatWarningsAsErrors=false`: an analyzer warning must not stop a test. One such
+warning is a real one in the repository at the time of writing: CA1416 in `src/Routeables.Native/AndroidHost.cs`
+(`RequestPermissions` inside a lambda the analyzer does not see guarded). `patches/android-ca1416.patch` fixes it:
+`git apply agent-desktop/patches/android-ca1416.patch`.
 
 ## macOS
 

@@ -94,6 +94,14 @@ function Find-Named($Ui, [string] $Name) {
   @($Ui | Where-Object { $_.Name -and [string]::Equals($_.Name, $Name, [StringComparison]::OrdinalIgnoreCase) })
 }
 
+# A menu entry: its own text, or a node whose accessible name starts with it on a line of its own (Avalonia merges the texts of
+# an entry into one name: "Cats" and, below, "GoToRouteAsync<TViewModel> ...").
+function Find-Entry($Ui, [string] $Name) {
+  $exact = @(Find-Named $Ui $Name)
+  if ($exact.Count) { return $exact }
+  @($Ui | Where-Object { $_.Name -and ($_.Name -split "`r?`n")[0].Trim() -ieq $Name })
+}
+
 function Invoke-Tap([hashtable] $Ctx, [int] $X, [int] $Y) { Invoke-Shell $Ctx "input tap $X $Y" | Out-Null }
 
 # A swipe of the content: up (towards the end of the page) or down (towards its top), in the middle of the screen or at $X.
@@ -146,9 +154,16 @@ function Find-Scrolling([hashtable] $Ctx, [scriptblock] $Pick, [int] $Swipes = 4
 
 # The drawer is open when several entries of the menu are on screen at once.
 function Test-DrawerOpen([hashtable] $Ctx, $Ui) {
-  $names = @($Ui | Where-Object { $_.Name } | ForEach-Object { $_.Name })
+  $names = @($Ui | Where-Object { $_.Name } | ForEach-Object { ($_.Name -split "`r?`n")[0].Trim() })
   $shown = @($Ctx.MenuNames | Where-Object { $names -contains $_ })
   $shown.Count -ge 4
+}
+
+# Where the drawer is: the median X of the menu entries on screen (the toolbar title, of the same name as an entry, is elsewhere).
+function Get-DrawerX([hashtable] $Ctx, $Ui) {
+  $xs = @(foreach ($name in $Ctx.MenuNames) { Find-Entry $Ui $name | ForEach-Object { $_.X } }) | Sort-Object
+  if (-not $xs.Count) { return $null }
+  $xs[[int]($xs.Count / 2)]
 }
 
 # The button of the toolbar that opens the drawer: its accessible name speaks of navigation, a drawer or a menu (MAUI's Shell
@@ -173,15 +188,23 @@ function Close-Drawer([hashtable] $Ctx) {
 function Find-DrawerEntry([hashtable] $Ctx, [string] $Page, $Ui) {
   $pick = {
     param($u)
-    @(Find-Named $u $Page | Where-Object { $_.Y -gt $Ctx.Height * 0.08 -and $_.X -lt $Ctx.Width * 0.75 }) | Sort-Object { -$_.Y } | Select-Object -First 1
+    $x = Get-DrawerX $Ctx $u
+    $all = @(Find-Entry $u $Page)
+    if ($null -eq $x) { return ($all | Sort-Object { -$_.Y } | Select-Object -First 1) }
+    # The one in the drawer: nearest to the other entries.
+    $all | Sort-Object { [Math]::Abs($_.X - $x) }, { -$_.Y } | Select-Object -First 1
   }
   $entry = & $pick $Ui
   if ($entry) { return $entry }
-  # Below the end of the drawer: scrolled at its middle, a third of the screen from the left.
-  for ($i = 0; $i -lt 3; $i++) {
-    Invoke-Swipe $Ctx 'up' ([int]($Ctx.Width / 3))
-    $ui = Get-Ui $Ctx
-    if ($ui) { $entry = & $pick $ui; if ($entry) { return $entry } }
+  # Out of view in the drawer: scrolled in the drawer, towards its end, then back towards its top.
+  $x = Get-DrawerX $Ctx $Ui
+  if ($null -eq $x) { $x = [int]($Ctx.Width / 4) }
+  foreach ($direction in 'up', 'down') {
+    for ($i = 0; $i -lt 3; $i++) {
+      Invoke-Swipe $Ctx $direction $x
+      $ui = Get-Ui $Ctx
+      if ($ui) { $entry = & $pick $ui; if ($entry) { return $entry } }
+    }
   }
   $null
 }
@@ -199,7 +222,10 @@ function Open-AndroidPage([hashtable] $Ctx, [string] $Page, [string[]] $Titles, 
     $ui = $open.Ui
   }
   $entry = Find-DrawerEntry $Ctx $Page $ui
-  if (-not $entry) { return [pscustomobject]@{ Ok = $false; Detail = "'$Page' is not in the menu"; Shown = $null } }
+  if (-not $entry) {
+    $seen = @(Get-Ui $Ctx | Where-Object { $_.Name } | ForEach-Object { ($_.Name -split "`r?`n")[0].Trim() } | Select-Object -Unique -First 25)
+    return [pscustomobject]@{ Ok = $false; Detail = "'$Page' is not in the menu (on screen: $($seen -join ' | '))"; Shown = $null }
+  }
   Invoke-Tap $Ctx $entry.X $entry.Y
   $state = @{ Closed = $false }
   $result = Wait-Ui $Ctx $Ctx.StepMs {

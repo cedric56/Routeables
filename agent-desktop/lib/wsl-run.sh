@@ -8,8 +8,9 @@ set -euo pipefail
 
 repo="$1"; hosts="$2"; setup="$3"; build="$4"; shift 4
 
-export DOTNET_ROOT="$HOME/.dotnet"
 export PATH="$HOME/.dotnet:$HOME/.dotnet/tools:$HOME/.local/bin:$HOME/.npm-global/bin:$PATH"
+# Only the Linux side: WSL appends the PATH of Windows, whose npm folder holds an agent-desktop script for Windows.
+linux_command() { local p; p="$(command -v "$1" 2>/dev/null || true)"; [ -n "$p" ] && [[ "$p" != /mnt/* ]] && echo "$p"; }
 export DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1
 artifacts="$HOME/.cache/routeables-wsl"
 
@@ -26,7 +27,7 @@ missing=()
 command -v dotnet >/dev/null 2>&1 && dotnet --list-sdks 2>/dev/null | grep -q '^10\.' || missing+=(dotnet)
 command -v pwsh >/dev/null 2>&1 || missing+=(pwsh)
 command -v node >/dev/null 2>&1 && [ "$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)" -ge 18 ] || missing+=(node)
-command -v agent-desktop >/dev/null 2>&1 || missing+=(agent-desktop)
+[ -n "$(linux_command agent-desktop)" ] || missing+=(agent-desktop)
 launcher=""
 for candidate in /usr/libexec/at-spi-bus-launcher /usr/lib/at-spi2-core/at-spi-bus-launcher; do
   [ -x "$candidate" ] && launcher="$candidate" && break
@@ -61,7 +62,7 @@ if [ "$setup" = "1" ] || [ ${#missing[@]} -gt 0 ]; then
     chmod +x "$HOME/.powershell/pwsh"
     mkdir -p "$HOME/.local/bin" && ln -sf "$HOME/.powershell/pwsh" "$HOME/.local/bin/pwsh"
   fi
-  if ! command -v agent-desktop >/dev/null 2>&1 || [ "$setup" = "1" ]; then
+  if [ -z "$(linux_command agent-desktop)" ] || [ "$setup" = "1" ]; then
     npm config set prefix "$HOME/.npm-global"
     npm install -g agent-desktop >/dev/null
   fi
@@ -70,6 +71,17 @@ if [ "$setup" = "1" ] || [ ${#missing[@]} -gt 0 ]; then
   done
 fi
 [ -n "$launcher" ] || fail "at-spi-bus-launcher not found (sudo apt install at-spi2-core)"
+
+# The .NET that runs the apps: the one dotnet comes from (apt puts it in /usr/lib/dotnet, dotnet-install in ~/.dotnet). An
+# apphost looks in DOTNET_ROOT: a wrong one gives "You must install .NET to run this application".
+dotnet_path="$(readlink -f "$(command -v dotnet)")"
+export DOTNET_ROOT="$(dirname "$dotnet_path")"
+# The native binary of agent-desktop (the npm launcher would need node at each call).
+ad_root="$(npm root -g 2>/dev/null || true)"
+case "$(uname -m)" in aarch64|arm64) ad_arch=arm64;; *) ad_arch=x64;; esac
+ad_bin="$ad_root/agent-desktop/bin/agent-desktop-linux-$ad_arch"
+[ -x "$ad_bin" ] || ad_bin="$(linux_command agent-desktop)"
+[ -n "$ad_bin" ] || fail "agent-desktop is not installed on the Linux side (npm install -g agent-desktop)"
 
 # ---------------------------------------------------------------------------------------------------------------------------
 # Accessibility bus: a session bus, the AT-SPI bus on it, accessibility switched on (the toolkits only expose their tree then)
@@ -105,8 +117,22 @@ for h in "${wanted[@]}"; do
     mkdir -p "$artifacts"
     # shellcheck disable=SC2086
     if ! dotnet build "$repo/${project[$h]}" -c Debug --artifacts-path "$artifacts" ${extra[$h]} -nologo >"$log" 2>&1; then
-      grep -m3 ': error ' "$log" >&2 || tail -n 20 "$log" >&2
-      fail "the build of $h failed (see $log)"
+      if grep -q 'Uno.Sdk.Services.PackageManifest' "$log"; then
+        # A broken copy of the Uno.Sdk package in the NuGet cache of WSL (its packages.json cannot be read): the fix that Uno
+        # documents is to delete it, so that the restore takes it again.
+        say "the Uno.Sdk package of the NuGet cache is broken: deleted, built again"
+        rm -rf "${NUGET_PACKAGES:-$HOME/.nuget/packages}/uno.sdk"
+        dotnet build-server shutdown >/dev/null 2>&1 || true
+        # shellcheck disable=SC2086
+        dotnet build "$repo/${project[$h]}" -c Debug --artifacts-path "$artifacts" ${extra[$h]} -nologo >"$log" 2>&1 && built=1 || built=0
+      else
+        built=0
+      fi
+      if [ "$built" != "1" ]; then
+        grep -m3 ': error ' "$log" >&2 || tail -n 20 "$log" >&2
+        grep -m1 -A12 'Unhandled exception\|InnerException\|---> ' "$log" >&2 || true
+        fail "the build of $h failed (see $log)"
+      fi
     fi
     exe="$(find "$artifacts/bin/${app[$h]}" -type f -name "${app[$h]}" -perm -u+x 2>/dev/null | head -n1 || true)"
   fi
@@ -118,7 +144,7 @@ done
 # Run
 # ---------------------------------------------------------------------------------------------------------------------------
 
-say "agent-desktop $(agent-desktop version 2>/dev/null | head -c 120)"
+say "agent-desktop: $ad_bin; .NET: $DOTNET_ROOT"
 exe_arg="$(IFS=','; echo "${exe_list[*]}")"
 cd "$repo"
-exec pwsh -NoProfile -File "$repo/agent-desktop/run.ps1" -Hosts "$hosts" -Exe "$exe_arg" -OutDir "$repo/out/native-smoke-wsl" "$@"
+exec pwsh -NoProfile -File "$repo/agent-desktop/run.ps1" -Hosts "$hosts" -Exe "$exe_arg" -AgentDesktop "$ad_bin" -OutDir "$repo/out/native-smoke-wsl" "$@"

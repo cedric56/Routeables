@@ -1,0 +1,14 @@
+diff --git a/src/Routeables.Native/AndroidHost.cs b/src/Routeables.Native/AndroidHost.cs
+index a9ff9f1..4e8276b 100644
+--- a/src/Routeables.Native/AndroidHost.cs
++++ b/src/Routeables.Native/AndroidHost.cs
+@@ -63,6 +63,9 @@ internal static class AndroidHost
+ 
+         return await OnMainThreadAsync(async () =>
+         {
++            // The version check at the top of the method does not reach into this lambda for the analyzer (CA1416): made again here.
++            if (!OperatingSystem.IsAndroidVersionAtLeast(33))
++                return true;
+             if (CurrentActivity is not { } activity)
+                 return Granted();
+ 
