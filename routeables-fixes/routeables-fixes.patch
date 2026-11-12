@@ -1,0 +1,67 @@
+diff --git a/samples/XAnimals.Avalonia.Desktop/Program.cs b/samples/XAnimals.Avalonia.Desktop/Program.cs
+index 1726c30..0730567 100644
+--- a/samples/XAnimals.Avalonia.Desktop/Program.cs
++++ b/samples/XAnimals.Avalonia.Desktop/Program.cs
+@@ -1,6 +1,7 @@
+ ﻿using Avalonia;
+ using Avalonia.Labs.Notifications;
+ using System;
++using System.Diagnostics;
+ 
+ namespace XAnimals.Avalonia.Desktop;
+ 
+@@ -15,21 +16,36 @@ class Program
+ 
+     // Avalonia configuration, don't remove; also used by visual designer.
+     public static AppBuilder BuildAvaloniaApp()
+-        => App.CreateApp()
++    {
++        var builder = App.CreateApp()
+             //(new Reshapes.Avalonia.Fluent.ReshapeMessageBoxService())
+             //.AfterSetup(builder =>
+             //{
+             //    var app = builder.Instance;
+             //    app?.Styles.Add(new FluentAvaloniaTheme());
+             //})
+-            .UsePlatformDetect()
+-            .WithAppNotifications(new AppNotificationOptions()
++            .UsePlatformDetect();
++
++        // On Linux, Avalonia.Labs.Notifications 12.1.0 is built against Tmds.DBus.Protocol 0.92 (DBusConnection.AsConnection), which
++        // 0.93 removed, and Avalonia 12.1 brings a later one: its notification manager cannot be created (MissingMethodException).
++        // The application then runs without system notifications rather than not at all.
++        try
++        {
++            builder = builder.WithAppNotifications(new AppNotificationOptions()
+             {
+                 //AppIcon = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName) + "/avalonia-32.png",
+                 AppName = "Avalonia.Labs",
+                 //AppUserModelId = "com.Avalonia.Labs.Catalog",
+-            })
++            });
++        }
++        catch (MissingMethodException ex) when (OperatingSystem.IsLinux())
++        {
++            Trace.WriteLine($"System notifications are off: {ex.Message}");
++        }
++
++        return builder
+             .WithInterFont()
+             .LogToTrace();
++    }
+ 
+ }
+diff --git a/src/Routeables.Native/AndroidHost.cs b/src/Routeables.Native/AndroidHost.cs
+index a9ff9f1..4e8276b 100644
+--- a/src/Routeables.Native/AndroidHost.cs
++++ b/src/Routeables.Native/AndroidHost.cs
+@@ -63,6 +63,9 @@ internal static class AndroidHost
+ 
+         return await OnMainThreadAsync(async () =>
+         {
++            // The version check at the top of the method does not reach into this lambda for the analyzer (CA1416): made again here.
++            if (!OperatingSystem.IsAndroidVersionAtLeast(33))
++                return true;
+             if (CurrentActivity is not { } activity)
+                 return Granted();
+ 

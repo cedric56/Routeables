@@ -4,6 +4,8 @@ using Avalonia.Interactivity;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Errors;
 using Routeables.Abstraction.Routing;
+using Button = Avalonia.Controls.Button;
+
 
 namespace Routeables.Avalonia;
 

@@ -110,6 +110,7 @@ exe_list=()
 IFS=',' read -ra wanted <<< "$hosts"
 for h in "${wanted[@]}"; do
   [ -n "${project[$h]:-}" ] || fail "Host '$h' does not run on Linux (Linux hosts: Avalonia, Uno)"
+  [ "$h" = "Uno" ] && say "Uno: its Skia renderer does not expose an accessibility tree on Linux yet (AT-SPI is 'planned' by Uno): agent-desktop will not find it"
   exe="$(find "$artifacts/bin/${app[$h]}" -type f -name "${app[$h]}" -perm -u+x 2>/dev/null | head -n1 || true)"
   if [ "$build" = "1" ] || [ -z "$exe" ]; then
     say "build $h for Linux ..."

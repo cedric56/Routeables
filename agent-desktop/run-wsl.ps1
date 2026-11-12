@@ -24,8 +24,9 @@
 param(
   # The WSL distribution (default: the default one).
   [string] $Distro = '',
-  # Avalonia, Uno (the hosts that run on Linux).
-  [string[]] $Hosts = @('Avalonia', 'Uno'),
+  # Avalonia (Uno runs on Linux but does not expose its tree there yet: its Skia renderer has no AT-SPI support, "planned" in
+  # its documentation; -Hosts Avalonia,Uno tries it anyway).
+  [string[]] $Hosts = @('Avalonia'),
   # Installs or updates the tools in WSL even when they are there.
   [switch] $Setup,
   # Builds again even when an executable is there.

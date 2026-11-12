@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Application = Avalonia.Application;
 
 namespace Routeables.Avalonia;
 

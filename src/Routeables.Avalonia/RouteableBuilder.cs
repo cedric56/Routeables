@@ -12,6 +12,7 @@ using Routeables.Avalonia.Services;
 using Routeables.Core;
 using Routeables.Services;
 using System.Diagnostics.CodeAnalysis;
+using Application = Avalonia.Application;
 
 namespace Routeables.Avalonia;
 

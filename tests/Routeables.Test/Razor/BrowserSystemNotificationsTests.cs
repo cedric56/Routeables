@@ -1,5 +1,6 @@
 using Microsoft.JSInterop;
 using Routeables.Blazor.Services;
+using Routeables.Native;
 using Routeables.Services;
 
 namespace Routeables.Tests.Razor;

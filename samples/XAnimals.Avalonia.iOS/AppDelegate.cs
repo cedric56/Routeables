@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.iOS;
 using Foundation;
+using Routeables.Avalonia;
 using AvaloniaApplication = Avalonia.Application;
 
 namespace XAnimals.Avalonia.iOS;
@@ -14,6 +15,7 @@ public partial class AppDelegate : AvaloniaAppDelegate<AvaloniaApplication>
     protected override AppBuilder CreateAppBuilder()
     {
         return App.CreateApp()
-            .UseiOS();
+            .UseiOS()
+            .WithAppNotifications();
     }
 }

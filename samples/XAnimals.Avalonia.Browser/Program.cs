@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Browser;
-using Avalonia.Labs.Notifications;
+using Routeables.Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Fonts;
 using System;

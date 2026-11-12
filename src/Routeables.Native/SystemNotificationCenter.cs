@@ -18,8 +18,18 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     /// <summary>The single instance used by the application.</summary>
     public static SystemNotificationCenter Current { get; } = new();
 
-    /// <summary>Whether this build has a notification center: Android, iOS, Mac Catalyst and Windows do, the plain <c>net10.0</c> target does not.</summary>
+    /// <summary>Whether this build has a notification center: Android, iOS, Mac Catalyst and Windows do; the plain <c>net10.0</c> target has one on Linux
+    /// (D-Bus) and on Windows (the notification area), none on macOS or in the browser.</summary>
     public static bool IsSupported =>
+#if ANDROID || IOS || MACCATALYST || WINDOWS
+        true;
+#else
+        OperatingSystem.IsLinux() || OperatingSystem.IsWindows() || OperatingSystem.IsBrowser();
+#endif
+
+    /// <summary>Whether this is a build for a platform of its own (Android, iOS, Mac Catalyst, Windows App SDK: an application of the platform, the web view of MAUI Blazor Hybrid
+    /// included) and not the plain <c>net10.0</c> one, which also runs on a server.</summary>
+    public static bool IsPlatformBuild =>
 #if ANDROID || IOS || MACCATALYST || WINDOWS
         true;
 #else
@@ -34,7 +44,7 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     {
         Options = options;
 #if ANDROID
-        AndroidHost.Start();
+        SystemNotificationCenter.StartTracking();
 #endif
         if (options.ClearOnAppClose)
             AppDomain.CurrentDomain.ProcessExit += (_, _) => CloseAll();
@@ -57,7 +67,7 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     /// <summary>Requests permission if options have been set; otherwise does nothing.</summary>
     public async Task InitializeAsync()
     {
-        if (Options is not null)
+        if (Options is { RequestPermissionOnInitialize: true })
             await RequestPermissionAsync();
     }
 
@@ -114,7 +124,7 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     }
 
     /// <summary>The platform tells what the user did: a tap (<paramref name="activated"/>) or a dismissal.</summary>
-    internal void Complete(uint id, bool activated, string? action)
+    internal void Complete(uint id, bool activated, string? action, string? userData = null)
     {
         bool known;
         lock (_gate) known = _active.Remove(id);
@@ -127,6 +137,7 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
             {
                 NotificationId = id,
                 ActionTag = action,
+                UserData = userData,
                 IsActivated = activated,
                 IsCancelled = !activated
             });

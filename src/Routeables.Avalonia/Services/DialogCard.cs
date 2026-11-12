@@ -5,6 +5,8 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
 using System.Windows.Input;
+using Button = Avalonia.Controls.Button;
+using Orientation = Avalonia.Layout.Orientation;
 
 namespace Routeables.Avalonia.Services;
 

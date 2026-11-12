@@ -1,7 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <!-- Routeables.Native has the system notifications of Android and iOS: an application head gets them only from a build of this library for its own
+         platform, so the library is built for each (like Routeables.Uno). A runner only has the SDK packs of its own OS; CiBuild keeps net10.0. -->
+    <TargetFrameworks>net10.0;net10.0-android;net10.0-ios</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('linux'))">net10.0;net10.0-android</TargetFrameworks>
+    <TargetFrameworks Condition="'$(CiBuild)' == 'true'">net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
@@ -20,10 +24,11 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="12.0.1" />
-    <PackageReference Include="Avalonia.Labs.Notifications" Version="12.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
+    <!-- The system notifications (Android, iOS) and the dialogs of the platform. -->
+    <ProjectReference Include="..\Routeables.Native\Routeables.Native.csproj" PrivateAssets="none" />
   </ItemGroup>
 </Project>

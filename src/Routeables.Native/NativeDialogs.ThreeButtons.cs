@@ -37,7 +37,7 @@ public static partial class NativeDialogs
             return new(false, default);
 
         // No activity (the application is in the background or starting, or the host was started after the first activity): the caller draws its own.
-        if (AndroidHost.CurrentActivity is not { } activity)
+        if (SystemNotificationCenter.CurrentActivity is not { } activity)
             return new(false, default);
 
         var alertBuilder = new Android.App.AlertDialog.Builder(activity);

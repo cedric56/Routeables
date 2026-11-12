@@ -30,4 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\XAnimals.Avalonia\XAnimals.Avalonia.csproj" />
   </ItemGroup>
+
+  <!-- A project reference does not bring the build/ targets of Routeables.Native that a package brings (they copy the notification service worker into wwwroot). -->
+  <Import Project="..\..\src\Routeables.Native\build\Routeables.Native.targets" />
 </Project>

@@ -16,5 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\XAnimals.Avalonia\XAnimals.Avalonia.csproj" />
+    <!-- Referenced here as well: a project reference of a net10.0 library resolves Routeables.Avalonia for net10.0, which has no system notifications. -->
+    <ProjectReference Include="..\..\src\Routeables.Avalonia\Routeables.Avalonia.csproj" />
   </ItemGroup>
 </Project>

@@ -3,6 +3,8 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Routeables.Services;
+using ProgressBar = Avalonia.Controls.ProgressBar;
+using Orientation = Avalonia.Layout.Orientation;
 
 namespace Routeables.Avalonia.Services;
 

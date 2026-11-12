@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Styling;
 using Routeables.Services;
+using Application = Avalonia.Application;
 
 namespace Routeables.Avalonia;
 

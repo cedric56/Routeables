@@ -16,6 +16,6 @@
 
   <!-- The service worker of the system notifications must be served from the root of the site: it is copied into wwwroot (see WithAppNotifications). -->
   <Target Name="CopyNotificationWorker" BeforeTargets="BeforeBuild">
-    <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\..\src\Routeables.Blazor\wwwroot\routeables-notifications-worker.js" DestinationFolder="$(MSBuildProjectDirectory)\wwwroot\" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\..\src\Routeables.Native\wwwroot\routeables-notifications-worker.js" DestinationFolder="$(MSBuildProjectDirectory)\wwwroot\" SkipUnchangedFiles="true" />
   </Target>
 </Project>

@@ -30,12 +30,18 @@ public class SystemNotificationCenterTests
     }
 
     [Fact]
-    public async Task The_plain_net10_target_has_no_notification_center_even_with_WithAppNotifications()
+    public async Task The_plain_net10_target_has_a_notification_center_only_on_the_desktop_and_the_browser()
     {
         var center = new SystemNotificationCenter();
         center.Configure(new AppNotificationOptions());
 
-        Assert.Null(await center.CreateNotificationAsync("animals"));
+        Assert.False(SystemNotificationCenter.IsPlatformBuild);
+
+        // Linux (D-Bus), Windows (the notification area) and the browser have one, the others (macOS) do not; where it exists, whether a notification is
+        // created depends on the machine (a session bus, a permission), which a test cannot decide.
+        if (!SystemNotificationCenter.IsSupported)
+            Assert.Null(await center.CreateNotificationAsync("animals"));
+
         center.CloseAll();
     }
 

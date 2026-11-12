@@ -6,6 +6,7 @@ using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
 using Routeables.Blazor.Services;
 using Routeables.Core;
+using Routeables.Native;
 using Routeables.Services;
 using Routeables.Tests.Core;
 

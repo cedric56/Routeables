@@ -1,57 +1,23 @@
-using Avalonia.Labs.Notifications;
+using Routeables.Native;
 using Routeables.Services;
 
 namespace Routeables.Avalonia.Services;
 
-// The system notifications (notification center of the OS) of IRouteableNotificationService, on Avalonia.Labs.Notifications.
-// Without a native manager on the platform (the browser, for one) nothing is active and nothing is created.
+// The system notifications (notification center of the OS) of IRouteableNotificationService, on Routeables.Native: Android and iOS have one.
+// Elsewhere (desktop, the browser) nothing is active and nothing is created. Without WithAppNotifications nothing is created either.
 internal partial class RouteableNotificationService
 {
-    private static INativeNotificationManager? Manager => NativeNotificationManager.Current;
+    public IReadOnlyDictionary<uint, IRouteableSystemNotification> ActiveNotifications() => SystemNotificationCenter.Current.ActiveNotifications();
 
-    public IReadOnlyDictionary<uint, IRouteableSystemNotification> ActiveNotifications()
-        => Manager?.ActiveNotifications.ToDictionary(p => p.Key, p => (IRouteableSystemNotification)new RouteableSystemNotification(p.Value))
-           ?? new Dictionary<uint, IRouteableSystemNotification>();
+    public Task<IRouteableSystemNotification?> CreateNotificationAsync(string? category) => SystemNotificationCenter.Current.CreateNotificationAsync(category);
 
-    public Task<IRouteableSystemNotification?> CreateNotificationAsync(string? category)
-    {
-        if (Manager is not { } manager) return Task.FromResult<IRouteableSystemNotification?>(null);
-        if (manager.CreateNotification(category) is { } created) return Task.FromResult<IRouteableSystemNotification?>(new RouteableSystemNotification(created));
-        return Task.FromResult<IRouteableSystemNotification?>(null);
-    }
+    public void CloseAll() => SystemNotificationCenter.Current.CloseAll();
 
-    public void CloseAll() => Manager?.CloseAll();
-
-    public Task InitializeAsync()
-    {
-        //if (Manager is { } manager)
-        //    manager.();
-        return Task.CompletedTask;
-    }
-
-    private EventHandler<RouteableSystemNotificationEventArgs>? _completed;
+    public Task InitializeAsync() => SystemNotificationCenter.Current.InitializeAsync();
 
     public event EventHandler<RouteableSystemNotificationEventArgs>? NotificationCompleted
     {
-        add
-        {
-            if (_completed is null && Manager is { } manager) manager.NotificationCompleted += OnCompleted;
-            _completed += value;
-        }
-        remove
-        {
-            _completed -= value;
-            if (_completed is null && Manager is { } manager) manager.NotificationCompleted -= OnCompleted;
-        }
+        add => SystemNotificationCenter.Current.NotificationCompleted += value;
+        remove => SystemNotificationCenter.Current.NotificationCompleted -= value;
     }
-
-    private void OnCompleted(object? sender, NativeNotificationCompletedEventArgs e)
-        => _completed?.Invoke(this, new RouteableSystemNotificationEventArgs
-        {
-            ActionTag = e.ActionTag,
-            NotificationId = e.NotificationId,
-            UserData = e.UserData,
-            IsCancelled = e.IsCancelled,
-            IsActivated = e.IsActivated
-        });
 }

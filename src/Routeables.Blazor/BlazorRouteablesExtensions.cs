@@ -8,6 +8,7 @@ using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Routing;
 using Routeables.Blazor.Services;
 using Routeables.Core;
+using Routeables.Native;
 using Routeables.Routing;
 using Routeables.Services;
 using System.Diagnostics.CodeAnalysis;
@@ -190,7 +191,7 @@ public static class BlazorRouteablesExtensions
     /// <summary>
     /// Turns on the system notifications of <see cref="IRouteableNotificationService"/> (<c>CreateNotificationAsync</c>, <c>ActiveNotifications</c>,
     /// <c>CloseAll</c>, <c>NotificationCompleted</c>, <c>InitializeAsync</c>): the notification center of the browser, through its Notification API.
-    /// It is the counterpart of <c>WithAppNotifications</c> of Avalonia.Labs.Notifications, and separate from <c>UseRouteables*</c>: without this
+    /// It is the counterpart of <c>WithAppNotifications</c> of Avalonia, and separate from <c>UseRouteables*</c>: without this
     /// call the service creates none. Call it once at startup, before or after <see cref="UseRouteablesServices"/>.
     /// The user must grant the permission: <c>CreateNotificationAsync</c> asks for it when it was not asked yet (from a click) and returns
     /// <see langword="null"/> when it is denied, when the browser has no Notification API, or while the page is prerendered.
@@ -209,14 +210,10 @@ public static class BlazorRouteablesExtensions
 
         // MAUI Blazor Hybrid runs in the web view of the platform, which has no usable Notification API: the notification center
         // of the platform (Routeables.Native) takes its place. Server and WebAssembly keep the one of the browser.
-        if (Routeables.Native.SystemNotificationCenter.IsSupported)
+        if (SystemNotificationCenter.IsPlatformBuild)
         {
-            Routeables.Native.SystemNotificationCenter.Current.Configure(new Routeables.Native.AppNotificationOptions
-            {
-                ClearOnAppClose = options.ClearOnAppClose,
-                ChannelName = options.ChannelName
-            });
-            services.AddSingleton<IRouteableSystemNotificationSource>(Routeables.Native.SystemNotificationCenter.Current);
+            SystemNotificationCenter.Current.Configure(options);
+            services.AddSingleton<IRouteableSystemNotificationSource>(SystemNotificationCenter.Current);
             return services;
         }
 

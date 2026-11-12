@@ -1,5 +1,6 @@
 ﻿using Avalonia;
-using Avalonia.Labs.Notifications;
+using Routeables.Avalonia;
+using Routeables.Native;
 using System;
 
 namespace XAnimals.Avalonia.Desktop;
@@ -23,12 +24,7 @@ class Program
             //    app?.Styles.Add(new FluentAvaloniaTheme());
             //})
             .UsePlatformDetect()
-            .WithAppNotifications(new AppNotificationOptions()
-            {
-                //AppIcon = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName) + "/avalonia-32.png",
-                AppName = "Avalonia.Labs",
-                //AppUserModelId = "com.Avalonia.Labs.Catalog",
-            })
+            .WithAppNotifications(new AppNotificationOptions())
             .WithInterFont()
             .LogToTrace();
 

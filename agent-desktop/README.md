@@ -98,8 +98,9 @@ The exit code is 0 when everything passed, 1 otherwise. When a step fails, send 
 
 ## Linux hosts in WSL: `run-wsl.ps1`
 
-From Windows, `powershell -File agent-desktop/run-wsl.ps1` tests Avalonia and Uno on Linux, inside WSL, their windows shown
-through WSLg. It runs `lib/wsl-run.sh` in the distribution, which:
+From Windows, `powershell -File agent-desktop/run-wsl.ps1` tests Avalonia on Linux, inside WSL, its window shown through
+WSLg. Uno runs on Linux too, but its Skia renderer has no AT-SPI support yet ("planned" in the Uno documentation): agent-desktop
+cannot see it there (`-Hosts Avalonia,Uno` tries anyway). It runs `lib/wsl-run.sh` in the distribution, which:
 
 - installs what is missing: the .NET 10 SDK (in `~/.dotnet`), PowerShell (a dotnet tool), Node 22 and agent-desktop (in
   `~/.npm-global`), the AT-SPI bus and the libraries of Avalonia and Uno (apt: `sudo` asks for the password once);

@@ -5,7 +5,8 @@ using Android.OS;
 using Android.Runtime;
 using Avalonia;
 using Avalonia.Android;
-using Avalonia.Labs.Notifications;
+using Routeables.Avalonia;
+using Routeables.Native;
 using System;
 using Application = Avalonia.Application;
 
@@ -32,7 +33,8 @@ public class MainActivity : AvaloniaMainActivity
     {
         base.OnCreate(savedInstanceState);
 
-        NativeNotificationManager.Current?.SetPermissionActivity(this);
+        // A tap on a notification comes back as NotificationCompleted.
+        SystemNotificationCenter.HandleIntent(Intent);
 
         // The pages the system killed with the process come back, then the link that started the application (if any) is followed.
         LinkInbox.Instance.Restore(savedInstanceState?.GetString(State));
@@ -43,6 +45,7 @@ public class MainActivity : AvaloniaMainActivity
     {
         base.OnNewIntent(intent);
         OnActivityIntent?.Invoke(this, intent);
+        SystemNotificationCenter.HandleIntent(intent);
         LinkInbox.Instance.Push(intent?.Data is { } data ? new Uri(data.ToString()!) : null);
     }
 
@@ -64,6 +67,6 @@ public class MainApplication : AvaloniaAndroidApplication<Application>
     {
         return App.CreateApp()
             .UseAndroid()
-            .WithAppNotifications(this);
+            .WithAppNotifications();
     }
 }

@@ -150,7 +150,7 @@ public static class MauiRouteablesExtensions
     /// <summary>
     /// Turns on the system notifications of <see cref="IRouteableNotificationService"/> (<c>CreateNotificationAsync</c>, <c>ActiveNotifications</c>,
     /// <c>CloseAll</c>, <c>NotificationCompleted</c>, <c>InitializeAsync</c>): Android, iOS, Mac Catalyst and Windows use their notification center.
-    /// It is the counterpart of <c>WithAppNotifications</c> of Avalonia.Labs.Notifications, and separate from <c>UseRouteables</c>: without this call the
+    /// It is the counterpart of <c>WithAppNotifications</c> of Avalonia, and separate from <c>UseRouteables</c>: without this call the
     /// service creates none. On Android it also registers the lifecycle events that bring a tap on a notification back.
     /// </summary>
     /// <param name="builder">The MAUI app builder to configure.</param>

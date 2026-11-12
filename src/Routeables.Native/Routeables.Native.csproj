@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFrameworks>net10.0;net10.0-android;net10.0-ios;net10.0-maccatalyst;net10.0-windows10.0.19041.0</TargetFrameworks>
@@ -12,6 +12,8 @@
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">17.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+    <!-- JSImport (the browser notifications in WebAssembly) generates unsafe code. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsAotCompatible>true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>Routeables.Native</RootNamespace>
@@ -19,7 +21,7 @@
     <Authors>Cédric Boutin</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>The system notifications of the platform (Android, iOS, Mac Catalyst, Windows App SDK) for Routeables: used by Routeables.Maui, by MAUI Blazor Hybrid and by a WinUI 3 application. No UI framework is needed.</Description>
+    <Description>The system notifications of the platform (Android, iOS, Mac Catalyst, Windows App SDK, and the desktop: Linux D-Bus, Windows) for Routeables: used by Routeables.Maui, by MAUI Blazor Hybrid and by a WinUI 3 application. No UI framework is needed.</Description>
   </PropertyGroup>
 
   <!-- Floating 1.8.*: pin the version your WinUI 3 / MAUI applications use. AppNotificationManager comes with the Windows App SDK: a WinUI 3 application already has it, a MAUI one too. -->
@@ -27,7 +29,24 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.*" />
   </ItemGroup>
 
+  <!-- The Windows runtime types for the toasts of the plain net10.0 target (the desktop of Avalonia, WPF, a console). PrivateAssets="all": compile-time only, they do not flow to the
+       applications that reference Routeables.Native. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <PackageReference Include="WindowsContracts.Net.Foundation.UniversalApiContract" Version="5.19041.10" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- The Apple SDK takes the files of wwwroot for resources of the app bundle (and warns that their path is outside it). They are static web assets here, not bundle resources. -->
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' Or $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+    <BundleResource Remove="wwwroot\**" />
+  </ItemGroup>
+
   <ItemGroup>
+    <!-- wwwroot/notifications.js is a static web asset (_content/Routeables.Native/notifications.js, imported by Routeables.Blazor) and is also embedded, so that a WebAssembly
+         application that is not Blazor imports it with nothing to serve. The service worker is a static web asset too: copy it to the root of the site for the action buttons. -->
+    <EmbeddedResource Include="wwwroot\notifications.js" LogicalName="Routeables.Native.notifications.js" />
+    <!-- The targets that copy the service worker into the wwwroot of a WebAssembly head, and the worker they copy. -->
+    <None Include="build\Routeables.Native.targets" Pack="true" PackagePath="build;buildTransitive" />
+    <None Include="wwwroot\routeables-notifications-worker.js" Link="build\routeables-notifications-worker.js" Pack="true" PackagePath="build;buildTransitive" />
     <InternalsVisibleTo Include="Routeables.Test" />
     <InternalsVisibleTo Include="Routeables.Test.Maui" />
   </ItemGroup>

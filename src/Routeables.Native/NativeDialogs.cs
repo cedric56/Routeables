@@ -29,7 +29,7 @@ public static partial class NativeDialogs
     public static void Initialize()
     {
 #if ANDROID
-        AndroidHost.Start();
+        SystemNotificationCenter.StartTracking();
 #endif
     }
 
