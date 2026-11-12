@@ -3,7 +3,9 @@
     <OutputType>WinExe</OutputType>
     <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
     One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
+    <!-- On Windows the head targets Windows, so that it gets the notification center of the Windows App SDK (Routeables.Native); elsewhere the plain net10.0 one. -->
     <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework Condition="$([MSBuild]::IsOSPlatform('windows')) And '$(CiBuild)' != 'true'">net10.0-windows10.0.19041.0</TargetFramework>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -18,5 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\reshapes\Reshapes.Avalonia.Fluent\Reshapes.Avalonia.Fluent.csproj" />
     <ProjectReference Include="..\XAnimals.Avalonia\XAnimals.Avalonia.csproj" />
+    <!-- Referenced here as well: through a net10.0 library, Routeables.Avalonia would resolve to its net10.0 build. -->
+    <ProjectReference Include="..\..\src\Routeables.Avalonia\Routeables.Avalonia.csproj" />
   </ItemGroup>
 </Project>

@@ -2,9 +2,10 @@
 
   <PropertyGroup>
     <!-- Routeables.Native has the system notifications of Android and iOS: an application head gets them only from a build of this library for its own
-         platform, so the library is built for each (like Routeables.Uno). A runner only has the SDK packs of its own OS; CiBuild keeps net10.0. -->
-    <TargetFrameworks>net10.0;net10.0-android;net10.0-ios</TargetFrameworks>
+         platform, so the library is built for each (like Routeables.Uno), the Windows one included: a Windows head that targets net10.0-windows10.0.19041.0 gets the notification center of the Windows App SDK (SystemNotificationCenter.windows.cs); one that targets plain net10.0 gets the Windows toasts (SystemNotificationCenter.winrt.cs). A runner only has the SDK packs of its own OS; CiBuild keeps net10.0. -->
+    <TargetFrameworks>net10.0;net10.0-android;net10.0-ios;net10.0-windows10.0.19041.0</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('linux'))">net10.0;net10.0-android</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('osx'))">net10.0;net10.0-android;net10.0-ios</TargetFrameworks>
     <TargetFrameworks Condition="'$(CiBuild)' == 'true'">net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
