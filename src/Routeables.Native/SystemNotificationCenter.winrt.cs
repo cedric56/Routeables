@@ -46,6 +46,7 @@ public sealed partial class SystemNotificationCenter
     private static bool WindowsCheck() => ToastNotificationManager.CreateToastNotifier(WindowsAppId()) is not null;
 
     // No toast where the system or the Windows runtime types cannot show one (a session with no desktop, the types missing): the notification completes as dismissed.
+    [SupportedOSPlatform("windows10.0.17763.0")]
     private void WindowsShow(SystemNotification notification)
     {
         try
