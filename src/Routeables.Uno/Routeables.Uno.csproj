@@ -35,5 +35,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
+    <!-- The system notifications and the three-button dialog of the platform (Android, iOS); the plain net10.0 target has none and the library draws its own. -->
+    <ProjectReference Include="..\Routeables.Native\Routeables.Native.csproj" PrivateAssets="none" />
   </ItemGroup>
 </Project>

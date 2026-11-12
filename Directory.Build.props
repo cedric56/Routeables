@@ -45,4 +45,10 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <WarningsNotAsErrors>$(WarningsNotAsErrors);CS1570;CS1571;CS1572;CS1573;CS1574;CS1580;CS1581;CS1584;CS1587;CS1589;CS1590;CS1591;CS1592;CS1658;CS1710;CS1711;CS1712;CS1723;CS1734;CS1735;CS0419</WarningsNotAsErrors>
   </PropertyGroup>
+
+  <!-- Routeables.Native (Maui.Essentials) brings a newer AndroidX Lifecycle.Runtime than the one Uno's Lifecycle.Process asks for (NU1608): an AndroidX
+       package set the application resolves, not a defect of this repository, so it stays a warning. -->
+  <PropertyGroup>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1608</WarningsNotAsErrors>
+  </PropertyGroup>
 </Project>

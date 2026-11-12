@@ -1,29 +1,104 @@
 # Native smoke test (agent-desktop)
 
-`run.ps1` starts each native sample (WPF, Avalonia, MAUI on Windows, Uno desktop, WinUI 3), opens every page of the menu, presses the
-buttons of the Dialogs page and answers the dialogs, through the accessibility tree (https://github.com/vercel-labs/agent-desktop).
+`run.ps1` starts each native sample (WPF, Avalonia, MAUI on Windows, Uno desktop, WinUI 3) and, through the accessibility tree
+(https://github.com/vercel-labs/agent-desktop):
+
+1. opens every page of the menu;
+2. on the six animal pages, opens the first animal of the list, checks its detail and goes back with **Back**;
+3. opens every dialog of the Dialogs page, answers it and checks what the page wrote on its Result line.
 
 ```powershell
 npm install -g agent-desktop
-dotnet build samples/XAnimals.Wpf -c Debug        # and the other samples
-pwsh agent-desktop/run.ps1 -Hosts Wpf,Avalonia,Maui,Uno,WinUI3
-pwsh agent-desktop/run.ps1 -Build          # builds the samples that are not built yet
+pwsh agent-desktop/run.ps1 -Build                      # builds what is not built yet, then every host of this OS
+pwsh agent-desktop/run.ps1 -Hosts Wpf,Uno              # two hosts
+pwsh agent-desktop/run.ps1 -Pages Cats,Dogs -SkipDialogs
 ```
 
-A host whose executable is not found is reported in `report.json` (`problems`) with the folder searched; the script looks for the newest `<App>.exe` under the `bin` folder of the sample, so another target framework is found too.
+Needs PowerShell 7.2+ (`pwsh`); started from Windows PowerShell 5.1 (`powershell`), the script runs itself again in `pwsh`. A
+script that came in a zip must be unblocked once: `Get-ChildItem agent-desktop -Recurse | Unblock-File`. Windows runs the five
+hosts. Linux (a desktop session with `at-spi2-core`; under WSL2, WSLg) and macOS (with the Accessibility permission:
+`agent-desktop permissions --guide`) run Avalonia and Uno. agent-desktop must run in the same OS as the application: the Windows
+one does not see inside a WSLg window.
 
-It writes `out/native-smoke/report.json` (the `out/` folder at the root of the repository, ignored by git, whatever the folder the script is started from; `-OutDir` changes it) (one line per page and per dialog) and the snapshots of every step. It is not part of the
-CI: it needs a desktop session. macOS needs the Accessibility permission (`agent-desktop permissions --guide`), Linux needs a
-graphical session with `at-spi2-core`; the paths of the executables at the top of the script are the Windows ones.
+**Do not use the mouse while it runs.** Menu entries and list items are clicked physically (see below): the window under test is
+brought to the front and maximized, and a click of yours or another window on top of it makes a step fail.
 
-## The templates
+## How it works, and why
 
-```powershell
-pwsh agent-desktop/run.ps1 -Templates avalonia,maui,uno,winui3 -PackageSource artifacts
-```
+What the accessibility trees of the five hosts show:
 
-For each template: `dotnet new` (installed from `templates/`) into a temporary folder **outside the repository** (under it, the application would inherit `Directory.Build.props`, the central package versions and `global.json`, which a user's application does not have), build in Debug, start, wait for `Hello, World!`, press **About** (the page must show
-its text), press **Hello** (`Hello, again!`). The report has a `templates` section with the result of each step, and `log/` holds the output of
-`dotnet new` and of the build: send that when a template does not build. The packages the templates reference (`Routeables.Maui` and so on, at the
-version of `Directory.Build.props`) must be restorable: published, or in the folder given with `-PackageSource` (`dotnet pack`, then that folder).
-Without `-Hosts` the samples are not run when `-Templates` is given. Like the rest of the script, it has not been run.
+- a menu entry or an animal is a list item whose accessible name is a class name (`...RouteableMenuEntry`1[...]`,
+  `XAnimals.Models.Animal`, `...ItemTemplateContext`) or nothing (WinUI 3); the name a person reads is a text inside it;
+- list items that share a name are twins, and agent-desktop refuses every semantic action on a twin on Windows; the semantic click
+  it does accept on a WPF or Uno menu entry does not select it either;
+- every host shows the title of the current page in a header outside the menu;
+- the menu can be hidden: Avalonia's drawer closes after a navigation, the pane of Uno, WinUI 3 and MAUI is an overlay.
+
+So an entry is found by its text (`find` gives the bounds of the text and the path of its ancestors), clicked physically at the
+centre of that text, and the page is open when the header shows its title. When the entry is not on screen, the button that opens
+the menu is pressed first (Avalonia's *Toggle navigation drawer*, MAUI's *Open navigation*, the `PaneToggleButton` of Uno and
+WinUI 3). Physical clicks need the window in front, so the applications all start at once, then are tested one after the other.
+
+Speed: on Windows every walk of the tree costs 0.3 s (WinUI 3) to 1.8 s (Avalonia), whatever is asked, so each step reads the tree
+once: one snapshot with bounds proves the page and tells whether a light-dismiss layer is left over it (Avalonia's drawer stays open
+after a navigation: a click on that layer, right of the drawer, closes it before anything on the page is clicked); one snapshot
+shows the detail and where its Back button is; the buttons of the Dialogs page are read once and clicked at their places; a menu
+that hides is opened at its button and its entry clicked at its remembered place, with no look at the menu; the Result line of a
+dialog is read in one snapshot for every possible answer (agent-desktop's `wait --text` misses it on Avalonia).
+
+A dialog that is not in the accessibility tree (Uno's ContentDialog, some MAUI dialogs) is answered by keys. The keys that worked
+for each one are kept between runs in `%TEMP%\routeables-smoke\dialog-keys.json` and tried first the next time (delete the file
+to learn them again).
+
+By default the hosts are tested one after the other, each window maximized. With `-Parallel 2`, two hosts are tested at the same time: the screen is cut in two (top and bottom on a portrait screen, left and
+right otherwise), each window fills its half, so that no window lies over another and each takes its own clicks. Reading the
+trees, most of the time, runs at the same time; the pointer and the keyboard take turns (a lock), and a step whose clicks belong
+together (open the menu then click its entry, open a dialog then answer it) keeps them until its last click. A pane that the other
+window's click may have closed is read again before it is closed. The longest hosts start first.
+
+Every window is minimized as soon as it shows and restored on its turn: a window that comes up late, or that Windows does not let
+`focus-window` put behind, would otherwise take the physical clicks meant for the one under test.
+
+| Step | Passes when |
+| --- | --- |
+| Start | the process is on the accessibility bus and its window shows the first page (a process that exits is reported with the end of its stderr) |
+| Page | the header shows its title. Members passes when it shows Features: the guard sends a visitor who is signed out there |
+| Detail | the first animal of the list opens a page with its name and a Back button, and Back brings the list back |
+| Dialog | the Result line shows the text of the answer given (`Answer: Abort.`, `Chose Send.`, `Note cancelled.`) |
+| Template | `Hello, World!`, then About shows its text, then Hello shows `Hello, again!` |
+
+## Options
+
+| Option | |
+| --- | --- |
+| `-Hosts Wpf,Avalonia,Maui,Uno,WinUI3` | default: every host of this OS |
+| `-Pages Cats,Dialogs` | a subset of the menu |
+| `-SkipDetails`, `-SkipDialogs` | no list -> detail -> Back / no dialogs |
+| `-Build` / `-BuildAll` | build the samples that are missing / all of them (incremental). Only the desktop target: `-f net10.0-windows10.0.19041.0` for MAUI, `-p:CiBuild=true` (net10.0-desktop) for Uno, as the CI does |
+| `-Parallel 2` | two hosts at the same time, each window on half of the screen (default 1: one after the other, maximized) |
+| `-Exe Avalonia=path,Wpf=path` | test this executable (a Release build, a published folder) |
+| `-Templates avalonia,maui,uno,winui3` `-PackageSource artifacts` | `dotnet new` outside the repository, build, run. Without `-Hosts`, only the templates |
+| `-ScanErrors` | looks for an error text (`Exception`, `Unhandled`, ...) on every page: one full snapshot per page, slow on Windows |
+| `-Screenshots` | a PNG next to the snapshot of each failed step |
+| `-NoHeaded` | no physical input; the menu and the lists then fail on every host, only the dialogs remain |
+| `-StartTimeoutSeconds 90`, `-StepTimeoutMs 4000` | |
+| `-AgentDesktop path` | default: the native binary of the global npm package (not the Node launcher) |
+
+## Output
+
+`out/native-smoke/` (at the root of the repository, ignored by git; `-OutDir` changes it):
+
+- `report.json` and `report.md`: one entry per page, per detail and per dialog, with its status, its time and why it failed;
+- `<Host>/calls.jsonl`: every agent-desktop call with its duration and result code;
+- `<Host>/stdout.txt`, `stderr.txt`: what the application wrote;
+- `<Host>/page-*.json`, `detail-*.json`, `back-*.json`, `dialog-*.json`: the snapshot (with bounds) of each failed step;
+- `build-*.txt`: the output of `dotnet build`.
+
+The exit code is 0 when everything passed, 1 otherwise. When a step fails, send `report.md` and the folder of that host.
+
+## Tried, and not yet
+
+Written from the trees of a real run on Windows 11 (agent-desktop 1.2.0, the five hosts). Run on Linux (Ubuntu 24.04, Xvfb, AT-SPI)
+against a GTK stand-in shaped like those trees: menu entries named by class or not named at all, a drawer that closes after each
+navigation, twin animal rows, the detail and Back, the guard of Members, the dialogs; and the failures: a Back that does nothing, a
+dialog that writes no result, an error text, a process that exits, a failed build. Not yet run against the real samples.

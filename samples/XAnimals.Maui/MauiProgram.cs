@@ -27,7 +27,7 @@ public static class MauiProgram
             });
 
         // Routes generated for the views of this project and the view models it references.
-        builder.Services.AddGeneratedRoutes();
+        //builder.Services.AddGeneratedRoutes();
         // MAUI draws a FontImageSource on Windows only from a font file the application registered: from a system font (the emoji
         // here) it fails with "not supported for a relative URI". There the icons are the pictures of Resources/Images (icon_<key>.png).
         AnimalIcons.Register((key, glyph) => OperatingSystem.IsWindows()

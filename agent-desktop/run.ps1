@@ -1,352 +1,452 @@
-﻿<#
+<#
 .SYNOPSIS
-  Smoke test of the native XAnimals samples (WPF, Avalonia, MAUI, Uno) driven by agent-desktop (accessibility tree).
+  Smoke test of the native XAnimals samples (WPF, Avalonia, MAUI, Uno, WinUI 3) and of the dotnet new templates, driven by
+  agent-desktop through the accessibility tree.
 
 .DESCRIPTION
-  For every host: starts the application, opens each page of the menu, presses the buttons of the Dialogs page and answers
-  the dialogs, then writes a report. Nothing is asserted from pixels: a page "opens" when the tree of the window changes and
-  holds the text of the page.
+  For every host: opens each page of the menu; on the six animal pages, opens the first animal, checks its detail and goes back
+  with Back; then opens each dialog of the Dialogs page, answers it and checks the Result line of the page ("Answer: Yes.").
 
-  Needs: agent-desktop (npm install -g agent-desktop), the samples built in Debug, PowerShell 5.1 or 7.
-  Run it from anywhere:  pwsh agent-desktop/run.ps1 -Hosts Wpf,Avalonia   (the paths are those of the repository, found from the script).
-  -Build builds the samples that are not built yet, in Debug, before starting them.
+  The applications start all at once; they are then tested one after the other, each window in front and maximized, because
+  menu entries and list items are clicked physically (they are twins in the accessibility tree: no semantic action reaches them).
 
-  The dotnet new templates (templates/) can be tried too, on Windows: -Templates avalonia,maui,uno,winui3 installs them, makes an
-  application of each in a temporary folder outside the repository (routeables-templates under the temp folder of the user), builds it, starts it and follows its two pages (Hello, then About through the
-  button, then back). The packages the templates ask for must be restorable: publish them, or give a folder that holds the
-  packages built here with -PackageSource (dotnet pack, then -PackageSource artifacts).
+  A page is "ok" when the header shows its title (Members: Features, where the guard sends a visitor who is signed out). A detail
+  is "ok" when the animal and the Back button appear, and Back brings the list back. A dialog is "ok" when the Result line shows
+  the text of the answer that was given.
 
-  The result is out/native-smoke/report.json and one snapshot per step: send report.json to be read.
-  The script was written from the documented commands of agent-desktop and has not been run: the first thing it records is the
-  help of each command (out/native-smoke/help-*.txt), which is what to send if a step fails.
+  Output: out/native-smoke/report.json, report.md, and one folder per host with calls.jsonl (every agent-desktop call with its
+  duration), stdout/stderr of the application, and the snapshot of every failed step. The exit code is 0 when everything passed.
+
+  Needs PowerShell 7.2+, agent-desktop (npm install -g agent-desktop) and the .NET 10 SDK for -Build.
+  Windows: all five hosts. Linux (a desktop session with at-spi2-core, WSLg included) and macOS: Avalonia and Uno.
+
+.EXAMPLE
+  pwsh agent-desktop/run.ps1 -Build
+  Builds the samples that are not built yet (only the desktop target of MAUI and Uno), then tests every host of this OS.
+
+.EXAMPLE
+  pwsh agent-desktop/run.ps1 -Hosts Wpf,Uno -Pages Cats,Dogs -SkipDialogs
+  Two hosts, two pages with their detail, no dialogs.
+
+.EXAMPLE
+  pwsh agent-desktop/run.ps1 -Templates avalonia,uno -PackageSource artifacts
+  The templates only: dotnet new outside the repository, build, start, Hello -> About -> Hello.
 #>
+[CmdletBinding()]
 param(
-  [string[]] $Hosts = @('Wpf', 'Avalonia', 'Maui', 'Uno', 'WinUI3'),
+  # Wpf, Avalonia, Maui, Uno, WinUI3. Default: every host this OS can run.
+  [string[]] $Hosts,
+  # A subset of the menu (Cats, Dogs, ... About). Default: all of them.
+  [string[]] $Pages,
+  # avalonia, maui, uno, winui3. Without -Hosts, only the templates are tested.
   [string[]] $Templates = @(),
+  # A folder holding the Routeables packages (dotnet pack -o artifacts) for the templates.
   [string] $PackageSource = '',
+  # Builds the samples that have no executable yet.
   [switch] $Build,
-  [string] $OutDir = '',
-  [int] $StartTimeoutSeconds = 60
+  # Builds every sample asked for (incremental), even the ones already built.
+  [switch] $BuildAll,
+  # Host=path: tests this executable instead of the one found under bin (a Release build, a published folder).
+  # -Exe Avalonia=C:/apps/XAnimals.Avalonia.Desktop.exe,Wpf=D:/wpf/XAnimals.Wpf.exe
+  [string[]] $Exe = @(),
+  [switch] $SkipDialogs,
+  # No list -> detail -> Back on the animal pages.
+  [switch] $SkipDetails,
+  # Looks for an error text (Exception, Unhandled ...) on every page: one full snapshot per page, slow on Windows.
+  [switch] $ScanErrors,
+  # Never use physical input (clicks that move the pointer, keys). Steps that need it fail instead.
+  [switch] $NoHeaded,
+  # Adds a PNG next to the snapshot of each failed step.
+  [switch] $Screenshots,
+  [int] $StartTimeoutSeconds = 90,
+  # 1 (default): one host after the other, maximized. 2: two at the same time, each window on half of the screen.
+  [int] $Parallel = 1,
+  # How long a single step (a page, the answer of a dialog) may take.
+  [int] $StepTimeoutMs = 4000,
+  # The agent-desktop executable (default: the native binary of the global npm package).
+  [string] $AgentDesktop = '',
+  [string] $OutDir = ''
 )
 
-$ErrorActionPreference = 'Continue'
-# The repository, whatever the folder the script is started from (the paths below are relative to it).
-$RepoRoot = Split-Path -Parent $PSScriptRoot
-# The results go to out/ at the root of the repository, which git ignores: not to the folder the script was started from.
-if (-not $OutDir) { $OutDir = Join-Path $RepoRoot 'out/native-smoke' }
-# With -File, "-Hosts Wpf,Avalonia" arrives as one string: split it.
-$Hosts = @($Hosts | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
-$Templates = @($Templates | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
-# Asked for templates only: the samples are not run unless -Hosts is given too.
-if ($Templates.Count -and -not $PSBoundParameters.ContainsKey('Hosts')) { $Hosts = @() }
-New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
-
-# A statement that fails is written to crash.txt with the line of the script, and the run goes on with the next statement: send that file.
-trap {
-  $text = "$(Get-Date -Format s)`n$($_ | Out-String)`n$($_.ScriptStackTrace)`n$($_.InvocationInfo.PositionMessage)`n----`n"
-  Add-Content -Path (Join-Path $OutDir 'crash.txt') -Value $text -Encoding UTF8
-  Write-Host "ERROR: $($_.Exception.Message)  ($($_.InvocationInfo.ScriptLineNumber): $($_.InvocationInfo.Line.Trim()))" -ForegroundColor Red
-  continue
-}
-
-# agent-desktop refuses a state folder owned by another principal (a folder made by an elevated shell, a copy, another user).
-# Unless the caller chose one, it works in a folder made now, by this process.
-if (-not $env:AGENT_DESKTOP_HOME) {
-  $env:AGENT_DESKTOP_HOME = Join-Path ([IO.Path]::GetTempPath()) ('agent-desktop-routeables-' + [Environment]::UserName)
-}
-New-Item -ItemType Directory -Force -Path $env:AGENT_DESKTOP_HOME | Out-Null
-Write-Host "agent-desktop state: $env:AGENT_DESKTOP_HOME"
-
-# The executable of a sample: the expected path first, then the newest <App>.exe under the bin folder of its project (another target framework,
-# another runtime identifier). $null when the sample was not built.
-function Resolve-Executable([string] $relative, [string] $app) {
-  $expected = Join-Path $RepoRoot $relative
-  if (Test-Path $expected) { return $expected }
-  $bin = Join-Path $RepoRoot (($relative -split '/bin/')[0] + '/bin')
-  if (-not (Test-Path $bin)) { return $null }
-  $found = Get-ChildItem -Path $bin -Recurse -Filter "$app.exe" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-  if ($found) { $found.FullName } else { $null }
-}
-
-# Where each sample is, the process name agent-desktop finds it by, and the executable to start.
-$catalog = @{
-  Wpf      = @{ App = 'XAnimals.Wpf';             Exe = 'samples/XAnimals.Wpf/bin/Debug/net10.0-windows/XAnimals.Wpf.exe' }
-  Avalonia = @{ App = 'XAnimals.Avalonia.Desktop'; Exe = 'samples/XAnimals.Avalonia.Desktop/bin/Debug/net10.0/XAnimals.Avalonia.Desktop.exe' }
-  Maui     = @{ App = 'XAnimals.Maui';            Exe = 'samples/XAnimals.Maui/bin/Debug/net10.0-windows10.0.19041.0/win-x64/XAnimals.Maui.exe' }
-  Uno      = @{ App = 'XAnimals.Uno';             Exe = 'samples/XAnimals.Uno/bin/Debug/net10.0-desktop/XAnimals.Uno.exe' }
-  WinUI3   = @{ App = 'XAnimals.WinUI3';          Exe = 'samples/XAnimals.WinUI3/bin/Debug/net10.0-windows10.0.19041.0/win-x64/XAnimals.WinUI3.exe' }
-}
-
-$pages = 'Cats', 'Dogs', 'Monkeys', 'Elephants', 'Bears', 'Pandas', 'History', 'Regions', 'Adopt a pet', 'Dialogs', 'Features', 'Members', 'About'
-$dialogButtons = 'Ok', 'Error', 'Yes / No', 'Ok / Cancel', 'Ok / Abort', 'Yes / No / Cancel', 'Yes / No / Abort',
-                 'Content dialog', 'Task dialog', 'Task dialog with progress', 'Show modal'
-# What answers a dialog, in the order tried.
-$answers = 'Yes', 'Ok', 'OK', 'Send', 'Save', 'Close', 'Cancel', 'No'
-$errorWords = 'Exception', 'Unhandled', 'Error:', 'Erreur', 'could not be located'
-
-# A simple function (no param block): an advanced one would read -i as a common parameter (-InformationAction).
-function Invoke-Ad {
-  $text = & agent-desktop @args 2>&1 | Out-String
-  try { return ($text | ConvertFrom-Json) } catch { return [pscustomobject]@{ ok = $false; raw = $text } }
-}
-
-# Every object of the tree, whatever the name of the property that holds the children.
-function Get-Nodes($node) {
-  if ($null -eq $node) { return }
-  if ($node -is [System.Collections.IEnumerable] -and $node -isnot [string]) { foreach ($item in $node) { Get-Nodes $item }; return }
-  if ($node -isnot [pscustomobject]) { return }
-  $node
-  foreach ($property in $node.PSObject.Properties) {
-    if ($property.Value -is [pscustomobject] -or ($property.Value -is [System.Collections.IEnumerable] -and $property.Value -isnot [string])) { Get-Nodes $property.Value }
+# Started from Windows PowerShell 5.1 (powershell.exe): the same command again in PowerShell 7 (pwsh), which the script needs.
+if ($PSVersionTable.PSVersion.Major -lt 7) {
+  $pwsh = Get-Command pwsh -ErrorAction SilentlyContinue
+  if (-not $pwsh) {
+    Write-Host 'This script needs PowerShell 7.2 or later (pwsh), which is not installed.' -ForegroundColor Red
+    Write-Host 'Install it:  winget install --id Microsoft.PowerShell --source winget' -ForegroundColor Red
+    Write-Host 'then run:    pwsh agent-desktop/run.ps1 -Build' -ForegroundColor Red
+    exit 2
   }
+  $forward = @('-NoProfile', '-File', $PSCommandPath)
+  foreach ($entry in $PSBoundParameters.GetEnumerator()) {
+    $value = $entry.Value
+    if ($value -is [switch]) { if ($value.IsPresent) { $forward += "-$($entry.Key)" }; continue }
+    $text = if ($value -is [array]) { $value -join ',' } else { "$value" }
+    if ($text) { $forward += @("-$($entry.Key)", $text) }
+  }
+  Write-Host "Windows PowerShell $($PSVersionTable.PSVersion): running again in $($pwsh.Source)" -ForegroundColor DarkGray
+  & $pwsh.Source @forward
+  exit $LASTEXITCODE
+}
+if ($PSVersionTable.PSVersion -lt [version]'7.2') {
+  Write-Host "This script needs PowerShell 7.2 or later; this is $($PSVersionTable.PSVersion). Update it: winget upgrade --id Microsoft.PowerShell" -ForegroundColor Red
+  exit 2
 }
 
-function Get-Snapshot([string] $app, [string] $label, [string] $dir) {
-  $result = Invoke-Ad snapshot --app $app -i --compact
-  $result | ConvertTo-Json -Depth 50 | Set-Content -Path (Join-Path $dir ("$label.json")) -Encoding UTF8
-  $nodes = @()
-  if ($result.ok -and $result.data) { $nodes = @(Get-Nodes $result.data) }
-  [pscustomobject]@{ Ok = [bool]$result.ok; Nodes = $nodes; Raw = $result }
+$ErrorActionPreference = 'Stop'
+$total = [Diagnostics.Stopwatch]::StartNew()
+$RepoRoot = Split-Path -Parent $PSScriptRoot
+if (-not $OutDir) { $OutDir = Join-Path $RepoRoot 'out/native-smoke' }
+$OutDir = [IO.Path]::GetFullPath($OutDir)
+New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
+$modulePath = Join-Path $PSScriptRoot 'lib/AgentDesktop.Smoke.psm1'
+Import-Module $modulePath -Force
+
+# With -File, "-Hosts Wpf,Avalonia" arrives as one string.
+function Split-List([string[]] $Values) { @($Values | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim() } | Where-Object { $_ }) }
+$Hosts = Split-List $Hosts
+$Templates = Split-List $Templates
+$Pages = Split-List $Pages
+$exeByHost = @{}
+foreach ($pair in (Split-List $Exe)) {
+  $hostName, $path = $pair -split '=', 2
+  if (-not $path) { throw "-Exe takes Host=path, not '$pair'" }
+  $exeByHost[$hostName.Trim()] = $path.Trim()
 }
 
-# A button is found by its name. A menu entry too, or by the view model it shows: the menu of the WPF sample has no accessible name,
-# its entries are called "Routeables.Routing.MenuEntry`1[XAnimals.ViewModels.CatsViewModel]".
-function Find-Node($snapshot, [string] $name, [string] $viewModel = '') {
-  $named = @($snapshot.Nodes | Where-Object { $_.ref_id -and $_.name })
-  # The exact name first: "Ok" is not "Ok / Cancel", "Yes" is not "Yes / No".
-  $found = $named | Where-Object { $_.name.Trim() -eq $name } | Select-Object -First 1
-  if (-not $found -and $viewModel) { $found = $named | Where-Object { $_.name -match ('\.' + [regex]::Escape($viewModel) + '\]$') } | Select-Object -First 1 }
-  if (-not $found) { $found = $named | Where-Object { $_.name.Trim().StartsWith($name) } | Select-Object -First 1 }
-  $found
+$currentOs = if ($IsWindows) { 'Windows' } elseif ($IsMacOS) { 'MacOS' } else { 'Linux' }
+$everywhere = 'Windows', 'Linux', 'MacOS'
+
+# ------------------------------------------------------------------------------------------------------------------------------
+# What is tested
+# ------------------------------------------------------------------------------------------------------------------------------
+
+# Build: only the desktop target. MAUI and Uno also target Android and iOS; building those is what made -Build slow.
+# Uno uses CiBuild like the CI does: it keeps net10.0-desktop only, so no mobile workload is needed to restore it.
+$catalog = [ordered]@{
+  Wpf      = @{ Project = 'samples/XAnimals.Wpf/XAnimals.Wpf.csproj'; App = 'XAnimals.Wpf'; Os = @('Windows'); BuildArgs = @() }
+  Avalonia = @{ Project = 'samples/XAnimals.Avalonia.Desktop/XAnimals.Avalonia.Desktop.csproj'; App = 'XAnimals.Avalonia.Desktop'; Os = $everywhere; BuildArgs = @() }
+  Maui     = @{ Project = 'samples/XAnimals.Maui/XAnimals.Maui.csproj'; App = 'XAnimals.Maui'; Os = @('Windows'); BuildArgs = @('-f', 'net10.0-windows10.0.19041.0') }
+  Uno      = @{ Project = 'samples/XAnimals.Uno/XAnimals.Uno.csproj'; App = 'XAnimals.Uno'; Os = $everywhere; BuildArgs = @('-p:CiBuild=true') }
+  WinUI3   = @{ Project = 'samples/XAnimals.WinUI3/XAnimals.WinUI3.csproj'; App = 'XAnimals.WinUI3'; Os = @('Windows'); BuildArgs = @() }
+}
+$templateCatalog = [ordered]@{
+  avalonia = @{ Os = $everywhere; BuildArgs = @() }
+  maui     = @{ Os = @('Windows'); BuildArgs = @('-f', 'net10.0-windows10.0.19041.0') }
+  uno      = @{ Os = $everywhere; BuildArgs = @() }
+  winui3   = @{ Os = @('Windows'); BuildArgs = @() }
 }
 
-# The view model behind each entry of the menu.
+$allPages = 'Cats', 'Dogs', 'Monkeys', 'Elephants', 'Bears', 'Pandas', 'History', 'Regions', 'Adopt a pet', 'Dialogs', 'Features', 'Members', 'About'
+
+# Each dialog of DialogsViewModel: the answers tried, in order, and what the Result line then shows. Never "Close": it is also the
+# name of the button that closes the window, and a dialog that did not open would leave only that one to find. The first answer of each
+# dialog is chosen so that the Result line changes from one dialog to the next (otherwise the check could pass on the old text).
+$dialogs = @(
+  @{ Button = 'Ok';                        Answers = @('OK');                     Results = @{ OK = 'Message closed.' } }
+  @{ Button = 'Error';                     Answers = @('OK');                     Results = @{ OK = 'Error closed.' } }
+  @{ Button = 'Yes / No';                  Answers = 'Yes', 'No';                 Results = @{ Yes = 'Answer: Yes.'; No = 'Answer: No.' } }
+  @{ Button = 'Ok / Cancel';               Answers = 'Cancel', 'OK';              Results = @{ Cancel = 'Answer: Cancel.'; OK = 'Answer: OK.' } }
+  @{ Button = 'Ok / Abort';                Answers = 'OK', 'Abort';               Results = @{ OK = 'Answer: OK.'; Abort = 'Answer: Abort.' } }
+  @{ Button = 'Yes / No / Cancel';         Answers = 'No', 'Yes', 'Cancel';       Results = @{ No = 'Answer: No.'; Yes = 'Answer: Yes.'; Cancel = 'Answer: Cancel.' } }
+  @{ Button = 'Yes / No / Abort';          Answers = 'Abort', 'Yes', 'No';        Results = @{ Abort = 'Answer: Abort.'; Yes = 'Answer: Yes.'; No = 'Answer: No.' } }
+  @{ Button = 'Content dialog';            Answers = 'Send', 'Copy link', 'Cancel'; Results = @{ Send = 'Chose Send.'; 'Copy link' = 'Chose Copy link.'; Cancel = 'Closed without a choice.' } }
+  @{ Button = 'Task dialog';               Answers = 'Yes', 'No', 'Cancel';       Results = @{ Yes = 'Answer: Yes.'; No = 'Answer: No.'; Cancel = 'Answer: Cancel.' } }
+  @{ Button = 'Task dialog with progress'; Answers = 'Cancel';                    Results = @{ Cancel = 'Download cancelled.' } }
+  @{ Button = 'Show modal';                Answers = @('Cancel');                 Results = @{ Cancel = 'Note cancelled.' } }
+)
+# The view model of each page: WPF and Avalonia name their menu entries after it ("...RouteableMenuEntry`1[...CatsViewModel]"),
+# which tells whether a drawer is open.
 $viewModels = @{
   'Cats' = 'CatsViewModel'; 'Dogs' = 'DogsViewModel'; 'Monkeys' = 'MonkeysViewModel'; 'Elephants' = 'ElephantsViewModel'
   'Bears' = 'BearsViewModel'; 'Pandas' = 'PandasViewModel'; 'History' = 'HistoryViewModel'; 'Regions' = 'RegionsViewModel'
   'Adopt a pet' = 'AdoptViewModel'; 'Dialogs' = 'DialogsViewModel'; 'Features' = 'FeaturesViewModel'
   'Members' = 'MembersViewModel'; 'About' = 'AboutViewModel'
 }
-
-function Invoke-Click($node) {
-  $ref = [string]$node.ref_id
-  if (-not $ref.StartsWith('@')) { $ref = '@' + $ref }
-  Invoke-Ad click $ref
+# The order of the entries of MainViewModel's menu (Birds comes from a module; WinUI 3 adds Tabs at the end). MAUI's flyout shows
+# no text in its entries: they are taken by rank.
+$menuOrder = 'Cats', 'Dogs', 'Monkeys', 'Elephants', 'Bears', 'Pandas', 'History', 'Regions', 'Adopt a pet', 'Dialogs', 'Birds', 'Features', 'Members', 'About'
+# The title the header shows for each page (Members: the guard sends a visitor who is signed out to Features).
+$titles = @{}
+foreach ($page in $allPages) { $titles[$page] = @($page) }
+$titles['Members'] = @('Members', 'Features')
+# The first animal of each list (samples/Bases/XAnimals.ViewModels/Data): opened, then Back.
+$firstAnimal = @{
+  'Cats' = 'Abyssinian'; 'Dogs' = 'Afghan Hound'; 'Monkeys' = 'Baboon'; 'Elephants' = 'African Bush Elephant'
+  'Bears' = 'American Black Bear'; 'Pandas' = 'Giant Panda'
 }
+$errorWords = 'Exception', 'Unhandled', 'Error:', 'Erreur', 'could not be located'
 
-# A menu entry of the WPF sample is a list item: the snapshots of the first run show that a plain click left the selection on Cats
-# and the page unchanged. So the entry is activated with each command in turn until the entry is reported "selected".
-# The help of agent-desktop: "click" is the accessibility press action (it answers ok and selects nothing here), "select" needs more
-# arguments, "double-click" needs --headed. So a physical click (--headed) comes first.
-$activations = 'headed-click', 'headed-double-click', 'focus-return'
-function Invoke-Activate($app, [string] $page, [string] $viewModel, [string] $dir) {
-  $tried = @()
-  foreach ($command in $activations) {
-    $snapshot = Get-Snapshot $app 'current' $dir
-    $node = Find-Node $snapshot $page $viewModel
-    if (-not $node) { return [pscustomobject]@{ Ok = $false; Command = $command; Tried = $tried; Error = 'entry not found' } }
-    if (@($node.states) -contains 'selected') { return [pscustomobject]@{ Ok = $true; Command = 'already selected'; Tried = $tried; Error = $null } }
-    $ref = [string]$node.ref_id
-    if (-not $ref.StartsWith('@')) { $ref = '@' + $ref }
-    if (@($node.states) -contains 'offscreen') { Invoke-Ad scroll-to $ref | Out-Null; Start-Sleep -Milliseconds 400 }
-    $answer = switch ($command) {
-      'headed-click'        { Invoke-Ad --headed click $ref }
-      'headed-double-click' { Invoke-Ad --headed double-click $ref }
-      'focus-return'        { Invoke-Ad --headed focus $ref | Out-Null; Invoke-Ad --headed press return }
+if (-not $PSBoundParameters.ContainsKey('Hosts')) {
+  $Hosts = if ($Templates.Count) { @() } else { @($catalog.Keys | Where-Object { $catalog[$_].Os -contains $currentOs }) }
+}
+if (-not $Pages.Count) { $Pages = $allPages }
+$unknownPages = @($Pages | Where-Object { $_ -notin $allPages })
+if ($unknownPages.Count) { throw "Unknown page(s): $($unknownPages -join ', '). The menu has: $($allPages -join ', ')" }
+
+# ------------------------------------------------------------------------------------------------------------------------------
+# agent-desktop
+# ------------------------------------------------------------------------------------------------------------------------------
+
+$adPath = Resolve-AgentDesktop $AgentDesktop
+# A state folder made now, by this user: agent-desktop refuses one owned by another principal (made by an elevated shell, copied),
+# and on Linux and macOS one that the group or others can read (a folder made under /tmp is 755).
+if (-not $env:AGENT_DESKTOP_HOME) {
+  $env:AGENT_DESKTOP_HOME = Join-Path ([IO.Path]::GetTempPath()) ('agent-desktop-routeables-' + [Environment]::UserName)
+}
+New-Item -ItemType Directory -Force -Path $env:AGENT_DESKTOP_HOME | Out-Null
+if (-not $IsWindows) { & chmod 700 $env:AGENT_DESKTOP_HOME }
+$version = (& $adPath version 2>$null) -join ''
+try { $version = ($version | ConvertFrom-Json).data.version } catch { }
+$status = (& $adPath status 2>$null) -join ''
+Set-Content -LiteralPath (Join-Path $OutDir 'status.json') -Value $status -Encoding utf8
+Write-Host "agent-desktop: $adPath"
+try {
+  $statusData = ($status | ConvertFrom-Json).data
+  $access = $statusData.permissions.accessibility.state
+  if ($access -ne 'granted') {
+    $hint = switch ($currentOs) {
+      'Linux' { 'Linux needs a desktop session with the AT-SPI bus (sudo apt install at-spi2-core; under WSL2, WSLg). Run: agent-desktop status' }
+      'MacOS' { 'Grant the Accessibility permission: agent-desktop permissions --guide' }
+      default { 'Run: agent-desktop status' }
     }
-    $tried += "$command=$(if ($answer.ok) { 'ok' } else { $answer.error.code })"
-    Start-Sleep -Milliseconds 1200
-    $check = Find-Node (Get-Snapshot $app 'check' $dir) $page $viewModel
-    if ($check -and (@($check.states) -contains 'selected')) { return [pscustomobject]@{ Ok = $true; Command = $command; Tried = $tried; Error = $null } }
+    throw "The accessibility tree cannot be read here (accessibility: $access). $hint"
   }
-  [pscustomobject]@{ Ok = $false; Command = $null; Tried = $tried; Error = 'the entry never became selected' }
+} catch [System.ArgumentException] { Write-Warning "agent-desktop status did not answer JSON: $status" }
+
+# ------------------------------------------------------------------------------------------------------------------------------
+# Build
+# ------------------------------------------------------------------------------------------------------------------------------
+
+# The newest executable of an app under a folder: <App>.exe on Windows, the apphost without extension elsewhere.
+function Find-Executable([string] $Folder, [string] $App) {
+  if (-not (Test-Path -LiteralPath $Folder)) { return $null }
+  $file = if ($IsWindows) { "$App.exe" } else { $App }
+  $all = @(Get-ChildItem -LiteralPath $Folder -Recurse -File -Filter $file -ErrorAction SilentlyContinue |
+           Where-Object { $_.FullName -notmatch '[\\/]obj[\\/]' -and $_.Name -eq $file })
+  $debug = @($all | Where-Object { $_.FullName -match '[\\/]Debug[\\/]' })
+  $pick = if ($debug.Count) { $debug } else { $all }
+  $found = $pick | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+  if ($found) { $found.FullName } else { $null }
 }
 
-function Test-Errors($snapshot) {
-  $names = ($snapshot.Nodes | ForEach-Object { $_.name }) -join "`n"
-  $errorWords | Where-Object { $names -match [regex]::Escape($_) }
+function Invoke-Build([string] $Name, [string] $Project, [string[]] $Arguments) {
+  $log = Join-Path $OutDir "build-$Name.txt"
+  $watch = [Diagnostics.Stopwatch]::StartNew()
+  Write-Host "[build] $Name ..." -NoNewline
+  & dotnet build $Project -c Debug -nologo @Arguments *> $log
+  $ok = $LASTEXITCODE -eq 0
+  Write-Host (" {0} in {1:0}s" -f $(if ($ok) { 'ok' } else { 'FAILED' }), $watch.Elapsed.TotalSeconds) -ForegroundColor $(if ($ok) { 'Green' } else { 'Red' })
+  if ($ok) { return $null }
+  $errors = @(Select-String -LiteralPath $log -Pattern ': error ' | Select-Object -First 3 | ForEach-Object { $_.Line.Trim() })
+  "the build failed (see $(Split-Path -Leaf $log))$(if ($errors.Count) { ': ' + ($errors -join ' | ') })"
 }
 
-# The help of the commands: what to send when a step fails because a flag is not the one assumed here.
-(& agent-desktop --help 2>&1 | Out-String) | Set-Content -Path (Join-Path $OutDir 'help.txt') -Encoding UTF8
-foreach ($command in 'snapshot', 'click', 'select', 'double-click', 'scroll', 'scroll-to', 'launch', 'find', 'wait', 'list-windows', 'close-app', 'screenshot') {
-  (& agent-desktop $command --help 2>&1 | Out-String) | Set-Content -Path (Join-Path $OutDir "help-$command.txt") -Encoding UTF8
-}
-(& agent-desktop status 2>&1 | Out-String) | Set-Content -Path (Join-Path $OutDir 'status.txt') -Encoding UTF8
-
-$report = [ordered]@{ date = (Get-Date).ToString('s'); os = [Environment]::OSVersion.VersionString; hosts = [ordered]@{} }
-
+$targets = [Collections.Generic.List[hashtable]]::new()
 foreach ($name in $Hosts) {
-  $host_ = $catalog[$name]
-  if (-not $host_) { Write-Warning "Unknown host '$name' (Wpf, Avalonia, Maui, Uno, WinUI3)"; continue }
-  $dir = Join-Path $OutDir $name
-  New-Item -ItemType Directory -Force -Path $dir | Out-Null
-  $entry = [ordered]@{ started = $false; pages = [ordered]@{}; dialogs = [ordered]@{}; problems = @() }
-  $report.hosts[$name] = $entry
-
-  $exePath = Resolve-Executable $host_.Exe $host_.App
-  if (-not $exePath -and $Build) {
-    # -Build: the sample is built in Debug first (the output of dotnet build is kept next to the snapshots).
-    $projectDir = ($host_.Exe -split '/bin/')[0]
-    $csproj = Join-Path $RepoRoot "$projectDir/$($projectDir.Split('/')[-1]).csproj"
-    Write-Host "[$name] building $csproj"
-    & dotnet build $csproj -c Debug *>&1 | Out-File (Join-Path $dir 'build.txt')
-    $exePath = Resolve-Executable $host_.Exe $host_.App
-  }
-  if (-not $exePath) {
-    $project = ($host_.Exe -split '/bin/')[0]
-    $entry.problems += "executable not found under $(Join-Path $RepoRoot $project)/bin (repository: $RepoRoot). Build it first (dotnet build $project/$($project.Split('/')[-1]).csproj -c Debug) or run the script with -Build"
-    Write-Warning "[$name] not built: $($entry.problems[-1])"
+  $key = @($catalog.Keys | Where-Object { $_ -eq $name }) | Select-Object -First 1
+  if (-not $key) { throw "Unknown host '$name'. Hosts: $($catalog.Keys -join ', ')" }
+  $spec = $catalog[$key]
+  $target = @{ Kind = 'sample'; Name = $key; App = $spec.App; Exe = $null; Problem = $null }
+  $targets.Add($target)
+  if ($spec.Os -notcontains $currentOs) { $target.Problem = "$key does not run on $currentOs (it runs on: $($spec.Os -join ', '))"; continue }
+  $explicit = @($exeByHost.Keys | Where-Object { $_ -eq $key }) | Select-Object -First 1
+  if ($explicit) {
+    $target.Exe = (Resolve-Path -LiteralPath $exeByHost[$explicit]).Path
+    $target.App = [IO.Path]::GetFileNameWithoutExtension($target.Exe)
     continue
   }
-  Write-Host "[$name] starting $exePath"
-  $process = Start-Process -FilePath $exePath -PassThru
-
-  # Wait until the tree of the window holds the menu.
-  $snapshot = $null
-  $deadline = (Get-Date).AddSeconds($StartTimeoutSeconds)
-  while ((Get-Date) -lt $deadline) {
-    Start-Sleep -Seconds 2
-    $snapshot = Get-Snapshot $host_.App 'start' $dir
-    $named = @($snapshot.Nodes | Where-Object { $_.name })
-    Write-Host ("[{0}] snapshot ok={1} nodes={2} named={3}" -f $name, $snapshot.Ok, $snapshot.Nodes.Count, $named.Count)
-    if ($snapshot.Ok -and (Find-Node $snapshot 'Cats' $viewModels['Cats'])) { $entry.started = $true; break }
+  $project = Join-Path $RepoRoot $spec.Project
+  $bin = Join-Path (Split-Path -Parent $project) 'bin'
+  $target.Exe = Find-Executable $bin $spec.App
+  if ($BuildAll -or ($Build -and -not $target.Exe)) {
+    $problem = Invoke-Build $key $project $spec.BuildArgs
+    if ($problem) { $target.Problem = $problem; continue }
+    $target.Exe = Find-Executable $bin $spec.App
   }
-  if (-not $entry.started) {
-    # What agent-desktop answered, and what it sees: this is what tells why the menu is not found.
-    Write-Host "[$name] the menu was not found. Last answer:"
-    ($snapshot.Raw | ConvertTo-Json -Depth 4) | Select-Object -First 1 | Write-Host
-    Write-Host "[$name] names seen:"
-    ($snapshot.Nodes | Where-Object { $_.name } | Select-Object -First 40 | ForEach-Object { "  $($_.role): $($_.name) [$($_.ref_id)]" }) | Write-Host
-    Write-Host "[$name] windows:"
-    (& agent-desktop list-windows 2>&1 | Out-String) | Write-Host
-    (& agent-desktop list-windows 2>&1 | Out-String) | Set-Content -Path (Join-Path $dir 'windows.txt') -Encoding UTF8
+  if (-not $target.Exe) {
+    $target.Problem = "not built: no $($spec.App)$(if ($IsWindows) { '.exe' }) under $bin. Run with -Build, or: dotnet build $($spec.Project) -c Debug $($spec.BuildArgs -join ' ')".Trim()
   }
-  if (-not $entry.started) { $entry.problems += 'the window did not show the menu in time'; Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue; continue }
+}
 
-  foreach ($page in $pages) {
-    $activation = Invoke-Activate $host_.App $page $viewModels[$page] $dir
-    $after = Get-Snapshot $host_.App ('page-' + ($page -replace '\W', '_')) $dir
-    $errors = @(Test-Errors $after)
-    Write-Host ("[{0}] {1}: {2}" -f $name, $page, $(if ($activation.Ok) { "selected by $($activation.Command)" } else { "not selected ($($activation.Error); $($activation.Tried -join ', '))" }))
-    $entry.pages[$page] = if (-not $activation.Ok) { "$($activation.Error): $($activation.Tried -join ', ')" }
-                          elseif (-not $after.Ok) { 'window did not answer after the click' }
-                          elseif ($errors.Count) { "error text on screen: $($errors -join ', ')" }
-                          else { "ok via $($activation.Command) ($($after.Nodes.Count) nodes)" }
+# The templates: dotnet new outside the repository (inside it, the project would inherit Directory.Build.props, the central
+# package versions and global.json, which an application of a user does not have). Each gets its own name, so several can run at once.
+if ($Templates.Count) {
+  $templateRoot = Join-Path ([IO.Path]::GetTempPath()) 'routeables-templates'
+  $installLog = Join-Path $OutDir 'templates-install.txt'
+  & dotnet new install (Join-Path $RepoRoot 'templates') --force *> $installLog
+  foreach ($template in $Templates) {
+    $name = $template.ToLowerInvariant()
+    $app = 'Rt' + (Get-Culture).TextInfo.ToTitleCase($name)
+    $target = @{ Kind = 'template'; Name = "tpl-$name"; App = $app; Exe = $null; Folder = $null; Problem = $null }
+    $targets.Add($target)
+    if (-not $templateCatalog.Contains($name)) { $target.Problem = "unknown template '$template' ($($templateCatalog.Keys -join ', '))"; continue }
+    $spec = $templateCatalog[$name]
+    if ($spec.Os -notcontains $currentOs) { $target.Problem = "the $name template does not run on $currentOs"; continue }
+    $folder = Join-Path $templateRoot $name
+    if (Test-Path -LiteralPath $folder) { Remove-Item -LiteralPath $folder -Recurse -Force }
+    $target.Folder = $folder
+    $newLog = Join-Path $OutDir "template-$name-new.txt"
+    & dotnet new "routeables-$name" -n $app -o $folder --force *> $newLog
+    $csproj = Join-Path $folder "$app.csproj"
+    if (-not (Test-Path -LiteralPath $csproj)) { $target.Problem = "dotnet new did not make the project (see $(Split-Path -Leaf $newLog))"; continue }
+    $arguments = @($spec.BuildArgs)
+    if ($PackageSource) { $arguments += @('--source', (Resolve-Path -LiteralPath $PackageSource).Path, '--source', 'https://api.nuget.org/v3/index.json') }
+    $problem = Invoke-Build "template-$name" $csproj $arguments
+    if ($problem) { $target.Problem = $problem; continue }
+    $target.Exe = Find-Executable (Join-Path $folder 'bin') $app
+    if (-not $target.Exe) { $target.Problem = "built, but no $app executable under $folder/bin" }
   }
+}
 
-  # Dialogs: open each, answer it, check the page still answers.
-  $dialogsEntry = Find-Node (Get-Snapshot $host_.App 'menu' $dir) 'Dialogs' $viewModels['Dialogs']
-  if ($dialogsEntry) {
-    Invoke-Activate $host_.App 'Dialogs' $viewModels['Dialogs'] $dir | Out-Null
-    foreach ($button in $dialogButtons) {
-      $snapshot = Get-Snapshot $host_.App 'dialogs' $dir
-      $node = Find-Node $snapshot $button
-      if (-not $node) { $entry.dialogs[$button] = 'button not found'; continue }
-      Invoke-Click $node | Out-Null
-      Start-Sleep -Milliseconds 1200
-      $open = Get-Snapshot $host_.App ('dialog-' + ($button -replace '\W', '_')) $dir
-      $answered = $null
-      foreach ($answer in $answers) {
-        $target = $open.Nodes | Where-Object { $_.ref_id -and $_.name -and $_.name.Trim() -eq $answer } | Select-Object -First 1
-        if ($target -and $target.ref_id -ne $node.ref_id) { Invoke-Click $target | Out-Null; $answered = $answer; break }
+if (-not $targets.Count) { throw 'Nothing to test: give -Hosts or -Templates.' }
+
+# ------------------------------------------------------------------------------------------------------------------------------
+# Run
+# ------------------------------------------------------------------------------------------------------------------------------
+
+$options = @{
+  OutDir = $OutDir; AgentDesktop = $adPath; Pages = $Pages; AllPages = $allPages; MenuOrder = $menuOrder; ViewModels = $viewModels; Titles = $titles; FirstAnimal = $firstAnimal; Dialogs = $dialogs; ErrorWords = $errorWords
+  StartTimeoutSeconds = $StartTimeoutSeconds; StepTimeoutMs = $StepTimeoutMs; NoHeaded = [bool]$NoHeaded
+  ScanErrors = [bool]$ScanErrors; Screenshots = [bool]$Screenshots; SkipDialogs = [bool]$SkipDialogs; SkipDetails = [bool]$SkipDetails
+}
+Set-AgentDesktopPath $adPath
+
+# All the applications start now, together: each takes 10 to 25 s to show its window, and that time passes while the hosts
+# before it are tested. The tests themselves run one at a time, because they click physically and need the window in front.
+Write-Host ("Starting {0}, then testing them one after the other" -f (($targets | ForEach-Object Name) -join ', ')) -ForegroundColor Cyan
+$contexts = @{}
+foreach ($target in $targets) { $contexts[$target.Name] = Start-Target $target $options }
+# Each window is minimized as soon as it shows, then restored on its turn and minimized again after it: no window lies over the
+# one under test (its physical clicks would land there).
+if ($targets.Count -gt 1) { Hide-StartedWindows @($targets | ForEach-Object { $contexts[$_.Name] }) $StartTimeoutSeconds }
+
+# Side by side: the screen is cut in $Parallel parts (top and bottom on a portrait screen, left and right otherwise), each host
+# takes a free part, the longest hosts first. Only the clicks and the keys take turns; the reading of the trees (most of the time)
+# runs at the same time.
+$slots = @()
+if ($Parallel -gt 1 -and $targets.Count -gt 1) {
+  $probe = $targets | ForEach-Object { $contexts[$_.Name] } | Where-Object { $_.HiddenId } | Select-Object -First 1
+  $area = if ($probe) { Get-WorkArea $probe } else { $null }
+  if ($area) {
+    $count = [Math]::Min($Parallel, $targets.Count)
+    $gap = 16
+    $portrait = $area.Height -gt $area.Width
+    for ($i = 0; $i -lt $count; $i++) {
+      if ($portrait) {
+        $h = [int](($area.Height - $gap * ($count - 1)) / $count)
+        $slots += [pscustomobject]@{ X = $area.X; Y = $area.Y + $i * ($h + $gap); Width = $area.Width; Height = $h }
+      } else {
+        $w = [int](($area.Width - $gap * ($count - 1)) / $count)
+        $slots += [pscustomobject]@{ X = $area.X + $i * ($w + $gap); Y = $area.Y; Width = $w; Height = $area.Height }
       }
-      Start-Sleep -Milliseconds 1200
-      $final = Get-Snapshot $host_.App 'dialogs-after' $dir
-      $entry.dialogs[$button] = if (-not $answered) { 'no dialog button found after the click' }
-                                elseif (-not $final.Ok) { "answered '$answered', then the window did not answer" }
-                                else { "ok, answered '$answered'" }
     }
-  } else { $entry.problems += 'Dialogs entry not found' }
-
-  Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
-}
-
-# ---------------------------------------------------------------------------------------------------------------------------------
-# The templates: dotnet new, build, start, and follow the two pages they hold.
-# ---------------------------------------------------------------------------------------------------------------------------------
-# Where the executable of each template is once built in Debug (the application is called RouteablesApp).
-$templateExe = @{
-  avalonia = 'bin/Debug/net10.0/RouteablesApp.exe'
-  maui     = 'bin/Debug/net10.0-windows10.0.19041.0/win-x64/RouteablesApp.exe'
-  uno      = 'bin/Debug/net10.0-desktop/RouteablesApp.exe'
-  winui3   = 'bin/Debug/net10.0-windows10.0.19041.0/win-x64/RouteablesApp.exe'
-}
-
-# True when a node of the tree shows this text (a label, a button, a text block).
-function Test-Text($snapshot, [string] $text) {
-  [bool]($snapshot.Nodes | Where-Object { $_.name -and $_.name.Contains($text) } | Select-Object -First 1)
-}
-
-# Waits until the window shows the text, or until the time is over.
-function Wait-Text([string] $app, [string] $text, [string] $label, [string] $dir, [int] $seconds = 20) {
-  $deadline = (Get-Date).AddSeconds($seconds)
-  do {
-    $snapshot = Get-Snapshot $app $label $dir
-    if ($snapshot.Ok -and (Test-Text $snapshot $text)) { return $true }
-    Start-Sleep -Milliseconds 800
-  } while ((Get-Date) -lt $deadline)
-  $false
-}
-
-# Presses a button by its name: the accessibility press first, a physical click when the page does not change.
-function Invoke-Button([string] $app, [string] $name, [string] $expected, [string] $dir) {
-  $node = Find-Node (Get-Snapshot $app 'button' $dir) $name
-  if (-not $node) { return "button '$name' not found" }
-  Invoke-Click $node | Out-Null
-  if (Wait-Text $app $expected ('after-' + ($name -replace '\W', '_')) $dir 6) { return $null }
-  $ref = [string]$node.ref_id
-  if (-not $ref.StartsWith('@')) { $ref = '@' + $ref }
-  Invoke-Ad --headed click $ref | Out-Null
-  if (Wait-Text $app $expected ('after-headed-' + ($name -replace '\W', '_')) $dir 10) { return $null }
-  "the page did not show '$expected' after the click on '$name'"
-}
-
-$report['templates'] = [ordered]@{}
-foreach ($template in $Templates) {
-  $name = $template.ToLowerInvariant()
-  $entry = [ordered]@{ created = $false; built = $false; started = $false; folder = ''; steps = [ordered]@{}; problems = @() }
-  $report['templates'][$name] = $entry
-  if (-not $templateExe.ContainsKey($name)) { $entry.problems += "unknown template '$template' (avalonia, maui, uno, winui3)"; continue }
-
-  # Outside the repository: under it, the application would inherit Directory.Build.props, Directory.Packages.props (central package
-  # versions refuse a Version on a PackageReference) and global.json of the repository, which a real user's application does not have.
-  $root = Join-Path ([IO.Path]::GetTempPath()) (Join-Path 'routeables-templates' $name)
-  if (Test-Path $root) { Remove-Item -Recurse -Force $root }
-  New-Item -ItemType Directory -Force -Path $root | Out-Null
-  # The logs and the snapshots stay with the report, the application does not.
-  $log = Join-Path $OutDir (Join-Path 'templates' $name)
-  New-Item -ItemType Directory -Force -Path $log | Out-Null
-  $entry['folder'] = $root
-
-  # The templates of this repository, installed from the folder (no package needed to try them).
-  & dotnet new install (Join-Path $RepoRoot 'templates') *>&1 | Out-File (Join-Path $log 'install.txt')
-  & dotnet new "routeables-$name" -n RouteablesApp -o (Join-Path $root 'app') --force *>&1 | Out-File (Join-Path $log 'new.txt')
-  $app = Join-Path $root 'app'
-  $entry.created = Test-Path (Join-Path $app 'RouteablesApp.csproj')
-  if (-not $entry.created) { $entry.problems += 'dotnet new did not make the project (see log/new.txt)'; continue }
-
-  $build = @('build', (Join-Path $app 'RouteablesApp.csproj'), '-c', 'Debug')
-  if ($PackageSource) { $build += @('--source', (Resolve-Path $PackageSource).Path, '--source', 'https://api.nuget.org/v3/index.json') }
-  & dotnet @build *>&1 | Out-File (Join-Path $log 'build.txt')
-  $exe = Join-Path $app $templateExe[$name]
-  $entry.built = ($LASTEXITCODE -eq 0) -and (Test-Path $exe)
-  if (-not $entry.built) { $entry.problems += 'the build failed or the executable is missing (see log/build.txt)'; continue }
-
-  $process = Start-Process -FilePath $exe -PassThru
-  $entry.started = Wait-Text 'RouteablesApp' 'Hello, World!' 'start' $log $StartTimeoutSeconds
-  if (-not $entry.started) { $entry.problems += "the first page did not show 'Hello, World!' in time"; Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue; continue }
-  $entry['steps']['hello'] = 'ok'
-
-  $failure = Invoke-Button 'RouteablesApp' 'About' 'the page is chosen by an address' $log
-  $entry['steps']['about'] = if ($failure) { $failure } else { 'ok' }
-  if (-not $failure) {
-    $failure = Invoke-Button 'RouteablesApp' 'Hello' 'Hello, again!' $log
-    $entry['steps']['back'] = if ($failure) { $failure } else { 'ok' }
+    Write-Host ("{0} hosts at a time, on {1}x{2} parts of the screen" -f $count, $slots[0].Width, $slots[0].Height) -ForegroundColor Cyan
+  } else {
+    Write-Host 'The size of the screen could not be read: one host at a time' -ForegroundColor Yellow
   }
-  Write-Host ("[template {0}] {1}" -f $name, (($entry['steps'].GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '))
-  Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
 }
 
-$report | ConvertTo-Json -Depth 10 | Set-Content -Path (Join-Path $OutDir 'report.json') -Encoding UTF8
-Write-Host "Report: $(Join-Path $OutDir 'report.json')"
+if ($slots.Count -gt 1) {
+  $free = [Collections.Concurrent.ConcurrentQueue[object]]::new()
+  foreach ($slot in $slots) { $free.Enqueue($slot) }
+  # The usual length of a host (seconds): the longest start first, so that the two parts end together.
+  $weight = @{ Maui = 110; Avalonia = 105; Uno = 75; Wpf = 65; WinUI3 = 45 }
+  $ordered = @($targets | Sort-Object { if ($_.Kind -eq 'sample' -and $weight[$_.Name]) { -$weight[$_.Name] } else { -30 } })
+  $results = $ordered | ForEach-Object -ThrottleLimit $slots.Count -Parallel {
+    $target = $_
+    Import-Module $using:modulePath -Force
+    Set-AgentDesktopPath $using:adPath
+    $queue = $using:free
+    $ctx = ($using:contexts)[$target.Name]
+    $slot = $null
+    while (-not $queue.TryDequeue([ref]$slot)) { Start-Sleep -Milliseconds 50 }
+    try {
+      $ctx.Slot = $slot
+      $ctx.Parallel = $true
+      $report = if ($target.Kind -eq 'sample') { Invoke-SampleSmoke $ctx $target $using:options } else { Invoke-TemplateSmoke $ctx $target $using:options }
+      Hide-Window $ctx
+    } finally { $queue.Enqueue($slot) }
+    [pscustomobject]@{ Name = $target.Name; Kind = $target.Kind; Report = $report }
+  }
+} else {
+  $results = foreach ($target in $targets) {
+    $ctx = $contexts[$target.Name]
+    $report = if ($target.Kind -eq 'sample') { Invoke-SampleSmoke $ctx $target $options } else { Invoke-TemplateSmoke $ctx $target $options }
+    if ($targets.Count -gt 1) { Hide-Window $ctx }
+    [pscustomobject]@{ Name = $target.Name; Kind = $target.Kind; Report = $report }
+  }
+}
+
+# ------------------------------------------------------------------------------------------------------------------------------
+# Report
+# ------------------------------------------------------------------------------------------------------------------------------
+
+$report = [ordered]@{
+  date = (Get-Date).ToString('s'); os = [Environment]::OSVersion.VersionString; agentDesktop = $version
+  seconds = [Math]::Round($total.Elapsed.TotalSeconds, 1); hosts = [ordered]@{}; templates = [ordered]@{}
+}
+# In the order asked for, whatever the order the runspaces finished in.
+foreach ($target in $targets) {
+  $result = $results | Where-Object Name -eq $target.Name | Select-Object -First 1
+  if ($target.Kind -eq 'sample') { $report.hosts[$target.Name] = $result.Report } else { $report.templates[$target.Name] = $result.Report }
+}
+$report | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $OutDir 'report.json') -Encoding utf8
+
+function Format-Count($Items) {
+  $values = @($Items)
+  if (-not $values.Count) { return '-' }
+  $ok = @($values | Where-Object { $_.status -eq 'ok' }).Count
+  $unverified = @($values | Where-Object { $_.status -eq 'unverified' }).Count
+  "$ok/$($values.Count)$(if ($unverified) { " (+$unverified unverified)" })"
+}
+
+$rows = @(foreach ($name in $report.hosts.Keys) {
+  $h = $report.hosts[$name]
+  [pscustomobject]@{
+    Host = $name; Status = $h.status.ToUpperInvariant(); Start = $(if ($null -ne $h.startSeconds) { "$($h.startSeconds)s" } else { '-' })
+    Pages = Format-Count $h.pages.Values; Details = Format-Count $h.details.Values; Dialogs = Format-Count $h.dialogs.Values; Menu = $(if ($h.menuActivation) { $h.menuActivation } else { '-' })
+    Time = "$($h.seconds)s"; Calls = $h.calls; Problems = ($h.problems -join ' | ')
+  }
+})
+$rows += @(foreach ($name in $report.templates.Keys) {
+  $t = $report.templates[$name]
+  [pscustomobject]@{
+    Host = $name; Status = $t.status.ToUpperInvariant(); Start = $(if ($null -ne $t.startSeconds) { "$($t.startSeconds)s" } else { '-' })
+    Pages = (($t.steps.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '); Details = '-'; Dialogs = '-'; Menu = '-'
+    Time = "$($t.seconds)s"; Calls = $t.calls; Problems = ($t.problems -join ' | ')
+  }
+})
+
+Write-Host ''
+# Written by hand: Format-Table prints nothing when the output is not a console (CI, a redirect).
+$columns = 'Host', 'Status', 'Start', 'Pages', 'Details', 'Dialogs', 'Menu', 'Time', 'Calls'
+$widths = @{}
+foreach ($c in $columns) { $widths[$c] = [Math]::Max($c.Length, (@($rows | ForEach-Object { "$($_.$c)".Length }) + 0 | Measure-Object -Maximum).Maximum) }
+Write-Host (($columns | ForEach-Object { $_.PadRight($widths[$_]) }) -join '  ')
+Write-Host (($columns | ForEach-Object { '-' * $widths[$_] }) -join '  ')
+foreach ($row in $rows) {
+  $line = ($columns | ForEach-Object { "$($row.$_)".PadRight($widths[$_]) }) -join '  '
+  Write-Host $line -ForegroundColor $(if ($row.Status -eq 'OK') { 'Green' } else { 'Red' })
+}
+Write-Host ''
+foreach ($row in $rows | Where-Object Problems) { Write-Host "$($row.Host): $($row.Problems)" -ForegroundColor Red }
+
+$md = [Text.StringBuilder]::new()
+[void]$md.AppendLine("# Native smoke test`n`n$($report.date) on $($report.os), agent-desktop $version, $($report.seconds)s`n")
+[void]$md.AppendLine('| Host | Status | Start | Pages | Details | Dialogs | Menu | Time | Calls |')
+[void]$md.AppendLine('|---|---|---|---|---|---|---|---|---|')
+foreach ($row in $rows) { [void]$md.AppendLine("| $($row.Host) | $($row.Status) | $($row.Start) | $($row.Pages) | $($row.Details) | $($row.Dialogs) | $($row.Menu) | $($row.Time) | $($row.Calls) |") }
+foreach ($name in $report.hosts.Keys) {
+  $h = $report.hosts[$name]
+  $bad = @($h.pages.GetEnumerator() | Where-Object { $_.Value.status -ne 'ok' }) + @($h.details.GetEnumerator() | Where-Object { $_.Value.status -ne 'ok' } | ForEach-Object { [pscustomobject]@{ Key = "$($_.Key) detail"; Value = $_.Value } }) + @($h.dialogs.GetEnumerator() | Where-Object { $_.Value.status -ne 'ok' })
+  if (-not $bad.Count -and -not $h.problems.Count) { continue }
+  [void]$md.AppendLine("`n## $name`n")
+  foreach ($p in $h.problems) { [void]$md.AppendLine("- $p") }
+  foreach ($item in $bad) { [void]$md.AppendLine("- **$($item.Key)**: $($item.Value.status), $($item.Value.detail)") }
+}
+Set-Content -LiteralPath (Join-Path $OutDir 'report.md') -Value $md.ToString() -Encoding utf8
+
+$failed = @($rows | Where-Object Status -ne 'OK').Count
+Write-Host ("{0} in {1:0.0}s. Report: {2}" -f $(if ($failed) { "$failed FAILED" } else { 'All passed' }), $total.Elapsed.TotalSeconds, (Join-Path $OutDir 'report.json')) -ForegroundColor $(if ($failed) { 'Red' } else { 'Green' })
+exit $(if ($failed) { 1 } else { 0 })

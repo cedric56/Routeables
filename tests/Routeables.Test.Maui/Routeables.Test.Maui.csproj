@@ -37,6 +37,8 @@
     <ApplicationTitle>Routeables.Test.Maui</ApplicationTitle>
     <ApplicationId>com.routeables.test.maui</ApplicationId>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <!-- One value for every target: the MAUI SDK sets PackageVersion to the display version on some targets and the repository's Version (Directory.Build.props) is the other, which NuGet refuses. -->
+    <PackageVersion>1.0</PackageVersion>
     <ApplicationVersion>1</ApplicationVersion>
     <WindowsPackageType>None</WindowsPackageType>
 

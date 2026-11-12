@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Routeables.Native;
 using Routeables.Services;
 using Orientation = Microsoft.UI.Xaml.Controls.Orientation;
 using ProgressBar = Microsoft.UI.Xaml.Controls.ProgressBar;
@@ -24,6 +25,17 @@ public class DefaultMessageBoxService : IMessageBoxService
         var handle = new RouteableDialogHandle();
 
         var texts = RouteableButtons.Split(buttons);
+
+        // Three buttons are those of the dialog of the platform (Routeables.Native) where it has one: the ContentDialog of the Windows App SDK,
+        // an alert on Android and iOS. Escape or a click outside gives the third button (the one that closes). Elsewhere, and for fewer buttons, the card below.
+        if (texts.Count == 3 && NativeDialogs.IsSupported)
+        {
+            var native = await NativeDialogs.DisplayThreeButtonsAsync<string?>(
+                title, message, texts[0], texts[1], texts[2], texts[0], texts[1], texts[2], owner, dark: null);
+            if (native.Shown)
+                return native.Value;
+        }
+
         var controls = texts
             .Select((text, index) => DialogCard.CreateButton(text, () =>
             {

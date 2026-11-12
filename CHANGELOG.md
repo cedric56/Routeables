@@ -2,6 +2,12 @@
 
 All notable changes to the Routeables packages. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the versions follow [VERSIONING.md](VERSIONING.md). Every package of the repository has the same version.
 
+## Unreleased
+
+### Changed
+
+- **The three-button dialog is in `Routeables.Native`** (`NativeDialogs.DisplayThreeButtonsAsync`): MAUI, WinUI 3 and Uno use it (Android alert, Windows App SDK `ContentDialog`, iOS alert or sheet) and draw their own where it has nothing to show.
+
 ## 2.1.0 - 2026-11-11
 
 ### Added

@@ -26,7 +26,7 @@ class Program
             .WithAppNotifications(new AppNotificationOptions()
             {
                 //AppIcon = Path.GetDirectoryName(Process.GetCurrentProcess()?.MainModule?.FileName) + "/avalonia-32.png",
-                //AppName = "Avalonia.Labs",
+                AppName = "Avalonia.Labs",
                 //AppUserModelId = "com.Avalonia.Labs.Catalog",
             })
             .WithInterFont()
