@@ -39,6 +39,10 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      # Routeables.Avalonia and Routeables.Native target Android on Linux: restoring them needs this workload, even to publish the browser head.
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android --skip-manifest-update
+
       - name: Install wasm-tools workload
         run: dotnet workload install wasm-tools --skip-manifest-update
 

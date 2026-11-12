@@ -18,11 +18,20 @@ public sealed partial class SystemNotificationCenter
     private DBusConnection? _linuxConnection;
     private bool _linuxTried;
 
-    /// <summary>Whether there is a session bus (and so, usually, a desktop to show the notifications).</summary>
+    /// <summary>Whether there is a session bus <i>and</i> a notification server on it: a session bus alone is not enough (WSL, a container or a bare window manager have one and
+    /// no server, and the call to Notify fails with ServiceUnknown).</summary>
     private bool LinuxIsAvailable()
     {
-        try { return LinuxConnection() is not null; }
-        catch (Exception ex) when (ex is IOException or InvalidOperationException or TimeoutException) { return false; }
+        try
+        {
+            var connection = LinuxConnection();
+            if (connection is null)
+                return false;
+
+            // Asking the server who it is starts it when the bus can (D-Bus activation), and fails with ServiceUnknown when nothing serves the name.
+            return connection.CallAsync(LinuxService, LinuxPath, LinuxService, "GetServerInformation", null, null).Wait(TimeSpan.FromSeconds(3));
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or TimeoutException or AggregateException) { return false; }
     }
 
     private DBusConnection? LinuxConnection()
@@ -79,8 +88,15 @@ public sealed partial class SystemNotificationCenter
             w.Int32(-1);
         });
 
-        if (!reply.Wait(TimeSpan.FromSeconds(3)))
-            throw new TimeoutException("The notification server did not answer.");
+        try
+        {
+            if (!reply.Wait(TimeSpan.FromSeconds(3)))
+                throw new TimeoutException("The notification server did not answer.");
+        }
+        catch (AggregateException ex) when (ex.InnerException is InvalidOperationException inner)
+        {
+            throw new InvalidOperationException($"The notification server refused the notification ({inner.Message}).", inner);
+        }
 
         var serverId = reply.Result.Reader().UInt32();
         lock (_linuxGate)
