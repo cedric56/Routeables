@@ -1410,6 +1410,14 @@ function Test-Notification([hashtable] $Ctx, [hashtable] $Spec, [string] $Previo
                        else { "the notification '$($Spec.Title)' did not appear in $($Spec.WaitMs) ms" }
       Save-Evidence $Ctx "notification-$($Spec.Button)"
       Save-DialogProbe $Ctx "notification-probe-$($Spec.Button)"
+      if ($Spec.System -and $IsMacOS) {
+        # Who shows the permission prompt, and what the system says: the whole screen, the apps agent-desktop sees, the notification daemons.
+        $dir = $Ctx.Dir
+        try { & screencapture -x (Join-Path $dir 'notification-System-screen.png') 2>&1 | Out-Null } catch { }
+        try { Set-Content -LiteralPath (Join-Path $dir 'notification-System-apps.json') -Value (Invoke-Ad $Ctx @('list-apps')).raw -Encoding utf8 } catch { }
+        try { (& ps -axo pid,comm 2>&1 | Select-String -Pattern 'notif|usernoted|UserNotification|ControlCenter|SystemUIServer') -join "`n" | Set-Content -LiteralPath (Join-Path $dir 'notification-System-processes.txt') -Encoding utf8 } catch { }
+        try { (& log show --last 3m --style compact --predicate 'process == "usernoted" OR process == "UserNotificationCenter" OR eventMessage CONTAINS "dev.routeables"' 2>&1 | Select-Object -Last 150) -join "`n" | Set-Content -LiteralPath (Join-Path $dir 'notification-System-log.txt') -Encoding utf8 } catch { }
+      }
       return $report
     }
 
