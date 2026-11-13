@@ -105,6 +105,23 @@ The same view models drive the Animals sample on each host: only the views diffe
   </tr>
 </table>
 
+## Four families of UI, one model
+
+Seven hosts, but four families of UI underneath. The core (router, history, regions, guards, lifecycle, the source generator)
+is shared by all of them; what a host adds is the binding to its family's API.
+
+| Family | Hosts | What they share |
+| --- | --- | --- |
+| Windows XAML | WPF (`System.Windows`); WinUI 3 and Uno Platform (`Microsoft.UI.Xaml`) | WinUI 3 and Uno compile the same sources ([`src/Routeables.WinUI`](src/Routeables.WinUI)): the same API, two assemblies. WPF has its own. |
+| Avalonia | Avalonia: desktop (Windows, Linux, macOS), Android, iOS, browser | One package for every platform Avalonia draws on. |
+| .NET MAUI | .NET MAUI: Android, iOS, Mac Catalyst, Windows | Its own model (`Microsoft.Maui.Controls`, Shell, handlers), even where it runs on WinUI 3 underneath. |
+| Web | Blazor (Server, WebAssembly, Web App, MAUI Blazor Hybrid); ASP.NET Core (Razor Pages, MVC views) | Both on ASP.NET Core; Blazor routes components, ASP.NET Core routes requests. |
+
+Sharing code is not sharing behaviour: the same sources behave differently on each platform (rendering, accessibility,
+how a drawer or a dialog is shown). So every host is tested where it runs, not once per family: the
+[native smoke tests](agent-desktop/README.md) open every page, a detail and every dialog of the Animals sample on Windows,
+Linux, macOS, Android and iOS.
+
 ## When you need more
 
 Nothing below is needed for a first page. Each line has its own guide.
