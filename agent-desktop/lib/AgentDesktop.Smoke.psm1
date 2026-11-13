@@ -1361,6 +1361,9 @@ function Approve-NotificationPrompt([hashtable] $Ctx) {
 #    system. Where it has none, "System notifications are not available on this host." is a pass only if the host is not required to
 #    have one ($Ctx.SystemNotificationRequired: macOS from a bundle, Windows); else it is 'unverified' (a host that cannot, not one that fails).
 function Test-Notification([hashtable] $Ctx, [hashtable] $Spec, [string] $Previous) {
+  # Strict mode: a key a spec does not have (an application notification has no System, the system one has no Title) must read as $null.
+  $Spec = $Spec.Clone()
+  foreach ($key in 'System', 'Title', 'Sent', 'Unavailable', 'Clicked') { if (-not $Spec.ContainsKey($key)) { $Spec[$key] = $null } }
   $watch = [Diagnostics.Stopwatch]::StartNew()
   $report = [ordered]@{ status = 'fail'; answered = $null; result = $null; ms = 0; detail = $null }
   # The place of the button: the lowest of that name ("Error" is a dialog above and a notification below).
