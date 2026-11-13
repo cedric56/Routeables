@@ -116,8 +116,9 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
     }
 
     // The services the module built once are disposed in the reverse order of their creation. Synchronously, a service that has Dispose is
-    // disposed with it, like the container of the application does; a service that has nothing but DisposeAsync is handled by
-    // DisposeWithoutWaitingForever (prefer DisposeAsync of the module services when you can).
+    // disposed with it, like the container of the application does; a service that has nothing but DisposeAsync is started and not waited for
+    // (AsyncDisposal: blocking would deadlock a thread with a synchronization context, and is impossible on Blazor WebAssembly).
+    // Prefer DisposeAsync of the module services when you can.
     public void Dispose()
     {
         var failures = new List<Exception>();
@@ -128,37 +129,13 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
                 switch (service)
                 {
                     case IDisposable sync: sync.Dispose(); break;
-                    case IAsyncDisposable async: DisposeWithoutWaitingForever(async); break;
+                    case IAsyncDisposable async: Lifecycle.AsyncDisposal.Start<RouteableModuleServices>(async); break;
                 }
             }
             catch (Exception ex) { failures.Add(ex); }
         }
 
         Raise(failures);
-    }
-
-    // A service that has only DisposeAsync. Finished already (most are): nothing to wait for. In the browser there is a single thread, and
-    // waiting for it would be waiting for ourselves (or throw): the disposal is started and its failure reported. Elsewhere it is waited
-    // for, on the thread pool: a service whose DisposeAsync resumes on the context of the caller would otherwise wait for the thread that waits for it.
-    private static void DisposeWithoutWaitingForever(IAsyncDisposable service)
-    {
-        var disposal = service.DisposeAsync();
-        if (disposal.IsCompletedSuccessfully)
-            return;
-
-        if (OperatingSystem.IsBrowser())
-        {
-            _ = Observe(disposal);
-            return;
-        }
-
-        Task.Run(() => disposal.AsTask()).GetAwaiter().GetResult();
-    }
-
-    private static async Task Observe(ValueTask disposal)
-    {
-        try { await disposal; }
-        catch (Exception ex) { Errors.RouteableErrors.Report<RouteableModuleServices>(null, ex); }
     }
 
     // The services to dispose, the last created first; the module forgets them.

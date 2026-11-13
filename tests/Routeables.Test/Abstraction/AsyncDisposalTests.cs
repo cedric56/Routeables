@@ -42,11 +42,13 @@ public class AsyncDisposalTests
         return task.Wait(TimeSpan.FromSeconds(10));
     }
 
-    private static void WaitUntil(Func<bool> condition)
+    // Polls without blocking the thread: on a host whose test thread owns a synchronization context (a device test runner), the continuation of
+    // DisposeAsync would be posted to the very thread that waits.
+    private static async Task WaitUntilAsync(Func<bool> condition)
     {
         var deadline = DateTime.UtcNow.AddSeconds(10);
         while (!condition() && DateTime.UtcNow < deadline)
-            Thread.Sleep(10);
+            await Task.Delay(10);
     }
 
     [Fact]
@@ -70,29 +72,38 @@ public class AsyncDisposalTests
     }
 
     [Fact]
-    public void The_disposal_started_by_a_synchronous_Dispose_finishes_afterwards()
+    public async Task The_disposal_started_by_a_synchronous_Dispose_finishes_afterwards()
     {
-        var cache = new ScopedViewCache();
-        var item = (AsyncOnly)cache.GetOrCreate("k", () => new AsyncOnly());
+        // Off the context of the test thread, so the disposal can continue whatever the host is.
+        var (cache, item) = await Task.Run(() =>
+        {
+            var cache = new ScopedViewCache();
+            var item = (AsyncOnly)cache.GetOrCreate("k", () => new AsyncOnly());
+            cache.Dispose();
+            return (cache, item);
+        });
 
-        cache.Dispose();
-
-        WaitUntil(() => item.Disposed);
+        await WaitUntilAsync(() => item.Disposed);
         Assert.True(item.Disposed);
+        GC.KeepAlive(cache);
     }
 
     [Fact]
-    public void A_failing_async_disposal_is_reported_not_thrown_by_Dispose()
+    public async Task A_failing_async_disposal_is_reported_not_thrown_by_Dispose()
     {
-        var cache = new ScopedViewCache();
-        var item = (AsyncOnly)cache.GetOrCreate("k", () => new AsyncOnly(fail: true));
+        var (thrown, item) = await Task.Run(() =>
+        {
+            var cache = new ScopedViewCache();
+            var item = (AsyncOnly)cache.GetOrCreate("k", () => new AsyncOnly(fail: true));
 
-        Exception? thrown = null;
-        try { cache.Dispose(); }
-        catch (Exception ex) { thrown = ex; }
+            Exception? thrown = null;
+            try { cache.Dispose(); }
+            catch (Exception ex) { thrown = ex; }
+            return (thrown, item);
+        });
 
         Assert.Null(thrown);
-        WaitUntil(() => item.Disposed);
+        await WaitUntilAsync(() => item.Disposed);
         Assert.True(item.Disposed);
     }
 }
