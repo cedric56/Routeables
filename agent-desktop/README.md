@@ -7,6 +7,11 @@
 2. on the six animal pages, opens the first animal of the list, checks its detail and goes back with **Back**;
 3. opens every dialog of the Dialogs page, answers it and checks what the page wrote on its Result line.
 
+   With `-Notifications` it goes on to the notifications of the same page: each notification of the application is shown, then clicked
+   (the Result line says "Clicked ..."), and the "System" one must write "System notification sent." (`-RequireSystemNotification`: the host
+   must have a notification center). On macOS, `-Bundle` runs the sample from a signed `.app` made in the temp folder: the system serves
+   notifications only to an application in a bundle, and asks for the permission the first time (the smoke presses Allow).
+
 ```powershell
 npm install -g agent-desktop
 pwsh agent-desktop/run.ps1 -Build                      # builds what is not built yet, then every host of this OS

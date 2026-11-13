@@ -50,6 +50,13 @@ param(
   # -Exe Avalonia=C:/apps/XAnimals.Avalonia.Desktop.exe,Wpf=D:/wpf/XAnimals.Wpf.exe
   [string[]] $Exe = @(),
   [switch] $SkipDialogs,
+  # After the dialogs, the notifications of the Dialogs page: the four of the application (shown, then clicked) and the one of the system.
+  [switch] $Notifications,
+  # macOS: runs each sample from a .app bundle made here (an Info.plist with an identifier, signed ad hoc). The system serves
+  # notifications only to an application in a bundle: without it, the "System" notification answers "not available on this host".
+  [switch] $Bundle,
+  # The "System" notification must be sent: "not available on this host" is a failure (else it is only 'unverified').
+  [switch] $RequireSystemNotification,
   # No list -> detail -> Back on the animal pages.
   [switch] $SkipDetails,
   # Looks for an error text (Exception, Unhandled ...) on every page: one full snapshot per page, slow on Windows.
@@ -233,6 +240,47 @@ foreach ($name in $Hosts) {
   }
 }
 
+# macOS: the build output of a sample in a .app: <temp>/routeables-bundles/<App>.app/Contents/{Info.plist,MacOS/...}, signed ad hoc. Returns the
+# executable inside it. An application of a bundle is the only one the system lets post notifications.
+function New-MacBundle([string] $Exe, [string] $App) {
+  # Outside the output folder: the artifact of a CI run would carry a copy of the whole application.
+  $root = Join-Path ([IO.Path]::GetTempPath()) "routeables-bundles/$App.app"
+  if (Test-Path -LiteralPath $root) { Remove-Item -LiteralPath $root -Recurse -Force }
+  $macos = Join-Path $root 'Contents/MacOS'
+  New-Item -ItemType Directory -Force -Path $macos | Out-Null
+  Copy-Item -Path (Join-Path (Split-Path -Parent $Exe) '*') -Destination $macos -Recurse -Force
+  $name = Split-Path -Leaf $Exe
+  $plist = @"
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleIdentifier</key><string>dev.routeables.smoke.$($App.ToLowerInvariant().Replace('_', '-'))</string>
+  <key>CFBundleName</key><string>$App</string>
+  <key>CFBundleDisplayName</key><string>$App</string>
+  <key>CFBundleExecutable</key><string>$name</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleVersion</key><string>1</string>
+  <key>CFBundleShortVersionString</key><string>1.0</string>
+  <key>LSMinimumSystemVersion</key><string>12.0</string>
+  <key>NSHighResolutionCapable</key><true/>
+</dict>
+</plist>
+"@
+  Set-Content -LiteralPath (Join-Path $root 'Contents/Info.plist') -Value $plist -Encoding utf8
+  & chmod +x (Join-Path $macos $name)
+  & codesign --force --deep --sign - $root *> (Join-Path $OutDir "codesign-$App.txt")
+  Join-Path $macos $name
+}
+
+if ($Bundle) {
+  if ($currentOs -ne 'MacOS') { throw '-Bundle is for macOS.' }
+  foreach ($target in $targets | Where-Object { $_.Kind -eq 'sample' -and $_.Exe -and -not $_.Problem }) {
+    $target.Exe = New-MacBundle $target.Exe $target.App
+    Write-Host "[bundle] $($target.Name): $($target.Exe)"
+  }
+}
+
 # The templates: dotnet new outside the repository (inside it, the project would inherit Directory.Build.props, the central
 # package versions and global.json, which an application of a user does not have). Each gets its own name, so several can run at once.
 if ($Templates.Count) {
@@ -273,6 +321,7 @@ $options = @{
   OutDir = $OutDir; AgentDesktop = $adPath; Pages = $Pages; AllPages = $allPages; MenuOrder = $menuOrder; ViewModels = $viewModels; Titles = $titles; FirstAnimal = $firstAnimal; Dialogs = $dialogs; ErrorWords = $errorWords
   StartTimeoutSeconds = $StartTimeoutSeconds; StepTimeoutMs = $StepTimeoutMs; NoHeaded = [bool]$NoHeaded
   ScanErrors = [bool]$ScanErrors; Screenshots = [bool]$Screenshots; SkipDialogs = [bool]$SkipDialogs; SkipDetails = [bool]$SkipDetails
+  Notifications = [bool]$Notifications; NotificationSpecs = $notificationSpecs; SystemNotificationRequired = [bool]$RequireSystemNotification
 }
 Set-AgentDesktopPath $adPath
 
@@ -369,7 +418,7 @@ $rows = @(foreach ($name in $report.hosts.Keys) {
   $h = $report.hosts[$name]
   [pscustomobject]@{
     Host = $name; Status = $h.status.ToUpperInvariant(); Start = $(if ($null -ne $h.startSeconds) { "$($h.startSeconds)s" } else { '-' })
-    Pages = Format-Count $h.pages.Values; Details = Format-Count $h.details.Values; Dialogs = Format-Count $h.dialogs.Values; Menu = $(if ($h.menuActivation) { $h.menuActivation } else { '-' })
+    Pages = Format-Count $h.pages.Values; Details = Format-Count $h.details.Values; Dialogs = Format-Count $h.dialogs.Values; Notifications = Format-Count $h.notifications.Values; Menu = $(if ($h.menuActivation) { $h.menuActivation } else { '-' })
     Time = "$($h.seconds)s"; Calls = $h.calls; Problems = ($h.problems -join ' | ')
   }
 })
@@ -377,14 +426,14 @@ $rows += @(foreach ($name in $report.templates.Keys) {
   $t = $report.templates[$name]
   [pscustomobject]@{
     Host = $name; Status = $t.status.ToUpperInvariant(); Start = $(if ($null -ne $t.startSeconds) { "$($t.startSeconds)s" } else { '-' })
-    Pages = (($t.steps.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '); Details = '-'; Dialogs = '-'; Menu = '-'
+    Pages = (($t.steps.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '); Details = '-'; Dialogs = '-'; Notifications = '-'; Menu = '-'
     Time = "$($t.seconds)s"; Calls = $t.calls; Problems = ($t.problems -join ' | ')
   }
 })
 
 Write-Host ''
 # Written by hand: Format-Table prints nothing when the output is not a console (CI, a redirect).
-$columns = 'Host', 'Status', 'Start', 'Pages', 'Details', 'Dialogs', 'Menu', 'Time', 'Calls'
+$columns = 'Host', 'Status', 'Start', 'Pages', 'Details', 'Dialogs', 'Notifications', 'Menu', 'Time', 'Calls'
 $widths = @{}
 foreach ($c in $columns) { $widths[$c] = [Math]::Max($c.Length, (@($rows | ForEach-Object { "$($_.$c)".Length }) + 0 | Measure-Object -Maximum).Maximum) }
 Write-Host (($columns | ForEach-Object { $_.PadRight($widths[$_]) }) -join '  ')
@@ -398,12 +447,12 @@ foreach ($row in $rows | Where-Object Problems) { Write-Host "$($row.Host): $($r
 
 $md = [Text.StringBuilder]::new()
 [void]$md.AppendLine("# Native smoke test`n`n$($report.date) on $($report.os), agent-desktop $version, $($report.seconds)s`n")
-[void]$md.AppendLine('| Host | Status | Start | Pages | Details | Dialogs | Menu | Time | Calls |')
-[void]$md.AppendLine('|---|---|---|---|---|---|---|---|---|')
-foreach ($row in $rows) { [void]$md.AppendLine("| $($row.Host) | $($row.Status) | $($row.Start) | $($row.Pages) | $($row.Details) | $($row.Dialogs) | $($row.Menu) | $($row.Time) | $($row.Calls) |") }
+[void]$md.AppendLine('| Host | Status | Start | Pages | Details | Dialogs | Notifications | Menu | Time | Calls |')
+[void]$md.AppendLine('|---|---|---|---|---|---|---|---|---|---|')
+foreach ($row in $rows) { [void]$md.AppendLine("| $($row.Host) | $($row.Status) | $($row.Start) | $($row.Pages) | $($row.Details) | $($row.Dialogs) | $($row.Notifications) | $($row.Menu) | $($row.Time) | $($row.Calls) |") }
 foreach ($name in $report.hosts.Keys) {
   $h = $report.hosts[$name]
-  $bad = @($h.pages.GetEnumerator() | Where-Object { $_.Value.status -ne 'ok' }) + @($h.details.GetEnumerator() | Where-Object { $_.Value.status -ne 'ok' } | ForEach-Object { [pscustomobject]@{ Key = "$($_.Key) detail"; Value = $_.Value } }) + @($h.dialogs.GetEnumerator() | Where-Object { $_.Value.status -ne 'ok' })
+  $bad = @($h.pages.GetEnumerator() | Where-Object { $_.Value.status -ne 'ok' }) + @($h.details.GetEnumerator() | Where-Object { $_.Value.status -ne 'ok' } | ForEach-Object { [pscustomobject]@{ Key = "$($_.Key) detail"; Value = $_.Value } }) + @($h.dialogs.GetEnumerator() | Where-Object { $_.Value.status -ne 'ok' }) + @($h.notifications.GetEnumerator() | Where-Object { $_.Value.status -ne 'ok' } | ForEach-Object { [pscustomobject]@{ Key = "notification $($_.Key)"; Value = $_.Value } })
   if (-not $bad.Count -and -not $h.problems.Count) { continue }
   [void]$md.AppendLine("`n## $name`n")
   foreach ($p in $h.problems) { [void]$md.AppendLine("- $p") }

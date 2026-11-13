@@ -19,6 +19,15 @@ $dialogs = @(
   @{ Button = 'Task dialog with progress'; Answers = 'Cancel';                    Results = @{ Cancel = 'Download cancelled.' } }
   @{ Button = 'Show modal';                Answers = @('Cancel');                 Results = @{ Cancel = 'Note cancelled.' } }
 )
+# The notifications of the Dialogs page (DialogsViewModel.NotifyAsync): the title each one shows, and what the Result line writes when the
+# notification is clicked ("Closed ..." where the host closes it after the click). "System" is the notification center of the system.
+$notificationSpecs = @(
+  @{ Button = 'Information'; Title = 'Tip';             WaitMs = 4000; Clicked = @('Clicked the information notification.', 'Closed the information notification.') }
+  @{ Button = 'Success';     Title = 'Saved';           WaitMs = 4000; Clicked = @('Clicked the success notification.', 'Closed the success notification.') }
+  @{ Button = 'Warning';     Title = 'Slow connection'; WaitMs = 4000; Clicked = @('Clicked the warning notification.', 'Closed the warning notification.') }
+  @{ Button = 'Error';       Title = 'Download failed'; WaitMs = 4000; Clicked = @('Clicked the error notification.', 'Closed the error notification.') }
+  @{ Button = 'System';      System = $true; WaitMs = 20000; Sent = 'System notification sent.'; Unavailable = 'System notifications are not available on this host.' }
+)
 # The view model of each page: WPF and Avalonia name their menu entries after it ("...RouteableMenuEntry`1[...CatsViewModel]"),
 # which tells whether a drawer is open.
 $viewModels = @{

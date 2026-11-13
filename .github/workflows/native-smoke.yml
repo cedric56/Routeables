@@ -116,7 +116,9 @@ jobs:
           }
       - name: Smoke
         shell: pwsh
-        run: ./agent-desktop/run-all.ps1 -Only Desktop -Build
+        # From a .app bundle (the system serves notifications only to one), through the notifications of the Dialogs page up to the one of the
+        # system. The first time, macOS asks for the permission: the smoke presses Allow (best effort; the evidence is in the artifact).
+        run: ./agent-desktop/run-all.ps1 -Only Desktop -Build -Notifications -Bundle -RequireSystemNotification
       - uses: actions/upload-artifact@v4
         if: always()
         with:

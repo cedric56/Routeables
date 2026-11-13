@@ -31,6 +31,10 @@ param(
   [string[]] $Pages = @(),
   [switch] $SkipDialogs,
   [switch] $SkipDetails,
+  # Passed on to run.ps1 (the desktop): the notifications of the Dialogs page, the macOS bundle, the system notification required.
+  [switch] $Notifications,
+  [switch] $Bundle,
+  [switch] $RequireSystemNotification,
   # Passed on to run-android.ps1.
   [string] $AndroidSerial = '',
   [string] $Avd = ''
@@ -65,6 +69,11 @@ $common = @()
 if ($Pages.Count) { $common += @('-Pages', ($Pages -join ',')) }
 if ($SkipDialogs) { $common += '-SkipDialogs' }
 if ($SkipDetails) { $common += '-SkipDetails' }
+# Only run.ps1 (the desktop) has these.
+$desktop = @()
+if ($Notifications) { $desktop += '-Notifications' }
+if ($Bundle) { $desktop += '-Bundle' }
+if ($RequireSystemNotification) { $desktop += '-RequireSystemNotification' }
 # Arrays, always: "if" would turn a one-item array into its string, and splatting a string to a program passes its characters one by
 # one ("-Build" became -, B, u, i, l, d: run.ps1 then got "d" for -StartTimeoutSeconds).
 $buildArgs = @(if ($Build) { '-Build' })
@@ -72,13 +81,13 @@ $buildArgs = @(if ($Build) { '-Build' })
 # What this machine can run, in the order it runs.
 $suites = [Collections.Generic.List[hashtable]]::new()
 if ($IsWindows) {
-  $suites.Add(@{ Name = 'Desktop'; Platform = 'Windows'; Report = 'out/native-smoke'; Run = { & $pwshExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $here 'run.ps1') @buildArgs @common } })
+  $suites.Add(@{ Name = 'Desktop'; Platform = 'Windows'; Report = 'out/native-smoke'; Run = { & $pwshExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $here 'run.ps1') @buildArgs @common @desktop } })
   if (Get-Command wsl.exe -ErrorAction SilentlyContinue) {
     $suites.Add(@{ Name = 'Wsl'; Platform = 'Linux (WSL)'; Report = 'out/native-smoke-wsl'; Run = { & $pwshExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $here 'run-wsl.ps1') @buildArgs @common } })
   }
 } elseif ($IsMacOS) {
   # Avalonia only: Uno 6.7 on macOS empties its accessibility tree after the first page change (only the window buttons are left).
-  $suites.Add(@{ Name = 'Desktop'; Platform = 'macOS'; Report = 'out/native-smoke'; Run = { & $pwshExe -NoProfile -File (Join-Path $here 'run.ps1') -Hosts 'Avalonia' @buildArgs @common } })
+  $suites.Add(@{ Name = 'Desktop'; Platform = 'macOS'; Report = 'out/native-smoke'; Run = { & $pwshExe -NoProfile -File (Join-Path $here 'run.ps1') -Hosts 'Avalonia' @buildArgs @common @desktop } })
   # MAUI and Avalonia in the iOS Simulator (idb).
   $suites.Add(@{ Name = 'Ios'; Platform = 'iOS (simulator)'; Report = 'out/ios-smoke'; Run = { & $pwshExe -NoProfile -File (Join-Path $here 'run-ios.ps1') @buildArgs @common } })
 } elseif ($IsLinux) {
@@ -130,7 +139,7 @@ foreach ($run in $runs) {
     # No report: the script stopped before testing (no SDK, no WSL, a build that failed, a wrong argument ...): its own output
     # says why. Never a pass: a suite asked for by -Only (as in CI) that did not run fails; one picked by default is "not run".
     $status = if ($run.Code -ne 0 -and $run.Asked) { 'FAIL' } else { 'NOT RUN' }
-    $rows.Add([pscustomobject]@{ Platform = $run.Suite.Platform; Host = '-'; Status = $status; Pages = '-'; Details = '-'; Dialogs = '-'; Time = "$($run.Seconds)s"; Problems = "no report (exit code $($run.Code))" })
+    $rows.Add([pscustomobject]@{ Platform = $run.Suite.Platform; Host = '-'; Status = $status; Pages = '-'; Details = '-'; Dialogs = '-'; Notifications = '-'; Time = "$($run.Seconds)s"; Problems = "no report (exit code $($run.Code))" })
     continue
   }
   $report = Get-Content -Raw -LiteralPath $run.Report | ConvertFrom-Json
@@ -138,13 +147,13 @@ foreach ($run in $runs) {
     $v = $h.Value
     $rows.Add([pscustomobject]@{
       Platform = $run.Suite.Platform; Host = $h.Name; Status = "$($v.status)".ToUpperInvariant()
-      Pages = Format-Count $v.pages; Details = Format-Count $v.details; Dialogs = Format-Count $v.dialogs
+      Pages = Format-Count $v.pages; Details = Format-Count $v.details; Dialogs = Format-Count $v.dialogs; Notifications = Format-Count $v.notifications
       Time = "$($v.seconds)s"; Problems = (@($v.problems) -join '; ')
     })
   }
 }
 
-$columns = 'Platform', 'Host', 'Status', 'Pages', 'Details', 'Dialogs', 'Time'
+$columns = 'Platform', 'Host', 'Status', 'Pages', 'Details', 'Dialogs', 'Notifications', 'Time'
 $widths = @{}
 foreach ($c in $columns) { $widths[$c] = [Math]::Max($c.Length, (@($rows | ForEach-Object { "$($_.$c)".Length }) + 0 | Measure-Object -Maximum).Maximum) }
 Write-Host ''
@@ -163,9 +172,9 @@ New-Item -ItemType Directory -Force -Path $outDir | Out-Null
   ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $outDir 'summary.json') -Encoding utf8
 $md = [Text.StringBuilder]::new()
 [void]$md.AppendLine("# Smoke tests ($((Get-Date).ToString('s')), $([Math]::Round($total.Elapsed.TotalSeconds))s)`n")
-[void]$md.AppendLine('| Platform | Host | Status | Pages | Details | Dialogs | Time |')
-[void]$md.AppendLine('| --- | --- | --- | --- | --- | --- | --- |')
-foreach ($row in $rows) { [void]$md.AppendLine("| $($row.Platform) | $($row.Host) | $($row.Status) | $($row.Pages) | $($row.Details) | $($row.Dialogs) | $($row.Time) |") }
+[void]$md.AppendLine('| Platform | Host | Status | Pages | Details | Dialogs | Notifications | Time |')
+[void]$md.AppendLine('| --- | --- | --- | --- | --- | --- | --- | --- |')
+foreach ($row in $rows) { [void]$md.AppendLine("| $($row.Platform) | $($row.Host) | $($row.Status) | $($row.Pages) | $($row.Details) | $($row.Dialogs) | $($row.Notifications) | $($row.Time) |") }
 $problems = @($rows | Where-Object Problems)
 if ($problems.Count) {
   [void]$md.AppendLine("`n## Problems`n")

@@ -1337,6 +1337,110 @@ function Write-Step([hashtable] $Ctx, [string] $Text, [string] $Color = 'Gray') 
 
 function Get-StatusColor([string] $Status) { switch ($Status) { 'ok' { 'Green' } 'unverified' { 'Yellow' } 'skipped' { 'DarkGray' } default { 'Red' } } }
 
+# The permission prompt of the system ("... would like to send you notifications"): macOS asks the first time an application of a bundle
+# posts one, and the post waits for the answer. It belongs to another application (UserNotificationCenter, or NotificationCenter), so it is
+# looked for there. Best effort: returns what was pressed, or $null when there is no prompt (nothing to answer, or not found).
+function Approve-NotificationPrompt([hashtable] $Ctx) {
+  foreach ($app in 'UserNotificationCenter', 'NotificationCenter') {
+    foreach ($label in 'Allow', 'Autoriser') {
+      $found = Invoke-Ad $Ctx @('find', '--app', $app, '--name', $label, '--role', 'button', '--exact', '--limit', '1', '--timeout-ms', '300')
+      if (-not $found.ok) { continue }
+      $match = @(@(Get-Prop $found.data 'matches') | Where-Object { $_ })[0]
+      if (-not $match) { continue }
+      $press = Invoke-ClickMatch $Ctx $match 'mouse'
+      if ($press.ok) { return "$app/$label" }
+    }
+  }
+  $null
+}
+
+# Presses one button of the notifications of the Dialogs page, and checks what comes of it.
+#  - A notification of the application (Information, Success, Warning, Error): its title must appear, then a click on it must write
+#    "Clicked ..." (or "Closed ...": some hosts close it after the click) on the Result line.
+#  - The system notification ("System"): the Result line says "System notification sent." where the host has a notification center of the
+#    system. Where it has none, "System notifications are not available on this host." is a pass only if the host is not required to
+#    have one ($Ctx.SystemNotificationRequired: macOS from a bundle, Windows); else it is 'unverified' (a host that cannot, not one that fails).
+function Test-Notification([hashtable] $Ctx, [hashtable] $Spec, [string] $Previous) {
+  $watch = [Diagnostics.Stopwatch]::StartNew()
+  $report = [ordered]@{ status = 'fail'; answered = $null; result = $null; ms = 0; detail = $null }
+  # The place of the button: the lowest of that name ("Error" is a dialog above and a notification below).
+  $place = $null
+  $opener = $null
+  if ($Ctx.Headed) {
+    foreach ($node in (Get-Layout $Ctx)) {
+      if (-not $node.Shown -or $node.InItem -or $node.Role -ne 'button' -or $node.Name -ne $Spec.Button) { continue }
+      if (-not $place -or $node.Center.Y -gt $place.Y) { $place = $node.Center }
+    }
+  }
+  if (-not $place) { $opener = @(Find-All $Ctx -Name $Spec.Button -Exact -Role 'button' | Where-Object { Get-Prop $_ 'ref_id' }) | Select-Object -Last 1 }
+  if (-not $place -and -not $opener) {
+    $report.detail = 'button not found on the Dialogs page'
+    $report.ms = $watch.ElapsedMilliseconds; return $report
+  }
+
+  $uiLock = Enter-Ui
+  try {
+    $press = if ($place) { Invoke-AdHeaded $Ctx @('mouse-click', '--xy', "$($place.X),$($place.Y)") } else { Invoke-ClickButton $Ctx $opener }
+    if (-not $press.ok -and (Get-ErrorCode $press) -ne 'TIMEOUT') {
+      $report.detail = "could not press the button: $(Get-ErrorCode $press)"; return $report
+    }
+
+    # What the press shows: the title of the notification, or the answer of the page for the system one.
+    $script:noteNode = $null
+    $script:lastPrompt = $null
+    $expect = @(if ($Spec.System) { $Spec.Sent, $Spec.Unavailable } else { $Spec.Title })
+    $clock = [Diagnostics.Stopwatch]::StartNew()
+    $shown = Wait-Until -TimeoutMs $Spec.WaitMs -IntervalMs 250 -Condition {
+      foreach ($node in @(Get-Layout $Ctx)) {
+        if ($node.Shown -and $expect -contains $node.Name -and $node.Name -ne $Previous) { $script:noteNode = $node; return $true }
+      }
+      # The system notification waits for the permission prompt the first time (macOS): answered after a second, then every two.
+      if ($Spec.System -and $clock.ElapsedMilliseconds -gt 1000 -and (-not $script:lastPrompt -or ($clock.ElapsedMilliseconds - $script:lastPrompt) -gt 2000)) {
+        $script:lastPrompt = $clock.ElapsedMilliseconds
+        $approved = Approve-NotificationPrompt $Ctx
+        if ($approved) { $report.answered = $approved }
+      }
+      $false
+    }
+    if (-not $shown) {
+      $report.detail = if ($Spec.System) { "the Result line showed neither '$($Spec.Sent)' nor '$($Spec.Unavailable)' in $($Spec.WaitMs) ms (a permission prompt that nothing answered?)" }
+                       else { "the notification '$($Spec.Title)' did not appear in $($Spec.WaitMs) ms" }
+      Save-Evidence $Ctx "notification-$($Spec.Button)"
+      Save-DialogProbe $Ctx "notification-probe-$($Spec.Button)"
+      return $report
+    }
+
+    if ($Spec.System) {
+      $report.result = $script:noteNode.Name
+      if ($report.result -eq $Spec.Sent) { $report.status = 'ok' }
+      elseif ($Ctx.SystemNotificationRequired) { $report.detail = "this host must have a notification center: $($report.result)"; Save-Evidence $Ctx "notification-$($Spec.Button)" }
+      else { $report.status = 'unverified'; $report.detail = $report.result }
+      return $report
+    }
+
+    # An application notification: a click on it.
+    $click = Invoke-ClickMatch $Ctx (ConvertTo-Match $script:noteNode) 'mouse'
+    if (-not $click.ok) { $report.detail = "could not click the notification: $(Get-ErrorCode $click)"; return $report }
+    $report.answered = 'click'
+    $script:clickedText = $null
+    $clicked = Wait-Until -TimeoutMs 3000 -IntervalMs 200 -Condition {
+      foreach ($node in @(Get-Layout $Ctx)) {
+        if ($Spec.Clicked -contains $node.Name) { $script:clickedText = $node.Name; return $true }
+      }
+      $false
+    }
+    if ($clicked) { $report.result = $script:clickedText; $report.status = 'ok' }
+    else {
+      $report.detail = "a click on the notification did not write $($Spec.Clicked -join ' or ') on the Result line"
+      Save-Evidence $Ctx "notification-$($Spec.Button)-click"
+    }
+    return $report
+  } finally {
+    Exit-Ui $uiLock
+    $report.ms = $watch.ElapsedMilliseconds
+  }
+}
+
 # The keys that answered each dialog that is not in the tree, per host, kept between runs (in the temp folder of the user).
 $script:DialogKeysFile = Join-Path ([IO.Path]::GetTempPath()) 'routeables-smoke/dialog-keys.json'
 function Read-DialogKeys([string] $HostName) {
@@ -1391,7 +1495,7 @@ function Initialize-Window([hashtable] $Ctx) {
 function Invoke-SampleSmoke([hashtable] $Ctx, [hashtable] $Target, [hashtable] $Options) {
   if (-not $script:AdPath) { Set-AgentDesktopPath $Options.AgentDesktop }
   $Ctx.Clock.Restart()
-  $report = [ordered]@{ kind = 'sample'; exe = $Target.Exe; status = 'fail'; startSeconds = $null; menuActivation = $null; pages = [ordered]@{}; details = [ordered]@{}; dialogs = [ordered]@{}; problems = @() }
+  $report = [ordered]@{ kind = 'sample'; exe = $Target.Exe; status = 'fail'; startSeconds = $null; menuActivation = $null; pages = [ordered]@{}; details = [ordered]@{}; dialogs = [ordered]@{}; notifications = [ordered]@{}; problems = @() }
   if ($Target.Problem) { $report.problems += $Target.Problem; return (Complete-Report $Ctx $report) }
 
   $Ctx.DialogKeys = Read-DialogKeys $Ctx.Name
@@ -1455,6 +1559,17 @@ function Invoke-SampleSmoke([hashtable] $Ctx, [hashtable] $Target, [hashtable] $
           $report.dialogs[$spec.Button] = $result
           Write-Step $Ctx ("dialog {0,-26} {1,-10} {2,6} ms  {3}" -f $spec.Button, $result.status, $result.ms, $(if ($result.detail) { $result.detail } else { "$($result.answered) -> $($result.result)" })) (Get-StatusColor $result.status)
         }
+
+        # The notifications, on the same page: those of the application, then the one of the system.
+        if ($Options.Notifications) {
+          $Ctx.SystemNotificationRequired = [bool]$Options.SystemNotificationRequired
+          foreach ($spec in $Options.NotificationSpecs) {
+            $result = Test-Notification $Ctx $spec $previous
+            if ($result.result) { $previous = $result.result }
+            $report.notifications[$spec.Button] = $result
+            Write-Step $Ctx ("notification {0,-20} {1,-10} {2,6} ms  {3}" -f $spec.Button, $result.status, $result.ms, $(if ($result.detail) { $result.detail } else { "$($result.answered) -> $($result.result)" })) (Get-StatusColor $result.status)
+          }
+        }
       }
     }
 
@@ -1463,7 +1578,7 @@ function Invoke-SampleSmoke([hashtable] $Ctx, [hashtable] $Target, [hashtable] $
       $report.problems += 'the process wrote an unhandled exception to stderr (see stderr.txt)'
     }
     $failed = @($report.pages.Values | Where-Object { $_.status -eq 'fail' }).Count + @($report.details.Values | Where-Object { $_.status -eq 'fail' }).Count +
-              @($report.dialogs.Values | Where-Object { $_.status -eq 'fail' }).Count + $report.problems.Count
+              @($report.dialogs.Values | Where-Object { $_.status -eq 'fail' }).Count + @($report.notifications.Values | Where-Object { $_.status -eq 'fail' }).Count + $report.problems.Count
     $report.status = if ($failed) { 'fail' } else { 'ok' }
   } catch {
     $report.problems += "script error: $($_.Exception.Message) at line $($_.InvocationInfo.ScriptLineNumber)"
