@@ -270,6 +270,10 @@ function New-MacBundle([string] $Exe, [string] $App) {
   Set-Content -LiteralPath (Join-Path $root 'Contents/Info.plist') -Value $plist -Encoding utf8
   & chmod +x (Join-Path $macos $name)
   & codesign --force --deep --sign - $root *> (Join-Path $OutDir "codesign-$App.txt")
+  # The system looks the bundle up in LaunchServices: one that was never registered ("LSApplicationRecord failed to find <identifier>" in the log of
+  # usernoted) is refused the notification permission at once. Started by its path from a temp folder, it never is: register it.
+  $lsregister = '/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister'
+  if (Test-Path -LiteralPath $lsregister) { & $lsregister -f $root *> (Join-Path $OutDir "lsregister-$App.txt") }
   Join-Path $macos $name
 }
 
