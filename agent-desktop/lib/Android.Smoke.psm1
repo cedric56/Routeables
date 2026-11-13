@@ -488,6 +488,15 @@ function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
     $report.seconds = [Math]::Round($ctx.Clock.ElapsedMilliseconds / 1000, 1)
     $report.calls = $ctx.Calls
     $ctx.Trace | ForEach-Object { $_ | ConvertTo-Json -Compress } | Set-Content -LiteralPath (Join-Path $dir 'calls.jsonl') -Encoding utf8
+    # A failed run keeps the log of the app while it is still running (an exception caught and logged by the framework shows
+    # there, not on screen: a page that stays empty), and the crash buffer.
+    if ($report.status -ne 'ok') {
+      try {
+        $appPid = (Invoke-Shell $ctx "pidof $($Target.Package)").Text.Trim()
+        $log = if ($appPid -match '^\d+') { (Invoke-Adb $ctx @('logcat', '-d', "--pid=$($appPid -replace '\s.*$', '')")).Text } else { (Invoke-Adb $ctx @('logcat', '-d', '-t', '3000', '*:W')).Text }
+        @("== pid $appPid", $log, '== crash buffer', (Invoke-Adb $ctx @('logcat', '-d', '-b', 'crash')).Text) | Set-Content -LiteralPath (Join-Path $dir 'logcat-app.txt') -Encoding utf8
+      } catch { }
+    }
     Invoke-Shell $ctx "am force-stop $($Target.Package)" | Out-Null
   }
 }

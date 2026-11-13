@@ -236,6 +236,13 @@ function Close-Pane([hashtable] $Ctx, $Layout) {
 function Close-PaneLocked([hashtable] $Ctx, $Layout) {
   # Side by side, a click in the other window since the snapshot may have closed the pane: read again, under the lock.
   if ($Layout -and (Test-Deactivated $Ctx)) { $fresh = @(Get-Layout $Ctx); if ($fresh.Count) { $Layout = $fresh } }
+  # A layer seen in the snapshot taken just after the click may be that of a drawer still closing by itself (Avalonia in a window
+  # that is not maximized, as on macOS: 350 ms). Judged on it, the drawer would be taken for a pane that stays open, and its
+  # button pressed "to close it" would open it again. Read once more when it has settled.
+  elseif ($Layout -and (Get-DismissPoint $Layout)) {
+    Wait-DrawerSettled $Ctx
+    $fresh = @(Get-Layout $Ctx); if ($fresh.Count) { $Layout = $fresh }
+  }
   if ($Layout -and $Ctx.Overlay -eq $true -and -not (Get-DismissPoint $Layout)) {
     # The pane is not open (closed by itself): its button would open it.
     $Ctx.OpenHow = 'mouse'
@@ -749,12 +756,20 @@ function Find-ShownEntry([hashtable] $Ctx, [string] $Page) {
 function Show-ScrolledEntry([hashtable] $Ctx, [string] $Page) {
   $w = $Ctx.WindowRect
   if (-not $Ctx.Headed -or -not $w -or $Ctx.ScrolledFor -eq $Page) { return $null }
-  $hidden = @(Find-All $Ctx -Name $Page -Exact | Where-Object { Test-InItem $_ } | ForEach-Object { $c = Get-Center $_; if ($c) { $c } } |
+  $texts = @(Find-All $Ctx -Name $Page -Exact | Where-Object { Test-InItem $_ })
+  $hidden = @($texts | ForEach-Object { $c = Get-Center $_; if ($c) { $c } } |
     Where-Object { $_.X -ge $w.X -and $_.X -le ($w.X + $w.Width) -and ($_.Y -lt $w.Y -or $_.Y -gt ($w.Y + $w.Height)) }) | Select-Object -First 1
-  if (-not $hidden) { return $null }
+  if ($hidden) {
+    $x = $hidden.X
+    $lines = if ($hidden.Y -gt ($w.Y + $w.Height)) { -10 } else { 10 }
+  } elseif ($Ctx.ToggleCenter -and @($texts | Where-Object { -not (Get-Center $_) -or @(Get-Prop $_ 'states') -contains 'offscreen' }).Count) {
+    # UI Automation gives an item of a WinUI ListView scrolled out of its viewport empty bounds: its text is there, not where.
+    # The menu is in the column of its button; the entries out of view are the last ones (the menu opens at its top): down.
+    $x = $Ctx.ToggleCenter.X
+    $lines = -10
+  } else { return $null }
   $Ctx.ScrolledFor = $Page
-  $lines = if ($hidden.Y -gt ($w.Y + $w.Height)) { -10 } else { 10 }
-  $wheel = Invoke-AdHeaded $Ctx @('mouse-wheel', '--x', "$($hidden.X)", '--y', "$([int]($w.Y + $w.Height / 2))", "--dy=$lines")
+  $wheel = Invoke-AdHeaded $Ctx @('mouse-wheel', '--x', "$x", '--y', "$([int]($w.Y + $w.Height / 2))", "--dy=$lines")
   if (-not $wheel.ok) { return $null }
   Start-Sleep -Milliseconds 300
   Find-ItemText $Ctx $Page
