@@ -733,7 +733,26 @@ function Find-ShownEntry([hashtable] $Ctx, [string] $Page) {
     $entry = Find-RankEntry $Ctx $Page
     if ($entry) { $Ctx.RankMenu = $true }
   }
+  if (-not $entry -and $Ctx.RankMenu -ne $true) { $entry = Show-ScrolledEntry $Ctx $Page }
   $entry
+}
+
+# An entry of a menu taller than the window (the last ones of a WinUI or Uno pane on a 1080p screen, where each entry has a title and
+# a description): its text is in a list item, in the column of the window, but above or below it. One wheel turn over the menu
+# towards it, then the text again. Once per page, as this runs inside waits; a text inside the window (a closed drawer keeps its
+# last bounds there) is left alone.
+function Show-ScrolledEntry([hashtable] $Ctx, [string] $Page) {
+  $w = $Ctx.WindowRect
+  if (-not $Ctx.Headed -or -not $w -or $Ctx.ScrolledFor -eq $Page) { return $null }
+  $hidden = @(Find-All $Ctx -Name $Page -Exact | Where-Object { Test-InItem $_ } | ForEach-Object { $c = Get-Center $_; if ($c) { $c } } |
+    Where-Object { $_.X -ge $w.X -and $_.X -le ($w.X + $w.Width) -and ($_.Y -lt $w.Y -or $_.Y -gt ($w.Y + $w.Height)) }) | Select-Object -First 1
+  if (-not $hidden) { return $null }
+  $Ctx.ScrolledFor = $Page
+  $lines = if ($hidden.Y -gt ($w.Y + $w.Height)) { -10 } else { 10 }
+  $wheel = Invoke-AdHeaded $Ctx @('mouse-wheel', '--x', "$($hidden.X)", '--y', "$([int]($w.Y + $w.Height / 2))", "--dy=$lines")
+  if (-not $wheel.ok) { return $null }
+  Start-Sleep -Milliseconds 300
+  Find-ItemText $Ctx $Page
 }
 
 # Opens a menu that hides after each navigation, the way that worked before: at the remembered place of its button when it was
