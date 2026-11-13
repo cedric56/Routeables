@@ -779,7 +779,19 @@ function Show-ScrolledEntry([hashtable] $Ctx, [string] $Page) {
     # The menu is in the column of its button; the entries out of view are the last ones (the menu opens at its top): down.
     $x = $Ctx.ToggleCenter.X
     $lines = -10
-  } else { return $null }
+  } else {
+    # A virtualized list (the ListBox of an Avalonia drawer in a small window, as on macOS): the entries below its viewport are not
+    # created at all, so their text is nowhere. The entries that are shown tell where the menu is, and their order (MenuOrder)
+    # tells which way the missing one is.
+    $order = @($Ctx.MenuOrder)
+    $want = [array]::IndexOf($order, $Page)
+    if ($want -lt 0) { return $null }
+    $shown = @(Get-Layout $Ctx | Where-Object { $_.Shown -and $_.InItem -and $_.Name -ne $Page -and $order -contains $_.Name } |
+      ForEach-Object { [pscustomobject]@{ Index = [array]::IndexOf($order, $_.Name); Center = $_.Center } })
+    if (-not $shown.Count) { return $null }
+    $x = $shown[0].Center.X
+    $lines = if ($want -gt ($shown | Measure-Object Index -Maximum).Maximum) { -10 } elseif ($want -lt ($shown | Measure-Object Index -Minimum).Minimum) { 10 } else { return $null }
+  }
   $Ctx.ScrolledFor = $Page
   $wheel = Invoke-AdHeaded $Ctx @('mouse-wheel', '--x', "$x", '--y', "$([int]($w.Y + $w.Height / 2))", "--dy=$lines")
   if (-not $wheel.ok) { return $null }

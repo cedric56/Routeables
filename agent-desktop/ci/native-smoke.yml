@@ -125,6 +125,68 @@ jobs:
             out/native-smoke
             out/all-smoke
 
+  # MAUI and Avalonia on iOS, in the iOS Simulator of a hosted Mac, read and tapped with idb (agent-desktop does not drive the
+  # Simulator). Xcode, its iOS runtime and the simulator as in the device-apple job of ci.yml. Not Uno: its iOS accessibility with
+  # the Skia renderer is not done yet. Not blocking until a first green run.
+  ios:
+    name: iOS (MAUI, Avalonia)
+    runs-on: macos-latest
+    continue-on-error: true
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Select Xcode 26.0
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.0'
+      - name: Workloads
+        run: dotnet workload install maui ios --skip-manifest-update
+      - name: Install the iOS runtime of Xcode 26.0
+        run: |
+          for attempt in 1 2 3 4; do
+            sudo killall -9 com.apple.CoreSimulator.CoreSimulatorService 2>/dev/null || true
+            xcrun simctl list runtimes >/dev/null 2>&1 || true
+            sleep 10
+            sudo xcodebuild -downloadPlatform iOS && exit 0
+            echo "Attempt $attempt failed"; sleep 30
+          done
+          exit 1
+      - name: Boot an iPhone simulator
+        run: |
+          udid=$(xcrun simctl list devices available -j | python3 -c "
+          import json, sys
+          for runtime, devices in json.load(sys.stdin)['devices'].items():
+              if 'iOS' in runtime:
+                  for device in devices:
+                      if 'iPhone' in device['name']:
+                          print(device['udid']); raise SystemExit
+          ")
+          if [ -z "$udid" ]; then
+            runtime=$(xcrun simctl list runtimes available -j | python3 -c "
+          import json, sys
+          print([r['identifier'] for r in json.load(sys.stdin)['runtimes'] if r['identifier'].startswith('com.apple.CoreSimulator.SimRuntime.iOS')][-1])
+          ")
+            devicetype=$(xcrun simctl list devicetypes -j | python3 -c "
+          import json, sys
+          print([d['identifier'] for d in json.load(sys.stdin)['devicetypes'] if 'iPhone' in d['name']][-1])
+          ")
+            udid=$(xcrun simctl create "Routeables iPhone" "$devicetype" "$runtime")
+          fi
+          xcrun simctl boot "$udid" || true
+          xcrun simctl bootstatus "$udid" -b
+          echo "IOS_UDID=$udid" >> "$GITHUB_ENV"
+      - name: Smoke
+        shell: pwsh
+        run: ./agent-desktop/run-ios.ps1 -Setup -Build -Udid $env:IOS_UDID -KeepSimulator
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-smoke
+          path: out/ios-smoke
+
   # MAUI and Avalonia on Android, in an emulator with hardware acceleration (KVM, enabled on the hosted Linux runners).
   # Not Uno yet: its Android app starts but exposes no text to uiautomator (its screen is a few nodes with no text), so every page
   # would fail; add it back (build step and -Hosts) once run-android.ps1 passes it on a local emulator.

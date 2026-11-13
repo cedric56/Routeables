@@ -116,6 +116,7 @@ minutes each, real windows).
   empties after the first page change). The hosted runner has a logged-in desktop
   and its agent holds the Accessibility permission, which macOS extends to the processes a step starts: nothing to grant. A step
   checks it first (`agent-desktop permissions`) and stops with the reason if it is missing.
+- **ios** (macos-latest, Xcode 26): MAUI and Avalonia in the iOS Simulator with `run-ios.ps1` (idb).
 - **android** (ubuntu-24.04, KVM): MAUI and Avalonia in an emulator started by `reactivecircus/android-emulator-runner`. Not Uno
   yet: its Android app exposes no text to uiautomator.
 
@@ -183,6 +184,24 @@ The Android builds of this script pass `-p:TreatWarningsAsErrors=false`: an anal
 `run.ps1` runs on a Mac as it is: Avalonia and Uno (`pwsh agent-desktop/run.ps1 -Build`), once agent-desktop has the
 Accessibility permission (`agent-desktop permissions --guide`). `run-android.ps1` runs there too. A macOS virtual machine on a
 PC (OSX-KVM, Sosumi) is not supported here: Apple's licence allows macOS only on Apple hardware.
+
+## iOS: `run-ios.ps1`
+
+MAUI and Avalonia in the iOS Simulator, on a Mac: `pwsh agent-desktop/run-ios.ps1 -Setup -Build`. The test is the one of
+Android (the same module, `lib/Android.Smoke.psm1`, with another backend): agent-desktop cannot read the Simulator (its window
+is one picture to macOS accessibility), so the screen is read with idb (`idb ui describe-all`: the accessibility tree of the app
+in front, in points) and tapped with `idb ui tap`; the app is installed, started and stopped with `xcrun simctl`.
+
+- `-Setup` installs idb when it is missing: `idb-companion` with Homebrew, `fb-idb` with pip.
+- The simulator: the one booted, else an iPhone of the newest iOS runtime (`-Device`, `-Udid`); shut down at the end when the
+  script booted it.
+- Each sample is built for the simulator of this Mac (`-r iossimulator-arm64` or `-x64`), unsigned, and installed with simctl.
+- A system alert asking for a permission (notifications) is allowed when it shows.
+- Not Uno: its iOS accessibility with the Skia renderer is not done yet (no text would be exposed).
+- Output: `out/ios-smoke` (report, and for a failed step the tree as idb read it, `.json`, and a screenshot), zipped in
+  `out/ios-smoke.zip`; `log-app.txt` (the unified log of the app, and its crash report) when a host failed.
+
+In CI: the `ios` job (Xcode 26, its iOS runtime, an iPhone booted as in the `device-apple` job of `ci.yml`).
 
 ## Tried, and not yet
 

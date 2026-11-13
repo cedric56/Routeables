@@ -1,4 +1,8 @@
-﻿# The smoke test of the XAnimals samples on Android (an emulator or a device), driven by adb. Loaded by run-android.ps1.
+﻿# The smoke test of the XAnimals samples on Android (an emulator or a device), driven by adb, and on iOS (a simulator), driven by
+# idb. Loaded by run-android.ps1 and run-ios.ps1.
+#
+# The two platforms share everything but the seven calls to the device: reading the screen (uiautomator dump / idb ui
+# describe-all), a tap, a swipe, starting and stopping the app, a screenshot and the log. Set-AdbTarget or Set-IosTarget chooses.
 #
 # agent-desktop reads the accessibility tree of desktop windows; the window of the emulator is a picture to it. On Android the same
 # tree comes from uiautomator: "uiautomator dump" gives every node of the screen with its text, its content description (the
@@ -13,6 +17,11 @@ Set-StrictMode -Version 3.0
 
 $script:Adb = $null
 $script:Serial = $null
+$script:Platform = 'android'
+$script:Idb = $null
+$script:Udid = $null
+# The bundle of the app under test (iOS): idb describes the application in front, its nodes carry no package of their own.
+$script:Bundle = $null
 
 # ------------------------------------------------------------------------------------------------------------------------------
 # adb
@@ -37,6 +46,70 @@ function Invoke-Adb([hashtable] $Ctx, [string[]] $A, [int] $TimeoutSeconds = 60)
 function Invoke-Shell([hashtable] $Ctx, [string] $Command) { Invoke-Adb $Ctx @('shell', $Command) }
 
 # ------------------------------------------------------------------------------------------------------------------------------
+# iOS: idb (the screen, taps, swipes) and simctl (the app, screenshots, the log)
+# ------------------------------------------------------------------------------------------------------------------------------
+
+function Set-IosTarget([string] $Idb, [string] $Udid) { $script:Platform = 'ios'; $script:Idb = $Idb; $script:Udid = $Udid }
+
+function Invoke-Tool([hashtable] $Ctx, [string] $Tool, [string[]] $A, [string] $Label) {
+  $watch = [Diagnostics.Stopwatch]::StartNew()
+  $text = (& $Tool @A 2>&1 | ForEach-Object { "$_" }) -join "`n"
+  $code = $LASTEXITCODE
+  if ($Ctx) {
+    $Ctx.Calls++
+    $Ctx.AdbMs += $watch.ElapsedMilliseconds
+    $Ctx.Trace.Add([pscustomobject]@{ at = $Ctx.Clock.ElapsedMilliseconds; ms = $watch.ElapsedMilliseconds; cmd = "$Label $($A -join ' ')"; ok = ($code -eq 0) })
+  }
+  [pscustomobject]@{ Ok = ($code -eq 0); Text = $text }
+}
+
+function Invoke-Idb([hashtable] $Ctx, [string[]] $A) { Invoke-Tool $Ctx $script:Idb (@($A) + @('--udid', $script:Udid)) 'idb' }
+
+function Invoke-Simctl([hashtable] $Ctx, [string[]] $A) { Invoke-Tool $Ctx 'xcrun' (@('simctl') + @($A)) 'xcrun' }
+
+# The screen of the simulator as idb sees it (the accessibility tree of the application in front, in points), flattened to the
+# nodes Read-Ui gives on Android: Name (the label, else the value), Class (the type), Id (the accessibility identifier).
+function Read-IosUi([hashtable] $Ctx) {
+  $json = $null
+  foreach ($try in 1..2) {
+    $dump = Invoke-Idb $Ctx @('ui', 'describe-all', '--json', '--nested')
+    $start = $dump.Text.IndexOf('[')
+    if ($dump.Ok -and $start -ge 0) { $json = $dump.Text.Substring($start); break }
+    Start-Sleep -Milliseconds 300
+  }
+  if (-not $json) { return $null }
+  $Ctx.LastXml = $json
+  try { $roots = @($json | ConvertFrom-Json -Depth 200) } catch { return $null }
+  $nodes = [Collections.Generic.List[object]]::new()
+  $stack = [Collections.Generic.Stack[object]]::new()
+  foreach ($root in $roots) { if ($root) { $stack.Push(@{ Node = $root; InList = $false }) } }
+  # idb leaves out the attributes it has no value for: read through PSObject.Properties (strict mode refuses an absent one).
+  $get = { param($o, $name) $p = $o.PSObject.Properties[$name]; if ($p) { $p.Value } else { $null } }
+  while ($stack.Count) {
+    $top = $stack.Pop()
+    $n = $top.Node
+    $type = [string](& $get $n 'type')
+    $inList = $top.InList -or $type -match '^(Table|Collection|CollectionView|List|Outline)$'
+    $f = & $get $n 'frame'
+    if ($f -and (& $get $f 'width') -gt 0 -and (& $get $f 'height') -gt 0) {
+      $rawLabel = & $get $n 'AXLabel'; $rawValue = & $get $n 'AXValue'
+      $label = if ($rawLabel) { ([string]$rawLabel).Trim() } else { '' }
+      $value = if ($rawValue -is [string]) { $rawValue.Trim() } else { '' }
+      $fx = [double](& $get $f 'x'); $fy = [double](& $get $f 'y'); $fw = [double](& $get $f 'width'); $fh = [double](& $get $f 'height')
+      $x1 = [int][Math]::Round($fx); $y1 = [int][Math]::Round($fy); $x2 = [int][Math]::Round($fx + $fw); $y2 = [int][Math]::Round($fy + $fh)
+      $nodes.Add([pscustomobject]@{
+        Name = $(if ($label) { $label } else { $value }); Desc = $label; Class = $type; Id = [string](& $get $n 'AXUniqueId'); Package = $script:Bundle
+        Clickable = ($type -in @('Button', 'Cell', 'Link', 'MenuItem', 'Tab', 'Switch')) -or ([string](& $get $n 'role') -eq 'AXButton')
+        X1 = $x1; Y1 = $y1; X2 = $x2; Y2 = $y2; X = [int](($x1 + $x2) / 2); Y = [int](($y1 + $y2) / 2); InList = $top.InList -or $type -eq 'Cell'
+      })
+    }
+    $kids = @(& $get $n 'children' | ForEach-Object { $_ })
+    for ($i = $kids.Count - 1; $i -ge 0; $i--) { if ($kids[$i]) { $stack.Push(@{ Node = $kids[$i]; InList = $inList }) } }
+  }
+  $nodes
+}
+
+# ------------------------------------------------------------------------------------------------------------------------------
 # The screen: uiautomator dump, flattened
 # ------------------------------------------------------------------------------------------------------------------------------
 
@@ -54,6 +127,7 @@ function Get-Ui([hashtable] $Ctx) {
 }
 
 function Read-Ui([hashtable] $Ctx) {
+  if ($script:Platform -eq 'ios') { return Read-IosUi $Ctx }
   $xmlText = $null
   foreach ($try in 1..2) {
     $dump = Invoke-Adb $Ctx @('exec-out', 'uiautomator', 'dump', '/dev/tty')
@@ -113,14 +187,18 @@ function Find-Entry($Ui, [string] $Name) {
   @($Ui | Where-Object { $_.Name -and ($_.Name -split "`r?`n")[0].Trim() -ieq $Name })
 }
 
-function Invoke-Tap([hashtable] $Ctx, [int] $X, [int] $Y) { Invoke-Shell $Ctx "input tap $X $Y" | Out-Null }
+function Invoke-Tap([hashtable] $Ctx, [int] $X, [int] $Y) {
+  if ($script:Platform -eq 'ios') { Invoke-Idb $Ctx @('ui', 'tap', "$X", "$Y") | Out-Null; return }
+  Invoke-Shell $Ctx "input tap $X $Y" | Out-Null
+}
 
 # A swipe of the content: up (towards the end of the page) or down (towards its top), in the middle of the screen or at $X.
 function Invoke-Swipe([hashtable] $Ctx, [string] $Direction, [int] $X = 0) {
   $x = if ($X) { $X } else { [int]($Ctx.Width / 2) }
   $from = [int]($Ctx.Height * 0.70); $to = [int]($Ctx.Height * 0.30)
   if ($Direction -eq 'down') { $tmp = $from; $from = $to; $to = $tmp }
-  Invoke-Shell $Ctx "input swipe $x $from $x $to 250" | Out-Null
+  if ($script:Platform -eq 'ios') { Invoke-Idb $Ctx @('ui', 'swipe', "$x", "$from", "$x", "$to", '--duration', '0.25') | Out-Null }
+  else { Invoke-Shell $Ctx "input swipe $x $from $x $to 250" | Out-Null }
   Start-Sleep -Milliseconds 250
 }
 
@@ -323,7 +401,7 @@ function Test-AndroidDialog([hashtable] $Ctx, [hashtable] $Spec, [string] $Previ
       # A dialog that is open but not readable: the Back key closes it (only when the page is not what is on screen: Back on the
       # page itself would leave it).
       $now = Get-Ui $Ctx
-      if ($now -and -not @(Find-Named $now $Spec.Button).Count) { Invoke-Shell $Ctx 'input keyevent 4' | Out-Null; Start-Sleep -Milliseconds 400 }
+      if ($now -and -not @(Find-Named $now $Spec.Button).Count -and $script:Platform -eq 'android') { Invoke-Shell $Ctx 'input keyevent 4' | Out-Null; Start-Sleep -Milliseconds 400 }
       return $report
     }
     Invoke-Tap $Ctx $found.Hit.Node.X $found.Hit.Node.Y
@@ -352,8 +430,13 @@ function Test-AndroidDialog([hashtable] $Ctx, [hashtable] $Spec, [string] $Previ
 function Save-AndroidEvidence([hashtable] $Ctx, [string] $Label) {
   $Label = $Label -replace '[^\w\-]+', '_'
   $ui = Get-Ui $Ctx
-  if ($Ctx.LastXml) { Set-Content -LiteralPath (Join-Path $Ctx.Dir "$Label.xml") -Value $Ctx.LastXml -Encoding utf8 }
   $png = Join-Path $Ctx.Dir "$Label.png"
+  if ($script:Platform -eq 'ios') {
+    if ($Ctx.LastXml) { Set-Content -LiteralPath (Join-Path $Ctx.Dir "$Label.json") -Value $Ctx.LastXml -Encoding utf8 }
+    Invoke-Simctl $Ctx @('io', $script:Udid, 'screenshot', $png) | Out-Null
+    return
+  }
+  if ($Ctx.LastXml) { Set-Content -LiteralPath (Join-Path $Ctx.Dir "$Label.xml") -Value $Ctx.LastXml -Encoding utf8 }
   # exec-out keeps the bytes as they are (shell would turn \n into \r\n on old devices).
   $info = [Diagnostics.ProcessStartInfo]::new($script:Adb)
   foreach ($a in @('-s', $script:Serial, 'exec-out', 'screencap', '-p')) { $info.ArgumentList.Add($a) }
@@ -375,6 +458,15 @@ function Get-AndroidColor([string] $Status) { switch ($Status) { 'ok' { 'Green' 
 # A system dialog over the app ("Pixel Launcher isn't responding", "... keeps stopping"): frequent on an emulator without a GPU
 # (CI). Answered "Wait" (else "Close app" / "OK"), so that the app comes back on top. True when one was answered.
 function Clear-SystemDialog([hashtable] $Ctx, $Ui) {
+  if ($script:Platform -eq 'ios') {
+    # An alert of iOS asking for a permission (notifications ...): allowed, the test needs the app in front.
+    if (-not @($Ui | Where-Object { $_.Name -match 'Would Like to|souhaite' }).Count) { return $false }
+    $allow = @($Ui | Where-Object { $_.Class -eq 'Button' -and $_.Name -in 'Allow', 'OK', 'Autoriser' }) | Select-Object -First 1
+    if (-not $allow) { return $false }
+    Invoke-Tap $Ctx $allow.X $allow.Y
+    Write-AndroidStep $Ctx "system alert answered: $($allow.Name)" 'DarkYellow'
+    return $true
+  }
   $system = @($Ui | Where-Object { $_.Package -in 'android', 'com.android.systemui' })
   if (-not @($system | Where-Object { $_.Name -match "isn.t responding|keeps stopping|has stopped|ne r.pond pas|s'arr.te" }).Count) { return $false }
   $button = @($system | Where-Object { $_.Id -eq 'android:id/aerr_wait' -or $_.Name -in 'Wait', 'Attendre' }) + @($system | Where-Object { $_.Name -in 'Close app', 'OK', "Fermer l'application" }) |
@@ -384,8 +476,37 @@ function Clear-SystemDialog([hashtable] $Ctx, $Ui) {
   $true
 }
 
+function Stop-App([hashtable] $Ctx, [string] $Package) {
+  if ($script:Platform -eq 'ios') { Invoke-Simctl $Ctx @('terminate', $script:Udid, $Package) | Out-Null }
+  else { Invoke-Shell $Ctx "am force-stop $Package" | Out-Null }
+}
+
+# Whether the app runs (iOS: launchctl of the simulator lists it with a pid as UIKitApplication:<bundle>).
+function Test-AppAlive([hashtable] $Ctx, [string] $Package) {
+  if ($script:Platform -eq 'ios') {
+    $list = (Invoke-Simctl $Ctx @('spawn', $script:Udid, 'launchctl', 'list')).Text
+    return [bool](@("$list" -split "`r?`n" | Where-Object { $_ -match "^\s*\d+\s.*UIKitApplication:$([regex]::Escape($Package))" }).Count)
+  }
+  [bool]((Invoke-Shell $Ctx "pidof $Package").Text.Trim())
+}
+
+# The log of the app on iOS (the unified log of the simulator, by its process), and its crash report when it stopped.
+function Save-IosLog([hashtable] $Ctx, [hashtable] $Target, [string] $File) {
+  $process = if ($Target.Process) { $Target.Process } else { ($Target.Package -split '\.')[-1] }
+  $log = (Invoke-Simctl $Ctx @('spawn', $script:Udid, 'log', 'show', '--last', '10m', '--style', 'compact', '--predicate', "process == `"$process`"")).Text
+  $reports = Join-Path $HOME 'Library/Logs/DiagnosticReports'
+  $crash = if (Test-Path -LiteralPath $reports) {
+    Get-ChildItem -LiteralPath $reports -File -Filter "$process*" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-15) } |
+      Sort-Object LastWriteTime -Descending | Select-Object -First 1
+  }
+  @("== log of $process", $log, '== crash report', $(if ($crash) { Get-Content -Raw -LiteralPath $crash.FullName } else { '(none)' })) |
+    Set-Content -LiteralPath (Join-Path $Ctx.Dir $File) -Encoding utf8
+  $crash
+}
+
 # One sample on the device: started from scratch (force-stop, then its launcher activity), then pages, details and dialogs.
 function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
+  $script:Bundle = $Target.Package
   $dir = Join-Path $Options.OutDir $Target.Name
   if (Test-Path -LiteralPath $dir) { Remove-Item -LiteralPath $dir -Recurse -Force }
   New-Item -ItemType Directory -Force -Path $dir | Out-Null
@@ -394,15 +515,20 @@ function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
     Calls = 0; AdbMs = 0; LastXml = $null; StepMs = $Options.StepTimeoutMs; Width = $Options.Width; Height = $Options.Height
     MenuNames = @($Options.MenuOrder); AnimalPages = @($Options.FirstAnimal.Keys); CurrentTitles = @()
   }
-  $report = [ordered]@{ kind = 'android'; package = $Target.Package; apk = $Target.Apk; status = 'fail'; startSeconds = $null
+  $report = [ordered]@{ kind = $script:Platform; package = $Target.Package; apk = $Target.Apk; status = 'fail'; startSeconds = $null
     pages = [ordered]@{}; details = [ordered]@{}; dialogs = [ordered]@{}; problems = @() }
   try {
     if ($Target.Problem) { $report.problems += $Target.Problem; return $report }
-    Invoke-Shell $ctx "am force-stop $($Target.Package)" | Out-Null
-    Invoke-Shell $ctx 'logcat -c' | Out-Null
-    $launch = Invoke-Shell $ctx "monkey -p $($Target.Package) -c android.intent.category.LAUNCHER 1"
-    if ($launch.Text -match 'No activities found|monkey aborted') {
-      $report.problems += "the app did not start: $($launch.Text.Trim())"; return $report
+    Stop-App $ctx $Target.Package
+    if ($script:Platform -eq 'ios') {
+      $launch = Invoke-Simctl $ctx @('launch', $script:Udid, $Target.Package)
+      if (-not $launch.Ok) { $report.problems += "the app did not start: $($launch.Text.Trim())"; return $report }
+    } else {
+      Invoke-Shell $ctx 'logcat -c' | Out-Null
+      $launch = Invoke-Shell $ctx "monkey -p $($Target.Package) -c android.intent.category.LAUNCHER 1"
+      if ($launch.Text -match 'No activities found|monkey aborted') {
+        $report.problems += "the app did not start: $($launch.Text.Trim())"; return $report
+      }
     }
     $first = $Options.Pages[0]
     $ready = Wait-Ui $ctx ($Options.StartTimeoutSeconds * 1000) {
@@ -413,6 +539,20 @@ function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
       # Why: the process died (its crash, from the log), or it runs but shows nothing uiautomator can read (a UI drawn on one
       # surface, such as a Skia renderer without accessibility), or it shows texts that are not the expected ones.
       Save-AndroidEvidence $ctx 'start'
+      if ($script:Platform -eq 'ios') {
+        $alive = Test-AppAlive $ctx $Target.Package
+        $crash = Save-IosLog $ctx $Target 'log-app.txt'
+        $why = if (-not $alive) {
+          "the process is not running" + $(if ($crash) { " (crash report $($crash.Name), in log-app.txt)" } else { ' (see log-app.txt)' })
+        } else {
+          $ui = Get-Ui $ctx
+          $named = @($ui | Where-Object { $_.Name } | ForEach-Object { $_.Name } | Select-Object -Unique)
+          if (-not $named.Count) { "the process runs and exposes no text to accessibility ($(@($ui).Count) node(s); see start.png, start.json)" }
+          else { "the process runs and shows: $(($named | Select-Object -First 8) -join ', ')" }
+        }
+        $report.problems += "the app did not show '$first' within $($Options.StartTimeoutSeconds) s; $why"
+        return $report
+      }
       $errors = (Invoke-Adb $ctx @('logcat', '-d', '-t', '2000', '*:E')).Text
       $errors | Set-Content -LiteralPath (Join-Path $dir 'logcat-errors.txt') -Encoding utf8
       (Invoke-Adb $ctx @('logcat', '-d', '-t', '2000')).Text | Set-Content -LiteralPath (Join-Path $dir 'logcat.txt') -Encoding utf8
@@ -490,15 +630,16 @@ function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
     $ctx.Trace | ForEach-Object { $_ | ConvertTo-Json -Compress } | Set-Content -LiteralPath (Join-Path $dir 'calls.jsonl') -Encoding utf8
     # A failed run keeps the log of the app while it is still running (an exception caught and logged by the framework shows
     # there, not on screen: a page that stays empty), and the crash buffer.
-    if ($report.status -ne 'ok') {
+    if ($report.status -ne 'ok' -and $script:Platform -eq 'ios') { try { $null = Save-IosLog $ctx $Target 'log-app.txt' } catch { } }
+    elseif ($report.status -ne 'ok') {
       try {
         $appPid = (Invoke-Shell $ctx "pidof $($Target.Package)").Text.Trim()
         $log = if ($appPid -match '^\d+') { (Invoke-Adb $ctx @('logcat', '-d', "--pid=$($appPid -replace '\s.*$', '')")).Text } else { (Invoke-Adb $ctx @('logcat', '-d', '-t', '3000', '*:W')).Text }
         @("== pid $appPid", $log, '== crash buffer', (Invoke-Adb $ctx @('logcat', '-d', '-b', 'crash')).Text) | Set-Content -LiteralPath (Join-Path $dir 'logcat-app.txt') -Encoding utf8
       } catch { }
     }
-    Invoke-Shell $ctx "am force-stop $($Target.Package)" | Out-Null
+    Stop-App $ctx $Target.Package
   }
 }
 
-Export-ModuleMember -Function Set-AdbTarget, Invoke-Adb, Invoke-AndroidSmoke
+Export-ModuleMember -Function Set-AdbTarget, Set-IosTarget, Invoke-Adb, Invoke-Idb, Invoke-AndroidSmoke

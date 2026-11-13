@@ -5,7 +5,8 @@
 .DESCRIPTION
   - Windows: run.ps1 (WPF, Avalonia, MAUI, Uno, WinUI 3), then run-wsl.ps1 (Avalonia on Linux, in WSL) when WSL is there.
   - Linux: lib/wsl-run.sh straight on this machine (Avalonia; it needs a display: a desktop session, or xvfb-run in CI).
-  - macOS: run.ps1 (Avalonia; not Uno, whose accessibility tree empties on macOS).
+  - macOS: run.ps1 (Avalonia; not Uno, whose accessibility tree empties on macOS), then run-ios.ps1 (MAUI, Avalonia in the iOS
+    Simulator, driven by idb).
   - Everywhere: run-android.ps1 (MAUI, Uno, Avalonia on Android) when an Android SDK is found.
 
   The tests take the screen (physical clicks), so they run one after the other, never at the same time. Each one writes its
@@ -22,7 +23,7 @@
 #>
 [CmdletBinding()]
 param(
-  # Desktop (run.ps1), Wsl (Windows only), Linux (Linux only), Android. Default: all that apply here.
+  # Desktop (run.ps1), Wsl (Windows only), Linux (Linux only), Ios (macOS only), Android. Default: all that apply here.
   [string[]] $Only = @(),
   [string[]] $Skip = @(),
   # Builds again (passed on to every script).
@@ -78,6 +79,8 @@ if ($IsWindows) {
 } elseif ($IsMacOS) {
   # Avalonia only: Uno 6.7 on macOS empties its accessibility tree after the first page change (only the window buttons are left).
   $suites.Add(@{ Name = 'Desktop'; Platform = 'macOS'; Report = 'out/native-smoke'; Run = { & $pwshExe -NoProfile -File (Join-Path $here 'run.ps1') -Hosts 'Avalonia' @buildArgs @common } })
+  # MAUI and Avalonia in the iOS Simulator (idb).
+  $suites.Add(@{ Name = 'Ios'; Platform = 'iOS (simulator)'; Report = 'out/ios-smoke'; Run = { & $pwshExe -NoProfile -File (Join-Path $here 'run-ios.ps1') @buildArgs @common } })
 } elseif ($IsLinux) {
   $suites.Add(@{ Name = 'Linux'; Platform = 'Linux'; Report = 'out/native-smoke-wsl'; Run = {
     & bash (Join-Path $here 'lib/wsl-run.sh') $repo 'Avalonia' '0' $(if ($Build) { '1' } else { '0' }) @common } })
