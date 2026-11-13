@@ -1354,6 +1354,16 @@ function Approve-NotificationPrompt([hashtable] $Ctx) {
   $null
 }
 
+# Who shows the permission prompt, and what the system says: the whole screen, the apps agent-desktop sees, the notification daemons, the bundle.
+function Save-MacNotificationEvidence([hashtable] $Ctx) {
+  $dir = $Ctx.Dir
+  try { & screencapture -x (Join-Path $dir 'notification-System-screen.png') 2>&1 | Out-Null } catch { }
+  try { Set-Content -LiteralPath (Join-Path $dir 'notification-System-apps.json') -Value (Invoke-Ad $Ctx @('list-apps')).raw -Encoding utf8 } catch { }
+  try { (& ps -axo pid,comm 2>&1 | Select-String -Pattern 'notif|usernoted|UserNotification|ControlCenter|SystemUIServer|XAnimals') -join "`n" | Set-Content -LiteralPath (Join-Path $dir 'notification-System-processes.txt') -Encoding utf8 } catch { }
+  try { (& log show --last 3m --style compact --predicate 'process == "usernoted" OR process == "UserNotificationCenter" OR eventMessage CONTAINS "dev.routeables"' 2>&1 | Select-Object -Last 200) -join "`n" | Set-Content -LiteralPath (Join-Path $dir 'notification-System-log.txt') -Encoding utf8 } catch { }
+  try { (& bash -c 'for d in "$TMPDIR"routeables-bundles/*.app; do echo "== $d"; plutil -p "$d/Contents/Info.plist"; codesign -dvv "$d" 2>&1; ls "$d/Contents/MacOS" | head -5; done') -join "`n" | Set-Content -LiteralPath (Join-Path $dir 'notification-System-bundle.txt') -Encoding utf8 } catch { }
+}
+
 # Presses one button of the notifications of the Dialogs page, and checks what comes of it.
 #  - A notification of the application (Information, Success, Warning, Error): its title must appear, then a click on it must write
 #    "Clicked ..." (or "Closed ...": some hosts close it after the click) on the Result line.
@@ -1410,21 +1420,14 @@ function Test-Notification([hashtable] $Ctx, [hashtable] $Spec, [string] $Previo
                        else { "the notification '$($Spec.Title)' did not appear in $($Spec.WaitMs) ms" }
       Save-Evidence $Ctx "notification-$($Spec.Button)"
       Save-DialogProbe $Ctx "notification-probe-$($Spec.Button)"
-      if ($Spec.System -and $IsMacOS) {
-        # Who shows the permission prompt, and what the system says: the whole screen, the apps agent-desktop sees, the notification daemons.
-        $dir = $Ctx.Dir
-        try { & screencapture -x (Join-Path $dir 'notification-System-screen.png') 2>&1 | Out-Null } catch { }
-        try { Set-Content -LiteralPath (Join-Path $dir 'notification-System-apps.json') -Value (Invoke-Ad $Ctx @('list-apps')).raw -Encoding utf8 } catch { }
-        try { (& ps -axo pid,comm 2>&1 | Select-String -Pattern 'notif|usernoted|UserNotification|ControlCenter|SystemUIServer') -join "`n" | Set-Content -LiteralPath (Join-Path $dir 'notification-System-processes.txt') -Encoding utf8 } catch { }
-        try { (& log show --last 3m --style compact --predicate 'process == "usernoted" OR process == "UserNotificationCenter" OR eventMessage CONTAINS "dev.routeables"' 2>&1 | Select-Object -Last 150) -join "`n" | Set-Content -LiteralPath (Join-Path $dir 'notification-System-log.txt') -Encoding utf8 } catch { }
-      }
+      if ($Spec.System -and $IsMacOS) { Save-MacNotificationEvidence $Ctx }
       return $report
     }
 
     if ($Spec.System) {
       $report.result = $script:noteNode.Name
       if ($report.result -eq $Spec.Sent) { $report.status = 'ok' }
-      elseif ($Ctx.SystemNotificationRequired) { $report.detail = "this host must have a notification center: $($report.result)"; Save-Evidence $Ctx "notification-$($Spec.Button)" }
+      elseif ($Ctx.SystemNotificationRequired) { $report.detail = "this host must have a notification center: $($report.result)"; Save-Evidence $Ctx "notification-$($Spec.Button)"; if ($IsMacOS) { Save-MacNotificationEvidence $Ctx } }
       else { $report.status = 'unverified'; $report.detail = $report.result }
       return $report
     }
