@@ -1,4 +1,4 @@
-# The smoke test of the XAnimals samples on Android (an emulator or a device), driven by adb. Loaded by run-android.ps1.
+﻿# The smoke test of the XAnimals samples on Android (an emulator or a device), driven by adb. Loaded by run-android.ps1.
 #
 # agent-desktop reads the accessibility tree of desktop windows; the window of the emulator is a picture to it. On Android the same
 # tree comes from uiautomator: "uiautomator dump" gives every node of the screen with its text, its content description (the
@@ -361,6 +361,19 @@ function Write-AndroidStep([hashtable] $Ctx, [string] $Text, [string] $Color = '
 
 function Get-AndroidColor([string] $Status) { switch ($Status) { 'ok' { 'Green' } 'unverified' { 'Yellow' } 'skipped' { 'DarkGray' } default { 'Red' } } }
 
+# A system dialog over the app ("System UI isn't responding", "... keeps stopping"): frequent on an emulator without a GPU (CI),
+# where the system is slow right after boot. Answered "Wait" (else "Close app" / "OK"), so that the app comes back on top.
+# True when one was answered.
+function Clear-SystemDialog([hashtable] $Ctx, $Ui) {
+  $system = @($Ui | Where-Object { $_.Package -in 'android', 'com.android.systemui' })
+  if (-not @($system | Where-Object { $_.Name -match "isn.t responding|keeps stopping|has stopped|ne r.pond pas|s'arr.te" }).Count) { return $false }
+  $button = @($system | Where-Object { $_.Id -eq 'android:id/aerr_wait' -or $_.Name -in 'Wait', 'Attendre' }) + @($system | Where-Object { $_.Name -in 'Close app', 'OK', "Fermer l'application" }) |
+    Select-Object -First 1
+  if (-not $button) { Invoke-Shell $Ctx 'input keyevent KEYCODE_BACK' | Out-Null } else { Invoke-Tap $Ctx $button.X $button.Y }
+  Write-AndroidStep $Ctx "system dialog answered: $(@($system | Where-Object Name | ForEach-Object Name | Select-Object -First 2) -join ' / ')" 'DarkYellow'
+  $true
+}
+
 # One sample on the device: started from scratch (force-stop, then its launcher activity), then pages, details and dialogs.
 function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
   $dir = Join-Path $Options.OutDir $Target.Name
@@ -384,6 +397,7 @@ function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
     $first = $Options.Pages[0]
     $ready = Wait-Ui $ctx ($Options.StartTimeoutSeconds * 1000) {
       param($u)
+      if (Clear-SystemDialog $ctx $u) { return $null }
       if (@($u | Where-Object { $_.Package -eq $Target.Package }).Count -and (@(Find-Named $u $first).Count -or @(Find-Named $u $Options.FirstAnimal[$first]).Count)) { $true } else { $null }
     }
     if (-not $ready) {
@@ -407,7 +421,11 @@ function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
         $ui = Get-Ui $ctx
         $mine = @($ui | Where-Object { $_.Package -eq $Target.Package })
         $named = @($mine | Where-Object { $_.Name } | ForEach-Object { $_.Name } | Select-Object -Unique)
-        if (-not $mine.Count) { 'the process runs but its window is not on screen' }
+        if (-not $mine.Count) {
+          $others = @($ui | Where-Object { $_.Package } | Group-Object Package | ForEach-Object {
+            "$($_.Name) ($((@($_.Group | Where-Object Name | ForEach-Object Name | Select-Object -Unique -First 4)) -join ', '))" })
+          "the process runs but its window is not on screen; on screen: $(if ($others) { $others -join '; ' } else { 'nothing readable' }) (see start.png)"
+        }
         elseif (-not $named.Count) {
           $classes = @($mine | ForEach-Object { ($_.Class -split '\.')[-1] } | Select-Object -Unique) -join ', '
           "the process runs, its window has $($mine.Count) node(s) ($classes) and no text: the UI is drawn without exposing it to accessibility (see start.png, start.xml)"

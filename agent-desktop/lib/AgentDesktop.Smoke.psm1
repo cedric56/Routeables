@@ -20,7 +20,8 @@ $script:AdPath = $null
 $script:HeadedMutexName = 'RouteablesAgentDesktopHeaded'
 
 # The roles of a list item, a menu item or a tab, whatever the toolkit.
-$script:ItemRoles = 'option', 'listitem', 'menuitem', 'treeitem', 'tabitem', 'tab'
+# row: a list item on macOS when the toolkit gives it the AXRow role (Uno: listitem, option, treeitem all become AXRow).
+$script:ItemRoles = 'option', 'listitem', 'menuitem', 'treeitem', 'tabitem', 'tab', 'row'
 
 # ------------------------------------------------------------------------------------------------------------------------------
 # agent-desktop
