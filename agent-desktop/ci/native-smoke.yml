@@ -81,6 +81,45 @@ jobs:
           name: native-smoke-linux
           path: out/native-smoke-wsl
 
+  # Avalonia and Uno (Skia desktop) on macOS, on a real Mac (Apple Silicon). A hosted macOS runner has a logged-in desktop, and its
+  # agent (/opt/hca/hosted-compute-agent) holds the Accessibility permission; macOS grants it to what a step starts, since the
+  # agent is their responsible process (see configure-tccdb-macos.sh in actions/runner-images): agent-desktop needs no setup.
+  # Not blocking until a first green run.
+  macos:
+    name: macOS (Avalonia, Uno)
+    runs-on: macos-15
+    continue-on-error: true
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tools
+        run: npm install -g agent-desktop
+      # Stops at once, with the reason, if agent-desktop cannot read the other applications (instead of failing every page).
+      - name: Accessibility permission
+        shell: pwsh
+        run: |
+          $report = agent-desktop permissions | ConvertFrom-Json
+          $report.data | ConvertTo-Json -Depth 5
+          if ($report.data.accessibility.state -ne 'granted') {
+            Write-Error "agent-desktop has no Accessibility permission on this runner: $($report.data.accessibility | ConvertTo-Json -Compress)"
+          }
+      - name: Smoke
+        shell: pwsh
+        run: ./agent-desktop/run-all.ps1 -Only Desktop -Build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-smoke-macos
+          path: |
+            out/native-smoke
+            out/all-smoke
+
   # MAUI, Uno, Avalonia on Android, in an emulator with hardware acceleration (KVM, enabled on the hosted Linux runners).
   android:
     name: Android (MAUI, Uno, Avalonia)

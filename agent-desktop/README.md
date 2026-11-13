@@ -112,10 +112,13 @@ minutes each, real windows).
 - **windows** (windows-latest): WPF, Avalonia, MAUI, Uno, WinUI 3. The hosted Windows runners have an interactive desktop, where
   UI Automation and physical clicks work; the screen is enlarged to 1920x1080 first.
 - **linux** (ubuntu-24.04): Avalonia, under Xvfb with openbox and the AT-SPI bus, through `lib/wsl-run.sh`.
+- **macos** (macos-15, Apple Silicon): Avalonia and Uno with `run.ps1`, as on Windows. The hosted runner has a logged-in desktop
+  and its agent holds the Accessibility permission, which macOS extends to the processes a step starts: nothing to grant. A step
+  checks it first (`agent-desktop permissions`) and stops with the reason if it is missing.
 - **android** (ubuntu-24.04, KVM): MAUI, Uno, Avalonia in an emulator started by `reactivecircus/android-emulator-runner`.
 
-Each job uploads its report and evidence as an artifact. Not in CI: Uno on Linux (no AT-SPI in Uno yet) and macOS (the
-Accessibility permission of agent-desktop cannot be granted on a hosted runner without a screen).
+Each job uploads its report and evidence as an artifact. Not in CI: Uno on Linux (no AT-SPI in Uno yet). The linux and macos jobs
+do not fail the workflow until they have passed once on a hosted runner (`continue-on-error`).
 
 ## Linux hosts in WSL: `run-wsl.ps1`
 
