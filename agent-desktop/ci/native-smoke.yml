@@ -120,9 +120,13 @@ jobs:
             out/native-smoke
             out/all-smoke
 
-  # MAUI, Uno, Avalonia on Android, in an emulator with hardware acceleration (KVM, enabled on the hosted Linux runners).
+  # MAUI and Avalonia on Android, in an emulator with hardware acceleration (KVM, enabled on the hosted Linux runners).
+  # Not Uno yet: its Android app starts but exposes no text to uiautomator (its screen is a few nodes with no text), so every page
+  # would fail; add it back (build step and -Hosts) once run-android.ps1 passes it on a local emulator.
+  # EmbedAssembliesIntoApk: a Debug APK leaves the .NET assemblies out by default (fast deployment); installed with adb, it would
+  # stop at start.
   android:
-    name: Android (MAUI, Uno, Avalonia)
+    name: Android (MAUI, Avalonia)
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
@@ -144,9 +148,8 @@ jobs:
       # Built before the emulator starts: run-android.ps1 then finds the APKs and only installs them.
       - name: Build the APKs
         run: |
-          dotnet build samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-android -p:TreatWarningsAsErrors=false
-          dotnet build samples/XAnimals.Uno/XAnimals.Uno.csproj -c Debug -f net10.0-android -p:TreatWarningsAsErrors=false
-          dotnet build samples/XAnimals.Avalonia.Android/XAnimals.Avalonia.Android.csproj -c Debug -p:TreatWarningsAsErrors=false
+          dotnet build samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-android -p:TreatWarningsAsErrors=false -p:EmbedAssembliesIntoApk=true
+          dotnet build samples/XAnimals.Avalonia.Android/XAnimals.Avalonia.Android.csproj -c Debug -p:TreatWarningsAsErrors=false -p:EmbedAssembliesIntoApk=true
       - name: Smoke
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -156,7 +159,7 @@ jobs:
           profile: pixel_7
           disable-animations: true
           emulator-options: -no-window -no-snapshot-save -no-boot-anim -gpu swiftshader_indirect -noaudio
-          script: pwsh agent-desktop/run-android.ps1 -Serial emulator-5554 -AndroidSdk "$ANDROID_HOME"
+          script: pwsh agent-desktop/run-android.ps1 -Serial emulator-5554 -AndroidSdk "$ANDROID_HOME" -Hosts Maui,Avalonia
       - uses: actions/upload-artifact@v4
         if: always()
         with:

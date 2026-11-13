@@ -64,7 +64,9 @@ $common = @()
 if ($Pages.Count) { $common += @('-Pages', ($Pages -join ',')) }
 if ($SkipDialogs) { $common += '-SkipDialogs' }
 if ($SkipDetails) { $common += '-SkipDetails' }
-$buildArgs = if ($Build) { @("-Build") } else { @() }
+# Arrays, always: "if" would turn a one-item array into its string, and splatting a string to a program passes its characters one by
+# one ("-Build" became -, B, u, i, l, d: run.ps1 then got "d" for -StartTimeoutSeconds).
+$buildArgs = @(if ($Build) { '-Build' })
 
 # What this machine can run, in the order it runs.
 $suites = [Collections.Generic.List[hashtable]]::new()
@@ -74,7 +76,7 @@ if ($IsWindows) {
     $suites.Add(@{ Name = 'Wsl'; Platform = 'Linux (WSL)'; Report = 'out/native-smoke-wsl'; Run = { & $pwshExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $here 'run-wsl.ps1') @buildArgs @common } })
   }
 } elseif ($IsMacOS) {
-  $suites.Add(@{ Name = 'Desktop'; Platform = 'macOS'; Report = 'out/native-smoke'; Run = { & $pwshExe -NoProfile -File (Join-Path $here 'run.ps1') -Hosts Avalonia, Uno @buildArgs @common } })
+  $suites.Add(@{ Name = 'Desktop'; Platform = 'macOS'; Report = 'out/native-smoke'; Run = { & $pwshExe -NoProfile -File (Join-Path $here 'run.ps1') -Hosts 'Avalonia,Uno' @buildArgs @common } })
 } elseif ($IsLinux) {
   $suites.Add(@{ Name = 'Linux'; Platform = 'Linux'; Report = 'out/native-smoke-wsl'; Run = {
     & bash (Join-Path $here 'lib/wsl-run.sh') $repo 'Avalonia' '0' $(if ($Build) { '1' } else { '0' }) @common } })
@@ -102,7 +104,7 @@ foreach ($suite in $selected) {
   $watch = [Diagnostics.Stopwatch]::StartNew()
   $code = 0
   try { & $suite.Run; $code = $LASTEXITCODE } catch { Write-Host $_.Exception.Message -ForegroundColor Red; $code = 2 }
-  $runs += [pscustomobject]@{ Suite = $suite; Code = $code; Seconds = [Math]::Round($watch.Elapsed.TotalSeconds, 1); Report = $reportPath }
+  $runs += [pscustomobject]@{ Suite = $suite; Code = $code; Seconds = [Math]::Round($watch.Elapsed.TotalSeconds, 1); Report = $reportPath; Asked = $Only -contains $suite.Name }
 }
 
 # ------------------------------------------------------------------------------------------------------------------------------
@@ -121,8 +123,10 @@ function Format-Count($Section) {
 $rows = [Collections.Generic.List[object]]::new()
 foreach ($run in $runs) {
   if (-not (Test-Path -LiteralPath $run.Report)) {
-    # No report: the script stopped before testing (no SDK, no WSL, a build that failed ...): its own output says why.
-    $rows.Add([pscustomobject]@{ Platform = $run.Suite.Platform; Host = '-'; Status = $(if ($run.Code -eq 0) { 'OK' } else { 'NOT RUN' }); Pages = '-'; Details = '-'; Dialogs = '-'; Time = "$($run.Seconds)s"; Problems = "no report (exit code $($run.Code))" })
+    # No report: the script stopped before testing (no SDK, no WSL, a build that failed, a wrong argument ...): its own output
+    # says why. Never a pass: a suite asked for by -Only (as in CI) that did not run fails; one picked by default is "not run".
+    $status = if ($run.Code -ne 0 -and $run.Asked) { 'FAIL' } else { 'NOT RUN' }
+    $rows.Add([pscustomobject]@{ Platform = $run.Suite.Platform; Host = '-'; Status = $status; Pages = '-'; Details = '-'; Dialogs = '-'; Time = "$($run.Seconds)s"; Problems = "no report (exit code $($run.Code))" })
     continue
   }
   $report = Get-Content -Raw -LiteralPath $run.Report | ConvertFrom-Json
@@ -169,6 +173,8 @@ Set-Content -LiteralPath (Join-Path $outDir 'summary.md') -Value $md.ToString() 
 if ($env:GITHUB_STEP_SUMMARY) { Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Value $md.ToString() }
 
 $failed = @($rows | Where-Object { $_.Status -notin 'OK', 'NOT RUN' }).Count
+# Nothing tested at all is not a pass either.
+if (-not @($rows | Where-Object { $_.Status -ne 'NOT RUN' }).Count) { $failed = [Math]::Max($failed, 1); Write-Host 'No suite ran a test.' -ForegroundColor Red }
 Write-Host ''
 Write-Host ("{0} in {1:0}s. Summary: {2}" -f $(if ($failed) { "$failed FAILED" } else { 'All passed' }), $total.Elapsed.TotalSeconds, (Join-Path $outDir 'summary.md')) -ForegroundColor $(if ($failed) { 'Red' } else { 'Green' })
 exit $(if ($failed) { 1 } else { 0 })

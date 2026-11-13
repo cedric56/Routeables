@@ -115,7 +115,8 @@ minutes each, real windows).
 - **macos** (macos-15, Apple Silicon): Avalonia and Uno with `run.ps1`, as on Windows. The hosted runner has a logged-in desktop
   and its agent holds the Accessibility permission, which macOS extends to the processes a step starts: nothing to grant. A step
   checks it first (`agent-desktop permissions`) and stops with the reason if it is missing.
-- **android** (ubuntu-24.04, KVM): MAUI, Uno, Avalonia in an emulator started by `reactivecircus/android-emulator-runner`.
+- **android** (ubuntu-24.04, KVM): MAUI and Avalonia in an emulator started by `reactivecircus/android-emulator-runner`. Not Uno
+  yet: its Android app exposes no text to uiautomator.
 
 Each job uploads its report and evidence as an artifact. Not in CI: Uno on Linux (no AT-SPI in Uno yet). The linux and macos jobs
 do not fail the workflow until they have passed once on a hosted runner (`continue-on-error`).

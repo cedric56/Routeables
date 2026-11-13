@@ -3,6 +3,8 @@
   <PropertyGroup>
     <!-- The desktop (Skia) head. Add net10.0-android, net10.0-ios, net10.0-browserwasm... as needed, with their platform folders. -->
     <TargetFrameworks>net10.0-android;net10.0-ios;net10.0-browserwasm;net10.0-desktop</TargetFrameworks>
+    <!-- No iOS workload exists for Linux (NETSDK1178 at restore, even for -f net10.0-android): Windows and macOS keep it. -->
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('Linux'))">net10.0-android;net10.0-browserwasm;net10.0-desktop</TargetFrameworks>
     <!-- The CI builds the desktop head only: restore needs the workload of every target framework listed, and the Linux runner has none of them. -->
     <TargetFrameworks Condition="'$(CiBuild)' == 'true'">net10.0-desktop</TargetFrameworks>
     <OutputType>Exe</OutputType>
