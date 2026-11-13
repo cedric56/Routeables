@@ -42,7 +42,18 @@ function Invoke-Shell([hashtable] $Ctx, [string] $Command) { Invoke-Adb $Ctx @('
 
 # Every node of the screen: Name (its text, else its content description), Class, Id, Clickable, its bounds and centre, InList
 # (inside a list: a RecyclerView, a ListView ...), and Package. $null when the dump failed (the screen never went idle).
+# A system dialog over the app ("Pixel Launcher isn't responding": an emulator without a GPU, in CI, raises it at any moment) is
+# answered first, then the screen read again: no step sees it.
 function Get-Ui([hashtable] $Ctx) {
+  foreach ($try in 1..3) {
+    $ui = Read-Ui $Ctx
+    if (-not $ui -or -not (Clear-SystemDialog $Ctx $ui)) { return $ui }
+    Start-Sleep -Milliseconds 700
+  }
+  Read-Ui $Ctx
+}
+
+function Read-Ui([hashtable] $Ctx) {
   $xmlText = $null
   foreach ($try in 1..2) {
     $dump = Invoke-Adb $Ctx @('exec-out', 'uiautomator', 'dump', '/dev/tty')
@@ -361,9 +372,8 @@ function Write-AndroidStep([hashtable] $Ctx, [string] $Text, [string] $Color = '
 
 function Get-AndroidColor([string] $Status) { switch ($Status) { 'ok' { 'Green' } 'unverified' { 'Yellow' } 'skipped' { 'DarkGray' } default { 'Red' } } }
 
-# A system dialog over the app ("System UI isn't responding", "... keeps stopping"): frequent on an emulator without a GPU (CI),
-# where the system is slow right after boot. Answered "Wait" (else "Close app" / "OK"), so that the app comes back on top.
-# True when one was answered.
+# A system dialog over the app ("Pixel Launcher isn't responding", "... keeps stopping"): frequent on an emulator without a GPU
+# (CI). Answered "Wait" (else "Close app" / "OK"), so that the app comes back on top. True when one was answered.
 function Clear-SystemDialog([hashtable] $Ctx, $Ui) {
   $system = @($Ui | Where-Object { $_.Package -in 'android', 'com.android.systemui' })
   if (-not @($system | Where-Object { $_.Name -match "isn.t responding|keeps stopping|has stopped|ne r.pond pas|s'arr.te" }).Count) { return $false }
@@ -397,7 +407,6 @@ function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
     $first = $Options.Pages[0]
     $ready = Wait-Ui $ctx ($Options.StartTimeoutSeconds * 1000) {
       param($u)
-      if (Clear-SystemDialog $ctx $u) { return $null }
       if (@($u | Where-Object { $_.Package -eq $Target.Package }).Count -and (@(Find-Named $u $first).Count -or @(Find-Named $u $Options.FirstAnimal[$first]).Count)) { $true } else { $null }
     }
     if (-not $ready) {

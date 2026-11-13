@@ -297,7 +297,12 @@ function Get-Layout([hashtable] $Ctx, [string] $Surface) {
       $nodes.Add([pscustomobject]@{ Name = [string]$name; Id = [string]$nativeId; Role = $role; Center = $center; Bounds = (Get-Prop $node 'bounds'); Shown = $shown; InItem = $top.InItem })
     }
     $inItem = $top.InItem -or $role -in $script:ItemRoles
-    foreach ($child in @(Get-Prop $node 'children')) { if ($child) { $stack.Push([pscustomobject]@{ Node = $child; InItem = $inItem; Hidden = $hidden }) } }
+    # A popup host of WinUI (MAUI's action sheet on Windows: a window "Popup", 0 x 0, reported offscreen) holds shown content: its
+    # children are judged on their own bounds, not hidden with it.
+    $bounds = Get-Prop $node 'bounds'
+    $popupHost = $role -eq 'window' -and $states -contains 'offscreen' -and $bounds -and -not (Get-Prop $bounds 'width') -and -not (Get-Prop $bounds 'height')
+    $childHidden = if ($popupHost) { $top.Hidden } else { $hidden }
+    foreach ($child in @(Get-Prop $node 'children')) { if ($child) { $stack.Push([pscustomobject]@{ Node = $child; InItem = $inItem; Hidden = $childHidden }) } }
   }
   $nodes
 }
@@ -475,7 +480,7 @@ function New-Context([string] $Name, [string] $App, [hashtable] $Options) {
     # Remembered positions (screen coordinates, the window is maximized and does not move): they spare a find of one to two
     # seconds on Windows each time. A click at a remembered place that does not give the expected result falls back to a find.
     Overlay = $null; HeaderCenter = $null; MenuMap = @{}; MenuOrder = @($Options.MenuOrder); RankMenu = $null; RankMap = $null; ToggleCenter = $null; BackCenter = $null; ButtonMap = $null; LayerClosed = 0; HiddenId = $null; DialogKeys = $null; MenuMapRead = $false; Slot = $null; Parallel = $false; LastNavAt = 0; Unproven = 0
-    PagesOpened = 0; MenuBroken = $null; MenuMisses = 0; MenuEvidence = $false; MenuTrace = $null; DialogPlace = $null; DialogHidden = $false; OpenerEvidence = $false; KeysWorked = $false
+    PagesOpened = 0; MenuBroken = $null; MenuMisses = 0; MenuEvidence = $false; MenuTrace = $null; ScrolledFor = $null; DialogPlace = $null; DialogHidden = $false; OpenerEvidence = $false; KeysWorked = $false
     Headed = -not $Options.NoHeaded; StepMs = $Options.StepTimeoutMs; Screenshots = [bool]$Options.Screenshots
     Calls = 0; AdMs = 0; StartMs = 0; Clock = [Diagnostics.Stopwatch]::StartNew(); Trace = [Collections.Generic.List[object]]::new()
   }
