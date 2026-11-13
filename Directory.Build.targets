@@ -7,6 +7,15 @@
     <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
+  <!-- The samples reference the source generator as a project, not through the package: the same rule as build/Routeables.targets
+       of Routeables.Core, so that their Android and iOS applications (compiled as libraries) register their generated routes too. -->
+  <ItemGroup>
+    <CompilerVisibleProperty Include="RouteablesAutoRegister" />
+  </ItemGroup>
+  <PropertyGroup Condition="'$(RouteablesAutoRegister)' == '' And ('$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe')">
+    <RouteablesAutoRegister>true</RouteablesAutoRegister>
+  </PropertyGroup>
+
   <!-- The icon of the package. -->
   <ItemGroup Condition="'$(IsPackable)' != 'false' And '$(PackageIcon)' != ''">
     <None Include="$(MSBuildThisFileDirectory)images/icon.png" Pack="true" PackagePath="" Visible="false" />

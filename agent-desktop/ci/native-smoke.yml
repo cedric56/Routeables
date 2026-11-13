@@ -81,12 +81,13 @@ jobs:
           name: native-smoke-linux
           path: out/native-smoke-wsl
 
-  # Avalonia and Uno (Skia desktop) on macOS, on a real Mac (Apple Silicon). A hosted macOS runner has a logged-in desktop, and its
+  # Avalonia on macOS, on a real Mac (Apple Silicon). Not Uno: on macOS, Uno 6.7 empties its accessibility tree after the first
+  # page change. A hosted macOS runner has a logged-in desktop, and its
   # agent (/opt/hca/hosted-compute-agent) holds the Accessibility permission; macOS grants it to what a step starts, since the
   # agent is their responsible process (see configure-tccdb-macos.sh in actions/runner-images): agent-desktop needs no setup.
   # Not blocking until a first green run.
   macos:
-    name: macOS (Avalonia, Uno)
+    name: macOS (Avalonia)
     runs-on: macos-15
     continue-on-error: true
     timeout-minutes: 45

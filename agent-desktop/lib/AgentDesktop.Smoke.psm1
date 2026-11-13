@@ -275,7 +275,19 @@ function Close-PaneLocked([hashtable] $Ctx, $Layout) {
     $Ctx.ToggleCenter = Get-RefCenter $Ctx (Get-Prop $toggle 'ref_id')
     if (-not $Ctx.ToggleCenter) { return }
   }
-  Invoke-AdHeaded $Ctx @('mouse-click', '--xy', "$($Ctx.ToggleCenter.X),$($Ctx.ToggleCenter.Y)") | Out-Null
+  # A drawer drawn over the page, its button under it (Avalonia when the window is not maximized, as on macOS): the place of the
+  # button is then an entry of the open drawer, and a click there would open that page. Its layer closes it instead.
+  $t = $Ctx.ToggleCenter
+  $covered = $Layout -and @($Layout | Where-Object { $_.Shown -and $_.InItem -and $_.Bounds -and
+      $t.X -ge (Get-Prop $_.Bounds 'x') -and $t.X -le ((Get-Prop $_.Bounds 'x') + (Get-Prop $_.Bounds 'width')) -and
+      $t.Y -ge (Get-Prop $_.Bounds 'y') -and $t.Y -le ((Get-Prop $_.Bounds 'y') + (Get-Prop $_.Bounds 'height')) }).Count
+  $point = if ($covered) { Get-DismissPoint $Layout } else { $null }
+  if ($point) {
+    Invoke-AdHeaded $Ctx @('mouse-click', '--xy', "$($point.X),$($point.Y)") | Out-Null
+    $Ctx.LayerClosed++
+  } else {
+    Invoke-AdHeaded $Ctx @('mouse-click', '--xy', "$($t.X),$($t.Y)") | Out-Null
+  }
   # From now on the menu is closed between two pages: it is opened at the same place.
   $Ctx.OpenHow = 'mouse'
   Start-Sleep -Milliseconds 300

@@ -1,11 +1,11 @@
-<#
+﻿<#
 .SYNOPSIS
   Runs every smoke test of the XAnimals samples that this machine can run, one after the other, and sums them up.
 
 .DESCRIPTION
   - Windows: run.ps1 (WPF, Avalonia, MAUI, Uno, WinUI 3), then run-wsl.ps1 (Avalonia on Linux, in WSL) when WSL is there.
   - Linux: lib/wsl-run.sh straight on this machine (Avalonia; it needs a display: a desktop session, or xvfb-run in CI).
-  - macOS: run.ps1 (Avalonia, Uno).
+  - macOS: run.ps1 (Avalonia; not Uno, whose accessibility tree empties on macOS).
   - Everywhere: run-android.ps1 (MAUI, Uno, Avalonia on Android) when an Android SDK is found.
 
   The tests take the screen (physical clicks), so they run one after the other, never at the same time. Each one writes its
@@ -76,7 +76,8 @@ if ($IsWindows) {
     $suites.Add(@{ Name = 'Wsl'; Platform = 'Linux (WSL)'; Report = 'out/native-smoke-wsl'; Run = { & $pwshExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $here 'run-wsl.ps1') @buildArgs @common } })
   }
 } elseif ($IsMacOS) {
-  $suites.Add(@{ Name = 'Desktop'; Platform = 'macOS'; Report = 'out/native-smoke'; Run = { & $pwshExe -NoProfile -File (Join-Path $here 'run.ps1') -Hosts 'Avalonia,Uno' @buildArgs @common } })
+  # Avalonia only: Uno 6.7 on macOS empties its accessibility tree after the first page change (only the window buttons are left).
+  $suites.Add(@{ Name = 'Desktop'; Platform = 'macOS'; Report = 'out/native-smoke'; Run = { & $pwshExe -NoProfile -File (Join-Path $here 'run.ps1') -Hosts 'Avalonia' @buildArgs @common } })
 } elseif ($IsLinux) {
   $suites.Add(@{ Name = 'Linux'; Platform = 'Linux'; Report = 'out/native-smoke-wsl'; Run = {
     & bash (Join-Path $here 'lib/wsl-run.sh') $repo 'Avalonia' '0' $(if ($Build) { '1' } else { '0' }) @common } })

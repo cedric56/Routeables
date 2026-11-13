@@ -11,6 +11,12 @@
   <ItemGroup>
     <CompilerVisibleProperty Include="RouteablesAutoRegister" />
   </ItemGroup>
+  <!-- An application of a mobile platform (net10.0-android, net10.0-ios ...) is compiled as a library: the generator, which goes by
+       the kind of the compiled assembly, would write no registration there, and no page would be found ("No view is registered
+       under the key ..."). An application is known by its OutputType: it registers its routes on every platform. -->
+  <PropertyGroup Condition="'$(RouteablesAutoRegister)' == '' And ('$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe')">
+    <RouteablesAutoRegister>true</RouteablesAutoRegister>
+  </PropertyGroup>
 
   <PropertyGroup>
     <RouteablesCommunityToolkitMvvmVersion Condition="'$(RouteablesCommunityToolkitMvvmVersion)' == ''">8.4.2</RouteablesCommunityToolkitMvvmVersion>
