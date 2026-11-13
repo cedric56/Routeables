@@ -98,8 +98,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      # The android workload: Routeables.Avalonia and Routeables.Native also target net10.0-android on macOS, and restore needs the
+      # workload of every target, even for the desktop build (NETSDK1147). iOS is on the image already.
       - name: Tools
-        run: npm install -g agent-desktop
+        run: |
+          dotnet workload install android --skip-manifest-update
+          npm install -g agent-desktop
       # Stops at once, with the reason, if agent-desktop cannot read the other applications (instead of failing every page).
       - name: Accessibility permission
         shell: pwsh

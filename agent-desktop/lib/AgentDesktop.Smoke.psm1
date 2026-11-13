@@ -1,4 +1,4 @@
-# The smoke test of the native samples, driven by agent-desktop. Loaded by run.ps1.
+﻿# The smoke test of the native samples, driven by agent-desktop. Loaded by run.ps1.
 #
 # What the trees of the five hosts look like (read from real runs on Windows), and what follows from it:
 #  - a menu entry or an animal of a list is a list item whose accessible name is a class name ("...RouteableMenuEntry`1[...]",
@@ -611,7 +611,9 @@ function Find-ErrorText($Snapshot, [string[]] $Words) {
 # Windows: "Ouvrir navigation"), the PaneToggleButton of Uno and WinUI 3. WPF's menu is always shown.
 # The query that found it is kept, and tried first the next time (each find costs a second or more on Windows).
 function Find-MenuToggle([hashtable] $Ctx) {
-  $queries = @(@{ NativeId = 'PaneToggleButton' }, @{ NativeId = 'PART_PaneButton' }, @{ NativeId = 'TogglePaneButton' }, @{ Name = 'navigation' })
+  # By name last: Uno on macOS gives no AutomationId to macOS accessibility (no accessibilityIdentifier in Uno 6.7), only the name,
+  # here the content of the button of the Uno and WinUI 3 samples.
+  $queries = @(@{ NativeId = 'PaneToggleButton' }, @{ NativeId = 'PART_PaneButton' }, @{ NativeId = 'TogglePaneButton' }, @{ Name = 'navigation' }, @{ Name = '☰' })
   $key = { param($q) ($q.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join ';' }
   if ($Ctx.ToggleHow) {
     $known = & $key $Ctx.ToggleHow
@@ -659,7 +661,7 @@ function Find-MenuEntry([hashtable] $Ctx, [string] $Page) {
     }
   }
   $toggle = Find-MenuToggle $Ctx
-  if (-not $toggle) { $Ctx.MenuTrace = 'no menu button found (native id PaneToggleButton, PART_PaneButton, TogglePaneButton, or a name with "navigation")'; return $null }
+  if (-not $toggle) { $Ctx.MenuTrace = 'no menu button found (native id PaneToggleButton, PART_PaneButton, TogglePaneButton, or a name with "navigation" or "☰")'; return $null }
   $Ctx.MenuTrace = "button '$(Get-Prop $toggle 'name')' (role $(Get-Prop $toggle 'role'), found by $(($Ctx.ToggleHow.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join ';'))"
   # Physical first: on Avalonia the semantic click on the drawer button answers ok and leaves the drawer closed. Then the Toggle
   # pattern (the button is a switch there), then the semantic click. The way that opened the menu is tried first the next time.
