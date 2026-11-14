@@ -27,7 +27,7 @@ public class RouteableRequestThemeService : IRouteableRequestedThemeService
                 using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
                 return key?.GetValue("AppsUseLightTheme") is int light && light == 0 ? RouteableRequestedTheme.Dark : RouteableRequestedTheme.Light;
             }
-            catch (Exception ex) when (ex is System.Security.SecurityException or UnauthorizedAccessException or IOException)
+            catch (Exception ex) when (ex is System.Security.SecurityException or UnauthorizedAccessException or System.IO.IOException)
             {
                 return RouteableRequestedTheme.Default;
             }

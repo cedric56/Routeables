@@ -79,21 +79,23 @@ function Get-PageNodes {
   if (-not $snap.ok) { return , $nodes }
   $walk = $null
   $walk = {
-    param($node, $inPage, $inMenu)
+    param($node, $inPage, $inMenu, $inDialog)
     $name = "$($node.name)"
     if ($node.role -eq 'group' -and $name -eq 'Chrome Legacy Window') { $inPage = $true }
     if ($inPage -and $node.role -eq 'group' -and $name -eq 'Menu') { $inMenu = $true }
+    # A dialog is a window (or a dialog) of the page: its buttons are the answers, not the buttons of the page behind it.
+    if ($inPage -and $node.role -in 'window', 'dialog') { $inDialog = $true }
     if ($inPage) {
       $b = $node.bounds
       $nodes.Add([pscustomobject]@{
-        Role = "$($node.role)"; Name = $name; Ref = $node.ref_id; InMenu = $inMenu
+        Role = "$($node.role)"; Name = $name; Ref = $node.ref_id; InMenu = $inMenu; InDialog = $inDialog
         X = if ($b) { [double]$b.x } else { 0 }; Y = if ($b) { [double]$b.y } else { 0 }
         W = if ($b) { [double]$b.width } else { 0 }; H = if ($b) { [double]$b.height } else { 0 }
       })
     }
-    foreach ($child in @($node.children)) { if ($child) { & $walk $child $inPage $inMenu } }
+    foreach ($child in @($node.children)) { if ($child) { & $walk $child $inPage $inMenu $inDialog } }
   }
-  & $walk $snap.data.tree $false $false
+  & $walk $snap.data.tree $false $false $false
   , $nodes
 }
 
@@ -147,15 +149,23 @@ function Test-Page([string] $Page) {
 
 function Test-Detail([string] $Page, [string] $Animal) {
   # A link or a button first; else the smallest node of that name (not the picture or the text inside it).
-  $item = @(Wait-Nodes { -not $_.InMenu -and $_.Role -notin 'statictext', 'image', 'document' -and $_.Name.StartsWith($Animal) }) |
+  # Else the text of the name (Blazor: the item is a div without a role, the tree has only its picture and its texts): a click of the mouse on it.
+  $item = @(Wait-Nodes { -not $_.InMenu -and $_.Role -notin 'image', 'document' -and $_.Name.StartsWith($Animal) }) |
     Sort-Object @{ Expression = { if ($_.Role -in 'link', 'button') { 0 } else { 1 } } }, @{ Expression = { $_.W * $_.H } } | Select-Object -First 1
   if (-not $item) { Save-Evidence "detail-$Page-no-animal"; return New-Step 'fail' "'$Animal' never appeared" }
   if (-not (Invoke-Click $item)) { Save-Evidence "detail-$Page-click"; return New-Step 'fail' "'$Animal' could not be clicked" }
   $back = @(Wait-Nodes { -not $_.InMenu -and $_.Role -in 'link', 'button' -and $_.Name -match '^\W*Back\b' }) | Select-Object -First 1
   if (-not $back) { Save-Evidence "detail-$Page"; return New-Step 'fail' 'no Back button on the detail' }
   if (-not (Invoke-Click $back)) { Save-Evidence "detail-$Page-back"; return New-Step 'fail' 'Back could not be clicked' }
-  $list = Wait-Nodes { -not $_.InMenu -and $_.Role -notin 'statictext', 'image' -and $_.Name.StartsWith($Animal) }
-  if ($list.Count) { return New-Step 'ok' $null }
+  # The list is back when the Back button is gone and the animal is on the page again.
+  $watch = [Diagnostics.Stopwatch]::StartNew()
+  do {
+    $nodes = Get-PageNodes
+    $stillBack = @($nodes | Where-Object { -not $_.InMenu -and $_.Role -in 'link', 'button' -and $_.Name -match '^\W*Back\b' }).Count
+    $listed = @($nodes | Where-Object { -not $_.InMenu -and $_.Role -ne 'image' -and $_.Name.StartsWith($Animal) }).Count
+    if (-not $stillBack -and $listed) { return New-Step 'ok' $null }
+    Start-Sleep -Milliseconds 300
+  } while ($watch.ElapsedMilliseconds -lt $StepTimeoutMs)
   Save-Evidence "detail-$Page-after-back"
   New-Step 'fail' 'Back did not bring the list back'
 }
@@ -175,7 +185,10 @@ function Test-Dialog($Spec) {
   $answered = $null
   foreach ($answer in $Spec.Answers) {
     # An answer is a button that was not there before: below the opener, or in a layer over the page; the first one of that name that is not the opener.
-    $match = @(Wait-Nodes { $_.Role -in 'button', 'link' -and $_.Name -ieq $answer -and -not $_.InMenu -and $_.Ref -ne $opener.Ref } 1500) | Select-Object -First 1
+    # The one in the dialog if the tree has one (a page that posts a form is reloaded: the opener has a new ref, and the same name as an answer);
+    # else the first one that is not the opener (same place on the screen).
+    $match = @(Wait-Nodes { $_.Role -in 'button', 'link' -and $_.Name -ieq $answer -and -not $_.InMenu -and ($_.InDialog -or ($_.Ref -ne $opener.Ref -and ($_.X -ne $opener.X -or $_.Y -ne $opener.Y))) } 1500) |
+      Sort-Object @{ Expression = { if ($_.InDialog) { 0 } else { 1 } } } | Select-Object -First 1
     if ($match -and (Invoke-Click $match)) { $answered = $answer; break }
   }
   if (-not $answered) { Save-Evidence "dialog-$($Spec.Button)"; return New-Step 'fail' "no answer ($($Spec.Answers -join ', ')) found" }
