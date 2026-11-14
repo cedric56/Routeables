@@ -218,6 +218,9 @@ jobs:
         run: |
           # The generated files of the MAUI app go to the artifact: the registration of its routes (RouteRegistration.g.cs) is what to read when they are not found.
           dotnet build samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-android -p:TreatWarningsAsErrors=false -p:EmbedAssembliesIntoApk=true -p:EmitCompilerGeneratedFiles=true -p:CompilerGeneratedFilesOutputPath=${{ github.workspace }}/out/generated-maui
+          # What the build sees of the MAUI app: the properties the generator is given, and the file of the compiler that holds them.
+          dotnet msbuild samples/XAnimals.Maui/XAnimals.Maui.csproj -p:TargetFramework=net10.0-android -getProperty:OutputType,AndroidApplication,SingleProject,RouteablesAutoRegister > out/generated-maui/properties.json || true
+          cp samples/XAnimals.Maui/obj/Debug/net10.0-android/*.GeneratedMSBuildEditorConfig.editorconfig out/generated-maui/ || true
           dotnet build samples/XAnimals.Avalonia.Android/XAnimals.Avalonia.Android.csproj -c Debug -p:TreatWarningsAsErrors=false -p:EmbedAssembliesIntoApk=true
       - name: Smoke
         uses: reactivecircus/android-emulator-runner@v2

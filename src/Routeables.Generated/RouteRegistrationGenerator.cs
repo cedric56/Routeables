@@ -215,13 +215,21 @@ namespace Routeables.Generated
             // AddGeneratedRoutes() itself. RouteablesAutoRegister=false switches it off, and =true switches it on for a project the compiler
             // does not see as an executable (an app of a mobile platform, for example). A library has no such initializer: its module
             // would only be initialized when one of its types is first used, which is too late and unpredictable.
-            var autoRegister = context.CompilationProvider
-                .Select(static (compilation, _) => IsExecutable(compilation.Options.OutputKind))
+            var autoInputs = context.CompilationProvider
+                .Select(static (compilation, _) => compilation.Options.OutputKind)
                 .Combine(context.AnalyzerConfigOptionsProvider.Select(static (options, _) =>
-                    options.GlobalOptions.TryGetValue("build_property.RouteablesAutoRegister", out var value) ? value?.Trim() : null))
+                    options.GlobalOptions.TryGetValue("build_property.RouteablesAutoRegister", out var value) ? value?.Trim() : null));
+            var autoRegister = autoInputs
                 .Select(static (pair, _) =>
                     string.Equals(pair.Right, "true", StringComparison.OrdinalIgnoreCase)
-                    || (pair.Left && !string.Equals(pair.Right, "false", StringComparison.OrdinalIgnoreCase)));
+                    || (IsExecutable(pair.Left) && !string.Equals(pair.Right, "false", StringComparison.OrdinalIgnoreCase)));
+
+            // What the generator saw, in a file of its own: when an application finds no route, this says why the registration was not written.
+            context.RegisterSourceOutput(autoInputs, static (spc, pair) =>
+                spc.AddSource("RouteablesAutoRegister.g.cs", SourceText.From(
+                    $"// OutputKind: {pair.Left}; RouteablesAutoRegister: {pair.Right ?? "(not set)"}; registration written: " +
+                    $"{(string.Equals(pair.Right, "true", StringComparison.OrdinalIgnoreCase) || (IsExecutable(pair.Left) && !string.Equals(pair.Right, "false", StringComparison.OrdinalIgnoreCase)))}\n",
+                    Encoding.UTF8)));
 
             var combined = localViews.Collect()
                 .Combine(localRoutes.Collect())

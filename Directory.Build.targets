@@ -16,6 +16,16 @@
     <RouteablesAutoRegister>true</RouteablesAutoRegister>
   </PropertyGroup>
 
+  <!-- The same decision, taken when the compiler is about to run: a project of a mobile platform can change its OutputType after the
+       properties above were read, and the Android SDK tells an application by AndroidApplication. Without this the generator wrote no
+       registration for the MAUI application of Android ("No view is registered under the key ..."). -->
+  <Target Name="RouteablesAutoRegisterOfApplication" BeforeTargets="GenerateMSBuildEditorConfigFile;CoreCompile"
+          Condition="'$(RouteablesAutoRegister)' == '' And ('$(AndroidApplication)' == 'true' Or '$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe')">
+    <PropertyGroup>
+      <RouteablesAutoRegister>true</RouteablesAutoRegister>
+    </PropertyGroup>
+  </Target>
+
   <!-- The icon of the package. -->
   <ItemGroup Condition="'$(IsPackable)' != 'false' And '$(PackageIcon)' != ''">
     <None Include="$(MSBuildThisFileDirectory)images/icon.png" Pack="true" PackagePath="" Visible="false" />

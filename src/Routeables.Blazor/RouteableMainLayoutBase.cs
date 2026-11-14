@@ -192,12 +192,29 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
         var addressChosen = await UrlSync.StartAsync();
         addressChosen |= restored;
         await Initialize(Provider);
+        await ReadThemeAsync();
         await ApplyThemeAsync();
         // The default page only when the address did not already choose one (a link to /elephants/Mammoth).
         // Through SelectedEntry: it is what selects the entry in the menu, and it shows the page.
         // An application without a menu opens its home route here and not from the region: the address decides, and it is applied above.
         if (!addressChosen && !MainViewModel.SelectFirst())
             RegionStart.StartDefault(Provider);
+    }
+
+    // The page starts in the theme the application defined (data-wui-theme on <html>), else the one of the system: not always the dark one.
+    private async Task ReadThemeAsync()
+    {
+        try
+        {
+            await using var module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Routeables.Blazor/routeables-theme.js");
+            var dark = await module.InvokeAsync<string>("current") == "dark";
+            if (dark == Service.IsDarkMode)
+                return;
+            Service.IsDarkMode = dark;
+            await RefreshAsync("MainLayout.ReadTheme");
+        }
+        catch (JSDisconnectedException) { }
+        catch (JSException) { }   // no module (a page without the static files): the default stays
     }
 
     private async void ThemeChanged(object? sender, RouteableRequestedTheme theme)
