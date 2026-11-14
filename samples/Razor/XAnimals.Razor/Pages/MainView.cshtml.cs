@@ -48,6 +48,7 @@ public class MainViewPageModel(IRouteableMenuViewModel main, IRouter router, ISe
         var url = "/" + (path?.TrimStart('/') ?? "") + Request.QueryString.Value;
 
         interactions.Expire();
+        Console.WriteLine($"Routeables sample: GET {url} toasts={interactions.Toasts.Count} dialog={interactions.Pending is not null}");
 
         // The same address again (a reload, the redirect after a button): the page as it is. Another one starts it.
         if (state.ServedUrl == url && router.CurrentView is not null)
@@ -72,6 +73,7 @@ public class MainViewPageModel(IRouteableMenuViewModel main, IRouter router, ISe
         var before = router.CurrentViewModel;
 
         await PageActions.RunAsync(provider, form["target"].ToString(), form["do"].ToString(), form["value"].ToString());
+        Console.WriteLine($"Routeables sample: POST {form["target"]}/{form["do"]} toasts={interactions.Toasts.Count} dialog={interactions.Pending is not null}");
 
         // A button can move the router (Open Members, Sign out): the address follows the page that is shown.
         var url = Address(path ?? "") + Request.QueryString.Value;
