@@ -75,8 +75,8 @@ foreach ($name in $Hosts) {
     $pageFile = "$name/"
     Invoke-Ad @('list-apps') "$pageFile/apps.json" | Out-Null
     Invoke-Ad @('list-windows') "$pageFile/windows.json" | Out-Null
-    foreach ($app in 'Google Chrome', 'chrome', 'Chrome') {
-      $text = Invoke-Ad @('snapshot', '--app', $app, '--compact', '--max-depth', '60', '--include-bounds') "$pageFile/snapshot-$($app -replace ' ','_').json"
+    foreach ($app in 'chrome.exe', 'Google Chrome', 'chrome') {
+      $text = Invoke-Ad @('snapshot', '--app', $app, '--compact', '--max-depth', '50', '--include-bounds') "$pageFile/snapshot-$($app -replace ' ','_').json"
       if ($text -match '"ok"\s*:\s*true') {
         Invoke-Ad @('find', '--app', $app, '--role', 'link', '--limit', '40', '--include-bounds') "$pageFile/links.json" | Out-Null
         Invoke-Ad @('find', '--app', $app, '--role', 'button', '--limit', '40', '--include-bounds') "$pageFile/buttons.json" | Out-Null

@@ -2,7 +2,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction.Injections;
 using Routeables.Abstraction.Registrations;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Routeables.Abstraction.Registrations;
 
@@ -64,10 +66,58 @@ public static class RouteableAutoRegistration
     /// <returns><see langword="true"/> when routes were added.</returns>
     public static bool Apply(IServiceCollection services)
     {
+        RunModuleInitializers();
         (Assembly? Owner, Action<IServiceCollection> Run)[] registrations;
         lock (Gate)
             registrations = [.. Registrations];
+        if (registrations.Length == 0)
+            Debug.WriteLine("Routeables: no generated routes were handed to the host (no module initializer ran, and none was found). Call AddGeneratedRoutes() or register the routes yourself.");
         return Apply(services, registrations);
+    }
+
+    private static bool s_initializersRun;
+
+    // A module initializer runs when the runtime loads the module: that is what hands the routes to Add. A runtime that does not run it (seen on
+    // .NET MAUI for Android) leaves the list empty and every route unregistered. Running the constructor of the module of each assembly that
+    // references Routeables is what the runtime would have done (it runs once: a second call does nothing), so the default registration works
+    // there too. The Debug line says when it was needed.
+    private static void RunModuleInitializers()
+    {
+        lock (Gate)
+        {
+            if (s_initializersRun)
+                return;
+            s_initializersRun = true;
+        }
+
+        int before;
+        lock (Gate)
+            before = Registrations.Count;
+
+        var ran = new List<string>();
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            if (assembly.IsDynamic)
+                continue;
+            try
+            {
+                if (!assembly.GetReferencedAssemblies().Any(r => r.Name == "Routeables.Abstraction"))
+                    continue;
+                RuntimeHelpers.RunModuleConstructor(assembly.ManifestModule.ModuleHandle);
+                ran.Add(assembly.GetName().Name ?? "?");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Routeables: the module constructor of {assembly.GetName().Name} failed: {ex.Message}");
+            }
+        }
+
+        int after;
+        lock (Gate)
+            after = Registrations.Count;
+        Debug.WriteLine(after > before
+            ? $"Routeables: the module initializers had not run ({after - before} registration(s) found by running the module constructors of: {string.Join(", ", ran)})."
+            : $"Routeables: the module initializers had already run ({after} registration(s); checked: {string.Join(", ", ran)}).");
     }
 
     internal static bool Apply(IServiceCollection services, IReadOnlyList<Action<IServiceCollection>> registrations)
