@@ -240,11 +240,12 @@ foreach ($name in $Hosts) {
   }
 }
 
-# macOS: the build output of a sample in a .app: <temp>/routeables-bundles/<App>.app/Contents/{Info.plist,MacOS/...}, signed ad hoc. Returns the
+# macOS: the build output of a sample in a .app: ~/Applications/routeables-bundles/<App>.app/Contents/{Info.plist,MacOS/...}, signed ad hoc. Returns the
 # executable inside it. An application of a bundle is the only one the system lets post notifications.
 function New-MacBundle([string] $Exe, [string] $App) {
   # Outside the output folder: the artifact of a CI run would carry a copy of the whole application.
-  $root = Join-Path ([IO.Path]::GetTempPath()) "routeables-bundles/$App.app"
+  # In ~/Applications, not the temp folder: LaunchServices does not index /var/folders ("LSApplicationRecord failed to find <identifier>" even after lsregister -f).
+  $root = Join-Path ([Environment]::GetFolderPath('UserProfile')) "Applications/routeables-bundles/$App.app"
   if (Test-Path -LiteralPath $root) { Remove-Item -LiteralPath $root -Recurse -Force }
   $macos = Join-Path $root 'Contents/MacOS'
   New-Item -ItemType Directory -Force -Path $macos | Out-Null

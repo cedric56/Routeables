@@ -1361,7 +1361,7 @@ function Save-MacNotificationEvidence([hashtable] $Ctx) {
   try { Set-Content -LiteralPath (Join-Path $dir 'notification-System-apps.json') -Value (Invoke-Ad $Ctx @('list-apps')).raw -Encoding utf8 } catch { }
   try { (& ps -axo pid,comm 2>&1 | Select-String -Pattern 'notif|usernoted|UserNotification|ControlCenter|SystemUIServer|XAnimals') -join "`n" | Set-Content -LiteralPath (Join-Path $dir 'notification-System-processes.txt') -Encoding utf8 } catch { }
   try { (& log show --last 3m --style compact --predicate 'process == "usernoted" OR process == "UserNotificationCenter" OR eventMessage CONTAINS "dev.routeables"' 2>&1 | Select-Object -Last 200) -join "`n" | Set-Content -LiteralPath (Join-Path $dir 'notification-System-log.txt') -Encoding utf8 } catch { }
-  try { (& bash -c 'for d in "$TMPDIR"routeables-bundles/*.app; do echo "== $d"; plutil -p "$d/Contents/Info.plist"; codesign -dvv "$d" 2>&1; ls "$d/Contents/MacOS" | head -5; done') -join "`n" | Set-Content -LiteralPath (Join-Path $dir 'notification-System-bundle.txt') -Encoding utf8 } catch { }
+  try { (& bash -c 'for d in "$HOME"/Applications/routeables-bundles/*.app; do echo "== $d"; plutil -p "$d/Contents/Info.plist"; codesign -dvv "$d" 2>&1; ls "$d/Contents/MacOS" | head -5; done') -join "`n" | Set-Content -LiteralPath (Join-Path $dir 'notification-System-bundle.txt') -Encoding utf8 } catch { }
 }
 
 # Presses one button of the notifications of the Dialogs page, and checks what comes of it.
