@@ -209,7 +209,10 @@ function Test-Notification($Spec) {
     if ($seen[0].Name -eq $Spec.Sent) { return New-Step 'ok' $null }
     return New-Step 'unverified' $seen[0].Name
   }
-  $shown = @(Wait-Nodes { -not $_.InMenu -and $_.Name -eq $Spec.Title } $Spec.WaitMs) | Select-Object -First 1
+  # The notification is a button whose name is its title and its message together (a button hides the texts inside it from the tree: Razor), or
+  # the title alone (Blazor, a text of its own).
+  $shown = @(Wait-Nodes { -not $_.InMenu -and ($_.Name -eq $Spec.Title -or ($_.Role -in 'button', 'link' -and $_.Name.StartsWith("$($Spec.Title) "))) } $Spec.WaitMs) |
+    Sort-Object @{ Expression = { if ($_.Role -in 'button', 'link') { 0 } else { 1 } } } | Select-Object -First 1
   if (-not $shown) { Save-Evidence "notification-$($Spec.Button)"; return New-Step 'fail' "the notification '$($Spec.Title)' did not appear" }
   if (-not (Invoke-Click $shown)) { Save-Evidence "notification-$($Spec.Button)-click"; return New-Step 'fail' 'the notification could not be clicked' }
   $clicked = Wait-Nodes { -not $_.InMenu -and $_.Name -in $Spec.Clicked }
