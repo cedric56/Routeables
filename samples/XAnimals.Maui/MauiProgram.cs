@@ -1,7 +1,6 @@
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using Reshapes.Maui.CommunityToolkit;
-using Routeables.Generated;
 using Routeables.Maui;
 using XAnimals.Common;
 using XAnimals.ViewModels;
@@ -26,8 +25,6 @@ public static class MauiProgram
                 fonts.AddFont("Lora-Regular.ttf", "Lora");
             });
 
-        // Routes generated for the views of this project and the view models it references.
-        //builder.Services.AddGeneratedRoutes();
         // MAUI draws a FontImageSource on Windows only from a font file the application registered: from a system font (the emoji
         // here) it fails with "not supported for a relative URI". There the icons are the pictures of Resources/Images (icon_<key>.png).
         AnimalIcons.Register((key, glyph) => OperatingSystem.IsWindows()

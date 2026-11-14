@@ -99,7 +99,7 @@ function Read-IosUi([hashtable] $Ctx) {
       $x1 = [int][Math]::Round($fx); $y1 = [int][Math]::Round($fy); $x2 = [int][Math]::Round($fx + $fw); $y2 = [int][Math]::Round($fy + $fh)
       $nodes.Add([pscustomobject]@{
         # iOS reads a menu entry as one text: "Cats, GoToRouteAsync<TViewModel>" and, on the next line, its description: its name is what comes before the comma.
-        Name = $(if ($label -and $script:Platform -eq 'ios' -and $label -match '^([^\r\n,]+), [^\r\n]*[\r\n]') { $Matches[1].Trim() } elseif ($label) { $label } else { $value }); Desc = $label; Class = $type; Id = [string](& $get $n 'AXUniqueId'); Package = $script:Bundle
+        Name = $(if ($label -and $script:Platform -eq 'ios' -and $label -match '^([^\r\n,]+), [^\r\n]*[\r\n]') { $Matches[1].Trim() } elseif ($label) { $label } elseif ($value) { $value } elseif ($script:Platform -eq 'ios' -and $type -eq 'Group' -and (& $get $n 'AXUniqueId')) { [string](& $get $n 'AXUniqueId') } else { '' }); Desc = $label; Class = $type; Id = [string](& $get $n 'AXUniqueId'); Package = $script:Bundle
         Clickable = ($type -in @('Button', 'Cell', 'Link', 'MenuItem', 'Tab', 'Switch')) -or ([string](& $get $n 'role') -eq 'AXButton')
         X1 = $x1; Y1 = $y1; X2 = $x2; Y2 = $y2; X = [int](($x1 + $x2) / 2); Y = [int](($y1 + $y2) / 2); InList = $top.InList -or $type -eq 'Cell'
       })
