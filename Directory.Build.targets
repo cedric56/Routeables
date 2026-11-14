@@ -16,10 +16,12 @@
     <RouteablesAutoRegister>true</RouteablesAutoRegister>
   </PropertyGroup>
 
-  <!-- The same decision, taken when the compiler is about to run: a project of a mobile platform can change its OutputType after the
+  <!-- On Android OutputType is Library when the compiler runs and AndroidApplication is true. The file of the compiler that carries the
+       property is written by GenerateMSBuildEditorConfigFileCore, and the dependencies of GenerateMSBuildEditorConfigFile run before a target
+       that is only its BeforeTargets: this one comes before the Core target. The same decision, taken when the compiler is about to run: a project of a mobile platform can change its OutputType after the
        properties above were read, and the Android SDK tells an application by AndroidApplication. Without this the generator wrote no
        registration for the MAUI application of Android ("No view is registered under the key ..."). -->
-  <Target Name="RouteablesAutoRegisterOfApplication" BeforeTargets="GenerateMSBuildEditorConfigFile;CoreCompile"
+  <Target Name="RouteablesAutoRegisterOfApplication" BeforeTargets="GenerateMSBuildEditorConfigFileShouldRun;GenerateMSBuildEditorConfigFileCore;CoreCompile"
           Condition="'$(RouteablesAutoRegister)' == '' And ('$(AndroidApplication)' == 'true' Or '$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe')">
     <PropertyGroup>
       <RouteablesAutoRegister>true</RouteablesAutoRegister>
