@@ -216,7 +216,8 @@ jobs:
       # Built before the emulator starts: run-android.ps1 then finds the APKs and only installs them.
       - name: Build the APKs
         run: |
-          dotnet build samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-android -p:TreatWarningsAsErrors=false -p:EmbedAssembliesIntoApk=true
+          # The generated files of the MAUI app go to the artifact: the registration of its routes (RouteRegistration.g.cs) is what to read when they are not found.
+          dotnet build samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-android -p:TreatWarningsAsErrors=false -p:EmbedAssembliesIntoApk=true -p:EmitCompilerGeneratedFiles=true -p:CompilerGeneratedFilesOutputPath=${{ github.workspace }}/out/generated-maui
           dotnet build samples/XAnimals.Avalonia.Android/XAnimals.Avalonia.Android.csproj -c Debug -p:TreatWarningsAsErrors=false -p:EmbedAssembliesIntoApk=true
       - name: Smoke
         uses: reactivecircus/android-emulator-runner@v2
@@ -232,15 +233,18 @@ jobs:
         if: always()
         with:
           name: android-smoke
-          path: out/android-smoke
+          path: |
+            out/android-smoke
+            out/generated-maui
 
-  # Not a test yet: what agent-desktop reads of Chrome on the web hosts (Blazor Server, Blazor WebAssembly, Razor Pages, Avalonia Browser), written to
-  # the artifact. The real test is written from it, as it was for iOS. Chrome is on the hosted Windows runner.
-  web-probe:
-    name: Web hosts in Chrome (probe)
+  # The web hosts (Blazor Server, Blazor WebAssembly, Razor Pages) in Chrome, read and clicked by agent-desktop through the accessibility tree of the page: the
+  # same steps as the native hosts (pages, details, dialogs, notifications). Avalonia Browser draws in a canvas: only its start is checked. Chrome is on
+  # the hosted Windows runner. Not blocking until a first green run.
+  web:
+    name: Web hosts in Chrome
     runs-on: windows-latest
     continue-on-error: true
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-dotnet@v4
@@ -253,11 +257,15 @@ jobs:
         run: |
           dotnet workload install wasm-tools --skip-manifest-update
           npm install -g agent-desktop
-      - name: Probe
+      - name: Screen 1920x1080
         shell: pwsh
-        run: ./agent-desktop/probe-web.ps1
+        continue-on-error: true
+        run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
+      - name: Smoke
+        shell: pwsh
+        run: ./agent-desktop/run-web.ps1
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: web-probe
-          path: out/web-probe
+          name: web-smoke
+          path: out/web-smoke

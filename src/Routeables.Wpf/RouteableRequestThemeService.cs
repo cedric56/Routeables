@@ -10,6 +10,30 @@ namespace Routeables.Wpf;
 [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 public class RouteableRequestThemeService : IRouteableRequestedThemeService
 {
+    /// <summary>The theme shown now: the one the application set with <c>ThemeMode</c>, else the one of Windows (<c>AppsUseLightTheme</c>).</summary>
+    public RouteableRequestedTheme Current
+    {
+        get
+        {
+#pragma warning disable WPF0001 // ThemeMode is an evaluation API of WPF
+            var mode = Application.Current?.ThemeMode;
+            if (mode == ThemeMode.Dark)
+                return RouteableRequestedTheme.Dark;
+            if (mode == ThemeMode.Light)
+                return RouteableRequestedTheme.Light;
+#pragma warning restore WPF0001
+            try
+            {
+                using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
+                return key?.GetValue("AppsUseLightTheme") is int light && light == 0 ? RouteableRequestedTheme.Dark : RouteableRequestedTheme.Light;
+            }
+            catch (Exception ex) when (ex is System.Security.SecurityException or UnauthorizedAccessException or IOException)
+            {
+                return RouteableRequestedTheme.Default;
+            }
+        }
+    }
+
     /// <inheritdoc />
     public void Request(RouteableRequestedTheme theme)
     {

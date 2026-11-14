@@ -12,6 +12,10 @@ public sealed class RouteableRequestThemeService : IRouteableRequestedThemeServi
     /// <summary>The theme that was asked for last; <see cref="RouteableRequestedTheme.Default"/> until a view model asks for another.</summary>
     public RouteableRequestedTheme Requested { get; private set; } = RouteableRequestedTheme.Default;
 
+    /// <inheritdoc />
+    /// <remarks>The server cannot see the system theme of the visitor: it is what was asked for, <see cref="RouteableRequestedTheme.Default"/> until then.</remarks>
+    public RouteableRequestedTheme Current => Requested;
+
     /// <summary>Raised when <see cref="Requested"/> changes, not when the same theme is asked for again.</summary>
     public event EventHandler<RouteableRequestedTheme>? RequestedThemeChanged;
 

@@ -14,6 +14,14 @@ namespace Routeables.Uno;
 [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 public class RouteableRequestThemeService : IRouteableRequestedThemeService
 {
+    /// <summary>The theme shown now: <c>ActualTheme</c> of the content of the active window (the one asked for, else the system's).</summary>
+    public RouteableRequestedTheme Current => RouteableWindows.ActiveRoot?.ActualTheme switch
+    {
+        ElementTheme.Dark => RouteableRequestedTheme.Dark,
+        ElementTheme.Light => RouteableRequestedTheme.Light,
+        _ => RouteableRequestedTheme.Default,
+    };
+
     /// <summary>Applies the specified theme; <see cref="RouteableRequestedTheme.Default"/> follows the system.</summary>
     /// <param name="theme">The requested theme.</param>
     public void Request(RouteableRequestedTheme theme)

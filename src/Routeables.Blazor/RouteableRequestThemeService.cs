@@ -15,9 +15,12 @@ public class RouteableRequestThemeService : IRouteableRequestedThemeService
     public event EventHandler<RouteableRequestedTheme>? RequestedThemeChanged;
 
     /// <summary>
-    /// Gets or sets a value indicating whether dark mode is currently enabled, defaulting to <see langword="true"/>.
+    /// Gets or sets a value indicating whether dark mode is currently enabled. It starts as <see langword="true"/> until the layout has read the theme the page defines (<c>data-wui-theme</c> on the <c>html</c> element) or, failing that, the one of the system.
     /// </summary>
     public bool IsDarkMode { get; set; } = true;
+
+    /// <inheritdoc />
+    public RouteableRequestedTheme Current => IsDarkMode ? RouteableRequestedTheme.Dark : RouteableRequestedTheme.Light;
 
     /// <summary>
     /// Requests a new application theme, updating the dark mode state and invoking change notification handlers.

@@ -25,6 +25,10 @@ public class MainViewModel(IRouter router, IRouteCoordinator coordinator, IRoute
     /// </summary>
     public void ToggleTheme(bool isDark) => themes.Request(isDark ? RouteableRequestedTheme.Light : RouteableRequestedTheme.Dark);
 
+    /// <summary>The same, when the host does not know which theme it shows: the service tells (<see cref="IRouteableRequestedThemeService.Current"/>), the one the
+    /// application defined or else the system's. Where the host cannot tell (<c>Default</c>), the dark one is asked for.</summary>
+    public void ToggleTheme() => themes.Request(themes.Current == RouteableRequestedTheme.Dark ? RouteableRequestedTheme.Light : RouteableRequestedTheme.Dark);
+
     protected override ObservableCollection<IRouteableMenuEntry> GetEntries() =>
     [
         new RouteableMenuEntry<CatsViewModel>("Cats", AnimalIcons.Cat, route: "/cats", template: "/cats", description: string.Join(Environment.NewLine, "GoToRouteAsync<TViewModel>", "Named values (WithValue)")),

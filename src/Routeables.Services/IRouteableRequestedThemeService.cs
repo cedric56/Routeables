@@ -38,4 +38,11 @@ public interface IRouteableRequestedThemeService
     /// implementation to confirm how it resolves <c>Default</c>.
     /// </param>
     void Request(RouteableRequestedTheme theme);
+
+    /// <summary>
+    /// The theme the app shows now: <see cref="RouteableRequestedTheme.Light"/> or <see cref="RouteableRequestedTheme.Dark"/>, whether the app
+    /// asked for it (a <see cref="Request"/>, or a theme it defined itself) or the system gave it. It can differ from the theme of the system.
+    /// <see cref="RouteableRequestedTheme.Default"/> when the host cannot tell (the default of an implementation that does not override it).
+    /// </summary>
+    RouteableRequestedTheme Current => RouteableRequestedTheme.Default;
 }
