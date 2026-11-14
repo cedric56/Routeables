@@ -307,11 +307,20 @@ function Open-AndroidPage([hashtable] $Ctx, [string] $Page, [string[]] $Titles, 
   if (-not $ui) { return [pscustomobject]@{ Ok = $false; Detail = 'uiautomator could not read the screen'; Shown = $null } }
   if (-not (Test-DrawerOpen $Ctx $ui)) {
     $button = Find-DrawerButton $Ctx $ui
-    if (-not $button) { return [pscustomobject]@{ Ok = $false; Detail = 'no button to open the menu in the toolbar'; Shown = $null } }
-    Invoke-Tap $Ctx $button.X $button.Y
-    $open = Wait-Ui $Ctx 3000 { param($u) Test-DrawerOpen $Ctx $u }
-    if (-not $open) { return [pscustomobject]@{ Ok = $false; Detail = "the menu did not open (button '$($button.Name)' at $($button.X),$($button.Y))"; Shown = $null } }
-    $ui = $open.Ui
+    if (-not $button -and $script:Platform -eq 'ios') {
+      # The hamburger of the toolbar is not in the tree of iOS (the navigation bar shows no child): a swipe from the left edge opens a flyout.
+      Invoke-Idb $Ctx @('ui', 'swipe', '2', "$([int]($Ctx.Height / 2))", "$([int]($Ctx.Width * 0.8))", "$([int]($Ctx.Height / 2))", '--duration', '0.3') | Out-Null
+      $open = Wait-Ui $Ctx 3000 { param($u) Test-DrawerOpen $Ctx $u }
+      if (-not $open) { Save-AndroidEvidence $Ctx "menu-$Page-edge-swipe"; return [pscustomobject]@{ Ok = $false; Detail = 'no button to open the menu in the toolbar, and a swipe from the left edge did not open it'; Shown = $null } }
+      $ui = $open.Ui
+    }
+    elseif (-not $button) { return [pscustomobject]@{ Ok = $false; Detail = 'no button to open the menu in the toolbar'; Shown = $null } }
+    else {
+      Invoke-Tap $Ctx $button.X $button.Y
+      $open = Wait-Ui $Ctx 3000 { param($u) Test-DrawerOpen $Ctx $u }
+      if (-not $open) { return [pscustomobject]@{ Ok = $false; Detail = "the menu did not open (button '$($button.Name)' at $($button.X),$($button.Y))"; Shown = $null } }
+      $ui = $open.Ui
+    }
   }
   $entry = Find-DrawerEntry $Ctx $Page $ui
   if (-not $entry) {

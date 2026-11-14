@@ -204,7 +204,7 @@ public class DialogsViewModel : ViewModelBase
         };
         _notifications.Show(
             title, message, type,
-            expiration: TimeSpan.FromSeconds(6),
+            expiration: TimeSpan.FromSeconds(15),
             onClick: () => Result = $"Clicked the {type.ToString().ToLowerInvariant()} notification.",
             onClose: () => Result = $"Closed the {type.ToString().ToLowerInvariant()} notification.");
         return Task.CompletedTask;

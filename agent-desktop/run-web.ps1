@@ -211,9 +211,12 @@ function Test-Notification($Spec) {
   }
   # The notification is a button whose name is its title and its message together (a button hides the texts inside it from the tree: Razor), or
   # the title alone (Blazor, a text of its own).
+  # The first look after the click, kept for the report: a notification that goes away on its own may be gone when the waiting ends.
+  $first = Get-PageNodes
+  $firstSeen = @($first | Where-Object { -not $_.InMenu -and $_.Name -and $_.Role -in 'statictext', 'button', 'link' } | ForEach-Object { $_.Name } | Select-Object -Unique -First 40)
   $shown = @(Wait-Nodes { -not $_.InMenu -and ($_.Name -eq $Spec.Title -or ($_.Role -in 'button', 'link' -and $_.Name.StartsWith("$($Spec.Title) "))) } $Spec.WaitMs) |
     Sort-Object @{ Expression = { if ($_.Role -in 'button', 'link') { 0 } else { 1 } } } | Select-Object -First 1
-  if (-not $shown) { Save-Evidence "notification-$($Spec.Button)"; return New-Step 'fail' "the notification '$($Spec.Title)' did not appear" }
+  if (-not $shown) { Save-Evidence "notification-$($Spec.Button)"; return New-Step 'fail' "the notification '$($Spec.Title)' did not appear (first look after the click: $($firstSeen -join ' | '))" }
   if (-not (Invoke-Click $shown)) { Save-Evidence "notification-$($Spec.Button)-click"; return New-Step 'fail' 'the notification could not be clicked' }
   $clicked = Wait-Nodes { -not $_.InMenu -and $_.Name -in $Spec.Clicked }
   if ($clicked.Count) { return New-Step 'ok' $clicked[0].Name }
