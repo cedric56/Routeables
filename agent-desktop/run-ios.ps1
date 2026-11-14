@@ -231,7 +231,7 @@ foreach ($c in $columns) { $widths[$c] = [Math]::Max($c.Length, (@($rows | ForEa
 Write-Host ''
 Write-Host (($columns | ForEach-Object { $_.PadRight($widths[$_]) }) -join '  ')
 Write-Host (($columns | ForEach-Object { '-' * $widths[$_] }) -join '  ')
-foreach ($row in $rows) { Write-Host (($columns | ForEach-Object { "$($row.$_)".PadRight($widths[$_]) }) -join '  ') -ForegroundColor $(if ($row.Status -eq 'OK') { 'Green' } else { 'Red' }) }
+foreach ($row in $rows) { Write-Host (($columns | ForEach-Object { "$($row.$_)".PadRight($widths[$_]) }) -join '  ') -ForegroundColor $(if ($row.Status -eq 'OK') { 'Green' } elseif ($row.Status -eq 'UNVERIFIED') { 'Yellow' } else { 'Red' }) }
 foreach ($row in $rows | Where-Object Problems) { Write-Host "$($row.Host): $($row.Problems)" -ForegroundColor Red }
 
 $md = [Text.StringBuilder]::new()
@@ -242,14 +242,15 @@ foreach ($row in $rows) { [void]$md.AppendLine("| $($row.Host) | $($row.Status) 
 foreach ($name in $reports.Keys) {
   $h = $reports[$name]
   $bad = @($h.pages.GetEnumerator()) + @($h.details.GetEnumerator()) + @($h.dialogs.GetEnumerator()) | Where-Object { $_.Value.status -ne 'ok' }
-  if (-not @($bad).Count -and -not $h.problems.Count) { continue }
+  if (-not @($bad).Count -and -not $h.problems.Count -and -not @($h.notes).Count) { continue }
   [void]$md.AppendLine("`n## $name`n")
   foreach ($p in $h.problems) { [void]$md.AppendLine("- $p") }
+  foreach ($n in @($h.notes)) { [void]$md.AppendLine("- $n") }
   foreach ($item in $bad) { [void]$md.AppendLine("- **$($item.Key)**: $($item.Value.status), $($item.Value.detail)") }
 }
 Set-Content -LiteralPath (Join-Path $OutDir 'report.md') -Value $md.ToString() -Encoding utf8
 
-$failed = @($rows | Where-Object { $_.Status -ne 'OK' }).Count
+$failed = @($rows | Where-Object { $_.Status -notin 'OK', 'UNVERIFIED' }).Count
 Write-Host ''
 Write-Host ("{0} in {1:0.0}s. Report: {2}" -f $(if ($failed) { "$failed FAILED" } else { 'All passed' }), $total.Elapsed.TotalSeconds, (Join-Path $OutDir 'report.json')) -ForegroundColor $(if ($failed) { 'Red' } else { 'Green' })
 try {

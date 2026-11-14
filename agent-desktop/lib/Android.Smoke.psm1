@@ -98,7 +98,8 @@ function Read-IosUi([hashtable] $Ctx) {
       $fx = [double](& $get $f 'x'); $fy = [double](& $get $f 'y'); $fw = [double](& $get $f 'width'); $fh = [double](& $get $f 'height')
       $x1 = [int][Math]::Round($fx); $y1 = [int][Math]::Round($fy); $x2 = [int][Math]::Round($fx + $fw); $y2 = [int][Math]::Round($fy + $fh)
       $nodes.Add([pscustomobject]@{
-        Name = $(if ($label) { $label } else { $value }); Desc = $label; Class = $type; Id = [string](& $get $n 'AXUniqueId'); Package = $script:Bundle
+        # iOS reads a menu entry as one text: "Cats, GoToRouteAsync<TViewModel>" and, on the next line, its description: its name is what comes before the comma.
+        Name = $(if ($label -and $script:Platform -eq 'ios' -and $label -match '^([^\r\n,]+), [^\r\n]*[\r\n]') { $Matches[1].Trim() } elseif ($label) { $label } else { $value }); Desc = $label; Class = $type; Id = [string](& $get $n 'AXUniqueId'); Package = $script:Bundle
         Clickable = ($type -in @('Button', 'Cell', 'Link', 'MenuItem', 'Tab', 'Switch')) -or ([string](& $get $n 'role') -eq 'AXButton')
         X1 = $x1; Y1 = $y1; X2 = $x2; Y2 = $y2; X = [int](($x1 + $x2) / 2); Y = [int](($y1 + $y2) / 2); InList = $top.InList -or $type -eq 'Cell'
       })
@@ -530,7 +531,7 @@ function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
     MenuNames = @($Options.MenuOrder); AnimalPages = @($Options.FirstAnimal.Keys); CurrentTitles = @()
   }
   $report = [ordered]@{ kind = $script:Platform; package = $Target.Package; apk = $Target.Apk; status = 'fail'; startSeconds = $null
-    pages = [ordered]@{}; details = [ordered]@{}; dialogs = [ordered]@{}; problems = @() }
+    pages = [ordered]@{}; details = [ordered]@{}; dialogs = [ordered]@{}; problems = @(); notes = @() }
   try {
     if ($Target.Problem) { $report.problems += $Target.Problem; return $report }
     Stop-App $ctx $Target.Package
@@ -560,9 +561,15 @@ function Invoke-AndroidSmoke([hashtable] $Target, [hashtable] $Options) {
           "the process is not running" + $(if ($crash) { " (crash report $($crash.Name), in log-app.txt)" } else { ' (see log-app.txt)' })
         } else {
           $ui = Get-Ui $ctx
-          $named = @($ui | Where-Object { $_.Name } | ForEach-Object { $_.Name } | Select-Object -Unique)
-          if (-not $named.Count) { "the process runs and exposes no text to accessibility ($(@($ui).Count) node(s); see start.png, start.json)" }
-          else { "the process runs and shows: $(($named | Select-Object -First 8) -join ', ')" }
+          # The application node itself is named (its bundle name): that is not a text of the screen.
+          $named = @($ui | Where-Object { $_.Name -and $_.Class -ne 'Application' } | ForEach-Object { $_.Name } | Select-Object -Unique)
+          if (-not $named.Count) {
+            # A UI drawn on one surface (Avalonia on iOS) exposes nothing to read: the app runs, and what it shows is in start.png, not checked.
+            $report.status = 'unverified'
+            $report.notes += "the app runs and exposes no text to accessibility ($(@($ui).Count) node(s)): its pages cannot be read or clicked from here (see start.png, start.json)"
+            return $report
+          }
+          "the process runs and shows: $(($named | Select-Object -First 8) -join ', ')"
         }
         $report.problems += "the app did not show '$first' within $($Options.StartTimeoutSeconds) s; $why"
         return $report
