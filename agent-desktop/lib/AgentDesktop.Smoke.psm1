@@ -1421,6 +1421,15 @@ function Test-Notification([hashtable] $Ctx, [hashtable] $Spec, [string] $Previo
       Save-Evidence $Ctx "notification-$($Spec.Button)"
       Save-DialogProbe $Ctx "notification-probe-$($Spec.Button)"
       if ($Spec.System -and $IsMacOS) { Save-MacNotificationEvidence $Ctx }
+      if ($Spec.System -and $IsMacOS) {
+        # The permission prompt is a banner of the NotificationCenter process. A hosted runner has none (usernoted: "failed to do a bootstrap look-up ...
+        # com.apple.notificationcenterui.main"): nothing can show the prompt, so nothing answers the request. That is the runner, not the application.
+        $center = @(& ps -axo comm 2>$null | Where-Object { $_ -match '/NotificationCenter\.app/' })
+        if (-not $center.Count) {
+          $report.status = 'unverified'
+          $report.detail = 'this Mac runs no NotificationCenter process, so the system cannot show the permission prompt and the request is never answered (see notification-System-log.txt)'
+        }
+      }
       return $report
     }
 
