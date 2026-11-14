@@ -78,8 +78,8 @@ public static class RouteableAutoRegistration
     private static bool s_initializersRun;
 
     // A module initializer runs when the runtime loads the module: that is what hands the routes to Add. A runtime that does not run it (seen on
-    // .NET MAUI for Android) leaves the list empty and every route unregistered. Running the constructor of the module of each assembly that
-    // references Routeables is what the runtime would have done (it runs once: a second call does nothing), so the default registration works
+    // .NET MAUI for Android) leaves the list empty and every route unregistered. Running the constructor of the module of each assembly of the
+    // application is what the runtime would have done (it runs once: a second call does nothing), so the default registration works
     // there too. The Debug line says when it was needed.
     private static void RunModuleInitializers()
     {
@@ -101,10 +101,14 @@ public static class RouteableAutoRegistration
                 continue;
             try
             {
-                if (!assembly.GetReferencedAssemblies().Any(r => r.Name == "Routeables.Abstraction"))
+                // No look at the types (reflection over types is not trim-safe): the constructor of the module of every assembly of the application,
+                // the ones of the framework left out. An assembly without a module initializer has nothing to run.
+                var name = assembly.GetName().Name ?? "?";
+                if (name.StartsWith("System", StringComparison.Ordinal) || name.StartsWith("Microsoft", StringComparison.Ordinal)
+                    || name is "mscorlib" or "netstandard" || name.StartsWith("Mono.", StringComparison.Ordinal) || name.StartsWith("Java.", StringComparison.Ordinal))
                     continue;
                 RuntimeHelpers.RunModuleConstructor(assembly.ManifestModule.ModuleHandle);
-                ran.Add(assembly.GetName().Name ?? "?");
+                ran.Add(name);
             }
             catch (Exception ex)
             {
@@ -116,8 +120,8 @@ public static class RouteableAutoRegistration
         lock (Gate)
             after = Registrations.Count;
         Debug.WriteLine(after > before
-            ? $"Routeables: the module initializers had not run ({after - before} registration(s) found by running the module constructors of: {string.Join(", ", ran)})."
-            : $"Routeables: the module initializers had already run ({after} registration(s); checked: {string.Join(", ", ran)}).");
+            ? $"Routeables: the module initializers had not run ({after - before} registration(s) found by running the module constructors of {ran.Count} assemblies)."
+            : $"Routeables: the module initializers had already run ({after} registration(s); {ran.Count} assemblies checked).");
     }
 
     internal static bool Apply(IServiceCollection services, IReadOnlyList<Action<IServiceCollection>> registrations)
