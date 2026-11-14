@@ -318,6 +318,11 @@ function Open-AndroidPage([hashtable] $Ctx, [string] $Page, [string[]] $Titles, 
     $seen = @(Get-Ui $Ctx | Where-Object { $_.Name } | ForEach-Object { ($_.Name -split "`r?`n")[0].Trim() } | Select-Object -Unique -First 25)
     return [pscustomobject]@{ Ok = $false; Detail = "'$Page' is not in the menu (on screen: $($seen -join ' | '))"; Shown = $null }
   }
+  # What the drawer shows when the entry is tapped, for the first pages: when a page does not open, the screen and the tree say what was under the finger.
+  if ([int]$Ctx['DrawerShots'] -lt 3) {
+    $Ctx['DrawerShots'] = [int]$Ctx['DrawerShots'] + 1
+    Save-AndroidEvidence $Ctx "drawer-$Page-tap-$($entry.X)x$($entry.Y)"
+  }
   Invoke-Tap $Ctx $entry.X $entry.Y
   # From here the toolbar shows the title of the page asked for: not an entry of the drawer.
   $Ctx.CurrentTitles = @($Titles)
