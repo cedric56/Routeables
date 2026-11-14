@@ -82,6 +82,9 @@ public class MainLayoutBaseTests
 
         public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args)
         {
+            // The import of a module (the theme the page starts in) is not a call the tests look at: there is no module here, and the layout keeps its default.
+            if (identifier == "import")
+                return new(default(TValue)!);
             Calls.Add((identifier, args ?? []));
             if (failure is not null && Calls.Count > failAfter) throw failure;
             return new(default(TValue)!);

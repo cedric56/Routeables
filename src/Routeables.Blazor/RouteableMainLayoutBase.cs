@@ -206,7 +206,9 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
     {
         try
         {
-            await using var module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Routeables.Blazor/routeables-theme.js");
+            await using var module = await JS.InvokeAsync<IJSObjectReference?>("import", "./_content/Routeables.Blazor/routeables-theme.js");
+            if (module is null)
+                return;   // a runtime that cannot import a module (a test double): the default stays
             var dark = await module.InvokeAsync<string>("current") == "dark";
             if (dark == Service.IsDarkMode)
                 return;
