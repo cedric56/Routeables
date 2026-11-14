@@ -85,11 +85,10 @@ jobs:
   # page change. A hosted macOS runner has a logged-in desktop, and its
   # agent (/opt/hca/hosted-compute-agent) holds the Accessibility permission; macOS grants it to what a step starts, since the
   # agent is their responsible process (see configure-tccdb-macos.sh in actions/runner-images): agent-desktop needs no setup.
-  # Not blocking until a first green run.
+  # Blocking: green since the bundle is registered (the system notification is 'unverified' there: a hosted Mac runs no NotificationCenter).
   macos:
     name: macOS (Avalonia)
     runs-on: macos-15
-    continue-on-error: true
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
@@ -234,3 +233,31 @@ jobs:
         with:
           name: android-smoke
           path: out/android-smoke
+
+  # Not a test yet: what agent-desktop reads of Chrome on the web hosts (Blazor Server, Blazor WebAssembly, Razor Pages, Avalonia Browser), written to
+  # the artifact. The real test is written from it, as it was for iOS. Chrome is on the hosted Windows runner.
+  web-probe:
+    name: Web hosts in Chrome (probe)
+    runs-on: windows-latest
+    continue-on-error: true
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tools
+        run: |
+          dotnet workload install wasm-tools --skip-manifest-update
+          npm install -g agent-desktop
+      - name: Probe
+        shell: pwsh
+        run: ./agent-desktop/probe-web.ps1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: web-probe
+          path: out/web-probe
