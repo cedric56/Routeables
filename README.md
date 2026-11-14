@@ -22,7 +22,7 @@
 
 # Routeables
 
-**View-model-first routing and navigation for Blazor, ASP.NET Core (Razor Pages and .cshtml views), .NET MAUI, Avalonia, Uno Platform, WinUI 3 and WPF.**
+**MVVM View-model-first routing and navigation for Blazor, ASP.NET Core (Razor Pages and .cshtml views), .NET MAUI, Avalonia, Uno Platform, WinUI 3 and WPF.**
 
 A view model asks an `IRouter` to go somewhere. It never touches a page, a frame or a navigation API of the framework, so the same code runs on every host. A route, a view and a zone of the screen that shows it: that is the whole model.
 
