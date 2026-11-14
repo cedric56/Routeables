@@ -34,6 +34,10 @@ a.back-btn { display:inline-flex; align-items:center; text-decoration:none; font
 .web-toast-body { flex: 1; display: grid; gap: .15rem; text-align: left; padding: .7rem .9rem; }
 .web-toast-close { padding: 0 .8rem; }
 @keyframes web-toast-out { to { opacity: 0; visibility: hidden; } }
+/* A toast with an expiration hides itself once the delay is over (the page does not reload while the visitor reads it). The reduced-motion rule
+   of animals.css sets every animation delay to 0 and every duration to 1ms with !important: the delay of the toast is a time to read, not a motion, so it keeps it. */
+.web-toast-timed { animation: web-toast-out 0s linear var(--web-toast-delay, 0s) forwards; }
+@media (prefers-reduced-motion: reduce) { .web-toast-timed { animation-delay: var(--web-toast-delay, 0s) !important; animation-duration: 0s !important; } }
 .web-dialog .search-box { margin-bottom: 0; }
 .web-dialog .actions button { font: inherit; font-weight: 600; cursor: pointer; padding: .55rem 1.2rem; border: 0; border-radius: 999px; background: var(--an-canopy); color: #fff; }
 .web-dialog .actions button:not(:first-child) { background: var(--an-lichen); color: inherit; }

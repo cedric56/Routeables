@@ -6,7 +6,7 @@
     <div class="web-toasts" aria-live="polite">
         @foreach (var toast in Model.Toasts)
         {
-            <form method="post" class="web-toast web-toast-@toast.Type.ToString().ToLowerInvariant()" style="@(toast.Expiration is { } span ? $"animation:web-toast-out 0s linear {(int)span.TotalSeconds}s forwards" : null)">
+            <form method="post" class="web-toast web-toast-@toast.Type.ToString().ToLowerInvariant()@(toast.Expiration is null ? "" : " web-toast-timed")" style="@(toast.Expiration is { } span ? $"--web-toast-delay:{(int)span.TotalSeconds}s" : null)">
                 <input type="hidden" name="target" value="toast" />
                 <button type="submit" name="do" value="click:@toast.Id" class="web-toast-body">
                     <strong>@toast.Title</strong>
