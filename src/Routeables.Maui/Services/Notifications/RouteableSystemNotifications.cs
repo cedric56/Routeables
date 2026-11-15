@@ -8,7 +8,7 @@ namespace Routeables.Maui.Services;
 /// <see cref="IRouteableNotificationService"/> that only redefines <c>Show</c> (the CommunityToolkit snackbars of the Reshapes) takes the system
 /// members from here, registered by <c>UseRouteablesServices</c>.
 /// </summary>
-public sealed class RouteableSystemNotifications
+public sealed class RouteableSystemNotifications : IRouteableSystemNotificationSource
 {
     internal RouteableSystemNotifications()
     {

@@ -7,7 +7,7 @@ namespace Routeables.Blazor.Services;
 /// <see cref="IRouteableNotificationService"/> that only redefines <c>Show</c> (the MudBlazor snackbars of the Reshapes) takes the system
 /// members from here, registered by <c>UseRouteablesServices</c>. Without <c>WithAppNotifications</c> it creates none.
 /// </summary>
-public sealed class RouteableSystemNotifications
+public sealed class RouteableSystemNotifications : IRouteableSystemNotificationSource
 {
     private readonly IRouteableSystemNotificationSource? _system;
 
