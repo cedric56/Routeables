@@ -26,6 +26,7 @@
     <Compile Include="..\Routeables.WinUI\RouteableItem.cs" Link="RouteableItem.cs" />
     <Compile Include="..\Routeables.WinUI\RouteableWindows.cs" Link="RouteableWindows.cs" />
     <Compile Include="..\Routeables.WinUI\ServiceLocator.cs" Link="ServiceLocator.cs" />
+    <Compile Include="..\Routeables.WinUI\Services\RouteableDialogService.cs" Link="Services\RouteableDialogService.cs" />
     <!-- The same files as Avalonia (the WPF branch of their #if). -->
     <Compile Include="..\Routeables.Shared\RouteableTabs.cs" Link="RouteableTabs.cs" />
     <Compile Include="..\Routeables.Shared\RouteableModalFor.cs" Link="Services\RouteableModalFor.cs" />
