@@ -1,4 +1,8 @@
-﻿#if AVALONIA
+﻿// WinUI 3 and Uno are what is left when neither WPF nor Avalonia is named.
+#if !WPF && !AVALONIA
+#define ROUTEABLE_WINUI
+#endif
+#if AVALONIA
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -8,23 +12,41 @@ using Orientation = Avalonia.Layout.Orientation;
 using ProgressBar = Avalonia.Controls.ProgressBar;
 using Element = Avalonia.Controls.Control;
 using Owner = Avalonia.Controls.TopLevel;
-#else
+#elif WPF
 using Routeables.Services;
 using System.Windows;
 using System.Windows.Controls;
 using Element = System.Windows.UIElement;
 using Owner = System.Windows.Window;
+#else
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Routeables.Native;
+using Routeables.Services;
+using Element = Microsoft.UI.Xaml.UIElement;
+using Owner = Microsoft.UI.Xaml.XamlRoot;
+using Orientation = Microsoft.UI.Xaml.Controls.Orientation;
+using ProgressBar = Microsoft.UI.Xaml.Controls.ProgressBar;
 #endif
 
-// One file for Routeables.Wpf and Routeables.Avalonia, which link it (and define WPF or AVALONIA). What each button returns is decided by the sessions of
-// Routeables.Services; here are only the controls, which differ by a few types (the Element and the Owner of a dialog: a Window or a TopLevel), the space
-// between the parts (a Margin in WPF, a Spacing in Avalonia), the thread of the interface and the names of the methods of IMessageBoxService.
+// One file for Routeables.Wpf and Routeables.Avalonia, which link it (and define WPF or AVALONIA), and for Routeables.Uno and Routeables.WinUI3. What each
+// button returns is decided by the sessions of Routeables.Services; here are only the controls, which differ by a few types (the Element and the Owner of a
+// dialog: a Window, a TopLevel or a XamlRoot), the space between the parts (a Margin in WPF, a Spacing elsewhere), the thread of the interface, the names of
+// the methods of IMessageBoxService and, in WinUI, the buttons of the ContentDialog and the native dialogs of Routeables.Native.
 #if AVALONIA
 namespace Routeables.Avalonia.Services;
-#else
+#elif WPF
 namespace Routeables.Wpf.Services;
+#elif WINUI3
+namespace Routeables.WinUI3.Services;
+#else
+namespace Routeables.Uno.Services;
 #endif
 
+#if ROUTEABLE_WINUI
+/// <summary>Draws the dialogs with <c>ContentDialog</c>, in the window the user is working in.</summary>
+public class DefaultMessageBoxService : IMessageBoxService
+#else
 /// <summary>
 /// Shows the dialogs of the host with plain controls (no third-party library): in owned windows on the desktop and, where there is a single view
 /// (Android, iOS, Browser: Avalonia only), in the overlay layer of the top level. What each button returns, and whether a dismissal can be vetoed,
@@ -32,7 +54,57 @@ namespace Routeables.Wpf.Services;
 /// </summary>
 /// <param name="icon">The icon of the dialog windows (a pack URI or a file); the one of the owner window when not set.</param>
 public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
+#endif
 {
+#if ROUTEABLE_WINUI
+    /// <inheritdoc />
+    public async Task<string?> ShowMessageBoxAsync(string title, string message, string buttons, XamlRoot? root = null)
+    {
+        ArgumentNullException.ThrowIfNull(message);
+        ArgumentNullException.ThrowIfNull(buttons);
+
+        var window = Resolve(root);
+        string? chosen = null;
+        var handle = new RouteableDialogHandle();
+
+        var texts = RouteableButtons.Split(buttons);
+
+        // Three buttons are those of the dialog of the platform (Routeables.Native) where it has one: the ContentDialog of the Windows App SDK,
+        // an alert on Android and iOS. Escape or a click outside gives the third button (the one that closes). Elsewhere, and for fewer buttons, the card below.
+        if (texts.Count == 3 && NativeDialogs.IsSupported)
+        {
+            var native = await NativeDialogs.DisplayThreeButtonsAsync<string?>(
+                title, message, texts[0], texts[1], texts[2], texts[0], texts[1], texts[2], window, dark: null);
+            if (native.Shown)
+                return native.Value;
+        }
+
+        // More than three buttons are the sheet of the platform (Routeables.Native): a ContentDialog with a column of buttons on Windows. Elsewhere, the sheet drawn below.
+        if (texts.Count > 3 && NativeDialogs.IsSupported)
+        {
+            var sheet = await NativeDialogs.DisplaySheetAsync(title, message, [.. texts.Take(texts.Count - 1)], texts[texts.Count - 1], window, dark: null);
+            if (sheet.Shown)
+                return texts[sheet.Value];
+        }
+
+        var controls = texts
+            .Select((text, index) => DialogCard.CreateButton(text, () =>
+            {
+                chosen = text;
+                handle.Complete();
+                return true;
+            }, isDefault: index == 0))
+            .ToList();
+
+        // Escape leaves without a choice.
+        handle.TryDismiss = () => true;
+
+        var card = DialogCard.Create([DialogCard.ToBody(message)], controls);
+        await DialogPresenter.ShowAsync(window, title, card, handle);
+        return chosen;
+    }
+
+#else
     /// <inheritdoc />
     public async Task<string?> ShowMessageBoxAsync(string title, string message, string buttons, Owner? owner = null)
     {
@@ -58,17 +130,24 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         await DialogPresenter.ShowAsync(window, icon, title, card, handle);
         return result;
     }
+#endif
 
     /// <inheritdoc />
 #if AVALONIA
     public async Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params, Owner? owner = null)
-#else
+#elif WPF
     public async Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params, Owner? owner = null)
+#else
+    public async Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params, XamlRoot? root = null)
 #endif
     {
         ArgumentNullException.ThrowIfNull(@params);
 
+#if ROUTEABLE_WINUI
+        var window = Resolve(root);
+#else
         var window = Resolve(owner);
+#endif
         var handle = new RouteableDialogHandle();
         var session = new RouteableContentDialogSession(@params, handle.Complete);
 
@@ -79,8 +158,16 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
             if (Dispatcher.UIThread.CheckAccess()) action();
             else Dispatcher.UIThread.Post(action);
         });
-#else
+#elif WPF
         session.AllowCloseFromCode(UiThread.Post);
+#else
+        session.AllowCloseFromCode(action =>
+        {
+            if (RouteableWindows.ActiveRoot?.DispatcherQueue is { HasThreadAccess: false } queue)
+                queue.TryEnqueue(() => action());
+            else
+                action();
+        });
 #endif
         handle.TryDismiss = session.TryDismiss;
         handle.Opened = session.Opened;
@@ -99,6 +186,8 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
             card.MaxWidth = double.PositiveInfinity;
             card.MinWidth = 640;
         }
+#elif ROUTEABLE_WINUI
+        // The size is the business of the ContentDialog: the presenter gets FullSizeDesired.
 #else
         if (@params.FullSizeDesired && card is FrameworkElement element)
         {
@@ -110,7 +199,11 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         session.Opening();
         try
         {
+#if ROUTEABLE_WINUI
+            await DialogPresenter.ShowAsync(window, @params.Title, card, handle, @params.FullSizeDesired);
+#else
             await DialogPresenter.ShowAsync(window, icon, @params.Title, card, handle);
+#endif
         }
         finally
         {
@@ -126,13 +219,19 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
     /// <inheritdoc />
 #if AVALONIA
     public async Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, Owner? owner = null, params RouteableTaskDialogResult[] results)
-#else
+#elif WPF
     public async Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, Owner? owner = null, params RouteableTaskDialogResult[] results)
+#else
+    public async Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, XamlRoot? root = null, params RouteableTaskDialogResult[] results)
 #endif
     {
         ArgumentNullException.ThrowIfNull(@params);
 
+#if ROUTEABLE_WINUI
+        var window = Resolve(root);
+#else
         var window = Resolve(owner);
+#endif
         var handle = new RouteableDialogHandle();
         var session = new RouteableTaskDialogSession(@params, results, handle.Complete);
 
@@ -146,13 +245,16 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var parts = new List<Element?>();
         var release = new List<Action>();
 
-#if AVALONIA
+#if AVALONIA || ROUTEABLE_WINUI
         var texts = new StackPanel { Spacing = 4 };
 #else
         var texts = new StackPanel();
 #endif
         if (!string.IsNullOrWhiteSpace(@params.Header))
         {
+#if ROUTEABLE_WINUI
+            texts.Children.Add(DialogCard.Header(@params.Header));
+#else
             texts.Children.Add(new TextBlock
             {
                 Text = @params.Header,
@@ -166,6 +268,7 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
                 Margin = new Thickness(0, 0, 0, 4)
 #endif
             });
+#endif
         }
 
         if (!string.IsNullOrWhiteSpace(@params.SubHeader))
@@ -174,7 +277,7 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var iconSource = DialogCard.ToIcon(@params.IconSource);
         if (iconSource is not null)
         {
-#if AVALONIA
+#if AVALONIA || ROUTEABLE_WINUI
             var header = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12 };
 #else
             if (iconSource is FrameworkElement iconElement)
@@ -198,7 +301,7 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
             parts.Add(scroller);
 
         if (@params.ShowProgressBar)
-#if AVALONIA
+#if AVALONIA || ROUTEABLE_WINUI
             parts.Add(new ProgressBar { IsIndeterminate = true });
 #else
             parts.Add(new ProgressBar { IsIndeterminate = true, Height = 8 });
@@ -228,7 +331,11 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         session.Opening();
         try
         {
+#if ROUTEABLE_WINUI
+            await DialogPresenter.ShowAsync(window, @params.Title, card, handle);
+#else
             await DialogPresenter.ShowAsync(window, icon, @params.Title, card, handle);
+#endif
         }
         finally
         {
@@ -241,18 +348,32 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
     }
 
     /// <inheritdoc />
+#if ROUTEABLE_WINUI
+    public bool IsDisplayable(XamlRoot root)
+    {
+        ArgumentNullException.ThrowIfNull(root);
+
+        return root.Content?.Visibility == Visibility.Visible;
+    }
+#else
     public bool IsDisplayable(Owner owner)
     {
         ArgumentNullException.ThrowIfNull(owner);
 
         return owner.IsVisible;
     }
+#endif
 
 #if AVALONIA
     private static Owner Resolve(Owner? owner) =>
         owner
         ?? TopLevelStateManager.Default.GetActive(throwOnNull: true)
         ?? throw new InvalidOperationException("No active top level is available to show the dialog.");
+#elif ROUTEABLE_WINUI
+    private static XamlRoot Resolve(XamlRoot? root) =>
+        root
+        ?? RouteableWindows.ActiveXamlRoot
+        ?? throw new InvalidOperationException("No active window is available to show the dialog. Open the window with Application.OpenMainWindow(...), or attach it with Window.AttachRouteables() once it has content.");
 #else
     private static Owner Resolve(Owner? owner) =>
         owner
