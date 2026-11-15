@@ -92,7 +92,7 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
     private async Task RefreshAsync(string source)
     {
         try { await InvokeAsync(StateHasChanged); }
-        catch (ObjectDisposedException) { }
+        catch (ObjectDisposedException) { }   // the layout was removed between the event and the render
         catch (Exception ex) { RouteableErrors.Report(Provider, source, ex); }
     }
 
@@ -136,7 +136,7 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
         if (options?.UnknownAddressIsNotFound == true && navigation is not null && !IsRoot(navigation))
         {
             try { navigation.NotFound(); }      // the status of the response becomes 404 (static server rendering)
-            catch (InvalidOperationException) { }
+            catch (InvalidOperationException) { }   // no response to give a status to (interactive rendering): the not-found page is shown as it is
             return;
         }
 
@@ -239,7 +239,7 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
                 "data-wui-theme",
                 Service.IsDarkMode ? "dark" : "light");
         }
-        catch (JSDisconnectedException) { }
+        catch (JSDisconnectedException) { }   // the circuit is gone: the attribute is not needed any more
     }
 
     /// <summary>

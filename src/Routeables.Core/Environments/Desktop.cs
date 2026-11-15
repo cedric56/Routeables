@@ -92,9 +92,9 @@ internal class DesktopImplementation : IDesktop
                 }
             }
         }
-        catch
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            // Ignore I/O or permission errors
+            // The file cannot be read: it is not WSL (anything else is a bug and goes up).
         }
 
         return false;

@@ -518,15 +518,28 @@ internal class Router(
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(url);
 
-        // Qualifiers: "-" goes back one page, "-/orders" goes back and then to /orders (a page replaces the one being left in the user's mind).
+        // Qualifiers: "-" goes back one page, "-/orders" goes back and then to /orders (a page replaces the one being left in the user's mind);
+        // when /orders does not open, the page that was left is shown again.
         // Checked first: they are not routes, and a back button (RouteableLink Route="-") needs no code.
         var trimmed = url.Trim();
         if (trimmed == "-")
             return await GoBackAsync(cancellationToken);
         if (trimmed.StartsWith("-/", StringComparison.Ordinal) && trimmed.Length > 2)
         {
+            var left = history.Current;
             var back = await GoBackAsync(cancellationToken);
-            return back.Success ? await GoToAsync(trimmed[1..], args, template, cancellationToken) : back;
+            if (!back.Success)
+                return back;
+
+            var forward = await GoToAsync(trimmed[1..], args, template, cancellationToken);
+            if (!forward.Success && ReferenceEquals(history.PeekForward(), left))
+            {
+                // The page was left for a route that did not open: the user is not left on the page before. Only when nothing else moved the history in the
+                // meantime (the page left is still the next one), and without the caller's token, which may be the reason the route did not open.
+                await ForwardAsync(CancellationToken.None);
+            }
+
+            return forward;
         }
 
         // A route registered with an explicit template (RegisterRoute(route: "/orders/{id:int}"), [Routeable]): the template

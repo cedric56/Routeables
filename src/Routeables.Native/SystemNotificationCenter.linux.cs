@@ -16,7 +16,7 @@ public sealed partial class SystemNotificationCenter
     private readonly Dictionary<uint, uint> _linuxServerIds = [];     // our id -> the id the server gave
     private readonly Dictionary<uint, uint> _linuxIds = [];           // the id the server gave -> ours
     private DBusConnection? _linuxConnection;
-    private bool _linuxTried;
+    private Task<DBusConnection?>? _linuxConnecting;                  // null: not tried yet, or the bus was closed
 
     /// <summary>Whether there is a session bus <i>and</i> a notification server on it: a session bus alone is not enough (WSL, a container or a bare window manager have one and
     /// no server, and the call to Notify fails with ServiceUnknown).</summary>
@@ -34,28 +34,36 @@ public sealed partial class SystemNotificationCenter
         catch (Exception ex) when (ex is IOException or InvalidOperationException or TimeoutException or AggregateException) { return false; }
     }
 
+    // The connection is made once, on the thread pool, and the callers wait for it outside the lock: the lock only guards the fields, so a
+    // signal or a close is never held up by a connection that is slow to come (a bus that does not answer).
     private DBusConnection? LinuxConnection()
     {
+        Task<DBusConnection?> connecting;
         lock (_linuxGate)
-        {
-            if (_linuxTried)
-                return _linuxConnection;
+            connecting = _linuxConnecting ??= Task.Run(ConnectLinuxAsync);
 
-            _linuxTried = true;
-            var task = Task.Run(DBusConnection.TryConnectAsync);
-            if (!task.Wait(TimeSpan.FromSeconds(5)))
-                return null;
+        // The caller (Present, the availability check) is synchronous: it waits, but for a bounded time, and the connection goes on in the background.
+        return connecting.Wait(TimeSpan.FromSeconds(5)) ? connecting.Result : null;
+    }
 
-            _linuxConnection = task.Result;
-            if (_linuxConnection is null)
-                return null;
+    private async Task<DBusConnection?> ConnectLinuxAsync()
+    {
+        DBusConnection? connection;
+        try { connection = await DBusConnection.TryConnectAsync().ConfigureAwait(false); }
+        catch (Exception) { return null; }       // whatever stops the connection means there is no bus: Present reports it
 
-            _linuxConnection.SignalReceived += OnLinuxSignal;
-            _linuxConnection.Closed += () => { lock (_linuxGate) { _linuxConnection = null; _linuxTried = false; } };
-            _ = _linuxConnection.CallAsync("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "AddMatch", "s",
-                w => w.String($"type='signal',interface='{LinuxService}'"));
-            return _linuxConnection;
-        }
+        if (connection is null)
+            return null;
+
+        connection.SignalReceived += OnLinuxSignal;
+        // A closed bus is connected again by the next call.
+        connection.Closed += () => { lock (_linuxGate) { _linuxConnection = null; _linuxConnecting = null; } };
+        lock (_linuxGate)
+            _linuxConnection = connection;
+
+        _ = connection.CallAsync("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "AddMatch", "s",
+            w => w.String($"type='signal',interface='{LinuxService}'"));
+        return connection;
     }
 
     private void LinuxPresent(SystemNotification notification)
@@ -116,7 +124,9 @@ public sealed partial class SystemNotificationCenter
             _linuxIds.Remove(serverId);
         }
 
-        _ = _linuxConnection?.CallAsync(LinuxService, LinuxPath, LinuxService, "CloseNotification", "u", w => w.UInt32(serverId));
+        DBusConnection? connection;
+        lock (_linuxGate) connection = _linuxConnection;
+        _ = connection?.CallAsync(LinuxService, LinuxPath, LinuxService, "CloseNotification", "u", w => w.UInt32(serverId));
     }
 
     private void OnLinuxSignal(DBusMessage message)

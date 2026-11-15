@@ -70,7 +70,7 @@ public static class RouteableHelper
     private static async Task Observe(Task task, IServiceProvider? provider, string? detail, Action<Exception>? onError)
     {
         try { await task.ConfigureAwait(true); }
-        catch (OperationCanceledException) { }
+        catch (OperationCanceledException) { }   // a cancelled operation is not an error
         catch (Exception ex) { Fail(ex, provider, detail, onError); }
     }
 

@@ -116,13 +116,15 @@ public class RouterStackTests
     }
 
     [Fact]
-    public async Task GoToAsync_Qualifier_DashSlashRoute_GoesBackThenFails_WhenTheRouteIsUnknown()
+    public async Task GoToAsync_Qualifier_DashSlashRoute_ShowsThePageAgain_WhenTheRouteIsUnknown()
     {
-        var (router, pages) = await ThreePagesAsync();
+        var (router, _) = await ThreePagesAsync();
+        var shown = router.CurrentViewModel;
 
         var result = await router.GoToAsync("-/not-registered", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.False(result.Success);                                  // the route is unknown...
-        Assert.Same(pages[1].ViewModel, router.CurrentViewModel);      // ...but the back part was done
+        Assert.Same(shown, router.CurrentViewModel);                   // ...so the page that was left is shown again, not the one before
+        Assert.False(router.CanGoForward);
     }
 }

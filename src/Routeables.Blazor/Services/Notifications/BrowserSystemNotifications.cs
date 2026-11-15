@@ -58,7 +58,7 @@ internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationO
         if (_module is { IsCompletedSuccessfully: true })
         {
             try { await _module.Result.DisposeAsync(); }
-            catch (JSDisconnectedException) { }
+            catch (JSDisconnectedException) { }   // the circuit is gone: nothing to dispose on the browser side
         }
         _callback?.Dispose();
     }

@@ -61,7 +61,7 @@ public sealed partial class SystemNotificationCenter
     private static async Task BrowserSafe(Task task)
     {
         try { await task; }
-        catch (JSException) { }
+        catch (JSException) { }   // the browser refused (no permission, no support): the notification is simply not shown
     }
 
     [SupportedOSPlatform("browser")]

@@ -221,7 +221,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
     {
         _disposed = true;
         _active = false;
-        try { _stopped.Cancel(); } catch (ObjectDisposedException) { }
+        try { _stopped.Cancel(); } catch (ObjectDisposedException) { }   // already stopped
         if (_router is { } router)
             router.Routed -= OnRouted;
         if (_router is { } erased)

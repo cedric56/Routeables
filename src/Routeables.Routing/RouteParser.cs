@@ -12,7 +12,7 @@ namespace Routeables.Routing;
 /// Provides route parsing capabilities to match incoming URIs against route templates,
 /// extract path and query parameters, convert types, and populate routing arguments.
 /// </summary>
-public static class RouteParser
+public static partial class RouteParser
 {
     // Serialization information for complex route parameters (System.Text.Json), by type name, case-insensitive.
     // Private: callers register through RegisterSerializer, nobody can replace or empty the table.
@@ -88,8 +88,71 @@ public static class RouteParser
 
     // {Id:int}  {Tab?}  {Tab::?}  {animate::bool}  {person:Person}  {**path}
     // "::" sets the 'attribute' group, "?" sets 'opt', "**" sets 'rest': the placeholder takes what is left of the path, slashes included
-    private static readonly Regex Param =
-        new(@"^\{(?<rest>\*\*)?(?<name>\w+)(?::(?<attribute>:)?(?<type>[^}?]*))?(?<opt>\?)?\}$");
+    // Generated at build time: no regular expression is built (or interpreted) at run time, which is what a trimmed or AOT application wants.
+    [GeneratedRegex(@"^\{(?<rest>\*\*)?(?<name>\w+)(?::(?<attribute>:)?(?<type>[^}?]*))?(?<opt>\?)?\}$")]
+    private static partial Regex ParamPattern();
+
+    private static readonly Regex Param = ParamPattern();
+
+    // What is read from a route template, once: the registered templates are few and each one is matched on every navigation, so splitting it
+    // and matching each segment against Param again for every route change would be the same work repeated.
+    private sealed class ParsedTemplate
+    {
+        public required string[] Segments { get; init; }
+        public required Match[] SegmentMatches { get; init; }      // one per segment, Success false for a literal
+        public required int RestAt { get; init; }                  // index of the catch-all, or -1
+        public required string? OptionalNotLast { get; init; }
+        public required string[] QueryParts { get; init; }
+        public required Match[] QueryMatches { get; init; }
+        public required int[] Rank { get; init; }
+    }
+
+    private const int MaxParsedTemplates = 2048;                   // the templates are registered by the application: a bound only against a template made of user input
+    private static readonly ConcurrentDictionary<string, ParsedTemplate> Parsed = new(StringComparer.Ordinal);
+
+    private static ParsedTemplate ParseTemplate(string template)
+    {
+        if (Parsed.TryGetValue(template, out var known))
+            return known;
+
+        var (path, query) = Split(template);
+        var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var matches = segments.Select(segment => Realized(Param.Match(segment))).ToArray();
+        var parts = query.Split('&', StringSplitOptions.RemoveEmptyEntries);
+        var parsed = new ParsedTemplate
+        {
+            Segments = segments,
+            SegmentMatches = matches,
+            RestAt = Array.FindIndex(matches, found => found.Success && found.Groups["rest"].Success),
+            OptionalNotLast = OptionalNotLast(segments),
+            QueryParts = parts,
+            QueryMatches = parts.Select(part => Realized(Param.Match(part))).ToArray(),
+            Rank = [.. matches.Select(Rank)],
+        };
+
+        if (Parsed.Count < MaxParsedTemplates)
+            Parsed[template] = parsed;
+        return parsed;
+    }
+
+    // A Match builds its groups the first time they are read, which is not safe from several threads at once: they are all read here, before the
+    // match is shared, so the navigations that read it afterwards only read.
+    private static Match Realized(Match m)
+    {
+        if (m.Success)
+            foreach (var name in (ReadOnlySpan<string>)["rest", "name", "attribute", "type", "opt"])
+                _ = m.Groups[name];
+        return m;
+    }
+
+    private static int Rank(Match m)
+    {
+        if (!m.Success) return 3;                                   // literal
+        if (m.Groups["rest"].Success) return -1;                    // catch-all
+        if (m.Groups["opt"].Success) return 0;                      // optional
+        var type = m.Groups["type"].Value;
+        return type is "" or "?" or "string" ? 1 : 2;               // untyped, or typed
+    }
 
     /// <summary>
     /// Attempts to match a given URI against a route template, extracting parameters and populating arguments.
@@ -125,23 +188,23 @@ public static class RouteParser
         if (uri.IndexOf('#') is var hash and >= 0)
             uri = uri[..hash];
 
-        var (tPath, tQuery) = Split(template);
+        var parsed = ParseTemplate(template);
         var (uPath, uQuery) = Split(uri, template: false);
 
         // --- path ---
-        var tSegs = tPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var tSegs = parsed.Segments;
         var uSegs = uPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-        var restAt = Array.FindIndex(tSegs, segment => Param.Match(segment) is { Success: true } found && found.Groups["rest"].Success);
+        var restAt = parsed.RestAt;
         if (restAt >= 0 && restAt != tSegs.Length - 1)
             return $"the catch-all placeholder {tSegs[restAt]} must be the last segment of the template";
-        if (OptionalNotLast(tSegs) is { } notLast)
+        if (parsed.OptionalNotLast is { } notLast)
             return $"the optional placeholder {notLast} must be the last segment of the template";
         if (restAt < 0 && uSegs.Length > tSegs.Length)
             return $"the route has {uSegs.Length} segment(s), the template only {tSegs.Length} (unexpected \"{uSegs[tSegs.Length]}\")";
 
         for (var i = 0; i < tSegs.Length; i++)
         {
-            var m = Param.Match(tSegs[i]);
+            var m = parsed.SegmentMatches[i];
 
             // {**path}: everything that is left, as it was written (each segment unescaped, the slashes kept). Nothing left is no value.
             if (m.Success && m.Groups["rest"].Success)
@@ -166,9 +229,10 @@ public static class RouteParser
 
         // --- query ---
         var query = ParseQuery(uQuery);
-        foreach (var part in tQuery.Split('&', StringSplitOptions.RemoveEmptyEntries))
+        for (var q = 0; q < parsed.QueryParts.Length; q++)
         {
-            var m = Param.Match(part);
+            var part = parsed.QueryParts[q];
+            var m = parsed.QueryMatches[q];
             if (!m.Success)
             {
                 // A fixed entry of the template ("mode=grid") must be in the address as written; "flag" alone only names a parameter.
@@ -321,19 +385,7 @@ public static class RouteParser
         return best;
     }
 
-    private static int[] Specificity(string template)
-    {
-        var (path, _) = Split(template);
-        return [.. path.Split('/', StringSplitOptions.RemoveEmptyEntries).Select(segment =>
-        {
-            var m = Param.Match(segment);
-            if (!m.Success) return 3;                                   // literal
-            if (m.Groups["rest"].Success) return -1;                    // catch-all
-            if (m.Groups["opt"].Success) return 0;                      // optional
-            var type = m.Groups["type"].Value;
-            return type is "" or "?" or "string" ? 1 : 2;               // untyped, or typed
-        })];
-    }
+    private static int[] Specificity(string template) => ParseTemplate(template).Rank;
 
     private static int CompareRanks(int[] a, int[] b)
     {
