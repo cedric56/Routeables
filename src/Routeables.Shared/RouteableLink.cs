@@ -27,7 +27,7 @@ using Routeables.Abstraction.Routing;
 using Routeables.Services;
 
 // One file for every host that has a button: Routeables.Wpf, Routeables.Maui and Routeables.Avalonia link it (and define WPF, MAUI or AVALONIA),
-// Routeables.Uno and Routeables.WinUI3 compile this folder. What differs from a host to another is only how an attached property is
+// Routeables.Uno and Routeables.WinUI3 link it too. What differs from a host to another is only how an attached property is
 // declared and the name of the click event; the rest, the accessors and what a click does, is written once.
 #if WPF
 namespace Routeables.Wpf;

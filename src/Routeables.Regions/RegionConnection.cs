@@ -45,6 +45,39 @@ public sealed class RegionConnection
         return true;
     }
 
+    /// <summary>
+    /// What <c>RouteableRegion</c> does when it appears: shows the current view of the region, then starts the routing of an application
+    /// that has no menu (<see cref="RegionStart.Begin"/>).
+    /// </summary>
+    /// <param name="provider">The container to read the region from; <see langword="null"/> connects nothing.</param>
+    /// <param name="region">The name of the region; empty for the default one.</param>
+    /// <param name="route">The page the region opens when its router shows nothing yet, or <see langword="null"/>.</param>
+    /// <param name="show">Shows a view; called on any thread, the host puts it on its own.</param>
+    /// <returns>Whether the control is connected now by this call.</returns>
+    public bool ConnectCurrent(IServiceProvider? provider, string? region, string? route, Action<object?, RegionChange> show)
+    {
+        ArgumentNullException.ThrowIfNull(show);
+        // The binding shows the current view as soon as it is built.
+        if (!Connect(provider, region, router => new RegionBinding(router, show)))
+            return false;
+
+        // The default region starts the routing of an application that has no menu (the binding is there to show the first page).
+        RegionStart.Begin(provider!, region, route);
+        return true;
+    }
+
+    /// <summary>What <c>RouteableRegionItems</c> does when it appears: shows every view of the region, now and when it changes.</summary>
+    /// <param name="provider">The container to read the region from; <see langword="null"/> connects nothing.</param>
+    /// <param name="region">The name of the region; empty for the default one.</param>
+    /// <param name="show">Shows the views; called on any thread, the host puts it on its own.</param>
+    /// <returns>Whether the control is connected now by this call.</returns>
+    public bool ConnectItems(IServiceProvider? provider, string? region, Action<IReadOnlyList<object>> show)
+    {
+        ArgumentNullException.ThrowIfNull(show);
+        // The binding gives the views of now as soon as it is built.
+        return Connect(provider, region, router => new RegionItemsBinding(router, show));
+    }
+
     /// <summary>Lets go of the router. Clear the content afterwards: a view has one parent and must be free for another control.</summary>
     public void Disconnect()
     {

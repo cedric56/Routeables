@@ -21,12 +21,16 @@
 
   <ItemGroup>
     <!-- The same file as Uno and WinUI 3 (the WPF branch of its #if). -->
-    <Compile Include="..\Routeables.WinUI\RouteableLink.cs" Link="RouteableLink.cs" />
-    <Compile Include="..\Routeables.WinUI\RouteableViewBinder.cs" Link="RouteableViewBinder.cs" />
-    <Compile Include="..\Routeables.WinUI\RouteableItem.cs" Link="RouteableItem.cs" />
-    <Compile Include="..\Routeables.WinUI\RouteableWindows.cs" Link="RouteableWindows.cs" />
-    <Compile Include="..\Routeables.WinUI\ServiceLocator.cs" Link="ServiceLocator.cs" />
-    <Compile Include="..\Routeables.WinUI\Services\RouteableDialogService.cs" Link="Services\RouteableDialogService.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableLink.cs" Link="RouteableLink.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableViewBinder.cs" Link="RouteableViewBinder.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableFor.cs" Link="RouteableFor.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableRegion.cs" Link="RouteableRegion.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableRegionItems.cs" Link="RouteableRegionItems.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableItem.cs" Link="RouteableItem.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableWindows.cs" Link="RouteableWindows.cs" />
+    <Compile Include="..\Routeables.Shared\ServiceLocator.cs" Link="ServiceLocator.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableDialogService.cs" Link="Services\RouteableDialogService.cs" />
+    <Compile Include="..\Routeables.Shared\DefaultMessageBoxService.cs" Link="Services\DefaultMessageBoxService.cs" />
     <!-- The same files as Avalonia (the WPF branch of their #if). -->
     <Compile Include="..\Routeables.Shared\RouteableTabs.cs" Link="RouteableTabs.cs" />
     <Compile Include="..\Routeables.Shared\RouteableModalFor.cs" Link="Services\RouteableModalFor.cs" />

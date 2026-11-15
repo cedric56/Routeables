@@ -3,18 +3,28 @@ using Avalonia.Automation.Peers;
 using RegionPeerBase = Avalonia.Automation.Peers.ContentControlAutomationPeer;
 using RegionItemsPeerBase = Avalonia.Automation.Peers.ItemsControlAutomationPeer;
 using ForPeerBase = Avalonia.Automation.Peers.ContentControlAutomationPeer;
-#else
+#elif WPF
 using System.Windows.Automation.Peers;
 using RegionPeerBase = System.Windows.Automation.Peers.FrameworkElementAutomationPeer;
 using RegionItemsPeerBase = System.Windows.Automation.Peers.FrameworkElementAutomationPeer;
 using ForPeerBase = System.Windows.Automation.Peers.FrameworkElementAutomationPeer;
+#else
+using Microsoft.UI.Xaml.Automation.Peers;
+using RegionPeerBase = Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer;
+using RegionItemsPeerBase = Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer;
+using ForPeerBase = Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer;
 #endif
 
-// One file for Routeables.Wpf and Routeables.Avalonia, which link it (and define WPF or AVALONIA): the three peers say the same, only their base class differs.
+// One file for every host with automation peers: Routeables.Wpf and Routeables.Avalonia link it (and define WPF or AVALONIA), Routeables.Uno and
+// Routeables.WinUI3 link it too: the peers say the same, only their base class differs. The item of the menu is for the hosts that have one (Uno, WinUI 3).
 #if AVALONIA
 namespace Routeables.Avalonia.Automation;
-#else
+#elif WPF
 namespace Routeables.Wpf.Automation;
+#elif WINUI3
+namespace Routeables.WinUI3.Automation;
+#else
+namespace Routeables.Uno.Automation;
 #endif
 
 // What a screen reader and a UI test see of the controls of Routeables: a group per region and per view, named after what they show, with a stable automation id
@@ -37,7 +47,7 @@ internal static class PeerNames
     public static string Named(string? given, string fallback) => string.IsNullOrEmpty(given) ? fallback : given;
 }
 
-internal sealed class RouteableRegionAutomationPeer : RegionPeerBase
+internal sealed partial class RouteableRegionAutomationPeer : RegionPeerBase
 {
     private readonly RouteableRegion _owner;
 
@@ -51,7 +61,7 @@ internal sealed class RouteableRegionAutomationPeer : RegionPeerBase
     protected override string GetAutomationIdCore() => PeerNames.Named(base.GetAutomationIdCore(), "Region." + PeerNames.Region(_owner.Region));
 }
 
-internal sealed class RouteableRegionItemsAutomationPeer : RegionItemsPeerBase
+internal sealed partial class RouteableRegionItemsAutomationPeer : RegionItemsPeerBase
 {
     private readonly RouteableRegionItems _owner;
 
@@ -65,7 +75,7 @@ internal sealed class RouteableRegionItemsAutomationPeer : RegionItemsPeerBase
     protected override string GetAutomationIdCore() => PeerNames.Named(base.GetAutomationIdCore(), "RegionItems." + PeerNames.Region(_owner.Region));
 }
 
-internal sealed class RouteableForAutomationPeer : ForPeerBase
+internal sealed partial class RouteableForAutomationPeer : ForPeerBase
 {
     private readonly RouteableFor _owner;
 
@@ -78,3 +88,20 @@ internal sealed class RouteableForAutomationPeer : ForPeerBase
 
     protected override string GetAutomationIdCore() => PeerNames.Named(base.GetAutomationIdCore(), "View." + PeerNames.ForName(_owner));
 }
+
+#if !WPF && !AVALONIA
+internal sealed partial class RouteableMenuItemAutomationPeer : FrameworkElementAutomationPeer
+{
+    private readonly RouteableMenuItem _owner;
+
+    public RouteableMenuItemAutomationPeer(RouteableMenuItem owner) : base(owner) => _owner = owner;
+    protected override AutomationControlType GetAutomationControlTypeCore() => AutomationControlType.ListItem;
+
+    protected override string GetClassNameCore() => nameof(RouteableMenuItem);
+
+    // The entry names the item, and its route identifies it.
+    protected override string GetNameCore() => PeerNames.Named(base.GetNameCore(), _owner.Item?.DisplayName ?? string.Empty);
+
+    protected override string GetAutomationIdCore() => PeerNames.Named(base.GetAutomationIdCore(), _owner.Item is { } item ? "MenuItem." + item.Route : string.Empty);
+}
+#endif

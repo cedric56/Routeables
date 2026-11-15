@@ -15,7 +15,7 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Lifecycle;
 
 // One file for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui link it (and define WPF, AVALONIA or MAUI),
-// Routeables.Uno and Routeables.WinUI3 compile this folder.
+// Routeables.Uno and Routeables.WinUI3 link it too.
 #if WPF
 namespace Routeables.Wpf;
 #elif AVALONIA

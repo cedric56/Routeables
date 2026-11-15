@@ -48,6 +48,28 @@ public class RegionHostSharedTests
     }
 
     [Fact]
+    public void ConnectCurrent_and_ConnectItems_connect_once_and_nothing_without_a_container()
+    {
+        using var provider = Build();
+        var current = new RegionConnection();
+        var items = new RegionConnection();
+
+        Assert.True(current.ConnectCurrent(provider, "tabs", null, (_, _) => { }));
+        Assert.True(current.IsConnected);
+        Assert.False(current.ConnectCurrent(provider, "tabs", null, (_, _) => { }));
+
+        Assert.True(items.ConnectItems(provider, "tabs", _ => { }));
+        Assert.True(items.IsConnected);
+        Assert.False(items.ConnectItems(provider, "tabs", _ => { }));
+
+        Assert.False(new RegionConnection().ConnectCurrent(null, "tabs", null, (_, _) => { }));
+        Assert.False(new RegionConnection().ConnectItems(null, "tabs", _ => { }));
+
+        current.Disconnect();
+        items.Disconnect();
+    }
+
+    [Fact]
     public void A_connection_without_a_container_connects_nothing()
     {
         var connection = new RegionConnection();

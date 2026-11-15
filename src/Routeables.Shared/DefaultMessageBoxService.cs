@@ -1,26 +1,43 @@
-﻿using Avalonia.Controls;
+﻿#if AVALONIA
+using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Routeables.Services;
-using ProgressBar = Avalonia.Controls.ProgressBar;
 using Orientation = Avalonia.Layout.Orientation;
+using ProgressBar = Avalonia.Controls.ProgressBar;
+using Element = Avalonia.Controls.Control;
+using Owner = Avalonia.Controls.TopLevel;
+#else
+using Routeables.Services;
+using System.Windows;
+using System.Windows.Controls;
+using Element = System.Windows.UIElement;
+using Owner = System.Windows.Window;
+#endif
 
+// One file for Routeables.Wpf and Routeables.Avalonia, which link it (and define WPF or AVALONIA). What each button returns is decided by the sessions of
+// Routeables.Services; here are only the controls, which differ by a few types (the Element and the Owner of a dialog: a Window or a TopLevel), the space
+// between the parts (a Margin in WPF, a Spacing in Avalonia), the thread of the interface and the names of the methods of IMessageBoxService.
+#if AVALONIA
 namespace Routeables.Avalonia.Services;
+#else
+namespace Routeables.Wpf.Services;
+#endif
 
 /// <summary>
-/// The default <see cref="IMessageBoxService"/>: message boxes, content dialogs and task dialogs drawn with plain
-/// Avalonia controls, without MessageBox.Avalonia or FluentAvalonia. On desktop they are modal windows owned by the
-/// active <see cref="TopLevel"/>; where there is a single view (Android, iOS, Browser) they are drawn in the
-/// top level's overlay layer.
+/// Shows the dialogs of the host with plain controls (no third-party library): in owned windows on the desktop and, where there is a single view
+/// (Android, iOS, Browser: Avalonia only), in the overlay layer of the top level. What each button returns, and whether a dismissal can be vetoed,
+/// is decided by the sessions of <c>Routeables.Services</c>, shared by every host.
 /// </summary>
+/// <param name="icon">The icon of the dialog windows (a pack URI or a file); the one of the owner window when not set.</param>
 public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
 {
     /// <inheritdoc />
-    public async Task<string?> ShowMessageBoxAsync(string title, string message, string buttons, TopLevel? topLevel = null)
+    public async Task<string?> ShowMessageBoxAsync(string title, string message, string buttons, Owner? owner = null)
     {
-        var owner = Resolve(topLevel);
-        var labels = (buttons ?? string.Empty).SplitOnCapitals().ToList();
+        var window = Resolve(owner);
+        var labels = RouteableButtons.Split(buttons ?? string.Empty).ToList();
         if (labels.Count == 0)
             labels.Add("Ok");
 
@@ -38,25 +55,33 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var body = DialogCard.Scrollable(DialogCard.ToBody(message ?? string.Empty)!);
         var card = DialogCard.Create([body], buttonControls);
 
-        await DialogPresenter.ShowAsync(owner, icon, title, card, handle);
+        await DialogPresenter.ShowAsync(window, icon, title, card, handle);
         return result;
     }
 
     /// <inheritdoc />
-    public async Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params, TopLevel? topLevel = null)
+#if AVALONIA
+    public async Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params, Owner? owner = null)
+#else
+    public async Task<RouteableContentDialogResult> ShowAsync(RouteableContentDialog @params, Owner? owner = null)
+#endif
     {
         ArgumentNullException.ThrowIfNull(@params);
 
-        var owner = Resolve(topLevel);
+        var window = Resolve(owner);
         var handle = new RouteableDialogHandle();
         var session = new RouteableContentDialogSession(@params, handle.Complete);
 
         // Lets the caller close the dialog later, from any thread.
+#if AVALONIA
         session.AllowCloseFromCode(action =>
         {
             if (Dispatcher.UIThread.CheckAccess()) action();
             else Dispatcher.UIThread.Post(action);
         });
+#else
+        session.AllowCloseFromCode(UiThread.Post);
+#endif
         handle.TryDismiss = session.TryDismiss;
         handle.Opened = session.Opened;
 
@@ -68,16 +93,24 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var body = DialogCard.ToBody(@params.Content);
         var scroller = body is null ? null : DialogCard.Scrollable(body);
         var card = DialogCard.Create([scroller], buttons);
+#if AVALONIA
         if (@params.FullSizeDesired)
         {
             card.MaxWidth = double.PositiveInfinity;
             card.MinWidth = 640;
         }
+#else
+        if (@params.FullSizeDesired && card is FrameworkElement element)
+        {
+            element.MaxWidth = double.PositiveInfinity;
+            element.MinWidth = 640;
+        }
+#endif
 
         session.Opening();
         try
         {
-            await DialogPresenter.ShowAsync(owner, icon, @params.Title, card, handle);
+            await DialogPresenter.ShowAsync(window, icon, @params.Title, card, handle);
         }
         finally
         {
@@ -91,11 +124,15 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
     }
 
     /// <inheritdoc />
-    public async Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, TopLevel? topLevel = null, params RouteableTaskDialogResult[] results)
+#if AVALONIA
+    public async Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, Owner? owner = null, params RouteableTaskDialogResult[] results)
+#else
+    public async Task<RouteableTaskDialogResult> ShowAsync(RouteableTaskDialog @params, Owner? owner = null, params RouteableTaskDialogResult[] results)
+#endif
     {
         ArgumentNullException.ThrowIfNull(@params);
 
-        var owner = Resolve(topLevel);
+        var window = Resolve(owner);
         var handle = new RouteableDialogHandle();
         var session = new RouteableTaskDialogSession(@params, results, handle.Complete);
 
@@ -103,21 +140,31 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         handle.Opened = session.Opened;
 
         var buttons = session.Buttons
-            .Select((b) => DialogCard.CreateButton(b.Text, () => b.Press(), isDefault: b.IsDefault))
+            .Select(b => DialogCard.CreateButton(b.Text, () => b.Press(), isDefault: b.IsDefault))
             .ToList();
 
-        var parts = new List<Control?>();
+        var parts = new List<Element?>();
         var release = new List<Action>();
 
+#if AVALONIA
         var texts = new StackPanel { Spacing = 4 };
+#else
+        var texts = new StackPanel();
+#endif
         if (!string.IsNullOrWhiteSpace(@params.Header))
         {
             texts.Children.Add(new TextBlock
             {
                 Text = @params.Header,
                 FontSize = 20,
+#if AVALONIA
                 FontWeight = FontWeight.SemiBold,
                 TextWrapping = TextWrapping.Wrap
+#else
+                FontWeight = FontWeights.SemiBold,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 4)
+#endif
             });
         }
 
@@ -127,7 +174,14 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var iconSource = DialogCard.ToIcon(@params.IconSource);
         if (iconSource is not null)
         {
+#if AVALONIA
             var header = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12 };
+#else
+            if (iconSource is FrameworkElement iconElement)
+                iconElement.Margin = new Thickness(0, 0, 12, 0);
+
+            var header = new StackPanel { Orientation = Orientation.Horizontal };
+#endif
             header.Children.Add(iconSource);
             header.Children.Add(texts);
             parts.Add(header);
@@ -144,7 +198,11 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
             parts.Add(scroller);
 
         if (@params.ShowProgressBar)
+#if AVALONIA
             parts.Add(new ProgressBar { IsIndeterminate = true });
+#else
+            parts.Add(new ProgressBar { IsIndeterminate = true, Height = 8 });
+#endif
 
         var footer = DialogCard.ToBody(@params.Footer);
         Expander? expander = null;
@@ -170,7 +228,7 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         session.Opening();
         try
         {
-            await DialogPresenter.ShowAsync(owner, icon, @params.Title, card, handle);
+            await DialogPresenter.ShowAsync(window, icon, @params.Title, card, handle);
         }
         finally
         {
@@ -183,15 +241,22 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
     }
 
     /// <inheritdoc />
-    public bool IsDisplayable(TopLevel topLevel)
+    public bool IsDisplayable(Owner owner)
     {
-        ArgumentNullException.ThrowIfNull(topLevel);
+        ArgumentNullException.ThrowIfNull(owner);
 
-        return topLevel.IsVisible;
+        return owner.IsVisible;
     }
 
-    private static TopLevel Resolve(TopLevel? topLevel) =>
-        topLevel
+#if AVALONIA
+    private static Owner Resolve(Owner? owner) =>
+        owner
         ?? TopLevelStateManager.Default.GetActive(throwOnNull: true)
         ?? throw new InvalidOperationException("No active top level is available to show the dialog.");
+#else
+    private static Owner Resolve(Owner? owner) =>
+        owner
+        ?? RouteableWindows.Active
+        ?? throw new InvalidOperationException("No active window is available to show the dialog. Open it with Application.OpenMainWindow or attach it with Window.AttachRouteables.");
+#endif
 }

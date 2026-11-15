@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml;
 #endif
 
 // One file for the XAML hosts that have a DependencyProperty: Routeables.Wpf links it (and defines WPF), Routeables.Uno and
-// Routeables.WinUI3 compile this folder.
+// Routeables.WinUI3 link it too.
 #if WPF
 namespace Routeables.Wpf;
 #elif WINUI3

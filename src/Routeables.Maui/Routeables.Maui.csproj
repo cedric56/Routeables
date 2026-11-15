@@ -30,8 +30,11 @@
 
   <ItemGroup>
     <!-- The same file as Wpf, Uno and WinUI 3 (the MAUI branch of its #if). -->
-    <Compile Include="..\Routeables.WinUI\RouteableLink.cs" Link="RouteableLink.cs" />
-    <Compile Include="..\Routeables.WinUI\RouteableViewBinder.cs" Link="RouteableViewBinder.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableLink.cs" Link="RouteableLink.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableViewBinder.cs" Link="RouteableViewBinder.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableFor.cs" Link="RouteableFor.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableRegion.cs" Link="RouteableRegion.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableRegionItems.cs" Link="RouteableRegionItems.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,3 +6,4 @@ Not a project and not a package: the **sources** that `Routeables.Uno` and `Rout
 - Edit a view, the region, the menu, the dialogs here, once.
 - What differs between the two hosts is inside `#if WINUI3` blocks (the Windows App SDK host); the public namespace is `Routeables.WinUI3` when it is defined, `Routeables.Uno` otherwise.
 - What belongs to one host only stays in its project (`BackRequests.cs` in `Routeables.Uno`).
+- The files that other hosts compile too (`Routeables.Wpf`, `Routeables.Avalonia`, `Routeables.Maui`) are not here but in `../Routeables.Shared`, with `#if WPF`, `#if AVALONIA` and `#if MAUI` branches (`RouteableLink`, `RouteableItem`, `RouteableViewBinder`, `RouteableWindows`, `ServiceLocator`, `RouteableDialogService`, `RouteableAutomationPeers`...). `Routeables.Uno` and `Routeables.WinUI3` link them from there.

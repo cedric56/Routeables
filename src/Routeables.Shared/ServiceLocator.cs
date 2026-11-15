@@ -1,4 +1,4 @@
-// One file for every host, which link it (and define WPF or AVALONIA) or compile this folder.
+// One file for every host, which link it (and define WPF or AVALONIA); Routeables.Uno and Routeables.WinUI3 link it too.
 #if WPF
 namespace Routeables.Wpf;
 #elif AVALONIA

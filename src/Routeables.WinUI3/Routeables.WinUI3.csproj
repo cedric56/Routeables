@@ -26,6 +26,17 @@
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' != 'net10.0'">
     <Compile Include="..\Routeables.WinUI\**\*.cs" Link="Routeables.WinUI\%(RecursiveDir)%(Filename)%(Extension)" />
+    <!-- The files that Routeables.Wpf, Routeables.Avalonia and Routeables.Maui compile too (their WINUI3 or default branch). -->
+    <Compile Include="..\Routeables.Shared\RouteableLink.cs" Link="Routeables.Shared\RouteableLink.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableItem.cs" Link="Routeables.Shared\RouteableItem.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableViewBinder.cs" Link="Routeables.Shared\RouteableViewBinder.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableFor.cs" Link="Routeables.Shared\RouteableFor.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableRegion.cs" Link="Routeables.Shared\RouteableRegion.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableRegionItems.cs" Link="Routeables.Shared\RouteableRegionItems.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableWindows.cs" Link="Routeables.Shared\RouteableWindows.cs" />
+    <Compile Include="..\Routeables.Shared\ServiceLocator.cs" Link="Routeables.Shared\ServiceLocator.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableDialogService.cs" Link="Routeables.Shared\RouteableDialogService.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableAutomationPeers.cs" Link="Routeables.Shared\RouteableAutomationPeers.cs" />
   </ItemGroup>
 
   <ItemGroup>
