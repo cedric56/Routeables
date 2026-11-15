@@ -159,19 +159,7 @@ public static class UnoRouteablesExtensions
         Func<IServiceProvider, IMessageBoxService>? messageBoxService = null,
         Func<IServiceProvider, IRouteableNotificationService>? notificationService = null)
     {
-        ArgumentNullException.ThrowIfNull(services);
-
-        // The dialogs of the platform follow the activity in front (Android, Uno): started before the first one.
-        Routeables.Native.NativeDialogs.Initialize();
-
-        services.RemoveAll<IMessageBoxService>();
-        services.RemoveAll<IRouteableNotificationService>();
-        services.RemoveAll<IRouteableDialogService>();
-
-        services.AddSingleton<IMessageBoxService>(messageBoxService ?? (_ => new DefaultMessageBoxService()));
-        services.AddSingleton(notificationService ?? (sp => new RouteableNotificationService(sp.GetRequiredService<IMessageBoxService>())));
-        services.AddSingleton<IRouteableDialogService>(sp => new RouteableDialogService(sp.GetRequiredService<IMessageBoxService>()));
-        return services;
+        return RouteableHostStart.AddServices(services, messageBoxService, notificationService, icon: null);
     }
 
 #if WINUI3

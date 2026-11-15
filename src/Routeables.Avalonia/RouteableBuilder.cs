@@ -121,16 +121,7 @@ public static class RouteableBuilder
         Func<IServiceProvider, IRouteableNotificationService>? notificationService = null,
         string? icon = null)
     {
-        ArgumentNullException.ThrowIfNull(services);
-
-        services.RemoveAll<IRouteableNotificationService>();
-        services.RemoveAll<IRouteableDialogService>();
-        services.RemoveAll<IMessageBoxService>();
-
-        services.AddTransient(notificationService ?? (sp => new RouteableNotificationService(sp.GetRequiredService<IMessageBoxService>())));
-        services.AddSingleton<IRouteableDialogService, RouteableDialogService>(sp => new RouteableDialogService(sp.GetRequiredService<IMessageBoxService>()));
-        services.AddSingleton<IMessageBoxService>(messageBoxService ?? (_ => new DefaultMessageBoxService(icon)));
-        return services;
+        return RouteableHostStart.AddServices(services, messageBoxService, notificationService, icon);
     }
 
     /// <summary>

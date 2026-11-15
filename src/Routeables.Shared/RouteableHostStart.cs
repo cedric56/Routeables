@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Errors;
@@ -6,6 +7,15 @@ using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Routing;
 using Routeables.Core;
 using Routeables.Services;
+#if WPF
+using Routeables.Wpf.Services;
+#elif AVALONIA
+using Routeables.Avalonia.Services;
+#elif WINUI3
+using Routeables.WinUI3.Services;
+#else
+using Routeables.Uno.Services;
+#endif
 
 // One file for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui link it (and define WPF, AVALONIA or MAUI),
 // Routeables.Uno and Routeables.WinUI3 link it too. What the extensions of the hosts do the same way when the application starts and when it ends.
@@ -51,6 +61,43 @@ internal static class RouteableHostStart
         ServiceLocator.Services = provider;
         afterBuild?.Invoke(provider);
         return provider;
+    }
+
+    /// <summary>
+    /// Registers the dialog, content dialog, task dialog and notification services of the host, and the <see cref="IMessageBoxService"/> that draws them.
+    /// A second call replaces the first.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="messageBoxService">Builds the <see cref="IMessageBoxService"/>; <see cref="DefaultMessageBoxService"/> when not set.</param>
+    /// <param name="notificationService">Builds the <see cref="IRouteableNotificationService"/>; Routeables' own when not set.</param>
+    /// <param name="icon">The icon of the dialog windows drawn by <see cref="DefaultMessageBoxService"/> (WPF and Avalonia).</param>
+    public static IServiceCollection AddServices(
+        IServiceCollection services,
+        Func<IServiceProvider, IMessageBoxService>? messageBoxService,
+        Func<IServiceProvider, IRouteableNotificationService>? notificationService,
+        string? icon)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+#if !WPF && !AVALONIA
+        // The dialogs of the platform follow the activity in front (Android, Uno): started before the first one.
+        Routeables.Native.NativeDialogs.Initialize();
+#endif
+
+        services.RemoveAll<IRouteableNotificationService>();
+        services.RemoveAll<IRouteableDialogService>();
+        services.RemoveAll<IMessageBoxService>();
+
+#if WPF || AVALONIA
+        // The notification service is built for each use; the host's one has nothing to keep.
+        services.AddTransient(notificationService ?? (sp => new RouteableNotificationService(sp.GetRequiredService<IMessageBoxService>())));
+        services.AddSingleton<IMessageBoxService>(messageBoxService ?? (_ => new DefaultMessageBoxService(icon)));
+#else
+        services.AddSingleton<IMessageBoxService>(messageBoxService ?? (_ => new DefaultMessageBoxService()));
+        services.AddSingleton(notificationService ?? (sp => new RouteableNotificationService(sp.GetRequiredService<IMessageBoxService>())));
+#endif
+        services.AddSingleton<IRouteableDialogService, RouteableDialogService>(sp => new RouteableDialogService(sp.GetRequiredService<IMessageBoxService>()));
+        return services;
     }
 
     /// <summary>
