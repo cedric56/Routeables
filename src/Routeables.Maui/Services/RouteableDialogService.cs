@@ -25,7 +25,7 @@ public class RouteableDialogService(
     IMessageBoxService
 {
     // The native implementation of IMessageBoxService: the interface's order is (title, message, buttons).
-    Task<int> IMessageBoxService.ShowMessageAsync(string title, string message, string buttons) => ShowMessageAsync(message, title, buttons);
+    Task<int> IRouteableMessageBoxBase.ShowMessageAsync(string title, string message, string buttons) => ShowMessageAsync(message, title, buttons);
 
     /// <summary>
     /// Shows the dialog of the platform (<see cref="DisplayThreeButtonsAsync{T}"/>): one button for one word, two for two, three for three, and the sheet of the platform for more. The confirmations (<see cref="IRouteableDialogService"/>) are written once, in
