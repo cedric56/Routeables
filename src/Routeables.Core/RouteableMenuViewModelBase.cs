@@ -67,7 +67,6 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     /// <param name="viewModel">The view model that is now current.</param>
     protected override void OnViewModelChanged(object? viewModel)
     {
-        Console.WriteLine($"[RDIAG] menu.OnViewModelChanged vm={viewModel?.GetType().Name} selected={_routeable?.Route} view={_router.CurrentView?.GetType().Name}");
         if (viewModel == null)
             return;
 
@@ -112,7 +111,6 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
 
     private void OnRouted(object? sender, RouteableRoutedEventArgs e)
     {
-        Console.WriteLine($"[RDIAG] menu.OnRouted kind={e.Kind} ok={e.Succeeded} selecting={_selecting} selfMoving={_selfMoving} sameAsFollowed={ReferenceEquals(_router.CurrentViewModel, _followed)} vm={_router.CurrentViewModel?.GetType().Name}");
         // A Push that the menu asked for (a selection) is announced by the selection itself; any other one (router.GoToAsync, a RouteableLink,
         // the redirection of a guard) is a page the menu did not choose, and it follows it like a Back.
         if (_selfMoving || !e.Succeeded || (e.Kind == RouteableKind.Push && _selecting > 0) || ReferenceEquals(_router.CurrentViewModel, _followed))
@@ -254,7 +252,6 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     public async Task SelectAsync(IRouteableMenuEntry? value, IRouteableMenuEntry? old = null)
     {
         var version = Interlocked.Increment(ref _selectionVersion);
-        Console.WriteLine($"[RDIAG] menu.SelectAsync begin value={value?.Route} version={version} gateFree={_selectionGate.CurrentCount}");
 
         // No ConfigureAwait(false): the notifications go to the UI, so the continuation must stay on the UI context.
         await _selectionGate.WaitAsync();
@@ -324,7 +321,6 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
             try { outcome = await _router.GoToRouteAsync(value); }
             finally { Interlocked.Decrement(ref _selecting); }
             var result = outcome.Success;
-            Console.WriteLine($"[RDIAG] menu.OnRouteableChangedAsync value={value.Route} success={result} version={version}/{_selectionVersion}");
 
             // Whatever a newer selection does next, the router now shows this entry: it is the one to go back to if that one is refused.
             if (result && _router.History.Current is { } shown

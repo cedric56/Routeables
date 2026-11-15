@@ -88,7 +88,6 @@ public partial class RouteablesShell : Shell
     {
         // A page opened from the code that has no entry (the detail a list opens) is shown by its owner, inside the page of the entry: the
         // menu follows it, but the shell must not take its view out of there (a view has one parent, and the page would stay empty).
-        Console.WriteLine($"[RDIAG] shell.OnCurrentViewChanged view={view?.GetType().Name} anotherEntry={IsPageOfAnotherEntry()} selected={menuViewModel.SelectedEntry?.Route}");
         if (IsPageOfAnotherEntry())
             return;
 

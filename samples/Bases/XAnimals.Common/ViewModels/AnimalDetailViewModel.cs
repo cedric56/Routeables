@@ -28,13 +28,9 @@ public abstract class AnimalDetailViewModel(IRouter router, Animal? animal = nul
 
     public async Task GoBackAsync()
     {
-        Console.WriteLine($"[RDIAG] detail.GoBackAsync canGoBack={router.CanGoBack} hasBack={Back is not null}");
         if (router.CanGoBack)
             // Pop, not Back: the detail leaves the history instead of staying there as a forward entry.
             if ((await router.PopAsync()).Success)
-            {
-                Console.WriteLine("[RDIAG] detail.GoBackAsync popped, calling Back");
                 Back?.Invoke();
-            }
     }
 }
