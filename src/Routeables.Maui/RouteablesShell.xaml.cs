@@ -86,10 +86,20 @@ public partial class RouteablesShell : Shell
     // Routeables -> Shell: the current view is displayed in the active item.
     private void OnCurrentViewChanged(object? sender, object? view) => OnUiThread(() =>
     {
+        // A page opened from the code that has no entry (the detail a list opens) is shown by its owner, inside the page of the entry: the
+        // menu follows it, but the shell must not take its view out of there (a view has one parent, and the page would stay empty).
+        if (IsPageOfAnotherEntry())
+            return;
+
         var index = ShownIndex();
         if (index >= 0 && index < hosts.Count)
             hosts[index].Content = view as View;
     });
+
+    private bool IsPageOfAnotherEntry()
+        => menuViewModel.SelectedEntry is { } entry
+           && services.GetService<IRouter>()?.History.Current is { } current
+           && !string.Equals(current.Args.Route, entry.Arguments.Route ?? entry.Route, StringComparison.Ordinal);
 
     // The entry the view model shows; before Shell has a current item (it has none until it appears) the shell cannot tell it.
     private int ShownIndex()

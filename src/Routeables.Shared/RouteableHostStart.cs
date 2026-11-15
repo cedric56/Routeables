@@ -100,29 +100,6 @@ internal static class RouteableHostStart
         return services;
     }
 
-    /// <summary>
-    /// What a window does the first time it is activated: selects the first entry of the menu view model. It is a singleton
-    /// (<c>RegisterMenuViewModel</c> refuses a transient one), so this is the instance the window displays.
-    /// </summary>
-    /// <param name="provider">The container of the host.</param>
-    /// <param name="source">The type reported when it fails.</param>
-    public static void SelectFirst(IServiceProvider provider, Type source)
-    {
-        // Raised from an event: it must not end the application.
-        try { provider.GetService<IRouteableMenuViewModel>()?.SelectFirst(); }
-        catch (Exception ex) { RouteableErrors.Report(provider, ex, source); }
-    }
-
-    /// <summary>Runs what the application asked for when its window closes; the container is disposed after it, so a failure is reported and goes no further.</summary>
-    /// <param name="provider">The container of the host.</param>
-    /// <param name="onDispose">The callback of the application, or <see langword="null"/>.</param>
-    /// <param name="source">The type reported when it fails.</param>
-    public static void RunOnDispose(IServiceProvider provider, Action? onDispose, Type source)
-    {
-        try { onDispose?.Invoke(); }
-        catch (Exception ex) { RouteableErrors.Report(provider, ex, source); }
-    }
-
     /// <summary>The last window takes the container with it: the locator forgets it, then it is disposed.</summary>
     /// <param name="provider">The container of the host.</param>
     public static void Release(IServiceProvider provider)

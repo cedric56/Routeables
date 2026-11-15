@@ -192,7 +192,7 @@ public static class WpfRouteablesExtensions
 
             selected = true;
 
-            RouteableHostStart.SelectFirst(provider, typeof(WpfRouteablesExtensions));
+            RouteableHostLifecycle.SelectFirst(provider, typeof(WpfRouteablesExtensions));
         }
 
         void OnClosed(object? sender, EventArgs e)
@@ -205,7 +205,7 @@ public static class WpfRouteablesExtensions
             if (RouteableWindows.Active is null)
                 provider.GetService<RouteableAppLifecycle>()?.SleepNow();
 
-            RouteableHostStart.RunOnDispose(provider, onDispose, typeof(WpfRouteablesExtensions));
+            RouteableHostLifecycle.RunOnDispose(provider, onDispose, typeof(WpfRouteablesExtensions));
 
             // The last window takes the container with it.
             if (RouteableWindows.Active is null)

@@ -279,7 +279,7 @@ public static class UnoRouteablesExtensions
 
             selected = true;
 
-            RouteableHostStart.SelectFirst(provider, typeof(HostExtensions));
+            RouteableHostLifecycle.SelectFirst(provider, typeof(HostExtensions));
         }
 
         void OnClosed(object sender, WindowEventArgs e)
@@ -288,7 +288,7 @@ public static class UnoRouteablesExtensions
             window.Closed -= OnClosed;
             RouteableWindows.Remove(window);
 
-            RouteableHostStart.RunOnDispose(provider, onDispose, typeof(HostExtensions));
+            RouteableHostLifecycle.RunOnDispose(provider, onDispose, typeof(HostExtensions));
 
             // The last window takes the container with it.
             if (RouteableWindows.Active is null)

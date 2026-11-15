@@ -199,7 +199,7 @@ public static class RouteableBuilder
 
                         var topLevel = TopLevelStateManager.Default.GetActive(false);
 
-                        RouteableHostStart.SelectFirst(provider, typeof(RouteableBuilder));
+                        RouteableHostLifecycle.SelectFirst(provider, typeof(RouteableBuilder));
 
                         topLevel?.Closed += OnClosed;
 
@@ -210,7 +210,7 @@ public static class RouteableBuilder
                             // The application leaving: the pages are told, and the history is saved with what they wrote.
                             provider.GetService<RouteableAppLifecycle>()?.SleepNow();
 
-                            RouteableHostStart.RunOnDispose(provider, onDispose, typeof(RouteableBuilder));
+                            RouteableHostLifecycle.RunOnDispose(provider, onDispose, typeof(RouteableBuilder));
                             RouteableHostStart.Release(provider);
                         }
                     }

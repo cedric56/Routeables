@@ -160,4 +160,46 @@ public class RouteableMenuViewModelBaseTests
         Assert.True(await sut.SelectEntryAsync(list));
         Assert.IsType<ListVm>(router.CurrentViewModel);
     }
+
+    public sealed class OrdersView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class OrdersVm;
+    public sealed class OrderView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class OrderVm(int id) { public int Id { get; } = id; }
+
+    private sealed class OrdersMenu(IRouter router) : RouteableMenuViewModelBase(router, initialize: false)
+    {
+        protected override ObservableCollection<IRouteableMenuEntry> GetEntries() =>
+        [
+            new RouteableMenuEntry<OrdersVm>("Orders", route: "/orders", template: "/orders"),
+        ];
+
+        protected override void NotifyPropertyChanged(string? propertyName)
+        {
+        }
+    }
+
+    [Fact]
+    public async Task The_entry_of_the_list_opens_the_list_again_from_a_detail_page_under_its_own_address()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<OrdersView, OrdersVm>(route: "/orders");
+        services.RegisterRoute<OrderView, OrderVm>(route: "/orders/{id:int}");
+        using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+        var sut = new OrdersMenu(router);
+        var list = sut.Entries[0];
+        Assert.True(await sut.SelectEntryAsync(list));
+        Assert.IsType<OrdersVm>(router.CurrentViewModel);
+
+        // The list opens an order: its address starts with the one of the entry, but it is not the list.
+        Assert.True((await router.GoToAsync("/orders/42", cancellationToken: ct)).Success);
+        Assert.IsType<OrderVm>(router.CurrentViewModel);
+        Assert.Same(list, sut.SelectedEntry);
+
+        // The user clicks the entry of the list again: the list opens.
+        Assert.True(await sut.SelectEntryAsync(list));
+        Assert.IsType<OrdersVm>(router.CurrentViewModel);
+    }
 }
