@@ -95,7 +95,7 @@ jobs:
         run: docfx docs/docfx.json
 
       # The demo goes next to the docs: /demo/avalonia/. .nojekyll keeps Pages from dropping files that start with an underscore (_framework).
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: avalonia-demo
           path: docs/_site/demo/avalonia
