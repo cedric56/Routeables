@@ -30,7 +30,9 @@ public partial class AnimalList : ContentView
 
             // Clear the selection so the same animal can be opened again after going back.
             list.SelectedItem = null;
+            Console.WriteLine($"[RDIAG] list.selected {animal.Name} vm={viewModel.GetType().Name}");
             await viewModel.OnSelectedAnimalAsync(animal);
+            Console.WriteLine($"[RDIAG] list.selected {animal.Name} done currentView={viewModel.CurrentView?.GetType().Name}");
         }
         catch (System.Exception ex)
         {

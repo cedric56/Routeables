@@ -74,6 +74,7 @@ public abstract class AnimalsViewModel(IRouter router, IServiceProvider provider
     public async Task OnSelectedAnimalAsync(Animal animal)
     {
         SelectedAnimal = animal;
+        Console.WriteLine($"[RDIAG] list.OnSelectedAnimalAsync {animal.Name} hostsDetail={HostsDetail}");
 
         if ((await GoToDetailAsync(animal, () => RaiseCurrentViewChanged(null))).Success && HostsDetail)
             RaiseCurrentViewChanged(_router.CurrentView);

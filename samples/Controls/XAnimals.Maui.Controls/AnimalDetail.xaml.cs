@@ -51,6 +51,7 @@ public partial class AnimalDetail : ContentView
     {
         try
         {
+            Console.WriteLine($"[RDIAG] detail.OnBackClicked context={BindingContext?.GetType().Name}");
             if (BindingContext is AnimalDetailViewModel viewModel)
                 await viewModel.GoBackAsync();
         }

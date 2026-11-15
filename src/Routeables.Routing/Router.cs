@@ -303,13 +303,16 @@ internal class Router(
     /// <inheritdoc />
     public async Task<RouteableResult> PopAsync(CancellationToken cancellationToken = default)
     {
+        Console.WriteLine("[RDIAG] router.PopAsync enter");
         var enter = gate.EnterAsync(cancellationToken);
         try { await enter; } catch { gate.Abort(); throw; }
         cancellationToken = gate.Observe(cancellationToken);
         try
         {
-            return await MoveAsync(RouteableKind.Pop, history.PeekBack(),
+            var popped = await MoveAsync(RouteableKind.Pop, history.PeekBack(),
                 history.Pop, cancellationToken);
+            Console.WriteLine($"[RDIAG] router.PopAsync success={popped.Success} cancelled={popped.Cancelled} error={popped.Exception?.GetType().Name}");
+            return popped;
         }
         finally { gate.Exit(); }
     }
