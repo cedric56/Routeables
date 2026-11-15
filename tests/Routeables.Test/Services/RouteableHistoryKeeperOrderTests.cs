@@ -80,7 +80,7 @@ public class RouteableHistoryKeeperOrderTests
         vm.Value = "bravo";
         vm.HoldNext = true;
         var slow = Task.Run(keeper.Flush, ct);
-        Assert.True(vm.Reading.Wait(TimeSpan.FromSeconds(5)), "the first save did not start reading");
+        Assert.True(vm.Reading.Wait(TimeSpan.FromSeconds(5), ct), "the first save did not start reading");
 
         // Then the page says "alpha" again, and a second save reads the history: the text is the one that is already written.
         vm.Value = "alpha";
