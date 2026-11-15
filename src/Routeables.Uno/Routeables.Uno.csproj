@@ -31,6 +31,7 @@
     <Compile Include="..\Routeables.Shared\RouteableFor.cs" Link="Routeables.Shared\RouteableFor.cs" />
     <Compile Include="..\Routeables.Shared\RouteableRegion.cs" Link="Routeables.Shared\RouteableRegion.cs" />
     <Compile Include="..\Routeables.Shared\RouteableRegionItems.cs" Link="Routeables.Shared\RouteableRegionItems.cs" />
+    <Compile Include="..\Routeables.Shared\DialogCard.cs" Link="Routeables.Shared\DialogCard.cs" />
     <Compile Include="..\Routeables.Shared\RouteableWindows.cs" Link="Routeables.Shared\RouteableWindows.cs" />
     <Compile Include="..\Routeables.Shared\ServiceLocator.cs" Link="Routeables.Shared\ServiceLocator.cs" />
     <Compile Include="..\Routeables.Shared\RouteableDialogService.cs" Link="Routeables.Shared\RouteableDialogService.cs" />

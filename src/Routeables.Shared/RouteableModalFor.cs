@@ -32,7 +32,7 @@ public class RouteableModalFor<TViewModel, TResult> : UserControl,
     /// <summary>Gets the icon identifier used by dialog implementations that show one. Empty by default.</summary>
     protected virtual string Icon { get; } = "";
 
-    /// <summary>Gets the strongly typed view model bound to this dialog's <see cref="DataContext"/>, or <see langword="null"/> if not set or of the wrong type.</summary>
+    /// <summary>Gets the strongly typed view model bound to this dialog's <c>DataContext</c>, or <see langword="null"/> if not set or of the wrong type.</summary>
     protected TViewModel? ViewModel => DataContext as TViewModel;
 
     /// <summary>Shows this dialog modally and awaits its result.</summary>

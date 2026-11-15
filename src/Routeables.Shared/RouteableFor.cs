@@ -160,7 +160,7 @@ public partial class RouteableFor : UserControl, IRouteableFor, IRouteable, IDis
 #else
     /// <summary>The view model: the <c>DataContext</c> of the view.</summary>
 #endif
-#if ANDROID && !MAUI
+#if ANDROID && ROUTEABLE_UNO
     // A native Android view already has a Context (the Android one): this one is the view model.
     public new object? Context
 #else
