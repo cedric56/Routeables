@@ -274,30 +274,7 @@ public partial class RouteableRegionItems : ContentControl
 #endif
     }
 
-    private void Show(IReadOnlyList<object> views)
-    {
-#if WPF
-        if (Dispatcher.CheckAccess())
-            Apply(views);
-        else
-            Dispatcher.InvokeAsync(() => Apply(views));
-#elif AVALONIA
-        if (Dispatcher.UIThread.CheckAccess())
-            Apply(views);
-        else
-            Dispatcher.UIThread.Post(() => Apply(views));
-#elif MAUI
-        if (Dispatcher.IsDispatchRequired)
-            Dispatcher.Dispatch(() => Apply(views));
-        else
-            Apply(views);
-#else
-        if (DispatcherQueue.HasThreadAccess)
-            Apply(views);
-        else
-            DispatcherQueue.TryEnqueue(() => Apply(views));
-#endif
-    }
+    private void Show(IReadOnlyList<object> views) => this.Post(() => Apply(views));
 
     private void Apply(IReadOnlyList<object> views)
     {

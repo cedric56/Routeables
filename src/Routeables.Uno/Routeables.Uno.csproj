@@ -28,6 +28,8 @@
     <Compile Include="..\Routeables.Shared\RouteableLink.cs" Link="Routeables.Shared\RouteableLink.cs" />
     <Compile Include="..\Routeables.Shared\RouteableItem.cs" Link="Routeables.Shared\RouteableItem.cs" />
     <Compile Include="..\Routeables.Shared\RouteableViewBinder.cs" Link="Routeables.Shared\RouteableViewBinder.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableHostStart.cs" Link="Routeables.Shared\RouteableHostStart.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableThread.cs" Link="Routeables.Shared\RouteableThread.cs" />
     <Compile Include="..\Routeables.Shared\RouteableFor.cs" Link="Routeables.Shared\RouteableFor.cs" />
     <Compile Include="..\Routeables.Shared\RouteableRegion.cs" Link="Routeables.Shared\RouteableRegion.cs" />
     <Compile Include="..\Routeables.Shared\RouteableRegionItems.cs" Link="Routeables.Shared\RouteableRegionItems.cs" />

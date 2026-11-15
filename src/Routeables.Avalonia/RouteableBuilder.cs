@@ -57,7 +57,7 @@ public static class RouteableBuilder
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        var provider = BuildProvider(services =>
+        var provider = RouteableHostStart.Build(services =>
         {
             services.RegisterMenuViewModel<TMenu>();
             services.UseRouteablesServices();
@@ -174,26 +174,6 @@ public static class RouteableBuilder
         BackRequests.Attach(view, provider);
     }
 
-    private static IServiceProvider BuildProvider(
-        Action<IServiceCollection>? configure,
-        Action<IServiceProvider>? afterBuild)
-    {
-        var services = new ServiceCollection();
-
-        services.AddRouteableHost(Runtime.Avalonia, new RouteablePropertyEntry(typeof(InjectPropertyAttribute)));
-        services.AddSingleton<IRouteableRequestedThemeService, RouteableRequestThemeService>();
-        services.AddSingleton<IRouteableDispatcher, RouteableDispatcher>();
-        services.AddSingleton<IRouteableViewBinder, RouteableViewBinder>();
-
-        configure?.Invoke(services);
-        // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
-        global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
-        var provider = services.BuildRouteableProvider();
-        ServiceLocator.Services = provider;
-        afterBuild?.Invoke(provider);
-        return provider;
-    }
-
     // The lifetime is set by the code that starts the application: when it is already there the view is shown now, which is
     // before OnFrameworkInitializationCompleted; when it is not, the view is shown as soon as the application runs.
     private static void OpenWhenKnown(Application app, Func<IApplicationLifetime?, Control> view)
@@ -228,10 +208,7 @@ public static class RouteableBuilder
 
                         var topLevel = TopLevelStateManager.Default.GetActive(false);
 
-                        // The menu view model is a singleton (RegisterMenuViewModel refuses a transient one), so this is the
-                        // instance the window displays.
-                        try { provider.GetService<IRouteableMenuViewModel>()?.SelectFirst(); }
-                        catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(RouteableBuilder)); }   // raised from an event: it must not end the application
+                        RouteableHostStart.SelectFirst(provider, typeof(RouteableBuilder));
 
                         topLevel?.Closed += OnClosed;
 
@@ -242,16 +219,8 @@ public static class RouteableBuilder
                             // The application leaving: the pages are told, and the history is saved with what they wrote.
                             provider.GetService<RouteableAppLifecycle>()?.SleepNow();
 
-                            try { onDispose?.Invoke(); }
-                            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(RouteableBuilder)); }   // the provider is still disposed below
-
-                            // The static locator must not keep serving the service of a host that is gone (a second host
-                            // in the same process, or the next test).
-                            if (ReferenceEquals(ServiceLocator.Services, provider))
-                                ServiceLocator.Services = null;
-
-                            if (provider is IDisposable disposable)
-                                disposable.Dispose();
+                            RouteableHostStart.RunOnDispose(provider, onDispose, typeof(RouteableBuilder));
+                            RouteableHostStart.Release(provider);
                         }
                     }
                 }

@@ -199,7 +199,7 @@ public static class UnoRouteablesExtensions
         Action<IServiceCollection>? configure = null,
         Action<IServiceProvider>? afterBuild = null)
         where TMenu : class, IRouteableMenuViewModel
-        => BuildProvider(services =>
+        => RouteableHostStart.Build(services =>
         {
             services.RegisterMenuViewModel<TMenu>();
             services.UseRouteablesServices();
@@ -291,10 +291,7 @@ public static class UnoRouteablesExtensions
 
             selected = true;
 
-            // The menu view model is a singleton (RegisterMenuViewModel refuses a transient one), so this is the
-            // instance the window displays.
-            try { provider.GetService<IRouteableMenuViewModel>()?.SelectFirst(); }
-            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(HostExtensions)); }   // raised from an event: it must not end the application
+            RouteableHostStart.SelectFirst(provider, typeof(HostExtensions));
         }
 
         void OnClosed(object sender, WindowEventArgs e)
@@ -303,11 +300,9 @@ public static class UnoRouteablesExtensions
             window.Closed -= OnClosed;
             RouteableWindows.Remove(window);
 
-            try { onDispose?.Invoke(); }
-            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(HostExtensions)); }   // the provider is still disposed below
+            RouteableHostStart.RunOnDispose(provider, onDispose, typeof(HostExtensions));
 
-            // The last window takes the container with it. The static locator must not keep serving the service of a host
-            // that is gone (a second host in the same process, or the next test).
+            // The last window takes the container with it.
             if (RouteableWindows.Active is null)
             {
 #if !WINUI3
@@ -315,41 +310,12 @@ public static class UnoRouteablesExtensions
                 _back = null;
 #endif
 
-                if (ReferenceEquals(ServiceLocator.Services, provider))
-                    ServiceLocator.Services = null;
-
-                if (provider is IDisposable disposable)
-                    disposable.Dispose();
+                RouteableHostStart.Release(provider);
             }
         }
 
         window.Activated += OnActivated;
         window.Closed += OnClosed;
         return window;
-    }
-
-    private static IServiceProvider BuildProvider(
-        Action<IServiceCollection>? configure,
-        Action<IServiceProvider>? afterBuild)
-    {
-        var services = new ServiceCollection();
-
-#if WINUI3
-        services.AddRouteableHost(Runtime.WinUI3,
-#else
-        services.AddRouteableHost(Runtime.Uno,
-#endif
-             new RouteablePropertyEntry(typeof(InjectPropertyAttribute)));
-        services.AddSingleton<IRouteableRequestedThemeService, RouteableRequestThemeService>();
-        services.AddSingleton<IRouteableDispatcher, RouteableDispatcher>();
-        services.AddSingleton<IRouteableViewBinder, RouteableViewBinder>();
-
-        configure?.Invoke(services);
-        // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
-        global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
-        var provider = services.BuildRouteableProvider();
-        ServiceLocator.Services = provider;
-        afterBuild?.Invoke(provider);
-        return provider;
     }
 }

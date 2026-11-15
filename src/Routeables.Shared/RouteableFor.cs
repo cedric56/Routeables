@@ -82,14 +82,6 @@ public partial class RouteableFor : UserControl, IRouteableFor, IRouteable, IDis
 
     private void SetLocked(bool locked) => SetValue(IsLockedKey, locked);
 
-    // The lock changes on the thread that asked for the route change.
-    private void OnInterfaceThread(Action action)
-    {
-        if (Dispatcher.CheckAccess())
-            action();
-        else
-            Dispatcher.InvokeAsync(action);
-    }
 #elif AVALONIA
     /// <summary>The automation peer: a group named after what the control shows (see <c>RouteableForAutomationPeer</c>).</summary>
     protected override global::Avalonia.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Automation.RouteableForAutomationPeer(this);
@@ -101,14 +93,6 @@ public partial class RouteableFor : UserControl, IRouteableFor, IRouteable, IDis
     // IsLocked is computed from the view model: the value only tells the bindings to read it again.
     private void SetLocked(bool locked) => RaisePropertyChanged(IsLockedProperty, false, true);
 
-    // The lock changes on the thread that asked for the route change.
-    private static void OnInterfaceThread(Action action)
-    {
-        if (Dispatcher.UIThread.CheckAccess())
-            action();
-        else
-            Dispatcher.UIThread.Post(action);
-    }
 #elif MAUI
     private static readonly BindablePropertyKey IsLockedPropertyKey =
         BindableProperty.CreateReadOnly(nameof(IsLocked), typeof(bool), typeof(RouteableFor), false);
@@ -118,14 +102,6 @@ public partial class RouteableFor : UserControl, IRouteableFor, IRouteable, IDis
 
     private void SetLocked(bool locked) => SetValue(IsLockedPropertyKey, locked);
 
-    // The lock changes on the thread that asked for the route change.
-    private void OnInterfaceThread(Action action)
-    {
-        if (Dispatcher.IsDispatchRequired)
-            Dispatcher.Dispatch(action);
-        else
-            action();
-    }
 #else
     /// <summary>The automation peer: a group named after what the control shows (see <c>RouteableForAutomationPeer</c>).</summary>
     protected override Microsoft.UI.Xaml.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Automation.RouteableForAutomationPeer(this);
@@ -136,20 +112,12 @@ public partial class RouteableFor : UserControl, IRouteableFor, IRouteable, IDis
 
     private void SetLocked(bool locked) => SetValue(IsLockedProperty, locked);
 
-    // The lock changes on the thread that asked for the route change.
-    private void OnInterfaceThread(Action action)
-    {
-        if (DispatcherQueue is { } queue && !queue.HasThreadAccess)
-            queue.TryEnqueue(() => action());
-        else
-            action();
-    }
 #endif
 
     // Follows the lock of the menu view model; one subscription, however many times the view is initialized.
     private RouteableLockWatcher? _lock;
 
-    private RouteableLockWatcher Lock => _lock ??= new RouteableLockWatcher(locked => OnInterfaceThread(() => SetLocked(locked)));
+    private RouteableLockWatcher Lock => _lock ??= new RouteableLockWatcher(locked => this.Post(() => SetLocked(locked)));
 
 #if MAUI
     /// <summary>The view model: the <c>BindingContext</c> of the view.</summary>

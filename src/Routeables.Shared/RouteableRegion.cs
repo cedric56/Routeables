@@ -353,30 +353,7 @@ public partial class RouteableRegion : ContentControl
         Content = null;
     }
 
-    private void Show(object? view, RegionChange change)
-    {
-#if WPF
-        if (Dispatcher.CheckAccess())
-            Apply(view, change);
-        else
-            Dispatcher.InvokeAsync(() => Apply(view, change));
-#elif AVALONIA
-        if (Dispatcher.UIThread.CheckAccess())
-            Apply(view, change);
-        else
-            Dispatcher.UIThread.Post(() => Apply(view, change));
-#elif MAUI
-        if (Dispatcher.IsDispatchRequired)
-            Dispatcher.Dispatch(() => Apply(view, change));
-        else
-            Apply(view, change);
-#else
-        if (DispatcherQueue.HasThreadAccess)
-            Apply(view, change);
-        else
-            DispatcherQueue.TryEnqueue(() => Apply(view, change));
-#endif
-    }
+    private void Show(object? view, RegionChange change) => this.Post(() => Apply(view, change));
 
     private void Apply(object? view, RegionChange change)
     {

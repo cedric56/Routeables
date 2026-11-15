@@ -47,7 +47,7 @@ public static class WpfRouteablesExtensions
         where TMenu : class, IRouteableMenuViewModel
     {
         ArgumentNullException.ThrowIfNull(application);
-        return BuildProvider(services =>
+        return RouteableHostStart.Build(services =>
         {
             services.RegisterMenuViewModel<TMenu>();
             services.UseRouteablesServices();
@@ -201,10 +201,7 @@ public static class WpfRouteablesExtensions
 
             selected = true;
 
-            // The menu view model is a singleton (RegisterMenuViewModel refuses a transient one), so this is the
-            // instance the window displays.
-            try { provider.GetService<IRouteableMenuViewModel>()?.SelectFirst(); }
-            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(WpfRouteablesExtensions)); }   // raised from an event: it must not end the application
+            RouteableHostStart.SelectFirst(provider, typeof(WpfRouteablesExtensions));
         }
 
         void OnClosed(object? sender, EventArgs e)
@@ -217,19 +214,11 @@ public static class WpfRouteablesExtensions
             if (RouteableWindows.Active is null)
                 provider.GetService<RouteableAppLifecycle>()?.SleepNow();
 
-            try { onDispose?.Invoke(); }
-            catch (Exception ex) { RouteableErrors.Report(provider, ex, typeof(WpfRouteablesExtensions)); }   // the provider is still disposed below
+            RouteableHostStart.RunOnDispose(provider, onDispose, typeof(WpfRouteablesExtensions));
 
-            // The last window takes the container with it. The static locator must not keep serving the service of a host
-            // that is gone (a second host in the same process).
+            // The last window takes the container with it.
             if (RouteableWindows.Active is null)
-            {
-                if (ReferenceEquals(ServiceLocator.Services, provider))
-                    ServiceLocator.Services = null;
-
-                if (provider is IDisposable disposable)
-                    disposable.Dispose();
-            }
+                RouteableHostStart.Release(provider);
         }
 
         // The Back request of the window: Alt+Left, the back key of a keyboard and the back button of a mouse (the NavigationCommands.BrowseBack
@@ -248,25 +237,5 @@ public static class WpfRouteablesExtensions
         window.Closed += OnClosed;
         window.Closed += (_, _) => window.CommandBindings.Remove(back);
         return window;
-    }
-
-    private static IServiceProvider BuildProvider(
-        Action<IServiceCollection> configure,
-        Action<IServiceProvider>? afterBuild)
-    {
-        var services = new ServiceCollection();
-
-        services.AddRouteableHost(Runtime.Wpf, new RouteablePropertyEntry(typeof(InjectPropertyAttribute)));
-        services.AddSingleton<IRouteableRequestedThemeService, RouteableRequestThemeService>();
-        services.AddSingleton<IRouteableDispatcher, RouteableDispatcher>();
-        services.AddSingleton<IRouteableViewBinder, RouteableViewBinder>();
-
-        configure(services);
-        // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
-        global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
-        var provider = services.BuildRouteableProvider();
-        ServiceLocator.Services = provider;
-        afterBuild?.Invoke(provider);
-        return provider;
     }
 }
