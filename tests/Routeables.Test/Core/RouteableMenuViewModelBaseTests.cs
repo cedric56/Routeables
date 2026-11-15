@@ -118,4 +118,46 @@ public class RouteableMenuViewModelBaseTests
         Assert.IsType<StayVm>(router.CurrentViewModel);
         Assert.True(sut.AnnouncedAfterSetter > before);        // and the control is told once the setter has returned
     }
+
+    public sealed class ListView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class ListVm;
+    public sealed class DetailView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class DetailVm;
+
+    private sealed class ListMenu(IRouter router) : RouteableMenuViewModelBase(router, initialize: false)
+    {
+        protected override ObservableCollection<IRouteableMenuEntry> GetEntries() =>
+        [
+            new RouteableMenuEntry<ListVm>("List", route: "/list", template: "/list"),
+        ];
+
+        protected override void NotifyPropertyChanged(string? propertyName)
+        {
+        }
+    }
+
+    [Fact]
+    public async Task The_entry_of_the_list_opens_the_list_again_from_a_page_that_has_no_entry()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<ListView, ListVm>(route: "/list");
+        services.RegisterRoute<DetailView, DetailVm>(route: "/detail");
+        using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+        var sut = new ListMenu(router);
+        var list = sut.Entries[0];
+        Assert.True(await sut.SelectEntryAsync(list));
+        Assert.IsType<ListVm>(router.CurrentViewModel);
+
+        // A page opens the detail itself: the menu has no entry for it, so it keeps showing the list as selected.
+        Assert.True((await router.GoToAsync("/detail", cancellationToken: ct)).Success);
+        Assert.IsType<DetailVm>(router.CurrentViewModel);
+        Assert.Same(list, sut.SelectedEntry);
+
+        // The user clicks the entry that is selected: the list is not the page shown, so it opens.
+        Assert.True(await sut.SelectEntryAsync(list));
+        Assert.IsType<ListVm>(router.CurrentViewModel);
+    }
 }

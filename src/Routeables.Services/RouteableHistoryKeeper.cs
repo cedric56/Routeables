@@ -196,8 +196,14 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             var text = snapshots.Count == 0 ? string.Empty : RouteableState.Serialize(snapshots);
             lock (_gate)
             {
-                if (ticket < _savedTicket || text == _last)
+                if (ticket < _savedTicket)
                     return;
+                // Nothing to write, but this read is now the newest one that was looked at: an older read, that differs, must not be written after it.
+                if (text == _last)
+                {
+                    _savedTicket = ticket;
+                    return;
+                }
                 store.Save(text);
                 _last = text;
                 _savedTicket = ticket;

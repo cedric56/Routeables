@@ -31,7 +31,31 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
     /// <param name="ct">A token to observe for cancellation.</param>
     public async Task TransitionAsync(RouterEntry leaving, RouterEntry entering, CancellationToken ct = default)
     {
-        await LeaveAsync(leaving, ct);
+        var viewModelLeft = false;
+        try
+        {
+            if (leaving.ViewModel is IRouteable vm) await vm.OnLeavingAsync(leaving.Args, ct);
+            viewModelLeft = true;
+            if (leaving.View is IRouteable v) await v.OnLeavingAsync(leaving.Args, ct);
+        }
+        catch
+        {
+            // The view model was told OnLeaving (it stopped a timer, unsubscribed) and the view then failed: `leaving` stays the current page,
+            // so it is entered again to be what the router says it is. When the view model itself failed, nothing was left.
+            if (viewModelLeft)
+            {
+                try
+                {
+                    await EnterAsync(leaving, CancellationToken.None);
+                }
+                catch (Exception recovery)
+                {
+                    RouteableErrors.Report<RouterLifecycle>(provider, recovery);
+                }
+            }
+
+            throw;
+        }
 
         try
         {
@@ -54,15 +78,6 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
 
             throw;
         }
-    }
-
-    /// <summary>
-    /// Notifies the view model and view of an entry that route change is leaving them.
-    /// </summary>
-    private static async Task LeaveAsync(RouterEntry entry, CancellationToken ct)
-    {
-        if (entry.ViewModel is IRouteable vm) await vm.OnLeavingAsync(entry.Args, ct);
-        if (entry.View is IRouteable v) await v.OnLeavingAsync(entry.Args, ct);
     }
 
     // The instances OnSubscribe was called on. Weak: it must not keep the pages alive.

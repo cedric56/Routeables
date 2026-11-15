@@ -94,11 +94,11 @@ public class RouterLifecycleTests
     }
 
     /// <summary>
-    /// The contract of a failed OnLeavingAsync: the route change fails with that exception, the entering page is never touched, and the
-    /// page being left is not entered again (it never stopped being the current one). What its callbacks already did is not undone.
+    /// The contract of a failed OnLeavingAsync of the view: the route change fails with that exception, the entering page is never touched,
+    /// and the page being left, which stays the current one and whose view model was already told OnLeaving, is entered again.
     /// </summary>
     [Fact]
-    public async Task A_leaving_callback_that_fails_stops_the_transition_without_entering_anything_again()
+    public async Task A_leaving_callback_of_the_view_that_fails_stops_the_transition_and_enters_the_page_left_again()
     {
         var calls = new List<string>();
         var failure = new InvalidOperationException("the view failed to leave");
@@ -109,7 +109,21 @@ public class RouterLifecycleTests
         var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => lifecycle.TransitionAsync(leaving, entering, ct: TestContext.Current.CancellationToken));
 
         Assert.Same(failure, thrown);
-        Assert.Equal(["leaving-vm:from", "leaving-view:from"], calls);
+        Assert.Equal(["leaving-vm:from", "leaving-view:from", "leaving-vm:to", "leaving-view:to"], calls);
+    }
+
+    [Fact]
+    public async Task A_leaving_callback_of_the_view_model_that_fails_leaves_nothing_to_enter_again()
+    {
+        var calls = new List<string>();
+        var failure = new InvalidOperationException("the view model failed to leave");
+        var leaving = Entry(new LifecycleProbe("leaving-vm", calls) { OnFrom = (_, _) => throw failure }, new LifecycleProbe("leaving-view", calls));
+        var entering = Entry(new LifecycleProbe("entering-vm", calls), new LifecycleProbe("entering-view", calls));
+
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => new RouterLifecycle().TransitionAsync(leaving, entering, ct: TestContext.Current.CancellationToken));
+
+        Assert.Same(failure, thrown);
+        Assert.Equal(["leaving-vm:from"], calls);
     }
 
     [Fact]

@@ -90,6 +90,9 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     // Set while GoBackAsync and GoForwardAsync of this menu run: they follow the router themselves, once the move is done.
     private bool _selfMoving;
 
+    // Greater than 0 while a selection of this menu asks the router for its page.
+    private int _selecting;
+
     /// <inheritdoc />
     public override async Task GoBackAsync()
     {
@@ -108,7 +111,9 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
 
     private void OnRouted(object? sender, RouteableRoutedEventArgs e)
     {
-        if (_selfMoving || !e.Succeeded || e.Kind == RouteableKind.Push || ReferenceEquals(_router.CurrentViewModel, _followed))
+        // A Push that the menu asked for (a selection) is announced by the selection itself; any other one (router.GoToAsync, a RouteableLink,
+        // the redirection of a guard) is a page the menu did not choose, and it follows it like a Back.
+        if (_selfMoving || !e.Succeeded || (e.Kind == RouteableKind.Push && _selecting > 0) || ReferenceEquals(_router.CurrentViewModel, _followed))
             return;
 
         OnRouterMoved(_router.CurrentViewModel);
@@ -143,7 +148,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         get => _routeable;
         set
         {
-            if (Equals(_routeable, value))
+            if (Equals(_routeable, value) && !PageIsElsewhere(value))
                 return;
             var old = _routeable;
             _routeable = value;
@@ -156,6 +161,12 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         }
     }
 
+    // The entry is the selected one, but the router shows another page: a page opened from the code (a detail, for instance) has no entry,
+    // and the menu keeps the entry it was on. Selecting that entry again must open its page, not be ignored.
+    private bool PageIsElsewhere(IRouteableMenuEntry? entry)
+        => entry is not null && _selectionVersion != 0 && _router.History.Current is { } current
+           && !string.Equals(current.Args.Route, entry.Arguments.Route ?? entry.Route, StringComparison.Ordinal);
+
     /// <summary>
     /// Selects an entry like the <see cref="SelectedEntry"/> setter does, and waits for the result.
     /// </summary>
@@ -165,7 +176,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     /// </returns>
     public async Task<bool> SelectEntryAsync(IRouteableMenuEntry? value)
     {
-        if (Equals(_routeable, value))
+        if (Equals(_routeable, value) && !PageIsElsewhere(value))
             return true;
         var old = _routeable;
         _routeable = value;
@@ -305,7 +316,10 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
             if (value == null)
                 return;
 
-            var outcome = await _router.GoToRouteAsync(value);
+            RouteableResult outcome;
+            Interlocked.Increment(ref _selecting);
+            try { outcome = await _router.GoToRouteAsync(value); }
+            finally { Interlocked.Decrement(ref _selecting); }
             var result = outcome.Success;
 
             // Whatever a newer selection does next, the router now shows this entry: it is the one to go back to if that one is refused.

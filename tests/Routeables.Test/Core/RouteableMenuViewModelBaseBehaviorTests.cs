@@ -70,6 +70,23 @@ public class RouteableMenuViewModelBaseBehaviorTests
         Assert.Equal([shown], announced);
     }
 
+    [Fact]
+    public async Task When_a_page_is_opened_from_the_code_the_menu_follows()
+    {
+        var router = CreateRouter();
+        await GoToAllAsync(router, new CallLog(), "A");
+        var entry = new Entry(nameof(RecordingViewModel)) { View = "the view" };
+        var sut = TestNavigableViewModel.Create(router, [new Entry("Other"), entry], initialize: false);
+        var announced = new List<object?>();
+        sut.CurrentViewChanged += (_, view) => announced.Add(view);
+
+        // Not through the menu, and not a move of the history: router.GoToAsync, a RouteableLink or the redirection of a guard push a page.
+        await GoToAllAsync(router, new CallLog(), "B");
+
+        Assert.Same(entry, sut.SelectedEntry);
+        Assert.Equal([router.CurrentView], announced);
+    }
+
     private sealed class FixedRuntime(Runtime current) : IRuntime
     {
         public Runtime Current { get; } = current;

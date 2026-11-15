@@ -46,6 +46,19 @@ public class RouterNotFoundAndGuardRefreshTests
         }
     }
 
+    [Fact]
+    public async Task The_args_of_the_caller_are_not_changed_by_the_page_of_a_missing_address()
+    {
+        using var provider = Build(notFound: true);
+        var router = provider.GetRequiredService<IRouter>();
+        var args = RouteableArgs.Create();
+
+        Assert.True((await router.GoToAsync("/nothing/here", args, null, Ct)).Success);
+        Assert.True((await router.GoToAsync("/nothing/else", args, null, Ct)).Success);
+
+        Assert.Empty(args.Values);
+    }
+
     private static ServiceProvider Build(bool notFound, Session? session = null, List<string>? log = null)
     {
         var services = new ServiceCollection();

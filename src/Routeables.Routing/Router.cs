@@ -551,7 +551,23 @@ internal class Router(
         // A page of the menu, whose route has no parameter.
         static string Normal(string? route) => (route ?? string.Empty).Split('?')[0].Trim('/');
         if (provider.GetService<IRouteableMenuViewModel>()?.Entries.FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(url), StringComparison.OrdinalIgnoreCase)) is { } item)
-            return await GoToEntryAsync(item, cancellationToken, []);
+        {
+            // The entry has no template to read the address with, but what the caller gave is not lost: its args, and the query of the address.
+            var query = RouteParser.QueryOf(url);
+            if (args is null && query.Count == 0)
+                return await GoToEntryAsync(item, cancellationToken, []);
+
+            var supplied = Snapshot(item.Arguments);
+            if (args is not null)
+            {
+                supplied.ViewModelParameters.AddRange(args.ViewModelParameters);
+                supplied.ViewParameters.AddRange(args.ViewParameters);
+                supplied.Values.AddRange(args.Values);
+            }
+            foreach (var (name, value) in query)
+                supplied.Values.Add(new RouteableArgument(value, name));
+            return await GoToEntryAsync(item, cancellationToken, [], supplied);
+        }
 
         // Nothing registered at all is the usual first mistake: say where to look.
         var hint = entries.Any()
@@ -561,7 +577,8 @@ internal class Router(
         static string Same(string? route) => (route ?? string.Empty).Split('?')[0].Trim('/');
         if (provider.GetService<RouteableNotFound>() is { } notFound && !string.Equals(Same(notFound.Route), Same(url), StringComparison.OrdinalIgnoreCase))
         {
-            var shown = (args ?? RouteableArgs.Create()).WithValue(RouteableNotFound.UrlValue, url);
+            // A copy: the caller's args must not collect a notFoundUrl per missing address.
+            var shown = Snapshot(args).WithValue(RouteableNotFound.UrlValue, url);
             return await GoToAsync(notFound.Route, shown, null, cancellationToken);
         }
 
@@ -619,27 +636,27 @@ internal class Router(
         return Task.FromResult(RouteableResult.Fail(failure!));
     }
 
-    private Task<RouteableResult> GoToEntryAsync(IRouteableMenuEntry routeableView, CancellationToken cancellationToken, string[] viewKeys)
+    private Task<RouteableResult> GoToEntryAsync(IRouteableMenuEntry routeableView, CancellationToken cancellationToken, string[] viewKeys, IRouteableArgs? supplied = null)
     {
         // A typed entry (RouteableMenuEntry<TViewModel>) names the keys of its view model; any other is bound by its template alone.
         var type = GetRouteableEntryType(routeableView);
         if (type is null)
-            return GoToViewAsync(routeableView, routeableView.Template, routeableView.Template, cancellationToken, viewKeys);
+            return GoToViewAsync(routeableView, routeableView.Template, routeableView.Template, cancellationToken, viewKeys, supplied);
 
         var keys = RouteableKeys.GetKeys(type, routeableView.Route);
-        return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys);
+        return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys, supplied);
     }
 
     // Goes to the entry, then gives it back the page the router shows so that the next visit finds it.
     private async Task<RouteableResult> GoToViewAsync(
-        IRouteableMenuEntry routeableView, string viewKey, string viewModelKey, CancellationToken cancellationToken, string[] viewKeys)
+        IRouteableMenuEntry routeableView, string viewKey, string viewModelKey, CancellationToken cancellationToken, string[] viewKeys, IRouteableArgs? supplied = null)
     {
         var result = await GoToRouteAsync(
             routeableView.Arguments.Route ?? routeableView.Route,
             routeableView.Template,
             viewKey,
             viewModelKey,
-            routeableView.Arguments,
+            supplied ?? routeableView.Arguments,
             Reusable(routeableView.ViewModel),
             Reusable(routeableView.View),
             cancellationToken,

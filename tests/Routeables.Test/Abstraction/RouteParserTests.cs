@@ -52,6 +52,25 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void A_brace_in_the_address_does_not_swallow_its_query()
+    {
+        var args = RouteableArgs.Create();
+
+        Assert.True(RouteParser.TryMatch("s/{q}?{tab?}", "s/a}b?tab=2", args, "tab"));
+
+        Assert.Equal("a}b", args.ViewModelParameters.Concat(args.ViewParameters).Single(x => x.name == "q").value);
+        Assert.Equal("2", args.ViewParameters.Single(x => x.name == "tab").value);
+    }
+
+    [Fact]
+    public void A_fixed_entry_of_the_query_of_a_template_must_be_in_the_address()
+    {
+        Assert.True(RouteParser.TryMatch("list?mode=grid", "list?mode=grid"));
+        Assert.False(RouteParser.TryMatch("list?mode=grid", "list?mode=table"));
+        Assert.False(RouteParser.TryMatch("list?mode=grid", "list"));
+    }
+
+    [Fact]
     public void TryMatch_accepts_a_missing_optional_segment_and_rejects_missing_or_invalid_required_segments()
     {
         Assert.True(RouteParser.TryMatch("orders/{id:int}/{tab?}", "orders/42"));

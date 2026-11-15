@@ -126,7 +126,7 @@ public static class RouteParser
             uri = uri[..hash];
 
         var (tPath, tQuery) = Split(template);
-        var (uPath, uQuery) = Split(uri);
+        var (uPath, uQuery) = Split(uri, template: false);
 
         // --- path ---
         var tSegs = tPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
@@ -169,7 +169,17 @@ public static class RouteParser
         foreach (var part in tQuery.Split('&', StringSplitOptions.RemoveEmptyEntries))
         {
             var m = Param.Match(part);
-            if (!m.Success) continue;
+            if (!m.Success)
+            {
+                // A fixed entry of the template ("mode=grid") must be in the address as written; "flag" alone only names a parameter.
+                if (part.IndexOf('=') is var eq and > 0)
+                {
+                    query.TryGetValue(part[..eq], out var got);
+                    if (!string.Equals(got, part[(eq + 1)..], StringComparison.OrdinalIgnoreCase))
+                        return $"the query \"{part[..eq]}\" is \"{got}\", expected \"{part[(eq + 1)..]}\"";
+                }
+                continue;
+            }
             query.TryGetValue(m.Groups["name"].Value, out var raw);
             if (Bind(m, raw, args, viewKeySet, bound) is { } failure) return failure;
         }
@@ -338,8 +348,15 @@ public static class RouteParser
     /// <summary>
     /// Splits a route string into path and query sections while ignoring '?' characters nested inside curly braces.
     /// </summary>
-    private static (string path, string query) Split(string s)
+    private static (string path, string query) Split(string s, bool template = true)
     {
+        // The braces are those of a template's placeholders; an address is user input and may hold a lone "{" or "}" ("/notes/a}b?tab=2").
+        if (!template)
+        {
+            var at = s.IndexOf('?');
+            return at < 0 ? (s, "") : (s[..at], s[(at + 1)..]);
+        }
+
         var depth = 0;
         for (var i = 0; i < s.Length; i++)
         {
@@ -473,6 +490,14 @@ public static class RouteParser
     /// <summary>
     /// Parses a query string into a key-value dictionary.
     /// </summary>
+    /// <summary>The query of an address as name and value (the fragment is left out): the values a page that has no template receives.</summary>
+    internal static IReadOnlyDictionary<string, string> QueryOf(string url)
+    {
+        if (url.IndexOf('#') is var hash and >= 0)
+            url = url[..hash];
+        return ParseQuery(Split(url, template: false).query);
+    }
+
     private static Dictionary<string, string> ParseQuery(string q)
     {
         var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
