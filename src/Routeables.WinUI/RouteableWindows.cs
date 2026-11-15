@@ -1,6 +1,14 @@
+#if WPF
+using System.Windows;
+#else
 using Microsoft.UI.Xaml;
+#endif
 
-#if WINUI3
+// One file for the XAML hosts that have a DependencyProperty: Routeables.Wpf links it (and defines WPF), Routeables.Uno and
+// Routeables.WinUI3 compile this folder.
+#if WPF
+namespace Routeables.Wpf;
+#elif WINUI3
 namespace Routeables.WinUI3;
 #else
 namespace Routeables.Uno;
@@ -8,7 +16,7 @@ namespace Routeables.Uno;
 
 /// <summary>
 /// The windows that were given to <c>AttachRouteables</c>, and which of them the user is working in.
-/// The dialogs and the notifications of <c>Routeables.Uno.Services</c> are shown in the active one, and the theme service
+/// The dialogs and the notifications of the host are shown in the active one, and the theme service
 /// changes its content.
 /// </summary>
 internal static class RouteableWindows
@@ -41,6 +49,7 @@ internal static class RouteableWindows
         }
     }
 
+#if !WPF
     public static void Clear()
     {
         lock (_windows)
@@ -49,6 +58,8 @@ internal static class RouteableWindows
             _active = null;
         }
     }
+
+#endif
 
     /// <summary>The window the user last worked in, or the first one that is still alive.</summary>
     public static Window? Active
@@ -69,9 +80,11 @@ internal static class RouteableWindows
         }
     }
 
+#if !WPF
     /// <summary>The content of <see cref="Active"/> when it is an element.</summary>
     public static FrameworkElement? ActiveRoot => Active?.Content as FrameworkElement;
 
     /// <summary>What a <c>ContentDialog</c> or a <c>Popup</c> needs to be shown in the active window; <see langword="null"/> before it has content.</summary>
     public static XamlRoot? ActiveXamlRoot => ActiveRoot?.XamlRoot;
+#endif
 }

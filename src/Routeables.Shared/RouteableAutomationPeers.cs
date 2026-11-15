@@ -1,6 +1,21 @@
+#if AVALONIA
+using Avalonia.Automation.Peers;
+using RegionPeerBase = Avalonia.Automation.Peers.ContentControlAutomationPeer;
+using RegionItemsPeerBase = Avalonia.Automation.Peers.ItemsControlAutomationPeer;
+using ForPeerBase = Avalonia.Automation.Peers.ContentControlAutomationPeer;
+#else
 using System.Windows.Automation.Peers;
+using RegionPeerBase = System.Windows.Automation.Peers.FrameworkElementAutomationPeer;
+using RegionItemsPeerBase = System.Windows.Automation.Peers.FrameworkElementAutomationPeer;
+using ForPeerBase = System.Windows.Automation.Peers.FrameworkElementAutomationPeer;
+#endif
 
+// One file for Routeables.Wpf and Routeables.Avalonia, which link it (and define WPF or AVALONIA): the three peers say the same, only their base class differs.
+#if AVALONIA
+namespace Routeables.Avalonia.Automation;
+#else
 namespace Routeables.Wpf.Automation;
+#endif
 
 // What a screen reader and a UI test see of the controls of Routeables: a group per region and per view, named after what they show, with a stable automation id
 // (the one the author gave wins). The content of each control is still its own: only the role, the name and the id are added.
@@ -22,7 +37,7 @@ internal static class PeerNames
     public static string Named(string? given, string fallback) => string.IsNullOrEmpty(given) ? fallback : given;
 }
 
-internal sealed class RouteableRegionAutomationPeer : FrameworkElementAutomationPeer
+internal sealed class RouteableRegionAutomationPeer : RegionPeerBase
 {
     private readonly RouteableRegion _owner;
 
@@ -36,7 +51,7 @@ internal sealed class RouteableRegionAutomationPeer : FrameworkElementAutomation
     protected override string GetAutomationIdCore() => PeerNames.Named(base.GetAutomationIdCore(), "Region." + PeerNames.Region(_owner.Region));
 }
 
-internal sealed class RouteableRegionItemsAutomationPeer : FrameworkElementAutomationPeer
+internal sealed class RouteableRegionItemsAutomationPeer : RegionItemsPeerBase
 {
     private readonly RouteableRegionItems _owner;
 
@@ -50,7 +65,7 @@ internal sealed class RouteableRegionItemsAutomationPeer : FrameworkElementAutom
     protected override string GetAutomationIdCore() => PeerNames.Named(base.GetAutomationIdCore(), "RegionItems." + PeerNames.Region(_owner.Region));
 }
 
-internal sealed class RouteableForAutomationPeer : FrameworkElementAutomationPeer
+internal sealed class RouteableForAutomationPeer : ForPeerBase
 {
     private readonly RouteableFor _owner;
 

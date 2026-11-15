@@ -24,6 +24,16 @@
     <Description>Routeables for .NET MAUI: view-model-first routing, Shell integration, routed views, regions, dialogs and notifications.</Description>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);MAUI</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The same file as Wpf, Uno and WinUI 3 (the MAUI branch of its #if). -->
+    <Compile Include="..\Routeables.WinUI\RouteableLink.cs" Link="RouteableLink.cs" />
+    <Compile Include="..\Routeables.WinUI\RouteableViewBinder.cs" Link="RouteableViewBinder.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="Routeables.Test" />
     <InternalsVisibleTo Include="Routeables.Test.Maui" />

@@ -1,4 +1,9 @@
-#if WINUI3
+// One file for every host, which link it (and define WPF or AVALONIA) or compile this folder.
+#if WPF
+namespace Routeables.Wpf;
+#elif AVALONIA
+namespace Routeables.Avalonia;
+#elif WINUI3
 namespace Routeables.WinUI3;
 #else
 namespace Routeables.Uno;

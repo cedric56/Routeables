@@ -1,9 +1,20 @@
+﻿#if AVALONIA
+using Avalonia.Controls;
+using Avalonia.Threading;
+#else
+using System.Windows.Controls;
+#endif
 using Routeables.Abstraction;
 using Routeables.Abstraction.Routing;
 using Routeables.Regions;
-using System.Windows.Controls;
 
+// One file for Routeables.Wpf and Routeables.Avalonia, which link it (and define WPF or AVALONIA): a TabControl has the same members in both.
+// Only how an action goes to the interface thread and what an event says it came from differ.
+#if AVALONIA
+namespace Routeables.Avalonia;
+#else
 namespace Routeables.Wpf;
+#endif
 
 /// <summary>
 /// A <see cref="TabControl"/> written in XAML whose tabs are routes: the tab keeps its header, the router builds its page.
@@ -38,13 +49,21 @@ public static class RouteableTabs
         var follower = new RegionTabs<TabItem>(provider, region, tabHost, tabs.Items.OfType<TabItem>(),
             RouteableItem.GetRoute, tab => tab.Content, (tab, content) => tab.Content = content,
             () => tabs.SelectedItem as TabItem, tab => tabs.SelectedItem = tab,
+#if AVALONIA
+            action => Dispatcher.UIThread.Post(action), typeof(RouteableTabs),
+#else
             action => tabs.Dispatcher.InvokeAsync(action), typeof(RouteableTabs),
+#endif
             RouteableItem.GetRegion, name => new RouteableRegion { Region = name, Services = provider });
 
         void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             // The selections of the controls inside the pages bubble up to here.
+#if AVALONIA
+            if (ReferenceEquals(e.Source, tabs))
+#else
             if (ReferenceEquals(e.OriginalSource, tabs))
+#endif
                 follower.OnSelectionChanged();
         }
 

@@ -19,6 +19,23 @@
     <Description>Routeables for Avalonia: view-model-first routing, routed views, regions, dialogs and notifications.</Description>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);AVALONIA</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The same file as Wpf, Uno and WinUI 3 (the AVALONIA branch of its #if). -->
+    <Compile Include="..\Routeables.WinUI\RouteableLink.cs" Link="RouteableLink.cs" />
+    <Compile Include="..\Routeables.WinUI\RouteableViewBinder.cs" Link="RouteableViewBinder.cs" />
+    <Compile Include="..\Routeables.WinUI\ServiceLocator.cs" Link="ServiceLocator.cs" />
+    <Compile Include="..\Routeables.WinUI\RouteableItem.cs" Link="RouteableItem.cs" />
+    <!-- The same files as Wpf (the AVALONIA branch of their #if). -->
+    <Compile Include="..\Routeables.Shared\RouteableTabs.cs" Link="RouteableTabs.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableModalFor.cs" Link="Services\RouteableModalFor.cs" />
+    <Compile Include="..\Routeables.Shared\DialogCard.cs" Link="Services\DialogCard.cs" />
+    <Compile Include="..\Routeables.Shared\RouteableAutomationPeers.cs" Link="Automation\RouteableAutomationPeers.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="Routeables.Test" />
   </ItemGroup>

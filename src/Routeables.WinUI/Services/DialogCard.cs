@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Routeables.Services;
 using System.Windows.Input;
 using Application = Microsoft.UI.Xaml.Application;
 using Button = Microsoft.UI.Xaml.Controls.Button;
@@ -76,21 +77,8 @@ internal static class DialogCard
         var action = CreateButton(text, submit, isDefault);
         var queue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
 
-        void Update() => action.IsEnabled = isEnabled && (command is null || command.CanExecute(parameter));
-        Update();
-
-        if (command is not null)
-        {
-            EventHandler changed = (_, _) =>
-            {
-                if (queue is { HasThreadAccess: false })
-                    queue.TryEnqueue(Update);
-                else
-                    Update();
-            };
-            command.CanExecuteChanged += changed;
-            cleanup.Add(() => command.CanExecuteChanged -= changed);
-        }
+        RouteableCommandFollower.Follow(command, parameter, isEnabled, enabled => action.IsEnabled = enabled,
+            update => { if (queue is { HasThreadAccess: false }) queue.TryEnqueue(() => update()); else update(); }, cleanup);
 
         return action;
     }
