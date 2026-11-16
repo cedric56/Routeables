@@ -23,7 +23,10 @@ public static class AuthorizationExtensions
         configure?.Invoke(options);
         services.AddAuthorizationCore();
         services.AddSingleton(options);
-        services.AddScoped<IRouteGuard, RouteableAuthorizationGuard>();
+        // One guard, asked twice: before the page is built (from its view model type), and once it exists (its view model and its view).
+        services.AddScoped<RouteableAuthorizationGuard>();
+        services.AddScoped<IRouteGuard>(provider => provider.GetRequiredService<RouteableAuthorizationGuard>());
+        services.AddScoped<IRouteTypeGuard>(provider => provider.GetRequiredService<RouteableAuthorizationGuard>());
         return services;
     }
 }

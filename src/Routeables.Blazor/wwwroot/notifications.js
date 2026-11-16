@@ -5,21 +5,31 @@
 let registration = null;
 let callback = null;
 let registered = false;
+let listening = false;
 const direct = new Map();
+
+// The service worker is shared by every window of the site, and each page numbers its notifications from 1: this value tells the notifications of this
+// page from those of another tab (it is in the data of each notification, in the messages of the worker, and in the default tag).
+const owner = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 
 // The messages of the service worker (and of the page itself) to .NET: a click, a close or a reply.
 export async function registrations(dotNetRef) {
     callback = dotNetRef;
-    if (!('serviceWorker' in navigator)) return;
+    // One listener, however many times this is called: the current callback is the one that is told.
+    if (!('serviceWorker' in navigator) || listening) return;
+    listening = true;
     navigator.serviceWorker.addEventListener('message', function (event) {
-        if (event.data && event.data.type === 'HandleNotificationClose') {
-            dotNetRef.invokeMethodAsync('OnClose', JSON.stringify(event.data));
+        const data = event.data;
+        // The worker tells every window: a notification of another tab is not for this page (a worker from before the owner was added does not say: it is taken as before).
+        if (!data || (data.owner != null && data.owner !== owner) || !callback) return;
+        if (data.type === 'HandleNotificationClose') {
+            callback.invokeMethodAsync('OnClose', JSON.stringify(data));
         }
-        if (event.data && event.data.type === 'HandleNotificationClick') {
-            dotNetRef.invokeMethodAsync('OnClick', JSON.stringify(event.data));
+        if (data.type === 'HandleNotificationClick') {
+            callback.invokeMethodAsync('OnClick', JSON.stringify(data));
         }
-        if (event.data && event.data.type === 'HandleNotificationReply') {
-            dotNetRef.invokeMethodAsync('OnReply', JSON.stringify(event.data), event.data.reply);
+        if (data.type === 'HandleNotificationReply') {
+            callback.invokeMethodAsync('OnReply', JSON.stringify(data), data.reply);
         }
     });
 }
@@ -52,7 +62,7 @@ export async function register(url) {
 // actions: flat triplets [caption, tag, icon, caption, tag, icon...]; the action named replyActionTag asks for a text.
 export async function show(id, title, body, icon, tag, expirationMs, actions, replyActionTag) {
     if (registration) {
-        const options = { data: { id }, tag: tag ?? `routeables-${id}` };
+        const options = { data: { id, owner }, tag: tag ?? `routeables-${owner}-${id}` };
         if (body) options.body = body;
         if (icon) options.icon = icon;
         if (actions && actions.length > 0) {
@@ -95,14 +105,16 @@ export async function close(id) {
     direct.get(id)?.close();
     if (registration) {
         for (const notification of await registration.getNotifications())
-            if (notification.data && notification.data.id === id) notification.close();
+            if (notification.data && notification.data.owner === owner && notification.data.id === id) notification.close();
     }
 }
 
 export async function closeAll() {
     for (const notification of [...direct.values()]) notification.close();
     if (registration) {
-        for (const notification of await registration.getNotifications()) notification.close();
+        // Its own only: the notifications of another tab of the application are not this page's to close.
+        for (const notification of await registration.getNotifications())
+            if (notification.data && notification.data.owner === owner) notification.close();
     }
 }
 

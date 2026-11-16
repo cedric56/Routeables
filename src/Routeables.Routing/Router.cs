@@ -434,6 +434,10 @@ internal class Router(
             // would keep two pages per entry. The page is its own view model then, as a cached (scoped or singleton) one already is.
             // What this call builds (not what the caller handed over, which it keeps): if the route change does not show it
             // (a guard or CanLeave refused, a redirect, an exception), nobody else would ever dispose it.
+            // A page that is going to be built is first asked of the guards that need only its type (a visitor who is turned away costs no constructor).
+            if (viewModel is null && await AskTypeGuardsAsync(template, route, cancellationToken) is { } refused)
+                return refused;
+
             var built = new List<object>();
             if (viewModel is null && string.Equals(viewmodelkey, viewkey, StringComparison.Ordinal))
             {
@@ -471,6 +475,36 @@ internal class Router(
         }
         return RouteableResult.Fail(new InvalidOperationException(
             $"Route \"{route}\" does not match the template \"{template}\": {mismatch}."));
+    }
+
+    private IRouteTypeGuard[]? _typeGuards;
+
+    private IRouteTypeGuard[] TypeGuards => _typeGuards ??= [.. provider.GetServices<IRouteTypeGuard>().Select((guard, index) => (guard, index))
+        .OrderBy(pair => pair.guard.Order).ThenBy(pair => pair.index).Select(pair => pair.guard)];
+
+    // The result of a route change that the type guards refuse (null when they allow it): cancelled, or the route change of the redirection.
+    private async Task<RouteableResult?> AskTypeGuardsAsync(string template, string route, CancellationToken cancellationToken)
+    {
+        var guards = TypeGuards;
+        if (guards.Length == 0)
+            return null;
+
+        var type = provider.GetService<RouteableTable>()?.Entries
+            .FirstOrDefault(entry => string.Equals(entry.Template, template, StringComparison.Ordinal)).ViewModelType;
+        if (type is null)
+            return null;
+
+        foreach (var guard in guards)
+        {
+            var decision = await guard.CanBuildAsync(type, route, cancellationToken)
+                ?? throw new InvalidOperationException($"The route guard {guard.GetType().FullName} returned null: it must return RouteGuardDecision.Allow, Cancel or Redirect.");
+            if (decision.IsAllowed)
+                continue;
+
+            return decision.RedirectTo is { } to ? await RedirectAsync(to, cancellationToken) : RouteableResult.Cancel();
+        }
+
+        return null;
     }
 
     private bool IsShown(List<object> built)

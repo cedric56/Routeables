@@ -122,5 +122,106 @@ public class DBusWireFormatTests
 
         Assert.Equal(77u, reader.UInt32());
     }
+
+    // --- what a peer sends is not trusted ---
+
+    [Fact]
+    public void Reading_past_the_end_is_refused_not_an_ArgumentOutOfRange()
+    {
+        Assert.Throws<InvalidDataException>(() => new DBusReader([]).Byte());
+        Assert.Throws<InvalidDataException>(() => new DBusReader([1, 0]).UInt32());
+        Assert.Throws<InvalidDataException>(() => new DBusReader([]).UInt32());
+        Assert.Throws<InvalidDataException>(() => new DBusReader([5, (byte)'s']).Signature());
+    }
+
+    [Fact]
+    public void A_string_that_claims_more_than_the_message_holds_is_refused()
+    {
+        var writer = new DBusWriter();
+        writer.UInt32(uint.MaxValue);          // four billion characters: not allocated, not read
+        writer.Raw([(byte)'a', 0]);
+
+        Assert.Throws<InvalidDataException>(() => new DBusReader(writer.ToArray()).String());
+    }
+
+    [Fact]
+    public void A_string_without_its_zero_is_refused()
+    {
+        var writer = new DBusWriter();
+        writer.UInt32(2);
+        writer.Raw([(byte)'h', (byte)'i']);    // the terminating zero is missing
+
+        Assert.Throws<InvalidDataException>(() => new DBusReader(writer.ToArray()).String());
+    }
+
+    [Theory]
+    [InlineData(uint.MaxValue, 0u)]
+    [InlineData(0u, uint.MaxValue)]
+    [InlineData(0x8000_0000u, 0u)]             // negative as an int: the cast must not come first
+    [InlineData(DBusConnection.MaxMessageLength, 1u)]
+    [InlineData(DBusConnection.MaxMessageLength - 20, 16u)]
+    public void The_lengths_of_a_message_above_what_the_specification_allows_are_refused(uint body, uint fields)
+        => Assert.Throws<InvalidOperationException>(() => DBusConnection.ValidateLengths(body, fields));
+
+    [Fact]
+    public void The_lengths_of_an_ordinary_message_are_kept()
+        => Assert.Equal((12, 40), DBusConnection.ValidateLengths(12, 40));
+
+    private static byte[] Header(Action<DBusWriter> fields)
+    {
+        var writer = new DBusWriter();
+        writer.Raw(new byte[16]);              // the fixed part: the fields start at 16, which is aligned on 8
+        fields(writer);
+        return writer.ToArray();
+    }
+
+    [Fact]
+    public void The_sender_that_the_bus_writes_in_the_header_is_read()
+    {
+        var header = Header(w =>
+        {
+            w.Byte(7); w.Signature("s"); w.String(":1.42");       // SENDER
+            w.Align(8);
+            w.Byte(2); w.Signature("s"); w.String("org.freedesktop.Notifications");   // INTERFACE
+            w.Align(8);
+            w.Byte(3); w.Signature("s"); w.String("ActionInvoked"); // MEMBER
+            w.Align(8);
+            w.Byte(8); w.Signature("g"); w.Signature("us");        // SIGNATURE
+        });
+
+        var message = DBusConnection.ParseMessage(4, 9, header, []);
+
+        Assert.Equal(":1.42", message.Sender);
+        Assert.Equal("org.freedesktop.Notifications", message.Interface);
+        Assert.Equal("ActionInvoked", message.Member);
+        Assert.Equal("us", message.Signature);
+    }
+
+    [Fact]
+    public void A_message_without_a_sender_has_none()
+    {
+        var header = Header(w => { w.Byte(3); w.Signature("s"); w.String("Anything"); });
+
+        Assert.Null(DBusConnection.ParseMessage(4, 1, header, []).Sender);
+    }
+
+    [Fact]
+    public void A_header_that_is_cut_short_or_has_a_field_nobody_knows_is_refused()
+    {
+        var cut = Header(w => { w.Byte(2); w.Signature("s"); w.UInt32(500); });     // a string of 500 characters that is not there
+        var unknown = Header(w => { w.Byte(9); w.Signature("x"); w.Raw(new byte[8]); });
+
+        Assert.Throws<InvalidDataException>(() => DBusConnection.ParseMessage(4, 1, cut, []));
+        Assert.Throws<InvalidOperationException>(() => DBusConnection.ParseMessage(4, 1, unknown, []));
+    }
+
+    [Fact]
+    public void A_body_that_is_empty_is_refused_when_it_is_read_not_before()
+    {
+        var message = new DBusMessage { Body = [] };
+
+        // What the notification client does with a signal that has no body: the read fails with a refusal it can tell, which the reading thread catches.
+        Assert.Throws<InvalidDataException>(() => message.Reader().UInt32());
+    }
 }
 #endif

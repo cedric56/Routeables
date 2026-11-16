@@ -1,6 +1,8 @@
 #if !ANDROID && !IOS && !MACCATALYST && !WINDOWS
 
 using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -18,6 +20,9 @@ internal sealed class DBusMessage
     public string? Member { get; init; }
     public string? ErrorName { get; init; }
     public string? Signature { get; init; }
+
+    /// <summary>The unique name of the sender, which the bus itself writes in the header: a peer cannot choose it.</summary>
+    public string? Sender { get; init; }
     public byte[] Body { get; init; } = [];
 
     public DBusReader Reader() => new(Body);
@@ -86,11 +91,24 @@ internal sealed class DBusReader(byte[] bytes, int position = 0)
             Position++;
     }
 
-    public byte Byte() => bytes[Position++];
+    // What a peer sends is not trusted: a message that is cut short or that lies about a length is refused (InvalidDataException), never read past
+    // its end, and never allocated at the size it claims.
+    private void Need(long count)
+    {
+        if (count < 0 || Position + count > bytes.Length)
+            throw new InvalidDataException("The D-Bus message is shorter than it says.");
+    }
+
+    public byte Byte()
+    {
+        Need(1);
+        return bytes[Position++];
+    }
 
     public uint UInt32()
     {
         Align(4);
+        Need(4);
         var value = BitConverter.ToUInt32(bytes, Position);
         Position += 4;
         return value;
@@ -98,15 +116,17 @@ internal sealed class DBusReader(byte[] bytes, int position = 0)
 
     public string String()
     {
-        var length = (int)UInt32();
-        var text = Encoding.UTF8.GetString(bytes, Position, length);
-        Position += length + 1;
+        var length = UInt32();
+        Need((long)length + 1);                           // the text and its zero
+        var text = Encoding.UTF8.GetString(bytes, Position, (int)length);
+        Position += (int)length + 1;
         return text;
     }
 
     public string Signature()
     {
         var length = Byte();
+        Need(length + 1);
         var text = Encoding.ASCII.GetString(bytes, Position, length);
         Position += length + 1;
         return text;
@@ -123,6 +143,10 @@ internal sealed class DBusConnection : IDisposable
     private const byte MethodReturn = 2;
     private const byte ErrorMessage = 3;
     private const byte Signal = 4;
+
+    // What the specification allows: a message is at most 128 MiB (the header fields 64 MiB, which the total includes).
+    internal const uint MaxMessageLength = 128 * 1024 * 1024;
+    private const int MaxAuthLine = 4096;
 
     private readonly Socket _socket;
     private readonly ConcurrentDictionary<uint, TaskCompletionSource<DBusMessage>> _pending = new();
@@ -148,14 +172,18 @@ internal sealed class DBusConnection : IDisposable
                 socket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
                 using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(3));
                 await socket.ConnectAsync(endpoint, timeout.Token);
+
+                // The authentication is synchronous: a bus that does not answer must not hold a thread for ever. The reading thread waits without a limit.
+                socket.ReceiveTimeout = socket.SendTimeout = 3000;
                 Authenticate(socket);
+                socket.ReceiveTimeout = socket.SendTimeout = 0;
 
                 var connection = new DBusConnection(socket);
                 new Thread(connection.ReadLoop) { IsBackground = true, Name = "Routeables D-Bus" }.Start();
                 await connection.CallAsync("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "Hello", null, null);
                 return connection;
             }
-            catch (Exception ex) when (ex is SocketException or IOException or OperationCanceledException or InvalidOperationException)
+            catch (Exception ex) when (ex is SocketException or IOException or OperationCanceledException or InvalidOperationException or InvalidDataException)
             {
                 socket?.Dispose();
             }
@@ -209,10 +237,14 @@ internal sealed class DBusConnection : IDisposable
 
     private static string ReadLine(Socket socket)
     {
+        // One byte at a time (what comes after the line belongs to the messages), but the end of the line is looked at where it can be: the last two
+        // characters. The answer of a bus is a few dozen bytes: a line that goes on is not a bus.
         var text = new StringBuilder();
         var one = new byte[1];
-        while (!text.ToString().EndsWith("\r\n", StringComparison.Ordinal))
+        while (text.Length < 2 || text[^2] != '\r' || text[^1] != '\n')
         {
+            if (text.Length >= MaxAuthLine)
+                throw new InvalidDataException("The answer of the session bus to the authentication is too long.");
             if (socket.Receive(one) == 0)
                 throw new IOException("The session bus closed the connection.");
             text.Append((char)one[0]);
@@ -299,9 +331,8 @@ internal sealed class DBusConnection : IDisposable
                     throw new InvalidOperationException("Only little-endian messages are read.");
 
                 var type = fixedPart[1];
-                var bodyLength = (int)BitConverter.ToUInt32(fixedPart, 4);
                 var serial = BitConverter.ToUInt32(fixedPart, 8);
-                var fieldsLength = (int)BitConverter.ToUInt32(fixedPart, 12);
+                var (bodyLength, fieldsLength) = ValidateLengths(BitConverter.ToUInt32(fixedPart, 4), BitConverter.ToUInt32(fixedPart, 12));
                 var headerEnd = 16 + fieldsLength;
                 var padding = (8 - headerEnd % 8) % 8;
 
@@ -311,17 +342,36 @@ internal sealed class DBusConnection : IDisposable
                 Array.Copy(rest, 0, header, 16, fieldsLength);
                 var body = rest[(fieldsLength + padding)..];
 
-                Dispatch(ParseMessage(type, serial, header, body));
+                // The message is whole, so what follows it is still readable: one that cannot be understood is dropped, the connection goes on.
+                DBusMessage message;
+                try { message = ParseMessage(type, serial, header, body); }
+                catch (Exception ex) when (ex is InvalidDataException or InvalidOperationException or ArgumentException or OverflowException)
+                {
+                    Trace.TraceWarning($"Routeables: a malformed D-Bus message was dropped: {ex.Message}");
+                    continue;
+                }
+
+                Dispatch(message);
             }
         }
-        catch (Exception ex) when (ex is IOException or SocketException or ObjectDisposedException or InvalidOperationException)
+        catch (Exception ex)
         {
+            // Whatever ends the reading ends the connection, and is told: nothing is thrown on this thread, where nobody could catch it.
             foreach (var pair in _pending)
                 if (_pending.TryRemove(pair.Key, out var source))
                     source.TrySetException(new IOException("The session bus connection ended.", ex));
 
             Closed?.Invoke();
         }
+    }
+
+    /// <summary>The lengths of a message, from the fixed part of its header: refused when a peer claims more than the specification allows.</summary>
+    internal static (int BodyLength, int FieldsLength) ValidateLengths(uint bodyLength, uint fieldsLength)
+    {
+        // As unsigned numbers: a cast to int first would turn a huge length into a negative one.
+        if (bodyLength > MaxMessageLength || fieldsLength > MaxMessageLength || (ulong)bodyLength + fieldsLength + 16 + 8 > MaxMessageLength)
+            throw new InvalidOperationException("A D-Bus message is longer than the 128 MiB the specification allows.");
+        return ((int)bodyLength, (int)fieldsLength);
     }
 
     private byte[] ReadExactly(int count)
@@ -339,10 +389,10 @@ internal sealed class DBusConnection : IDisposable
         return buffer;
     }
 
-    private static DBusMessage ParseMessage(byte type, uint serial, byte[] header, byte[] body)
+    internal static DBusMessage ParseMessage(byte type, uint serial, byte[] header, byte[] body)
     {
         uint replySerial = 0;
-        string? @interface = null, member = null, errorName = null, signature = null;
+        string? @interface = null, member = null, errorName = null, signature = null, sender = null;
 
         var r = new DBusReader(header, 16);
         while (r.Position < header.Length)
@@ -361,6 +411,7 @@ internal sealed class DBusConnection : IDisposable
                     if (code == 2) @interface = text;
                     else if (code == 3) member = text;
                     else if (code == 4) errorName = text;
+                    else if (code == 7) sender = text;
                     break;
                 case "g":
                     var sig = r.Signature();
@@ -378,7 +429,7 @@ internal sealed class DBusConnection : IDisposable
         return new DBusMessage
         {
             Type = type, Serial = serial, ReplySerial = replySerial, Interface = @interface, Member = member,
-            ErrorName = errorName, Signature = signature, Body = body
+            ErrorName = errorName, Signature = signature, Sender = sender, Body = body
         };
     }
 
@@ -393,7 +444,9 @@ internal sealed class DBusConnection : IDisposable
                 failed.TrySetException(new InvalidOperationException("D-Bus error " + message.ErrorName));
                 break;
             case Signal:
-                SignalReceived?.Invoke(message);
+                // A handler that throws must not end the thread that reads the bus (and the application with it: nobody catches there).
+                try { SignalReceived?.Invoke(message); }
+                catch (Exception ex) { Trace.TraceWarning($"Routeables: a D-Bus signal could not be handled: {ex}"); }
                 break;
         }
     }

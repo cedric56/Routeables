@@ -47,9 +47,18 @@ public sealed class FileRouteableHistoryStore : IRouteableHistoryStore
             Directory.CreateDirectory(folder);
 
         // Written aside and moved over the old file: a run that stops in the middle of a write keeps the previous history.
-        var temporary = Path + ".tmp";
-        File.WriteAllText(temporary, text);
-        File.Move(temporary, Path, overwrite: true);
+        // The name is unique: two instances of the application (or two saves) never write the same temporary file.
+        var temporary = $"{Path}.{Guid.NewGuid():N}.tmp";
+        try
+        {
+            File.WriteAllText(temporary, text);
+            File.Move(temporary, Path, overwrite: true);
+        }
+        catch
+        {
+            try { File.Delete(temporary); } catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { /* nothing more to do */ }
+            throw;
+        }
     }
 
     private static string DefaultPath()

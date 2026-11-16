@@ -19,7 +19,7 @@ namespace Routeables.Blazor;
 /// <see cref="RouteableAuthorizationOptions.ForbiddenRoute"/>; without a route the route change is cancelled. Only a new page is redirected
 /// (<see cref="RouteGuardDecision.Redirect"/>); Back, Forward and the like are cancelled.
 /// </remarks>
-public sealed class RouteableAuthorizationGuard(IServiceProvider provider, RouteableAuthorizationOptions options) : IRouteGuard
+public sealed class RouteableAuthorizationGuard(IServiceProvider provider, RouteableAuthorizationOptions options) : IRouteGuard, IRouteTypeGuard
 {
     /// <inheritdoc />
     public int Order => -100;     // before the guards of the application: they need not repeat the rule
@@ -28,7 +28,19 @@ public sealed class RouteableAuthorizationGuard(IServiceProvider provider, Route
     public async Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(change);
-        Type[] types = [change.To.ViewModel.GetType(), change.To.View.GetType()];
+        return await DecideAsync([change.To.ViewModel.GetType(), change.To.View.GetType()], change.To.Args.Route);
+    }
+
+    /// <inheritdoc />
+    /// <remarks>The page is not built yet: only its view model type is read here. What the view carries is read when it exists (<see cref="CanEnterAsync"/>).</remarks>
+    public Task<RouteGuardDecision> CanBuildAsync(Type viewModelType, string route, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(viewModelType);
+        return DecideAsync([viewModelType], route);
+    }
+
+    private async Task<RouteGuardDecision> DecideAsync(Type[] types, string? address)
+    {
         if (types.Any(t => t.GetCustomAttributes(typeof(IAllowAnonymous), inherit: true).Length > 0))
             return RouteGuardDecision.Allow;
 
@@ -51,10 +63,10 @@ public sealed class RouteableAuthorizationGuard(IServiceProvider provider, Route
             return RouteGuardDecision.Allow;
 
         var route = user.Identity?.IsAuthenticated == true ? options.ForbiddenRoute : options.SignInRoute;
-        return route is null || IsAddress(change, route) ? RouteGuardDecision.Cancel : RouteGuardDecision.Redirect(route);
+        return route is null || IsAddress(address, route) ? RouteGuardDecision.Cancel : RouteGuardDecision.Redirect(route);
     }
 
     // The sign-in page that forgot [AllowAnonymous] would send the visitor to itself: cancel instead.
-    private static bool IsAddress(RouteableRoutingEventArgs change, string route)
-        => string.Equals(change.To.Args.Route?.Trim('/'), route.Trim('/'), StringComparison.OrdinalIgnoreCase);
+    private static bool IsAddress(string? address, string route)
+        => string.Equals(address?.Trim('/'), route.Trim('/'), StringComparison.OrdinalIgnoreCase);
 }

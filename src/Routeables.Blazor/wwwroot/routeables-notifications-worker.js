@@ -17,6 +17,7 @@ self.addEventListener('notificationclick', event => {
     const message = {
         type: reply === null ? 'HandleNotificationClick' : 'HandleNotificationReply',
         id: notification.data ? notification.data.id : null,
+        owner: notification.data ? notification.data.owner : null,
         tag: notification.tag,
         action: event.action || null,
         reply
@@ -31,5 +32,5 @@ self.addEventListener('notificationclick', event => {
 
 self.addEventListener('notificationclose', event => {
     const notification = event.notification;
-    event.waitUntil(tell({ type: 'HandleNotificationClose', id: notification.data ? notification.data.id : null, tag: notification.tag, action: null }));
+    event.waitUntil(tell({ type: 'HandleNotificationClose', id: notification.data ? notification.data.id : null, owner: notification.data ? notification.data.owner : null, tag: notification.tag, action: null }));
 });

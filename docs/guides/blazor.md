@@ -134,7 +134,7 @@ public sealed class SignedInGuard(ISession session) : IRouteGuard
 
 `RouteableReturn` takes the user back to the page they asked for once they are signed in. Everything about guards: [Back, deep links, guards and diagnostics](system-integration.md).
 
-**Authorization.** The guard runs after the constructors of the page (see [Route guards](system-integration.md#route-guards)): load data in `InitializeAsync` or `OnEnteringAsync`, never in a constructor. `services.AddRouteableAuthorization(o => o.SignInRoute = "/sign-in")` makes `[Authorize]` and `[AllowAnonymous]` count on the view models (and views) of Routeables, with the `Roles` and `Policy` of `[Authorize]`. The guard it registers (`RouteableAuthorizationGuard`) reads the `AuthenticationStateProvider` of the application and the authorization policies, and asks before any other guard (`Order` is `-100`).
+**Authorization.** `[Authorize]` on the view model is checked before the page is built (an `IRouteTypeGuard`, see [Route guards](system-integration.md#route-guards)), so a refused visitor runs no constructor; `[Authorize]` on the view is checked once the page exists, and so is any `IRouteGuard`. Load data in `InitializeAsync` or `OnEnteringAsync` all the same, never in a constructor. `services.AddRouteableAuthorization(o => o.SignInRoute = "/sign-in")` makes `[Authorize]` and `[AllowAnonymous]` count on the view models (and views) of Routeables, with the `Roles` and `Policy` of `[Authorize]`. The guard it registers (`RouteableAuthorizationGuard`) reads the `AuthenticationStateProvider` of the application and the authorization policies, and asks before any other guard (`Order` is `-100`).
 
 ```csharp
 services.AddRouteableAuthorization(o =>

@@ -55,14 +55,20 @@ public sealed partial class SystemNotificationCenter
         if (connection is null)
             return null;
 
-        connection.SignalReceived += OnLinuxSignal;
+        connection.SignalReceived += message => OnLinuxSignal(message);
         // A closed bus is connected again by the next call.
-        connection.Closed += () => { lock (_linuxGate) { _linuxConnection = null; _linuxConnecting = null; } };
+        connection.Closed += () => { lock (_linuxGate) { _linuxConnection = null; _linuxConnecting = null; _linuxOwner = null; } };
         lock (_linuxGate)
             _linuxConnection = connection;
 
-        _ = connection.CallAsync("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "AddMatch", "s",
-            w => w.String($"type='signal',interface='{LinuxService}'"));
+        // Only what the notification server sends (its signals have its name as sender), and the changes of who has that name: the sender of a
+        // message is written by the bus, so a process cannot sign as the server. Any other process of the session could otherwise send
+        // ActionInvoked with an identifier that is easy to guess, and have an action run as if the user had clicked.
+        _ = connection.CallAsync(BusService, BusPath, BusService, "AddMatch", "s",
+            w => w.String($"type='signal',sender='{LinuxService}',interface='{LinuxService}'"));
+        _ = connection.CallAsync(BusService, BusPath, BusService, "AddMatch", "s",
+            w => w.String($"type='signal',sender='{BusService}',interface='{BusService}',member='NameOwnerChanged',arg0='{LinuxService}'"));
+        _ = ReadOwnerAsync(connection);
         return connection;
     }
 
@@ -129,9 +135,56 @@ public sealed partial class SystemNotificationCenter
         _ = connection?.CallAsync(LinuxService, LinuxPath, LinuxService, "CloseNotification", "u", w => w.UInt32(serverId));
     }
 
+    private const string BusService = "org.freedesktop.DBus";
+    private const string BusPath = "/org/freedesktop/DBus";
+
+    // The unique name of the process that owns the notification service now, or null when there is none (yet). Read when the connection is made, and
+    // changed by NameOwnerChanged: it cannot be asked inside a signal, which the thread that reads the replies is running.
+    private string? _linuxOwner;
+
+    private async Task ReadOwnerAsync(DBusConnection connection)
+    {
+        try
+        {
+            var reply = await connection.CallAsync(BusService, BusPath, BusService, "GetNameOwner", "s", w => w.String(LinuxService)).ConfigureAwait(false);
+            lock (_linuxGate)
+                _linuxOwner ??= reply.Reader().String();     // a NameOwnerChanged that came first is more recent
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or InvalidDataException)
+        {
+            // Nobody owns the service yet: the notification that is shown starts it, and NameOwnerChanged tells who it is.
+        }
+    }
+
     private void OnLinuxSignal(DBusMessage message)
     {
+        if (message.Interface == BusService && message.Member == "NameOwnerChanged" && message.Sender == BusService)
+        {
+            // (name, old_owner, new_owner)
+            var change = message.Reader();
+            if (message.Signature == "sss" && change.String() == LinuxService)
+            {
+                change.String();
+                var owner = change.String();
+                lock (_linuxGate)
+                    _linuxOwner = owner.Length == 0 ? null : owner;
+            }
+
+            return;
+        }
+
         if (message.Interface != LinuxService)
+            return;
+
+        // From the server and from nobody else, and of the shape that the specification gives it: ActionInvoked(u id, s action), NotificationClosed(u id, u reason).
+        lock (_linuxGate)
+        {
+            if (_linuxOwner is null || message.Sender != _linuxOwner)
+                return;
+        }
+
+        var expected = message.Member switch { "ActionInvoked" => "us", "NotificationClosed" => "uu", _ => null };
+        if (expected is null || message.Signature != expected)
             return;
 
         var reader = message.Reader();

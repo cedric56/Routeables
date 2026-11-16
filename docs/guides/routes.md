@@ -98,6 +98,7 @@ The container is built at start and cannot take services afterwards, so a module
 - A route of the application wins over the same route of a module.
 - A module is never unloaded.
 - A module that throws, or whose entries cannot be built, is not loaded: none of its routes, entries or services is registered, and it can be loaded again. Loading a name that is already loaded does nothing; with another method than the first, the second is not run and the mistake goes to the `IRouteableErrorSink`.
+- **A module is code that runs with the rights of the application.** `LoadFrom` loads an assembly from a path and runs its `[RouteableModule]` method: only give it a file that you ship and that the user cannot replace (an install folder with the rights of an administrator, not a folder the user or a download can write to), never a path that comes from an address, a setting or a message. Nothing checks a signature: the file is as trusted as the application itself.
 - `LoadFrom` and `Load(Assembly)` read assemblies by reflection, so they are not for a trimmed or Native AOT application (the compiler warns); `Load(name, add)` is. The assemblies the application already has (Routeables, the UI framework) are shared with the module, the others are searched with its `.deps.json`, then next to it. A platform that cannot load files at run time (the stores of iOS) uses `Load(name, add)`.
 
 ### Lifetimes

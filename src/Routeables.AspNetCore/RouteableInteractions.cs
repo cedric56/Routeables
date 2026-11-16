@@ -207,11 +207,14 @@ public sealed class RouteableInteractions : IDisposable
             _systemCommands.Clear();
         }
 
-        return System.Text.Json.JsonSerializer.Serialize(commands, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)
-        {
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-        });
+        return System.Text.Json.JsonSerializer.Serialize(commands, CommandsJson);
     }
+
+    // One instance for the process: a new options object per call builds its own metadata cache again.
+    private static readonly System.Text.Json.JsonSerializerOptions CommandsJson = new(System.Text.Json.JsonSerializerDefaults.Web)
+    {
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+    };
 
     /// <summary>Drops the notifications whose time is over, as the page they were shown on has been left.</summary>
     public void Expire()
