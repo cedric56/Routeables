@@ -45,7 +45,7 @@ jobs:
         run: dotnet workload install maui --skip-manifest-update
 
       - name: Cache NuGet packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
@@ -98,7 +98,7 @@ jobs:
         run: dotnet workload install wasm-tools --skip-manifest-update
 
       - name: Cache NuGet packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-web-${{ hashFiles('**/*.csproj') }}
@@ -152,7 +152,7 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Cache NuGet packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-uno-${{ hashFiles('**/*.csproj') }}
@@ -181,7 +181,7 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Cache NuGet packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-wpf-${{ hashFiles('**/*.csproj') }}
@@ -215,7 +215,7 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Cache NuGet packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-winui3-${{ hashFiles('**/*.csproj') }}
@@ -360,7 +360,7 @@ jobs:
         run: dotnet workload install maui-android --skip-manifest-update
 
       - name: Cache NuGet packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-android-${{ hashFiles('**/*.csproj') }}
@@ -392,7 +392,7 @@ jobs:
         run: dotnet workload install maui --skip-manifest-update
 
       - name: Cache NuGet packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-maui-${{ hashFiles('**/*.csproj') }}
@@ -445,7 +445,7 @@ jobs:
         run: dotnet workload install maui ios --skip-manifest-update
 
       - name: Cache NuGet packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-apple-${{ hashFiles('**/*.csproj') }}
@@ -550,7 +550,7 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Cache NuGet packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-uno-test-${{ hashFiles('**/*.csproj') }}
