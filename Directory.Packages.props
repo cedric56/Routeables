@@ -10,12 +10,10 @@
       - templates/: what a user receives has to build alone, outside this repository (see templates/Directory.Packages.props);
       - the packages that Routeables.Core/build/Routeables.targets adds to a user's project: it already skips them under central package management.
 
-    A version with a star (Microsoft.WindowsAppSDK 1.8.*, DeviceRunners.* preview) floats, which is why CentralPackageFloatingVersionsEnabled is on:
-    replace it with the exact version a restore picked (dotnet list package) when the build must be reproducible. Dependabot reads this file.
+    No version floats: each is the exact one a restore resolved (dotnet list package). Raise them on purpose; Dependabot reads this file.
   -->
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
   </PropertyGroup>
 
   <!-- The libraries of the repository: Microsoft.Extensions and ASP.NET Core. The packages the Routeables.nuspec lists are checked by .github/scripts/check-nuspec.sh. -->
@@ -37,7 +35,7 @@
   <ItemGroup>
     <PackageVersion Include="CommunityToolkit.Maui" Version="15.0.1" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.110" />
-    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.8.*" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.8.260921001" />
     <PackageVersion Include="SharpVectors.Wpf" Version="1.8.6" />
     <PackageVersion Include="SkiaSharp.NativeAssets.WebAssembly" Version="4.148.0" />
     <PackageVersion Include="Uno.WinUI" Version="6.7.135" />
@@ -84,13 +82,13 @@
     <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.2" />
   </ItemGroup>
 
-  <!-- Device runners of the MAUI tests: still previews, so floating. -->
+  <!-- Device runners of the MAUI tests: previews, pinned to the version a restore resolved (dotnet list package, November 2026). Raise it on purpose. -->
   <ItemGroup>
-    <PackageVersion Include="DeviceRunners.Testing.Targets" Version="0.1.0-preview.*" />
-    <PackageVersion Include="DeviceRunners.UITesting.Maui" Version="0.1.0-preview.*" />
-    <PackageVersion Include="DeviceRunners.UITesting.Xunit3" Version="0.1.0-preview.*" />
-    <PackageVersion Include="DeviceRunners.VisualRunners.Maui" Version="0.1.0-preview.*" />
-    <PackageVersion Include="DeviceRunners.VisualRunners.Xunit3" Version="0.1.0-preview.*" />
+    <PackageVersion Include="DeviceRunners.Testing.Targets" Version="0.1.0-preview.12" />
+    <PackageVersion Include="DeviceRunners.UITesting.Maui" Version="0.1.0-preview.12" />
+    <PackageVersion Include="DeviceRunners.UITesting.Xunit3" Version="0.1.0-preview.12" />
+    <PackageVersion Include="DeviceRunners.VisualRunners.Maui" Version="0.1.0-preview.12" />
+    <PackageVersion Include="DeviceRunners.VisualRunners.Xunit3" Version="0.1.0-preview.12" />
   </ItemGroup>
 
 </Project>

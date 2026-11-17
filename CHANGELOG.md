@@ -22,6 +22,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **Floating package versions pinned**: `Microsoft.WindowsAppSDK`, `DeviceRunners.*` (0.1.0-preview.12), and in `Routeables.Test.Uno` `MSTest.TestFramework` (4.5.3) and `Uno.UI.RuntimeTests.Engine` (3.0.0-dev.11), to what a restore resolved. `Microsoft.WindowsAppSDK` is pinned too (1.8.260921001): no version floats any more, and `CentralPackageFloatingVersionsEnabled` is off.
+
 - **Deep links: no scheme is accepted unless it is given** (`RouteableDeepLinks`, `RouteableLinkInbox`). `schemes: null` or an empty list used to accept any scheme (`file:`, `content:`, the protocol of another application); it now accepts none of the application, and only an `http(s)` address of a listed host. **An application that passed no schemes must now pass the ones it owns** (`["myapp"]`); the failed result says so. An address with a user name or a password is refused, and no longer copied into the route. The signatures are unchanged.
 
 - **The history file is never wider than its owner on Unix**: `FileRouteableHistoryStore` creates the file with the mode 600 (it used to write it and restrict it right after, which left a moment when another user of the machine could open it) and the folder it creates with the mode 700.
