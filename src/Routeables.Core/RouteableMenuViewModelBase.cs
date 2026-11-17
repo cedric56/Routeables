@@ -353,6 +353,9 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
                 // unless the page shown has an entry of its own (OnViewModelChanged selected it).
                 var redirected = _router.History.Current is { } current
                     && !RouteAddress.Same(current.Args.Route, value.Arguments.Route ?? value.Route);
+                // The redirection is a Push that came while the selection ran, and OnRouted left it out: the menu follows that page now.
+                if (redirected && !ReferenceEquals(_router.CurrentViewModel, _followed))
+                    OnRouterMoved(_router.CurrentViewModel);
                 if (redirected && ReferenceEquals(_routeable, value))
                     _routeable = Previous(old, version);
 

@@ -14,6 +14,12 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **A menu follows the page a guard redirects to**: when the selection of an entry ends on another page (the sign-in page that a guard sends the user to), the menu now selects the entry of that page and shows its title. Before, the redirection was left out while the selection ran, and the menu went back to the entry it had before.
+
+- **The source generator reads fewer assemblies**: the bindings of Android and iOS (`Mono.Android`, `Xamarin.*`, `Java.Interop`) and the graphics libraries (`SkiaSharp`, `HarfBuzzSharp`) are not searched for views and view models any more. A project of MAUI for Android reads tens of thousands of types less at each keystroke.
+
+- **`agent-desktop` is installed in a fixed version** (1.3.1) by the smoke tests of the native samples and by the scripts of `agent-desktop/`.
+
 - **The NuGet versions of the repository are central** (`Directory.Packages.props`): the projects write `<PackageReference Include="..." />` and the versions are in one place. The versions are the ones the projects had; `VersionOverride` stays where two projects asked for different ones (`Routeables.Avalonia` keeps the oldest Avalonia it works with, the generator the oldest Roslyn). The Uno SDK projects and `templates/` stay outside of it. A `.editorconfig` shares the indentation.
 
 - **One rule for "the same route?"** (`RouteAddress`, internal): the router (menu entry lookup, type guards, not-found page, `GoBackToAsync`), `WentTo`, the menus (`RouteableMenuViewModelBase`), the table of routes, the controls of navigation (`RouteTarget`, the Shell tabs of MAUI), the sign-in guard of Blazor and the address bar (`RouteableUrlSync`) used eight different comparisons. They now agree: a leading or closing slash does not count, the words of a path ignore the case, a query ignores the order of its pairs and the case of its names but not of its values, and an escaped address is the plain one. Visible effects: a menu entry is found for the page whatever the case or slashes of its route (`/Orders/` is `/orders`), two entries that differ by their query stay two, `RouteableTable` drops `orders/` as a duplicate of `/orders`, and the sign-in guard no longer redirects a visit of the sign-in page with a `returnUrl` to itself.

@@ -294,6 +294,13 @@ namespace Routeables.Generated
                     name.StartsWith("Uno.", StringComparison.Ordinal) ||
                     name.StartsWith("WinRT.", StringComparison.Ordinal) ||
                     name.StartsWith("MudBlazor", StringComparison.Ordinal) ||
+                    // The bindings of Android and iOS and the graphics libraries: tens of thousands of types, none of them a view of the application.
+                    name.StartsWith("Mono.Android", StringComparison.Ordinal) ||
+                    name.StartsWith("Xamarin.", StringComparison.Ordinal) ||
+                    name.StartsWith("Java.Interop", StringComparison.Ordinal) ||
+                    name.StartsWith("SkiaSharp", StringComparison.Ordinal) ||
+                    name.StartsWith("HarfBuzzSharp", StringComparison.Ordinal) ||
+                    name.Equals("mscorlib", StringComparison.Ordinal) ||
                     name.StartsWith("netstandard", StringComparison.Ordinal))
                     continue;
 

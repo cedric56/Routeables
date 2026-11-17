@@ -13,7 +13,7 @@ macOS, `-Bundle` runs the sample from a signed `.app` made in the temp folder: t
 application in a bundle, and asks for the permission the first time (the smoke presses Allow).
 
 ```powershell
-npm install -g agent-desktop
+npm install -g agent-desktop@1.3.1
 pwsh agent-desktop/run.ps1 -Build                      # builds what is missing, then every host of this OS
 pwsh agent-desktop/run.ps1 -Hosts Wpf,Uno              # two hosts
 pwsh agent-desktop/run.ps1 -Pages Cats,Dogs -SkipDialogs

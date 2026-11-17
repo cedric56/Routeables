@@ -66,7 +66,7 @@ if [ "$setup" = "1" ] || [ ${#missing[@]} -gt 0 ]; then
   fi
   if [ -z "$(linux_command agent-desktop)" ] || [ "$setup" = "1" ]; then
     npm config set prefix "$HOME/.npm-global"
-    npm install -g agent-desktop >/dev/null
+    npm install -g agent-desktop@1.3.1 >/dev/null
   fi
   for candidate in /usr/libexec/at-spi-bus-launcher /usr/lib/at-spi2-core/at-spi-bus-launcher; do
     [ -x "$candidate" ] && launcher="$candidate" && break

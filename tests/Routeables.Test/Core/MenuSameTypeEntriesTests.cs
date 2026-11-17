@@ -1,5 +1,6 @@
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Guards;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Core;
@@ -97,5 +98,52 @@ public class MenuSameTypeEntriesTests
 
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => router.MoveBackAsync(0, ct));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => router.MoveBackAsync(-1, ct));
+    }
+
+    public sealed class MsSecretView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class MsSecretVm;
+    public sealed class MsLoginView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class MsLoginVm;
+
+    private sealed class SecretGuard : IRouteGuard
+    {
+        public Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
+            => Task.FromResult(change.To.ViewModel is MsSecretVm ? RouteGuardDecision.Redirect("/ms-login") : RouteGuardDecision.Allow);
+    }
+
+    private sealed class GuardedMenu(IRouter router) : RouteableMenuViewModelBase(router, initialize: false)
+    {
+        protected override ObservableCollection<IRouteableMenuEntry> GetEntries() =>
+        [
+            new RouteableMenuEntry<MsOtherVm>("Home", route: "/ms-other", template: "/ms-other"),
+            new RouteableMenuEntry<MsSecretVm>("Secret", route: "/ms-secret", template: "/ms-secret"),
+            new RouteableMenuEntry<MsLoginVm>("Sign in", route: "/ms-login", template: "/ms-login"),
+        ];
+
+        protected override void NotifyPropertyChanged(string? propertyName) { }
+    }
+
+    [Fact]
+    public async Task A_guard_that_redirects_a_selection_makes_the_menu_follow_the_page_it_redirected_to()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<MsOtherView, MsOtherVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-other");
+        services.RegisterRoute<MsSecretView, MsSecretVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-secret");
+        services.RegisterRoute<MsLoginView, MsLoginVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-login");
+        services.AddTransient<MsOtherVm>();
+        services.AddTransient<MsSecretVm>();
+        services.AddTransient<MsLoginVm>();
+        services.AddSingleton<IRouteGuard>(new SecretGuard());
+        using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+        var menu = new GuardedMenu(router);
+        await menu.SelectEntryAsync(menu.Entries[0], ct);
+
+        await menu.SelectEntryAsync(menu.Entries[1], ct);      // "Secret": the guard sends the user to the sign-in page
+
+        Assert.IsType<MsLoginVm>(router.CurrentViewModel);
+        Assert.Equal("Sign in", menu.SelectedEntry?.DisplayName);
     }
 }
