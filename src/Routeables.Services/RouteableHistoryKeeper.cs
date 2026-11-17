@@ -18,6 +18,78 @@ public interface IRouteableHistoryStore
 }
 
 /// <summary>
+/// Protects the history before it is kept, and reads it back. The history holds the addresses of the pages and what the pages saved (<see cref="Abstraction.States.PersistAttribute"/>:
+/// a draft of a form, an identifier): it is written as plain text unless a protector is given to <see cref="RouteableHistoryExtensions.AddRouteableHistory"/>.
+/// </summary>
+public interface IRouteableHistoryProtector
+{
+    /// <summary>Turns the history into what is kept (an encrypted text, say).</summary>
+    string Protect(string text);
+
+    /// <summary>Gives the history back; <see langword="null"/> when it cannot be read (another key, a file that was changed): the application then starts with no history.</summary>
+    string? Unprotect(string text);
+}
+
+/// <summary>
+/// <see cref="IRouteableHistoryProtector"/> with AES-GCM: the history is encrypted and cannot be changed without the key being noticed. The key
+/// is the one of the application: keep it in the secure storage of the platform (the keychain, the keystore, <c>SecureStorage</c> on MAUI),
+/// never in the source code or next to the file.
+/// </summary>
+public sealed class AesRouteableHistoryProtector : IRouteableHistoryProtector
+{
+    private const string Prefix = "rh1:";
+    private const int NonceSize = 12;
+    private const int TagSize = 16;
+
+    private readonly byte[] _key;
+
+    /// <summary>Creates the protector.</summary>
+    /// <param name="key">16, 24 or 32 bytes (a copy is kept).</param>
+    public AesRouteableHistoryProtector(byte[] key)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        if (key.Length is not (16 or 24 or 32))
+            throw new ArgumentException("The key must be 16, 24 or 32 bytes long.", nameof(key));
+        _key = (byte[])key.Clone();
+    }
+
+    /// <inheritdoc />
+    public string Protect(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        var plain = System.Text.Encoding.UTF8.GetBytes(text);
+        var packed = new byte[NonceSize + TagSize + plain.Length];
+        var nonce = packed.AsSpan(0, NonceSize);
+        var tag = packed.AsSpan(NonceSize, TagSize);
+        System.Security.Cryptography.RandomNumberGenerator.Fill(nonce);
+        using var aes = new System.Security.Cryptography.AesGcm(_key, TagSize);
+        aes.Encrypt(nonce, plain, packed.AsSpan(NonceSize + TagSize), tag);
+        return Prefix + Convert.ToBase64String(packed);
+    }
+
+    /// <inheritdoc />
+    public string? Unprotect(string text)
+    {
+        if (text is null || !text.StartsWith(Prefix, StringComparison.Ordinal))
+            return null;
+        try
+        {
+            var packed = Convert.FromBase64String(text[Prefix.Length..]);
+            if (packed.Length < NonceSize + TagSize)
+                return null;
+            var plain = new byte[packed.Length - NonceSize - TagSize];
+            using var aes = new System.Security.Cryptography.AesGcm(_key, TagSize);
+            aes.Decrypt(packed.AsSpan(0, NonceSize), packed.AsSpan(NonceSize + TagSize), packed.AsSpan(NonceSize, TagSize), plain);
+            return System.Text.Encoding.UTF8.GetString(plain);
+        }
+        catch (Exception ex) when (ex is FormatException or System.Security.Cryptography.CryptographicException)
+        {
+            return null;
+        }
+    }
+}
+
+/// <summary>
 /// <see cref="IRouteableHistoryStore"/> in a text file. Without a path the file is <c>routeables-history.txt</c> in a folder named after the
 /// application, in the local application data of the user (the sandbox of the application on MAUI).
 /// </summary>
@@ -52,6 +124,9 @@ public sealed class FileRouteableHistoryStore : IRouteableHistoryStore
         try
         {
             File.WriteAllText(temporary, text);
+            // The history of one user is not for the others of the machine (Unix: the mode is set before the file takes the place of the old one).
+            if (!OperatingSystem.IsWindows() && !OperatingSystem.IsBrowser())
+                File.SetUnixFileMode(temporary, UnixFileMode.UserRead | UnixFileMode.UserWrite);
             File.Move(temporary, Path, overwrite: true);
         }
         catch
@@ -78,7 +153,7 @@ public sealed class FileRouteableHistoryStore : IRouteableHistoryStore
 /// Blazor keeps the history of a circuit with <c>PersistentComponentState</c> instead (see <c>RouteableHistoryOptions</c>), and the ASP.NET Core
 /// host keeps a scope per visitor in memory.
 /// </remarks>
-public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteableHistoryStore store) : IDisposable
+public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteableHistoryStore store, IRouteableHistoryProtector? protector = null) : IDisposable
 {
     private readonly object _gate = new();
     private IRouter? _router;
@@ -101,7 +176,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         }
 
         IReadOnlyList<RouteableSnapshot> kept = [];
-        try { kept = RouteableState.DeserializeSnapshots(store.Load()); }
+        try { kept = RouteableState.DeserializeSnapshots(Unprotect(store.Load())); }
         catch (Exception ex) { RouteableErrors.Report<RouteableHistoryKeeper>(provider, ex, "Load"); }
 
         router.Routed += OnRouted;
@@ -192,6 +267,14 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         if (_active) SaveNow();
     }
 
+    // A history that cannot be unprotected (another key, a file that was changed) is left out: the application starts with no history.
+    private string? Unprotect(string? kept)
+    {
+        if (protector is null || string.IsNullOrEmpty(kept))
+            return kept;
+        return protector.Unprotect(kept);
+    }
+
     private void SaveNow() => SaveNow(allowEmpty: false);
 
     private void SaveNow(bool allowEmpty)
@@ -221,7 +304,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
                     _savedTicket = ticket;
                     return;
                 }
-                store.Save(text);
+                store.Save(protector is null || text.Length == 0 ? text : protector.Protect(text));
                 _last = text;
                 _savedTicket = ticket;
             }
@@ -260,11 +343,14 @@ public static class RouteableHistoryExtensions
     /// </summary>
     /// <param name="services">The service collection of the application.</param>
     /// <param name="path">The file that holds the history; <see langword="null"/> takes <see cref="FileRouteableHistoryStore"/>'s default.</param>
-    public static IServiceCollection AddRouteableHistory(this IServiceCollection services, string? path = null)
+    /// <param name="protector">Encrypts what is kept (see <see cref="AesRouteableHistoryProtector"/>); <see langword="null"/> keeps plain text, which is only fit for histories that hold no private data.</param>
+    public static IServiceCollection AddRouteableHistory(this IServiceCollection services, string? path = null, IRouteableHistoryProtector? protector = null)
     {
         ArgumentNullException.ThrowIfNull(services);
+        if (protector is not null)
+            services.TryAddSingleton(protector);
         services.TryAddSingleton<IRouteableHistoryStore>(_ => new FileRouteableHistoryStore(path));
-        services.TryAddSingleton<RouteableHistoryKeeper>();
+        services.TryAddSingleton(sp => new RouteableHistoryKeeper(sp, sp.GetRequiredService<IRouteableHistoryStore>(), sp.GetService<IRouteableHistoryProtector>()));
         return services;
     }
 

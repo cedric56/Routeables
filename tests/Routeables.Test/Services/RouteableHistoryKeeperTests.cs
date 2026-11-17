@@ -29,7 +29,7 @@ public class RouteableHistoryKeeperTests
         }
     }
 
-    private static ServiceProvider Build(IRouteableHistoryStore store)
+    private static ServiceProvider Build(IRouteableHistoryStore store, IRouteableHistoryProtector? protector = null)
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
@@ -38,7 +38,7 @@ public class RouteableHistoryKeeperTests
         services.AddTransient<KeptFirstVm>();
         services.AddTransient<KeptSecondVm>();
         services.AddSingleton(store);
-        services.AddRouteableHistory();
+        services.AddRouteableHistory(protector: protector);
         return services.BuildServiceProvider();
     }
 
@@ -49,6 +49,79 @@ public class RouteableHistoryKeeperTests
         {
             if (DateTime.UtcNow > deadline) throw new TimeoutException("The condition was not met in 5 seconds.");
             await Task.Delay(10, TestContext.Current.CancellationToken);
+        }
+    }
+
+    private static byte[] Key(byte fill) => Enumerable.Repeat(fill, 32).ToArray();
+
+    [Fact]
+    public async Task A_protected_history_is_not_kept_as_plain_text_and_comes_back_with_the_same_key()
+    {
+        var store = new MemoryStore();
+        var protector = new AesRouteableHistoryProtector(Key(7));
+        using (var provider = Build(store, protector))
+        {
+            provider.StartRouteableHistory();
+            var router = provider.GetRequiredService<IRouter>();
+            await router.GoToAsync("/kept-first", cancellationToken: TestContext.Current.CancellationToken);
+            await router.GoToAsync("/kept-second", cancellationToken: TestContext.Current.CancellationToken);
+        }
+
+        Assert.NotNull(store.Kept);
+        Assert.DoesNotContain("kept-second", store.Kept);
+        Assert.Equal(["/kept-first", "/kept-second"], RouteableState.Deserialize(protector.Unprotect(store.Kept!)));
+
+        using var next = Build(new MemoryStore(store.Kept), new AesRouteableHistoryProtector(Key(7)));
+        next.StartRouteableHistory();
+        var again = next.GetRequiredService<IRouter>();
+        await again.GoToAsync("/kept-first", cancellationToken: TestContext.Current.CancellationToken);
+        await UntilAsync(() => again.CurrentViewModel is KeptSecondVm);
+    }
+
+    [Fact]
+    public async Task A_history_that_cannot_be_unprotected_is_left_out_and_replaced()
+    {
+        var kept = new AesRouteableHistoryProtector(Key(1)).Protect(RouteableState.Serialize(["/kept-first", "/kept-second"]));
+        var store = new MemoryStore(kept);
+        using var provider = Build(store, new AesRouteableHistoryProtector(Key(2)));
+        provider.StartRouteableHistory();
+        var router = provider.GetRequiredService<IRouter>();
+
+        await router.GoToAsync("/kept-first", cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.IsType<KeptFirstVm>(router.CurrentViewModel);
+        await UntilAsync(() => store.Saves > 0);
+        Assert.NotEqual(kept, store.Kept);
+    }
+
+    [Fact]
+    public void The_protector_refuses_a_text_that_was_changed_a_wrong_key_and_a_bad_key_size()
+    {
+        var protector = new AesRouteableHistoryProtector(Key(3));
+        var text = protector.Protect("secret");
+
+        Assert.Equal("secret", protector.Unprotect(text));
+        Assert.NotEqual(text, protector.Protect("secret"));   // a new nonce each time
+        Assert.Null(protector.Unprotect(text[..^4] + "AAAA"));
+        Assert.Null(protector.Unprotect("secret"));
+        Assert.Null(new AesRouteableHistoryProtector(Key(4)).Unprotect(text));
+        Assert.Throws<ArgumentException>(() => new AesRouteableHistoryProtector(new byte[5]));
+    }
+
+    [Fact]
+    public void The_file_of_the_history_is_for_its_owner_only_on_unix()
+    {
+        if (OperatingSystem.IsWindows())
+            return;
+        var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"), "h.txt");
+        try
+        {
+            new FileRouteableHistoryStore(path).Save("x");
+            Assert.Equal(UnixFileMode.UserRead | UnixFileMode.UserWrite, File.GetUnixFileMode(path));
+        }
+        finally
+        {
+            try { Directory.Delete(Path.GetDirectoryName(path)!, true); } catch (IOException) { }
         }
     }
 

@@ -168,6 +168,15 @@ The host starts it when it builds its container (WPF, Avalonia, WinUI, Uno, WinU
 
 The default store is a **plain text file** in the local application data folder of the user (`routeables-history.txt`): the routes, the query and what the pages saved with `RouteableState` are readable by anyone who can read that folder. Do not save a secret or personal data in a page state that is kept, or register a store that encrypts (`IRouteableHistoryStore.Save` receives the text, `Load` gives it back). The file is written aside under a unique name and moved over the old one, so two instances do not share a temporary file; the last one to save wins.
 
+The history holds the addresses and what the pages saved with `[Persist]` (a draft of a form, an identifier). It is plain text unless you give a protector; if a page keeps anything private, encrypt it with a key from the secure storage of the platform (`SecureStorage` on MAUI, the keychain, the keystore), never from the source code:
+
+```csharp
+byte[] key = await LoadOrCreateKeyAsync();   // 32 bytes kept in the secure storage
+services.AddRouteableHistory(protector: new AesRouteableHistoryProtector(key));
+```
+
+A history that was changed, or written with another key, is ignored and the application starts with no history. Changing from plain text to a protector also starts empty once. On Linux, macOS and Android the file is readable by its owner only. Your own `IRouteableHistoryProtector` can use another scheme (DPAPI on Windows, for instance).
+
 To keep it somewhere else (a database, the cloud), register your own `IRouteableHistoryStore` (`Load` and `Save`) before `AddRouteableHistory`. Blazor keeps the history of a circuit with `PersistentComponentState` instead (see the Blazor guide), and the ASP.NET Core host keeps one scope per visitor in memory.
 
 ## Diagnostics: traces and metrics
