@@ -28,7 +28,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 - **The history file is never wider than its owner on Unix**: `FileRouteableHistoryStore` creates the file with the mode 600 (it used to write it and restrict it right after, which left a moment when another user of the machine could open it) and the folder it creates with the mode 700.
 
-- **The D-Bus calls of the notifications have a delay**: `AddMatch` and `GetNameOwner` give up after 3 s like the others, so a bus that does not answer does not keep an entry of each call.
+- **The D-Bus calls of the notifications have a delay**: `AddMatch`, `GetNameOwner` and `CloseNotification` give up after 3 s like the others, so a bus that does not answer does not keep an entry of each call.
 
 - **`RouteableTable.Entries` cannot be changed by a caller**: it is a read-only collection, not the array that the table keeps. The read is still the collection itself, with no copy.
 

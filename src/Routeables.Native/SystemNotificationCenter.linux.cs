@@ -175,7 +175,9 @@ public sealed partial class SystemNotificationCenter
 
         DBusConnection? connection;
         lock (_linuxGate) connection = _linuxConnection;
-        _ = connection?.CallAsync(LinuxService, LinuxPath, LinuxService, "CloseNotification", "u", w => w.UInt32(serverId));
+        // With a delay, like the other calls: a bus that does not answer must not keep the entry of this one, and its failure is read.
+        if (connection is not null)
+            Forget(connection.CallAsync(LinuxService, LinuxPath, LinuxService, "CloseNotification", "u", w => w.UInt32(serverId), LinuxCallTimeout));
     }
 
     private const string BusService = "org.freedesktop.DBus";
