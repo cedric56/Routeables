@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- What `dotnet test --coverage` measures (Microsoft.Testing.Extensions.CodeCoverage): the libraries of Routeables, not the tests, the
-     packages they use, or the code the generators and the compiler write. Passed with --coverage-settings. -->
+<!-- What the coverage option of `dotnet test` measures (Microsoft.Testing.Extensions.CodeCoverage): the libraries of Routeables, not the tests, the
+     packages they use, or the code the generators and the compiler write. Passed with the coverage-settings option. -->
 <Configuration>
   <CodeCoverage>
     <ModulePaths>

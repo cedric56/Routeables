@@ -154,9 +154,6 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Install MAUI workload
-        run: dotnet workload install maui --skip-manifest-update
-
       - name: Cache NuGet packages
         uses: actions/cache@v6
         with:
