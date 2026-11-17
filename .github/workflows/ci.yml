@@ -342,7 +342,7 @@ jobs:
   # (ApiBaselineVersion, Directory.Build.props). A removed or changed public member is reported here before a minor or a patch carries it.
   # It reports but does not block (continue-on-error) until the differences that exist since the baseline are settled; remove that
   # line once it runs green. A difference that is wanted (a major version) goes in a CompatibilitySuppressions.xml:
-  # dotnet pack -p:ApiBaselineVersion=... -p:GenerateCompatibilitySuppressionFile=true
+  # dotnet pack -p:EnablePackageValidation=true -p:PackageValidationBaselineVersion=2.1.0 -p:ApiCompatGenerateSuppressionFile=true
   api-compatibility:
     name: API compatibility with the last release
     runs-on: ubuntu-latest

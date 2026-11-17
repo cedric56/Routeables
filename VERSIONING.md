@@ -40,4 +40,4 @@ The CI packs `Routeables` and `Routeables.Abstraction` with `EnablePackageValida
 dotnet pack src/Routeables.Core/Routeables.Core.csproj -c Release -p:EnablePackageValidation=true -p:PackageValidationBaselineVersion=2.1.0
 ```
 
-A change that is wanted (a major version) is listed with `-p:GenerateCompatibilitySuppressionFile=true`, which writes a `CompatibilitySuppressions.xml` next to the project.
+A change that is wanted (a major version) is listed with `-p:ApiCompatGenerateSuppressionFile=true`, which writes a `CompatibilitySuppressions.xml` next to the project.

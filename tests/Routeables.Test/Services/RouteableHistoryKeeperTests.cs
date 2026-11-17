@@ -38,7 +38,7 @@ public class RouteableHistoryKeeperTests
         services.AddTransient<KeptFirstVm>();
         services.AddTransient<KeptSecondVm>();
         services.AddSingleton(store);
-        services.AddRouteableHistory(protector: protector);
+        services.AddRouteableHistory(path: null, protector: protector);
         return services.BuildServiceProvider();
     }
 

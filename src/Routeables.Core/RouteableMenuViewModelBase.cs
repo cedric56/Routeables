@@ -181,7 +181,10 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     /// </returns>
     /// <param name="value">The entry to select.</param>
     /// <param name="cancellationToken">Cancels the selection, and the route change that it asks of the router (a navigation that the browser gave up).</param>
-    public async Task<bool> SelectEntryAsync(IRouteableMenuEntry? value, CancellationToken cancellationToken = default)
+    public Task<bool> SelectEntryAsync(IRouteableMenuEntry? value) => SelectEntryAsync(value, CancellationToken.None);
+
+    /// <inheritdoc cref="SelectEntryAsync(IRouteableMenuEntry?)"/>
+    public async Task<bool> SelectEntryAsync(IRouteableMenuEntry? value, CancellationToken cancellationToken)
     {
         if (Equals(_routeable, value) && !PageIsElsewhere(value))
             return true;
@@ -262,7 +265,10 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     /// <param name="value">The entry to select.</param>
     /// <param name="old">The previous entry, restored on failure.</param>
     /// <param name="cancellationToken">Cancels the selection while it waits for another one, and the route change that it asks of the router.</param>
-    public async Task SelectAsync(IRouteableMenuEntry? value, IRouteableMenuEntry? old = null, CancellationToken cancellationToken = default)
+    public Task SelectAsync(IRouteableMenuEntry? value, IRouteableMenuEntry? old = null) => SelectAsync(value, old, CancellationToken.None);
+
+    /// <inheritdoc cref="SelectAsync(IRouteableMenuEntry?, IRouteableMenuEntry?)"/>
+    public async Task SelectAsync(IRouteableMenuEntry? value, IRouteableMenuEntry? old, CancellationToken cancellationToken)
     {
         var version = Interlocked.Increment(ref _selectionVersion);
 

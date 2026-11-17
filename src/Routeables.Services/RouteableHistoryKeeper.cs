@@ -350,8 +350,17 @@ public static class RouteableHistoryExtensions
     /// </summary>
     /// <param name="services">The service collection of the application.</param>
     /// <param name="path">The file that holds the history; <see langword="null"/> takes <see cref="FileRouteableHistoryStore"/>'s default.</param>
-    /// <param name="protector">Encrypts what is kept (see <see cref="AesRouteableHistoryProtector"/>); <see langword="null"/> keeps plain text, which is only fit for histories that hold no private data.</param>
-    public static IServiceCollection AddRouteableHistory(this IServiceCollection services, string? path = null, IRouteableHistoryProtector? protector = null)
+    public static IServiceCollection AddRouteableHistory(this IServiceCollection services, string? path = null)
+        => services.AddRouteableHistory(path, protector: null);
+
+    /// <summary>
+    /// Keeps the history of the router between two runs of the application, encrypted by <paramref name="protector"/>
+    /// (see <see cref="AesRouteableHistoryProtector"/>).
+    /// </summary>
+    /// <param name="services">The service collection of the application.</param>
+    /// <param name="path">The file that holds the history; <see langword="null"/> takes <see cref="FileRouteableHistoryStore"/>'s default.</param>
+    /// <param name="protector">Encrypts what is kept; <see langword="null"/> keeps plain text, which is only fit for histories that hold no private data.</param>
+    public static IServiceCollection AddRouteableHistory(this IServiceCollection services, string? path, IRouteableHistoryProtector? protector)
     {
         ArgumentNullException.ThrowIfNull(services);
         if (protector is not null)

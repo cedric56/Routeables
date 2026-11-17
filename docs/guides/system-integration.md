@@ -172,7 +172,7 @@ The history holds the addresses and what the pages saved with `[Persist]` (a dra
 
 ```csharp
 byte[] key = await LoadOrCreateKeyAsync();   // 32 bytes kept in the secure storage
-services.AddRouteableHistory(protector: new AesRouteableHistoryProtector(key));
+services.AddRouteableHistory(path: null, protector: new AesRouteableHistoryProtector(key));
 ```
 
 A history that was changed, or written with another key, is ignored and the application starts with no history. Changing from plain text to a protector also starts empty once. On Linux, macOS and Android the file is readable by its owner only. Your own `IRouteableHistoryProtector` can use another scheme (DPAPI on Windows, for instance).
