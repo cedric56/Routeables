@@ -10,12 +10,18 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **One rule for "the same route?"** (`RouteAddress`, internal): the router (menu entry lookup, type guards, not-found page, `GoBackToAsync`), `WentTo`, the menus (`RouteableMenuViewModelBase`), the table of routes, the controls of navigation (`RouteTarget`, the Shell tabs of MAUI), the sign-in guard of Blazor and the address bar (`RouteableUrlSync`) used eight different comparisons. They now agree: a leading or closing slash does not count, the words of a path ignore the case, a query ignores the order of its pairs and the case of its names but not of its values, and an escaped address is the plain one. Visible effects: a menu entry is found for the page whatever the case or slashes of its route (`/Orders/` is `/orders`), two entries that differ by their query stay two, `RouteableTable` drops `orders/` as a duplicate of `/orders`, and the sign-in guard no longer redirects a visit of the sign-in page with a `returnUrl` to itself.
+
+- **The address bar of Blazor asks any menu to select an entry**: `IRouteableMenuViewModel.SelectEntryAsync` (a default that sets `SelectedEntry`, which the base classes of `Routeables.Core` already implement). A menu written by hand can answer `false` when a guard keeps the user where they were, and the address is put back; before, only the base classes could.
+
 - **Avalonia uses `Routeables.Native`** for its system notifications instead of Avalonia.Labs.Notifications (removed: on Linux its D-Bus dependency crashed the application at start). Turn them on with `AppBuilder.WithAppNotifications()` (`Routeables.Avalonia`). `Routeables.Avalonia` now also builds for `net10.0-android` and `net10.0-ios`: an Android or iOS head must reference it directly to get them. The desktop has them too (Linux through D-Bus, Windows through the notification area, see above); macOS and the browser do not: `CreateNotificationAsync` returns `null` there. On Android pass the intents to `SystemNotificationCenter.HandleIntent` from the main activity.
 
 - **`Routeables.Native` no longer depends on MAUI Essentials or AndroidX** on Android: it follows the activity in front itself, asks for the notification permission with it, and uses `Notification.Builder`. No `Platform.Init` is needed outside MAUI. Applications build the services (`UseRouteablesServices`) before the first activity, as they do; `NativeDialogs.Initialize()` starts it for a host that does not.
 - **The three-button dialog is in `Routeables.Native`** (`NativeDialogs.DisplayThreeButtonsAsync`): MAUI, WinUI 3 and Uno use it (Android alert, Windows App SDK `ContentDialog`, iOS alert or sheet) and draw their own where it has nothing to show.
 
 ### Fixed
+
+- **A view that fails to show on the UI thread is shown again** (`RegionBinding.ShowFailed`, used by `RouteableRegion`): when the route change came from another thread, the failure happened after the binding had taken the view for shown, and the same view was never tried again. `RouteableHistoryKeeper` also disposes its cancellation source.
 
 - **Starting with a link and a saved history** (`AddRouteableHistory` and `RouteableLinkInbox`): the history is put back first and the addresses are followed after it. Before, the restoration, which starts by erasing the history, could remove the page that the link had just opened.
 - **An absolute coordination whose page throws** (an exception in `OnEnteringAsync`, a cancellation) puts back the page that was shown, as a failed result already did; the regions were left empty.

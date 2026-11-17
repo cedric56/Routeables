@@ -31,9 +31,7 @@ public static class RouterStackExtensions
     public static Task<RouteableResult> GoBackToAsync(this IRouter router, string route, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(route);
-        static string Normal(string? r) => (r ?? string.Empty).Split('?')[0].Trim('/');
-        var wanted = Normal(route);
-        return router.GoBackToAsync(e => string.Equals(Normal(e.Args.Route), wanted, StringComparison.OrdinalIgnoreCase), cancellationToken);
+        return router.GoBackToAsync(e => RouteAddress.SamePath(e.Args.Route ?? string.Empty, route), cancellationToken);
     }
 
     /// <summary>Goes back to the nearest earlier entry whose view model is a <typeparamref name="TViewModel"/>.</summary>

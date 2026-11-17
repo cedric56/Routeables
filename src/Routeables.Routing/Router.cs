@@ -487,11 +487,6 @@ internal class Router(
             $"Route \"{route}\" does not match the template \"{template}\": {mismatch}."));
     }
 
-    // The same template written two ways (a menu entry says "Orders", the registration "/orders"): the way GoToAsync and TryTemplateOf compare.
-    private static bool SameTemplate(string? a, string? b)
-        => a is not null && b is not null
-           && string.Equals(a.Split('?')[0].Trim('/'), b.Split('?')[0].Trim('/'), StringComparison.OrdinalIgnoreCase);
-
     private IRouteTypeGuard[]? _typeGuards;
 
     private IRouteTypeGuard[] TypeGuards => _typeGuards ??= [.. provider.GetServices<IRouteTypeGuard>().Select((guard, index) => (guard, index))
@@ -505,7 +500,7 @@ internal class Router(
             return null;
 
         var type = provider.GetService<RouteableTable>()?.Entries
-            .FirstOrDefault(entry => SameTemplate(entry.Template, template)).ViewModelType;
+            .FirstOrDefault(entry => RouteAddress.SamePath(entry.Template, template)).ViewModelType;
         if (type is null)
             return null;
 
@@ -611,8 +606,7 @@ internal class Router(
             return await GoToRouteAsync(url, template, template, template, args, null, null, cancellationToken);
 
         // A page of the menu, whose route has no parameter.
-        static string Normal(string? route) => (route ?? string.Empty).Split('?')[0].Trim('/');
-        if (provider.GetService<IRouteableMenuViewModel>()?.Entries.FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(url), StringComparison.OrdinalIgnoreCase)) is { } item)
+        if (provider.GetService<IRouteableMenuViewModel>()?.Entries.FirstOrDefault(r => RouteAddress.SamePath(r.Route, url)) is { } item)
         {
             // The entry has no template to read the address with, but what the caller gave is not lost: its args, and the query of the address.
             var query = RouteParser.QueryOf(url);
@@ -636,8 +630,7 @@ internal class Router(
             ? string.Empty
             : " No route is registered at all: check that the projects with the [Routeable] view models and the views reference the Routeables package (it carries the source generator). An executable registers its generated routes by itself; a library, or a project built with RouteablesAutoRegister=false, needs its AddGeneratedRoutes() called.";
         // A page for the addresses nobody serves (UseNotFoundRoute), unless the missing one is that page itself.
-        static string Same(string? route) => (route ?? string.Empty).Split('?')[0].Trim('/');
-        if (provider.GetService<RouteableNotFound>() is { } notFound && !string.Equals(Same(notFound.Route), Same(url), StringComparison.OrdinalIgnoreCase))
+        if (provider.GetService<RouteableNotFound>() is { } notFound && !RouteAddress.SamePath(notFound.Route, url))
         {
             // A copy: the caller's args must not collect a notFoundUrl per missing address.
             var shown = Snapshot(args).WithValue(RouteableNotFound.UrlValue, url);
@@ -734,7 +727,7 @@ internal class Router(
 
     // Whether the page shown is the one of the entry (its route), and not the one a guard redirected to.
     internal bool WentTo(IRouteableMenuEntry entry)
-        => string.Equals(history.Current?.Args.Route, entry.Arguments.Route ?? entry.Route, StringComparison.Ordinal);
+        => RouteAddress.Same(history.Current?.Args.Route, entry.Arguments.Route ?? entry.Route);
 
     // A menu entry remembers the page it showed last. Not one the router has disposed since: a new one is created instead.
     private object? Reusable(object? remembered) => lifecycle.WasDestroyed(remembered) ? null : remembered;
@@ -772,10 +765,8 @@ internal class Router(
 
     private bool TryTemplateOf(string route, out string template)
     {
-        static string Normal(string? value) => (value ?? string.Empty).Split('?')[0].Trim('/');
-
         var entries = provider.GetService<RouteableTable>()?.Entries ?? [];
-        var exact = entries.FirstOrDefault(e => string.Equals(Normal(e.Template), Normal(route), StringComparison.OrdinalIgnoreCase));
+        var exact = entries.FirstOrDefault(e => RouteAddress.SamePath(e.Template, route));
         if (exact.Template is not null)
             return Found(exact.Template, out template);
 
@@ -784,7 +775,7 @@ internal class Router(
             return Found(matching.Template, out template);
 
         var item = provider.GetService<IRouteableMenuViewModel>()?.Entries
-            .FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(route), StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(r.Template));
+            .FirstOrDefault(r => RouteAddress.SamePath(r.Route, route) && !string.IsNullOrEmpty(r.Template));
         if (item?.Template is { } menuTemplate)
             return Found(menuTemplate, out template);
 

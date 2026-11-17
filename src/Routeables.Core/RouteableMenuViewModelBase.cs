@@ -77,7 +77,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         var type = viewModel.GetType();
         IRouteableMenuEntry? entry = null;
         if (ReferenceEquals(viewModel, _router.CurrentViewModel) && _router.History.Current?.Args.Route is { } shownRoute)
-            entry = Entries.FirstOrDefault(p => string.Equals(p.Arguments.Route ?? p.Route, shownRoute, StringComparison.Ordinal));
+            entry = Entries.FirstOrDefault(p => RouteAddress.Same(p.Arguments.Route ?? p.Route, shownRoute));
         entry ??= Entries.FirstOrDefault(p => p.Route == type.Name || (p as RouteableMenuEntry)?.ViewModelType == type);
         if (entry != null)
             _routeable = _confirmed = entry;
@@ -170,7 +170,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     // and the menu keeps the entry it was on. Selecting that entry again must open its page, not be ignored.
     private bool PageIsElsewhere(IRouteableMenuEntry? entry)
         => entry is not null && _selectionVersion != 0 && _router.History.Current is { } current
-           && !string.Equals(current.Args.Route, entry.Arguments.Route ?? entry.Route, StringComparison.Ordinal);
+           && !RouteAddress.Same(current.Args.Route, entry.Arguments.Route ?? entry.Route);
 
     /// <summary>
     /// Selects an entry like the <see cref="SelectedEntry"/> setter does, and waits for the result.
@@ -340,7 +340,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
 
             // Whatever a newer selection does next, the router now shows this entry: it is the one to go back to if that one is refused.
             if (result && _router.History.Current is { } shown
-                && string.Equals(shown.Args.Route, value.Arguments.Route ?? value.Route, StringComparison.Ordinal))
+                && RouteAddress.Same(shown.Args.Route, value.Arguments.Route ?? value.Route))
                 _confirmed = value;
 
             // A newer selection replaced this one while the router was working: its result is the one to keep.
@@ -352,7 +352,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
                 // A guard sent the user to another page (a sign-in): the menu does not claim the entry that was refused,
                 // unless the page shown has an entry of its own (OnViewModelChanged selected it).
                 var redirected = _router.History.Current is { } current
-                    && !string.Equals(current.Args.Route, value.Arguments.Route ?? value.Route, StringComparison.Ordinal);
+                    && !RouteAddress.Same(current.Args.Route, value.Arguments.Route ?? value.Route);
                 if (redirected && ReferenceEquals(_routeable, value))
                     _routeable = Previous(old, version);
 

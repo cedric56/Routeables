@@ -283,18 +283,13 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         else if (provider.GetService<IRouteableMenuViewModel>() is { } menuViewModel
                  && menuViewModel.Entries.FirstOrDefault(r => SameAddress(r.Route, path)) is { } item)
         {
-            // Keeps the layout's selection (menu highlight) in step; it navigates the router. The guards answer before the address is accepted.
-            if (menuViewModel is Routeables.Core.RouteableMenuViewModelBase selectable)
-            {
-                if (await selectable.SelectEntryAsync(item, cancellationToken))
-                    return Outcome.Done;
-                if (restore && AddressOf(history.Current) is { } shownNow)
-                    Show(shownNow, replace: true);
-                return Outcome.Refused;
-            }
-
-            menuViewModel.SelectedEntry = item;
-            return Outcome.Done;
+            // Keeps the layout's selection (menu highlight) in step; it navigates the router. The guards answer before the address is accepted
+            // (a menu written by hand answers true: see IRouteableMenuViewModel.SelectEntryAsync).
+            if (await menuViewModel.SelectEntryAsync(item, cancellationToken))
+                return Outcome.Done;
+            if (restore && AddressOf(history.Current) is { } shownNow)
+                Show(shownNow, replace: true);
+            return Outcome.Refused;
         }
         else if (RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], path).Template is { } template)
         {
@@ -360,88 +355,16 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     // "about" and "/about" are the same address.
     // Exactly one leading slash: "//host" is a protocol-relative link (the browser leaves the application for host), and browsers
     // read "/\host" the same way. A route can carry user input (a returnUrl, a search), so the address stays inside the application.
-    private static string Url(string route) => "/" + route.TrimStart('/', '\\');
+    private static string Url(string route) => RouteAddress.Rooted(route);
 
     private bool IsKnown(string route)
         => provider.GetService<RouteableTable>()?.Entries.Any(e => RouteParser.TryMatch(e.Template, route)) == true;
 
-    // The browser reports an address escaped ("/dogs/Afghan%20Hound") and a route is kept as it was asked ("/dogs/Afghan Hound"): both are
-    // the same address, so they are compared unescaped. Without it the two never match and the address is shown again and again.
-    // The path ignores the case and a closing slash; the query is data: the names ignore the case, the values do not, and a slash that ends a
-    // value is part of it ("/search?q=ABC" is not "/search?q=abc", "?path=a/" is not "?path=a").
+    // The rules of "the same address" (the case, the closing slash, the escapes, the order of the query) are the ones of every other part of the library: see RouteAddress.
     internal static bool Same(string? a, string? b, IEnumerable<(string Template, Type? ViewModelType)>? routes = null)
-    {
-        if (a is null || b is null)
-            return false;
-        var (pathA, queryA) = SplitQuery(Url(a));
-        var (pathB, queryB) = SplitQuery(Url(b));
-        return SamePath(Unescape(pathA.TrimEnd('/')), Unescape(pathB.TrimEnd('/')), routes)
-               && SameQuery(queryA, queryB);
-    }
+        => RouteAddress.Same(a, b, routes is null ? null : path => RouteParser.BestMatch(routes, path).Template);
 
     private bool SameAddress(string? a, string? b) => Same(a, b, provider.GetService<RouteableTable>()?.Entries);
-
-    // The words of a route ignore the case ("/Orders" is "/orders"), the values of its placeholders do not: "/items/aB" and "/items/Ab" are two
-    // pages when the identifier is a token or a slug. A path whose route is not known has no placeholder to protect.
-    private static bool SamePath(string a, string b, IEnumerable<(string Template, Type? ViewModelType)>? routes)
-    {
-        if (string.Equals(a, b, StringComparison.Ordinal))
-            return true;
-        if (!string.Equals(a, b, StringComparison.OrdinalIgnoreCase))
-            return false;
-        if (routes is null || RouteParser.BestMatch(routes, a).Template is not { } template)
-            return true;
-
-        var templateSegments = template.Split('?')[0].Split('/', StringSplitOptions.RemoveEmptyEntries);
-        var segmentsA = a.Split('/', StringSplitOptions.RemoveEmptyEntries);
-        var segmentsB = b.Split('/', StringSplitOptions.RemoveEmptyEntries);
-        for (var i = 0; i < segmentsA.Length && i < segmentsB.Length; i++)
-        {
-            if (string.Equals(segmentsA[i], segmentsB[i], StringComparison.Ordinal))
-                continue;
-            if (i >= templateSegments.Length || templateSegments[i].Contains('{'))
-                return false;   // the case of a value changed: not the same page
-        }
-
-        return true;
-    }
-
-    private static (string Path, string? Query) SplitQuery(string address)
-    {
-        var at = address.IndexOf('?');
-        return at < 0 ? (address, null) : (address[..at], address[(at + 1)..]);
-    }
-
-    private static bool SameQuery(string? a, string? b)
-    {
-        // "?x=1&y=2" is "?y=2&x=1": the pairs are put in order of name (the sort is stable, so the values of a repeated name keep their order).
-        var pairsA = (a ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries).OrderBy(p => SplitPair(p).Name, StringComparer.OrdinalIgnoreCase).ToArray();
-        var pairsB = (b ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries).OrderBy(p => SplitPair(p).Name, StringComparer.OrdinalIgnoreCase).ToArray();
-        if (pairsA.Length != pairsB.Length)
-            return false;
-        for (var i = 0; i < pairsA.Length; i++)
-        {
-            var (nameA, valueA) = SplitPair(pairsA[i]);
-            var (nameB, valueB) = SplitPair(pairsB[i]);
-            if (!string.Equals(Unescape(nameA), Unescape(nameB), StringComparison.OrdinalIgnoreCase)
-                || !string.Equals(Unescape(valueA), Unescape(valueB), StringComparison.Ordinal))
-                return false;
-        }
-        return true;
-    }
-
-    private static (string Name, string Value) SplitPair(string pair)
-    {
-        var at = pair.IndexOf('=');
-        return at < 0 ? (pair, string.Empty) : (pair[..at], pair[(at + 1)..]);
-    }
-
-    private static string Unescape(string text)
-    {
-        // An escaped slash is not a separator: "/files/a%2Fb" is one segment and "/files/a/b" is two, so the first must stay escaped.
-        try { return Uri.UnescapeDataString(text.Replace("%2F", "%252F", StringComparison.OrdinalIgnoreCase)); }
-        catch (UriFormatException) { return text; }
-    }
 
     /// <inheritdoc />
     public void Dispose()

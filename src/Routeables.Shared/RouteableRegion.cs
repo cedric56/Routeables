@@ -353,7 +353,19 @@ public partial class RouteableRegion : ContentControl
         Content = null;
     }
 
-    private void Show(object? view, RegionChange change) => this.Post(() => Apply(view, change));
+    // The call can come from another thread: Apply then runs later, on the UI thread, and its failure reaches nobody who could take the view for not shown.
+    private void Show(object? view, RegionChange change) => this.Post(() =>
+    {
+        try
+        {
+            Apply(view, change);
+        }
+        catch
+        {
+            _connection.ShowFailed(view);
+            throw;
+        }
+    });
 
     private void Apply(object? view, RegionChange change)
     {

@@ -38,6 +38,21 @@ public interface IRouteableMenuViewModel
     void OnRouterMoved(object? viewModel) { }
 
     /// <summary>
+    /// Selects an entry and says whether it is the selected one afterwards: <see langword="false"/> when a guard or a newer route change kept the
+    /// user on the page they were on. The address bar of Blazor asks it for an address typed or followed, and puts the address of the page back when
+    /// the answer is <see langword="false"/>. The default sets <see cref="SelectedEntry"/> and answers <see langword="true"/>, since it cannot tell
+    /// what the setter of a menu written by hand did; a menu that can (it awaits the route change) implements this method itself. The base classes of Routeables.Core do.
+    /// </summary>
+    /// <param name="entry">The entry to select.</param>
+    /// <param name="cancellationToken">Cancels the selection (a navigation that the browser gave up).</param>
+    /// <returns><see langword="true"/> when <paramref name="entry"/> is selected.</returns>
+    Task<bool> SelectEntryAsync(IRouteableMenuEntry entry, CancellationToken cancellationToken = default)
+    {
+        SelectedEntry = entry;
+        return Task.FromResult(true);
+    }
+
+    /// <summary>
     /// Selects the first entry when nothing is selected yet. Every host calls it once at start, so the first page is chosen
     /// the same way on Blazor, Avalonia and MAUI.
     /// </summary>

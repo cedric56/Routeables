@@ -68,5 +68,5 @@ public sealed class RouteableAuthorizationGuard(IServiceProvider provider, Route
 
     // The sign-in page that forgot [AllowAnonymous] would send the visitor to itself: cancel instead.
     private static bool IsAddress(string? address, string route)
-        => string.Equals(address?.Trim('/'), route.Trim('/'), StringComparison.OrdinalIgnoreCase);
+        => RouteAddress.SamePath(address, route);
 }

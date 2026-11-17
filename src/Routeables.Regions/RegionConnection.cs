@@ -78,6 +78,13 @@ public sealed class RegionConnection
         return Connect(provider, region, router => new RegionItemsBinding(router, show));
     }
 
+    /// <summary>
+    /// Tells the binding that a view could not be put on screen, so the next change or reconnection shows it again instead of taking it for shown
+    /// (see <see cref="RegionBinding.ShowFailed"/>). For a view that fails on the UI thread after the call that routed it returned.
+    /// </summary>
+    /// <param name="view">The view that was not shown.</param>
+    public void ShowFailed(object? view) => (_binding as RegionBinding)?.ShowFailed(view);
+
     /// <summary>Lets go of the router. Clear the content afterwards: a view has one parent and must be free for another control.</summary>
     public void Disconnect()
     {

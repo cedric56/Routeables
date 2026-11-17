@@ -1,4 +1,5 @@
-﻿namespace Routeables.Abstraction.Registrations;
+﻿using Routeables.Abstraction.Routing;
+namespace Routeables.Abstraction.Registrations;
 
 /// <summary>
 /// The routes registered with an explicit route, for example
@@ -39,7 +40,7 @@ internal sealed class RouteableTable
     {
         lock (_gate)
         {
-            if (_entries.Any(e => string.Equals(e.Template, template, StringComparison.OrdinalIgnoreCase)))
+            if (_entries.Any(e => RouteAddress.SamePath(e.Template, template)))
                 return;
             _entries = [.. _entries, (template, viewModelType)];
         }

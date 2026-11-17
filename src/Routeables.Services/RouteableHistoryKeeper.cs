@@ -121,9 +121,14 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
 
     private async Task RestoreAsync(IRouter router, IReadOnlyList<RouteableSnapshot> kept)
     {
+        // The keeper may be disposed before this runs: its source is disposed with it, and a disposed source gives no token.
+        CancellationToken stop;
+        try { stop = _stopped.Token; }
+        catch (ObjectDisposedException) { return; }
+
         try
         {
-            if (!await RouteableLinkInbox.WaitForFirstPageAsync(router, _stopped.Token) || _disposed)
+            if (!await RouteableLinkInbox.WaitForFirstPageAsync(router, stop) || _disposed)
                 return;
 
             async Task Restore()
@@ -233,7 +238,12 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
     {
         _disposed = true;
         _active = false;
-        try { _stopped.Cancel(); } catch (ObjectDisposedException) { }   // already stopped
+        try
+        {
+            _stopped.Cancel();
+            _stopped.Dispose();
+        }
+        catch (ObjectDisposedException) { }   // already stopped
         if (_router is { } router)
             router.Routed -= OnRouted;
         if (_router is { } erased)

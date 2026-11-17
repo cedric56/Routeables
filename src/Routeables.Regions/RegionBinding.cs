@@ -94,15 +94,25 @@ public sealed class RegionBinding : IDisposable
         catch
         {
             // A view that could not be shown is not shown: the next Refresh, even for the same view, tries again.
-            lock (_lock)
-            {
-                if (ReferenceEquals(_shown, view))
-                {
-                    _hasShown = false;
-                    _shown = null;
-                }
-            }
+            ShowFailed(view);
             throw;
+        }
+    }
+
+    /// <summary>
+    /// Says that <paramref name="view"/> could not be put on screen after all, so the next <see cref="Refresh"/>, even for the same view, shows it
+    /// again. <see cref="Refresh"/> does it itself when <c>show</c> throws; a host that puts the view on its UI thread later (the call came from
+    /// another thread) is the only one that knows, and tells here. Nothing happens when another view has been shown since.
+    /// </summary>
+    /// <param name="view">The view that was not shown.</param>
+    public void ShowFailed(object? view)
+    {
+        lock (_lock)
+        {
+            if (_disposed || !_hasShown || !ReferenceEquals(_shown, view))
+                return;
+            _hasShown = false;
+            _shown = null;
         }
     }
 

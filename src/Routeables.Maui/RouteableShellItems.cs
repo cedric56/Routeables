@@ -94,7 +94,7 @@ public static class RouteableShellItems
         try
         {
             var router = provider.GetRouter(region);
-            if (string.Equals(Trim(router.History.Current?.Args.Route), Trim(route), StringComparison.OrdinalIgnoreCase))
+            if (RouteAddress.Same(router.History.Current?.Args.Route, route))
                 return;
 
             // A tab with a region of its own goes to its route the first time only: coming back to it shows the pile of pages it left,
@@ -108,8 +108,6 @@ public static class RouteableShellItems
         {
             RouteableErrors.Report(provider, ex, typeof(RouteableShellItems), route);
         }
-
-        static string Trim(string? value) => (value ?? string.Empty).Trim('/');
     }
 
     private sealed class Subscription(Action dispose) : IDisposable
