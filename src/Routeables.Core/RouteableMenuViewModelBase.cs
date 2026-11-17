@@ -146,7 +146,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     private int _selectionVersion;
 
     /// <summary>
-    /// The selected entry. Setting it selects that entry without waiting (use <see cref="SelectAsync"/> to wait for the result).
+    /// The selected entry. Setting it selects that entry without waiting (use <see cref="SelectAsync(IRouteableMenuEntry?, IRouteableMenuEntry?)"/> to wait for the result).
     /// </summary>
     public IRouteableMenuEntry? SelectedEntry
     {
@@ -180,18 +180,27 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     /// (the menu is then back on the entry it was on).
     /// </returns>
     /// <param name="value">The entry to select.</param>
-    /// <param name="cancellationToken">Cancels the selection, and the route change that it asks of the router (a navigation that the browser gave up).</param>
     public Task<bool> SelectEntryAsync(IRouteableMenuEntry? value) => SelectEntryAsync(value, CancellationToken.None);
 
-    /// <inheritdoc cref="SelectEntryAsync(IRouteableMenuEntry?)"/>
+    /// <summary>
+    /// Selects an entry like the <see cref="SelectedEntry"/> setter does, and waits for the result.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> when the entry is selected once its page is shown; <see langword="false"/> when a guard refused it, its route failed
+    /// or the selection was cancelled (the menu is then back on the entry it was on).
+    /// </returns>
+    /// <param name="value">The entry to select.</param>
+    /// <param name="cancellationToken">Cancels the selection, and the route change that it asks of the router (a navigation that the browser gave up).</param>
     public async Task<bool> SelectEntryAsync(IRouteableMenuEntry? value, CancellationToken cancellationToken)
     {
         if (Equals(_routeable, value) && !PageIsElsewhere(value))
             return true;
         var old = _routeable;
         _routeable = value;
-        await ObserveAsync(SelectAsync(value, old, cancellationToken), value);
-        return ReferenceEquals(_routeable, value);
+        var selection = SelectAsync(value, old, cancellationToken);
+        await ObserveAsync(selection, value);
+        // A selection that was cancelled did not select anything, whatever the menu shows: it answers "no".
+        return !selection.IsCanceled && ReferenceEquals(_routeable, value);
     }
 
     private CancellationToken _selectionToken;
@@ -264,16 +273,38 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     /// </summary>
     /// <param name="value">The entry to select.</param>
     /// <param name="old">The previous entry, restored on failure.</param>
-    /// <param name="cancellationToken">Cancels the selection while it waits for another one, and the route change that it asks of the router.</param>
     public Task SelectAsync(IRouteableMenuEntry? value, IRouteableMenuEntry? old = null) => SelectAsync(value, old, CancellationToken.None);
 
-    /// <inheritdoc cref="SelectAsync(IRouteableMenuEntry?, IRouteableMenuEntry?)"/>
+    /// <summary>
+    /// Selects an entry and waits for its view to be shown. Selections run one at a time; a selection that a newer one has replaced does nothing.
+    /// </summary>
+    /// <param name="value">The entry to select.</param>
+    /// <param name="old">The previous entry, restored on failure.</param>
+    /// <param name="cancellationToken">Cancels the selection while it waits for another one, and the route change that it asks of the router.</param>
     public async Task SelectAsync(IRouteableMenuEntry? value, IRouteableMenuEntry? old, CancellationToken cancellationToken)
     {
         var version = Interlocked.Increment(ref _selectionVersion);
 
         // No ConfigureAwait(false): the notifications go to the UI, so the continuation must stay on the UI context.
-        await _selectionGate.WaitAsync(cancellationToken);
+        try
+        {
+            await _selectionGate.WaitAsync(cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            // Cancelled while it waited for another selection: it never ran. If it is still the newest, the menu goes back to the entry
+            // it was on, and the selection that holds the gate is the newest again (it would otherwise think that it was replaced and leave
+            // the menu on the wrong entry). A newer selection owns the state: nothing to do then.
+            if (Interlocked.CompareExchange(ref _selectionVersion, version - 1, version) == version)
+            {
+                _routeable = old;
+                NotifyPropertyChanged(nameof(SelectedEntry));
+                NotifyPropertyChanged(nameof(CurrentTitle));
+            }
+
+            throw;
+        }
+
         try
         {
             // A newer selection was requested while we were waiting for the gate — our work
@@ -329,7 +360,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     /// <param name="value">The entry to show, or <see langword="null"/> for none.</param>
     /// <param name="old">The previously selected entry, restored on failure.</param>
     /// <param name="version">
-    /// The selection version this call is running under, as assigned by <see cref="SelectAsync"/>.
+    /// The selection version this call is running under, as assigned by <see cref="SelectAsync(IRouteableMenuEntry?, IRouteableMenuEntry?, CancellationToken)"/>.
     /// </param>
     public virtual async Task OnRouteableChangedAsync(IRouteableMenuEntry? value, IRouteableMenuEntry? old, int version = 0)
     {

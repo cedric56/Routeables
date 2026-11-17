@@ -18,6 +18,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **A cancelled menu selection answers "no"**: `SelectEntryAsync(entry, cancellationToken)` cancelled while it waits for another selection used to answer `true` and leave the menu on an entry that was never shown. It now answers `false`, and the menu stays on the entry whose page is being shown.
+
 - **A menu follows the page a guard redirects to**: when the selection of an entry ends on another page (the sign-in page that a guard sends the user to), the menu now selects the entry of that page and shows its title. Before, the redirection was left out while the selection ran, and the menu went back to the entry it had before.
 
 - **The source generator reads fewer assemblies**: the bindings of Android and iOS (`Mono.Android`, `Xamarin.*`, `Java.Interop`) and the graphics libraries (`SkiaSharp`, `HarfBuzzSharp`) are not searched for views and view models any more. A project of MAUI for Android reads tens of thousands of types less at each keystroke.

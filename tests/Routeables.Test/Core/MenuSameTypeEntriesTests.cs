@@ -146,4 +146,53 @@ public class MenuSameTypeEntriesTests
         Assert.IsType<MsLoginVm>(router.CurrentViewModel);
         Assert.Equal("Sign in", menu.SelectedEntry?.DisplayName);
     }
+
+    private sealed class BlockingGuard : IRouteGuard
+    {
+        public TaskCompletionSource Asked { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource Answer { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public async Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
+        {
+            if (change.To.ViewModel is not MsSecretVm)
+                return RouteGuardDecision.Allow;
+            Asked.TrySetResult();
+            await Answer.Task.WaitAsync(cancellationToken);
+            return RouteGuardDecision.Allow;
+        }
+    }
+
+    [Fact]
+    public async Task A_selection_cancelled_while_it_waits_for_the_one_that_runs_answers_no_and_leaves_the_menu_on_the_entry_that_runs()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var guard = new BlockingGuard();
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<MsOtherView, MsOtherVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-other");
+        services.RegisterRoute<MsSecretView, MsSecretVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-secret");
+        services.RegisterRoute<MsLoginView, MsLoginVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-login");
+        services.AddTransient<MsOtherVm>();
+        services.AddTransient<MsSecretVm>();
+        services.AddTransient<MsLoginVm>();
+        services.AddSingleton<IRouteGuard>(guard);
+        using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+        var menu = new GuardedMenu(router);
+        await menu.SelectEntryAsync(menu.Entries[0], ct);
+        var running = menu.SelectEntryAsync(menu.Entries[1], ct);        // "Secret": the guard holds the gate
+        await guard.Asked.Task.WaitAsync(TimeSpan.FromSeconds(5), ct);
+        using var source = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        var waiting = menu.SelectEntryAsync(menu.Entries[2], source.Token);   // "Sign in": it waits for the gate
+        await Task.Delay(50, ct);
+
+        await source.CancelAsync();
+
+        Assert.False(await waiting);
+        Assert.Equal("Secret", menu.SelectedEntry?.DisplayName);
+        guard.Answer.SetResult();
+        Assert.True(await running);
+        Assert.IsType<MsSecretVm>(router.CurrentViewModel);
+        Assert.Equal("Secret", menu.SelectedEntry?.DisplayName);
+    }
 }
