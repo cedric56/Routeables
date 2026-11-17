@@ -286,7 +286,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             // Keeps the layout's selection (menu highlight) in step; it navigates the router. The guards answer before the address is accepted.
             if (menuViewModel is Routeables.Core.RouteableMenuViewModelBase selectable)
             {
-                if (await selectable.SelectEntryAsync(item))
+                if (await selectable.SelectEntryAsync(item, cancellationToken))
                     return Outcome.Done;
                 if (restore && AddressOf(history.Current) is { } shownNow)
                     Show(shownNow, replace: true);

@@ -258,74 +258,54 @@ internal class Router(
         });
     }
 
-    /// <inheritdoc />
-    public async Task<RouteableResult> GoBackAsync(CancellationToken cancellationToken = default)
+    // The shape that every route change has: wait for the gate, run, leave the gate. EnterAsync is not async on purpose (its AsyncLocal must be set in the
+    // flow that awaits the body, so that a nested route change is seen), and this helper is that flow: the body is awaited inside it.
+    private async Task<T> RunGatedAsync<T>(CancellationToken cancellationToken, Func<CancellationToken, Task<T>> body)
     {
         var enter = gate.EnterAsync(cancellationToken);
         try { await enter; } catch { gate.Abort(); throw; }
-        cancellationToken = gate.Observe(cancellationToken);
-        try
-        {
-            return await MoveAsync(RouteableKind.Back, history.PeekBack(),
-                () => { history.MoveBack(); return []; }, cancellationToken);
-        }
+        try { return await body(gate.Observe(cancellationToken)); }
         finally { gate.Exit(); }
+    }
+
+    /// <inheritdoc />
+    public async Task<RouteableResult> GoBackAsync(CancellationToken cancellationToken = default)
+    {
+        return await RunGatedAsync(cancellationToken, token =>
+            MoveAsync(RouteableKind.Back, history.PeekBack(),
+                () => { history.MoveBack(); return []; }, token));
     }
 
     /// <inheritdoc />
     public async Task<RouteableResult> ForwardAsync(CancellationToken cancellationToken = default)
     {
-        var enter = gate.EnterAsync(cancellationToken);
-        try { await enter; } catch { gate.Abort(); throw; }
-        cancellationToken = gate.Observe(cancellationToken);
-        try
-        {
-            return await MoveAsync(RouteableKind.Forward, history.PeekForward(),
-                () => { history.MoveForward(); return []; }, cancellationToken);
-        }
-        finally { gate.Exit(); }
+        return await RunGatedAsync(cancellationToken, token =>
+            MoveAsync(RouteableKind.Forward, history.PeekForward(),
+                () => { history.MoveForward(); return []; }, token));
     }
 
     /// <inheritdoc />
     public async Task<RouteableResult> GoBackToRootAsync(CancellationToken cancellationToken = default)
     {
-        var enter = gate.EnterAsync(cancellationToken);
-        try { await enter; } catch { gate.Abort(); throw; }
-        cancellationToken = gate.Observe(cancellationToken);
-        try
-        {
-            return await MoveAsync(RouteableKind.Root, history.Root,
-                history.MoveToRoot, cancellationToken);
-        }
-        finally { gate.Exit(); }
+        return await RunGatedAsync(cancellationToken, token =>
+            MoveAsync(RouteableKind.Root, history.Root,
+                history.MoveToRoot, token));
     }
 
     /// <inheritdoc />
     public async Task<RouteableResult> PopAsync(CancellationToken cancellationToken = default)
     {
-        var enter = gate.EnterAsync(cancellationToken);
-        try { await enter; } catch { gate.Abort(); throw; }
-        cancellationToken = gate.Observe(cancellationToken);
-        try
-        {
-            return await MoveAsync(RouteableKind.Pop, history.PeekBack(),
-                history.Pop, cancellationToken);
-        }
-        finally { gate.Exit(); }
+        return await RunGatedAsync(cancellationToken, token =>
+            MoveAsync(RouteableKind.Pop, history.PeekBack(),
+                history.Pop, token));
     }
 
     /// <inheritdoc />
     public async Task<RouteableResult> MoveToAsync(int index, CancellationToken cancellationToken = default)
     {
-        var enter = gate.EnterAsync(cancellationToken);
-        try { await enter; } catch { gate.Abort(); throw; }
-        cancellationToken = gate.Observe(cancellationToken);
-        try
-        {
-            return await MoveAsync(RouteableKind.MoveTo, history.At(index),
-                () => { history.MoveTo(index); return []; }, cancellationToken);
-        }
-        finally { gate.Exit(); }
+        return await RunGatedAsync(cancellationToken, token =>
+            MoveAsync(RouteableKind.MoveTo, history.At(index),
+                () => { history.MoveTo(index); return []; }, token));
     }
 
     /// <inheritdoc />
@@ -342,38 +322,34 @@ internal class Router(
 
     /// <inheritdoc />
     public Task<RouteableResult> MoveBackAsync(int steps, CancellationToken cancellationToken = default)
-        => MoveBackCoreAsync(_ => history.CurrentIndex - steps, cancellationToken);
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThan(steps, 1);
+        return MoveBackCoreAsync(_ => history.CurrentIndex - steps, cancellationToken);
+    }
 
     // The target is chosen with the gate held: after the route changes that were running, from the history as it is then.
     private async Task<RouteableResult> MoveBackCoreAsync(Func<IReadOnlyList<IHistoryEntry>, int> find, CancellationToken cancellationToken)
     {
-        var enter = gate.EnterAsync(cancellationToken);
-        try { await enter; } catch { gate.Abort(); throw; }
-        cancellationToken = gate.Observe(cancellationToken);
-        try
+        return await RunGatedAsync(cancellationToken, token =>
         {
             var index = find(((IRouterHistory)history).Entries);
             if (index < 0 || index >= history.Count)
-                return RouteableResult.Cancel();
+                return Task.FromResult(RouteableResult.Cancel());
 
-            return await MoveAsync(RouteableKind.MoveTo, history.At(index),
-                () => { history.MoveTo(index); return []; }, cancellationToken);
-        }
-        finally { gate.Exit(); }
+            return MoveAsync(RouteableKind.MoveTo, history.At(index),
+                () => { history.MoveTo(index); return []; }, token);
+        });
     }
 
     /// <inheritdoc />
     public async Task EraseHistoryAsync(CancellationToken cancellationToken = default)
     {
-        var enter = gate.EnterAsync(cancellationToken);
-        try { await enter; } catch { gate.Abort(); throw; }
-        cancellationToken = gate.Observe(cancellationToken);
-        try
+        await RunGatedAsync<object?>(cancellationToken, async _ =>
         {
             var removed = history.Clear();
             await lifecycle.DestroyAsync(removed, history.Snapshot());   // snapshot is empty now
-        }
-        finally { gate.Exit(); }
+            return null;
+        });
     }
 
     public async Task<RouteableResult> GoAsync(object view, object viewModel, IRouteableArgs? args = null, CancellationToken cancellationToken = default)
@@ -511,6 +487,11 @@ internal class Router(
             $"Route \"{route}\" does not match the template \"{template}\": {mismatch}."));
     }
 
+    // The same template written two ways (a menu entry says "Orders", the registration "/orders"): the way GoToAsync and TryTemplateOf compare.
+    private static bool SameTemplate(string? a, string? b)
+        => a is not null && b is not null
+           && string.Equals(a.Split('?')[0].Trim('/'), b.Split('?')[0].Trim('/'), StringComparison.OrdinalIgnoreCase);
+
     private IRouteTypeGuard[]? _typeGuards;
 
     private IRouteTypeGuard[] TypeGuards => _typeGuards ??= [.. provider.GetServices<IRouteTypeGuard>().Select((guard, index) => (guard, index))
@@ -524,7 +505,7 @@ internal class Router(
             return null;
 
         var type = provider.GetService<RouteableTable>()?.Entries
-            .FirstOrDefault(entry => string.Equals(entry.Template, template, StringComparison.Ordinal)).ViewModelType;
+            .FirstOrDefault(entry => SameTemplate(entry.Template, template)).ViewModelType;
         if (type is null)
             return null;
 

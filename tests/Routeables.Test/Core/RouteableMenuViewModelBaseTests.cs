@@ -148,7 +148,7 @@ public class RouteableMenuViewModelBaseTests
         var router = provider.GetRequiredService<IRouter>();
         var sut = new ListMenu(router);
         var list = sut.Entries[0];
-        Assert.True(await sut.SelectEntryAsync(list));
+        Assert.True(await sut.SelectEntryAsync(list, cancellationToken: ct));
         Assert.IsType<ListVm>(router.CurrentViewModel);
 
         // A page opens the detail itself: the menu has no entry for it, so it keeps showing the list as selected.
@@ -157,7 +157,7 @@ public class RouteableMenuViewModelBaseTests
         Assert.Same(list, sut.SelectedEntry);
 
         // The user clicks the entry that is selected: the list is not the page shown, so it opens.
-        Assert.True(await sut.SelectEntryAsync(list));
+        Assert.True(await sut.SelectEntryAsync(list, cancellationToken: ct));
         Assert.IsType<ListVm>(router.CurrentViewModel);
     }
 
@@ -190,7 +190,7 @@ public class RouteableMenuViewModelBaseTests
         var router = provider.GetRequiredService<IRouter>();
         var sut = new OrdersMenu(router);
         var list = sut.Entries[0];
-        Assert.True(await sut.SelectEntryAsync(list));
+        Assert.True(await sut.SelectEntryAsync(list, cancellationToken: ct));
         Assert.IsType<OrdersVm>(router.CurrentViewModel);
 
         // The list opens an order: its address starts with the one of the entry, but it is not the list.
@@ -199,7 +199,7 @@ public class RouteableMenuViewModelBaseTests
         Assert.Same(list, sut.SelectedEntry);
 
         // The user clicks the entry of the list again: the list opens.
-        Assert.True(await sut.SelectEntryAsync(list));
+        Assert.True(await sut.SelectEntryAsync(list, cancellationToken: ct));
         Assert.IsType<OrdersVm>(router.CurrentViewModel);
     }
 }

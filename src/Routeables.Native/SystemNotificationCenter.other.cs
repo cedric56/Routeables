@@ -13,15 +13,23 @@ public sealed partial class SystemNotificationCenter
         if (OperatingSystem.IsBrowser())
             return await BrowserPermissionAsync(ask: true) == "granted";
 
-        return (OperatingSystem.IsLinux() && LinuxIsAvailable()) || (OperatingSystem.IsWindows() && WindowsIsAvailable()) || (OperatingSystem.IsMacOS() && await MacRequestPermissionAsync());
+        return (OperatingSystem.IsLinux() && await LinuxIsAvailableAsync()) || (OperatingSystem.IsWindows() && WindowsIsAvailable()) || (OperatingSystem.IsMacOS() && await MacRequestPermissionAsync());
+    }
+
+    private partial Task PresentAsync(SystemNotification notification)
+    {
+        // The D-Bus is spoken without ever blocking the caller: Linux is the platform that answers late.
+        if (OperatingSystem.IsLinux())
+            return LinuxPresentAsync(notification);
+
+        Present(notification);
+        return Task.CompletedTask;
     }
 
     private partial void Present(SystemNotification notification)
     {
         if (OperatingSystem.IsBrowser())
             _ = BrowserShowAsync(notification);
-        else if (OperatingSystem.IsLinux())
-            LinuxPresent(notification);
         else if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17763))
             WindowsShow(notification);
         else if (OperatingSystem.IsMacOS())

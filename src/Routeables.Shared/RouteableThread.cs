@@ -22,6 +22,20 @@ namespace Routeables.Uno;
 
 internal static class RouteableThread
 {
+    // What is queued on the thread of the control has no caller to receive its exception: left alone it ends the application (Avalonia, MAUI, WinUI)
+    // or is lost (WPF). It goes to the error channel of Routeables instead. What runs at once still throws to its caller, which can undo what it started.
+    private static void Deferred(Action action)
+    {
+        try
+        {
+            action();
+        }
+        catch (Exception ex)
+        {
+            Routeables.Abstraction.Errors.RouteableErrors.Report(null, "RouteableThread.Post", ex);
+        }
+    }
+
     /// <summary>
     /// Runs <paramref name="action"/> now when the caller is on the thread of <paramref name="owner"/>, else queues it there. The router changes
     /// on the thread that asked for the route change: a control can only be touched from its own.
@@ -34,7 +48,7 @@ internal static class RouteableThread
         if (owner.Dispatcher.CheckAccess())
             action();
         else
-            owner.Dispatcher.InvokeAsync(action);
+            owner.Dispatcher.InvokeAsync(() => Deferred(action));
     }
 #elif AVALONIA
     public static void Post(this object owner, Action action)
@@ -42,13 +56,13 @@ internal static class RouteableThread
         if (Dispatcher.UIThread.CheckAccess())
             action();
         else
-            Dispatcher.UIThread.Post(action);
+            Dispatcher.UIThread.Post(() => Deferred(action));
     }
 #elif MAUI
     public static void Post(this BindableObject owner, Action action)
     {
         if (owner.Dispatcher.IsDispatchRequired)
-            owner.Dispatcher.Dispatch(action);
+            owner.Dispatcher.Dispatch(() => Deferred(action));
         else
             action();
     }
@@ -56,7 +70,7 @@ internal static class RouteableThread
     public static void Post(this DependencyObject owner, Action action)
     {
         if (owner.DispatcherQueue is { } queue && !queue.HasThreadAccess)
-            queue.TryEnqueue(() => action());
+            queue.TryEnqueue(() => Deferred(action));
         else
             action();
     }

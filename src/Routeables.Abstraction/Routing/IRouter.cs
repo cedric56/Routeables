@@ -82,6 +82,7 @@ public interface IRouter
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     Task<RouteableResult> MoveBackAsync(int steps, CancellationToken cancellationToken = default)
     {
+        ArgumentOutOfRangeException.ThrowIfLessThan(steps, 1);
         var index = History.CurrentIndex - steps;
         return index < 0 ? Task.FromResult(RouteableResult.Cancel()) : MoveToAsync(index, cancellationToken);
     }

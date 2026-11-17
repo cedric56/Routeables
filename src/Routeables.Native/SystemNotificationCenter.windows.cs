@@ -37,6 +37,12 @@ public sealed partial class SystemNotificationCenter
         }
     }
 
+    private partial Task PresentAsync(SystemNotification notification)
+    {
+        Present(notification);
+        return Task.CompletedTask;
+    }
+
     private partial void Present(SystemNotification notification)
     {
         var builder = new AppNotificationBuilder()

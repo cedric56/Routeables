@@ -110,11 +110,9 @@ internal sealed class RouterHistory : IRouterHistory
     /// <returns>A list of entries that were removed.</returns>
     public IReadOnlyList<RouterEntry> MoveToRoot()
     {
+        // Nothing after the first entry, and the cursor is on it already.
         if (_entries.Count <= 1)
-        {
-            if (_entries.Count == 1) _currentIndex = 0;
             return [];
-        }
         var removed = _entries.GetRange(1, _entries.Count - 1);
         _entries.RemoveRange(1, removed.Count);
         _currentIndex = 0;

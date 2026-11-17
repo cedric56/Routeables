@@ -27,6 +27,12 @@ public sealed partial class SystemNotificationCenter
         return granted;
     }
 
+    private partial Task PresentAsync(SystemNotification notification)
+    {
+        Present(notification);
+        return Task.CompletedTask;
+    }
+
     private partial void Present(SystemNotification notification)
     {
         var content = new UNMutableNotificationContent

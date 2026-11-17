@@ -8,6 +8,12 @@ public sealed class AppNotificationOptions
     /// <summary>Whether the notifications still displayed are withdrawn when the application ends. <see langword="false"/> by default.</summary>
     public bool ClearOnAppClose { get; set; }
 
+    /// <summary>
+    /// Linux only: the text of the action that a click on the notification stands for, which some servers show as a button (<c>Open</c> by default).
+    /// Set it in the language of the application.
+    /// </summary>
+    public string DefaultActionText { get; set; } = "Open";
+
     /// <summary>The name of the notification channel the user sees in the settings of Android 8 and later.</summary>
     public string ChannelName { get; set; } = "Notifications";
 

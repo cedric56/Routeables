@@ -131,6 +131,35 @@ internal sealed class DBusReader(byte[] bytes, int position = 0)
         Position += length + 1;
         return text;
     }
+
+    /// <summary>
+    /// Reads past one value of the given type without keeping it: the specification asks a reader to ignore the header fields that it does not know.
+    /// Basic types, variants and arrays of basic types are known; a structure or a dictionary is refused (<see cref="InvalidDataException"/>).
+    /// </summary>
+    public void Skip(string type)
+    {
+        if (type.Length == 0)
+            throw new InvalidDataException("An empty D-Bus type.");
+
+        switch (type[0])
+        {
+            case 'y': Need(1); Position += 1; break;
+            case 'n' or 'q': Align(2); Need(2); Position += 2; break;
+            case 'b' or 'i' or 'u' or 'h': Align(4); Need(4); Position += 4; break;
+            case 'x' or 't' or 'd': Align(8); Need(8); Position += 8; break;
+            case 's' or 'o': String(); break;
+            case 'g': Signature(); break;
+            case 'v': Skip(Signature()); break;
+            case 'a' when type.Length == 2 && type[1] is 'y' or 'n' or 'q' or 'b' or 'i' or 'u' or 'h' or 'x' or 't' or 'd':
+                var length = UInt32();
+                Align(type[1] switch { 'y' => 1, 'n' or 'q' => 2, 'b' or 'i' or 'u' or 'h' => 4, _ => 8 });
+                Need(length);
+                Position += (int)length;
+                break;
+            default:
+                throw new InvalidDataException("A D-Bus type that is not read: " + type);
+        }
+    }
 }
 
 /// <summary>
@@ -154,6 +183,12 @@ internal sealed class DBusConnection : IDisposable
     private uint _serial;
 
     private DBusConnection(Socket socket) => _socket = socket;
+
+    /// <summary>A connection over a socket that is already connected, without the authentication or the reading thread (for the tests).</summary>
+    internal static DBusConnection ForTests(Socket socket) => new(socket);
+
+    /// <summary>The calls that wait for a reply (for the tests).</summary>
+    internal int PendingCount => _pending.Count;
 
     /// <summary>Raised on the reading thread for each signal.</summary>
     public event Action<DBusMessage>? SignalReceived;
@@ -180,10 +215,11 @@ internal sealed class DBusConnection : IDisposable
 
                 var connection = new DBusConnection(socket);
                 new Thread(connection.ReadLoop) { IsBackground = true, Name = "Routeables D-Bus" }.Start();
-                await connection.CallAsync("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "Hello", null, null);
+                // A bus that accepts the authentication and then says nothing must not hold the connection for ever.
+                await connection.CallAsync("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "Hello", null, null, TimeSpan.FromSeconds(3));
                 return connection;
             }
-            catch (Exception ex) when (ex is SocketException or IOException or OperationCanceledException or InvalidOperationException or InvalidDataException)
+            catch (Exception ex) when (ex is SocketException or IOException or OperationCanceledException or InvalidOperationException or InvalidDataException or TimeoutException)
             {
                 socket?.Dispose();
             }
@@ -254,7 +290,12 @@ internal sealed class DBusConnection : IDisposable
     }
 
     /// <summary>Calls a method; the task ends with the reply, or fails with the error of the bus.</summary>
-    public Task<DBusMessage> CallAsync(string destination, string path, string @interface, string member, string? signature, Action<DBusWriter>? writeBody)
+    /// <param name="timeout">
+    /// How long to wait for the reply: past it the task fails with a <see cref="TimeoutException"/> and the call is forgotten (a reply that
+    /// comes later is dropped), so a bus that does not answer does not keep an entry for each call. <see langword="null"/> waits for ever.
+    /// </param>
+    public Task<DBusMessage> CallAsync(string destination, string path, string @interface, string member, string? signature, Action<DBusWriter>? writeBody,
+        TimeSpan? timeout = null)
     {
         var body = new DBusWriter();
         writeBody?.Invoke(body);
@@ -265,6 +306,17 @@ internal sealed class DBusConnection : IDisposable
         {
             var serial = ++_serial;
             _pending[serial] = source;
+            if (timeout is { } wait)
+            {
+                var timer = new CancellationTokenSource(wait);
+                timer.Token.Register(() =>
+                {
+                    _pending.TryRemove(serial, out _);
+                    source.TrySetException(new TimeoutException($"The session bus did not answer {member} in {wait.TotalSeconds:0.#} s."));
+                });
+                _ = source.Task.ContinueWith(_ => timer.Dispose(), CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+            }
+
             message = BuildMethodCall(serial, destination, path, @interface, member, signature, body.ToArray());
             try
             {
@@ -422,7 +474,9 @@ internal sealed class DBusConnection : IDisposable
                     if (code == 5) replySerial = number;
                     break;
                 default:
-                    throw new InvalidOperationException("Unknown header field " + kind);
+                    // A field that this client does not know is read past, as the specification asks: the message is still delivered.
+                    r.Skip(kind);
+                    break;
             }
         }
 

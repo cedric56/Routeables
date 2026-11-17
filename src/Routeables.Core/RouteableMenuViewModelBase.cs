@@ -72,9 +72,13 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
 
         _followed = viewModel;
 
-        // The entry of that view model: its route is the type name, or it is a RouteableMenuEntry<T> of that type.
+        // The entry of that page: the one whose route is the route of the page that is shown (several entries can show the same type with
+        // other routes: /products/shoes and /products/hats). Else the entry whose route is the type name, or a RouteableMenuEntry<T> of that type.
         var type = viewModel.GetType();
-        var entry = Entries.FirstOrDefault(p => p.Route == type.Name || (p as RouteableMenuEntry)?.ViewModelType == type);
+        IRouteableMenuEntry? entry = null;
+        if (ReferenceEquals(viewModel, _router.CurrentViewModel) && _router.History.Current?.Args.Route is { } shownRoute)
+            entry = Entries.FirstOrDefault(p => string.Equals(p.Arguments.Route ?? p.Route, shownRoute, StringComparison.Ordinal));
+        entry ??= Entries.FirstOrDefault(p => p.Route == type.Name || (p as RouteableMenuEntry)?.ViewModelType == type);
         if (entry != null)
             _routeable = _confirmed = entry;
         NotifyPropertyChanged(nameof(SelectedEntry));
@@ -87,8 +91,9 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     // A selection of the menu, and a move that the menu has already followed, are not told twice.
     private object? _followed;
 
-    // Set while GoBackAsync and GoForwardAsync of this menu run: they follow the router themselves, once the move is done.
-    private bool _selfMoving;
+    // Greater than 0 while GoBackAsync and GoForwardAsync of this menu run: they follow the router themselves, once the move is done.
+    // A count, not a flag: two of them that overlap (a double click) must not let the first one to end switch it off for the other.
+    private int _selfMoving;
 
     // Greater than 0 while a selection of this menu asks the router for its page.
     private int _selecting;
@@ -96,24 +101,24 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     /// <inheritdoc />
     public override async Task GoBackAsync()
     {
-        _selfMoving = true;
+        Interlocked.Increment(ref _selfMoving);
         try { await base.GoBackAsync(); }
-        finally { _selfMoving = false; }
+        finally { Interlocked.Decrement(ref _selfMoving); }
     }
 
     /// <inheritdoc />
     public override async Task GoForwardAsync()
     {
-        _selfMoving = true;
+        Interlocked.Increment(ref _selfMoving);
         try { await base.GoForwardAsync(); }
-        finally { _selfMoving = false; }
+        finally { Interlocked.Decrement(ref _selfMoving); }
     }
 
     private void OnRouted(object? sender, RouteableRoutedEventArgs e)
     {
         // A Push that the menu asked for (a selection) is announced by the selection itself; any other one (router.GoToAsync, a RouteableLink,
         // the redirection of a guard) is a page the menu did not choose, and it follows it like a Back.
-        if (_selfMoving || !e.Succeeded || (e.Kind == RouteableKind.Push && _selecting > 0) || ReferenceEquals(_router.CurrentViewModel, _followed))
+        if (Volatile.Read(ref _selfMoving) > 0 || !e.Succeeded || (e.Kind == RouteableKind.Push && _selecting > 0) || ReferenceEquals(_router.CurrentViewModel, _followed))
             return;
 
         OnRouterMoved(_router.CurrentViewModel);
@@ -174,16 +179,19 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     /// <see langword="true"/> when the entry is selected once its page is shown; <see langword="false"/> when a guard refused it or its route failed
     /// (the menu is then back on the entry it was on).
     /// </returns>
-    public async Task<bool> SelectEntryAsync(IRouteableMenuEntry? value)
+    /// <param name="value">The entry to select.</param>
+    /// <param name="cancellationToken">Cancels the selection, and the route change that it asks of the router (a navigation that the browser gave up).</param>
+    public async Task<bool> SelectEntryAsync(IRouteableMenuEntry? value, CancellationToken cancellationToken = default)
     {
         if (Equals(_routeable, value) && !PageIsElsewhere(value))
             return true;
         var old = _routeable;
         _routeable = value;
-        await ObserveAsync(SelectAsync(value, old), value);
+        await ObserveAsync(SelectAsync(value, old, cancellationToken), value);
         return ReferenceEquals(_routeable, value);
     }
 
+    private CancellationToken _selectionToken;
     private IRouteableLockCoordinator? _coordinator;
 
     /// <summary>
@@ -221,6 +229,10 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         {
             await task;
         }
+        catch (OperationCanceledException)
+        {
+            // A selection that was cancelled (the navigation that asked for it was given up) is not a failure to report.
+        }
         catch (Exception exception)
         {
             OnSelectionFailed(exception);
@@ -249,12 +261,13 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     /// </summary>
     /// <param name="value">The entry to select.</param>
     /// <param name="old">The previous entry, restored on failure.</param>
-    public async Task SelectAsync(IRouteableMenuEntry? value, IRouteableMenuEntry? old = null)
+    /// <param name="cancellationToken">Cancels the selection while it waits for another one, and the route change that it asks of the router.</param>
+    public async Task SelectAsync(IRouteableMenuEntry? value, IRouteableMenuEntry? old = null, CancellationToken cancellationToken = default)
     {
         var version = Interlocked.Increment(ref _selectionVersion);
 
         // No ConfigureAwait(false): the notifications go to the UI, so the continuation must stay on the UI context.
-        await _selectionGate.WaitAsync();
+        await _selectionGate.WaitAsync(cancellationToken);
         try
         {
             // A newer selection was requested while we were waiting for the gate — our work
@@ -262,10 +275,13 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
             if (version != _selectionVersion)
                 return;
 
+            // The selections are serialized by the gate: the token of the one that runs is the one the router is given.
+            _selectionToken = cancellationToken;
             await OnRouteableChangedAsync(value, old, version);
         }
         finally
         {
+            _selectionToken = default;
             _selectionGate.Release();
         }
     }
@@ -318,7 +334,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
 
             RouteableResult outcome;
             Interlocked.Increment(ref _selecting);
-            try { outcome = await _router.GoToRouteAsync(value); }
+            try { outcome = await _router.GoToRouteAsync(value, _selectionToken); }
             finally { Interlocked.Decrement(ref _selecting); }
             var result = outcome.Success;
 

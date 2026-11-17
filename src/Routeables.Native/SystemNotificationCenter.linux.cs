@@ -18,32 +18,64 @@ public sealed partial class SystemNotificationCenter
     private DBusConnection? _linuxConnection;
     private Task<DBusConnection?>? _linuxConnecting;                  // null: not tried yet, or the bus was closed
 
+    private static readonly TimeSpan LinuxCallTimeout = TimeSpan.FromSeconds(3);
+    private static readonly TimeSpan LinuxRetryAfter = TimeSpan.FromSeconds(5);
+    private DateTime _linuxFailedAt;                                  // when the last connection failed (a bus that is not there yet is tried again later)
+    private DateTime _linuxAvailableAt;                               // when the server last answered who it is
+
     /// <summary>Whether there is a session bus <i>and</i> a notification server on it: a session bus alone is not enough (WSL, a container or a bare window manager have one and
-    /// no server, and the call to Notify fails with ServiceUnknown).</summary>
-    private bool LinuxIsAvailable()
+    /// no server, and the call to Notify fails with ServiceUnknown). The answer "yes" is kept for a few seconds.</summary>
+    private async Task<bool> LinuxIsAvailableAsync()
     {
+        lock (_linuxGate)
+            if (DateTime.UtcNow - _linuxAvailableAt < TimeSpan.FromSeconds(10))
+                return true;
+
         try
         {
-            var connection = LinuxConnection();
+            var connection = await LinuxConnectionAsync();
             if (connection is null)
                 return false;
 
             // Asking the server who it is starts it when the bus can (D-Bus activation), and fails with ServiceUnknown when nothing serves the name.
-            return connection.CallAsync(LinuxService, LinuxPath, LinuxService, "GetServerInformation", null, null).Wait(TimeSpan.FromSeconds(3));
+            await connection.CallAsync(LinuxService, LinuxPath, LinuxService, "GetServerInformation", null, null, LinuxCallTimeout);
+            lock (_linuxGate)
+                _linuxAvailableAt = DateTime.UtcNow;
+            return true;
         }
-        catch (Exception ex) when (ex is IOException or InvalidOperationException or TimeoutException or AggregateException) { return false; }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or TimeoutException or InvalidDataException) { return false; }
     }
 
     // The connection is made once, on the thread pool, and the callers wait for it outside the lock: the lock only guards the fields, so a
-    // signal or a close is never held up by a connection that is slow to come (a bus that does not answer).
-    private DBusConnection? LinuxConnection()
+    // signal or a close is never held up by a connection that is slow to come (a bus that does not answer). A connection that failed is tried
+    // again, but not at each call: after LinuxRetryAfter (the session bus is not always there yet when the application starts).
+    private async Task<DBusConnection?> LinuxConnectionAsync()
     {
         Task<DBusConnection?> connecting;
         lock (_linuxGate)
+        {
+            if (_linuxConnecting is null && DateTime.UtcNow - _linuxFailedAt < LinuxRetryAfter)
+                return null;
             connecting = _linuxConnecting ??= Task.Run(ConnectLinuxAsync);
+        }
 
-        // The caller (Present, the availability check) is synchronous: it waits, but for a bounded time, and the connection goes on in the background.
-        return connecting.Wait(TimeSpan.FromSeconds(5)) ? connecting.Result : null;
+        DBusConnection? connection;
+        try { connection = await connecting.WaitAsync(TimeSpan.FromSeconds(5)); }
+        catch (TimeoutException) { return null; }     // too slow for this call; the connection goes on in the background and the next call may find it
+
+        if (connection is null)
+        {
+            lock (_linuxGate)
+            {
+                if (ReferenceEquals(_linuxConnecting, connecting))
+                {
+                    _linuxConnecting = null;
+                    _linuxFailedAt = DateTime.UtcNow;
+                }
+            }
+        }
+
+        return connection;
     }
 
     private async Task<DBusConnection?> ConnectLinuxAsync()
@@ -72,9 +104,9 @@ public sealed partial class SystemNotificationCenter
         return connection;
     }
 
-    private void LinuxPresent(SystemNotification notification)
+    private async Task LinuxPresentAsync(SystemNotification notification)
     {
-        var connection = LinuxConnection() ?? throw new InvalidOperationException("There is no session bus to show the notification.");
+        var connection = await LinuxConnectionAsync() ?? throw new InvalidOperationException("There is no session bus to show the notification.");
         // A notification that is shown again replaces the bubble the server already has (its own id), instead of adding a second one.
         uint replaces;
         lock (_linuxGate)
@@ -96,7 +128,7 @@ public sealed partial class SystemNotificationCenter
             w.UInt32(0);
             var actionsStart = w.Length;
             w.String("default");
-            w.String("Open");
+            w.String(string.IsNullOrWhiteSpace(Options?.DefaultActionText) ? "Open" : Options.DefaultActionText);
             w.SetUInt32(actionsLengthAt, (uint)(w.Length - actionsStart));
 
             // No hint; the array of dictionary entries is aligned on 8 even when it is empty.
@@ -104,19 +136,23 @@ public sealed partial class SystemNotificationCenter
             w.Align(8);
 
             w.Int32(-1);
-        });
+        }, LinuxCallTimeout);
 
+        DBusMessage answer;
         try
         {
-            if (!reply.Wait(TimeSpan.FromSeconds(3)))
-                throw new TimeoutException("The notification server did not answer.");
+            answer = await reply;
         }
-        catch (AggregateException ex) when (ex.InnerException is InvalidOperationException inner)
+        catch (TimeoutException)
+        {
+            throw new TimeoutException("The notification server did not answer.");
+        }
+        catch (InvalidOperationException inner)
         {
             throw new InvalidOperationException($"The notification server refused the notification ({inner.Message}).", inner);
         }
 
-        var serverId = reply.Result.Reader().UInt32();
+        var serverId = answer.Reader().UInt32();
         lock (_linuxGate)
         {
             if (replaces != 0 && replaces != serverId)

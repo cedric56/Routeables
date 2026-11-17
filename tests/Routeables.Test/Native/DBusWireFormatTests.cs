@@ -206,13 +206,56 @@ public class DBusWireFormatTests
     }
 
     [Fact]
-    public void A_header_that_is_cut_short_or_has_a_field_nobody_knows_is_refused()
+    public void A_header_that_is_cut_short_is_refused()
     {
         var cut = Header(w => { w.Byte(2); w.Signature("s"); w.UInt32(500); });     // a string of 500 characters that is not there
-        var unknown = Header(w => { w.Byte(9); w.Signature("x"); w.Raw(new byte[8]); });
 
         Assert.Throws<InvalidDataException>(() => DBusConnection.ParseMessage(4, 1, cut, []));
-        Assert.Throws<InvalidOperationException>(() => DBusConnection.ParseMessage(4, 1, unknown, []));
+    }
+
+    [Fact]
+    public void A_field_nobody_knows_is_read_past_and_the_message_is_delivered()
+    {
+        // The specification: a reader ignores the header fields it does not know. Here a 64-bit number (code 9), a variant of text (code 10), an array of
+        // bytes (code 11), then the fields that matter after them.
+        var header = Header(w =>
+        {
+            w.Byte(9); w.Signature("x"); w.Align(8); w.Raw(new byte[8]);
+            w.Align(8); w.Byte(10); w.Signature("v"); w.Signature("s"); w.String("anything");
+            w.Align(8); w.Byte(11); w.Signature("ay"); w.UInt32(3); w.Raw(new byte[3]);
+            w.Align(8); w.Byte(5); w.Signature("u"); w.UInt32(77);
+            w.Align(8); w.Byte(3); w.Signature("s"); w.String("Known");
+        });
+
+        var message = DBusConnection.ParseMessage(2, 1, header, []);
+
+        Assert.Equal(77u, message.ReplySerial);
+        Assert.Equal("Known", message.Member);
+    }
+
+    [Fact]
+    public void A_field_of_a_type_that_is_not_read_is_refused_not_misread()
+    {
+        var structure = Header(w => { w.Byte(9); w.Signature("(ii)"); w.Align(8); w.Raw(new byte[8]); });
+
+        Assert.Throws<InvalidDataException>(() => DBusConnection.ParseMessage(4, 1, structure, []));
+    }
+
+    [Fact]
+    public async Task A_call_that_is_not_answered_fails_and_is_forgotten()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        using var listener = new System.Net.Sockets.TcpListener(System.Net.IPAddress.Loopback, 0);
+        listener.Start();
+        var client = new System.Net.Sockets.Socket(System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp);
+        await client.ConnectAsync(listener.LocalEndpoint, ct);
+        using var server = await listener.AcceptSocketAsync(ct);
+        using var connection = DBusConnection.ForTests(client);
+
+        var call = connection.CallAsync("org.example", "/", "org.example", "Never", null, null, TimeSpan.FromMilliseconds(200));
+
+        await Assert.ThrowsAsync<TimeoutException>(() => call);
+        Assert.Equal(0, connection.PendingCount);
     }
 
     [Fact]

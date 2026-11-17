@@ -107,7 +107,7 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     internal Action<uint>? CancelOverride { get; set; }
 
     /// <summary>Shows the notification in the system center and schedules its expiration when one is set.</summary>
-    internal Task ShowAsync(SystemNotification notification)
+    internal async Task ShowAsync(SystemNotification notification)
     {
         lock (_gate) _active[notification.Id] = notification;
         try
@@ -115,7 +115,7 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
             if (PresentOverride is { } present)
                 present(notification);
             else
-                Present(notification);
+                await PresentAsync(notification);
         }
         catch
         {
@@ -136,8 +136,6 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
             _ = Task.Delay(notification.Expiration!.Value, token)
                 .ContinueWith(_ => CloseAsync(id), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
         }
-
-        return Task.CompletedTask;
     }
 
     private void ReplaceExpiration(uint id, CancellationTokenSource? next)
@@ -220,6 +218,9 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
 
     /// <summary>Presents the notification in the system notification center.</summary>
     private partial void Present(SystemNotification notification);
+
+    // Shows it; the platforms that answer late (D-Bus) are awaited, the others are done by Present.
+    private partial Task PresentAsync(SystemNotification notification);
 
     /// <summary>Cancels the notification with the given id on the platform.</summary>
     private partial void Cancel(uint id);

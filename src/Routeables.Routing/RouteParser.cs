@@ -539,9 +539,6 @@ public static partial class RouteParser
         };
     }
 
-    /// <summary>
-    /// Parses a query string into a key-value dictionary.
-    /// </summary>
     /// <summary>The query of an address as name and value (the fragment is left out): the values a page that has no template receives.</summary>
     internal static IReadOnlyDictionary<string, string> QueryOf(string url)
     {

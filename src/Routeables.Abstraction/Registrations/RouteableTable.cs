@@ -8,7 +8,8 @@
 /// </summary>
 internal sealed class RouteableTable
 {
-    private readonly List<(string Template, Type? ViewModelType)> _entries = [];
+    // Copy on write: a route change reads the table several times, and the routes are added at start, so a read is the array itself and an add builds a new one.
+    private volatile (string Template, Type? ViewModelType)[] _entries = [];
     private readonly object _gate = new();
 
     /// <summary>
@@ -17,7 +18,7 @@ internal sealed class RouteableTable
     /// </summary>
     public IReadOnlyList<(string Template, Type? ViewModelType)> Entries
     {
-        get { lock (_gate) return _entries.ToArray(); }
+        get => _entries;
     }
 
     /// <summary>Takes the routes of another table (the one a module loaded while running filled); the ones already here are kept.</summary>
@@ -33,7 +34,7 @@ internal sealed class RouteableTable
         {
             if (_entries.Any(e => string.Equals(e.Template, template, StringComparison.OrdinalIgnoreCase)))
                 return;
-            _entries.Add((template, viewModelType));
+            _entries = [.. _entries, (template, viewModelType)];
         }
     }
 }
