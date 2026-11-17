@@ -655,7 +655,7 @@ jobs:
 
   device-apple:
     name: Device tests (MAUI, Mac Catalyst and iOS simulator)
-    runs-on: macos-latest
+    runs-on: macos-15
     timeout-minutes: 60
     continue-on-error: true
 
