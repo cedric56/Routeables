@@ -67,14 +67,16 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         string? chosen = null;
         var handle = new RouteableDialogHandle();
 
+        // The words are what the box answers; the labels are what the buttons say (RouteableTexts.ButtonTranslator).
         var texts = RouteableButtons.Split(buttons);
+        var labels = RouteableButtons.Labels(buttons);
 
         // Three buttons are those of the dialog of the platform (Routeables.Native) where it has one: the ContentDialog of the Windows App SDK,
         // an alert on Android and iOS. Escape or a click outside gives the third button (the one that closes). Elsewhere, and for fewer buttons, the card below.
         if (texts.Count == 3 && NativeDialogs.IsSupported)
         {
             var native = await NativeDialogs.DisplayThreeButtonsAsync<string?>(
-                title, message, texts[0], texts[1], texts[2], texts[0], texts[1], texts[2], window, dark: null);
+                title, message, labels[0], labels[1], labels[2], texts[0], texts[1], texts[2], window, dark: null);
             if (native.Shown)
                 return native.Value;
         }
@@ -82,13 +84,13 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         // More than three buttons are the sheet of the platform (Routeables.Native): a ContentDialog with a column of buttons on Windows. Elsewhere, the sheet drawn below.
         if (texts.Count > 3 && NativeDialogs.IsSupported)
         {
-            var sheet = await NativeDialogs.DisplaySheetAsync(title, message, [.. texts.Take(texts.Count - 1)], texts[texts.Count - 1], window, dark: null);
+            var sheet = await NativeDialogs.DisplaySheetAsync(title, message, [.. labels.Take(labels.Count - 1)], labels[labels.Count - 1], window, dark: null);
             if (sheet.Shown)
                 return texts[sheet.Value];
         }
 
         var controls = texts
-            .Select((text, index) => DialogCard.CreateButton(text, () =>
+            .Select((text, index) => DialogCard.CreateButton(labels[index], () =>
             {
                 chosen = text;
                 handle.Complete();
@@ -112,12 +114,13 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var labels = RouteableButtons.Split(buttons ?? string.Empty).ToList();
         if (labels.Count == 0)
             labels.Add("Ok");
+        // The words are what the box answers; the buttons say what RouteableTexts.ButtonTranslator makes of them.
 
         string? result = null;
         var handle = new RouteableDialogHandle { TryDismiss = () => true };
 
         var buttonControls = labels
-            .Select((label, index) => DialogCard.CreateButton(label, () =>
+            .Select((label, index) => DialogCard.CreateButton(RouteableTexts.Button(label), () =>
             {
                 result = label;
                 handle.Complete();

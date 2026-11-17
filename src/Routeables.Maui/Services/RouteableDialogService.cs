@@ -46,12 +46,13 @@ public class RouteableDialogService(
 
         // Every message box is the dialog of the platform with up to three buttons (not DisplayAlert): the answer is the index of the button, and the
         // dialog dismissed without a button (Back, Escape) is the last one, the cancel of an alert.
-        var words = RouteableButtons.Split(buttonText);
+        // The buttons say what RouteableTexts.ButtonTranslator makes of the words; the answer is the index, so the language does not change it.
+        var words = RouteableButtons.Labels(buttonText);
         switch (words.Count)
         {
             case 0:
             case 1:
-                await DisplayThreeButtonsAsync<int>(title, message, words.Count == 0 ? "Ok" : words[0], null, null, 0, 1, 0);
+                await DisplayThreeButtonsAsync<int>(title, message, words.Count == 0 ? RouteableTexts.Button("Ok") : words[0], null, null, 0, 1, 0);
                 return 0;
             case 2:
                 return await DisplayThreeButtonsAsync(title, message, words[0], words[1], null, 0, 1, 1);

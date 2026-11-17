@@ -294,7 +294,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     public ObservableCollection<IRouteableMenuEntry> Entries { get { return _routeables ??= GetEntries(); } }
 
     /// <inheritdoc />
-    public virtual string? CurrentTitle { get => SelectedEntry?.DisplayName ?? "Application"; }
+    public virtual string? CurrentTitle { get => SelectedEntry?.DisplayName ?? RouteableTexts.ApplicationTitle; }
 
     /// <summary>
     /// Returns the entries of the menu.

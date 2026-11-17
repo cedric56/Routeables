@@ -34,7 +34,7 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
     /// <summary>
     /// Gets or sets the title displayed in the application's app bar.
     /// </summary>
-    public string Title { get; set; } = "Application";
+    public string Title { get; set; } = RouteableTexts.ApplicationTitle;
 
     /// <summary>Whether the drawer is open.</summary>
     protected bool _drawerOpen = true;
@@ -82,7 +82,7 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
     private async void CurrentViewChanged(object? sender, object? view)
     {
         // The title first: the render the refresh asks for must show the title of this view, not the one of the previous view.
-        try { Title = MainViewModel.CurrentTitle ?? "Application"; }
+        try { Title = MainViewModel.CurrentTitle ?? RouteableTexts.ApplicationTitle; }
         catch (Exception ex) { RouteableErrors.Report(Provider, "MainLayout.CurrentViewChanged", ex); }   // async void: it must not reach the circuit
         await RefreshAsync("MainLayout.CurrentViewChanged");
     }

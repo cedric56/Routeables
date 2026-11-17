@@ -30,6 +30,21 @@ These interfaces live in `Routeables.Services` (namespace `Routeables.Services`)
 | `IRouteableRequestedThemeService` | Light/dark theme switching |
 | `IRouteableDispatcher` | Runs work on the thread of the interface (`Post`, `InvokeAsync`, `CheckAccess`), from any thread |
 
+### Translating the texts of the library
+
+The library writes very few words itself: the buttons of the message boxes (`Yes`, `No`, `Cancel`, `Abort`, `Ok`) and the title shown when no menu entry is selected (`Application`). They are English by default. Set them once, at start:
+
+```csharp
+RouteableTexts.ButtonTranslator = word => word switch
+{
+    "Yes" => "Oui", "No" => "Non", "Cancel" => "Annuler", "Abort" => "Abandonner",
+    _ => null,                      // null keeps the English word
+};
+RouteableTexts.ApplicationTitle = "Mon application";
+```
+
+Only what is written on the buttons changes. The words a message box gives back (`"Yes"`, the index of the button) are always the English ones, so the code that reads the answer does not depend on the language.
+
 ## Hosts
 
 | Host | Setup call | Notes |

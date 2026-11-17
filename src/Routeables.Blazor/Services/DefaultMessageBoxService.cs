@@ -37,7 +37,7 @@ public sealed class DefaultMessageBoxService : IMessageBoxService
         return _messages.ShowAsync(title, message, words.Count - 1, drawn);
     }
 
-    private static string Label(string word) => word == "Ok" ? "OK" : word;
+    private static string Label(string word) => RouteableTexts.Button(word) is var text && text == "Ok" ? "OK" : text;
 
     /// <inheritdoc />
     public Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params)

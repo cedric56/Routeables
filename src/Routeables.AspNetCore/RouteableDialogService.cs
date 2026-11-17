@@ -13,7 +13,7 @@ public sealed class RouteableDialogService(RouteableInteractions interactions) :
     /// Shows a simple message dialog with a single button and returns the chosen button index (always 0).
     /// </summary>
     public override Task<int> ShowMessageAsync(string message, string title, string buttonText)
-        => interactions.AskAsync(new RouteableDialog(title, null, message, RouteableButtons.Split(buttonText)));
+        => interactions.AskAsync(new RouteableDialog(title, null, message, RouteableButtons.Labels(buttonText)));
 
     /// <summary>
     /// Shows a content dialog (primary / secondary / close) and returns which button the visitor selected.

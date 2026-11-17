@@ -29,7 +29,7 @@ public sealed class RouteableTaskDialogSession
         var wanted = results is { Length: > 0 } ? results : [RouteableTaskDialogResult.Close];
         Buttons = [.. wanted
             .Where(r => r != RouteableTaskDialogResult.None)
-            .Select((r, index) => new RouteableDialogButton(r.ToString(), true, null, null, index == 0, () => Submit(r)))];
+            .Select((r, index) => new RouteableDialogButton(RouteableTexts.Button(r.ToString()), true, null, null, index == 0, () => Submit(r)))];
     }
 
     /// <summary>The result of the dialog: <see cref="RouteableTaskDialogResult.None"/> until a button decided it.</summary>
