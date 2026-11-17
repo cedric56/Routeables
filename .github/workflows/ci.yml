@@ -338,6 +338,36 @@ jobs:
       - name: Check the dependencies and the content
         run: bash .github/scripts/check-packages.sh artifacts
 
+  # What the public API of the packages promises (VERSIONING.md): the packages are packed and compared with the last published version
+  # (ApiBaselineVersion, Directory.Build.props). A removed or changed public member is reported here before a minor or a patch carries it.
+  # It reports but does not block (continue-on-error) until the differences that exist since the baseline are settled; remove that
+  # line once it runs green. A difference that is wanted (a major version) goes in a CompatibilitySuppressions.xml:
+  # dotnet pack -p:ApiBaselineVersion=... -p:GenerateCompatibilitySuppressionFile=true
+  api-compatibility:
+    name: API compatibility with the last release
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android --skip-manifest-update
+
+      - name: Pack with the validation of the package
+        run: |
+          baseline=$(grep -o '<ApiBaselineVersion>[^<]*' Directory.Build.props | sed 's/<ApiBaselineVersion>//')
+          echo "Baseline: $baseline"
+          for project in Routeables.Abstraction Routeables.Core; do
+            dotnet pack "src/$project/$project.csproj" -c Release -o artifacts \
+              -p:EnablePackageValidation=true -p:PackageValidationBaselineVersion="$baseline"
+          done
+
   android:
     name: Build Android (MAUI, Avalonia)
     runs-on: ubuntu-latest

@@ -153,8 +153,15 @@ public sealed class FileRouteableHistoryStore : IRouteableHistoryStore
 /// Blazor keeps the history of a circuit with <c>PersistentComponentState</c> instead (see <c>RouteableHistoryOptions</c>), and the ASP.NET Core
 /// host keeps a scope per visitor in memory.
 /// </remarks>
-public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteableHistoryStore store, IRouteableHistoryProtector? protector = null) : IDisposable
+public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteableHistoryStore store, IRouteableHistoryProtector? protector) : IDisposable
 {
+    /// <summary>Creates the keeper with a history that is not protected (the constructor of version 2.1.0).</summary>
+    /// <param name="provider">The container of the application.</param>
+    /// <param name="store">Where the history is kept.</param>
+    public RouteableHistoryKeeper(IServiceProvider provider, IRouteableHistoryStore store) : this(provider, store, null)
+    {
+    }
+
     private readonly object _gate = new();
     private IRouter? _router;
     private volatile bool _active;

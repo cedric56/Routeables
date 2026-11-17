@@ -13,6 +13,8 @@ dotnet run -c Release --project Routeables.Benchmarks -- --perf                 
 
 Always run in `Release`, on a machine that is doing nothing else. Compare numbers only between runs on the same machine.
 
+To compare Routeables with other libraries on one same application, see [Comparing navigation libraries on the same application](benchmark-comparison.md) (a protocol, with no results yet).
+
 ## What is measured
 
 | Class | Question it answers |

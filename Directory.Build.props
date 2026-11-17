@@ -12,6 +12,11 @@
     <Version Condition="'$(VersionSuffix)' != ''">$(VersionPrefix)-$(VersionSuffix)</Version>
   </PropertyGroup>
 
+  <!-- The last version that was published: the CI (job "API compatibility") checks the packages against it, see VERSIONING.md. Raise it at each release. -->
+  <PropertyGroup>
+    <ApiBaselineVersion>2.1.0</ApiBaselineVersion>
+  </PropertyGroup>
+
   <!-- What every package of the repository shares. Id, authors, readme and license are set in each project. -->
   <PropertyGroup>
     <Copyright>Copyright (c) 2026 Cédric Boutin</Copyright>

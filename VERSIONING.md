@@ -30,3 +30,14 @@ A preview is built with `-p:VersionSuffix=preview.1` (`2.1.0-preview.1`): nothin
 2. Rename `Unreleased` in the changelog to `x.y.z - date`.
 3. Set `VersionPrefix` and the `Routeables.*` versions in the `templates/*/content/*.csproj` files.
 4. Tag `vx.y.z`, then pack and push the packages.
+5. Set `ApiBaselineVersion` in `Directory.Build.props` to the version that was just published: the next versions are compared with it.
+
+## Checking the public API
+
+The CI packs `Routeables` and `Routeables.Abstraction` with `EnablePackageValidation` against `ApiBaselineVersion` (the job "API compatibility with the last release"). A removed or changed public type or member is reported in a minor or a patch version. Run the same check locally:
+
+```
+dotnet pack src/Routeables.Core/Routeables.Core.csproj -c Release -p:EnablePackageValidation=true -p:PackageValidationBaselineVersion=2.1.0
+```
+
+A change that is wanted (a major version) is listed with `-p:GenerateCompatibilitySuppressionFile=true`, which writes a `CompatibilitySuppressions.xml` next to the project.
