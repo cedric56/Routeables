@@ -24,7 +24,7 @@ public static class RouteableDeepLinks
     /// The fragment is left out; the characters stay escaped, as the router reads them.
     /// </summary>
     /// <param name="uri">The address.</param>
-    /// <param name="schemes">The schemes that are accepted (<c>"myapp"</c>, <c>"https"</c>); <see langword="null"/> or empty accepts any.</param>
+    /// <param name="schemes">The schemes that are accepted (<c>"myapp"</c>, <c>"https"</c>); <see langword="null"/> or empty accepts no scheme of the application (only <c>http</c> and <c>https</c>, and only for a listed host).</param>
     /// <param name="route">The route, when the address has one.</param>
     /// <returns><see langword="false"/> for a relative address, a scheme that is not accepted, a web address (no host is given here: use the overload with the hosts), or an address with no path (<c>myapp://</c>).</returns>
     public static bool TryGetRoute(Uri? uri, IReadOnlyCollection<string>? schemes, out string route)
@@ -36,7 +36,7 @@ public static class RouteableDeepLinks
     /// application's own, and any other host is refused.
     /// </summary>
     /// <param name="uri">The address.</param>
-    /// <param name="schemes">The schemes that are accepted (<c>"myapp"</c>, <c>"https"</c>); <see langword="null"/> or empty accepts any.</param>
+    /// <param name="schemes">The schemes that are accepted (<c>"myapp"</c>, <c>"https"</c>); <see langword="null"/> or empty accepts no scheme of the application (only <c>http</c> and <c>https</c>, and only for a listed host).</param>
     /// <param name="hosts">The hosts of the <c>http</c> and <c>https</c> addresses that are accepted (<c>"example.com"</c>). <see langword="null"/> or empty
     /// accepts <b>no</b> web address: they are refused until the hosts are given. The address of an own scheme (<c>myapp://</c>) has no host in this
     /// sense and is not limited by it.</param>
@@ -52,12 +52,26 @@ public static class RouteableDeepLinks
         if (uri.OriginalString.Length > MaxLength)
             return false;
 
-        if (schemes is { Count: > 0 } && !schemes.Contains(uri.Scheme, StringComparer.OrdinalIgnoreCase))
+        // An address with a user name or a password is not a link to a page: it would be copied into the route, and from there into the logs
+        // and the messages of the errors.
+        if (!string.IsNullOrEmpty(uri.UserInfo))
             return false;
+
+        // The schemes are the ones the application owns, and are given: with none, any scheme would do (file:, content:, the protocol of
+        // another application), and the address would be followed as if the application had asked for it. Only the web is left, below.
+        var isWeb = uri.Scheme is "http" or "https";
+        if (schemes is { Count: > 0 })
+        {
+            if (!schemes.Contains(uri.Scheme, StringComparer.OrdinalIgnoreCase))
+                return false;
+        }
+        else if (!isWeb)
+        {
+            return false;
+        }
 
         // The host of a web address is not part of the route: without the hosts that are the application's own, any web page or message
         // could send the address of another site and open a page of the application.
-        var isWeb = uri.Scheme is "http" or "https";
         if (isWeb && (hosts is not { Count: > 0 } || !hosts.Contains(uri.Host, StringComparer.OrdinalIgnoreCase)))
             return false;
 
@@ -88,7 +102,7 @@ public static class RouteableDeepLinks
         return "/" + (end >= 0 ? rest[..end] : rest);
     }
 
-    /// <summary>The route of an address, without a limit on the schemes.</summary>
+    /// <summary>The route of an address, with no scheme given: only a web address of a host that is given is accepted, so this is of use with <see cref="TryGetRoute(Uri?, IReadOnlyCollection{string}?, IReadOnlyCollection{string}?, out string)"/> only. Give the schemes your application owns.</summary>
     public static bool TryGetRoute(Uri? uri, out string route) => TryGetRoute(uri, null, out route);
 
     /// <summary>
@@ -97,7 +111,7 @@ public static class RouteableDeepLinks
     /// </summary>
     /// <param name="provider">The container of the host.</param>
     /// <param name="uri">The address.</param>
-    /// <param name="schemes">The schemes that are accepted; <see langword="null"/> or empty accepts any.</param>
+    /// <param name="schemes">The schemes that are accepted; <see langword="null"/> or empty accepts no scheme of the application (only <c>http</c> and <c>https</c>, and only for a listed host).</param>
     /// <param name="cancellationToken">Cancels the route change.</param>
     /// <param name="hosts">The hosts of the <c>http</c> and <c>https</c> addresses that are accepted; <see langword="null"/> or empty accepts no web address (see <see cref="TryGetRoute(Uri?, IReadOnlyCollection{string}?, IReadOnlyCollection{string}?, out string)"/>).</param>
     /// <returns>The result of the route change; failed (with an <see cref="ArgumentException"/>) when the address has no route or is not accepted.</returns>
@@ -109,7 +123,7 @@ public static class RouteableDeepLinks
         ArgumentNullException.ThrowIfNull(uri);
 
         if (!TryGetRoute(uri, schemes, hosts, out var route))
-            return RouteableResult.Fail(new ArgumentException($"The address \"{uri}\" has no route that this application accepts.", nameof(uri)));
+            return RouteableResult.Fail(new ArgumentException($"The address \"{uri}\" has no route that this application accepts" + (schemes is { Count: > 0 } ? "." : " (no scheme was given: pass the schemes the application owns)."), nameof(uri)));
 
         var router = provider.GetRequiredService<IRouter>();
         var result = await router.GoToAsync(route, null, null, cancellationToken);

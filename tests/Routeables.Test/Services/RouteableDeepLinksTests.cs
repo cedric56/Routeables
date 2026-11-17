@@ -32,7 +32,7 @@ public class RouteableDeepLinksTests
     [InlineData("myapp://orders", "/orders")]
     public void An_address_gives_its_route(string address, string expected)
     {
-        Assert.True(RouteableDeepLinks.TryGetRoute(new Uri(address), out var route));
+        Assert.True(RouteableDeepLinks.TryGetRoute(new Uri(address), ["myapp"], out var route));
         Assert.Equal(expected, route);
     }
 
@@ -83,6 +83,36 @@ public class RouteableDeepLinksTests
 
         Assert.True(RouteableDeepLinks.TryGetRoute(new Uri("MYAPP://orders"), schemes, out _));
         Assert.False(RouteableDeepLinks.TryGetRoute(new Uri("ftp://host/orders"), schemes, out _));
+    }
+
+    [Theory]
+    [InlineData("myapp://orders/42")]
+    [InlineData("file:///etc/passwd")]
+    [InlineData("content://media/external/images/1")]
+    [InlineData("ftp://host/orders")]
+    public void With_no_scheme_given_no_scheme_of_the_application_is_accepted(string address)
+    {
+        Assert.False(RouteableDeepLinks.TryGetRoute(new Uri(address), out _));
+        Assert.False(RouteableDeepLinks.TryGetRoute(new Uri(address), [], out _));
+        Assert.False(RouteableDeepLinks.TryGetRoute(new Uri(address), null, ["example.com"], out _));
+    }
+
+    [Theory]
+    [InlineData("myapp://user:secret@orders/1")]
+    [InlineData("myapp://user@orders/1")]
+    [InlineData("https://user:secret@example.com/orders/1")]
+    public void An_address_with_a_user_name_or_a_password_is_refused(string address)
+        => Assert.False(RouteableDeepLinks.TryGetRoute(new Uri(address), ["myapp", "https"], ["example.com"], out _));
+
+    [Fact]
+    public async Task Going_to_an_address_with_no_scheme_given_fails_and_says_why()
+    {
+        using var provider = Build();
+
+        var result = await RouteableDeepLinks.GoToAsync(provider, new Uri("myapp://link-second"), cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.False(result.Success);
+        Assert.Contains("no scheme was given", result.Exception?.Message);
     }
 
     [Fact]
@@ -376,12 +406,11 @@ public class RouteableDeepLinksTests
     [InlineData("myapp://SKU12/details", "/SKU12/details")]
     [InlineData("myapp://Orders/Big?Q=A#top", "/Orders/Big?Q=A")]
     [InlineData("myapp://orders:5/1", "/orders:5/1")]
-    [InlineData("myapp://user@orders/1", "/user@orders/1")]
     [InlineData("myapp://orders/a%20b", "/orders/a%20b")]
     [InlineData("myapp:///orders/1", "/orders/1")]
     public void The_first_segment_of_an_application_scheme_is_kept_as_it_was_written(string address, string expected)
     {
-        Assert.True(RouteableDeepLinks.TryGetRoute(new Uri(address), null, out var route));
+        Assert.True(RouteableDeepLinks.TryGetRoute(new Uri(address), ["myapp"], out var route));
         Assert.Equal(expected, route);
     }
 

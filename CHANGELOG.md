@@ -22,6 +22,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **Deep links: no scheme is accepted unless it is given** (`RouteableDeepLinks`, `RouteableLinkInbox`). `schemes: null` or an empty list used to accept any scheme (`file:`, `content:`, the protocol of another application); it now accepts none of the application, and only an `http(s)` address of a listed host. **An application that passed no schemes must now pass the ones it owns** (`["myapp"]`); the failed result says so. An address with a user name or a password is refused, and no longer copied into the route. The signatures are unchanged.
+
 - **The history file is never wider than its owner on Unix**: `FileRouteableHistoryStore` creates the file with the mode 600 (it used to write it and restrict it right after, which left a moment when another user of the machine could open it) and the folder it creates with the mode 700.
 
 - **The D-Bus calls of the notifications have a delay**: `AddMatch` and `GetNameOwner` give up after 3 s like the others, so a bus that does not answer does not keep an entry of each call.

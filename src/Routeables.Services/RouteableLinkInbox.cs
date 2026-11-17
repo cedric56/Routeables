@@ -35,7 +35,7 @@ public sealed class RouteableLinkInbox
     /// Creates an inbox before the container exists (a static field of the application, which the Android activity fills at start).
     /// What it receives waits for <see cref="Attach"/>.
     /// </summary>
-    /// <param name="schemes">The schemes that are accepted (<c>"myapp"</c>, <c>"https"</c>); <see langword="null"/> or empty accepts any.</param>
+    /// <param name="schemes">The schemes that are accepted (<c>"myapp"</c>, <c>"https"</c>); <see langword="null"/> or empty accepts no scheme of the application: give the ones it owns.</param>
     /// <param name="hosts">The hosts of the <c>http</c> and <c>https</c> links that are accepted; <see langword="null"/> or empty accepts no web link: set it when <c>https</c> is accepted.</param>
     public RouteableLinkInbox(IReadOnlyCollection<string>? schemes = null, IReadOnlyCollection<string>? hosts = null)
     {
@@ -45,7 +45,7 @@ public sealed class RouteableLinkInbox
 
     /// <summary>Creates the inbox for a container and starts it.</summary>
     /// <param name="provider">The container of the host.</param>
-    /// <param name="schemes">The schemes that are accepted; <see langword="null"/> or empty accepts any.</param>
+    /// <param name="schemes">The schemes that are accepted; <see langword="null"/> or empty accepts no scheme of the application: give the ones it owns.</param>
     /// <param name="hosts">The hosts of the <c>http</c> and <c>https</c> links that are accepted; <see langword="null"/> or empty accepts no web link.</param>
     public RouteableLinkInbox(IServiceProvider provider, IReadOnlyCollection<string>? schemes = null, IReadOnlyCollection<string>? hosts = null) : this(schemes, hosts)
     {
