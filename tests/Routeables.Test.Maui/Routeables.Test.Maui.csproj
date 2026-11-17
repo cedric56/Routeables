@@ -61,8 +61,10 @@
     <PackageReference Include="Microsoft.Maui.Controls" />
     <!-- xunit v3 for a library that a MAUI application hosts: the assertions and the attributes, never "xunit.v3" (it makes the project an executable of its own).
          The versions of these packages could not be checked where this project was written: pin them to the ones restored. -->
-    <PackageReference Include="xunit.v3.extensibility.core" />
-    <PackageReference Include="xunit.v3.assert" />
+    <!-- 3.2.2 and not the 4.0.2 of the other test projects: DeviceRunners.*.Xunit3 0.1.0-preview.12 is built for exactly xunit.v3 3.2.2 (NU1608 otherwise), and with the two mixed 175 of the 180 tests failed on the emulator (the reason
+         was not in the log: probably the mix). Go back to the central version when DeviceRunners follows xunit 4. -->
+    <PackageReference Include="xunit.v3.extensibility.core" VersionOverride="3.2.2" />
+    <PackageReference Include="xunit.v3.assert" VersionOverride="3.2.2" />
     <PackageReference Include="DeviceRunners.VisualRunners.Maui" />
     <PackageReference Include="DeviceRunners.VisualRunners.Xunit3" />
     <PackageReference Include="DeviceRunners.UITesting.Maui" />
