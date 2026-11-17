@@ -28,6 +28,13 @@ internal sealed class RouteableTable
             Add(template, viewModelType);
     }
 
+    /// <summary>Forgets every route (for the tests: a page that the menu lists and the table does not).</summary>
+    internal void Clear()
+    {
+        lock (_gate)
+            _entries = [];
+    }
+
     internal void Add(string template, Type? viewModelType)
     {
         lock (_gate)

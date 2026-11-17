@@ -21,10 +21,7 @@ public class MenuOnlyRouteArgsTests
         var provider = services.BuildServiceProvider();
         // A page the menu lists but the table of routes does not (a page added by a module or by the generator after the table was read):
         // no template of the table matches "/settings", so only the entry of the menu knows how to open it.
-        var entries = (List<(string Template, Type? ViewModelType)>)typeof(RouteableTable)
-            .GetField("_entries", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
-            .GetValue(provider.GetRequiredService<RouteableTable>())!;
-        entries.Clear();
+        provider.GetRequiredService<RouteableTable>().Clear();
         provider.GetRequiredService<IRouteableMenuViewModel>().Entries.Add(new RouteableMenuEntry("/settings", "/settings", "Settings"));
         return provider;
     }
