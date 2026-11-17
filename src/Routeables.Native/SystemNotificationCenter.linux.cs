@@ -75,13 +75,17 @@ public sealed partial class SystemNotificationCenter
     private void LinuxPresent(SystemNotification notification)
     {
         var connection = LinuxConnection() ?? throw new InvalidOperationException("There is no session bus to show the notification.");
+        // A notification that is shown again replaces the bubble the server already has (its own id), instead of adding a second one.
+        uint replaces;
+        lock (_linuxGate)
+            _linuxServerIds.TryGetValue(notification.Id, out replaces);
         var appName = Options?.ChannelName ?? AppDomain.CurrentDomain.FriendlyName;
 
         // Notify(app_name, replaces_id, app_icon, summary, body, actions, hints, expire_timeout) -> id
         var reply = connection.CallAsync(LinuxService, LinuxPath, LinuxService, "Notify", "susssasa{sv}i", w =>
         {
             w.String(appName);
-            w.UInt32(0);
+            w.UInt32(replaces);
             w.String(notification.Icon ?? string.Empty);
             w.String(notification.Title ?? string.Empty);
             w.String(notification.Message ?? string.Empty);
@@ -115,6 +119,8 @@ public sealed partial class SystemNotificationCenter
         var serverId = reply.Result.Reader().UInt32();
         lock (_linuxGate)
         {
+            if (replaces != 0 && replaces != serverId)
+                _linuxIds.Remove(replaces);
             _linuxServerIds[notification.Id] = serverId;
             _linuxIds[serverId] = notification.Id;
         }
@@ -199,7 +205,7 @@ public sealed partial class SystemNotificationCenter
         if (message.Member == "ActionInvoked")
         {
             var action = reader.String();
-            Complete(id, true, action == "default" ? null : action);
+            Complete(id, true, action == "default" ? null : action, offThread: true);
         }
         else if (message.Member == "NotificationClosed")
         {
@@ -209,7 +215,7 @@ public sealed partial class SystemNotificationCenter
                 _linuxServerIds.Remove(id);
             }
 
-            Complete(id, false, null);
+            Complete(id, false, null, offThread: true);
         }
     }
 }

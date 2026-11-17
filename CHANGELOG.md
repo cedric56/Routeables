@@ -15,6 +15,14 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 - **`Routeables.Native` no longer depends on MAUI Essentials or AndroidX** on Android: it follows the activity in front itself, asks for the notification permission with it, and uses `Notification.Builder`. No `Platform.Init` is needed outside MAUI. Applications build the services (`UseRouteablesServices`) before the first activity, as they do; `NativeDialogs.Initialize()` starts it for a host that does not.
 - **The three-button dialog is in `Routeables.Native`** (`NativeDialogs.DisplayThreeButtonsAsync`): MAUI, WinUI 3 and Uno use it (Android alert, Windows App SDK `ContentDialog`, iOS alert or sheet) and draw their own where it has nothing to show.
 
+### Fixed
+
+- **Starting with a link and a saved history** (`AddRouteableHistory` and `RouteableLinkInbox`): the history is put back first and the addresses are followed after it. Before, the restoration, which starts by erasing the history, could remove the page that the link had just opened.
+- **An absolute coordination whose page throws** (an exception in `OnEnteringAsync`, a cancellation) puts back the page that was shown, as a failed result already did; the regions were left empty.
+- **`GoBackAsync(steps)` and `GoBackToAsync`** work out the target once the route change may start, so a route change that is already running cannot make them land on another page (`IRouter.MoveBackAsync`).
+- **System notifications**: Windows (plain `net10.0`) no longer reports a notification as closed when its banner leaves the screen, and a notification that is shown again replaces the first one on Linux and Windows instead of adding a second one; the expiration of an updated notification runs from its last display; the identifiers of the notifications no longer start again at 1 at each launch (an old notification of the system could be mistaken for a new one); `NotificationCompleted` is raised on the context of the interface (the one in which `Configure` ran), and never on the thread that reads the D-Bus replies.
+- **Telemetry**: a route that no template names is tagged `(unmatched)` in `routeables.route`, not with its address.
+
 ## 2.1.0 - 2026-11-11
 
 ### Added

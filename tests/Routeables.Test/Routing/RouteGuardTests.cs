@@ -338,6 +338,20 @@ public class RouteGuardTests
 
     /// <summary>The telemetry names a route by its template: an address holds identifiers and tokens, and one series per address has no bound.</summary>
     [Fact]
+    public void A_route_that_no_template_names_is_tagged_unmatched_and_not_with_its_address()
+    {
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<MeterItemView, MeterItemVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/meter-item/{id:int}");
+        using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+        var tag = router.GetType().GetMethod("RouteTag", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+
+        Assert.Equal("(unmatched)", tag.Invoke(router, ["/orders/9999?token=secret"]));
+        Assert.Equal("/meter-item/{id:int}", tag.Invoke(router, ["/meter-item/4242"]));
+    }
+
+    [Fact]
     public async Task The_activity_is_tagged_with_the_template_and_not_with_the_address()
     {
         var activities = new List<Activity>();

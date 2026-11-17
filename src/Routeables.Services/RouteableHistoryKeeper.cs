@@ -114,6 +114,8 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             return;
         }
 
+        // The addresses that opened the application (RouteableLinkInbox) wait until the pages are back: restoring starts by erasing the history.
+        RouteableStartup.BeginRestore(router);
         RouteableHelper.FireAndForget(() => Task.Run(() => RestoreAsync(router, kept)), provider, "RouteableHistoryKeeper.Restore");
     }
 
@@ -146,6 +148,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             // A keeper that was disposed while it restored stays off: it must not write the history again.
             if (!_disposed)
                 _active = true;
+            RouteableStartup.EndRestore(router);
             try
             {
                 // The history belongs to the thread of the interface: read it there, as the route changes that save it do.

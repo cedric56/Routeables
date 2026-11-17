@@ -229,6 +229,8 @@ notification.Message = "A polar bear was added to the adoption list.";
 await notification.ShowAsync();
 ```
 
+`NotificationCompleted` is raised on the context of the interface that was current when the notifications were turned on (`Configure`, that is `WithAppNotifications`): a handler can go to a page or show a dialog. Where there is no such context (a console, a call to `Configure` from a thread of the pool) the handler runs on the thread the platform called from, which on Linux is never the one that reads the D-Bus replies. An `Expiration` runs from the last display of the notification: showing it again (an update) starts it again. Each notification has an identifier that is not reused by the next launch, so a tap on a notification of an earlier run is ignored.
+
 In the browser, each page that shows a notification is its **owner**: the worker is shared by every tab of the site, so the id of a notification carries the owner (a random id of the page), and a page ignores the clicks, replies and closes of the notifications another tab showed, and `CloseAll` closes only its own. The ids you give are therefore per page, not per site.
 
 On Blazor, `services.WithAppNotifications(new AppNotificationOptions { ... })` (namespace `Routeables.Native`, the same options as MAUI, WinUI 3 and Avalonia, all optional) turns them on with the notification center of the browser. `CreateNotificationAsync` asks for the permission when it was not asked yet, which a browser only accepts after a click, and returns `null` when it is denied or while the page is prerendered. The options are `DefaultIcon`, `ClearOnAppClose`, `RequestPermissionOnInitialize` and `ServiceWorkerUrl`.

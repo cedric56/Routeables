@@ -45,10 +45,7 @@ public static class RouterStackExtensions
     {
         ArgumentNullException.ThrowIfNull(router);
         ArgumentNullException.ThrowIfNull(match);
-        var entries = router.History.Entries;
-        for (var i = router.History.CurrentIndex - 1; i >= 0 && i < entries.Count; i--)
-            if (match(entries[i])) return router.MoveToAsync(i, cancellationToken);
-        return Task.FromResult(RouteableResult.Cancel());
+        return router.MoveBackAsync(match, cancellationToken);
     }
 
     /// <summary>Goes back <paramref name="steps"/> entries at once (one lifecycle change, not one per page). Cancelled when the history is shorter.</summary>
@@ -56,7 +53,6 @@ public static class RouterStackExtensions
     {
         ArgumentNullException.ThrowIfNull(router);
         ArgumentOutOfRangeException.ThrowIfLessThan(steps, 1);
-        var index = router.History.CurrentIndex - steps;
-        return index < 0 ? Task.FromResult(RouteableResult.Cancel()) : router.MoveToAsync(index, cancellationToken);
+        return router.MoveBackAsync(steps, cancellationToken);
     }
 }

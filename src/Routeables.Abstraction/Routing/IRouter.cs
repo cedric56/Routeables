@@ -60,6 +60,32 @@ public interface IRouter
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     Task<RouteableResult> MoveToAsync(int index, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Goes back to the nearest earlier entry that satisfies <paramref name="match"/>. The entry is searched <b>once the route change may start</b>
+    /// (after the ones that are already running), so a history that changed in the meantime cannot make the move land on another page.
+    /// Cancelled when none matches. A router that does not search by itself looks at the history at once.
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    Task<RouteableResult> MoveBackAsync(Func<IHistoryEntry, bool> match, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(match);
+        var entries = History.Entries;
+        for (var i = History.CurrentIndex - 1; i >= 0 && i < entries.Count; i--)
+            if (match(entries[i])) return MoveToAsync(i, cancellationToken);
+        return Task.FromResult(RouteableResult.Cancel());
+    }
+
+    /// <summary>
+    /// Goes back <paramref name="steps"/> entries at once, counted <b>once the route change may start</b> (see <see cref="MoveBackAsync(Func{IHistoryEntry, bool}, CancellationToken)"/>).
+    /// Cancelled when the history is shorter.
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    Task<RouteableResult> MoveBackAsync(int steps, CancellationToken cancellationToken = default)
+    {
+        var index = History.CurrentIndex - steps;
+        return index < 0 ? Task.FromResult(RouteableResult.Cancel()) : MoveToAsync(index, cancellationToken);
+    }
+
     /// <summary>Forgets every entry, disposing the view models that are disposable. The router is then empty until the next route change.</summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     Task EraseHistoryAsync(CancellationToken cancellationToken = default);

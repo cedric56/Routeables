@@ -13,6 +13,13 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     private readonly Dictionary<uint, SystemNotification> _active = [];
     private readonly object _gate = new();
     private int _lastId;
+    // The identifiers of the notifications that a platform keeps after the process (Android, iOS, macOS, Windows) must not be the ones of the next launch:
+    // the high half is chosen at random for each run, the low half counts. A tap on a notification of an earlier run then finds no notification here
+    // (it is ignored) instead of the wrong one, and the notification of a new run never replaces one that is still shown.
+    private uint _idBase = (uint)Random.Shared.Next(1, 0x8000) << 16;
+    // The context of the interface, taken when the notifications are turned on: NotificationCompleted is raised there.
+    private SynchronizationContext? _context;
+    private readonly Dictionary<uint, CancellationTokenSource> _expirations = [];
     private EventHandler<RouteableSystemNotificationEventArgs>? _completed;
 
     /// <summary>The single instance used by the application.</summary>
@@ -43,6 +50,7 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     public void Configure(AppNotificationOptions options)
     {
         Options = options;
+        _context = SynchronizationContext.Current;
 #if ANDROID
         SystemNotificationCenter.StartTracking();
 #endif
@@ -75,7 +83,12 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     /// Creates a new system notification when options are set and permission is granted; otherwise returns <see langword="null"/>.
     /// </summary>
     public async Task<IRouteableSystemNotification?> CreateNotificationAsync(string? category)
-        => Options is not null && await RequestPermissionAsync() ? new SystemNotification(this, (uint)Interlocked.Increment(ref _lastId), category) : null;
+        => Options is not null && await RequestPermissionAsync() ? new SystemNotification(this, NextId(), category) : null;
+
+    internal uint NextId() => _idBase + (uint)(Interlocked.Increment(ref _lastId) & 0xFFFF);
+
+    // For the tests: the base of the identifiers of "this run".
+    internal void SetIdBaseForTests(uint idBase) => _idBase = idBase;
 
     /// <summary>Cancels every active notification and raises <see cref="NotificationCompleted"/> for each one.</summary>
     public void CloseAll()
@@ -110,11 +123,35 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
             throw;
         }
 
-        // Not every platform lets a notification expire by itself: it is withdrawn from here.
+        // Not every platform lets a notification expire by itself: it is withdrawn from here. The time runs from the last display: showing the
+        // notification again (an update) starts it again, and the delay of the earlier display is dropped.
+        CancellationTokenSource? expiring = null;
         if (notification.Expiration is { } expiration && expiration > TimeSpan.Zero)
-            _ = Task.Delay(expiration).ContinueWith(_ => CloseAsync(notification.Id), TaskScheduler.Default);
+            expiring = new CancellationTokenSource();
+        ReplaceExpiration(notification.Id, expiring);
+        if (expiring is not null)
+        {
+            var id = notification.Id;
+            var token = expiring.Token;
+            _ = Task.Delay(notification.Expiration!.Value, token)
+                .ContinueWith(_ => CloseAsync(id), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
+        }
 
         return Task.CompletedTask;
+    }
+
+    private void ReplaceExpiration(uint id, CancellationTokenSource? next)
+    {
+        CancellationTokenSource? previous;
+        lock (_gate)
+        {
+            _expirations.Remove(id, out previous);
+            if (next is not null)
+                _expirations[id] = next;
+        }
+
+        previous?.Cancel();
+        previous?.Dispose();
     }
 
     /// <summary>Withdraws the notification with the given id from the system center, if it is still active.</summary>
@@ -135,23 +172,40 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     }
 
     /// <summary>The platform tells what the user did: a tap (<paramref name="activated"/>) or a dismissal.</summary>
-    internal void Complete(uint id, bool activated, string? action, string? userData = null)
+    internal void Complete(uint id, bool activated, string? action, string? userData = null, bool offThread = false)
     {
         bool known;
         lock (_gate) known = _active.Remove(id);
         if (!known)
             return;
 
+        ReplaceExpiration(id, null);
+        var args = new RouteableSystemNotificationEventArgs
+        {
+            NotificationId = id,
+            ActionTag = action,
+            UserData = userData,
+            IsActivated = activated,
+            IsCancelled = !activated
+        };
+
+        // The platforms call back on a thread of their own (the D-Bus reader, a pool thread of the expiration): the handler goes to the
+        // interface (a route change, a dialog) and runs there, when the context of the interface is known. Without one it runs where the
+        // platform called, but never on the thread that reads the D-Bus replies (see offThread).
+        var context = _context;
+        if (context is not null && SynchronizationContext.Current != context)
+            context.Post(_ => Raise(args), null);
+        else if (context is null && offThread)
+            _ = Task.Run(() => Raise(args));
+        else
+            Raise(args);
+    }
+
+    private void Raise(RouteableSystemNotificationEventArgs args)
+    {
         try
         {
-            _completed?.Invoke(this, new RouteableSystemNotificationEventArgs
-            {
-                NotificationId = id,
-                ActionTag = action,
-                UserData = userData,
-                IsActivated = activated,
-                IsCancelled = !activated
-            });
+            _completed?.Invoke(this, args);
         }
         catch (Exception ex)
         {

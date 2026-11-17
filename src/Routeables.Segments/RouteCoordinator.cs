@@ -35,11 +35,11 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
 
         var completed = 0;
         var result = RouteableResult.Ok();
+        var shownBefore = new Dictionary<IRouter, string?>();
         try
         {
             // 2. Absolute: start from empty histories, once per router. Erasing is not leaving: the page shown is asked first, as a route
             // change would (a page with unsaved changes can say no), and one "no" stops the whole coordination before anything is touched.
-            var shownBefore = new Dictionary<IRouter, string?>();
             if (coordination.Absolute)
             {
                 var routers = steps.Select(s => s.Router).Distinct().ToList();
@@ -76,11 +76,14 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
+            // A page that throws or a cancellation after the histories were erased leaves the same blank regions as a failed result does.
+            await BringBackAsync(shownBefore);
             Raise(Coordinated, new RouteCoordinatedEventArgs(coordination, RouteableResult.Cancel(), completed));
             throw;
         }
         catch (Exception ex)
         {
+            await BringBackAsync(shownBefore);
             Raise(Coordinated, new RouteCoordinatedEventArgs(coordination, RouteableResult.Fail(ex), completed));
             throw;
         }

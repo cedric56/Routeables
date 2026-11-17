@@ -76,14 +76,22 @@ public sealed partial class SystemNotificationCenter
 
         var toast = new ToastNotification(xml);
         var id = notification.Id;
-        toast.Activated += (_, _) => WindowsEnded(id, activated: true);
+
+        // The same tag replaces the toast that is shown (an update) instead of adding a second one.
+        toast.Tag = id.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        toast.Group = "routeables";
+
+        // The events of a toast that was replaced are not the notification's any more.
+        bool IsCurrent() { lock (_windowsGate) return _windowsToasts.TryGetValue(id, out var current) && ReferenceEquals(current, toast); }
+        toast.Activated += (_, _) => { if (IsCurrent()) WindowsEnded(id, activated: true); };
         toast.Dismissed += (_, e) =>
         {
-            // The application hiding it (Cancel) is not the user dismissing it.
-            if (e.Reason != ToastDismissalReason.ApplicationHidden)
+            // Only the user closing it ends the notification. The banner leaving the screen after a few seconds (TimedOut) keeps the notification in the
+            // notification center, where it can still be clicked; the application hiding it (Cancel) is not the user either.
+            if (e.Reason == ToastDismissalReason.UserCanceled && IsCurrent())
                 WindowsEnded(id, activated: false);
         };
-        toast.Failed += (_, _) => WindowsEnded(id, activated: false);
+        toast.Failed += (_, _) => { if (IsCurrent()) WindowsEnded(id, activated: false); };
 
         lock (_windowsGate)
             _windowsToasts[id] = toast;

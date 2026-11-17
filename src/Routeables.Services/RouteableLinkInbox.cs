@@ -134,6 +134,9 @@ public sealed class RouteableLinkInbox
                 return;
             }
 
+            // The history of the last run, when there is one, is put back first: it starts by erasing the history, and would remove the page of a link.
+            await RouteableStartup.WhenRestoredAsync(router);
+
             while (true)
             {
                 IReadOnlyList<RouteableSnapshot>? restoring;

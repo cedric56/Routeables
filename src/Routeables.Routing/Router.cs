@@ -329,6 +329,40 @@ internal class Router(
     }
 
     /// <inheritdoc />
+    public Task<RouteableResult> MoveBackAsync(Func<IHistoryEntry, bool> match, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(match);
+        return MoveBackCoreAsync(entries =>
+        {
+            for (var i = history.CurrentIndex - 1; i >= 0 && i < entries.Count; i--)
+                if (match(entries[i])) return i;
+            return -1;
+        }, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public Task<RouteableResult> MoveBackAsync(int steps, CancellationToken cancellationToken = default)
+        => MoveBackCoreAsync(_ => history.CurrentIndex - steps, cancellationToken);
+
+    // The target is chosen with the gate held: after the route changes that were running, from the history as it is then.
+    private async Task<RouteableResult> MoveBackCoreAsync(Func<IReadOnlyList<IHistoryEntry>, int> find, CancellationToken cancellationToken)
+    {
+        var enter = gate.EnterAsync(cancellationToken);
+        try { await enter; } catch { gate.Abort(); throw; }
+        cancellationToken = gate.Observe(cancellationToken);
+        try
+        {
+            var index = find(((IRouterHistory)history).Entries);
+            if (index < 0 || index >= history.Count)
+                return RouteableResult.Cancel();
+
+            return await MoveAsync(RouteableKind.MoveTo, history.At(index),
+                () => { history.MoveTo(index); return []; }, cancellationToken);
+        }
+        finally { gate.Exit(); }
+    }
+
+    /// <inheritdoc />
     public async Task EraseHistoryAsync(CancellationToken cancellationToken = default)
     {
         var enter = gate.EnterAsync(cancellationToken);
@@ -743,28 +777,40 @@ internal class Router(
     }
 
     // What a route is called in the telemetry: its template, never the address (an address holds identifiers, and one series per address is unbounded).
-    private string RouteTag(string? route) => string.IsNullOrWhiteSpace(route) ? string.Empty : PathOf(TemplateOf(route));
+    // A route that no template names (a direct route change, a menu entry without a template) is "(unmatched)": the address itself would put its identifiers in the tag.
+    private string RouteTag(string? route)
+        => string.IsNullOrWhiteSpace(route) ? string.Empty : TryTemplateOf(route, out var template) ? PathOf(template) : UnmatchedRouteTag;
+
+    internal const string UnmatchedRouteTag = "(unmatched)";
 
     // The address without its query (the query can hold a token).
     private static string PathOf(string? route) => (route ?? string.Empty).Split('?')[0];
 
     // The template registered for a route: the one that is the route, the one that matches it, the one of a menu entry, or the route itself.
-    private string TemplateOf(string route)
+    private string TemplateOf(string route) => TryTemplateOf(route, out var template) ? template : route;
+
+    private bool TryTemplateOf(string route, out string template)
     {
         static string Normal(string? value) => (value ?? string.Empty).Split('?')[0].Trim('/');
 
         var entries = provider.GetService<RouteableTable>()?.Entries ?? [];
         var exact = entries.FirstOrDefault(e => string.Equals(Normal(e.Template), Normal(route), StringComparison.OrdinalIgnoreCase));
         if (exact.Template is not null)
-            return exact.Template;
+            return Found(exact.Template, out template);
 
         var matching = RouteParser.BestMatch(entries, route);
         if (matching.Template is not null)
-            return matching.Template;
+            return Found(matching.Template, out template);
 
         var item = provider.GetService<IRouteableMenuViewModel>()?.Entries
             .FirstOrDefault(r => string.Equals(Normal(r.Route), Normal(route), StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(r.Template));
-        return item?.Template ?? route;
+        if (item?.Template is { } menuTemplate)
+            return Found(menuTemplate, out template);
+
+        template = route;
+        return false;
+
+        static bool Found(string value, out string template) { template = value; return true; }
     }
 
     private Task<RouteableResult> GoToEntryAsync(IRouteableMenuEntry routeableView, Type viewModelType, CancellationToken cancellationToken, string[] viewKeys)
