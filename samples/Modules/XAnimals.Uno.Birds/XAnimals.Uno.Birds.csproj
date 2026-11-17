@@ -2,6 +2,8 @@
 
   <!-- The Birds module for the Uno hosts: its two pages, which draw with the controls of XAnimals.Uno.Controls. The shared part (data, view models, the menu entry) is XAnimals.Birds. The head references this project: its AddGeneratedRoutes() finds the pages. -->
   <PropertyGroup>
+    <!-- The Uno SDK chooses the versions of its own packages: this project keeps them outside Directory.Packages.props. -->
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
     <TargetFrameworks>net10.0-android;net10.0-ios;net10.0-browserwasm;net10.0-desktop</TargetFrameworks>
     <!-- As the head: the CI builds the desktop target only. -->
     <TargetFrameworks Condition="'$(CiBuild)' == 'true'">net10.0-desktop</TargetFrameworks>

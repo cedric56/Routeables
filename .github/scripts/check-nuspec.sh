@@ -12,12 +12,25 @@ cd "$(dirname "$0")/../.."
 
 projects="Routing Core Regions Services Locking Segments"
 
+# The versions are in Directory.Packages.props (central package management); a VersionOverride on a reference wins.
+version_of() {
+  local id="$1" override="$2"
+  if [ -n "$override" ]; then
+    echo "$override"
+    return
+  fi
+  grep -o "<PackageVersion Include=\"$id\" Version=\"[^\"]*\"" Directory.Packages.props |
+    sed -E 's/.*Version="([^"]*)".*/\1/' | head -n 1
+}
+
 declared=$(
   for p in $projects; do
-    grep -ho '\<PackageReference Include="[^"]*" Version="[^"]*"' \
-      "src/Routeables.$p/Routeables.$p.csproj" || true
+    { grep -ho '<PackageReference Include="[^"]*"[^>]*>' "src/Routeables.$p/Routeables.$p.csproj" || true; } | while read -r reference; do
+      id=$(echo "$reference" | sed -E 's/.*Include="([^"]*)".*/\1/')
+      override=$(echo "$reference" | sed -nE 's/.*VersionOverride="([^"]*)".*/\1/p')
+      echo "$id $(version_of "$id" "$override")"
+    done
   done |
-    sed -E 's/.*Include="([^"]*)" Version="([^"]*)".*/\1 \2/' |
     sort -u
 )
 

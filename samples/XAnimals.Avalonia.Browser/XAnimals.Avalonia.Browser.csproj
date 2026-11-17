@@ -17,8 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Browser" Version="12.1.4" />
-    <PackageReference Include="SkiaSharp.NativeAssets.WebAssembly" Version="4.148.0" />
+    <PackageReference Include="Avalonia.Browser" />
+    <PackageReference Include="SkiaSharp.NativeAssets.WebAssembly" />
   </ItemGroup>
 
   <!-- A browser has no system fonts for the WebAssembly app: the emoji of the menu (the glyphs of AnimalIcons) come from this font, used when

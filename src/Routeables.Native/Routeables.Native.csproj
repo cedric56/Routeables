@@ -26,7 +26,7 @@
 
   <!-- Floating 1.8.*: pin the version your WinUI 3 / MAUI applications use. AppNotificationManager comes with the Windows App SDK: a WinUI 3 application already has it, a MAUI one too. -->
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.*" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
   </ItemGroup>
 
   <!-- The Windows runtime types for the toasts of the plain net10.0 target (the desktop of Avalonia, WPF, a console). PrivateAssets="all": they are for compiling this library only, so
@@ -34,7 +34,7 @@
        runtimes/win, which NuGet gives to Windows applications only. Where they are missing (a project reference, which has no runtimes folder) the toast is not shown and the
        notification completes as dismissed. -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-    <PackageReference Include="WindowsContracts.Net.Foundation.UniversalApiContract" Version="5.19041.10" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="WindowsContracts.Net.Foundation.UniversalApiContract" PrivateAssets="all" GeneratePathProperty="true" />
     <None Include="$(PkgWindowsContracts_Net_Foundation_UniversalApiContract)\lib\net5.0\*.dll" Pack="true" PackagePath="runtimes\win\lib\net10.0" Visible="false" />
   </ItemGroup>
 

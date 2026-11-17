@@ -1,0 +1,6 @@
+<Project>
+  <!-- The projects of the templates are copied out of this repository: each one says its versions itself, so they stay outside the central package management of the repository. -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+</Project>

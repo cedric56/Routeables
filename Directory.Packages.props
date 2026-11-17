@@ -1,0 +1,94 @@
+<Project>
+  <!--
+    The version of every NuGet package of the repository, in one place (central package management). A project says which packages it uses, never which
+    version: <PackageReference Include="Avalonia" />. A project that needs another version than the one here writes VersionOverride="..." on its reference,
+    and says why next to it.
+
+    Left out on purpose:
+      - the two projects that use the Uno SDK (samples/XAnimals.Uno, tests/Routeables.Test.Uno): the SDK chooses the versions of its own packages, so they keep
+        theirs in their project (ManagePackageVersionsCentrally is false there);
+      - templates/: what a user receives has to build alone, outside this repository (see templates/Directory.Packages.props);
+      - the packages that Routeables.Core/build/Routeables.targets adds to a user's project: it already skips them under central package management.
+
+    A version with a star (Microsoft.WindowsAppSDK 1.8.*, DeviceRunners.* preview) floats, which is why CentralPackageFloatingVersionsEnabled is on:
+    replace it with the exact version a restore picked (dotnet list package) when the build must be reproducible. Dependabot reads this file.
+  -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
+  </PropertyGroup>
+
+  <!-- The libraries of the repository: Microsoft.Extensions and ASP.NET Core. The packages the Routeables.nuspec lists are checked by .github/scripts/check-nuspec.sh. -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.Components" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.110" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+  </ItemGroup>
+
+  <!-- MAUI, Windows, Uno and the Android and iOS libraries. -->
+  <ItemGroup>
+    <PackageVersion Include="CommunityToolkit.Maui" Version="15.0.1" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.110" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.8.*" />
+    <PackageVersion Include="SharpVectors.Wpf" Version="1.8.6" />
+    <PackageVersion Include="SkiaSharp.NativeAssets.WebAssembly" Version="4.148.0" />
+    <PackageVersion Include="Uno.WinUI" Version="6.7.135" />
+    <PackageVersion Include="WindowsContracts.Net.Foundation.UniversalApiContract" Version="5.19041.10" />
+    <PackageVersion Include="Xamarin.AndroidX.AppCompat" Version="1.7.0.7" />
+    <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.1.1" />
+  </ItemGroup>
+
+  <!-- Avalonia. The libraries ask for the oldest version they work with (VersionOverride in Routeables.Avalonia); the samples use the one below. -->
+  <ItemGroup>
+    <PackageVersion Include="AsyncImageLoader.Avalonia" Version="4.0.0" />
+    <PackageVersion Include="Avalonia" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Android" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Browser" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Headless" Version="12.0.1" />
+    <PackageVersion Include="Avalonia.iOS" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <PackageVersion Include="FluentAvaloniaUI" Version="3.1.0" />
+    <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.17" />
+  </ItemGroup>
+
+  <!-- Packages the flavours, the reshapes and the samples build on. -->
+  <ItemGroup>
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageVersion Include="MudBlazor" Version="9.11.0" />
+    <PackageVersion Include="ReactiveUI" Version="23.2.28" />
+    <PackageVersion Include="ReactiveUI.SourceGenerators" Version="3.2.0" />
+  </ItemGroup>
+
+  <!-- Tests and benchmarks. -->
+  <ItemGroup>
+    <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
+    <PackageVersion Include="coverlet.collector" Version="10.1.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageVersion Include="Microsoft.Playwright" Version="1.55.0" />
+    <PackageVersion Include="NSubstitute" Version="6.2.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
+    <PackageVersion Include="xunit.v3" Version="4.0.2" />
+    <PackageVersion Include="xunit.v3.assert" Version="3.2.2" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.2" />
+  </ItemGroup>
+
+  <!-- Device runners of the MAUI tests: still previews, so floating. -->
+  <ItemGroup>
+    <PackageVersion Include="DeviceRunners.Testing.Targets" Version="0.1.0-preview.*" />
+    <PackageVersion Include="DeviceRunners.UITesting.Maui" Version="0.1.0-preview.*" />
+    <PackageVersion Include="DeviceRunners.UITesting.Xunit3" Version="0.1.0-preview.*" />
+    <PackageVersion Include="DeviceRunners.VisualRunners.Maui" Version="0.1.0-preview.*" />
+    <PackageVersion Include="DeviceRunners.VisualRunners.Xunit3" Version="0.1.0-preview.*" />
+  </ItemGroup>
+
+</Project>

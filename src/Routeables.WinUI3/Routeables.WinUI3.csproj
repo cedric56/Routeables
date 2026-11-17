@@ -50,7 +50,7 @@
 
   <!-- Floating 1.8.*: pin the version your application uses. -->
   <ItemGroup Condition="'$(TargetFramework)' != 'net10.0'">
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.*" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
   </ItemGroup>
 
   <ItemGroup>

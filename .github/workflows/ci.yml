@@ -48,7 +48,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
           restore-keys: nuget-${{ runner.os }}-
 
       - name: Restore
@@ -101,7 +101,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-web-${{ hashFiles('**/*.csproj') }}
+          key: nuget-${{ runner.os }}-web-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
           restore-keys: nuget-${{ runner.os }}-web-
 
       - name: Libraries and Reshapes
@@ -155,7 +155,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-uno-${{ hashFiles('**/*.csproj') }}
+          key: nuget-${{ runner.os }}-uno-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
           restore-keys: nuget-${{ runner.os }}-uno-
 
       - name: Uno libraries
@@ -184,7 +184,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-wpf-${{ hashFiles('**/*.csproj') }}
+          key: nuget-${{ runner.os }}-wpf-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
           restore-keys: nuget-${{ runner.os }}-wpf-
 
       - name: WPF library
@@ -218,7 +218,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-winui3-${{ hashFiles('**/*.csproj') }}
+          key: nuget-${{ runner.os }}-winui3-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
           restore-keys: nuget-${{ runner.os }}-winui3-
 
       - name: WinUI 3 library
@@ -363,7 +363,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-android-${{ hashFiles('**/*.csproj') }}
+          key: nuget-${{ runner.os }}-android-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
           restore-keys: nuget-${{ runner.os }}-android-
 
       - name: MAUI
@@ -395,7 +395,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-maui-${{ hashFiles('**/*.csproj') }}
+          key: nuget-${{ runner.os }}-maui-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
           restore-keys: nuget-${{ runner.os }}-maui-
 
       # bash, not PowerShell: PowerShell only reports the exit code of the last command of a script, so an earlier failed build would pass.
@@ -448,7 +448,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-apple-${{ hashFiles('**/*.csproj') }}
+          key: nuget-${{ runner.os }}-apple-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
           restore-keys: nuget-${{ runner.os }}-apple-
 
       - name: MAUI, Mac Catalyst
@@ -553,7 +553,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-uno-test-${{ hashFiles('**/*.csproj') }}
+          key: nuget-${{ runner.os }}-uno-test-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
           restore-keys: nuget-${{ runner.os }}-uno-test-
 
       - name: Screen and fonts for the Skia head
