@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Phase 1 of docs/benchmark-comparison.md: the same application navigation, written for Routeables and for a navigation service of
+    your own, replayed on the .NET console. The ReactiveUI version is in Routeables.Comparison.ReactiveUI (it needs a package the
+    rest of the repository does not use, and is built apart).
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsPublishable>false</IsPublishable>
+    <!-- 50 view models and 50 views with no documentation: a benchmark, not a library. -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Routeables.Abstraction\Routeables.Abstraction.csproj" />
+    <ProjectReference Include="..\..\src\Routeables.Routing\Routeables.Routing.csproj" />
+  </ItemGroup>
+
+</Project>

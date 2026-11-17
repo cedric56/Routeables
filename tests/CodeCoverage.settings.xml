@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- What `dotnet test --coverage` measures (Microsoft.Testing.Extensions.CodeCoverage): the libraries of Routeables, not the tests, the
+     packages they use, or the code the generators and the compiler write. Passed with --coverage-settings. -->
+<Configuration>
+  <CodeCoverage>
+    <ModulePaths>
+      <Include>
+        <ModulePath>.*[\\/]Routeables\.[^\\/]*\.dll$</ModulePath>
+      </Include>
+      <Exclude>
+        <ModulePath>.*[\\/]Routeables\.Test[^\\/]*\.dll$</ModulePath>
+        <ModulePath>.*[\\/]Routeables\.Benchmarks[^\\/]*\.dll$</ModulePath>
+      </Exclude>
+    </ModulePaths>
+    <Attributes>
+      <Exclude>
+        <Attribute>^System\.Diagnostics\.CodeAnalysis\.ExcludeFromCodeCoverageAttribute$</Attribute>
+        <Attribute>^System\.CodeDom\.Compiler\.GeneratedCodeAttribute$</Attribute>
+        <Attribute>^System\.Runtime\.CompilerServices\.CompilerGeneratedAttribute$</Attribute>
+      </Exclude>
+    </Attributes>
+    <Sources>
+      <Exclude>
+        <Source>.*[\\/]obj[\\/].*</Source>
+      </Exclude>
+    </Sources>
+    <CollectFromChildProcesses>True</CollectFromChildProcesses>
+    <UseVerifiableInstrumentation>True</UseVerifiableInstrumentation>
+  </CodeCoverage>
+</Configuration>

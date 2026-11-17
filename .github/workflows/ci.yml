@@ -137,6 +137,89 @@ jobs:
         # After a change that moves them on purpose: dotnet run ... -- --perf <path of the baseline> --update, in a commit of its own.
         run: dotnet run --project src/Routeables.Benchmarks/Routeables.Benchmarks.csproj -c Release --no-build -- --perf
 
+  # The line and branch coverage of the libraries by Routeables.Test, with Microsoft.Testing.Platform (`--coverage`, settings in
+  # tests/CodeCoverage.settings.xml). Reported in the summary of the run and kept as an artifact; nothing fails on a number yet: read the
+  # first reports, then set a floor with `tools/coverage-summary.py --min`. A job of its own, and not a step of "Build & test", because it
+  # was written without being able to run the extension: until one run is green, a failure here must not hide the tests above.
+  coverage:
+    name: Code coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install MAUI workload
+        run: dotnet workload install maui --skip-manifest-update
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Test with coverage
+        run: >
+          dotnet test --project tests/Routeables.Test/Routeables.Test.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+          --coverage --coverage-output-format cobertura --coverage-settings tests/CodeCoverage.settings.xml
+          --results-directory coverage
+
+      - name: Summary
+        if: always()
+        run: |
+          reports=$(find coverage -name '*.cobertura.xml')
+          if [ -z "$reports" ]; then echo "No coverage report was written." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
+          { echo "### Code coverage (Routeables.Test)"; python3 tools/coverage-summary.py $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: coverage/**/*.cobertura.xml
+          if-no-files-found: warn
+
+  # Phase 1 of docs/benchmark-comparison.md: the same 200-step navigation scenario on Routeables, ReactiveUI routing and a navigation
+  # service of your own, on the console. The check (every step ends on the page the model expects) fails the job; the times and the
+  # memory are written in the summary and are not gated: a shared runner is not a place to compare microseconds.
+  comparison:
+    name: Same application, three libraries
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Build (Routeables and the service of your own)
+        run: dotnet build benchmarks/Routeables.Comparison/Routeables.Comparison.csproj -c Release
+
+      - name: Check, measure and memory
+        run: |
+          { echo "### Routeables and a service of your own"; dotnet run --project benchmarks/Routeables.Comparison/Routeables.Comparison.csproj -c Release --no-build; } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      # The ReactiveUI version was written without being able to restore ReactiveUI: it has a step of its own that cannot fail the job, until one run is green.
+      - name: ReactiveUI, with the other two
+        continue-on-error: true
+        run: |
+          dotnet build benchmarks/Routeables.Comparison.ReactiveUI/Routeables.Comparison.ReactiveUI.csproj -c Release
+          { echo "### With ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.ReactiveUI/Routeables.Comparison.ReactiveUI.csproj -c Release --no-build; } | tee -a "$GITHUB_STEP_SUMMARY"
+
   # The Uno projects are in a job of their own: they were written without being able to restore Uno Platform, so a failure here
   # must not hide the result of the jobs above. Once it is green, fold it into web-and-desktop.
   uno:

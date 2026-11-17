@@ -1,6 +1,6 @@
 # Comparing navigation libraries on the same application
 
-[Benchmarks](benchmarks.md) measures the router of Routeables alone. It does not say how Routeables compares with Prism, ReactiveUI, MAUI Shell, MvvmCross or a navigation service of your own: that needs the **same application** written once for each of them, and the same measures taken on each. This page is the protocol for that comparison. **No implementation of it exists yet and there are no results below**: a table of numbers that nobody measured would be worse than none.
+[Benchmarks](benchmarks.md) measures the router of Routeables alone. It does not say how Routeables compares with Prism, ReactiveUI, MAUI Shell, MvvmCross or a navigation service of your own: that needs the **same application** written once for each of them, and the same measures taken on each. This page is the protocol for that comparison. **Phase 1 is written (see below); phases 2 and 3 are not, and there are no results below**: a table of numbers that nobody measured on a machine that is named would be worse than none.
 
 ## The application
 
@@ -48,12 +48,39 @@ One script of 200 steps, the same for every implementation: open each of the 50 
 
 ## Phases
 
-1. **Headless core.** The 200-step script on the navigation of Routeables, ReactiveUI routing, and a navigation service of your own, all on the .NET console, with the memory checks. This part needs no UI framework and is the cheapest to make correct.
+1. **Headless core (written).** The 200-step script on the navigation of Routeables, ReactiveUI routing, and a navigation service of your own, all on the .NET console, with the memory checks. This part needs no UI framework and is the cheapest to make correct.
 2. **One UI framework.** The same application on Avalonia or WPF, for Routeables, Prism and ReactiveUI: start, size, trimming, code to write.
 3. **Mobile and Blazor.** MAUI (Routeables, Shell, Prism) and Blazor (Routeables, the Blazor router): published size and start on the device.
+
+### Phase 1: what is in the repository
+
+`benchmarks/Routeables.Comparison` (Routeables and a navigation service of your own) and `benchmarks/Routeables.Comparison.ReactiveUI` (the same, with ReactiveUI routing) run **the same script of 200 steps** through one interface (`INavigationDriver`: go, back, forward, the state of the application). The expected page of each step comes from a small model of history written once (`Scenario.cs`), not from any of the libraries.
+
+```
+dotnet run --project benchmarks/Routeables.Comparison -c Release                       # Routeables and the service of your own
+dotnet run --project benchmarks/Routeables.Comparison.ReactiveUI -c Release            # the three; options: --check, --measure, --memory
+```
+
+- **`--check`**: every step must end on the page the model expects; the exit code says so. This is what the CI job "Same application, three libraries" gates on.
+- **`--measure`**: 5 warm-up runs, then 30 runs of the script, each on a new driver; the median time and the bytes allocated (`GC.GetTotalAllocatedBytes`) of a run. A plain harness, not BenchmarkDotNet: the three libraries run in one process on a script that lasts milliseconds, and the harness is the same for all of them. BenchmarkDotNet comes back in the phases that measure on a device.
+- **`--memory`**: 1 000 route changes, the managed heap after two forced collections, and how many of the first 100 pages are still alive, before and after the history is cleared.
+
+What the script covers: 40 menu pages (5 with a constructor dependency, 5 behind a guard), 10 pages with a route parameter, the chain list / detail / edit with Back, the edit page that refuses to be left, the guard (turned away, signs in, goes on to the page asked for), a history 20 pages deep with Back and Forward. **What it does not cover yet**: the menu as a control, tabs, dialogs and the deep link at start: they need a UI framework, so they wait for phase 2.
+
+How each library is written, and where it differs, is part of the result:
+
+| | Routeables | ReactiveUI routing | Service of your own |
+|---|---|---|---|
+| Pages | one view and one view model per route, registered with a route (`/p07`, `/c3/{id:int}`); the parameter reaches the constructor | the application creates the view model and gives it to `Navigate` | a dictionary from a route to a factory |
+| Guard | an `IRouteGuard` that redirects | written in the application, before `Navigate` | written in the service |
+| Refuse to leave | `CanLeaveAsync` of the page | written in the application, before `Navigate` | written in the service |
+| Back / Forward | `GoBackAsync`, `ForwardAsync` | `NavigateBack`; **no Forward** (a stack, not a history): those 20 steps are skipped and the run says so | a list and an index |
+| Container | `Microsoft.Extensions.DependencyInjection` | the application's own (a plain object here, the dependency is a field) | `Microsoft.Extensions.DependencyInjection` |
+
+**The ReactiveUI version was written without being able to restore ReactiveUI**, so it has never been compiled or run: its CI step cannot fail the job until one run has passed, and a person who uses ReactiveUI every day must read it before its numbers are quoted (the rule above applies to it first). The runs of the other two were made on a 2-core Linux sandbox and checked (200 of 200 steps on the expected page); nothing was measured on a machine fit to be named, so no number is published here. The CI job writes the three tables in the summary of each run; copy them below with the date, the versions and the runner when a run is clean.
 
 Each phase ends with its results published in this page, with the date, the versions and the machine. Phases 2 and 3 need the packages of each library, the SDKs of each platform, and a person who knows each library to review its implementation: they are work for several people, not for one afternoon.
 
 ## Results
 
-None yet.
+None yet. Phase 1 can produce them now (the summary of the CI job "Same application, three libraries"); they are published here once someone who uses ReactiveUI has read its implementation.

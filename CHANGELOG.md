@@ -6,6 +6,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Added
 
+- **Code coverage in the CI** (job "Code coverage"): `Routeables.Test` runs with `--coverage` (`Microsoft.Testing.Extensions.CodeCoverage`, settings in `tests/CodeCoverage.settings.xml`), the line and branch coverage of each assembly is written in the summary of the run (`tools/coverage-summary.py`), and the Cobertura reports are kept as an artifact. Nothing fails on a number yet. `coverlet.collector` is gone from the test project: it is a VSTest collector and never ran under Microsoft.Testing.Platform.
+
+- **The same application on three libraries, phase 1** (`benchmarks/`): a script of 200 navigation steps replayed on Routeables, ReactiveUI routing and a navigation service of your own, on the console, with the page of each step checked, the time and allocations of a run, and the memory after 1 000 route changes. CI job "Same application, three libraries". See [the protocol](docs/benchmark-comparison.md). The ReactiveUI version has not been compiled yet.
+
 - **`RouteableTexts`**: the buttons of the message boxes (`Yes`, `No`, `Cancel`, `Abort`, `Ok`) and the default title `Application` can be translated (`RouteableTexts.ButtonTranslator`, `RouteableTexts.ApplicationTitle`); every host (WPF, Avalonia, MAUI, WinUI 3, Uno, Blazor, Razor) and the task dialogs use them. What a message box answers stays English, so the code that reads it does not change. See the hosts guide.
 
 - **The CI checks the public API of the packages against the last release** (job "API compatibility with the last release"): `Routeables` and `Routeables.Abstraction` are packed with `EnablePackageValidation` against `ApiBaselineVersion` (`Directory.Build.props`, 2.1.0). It blocks. See [VERSIONING.md](VERSIONING.md).

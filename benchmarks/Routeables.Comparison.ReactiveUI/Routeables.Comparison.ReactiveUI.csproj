@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The ReactiveUI version of the scenario of Routeables.Comparison (phase 1 of docs/benchmark-comparison.md), and the same program: it
+    runs the three libraries together. Built apart because it is the only project of the repository that needs ReactiveUI to run:
+    a failure here does not stop the build of the rest.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsPublishable>false</IsPublishable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ReactiveUI" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Comparison\Routeables.Comparison.csproj" />
+  </ItemGroup>
+
+</Project>

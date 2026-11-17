@@ -18,6 +18,8 @@ dotnet test --project tests/Routeables.Test/Routeables.Test.csproj
 `dotnet test` runs xunit v3 through Microsoft.Testing.Platform, enabled by `global.json`. On CI, pass `-p:CiBuild=true` so the MAUI and Uno
 libraries build only the targets the runner has the workloads for.
 
+For the coverage of the libraries: `dotnet test --project tests/Routeables.Test/Routeables.Test.csproj --coverage --coverage-output-format cobertura --coverage-settings tests/CodeCoverage.settings.xml`, then `python3 tools/coverage-summary.py` on the `*.cobertura.xml` it writes under `TestResults`.
+
 Performance and memory checks run outside the test suite, in `Release`:
 
 ```bash
