@@ -4,7 +4,7 @@ using Routeables.Abstraction.Transitions;
 using Routeables.Routing;
 using Xunit;
 
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: Parallelization(Mode = ParallelMode.None)]
 
 namespace Routeables.Test.Maui;
 
