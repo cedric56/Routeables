@@ -34,7 +34,7 @@ A preview is built with `-p:VersionSuffix=preview.1` (`2.1.0-preview.1`): nothin
 
 ## Checking the public API
 
-The CI packs `Routeables` and `Routeables.Abstraction` with `EnablePackageValidation` against `ApiBaselineVersion` (the job "API compatibility with the last release"). A removed or changed public type or member is reported in a minor or a patch version. Run the same check locally:
+The CI packs `Routeables` and `Routeables.Abstraction` with `EnablePackageValidation` against `ApiBaselineVersion` (the job "API compatibility with the last release", which blocks). A removed or changed public type or member is reported in a minor or a patch version. Run the same check locally:
 
 ```
 dotnet pack src/Routeables.Core/Routeables.Core.csproj -c Release -p:EnablePackageValidation=true -p:PackageValidationBaselineVersion=2.1.0

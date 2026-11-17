@@ -111,17 +111,17 @@ public abstract partial class RouteableViewModel<TResult>(IRouter router, bool i
         {
             new RouteableCommand()
             {
-                Name = "Validate",
+                Name = RouteableTexts.Button("Validate"),
                 Command = ValidateCommand
             },
             new RouteableCommand()
             {
-                Name = "Cancel",
+                Name = RouteableTexts.Button("Cancel"),
                 Command = CancelCommand
             },
             new RouteableCommand()
             {
-                Name = "Close",
+                Name = RouteableTexts.Button("Close"),
                 Command = CloseCommand
             }
         };

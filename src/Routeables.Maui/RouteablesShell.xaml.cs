@@ -98,8 +98,9 @@ public partial class RouteablesShell : Shell
 
     private bool IsPageOfAnotherEntry()
         => menuViewModel.SelectedEntry is { } entry
-           && services.GetService<IRouter>()?.History.Current is { } current
-           && !string.Equals(current.Args.Route, entry.Arguments.Route ?? entry.Route, StringComparison.Ordinal);
+           && services.GetService<IRouter>() is { } router
+           && router.History.Current is { } current
+           && !RouteAddress.SameFor(router, current.Args.Route, entry.Arguments.Route ?? entry.Route);
 
     // The entry the view model shows; before Shell has a current item (it has none until it appears) the shell cannot tell it.
     private int ShownIndex()

@@ -1,4 +1,10 @@
+using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
+using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
+using Routeables.Routing;
 
 namespace Routeables.Tests.Abstraction;
 
@@ -68,5 +74,22 @@ public class RouteAddressTests
         Assert.Equal("/host", RouteAddress.Rooted("//host"));
         Assert.Equal("/host", RouteAddress.Rooted("/\\host"));
         Assert.Equal("/about", RouteAddress.Rooted("about"));
+    }
+
+    public sealed class RaItemView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class RaItemVm;
+
+    [Fact]
+    public void The_router_tells_the_words_of_a_path_from_its_values_and_a_router_that_does_not_know_its_templates_cannot()
+    {
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<RaItemView, RaItemVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ra-items/{id}");
+        using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+
+        Assert.False(RouteAddress.SameFor(router, "/ra-items/aB", "/ra-items/Ab"));     // two identifiers
+        Assert.True(RouteAddress.SameFor(router, "/RA-items/ab", "/ra-items/ab"));      // a word that changed its case
+        Assert.True(RouteAddress.SameFor(Substitute.For<IRouter>(), "/ra-items/aB", "/ra-items/Ab"));
     }
 }

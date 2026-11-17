@@ -78,7 +78,7 @@ internal sealed class RouteableModalSession<TResult> : IDisposable
         };
 
         if (commands.Count == 0)
-            dialog.CloseButtonText = "Close";
+            dialog.CloseButtonText = RouteableTexts.Button("Close");
 
         // Closing returns true to keep the dialog open.
         dialog.Closing = button => button switch

@@ -26,7 +26,7 @@ public sealed class RouteableDialogService(RouteableInteractions interactions) :
             choices.Add((@params.PrimaryButtonText, RouteableContentDialogResult.Primary, @params.PrimaryButtonClick));
         if (!string.IsNullOrEmpty(@params.SecondaryButtonText) && @params.IsSecondaryButtonEnabled)
             choices.Add((@params.SecondaryButtonText, RouteableContentDialogResult.Secondary, @params.SecondaryButtonClick));
-        choices.Add((string.IsNullOrEmpty(@params.CloseButtonText) ? "Close" : @params.CloseButtonText, RouteableContentDialogResult.None, @params.CloseButtonClick));
+        choices.Add((string.IsNullOrEmpty(@params.CloseButtonText) ? RouteableTexts.Button("Close") : @params.CloseButtonText, RouteableContentDialogResult.None, @params.CloseButtonClick));
 
         RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpening, @params.Opening);
         var dialog = new RouteableDialog(@params.Title ?? string.Empty, null, @params.Content?.ToString(), [.. choices.Select(c => c.Text)]);

@@ -17,6 +17,7 @@
     <InternalsVisibleTo Include="Routeables.Routing" />
     <InternalsVisibleTo Include="Routeables.Segments" />
     <InternalsVisibleTo Include="Routeables.Regions" />
+    <InternalsVisibleTo Include="Routeables.Services" />
     <InternalsVisibleTo Include="Routeables.Test" />
     <InternalsVisibleTo Include="Routeables.Core" />
     <InternalsVisibleTo Include="Routeables.Blazor" />

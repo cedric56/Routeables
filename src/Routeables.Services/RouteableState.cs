@@ -145,6 +145,10 @@ public static class RouteableState
     {
         foreach (var snapshot in list)
         {
+            // A saved route is an address, not a command: "-/orders" (go back, then navigate) in a file that was changed by hand would go back.
+            if (snapshot.Route.TrimStart().StartsWith('-'))
+                continue;
+
             var result = await router.GoToAsync(snapshot.Route, ValuesArgs(snapshot.State), null, cancellationToken);
             if (!result.Success)
             {
@@ -154,7 +158,7 @@ public static class RouteableState
 
             // Not when a guard sent the user to another page: those values are not for it.
             if (snapshot.State.Count > 0
-                && string.Equals(router.History.Current?.Args.Route, snapshot.Route, StringComparison.Ordinal)
+                && RouteAddress.SameFor(router, router.History.Current?.Args.Route, snapshot.Route)
                 && router.CurrentViewModel is { } shown)
             {
                 if (shown is IRouteableState keeper)

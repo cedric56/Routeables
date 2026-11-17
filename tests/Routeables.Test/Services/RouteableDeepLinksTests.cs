@@ -394,4 +394,18 @@ public class RouteableDeepLinksTests
         var fine = new Uri("myapp://orders/" + new string('a', 100));
         Assert.True(RouteableDeepLinks.TryGetRoute(fine, ["myapp"], out _));
     }
+
+    [Fact]
+    public async Task A_saved_route_is_an_address_and_never_the_command_to_go_back()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        var ct = TestContext.Current.CancellationToken;
+
+        // "-/route" is go back, then navigate: in a history file that was changed by hand it must not run.
+        await RouteableState.RestoreSnapshotsAsync(router, [new RouteableSnapshot("/link-first"), new RouteableSnapshot("-/link-second")], ct);
+
+        Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
+        Assert.Single(RouteableState.Capture(router));
+    }
 }

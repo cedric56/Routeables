@@ -186,4 +186,21 @@ public class FlavourViewModelTests
 
         Assert.Equal(0, closed);
     }
+
+    [Fact]
+    public void The_buttons_of_the_modal_are_the_words_of_the_translator()
+    {
+        var before = RouteableTexts.ButtonTranslator;
+        RouteableTexts.ButtonTranslator = word => word switch { "Validate" => "Valider", "Cancel" => "Annuler", "Close" => "Fermer", _ => null };
+        try
+        {
+            var names = Create().Commands.Select(command => command.Name).ToArray();
+
+            Assert.True(new[] { "Valider", "Annuler", "Fermer" }.SequenceEqual(names));
+        }
+        finally
+        {
+            RouteableTexts.ButtonTranslator = before;
+        }
+    }
 }

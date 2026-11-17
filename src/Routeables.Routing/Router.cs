@@ -20,7 +20,7 @@ internal class Router(
     RouterHistory history,
     RouterGate gate,
     RouterLifecycle lifecycle,
-    IServiceProvider provider) : IRouter, IRouteableLockCoordinatorFactory, IRouteGuardRefresh
+    IServiceProvider provider) : IRouter, IRouteableLockCoordinatorFactory, IRouteGuardRefresh, IRouteTemplates
 {
     /// <summary>
     /// Occurs when a routing operation is about to begin.
@@ -727,7 +727,7 @@ internal class Router(
 
     // Whether the page shown is the one of the entry (its route), and not the one a guard redirected to.
     internal bool WentTo(IRouteableMenuEntry entry)
-        => RouteAddress.Same(history.Current?.Args.Route, entry.Arguments.Route ?? entry.Route);
+        => RouteAddress.SameFor(this, history.Current?.Args.Route, entry.Arguments.Route ?? entry.Route);
 
     // A menu entry remembers the page it showed last. Not one the router has disposed since: a new one is created instead.
     private object? Reusable(object? remembered) => lifecycle.WasDestroyed(remembered) ? null : remembered;
@@ -762,6 +762,8 @@ internal class Router(
 
     // The template registered for a route: the one that is the route, the one that matches it, the one of a menu entry, or the route itself.
     private string TemplateOf(string route) => TryTemplateOf(route, out var template) ? template : route;
+
+    string? IRouteTemplates.TemplateOf(string route) => TryTemplateOf(route, out var template) ? template : null;
 
     private bool TryTemplateOf(string route, out string template)
     {

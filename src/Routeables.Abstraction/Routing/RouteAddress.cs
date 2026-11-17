@@ -47,6 +47,16 @@ internal static class RouteAddress
                && SameQuery(queryA, queryB);
     }
 
+    /// <summary>
+    /// Whether two addresses are the same page for <paramref name="router"/>: when the router knows its templates (the default router does), the case of a
+    /// <b>value</b> counts; for any other router (a double, a router of your own) every difference of case is taken for a word.
+    /// </summary>
+    /// <param name="router">The router that shows the pages.</param>
+    /// <param name="a">The first address.</param>
+    /// <param name="b">The second address.</param>
+    internal static bool SameFor(IRouter router, string? a, string? b)
+        => Same(a, b, router is IRouteTemplates templates ? templates.TemplateOf : null);
+
     private static bool SamePathOnly(string a, string b, Func<string, string?>? templateOf)
     {
         if (string.Equals(a, b, StringComparison.Ordinal))
@@ -106,4 +116,12 @@ internal static class RouteAddress
         try { return Uri.UnescapeDataString(text.Replace("%2F", "%252F", StringComparison.OrdinalIgnoreCase)); }
         catch (UriFormatException) { return text; }
     }
+}
+
+/// <summary>What the default router tells the comparison of addresses: the template that serves a route, to tell the words of a path from its values.</summary>
+internal interface IRouteTemplates
+{
+    /// <summary>The template that serves <paramref name="route"/>; <see langword="null"/> when none does.</summary>
+    /// <param name="route">The route or address.</param>
+    string? TemplateOf(string route);
 }
