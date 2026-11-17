@@ -13,7 +13,7 @@ internal static class RouteTarget
     internal static bool IsCurrent(IRouter router, string? route)
     {
         ArgumentNullException.ThrowIfNull(router);
-        return RouteAddress.Same(router.History.Current?.Args.Route, route ?? string.Empty);
+        return RouteAddress.Same(router.History.Current?.Args.Route ?? string.Empty, route ?? string.Empty);
     }
 
     /// <summary>

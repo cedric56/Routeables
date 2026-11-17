@@ -40,6 +40,14 @@ public class RouteAddressTests
     }
 
     [Fact]
+    public void Nothing_shown_is_the_empty_address_and_not_any_other()
+    {
+        Assert.True(RouteAddress.Same(string.Empty, string.Empty));
+        Assert.True(RouteAddress.Same(string.Empty, "/"));
+        Assert.False(RouteAddress.Same(string.Empty, "orders"));
+    }
+
+    [Fact]
     public void The_query_tells_two_entries_of_the_same_path_apart()
         => Assert.False(RouteAddress.Same("/items?kind=a", "/items?kind=b"));
 

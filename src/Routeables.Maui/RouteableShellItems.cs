@@ -94,7 +94,7 @@ public static class RouteableShellItems
         try
         {
             var router = provider.GetRouter(region);
-            if (RouteAddress.Same(router.History.Current?.Args.Route, route))
+            if (RouteAddress.Same(router.History.Current?.Args.Route ?? string.Empty, route))
                 return;
 
             // A tab with a region of its own goes to its route the first time only: coming back to it shows the pile of pages it left,

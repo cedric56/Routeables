@@ -1,0 +1,21 @@
+# The formatting every editor of the repository shares. It sets the indentation and the habits of the files only: no analyzer severity, so
+# it changes nothing to what builds. Line endings and byte order marks are left alone (the files of the repository are not uniform).
+root = true
+
+[*]
+indent_style = space
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{cs,razor,xaml,axaml,cshtml}]
+indent_size = 4
+
+[*.{csproj,props,targets,json,yml,yaml,xml,resx,config,nuspec,slnx}]
+indent_size = 2
+
+[*.md]
+# A line that ends with two spaces is a line break in Markdown.
+trim_trailing_whitespace = false
+
+[*.{ps1,sh}]
+indent_size = 4

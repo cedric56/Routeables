@@ -14,7 +14,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>XAnimals.WinUI3</RootNamespace>
     <ApplicationTitle>XAnimals.WinUI3</ApplicationTitle>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>    
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- The XAML analyzer does not know <Color x:Key="SystemAccentColor"> of App.xaml (a false positive: it is how the documentation overrides the accent color, and it builds and runs). -->
+    <NoWarn>$(NoWarn);WMC0001</NoWarn>    
   </PropertyGroup>
 
   <!-- Floating 1.8.*: pin the version of your application. -->
