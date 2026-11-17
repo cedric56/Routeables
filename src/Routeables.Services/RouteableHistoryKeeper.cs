@@ -19,7 +19,7 @@ public interface IRouteableHistoryStore
 
 /// <summary>
 /// Protects the history before it is kept, and reads it back. The history holds the addresses of the pages and what the pages saved (<see cref="Abstraction.States.PersistAttribute"/>:
-/// a draft of a form, an identifier): it is written as plain text unless a protector is given to <see cref="RouteableHistoryExtensions.AddRouteableHistory"/>.
+/// a draft of a form, an identifier): it is written as plain text unless a protector is given to <see cref="RouteableHistoryExtensions.AddRouteableHistory(IServiceCollection, string?, IRouteableHistoryProtector?)"/>.
 /// </summary>
 public interface IRouteableHistoryProtector
 {
@@ -117,11 +117,11 @@ public sealed class FileRouteableHistoryStore : IRouteableHistoryStore
         // The history of one user is not for the others of the machine. On Unix the folder that is created is for its owner (the mode of a folder that
         // exists already is the choice of whoever made it), and the file is created with its mode: there is no moment when it is wider, as there is
         // when the mode is set after the write. The umask can only remove rights, never add them.
-        var restricted = !OperatingSystem.IsWindows() && !OperatingSystem.IsBrowser();
         var folder = System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(Path));
         if (!string.IsNullOrEmpty(folder))
         {
-            if (restricted)
+            // The platform test is written in the condition itself: it is what the platform analyzer (CA1416) recognises as a guard.
+            if (!OperatingSystem.IsWindows() && !OperatingSystem.IsBrowser())
                 Directory.CreateDirectory(folder, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
             else
                 Directory.CreateDirectory(folder);
@@ -133,7 +133,7 @@ public sealed class FileRouteableHistoryStore : IRouteableHistoryStore
         try
         {
             var options = new FileStreamOptions { Mode = FileMode.CreateNew, Access = FileAccess.Write, Share = FileShare.None };
-            if (restricted)
+            if (!OperatingSystem.IsWindows() && !OperatingSystem.IsBrowser())
                 options.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
             using (var stream = new FileStream(temporary, options))
             using (var writer = new StreamWriter(stream, new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false)))
@@ -158,7 +158,7 @@ public sealed class FileRouteableHistoryStore : IRouteableHistoryStore
 /// Keeps the history of the router between two runs of the application, on every host that has a container of its own (WPF, Avalonia, WinUI,
 /// Uno, WinUI 3, MAUI): the pages shown, with what they saved (<see cref="RouteableState"/>), are written to an
 /// <see cref="IRouteableHistoryStore"/> after each route change and put back when the application starts again, once its first page is shown.
-/// Switched on by <see cref="RouteableHistoryExtensions.AddRouteableHistory"/>; the host starts it when it builds its container.
+/// Switched on by <see cref="RouteableHistoryExtensions.AddRouteableHistory(IServiceCollection, string?)"/>; the host starts it when it builds its container.
 /// </summary>
 /// <remarks>
 /// Blazor keeps the history of a circuit with <c>PersistentComponentState</c> instead (see <c>RouteableHistoryOptions</c>), and the ASP.NET Core
@@ -381,7 +381,7 @@ public static class RouteableHistoryExtensions
         return services;
     }
 
-    /// <summary>Starts the keeper when <see cref="AddRouteableHistory"/> registered it; does nothing otherwise. A host calls it once its container is built.</summary>
+    /// <summary>Starts the keeper when <see cref="AddRouteableHistory(IServiceCollection, string?)"/> registered it; does nothing otherwise. A host calls it once its container is built.</summary>
     public static IServiceProvider StartRouteableHistory(this IServiceProvider provider)
     {
         ArgumentNullException.ThrowIfNull(provider);
