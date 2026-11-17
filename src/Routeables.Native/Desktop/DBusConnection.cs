@@ -290,6 +290,12 @@ internal sealed class DBusConnection : IDisposable
     }
 
     /// <summary>Calls a method; the task ends with the reply, or fails with the error of the bus.</summary>
+    /// <param name="destination">The bus name of the service that is called.</param>
+    /// <param name="path">The object path on that service.</param>
+    /// <param name="interface">The interface of the method.</param>
+    /// <param name="member">The name of the method.</param>
+    /// <param name="signature">The signature of the body, or <see langword="null"/> for a call without arguments.</param>
+    /// <param name="writeBody">Writes the arguments, or <see langword="null"/> when there are none.</param>
     /// <param name="timeout">
     /// How long to wait for the reply: past it the task fails with a <see cref="TimeoutException"/> and the call is forgotten (a reply that
     /// comes later is dropped), so a bus that does not answer does not keep an entry for each call. <see langword="null"/> waits for ever.
