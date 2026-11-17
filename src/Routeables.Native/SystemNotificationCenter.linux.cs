@@ -96,10 +96,11 @@ public sealed partial class SystemNotificationCenter
         // Only what the notification server sends (its signals have its name as sender), and the changes of who has that name: the sender of a
         // message is written by the bus, so a process cannot sign as the server. Any other process of the session could otherwise send
         // ActionInvoked with an identifier that is easy to guess, and have an action run as if the user had clicked.
-        _ = connection.CallAsync(BusService, BusPath, BusService, "AddMatch", "s",
-            w => w.String($"type='signal',sender='{LinuxService}',interface='{LinuxService}'"));
-        _ = connection.CallAsync(BusService, BusPath, BusService, "AddMatch", "s",
-            w => w.String($"type='signal',sender='{BusService}',interface='{BusService}',member='NameOwnerChanged',arg0='{LinuxService}'"));
+        // None of them is waited for, and none waits for ever: a bus that does not answer would keep an entry of each call until the connection closes.
+        Forget(connection.CallAsync(BusService, BusPath, BusService, "AddMatch", "s",
+            w => w.String($"type='signal',sender='{LinuxService}',interface='{LinuxService}'"), LinuxCallTimeout));
+        Forget(connection.CallAsync(BusService, BusPath, BusService, "AddMatch", "s",
+            w => w.String($"type='signal',sender='{BusService}',interface='{BusService}',member='NameOwnerChanged',arg0='{LinuxService}'"), LinuxCallTimeout));
         _ = ReadOwnerAsync(connection);
         return connection;
     }
@@ -184,15 +185,18 @@ public sealed partial class SystemNotificationCenter
     // changed by NameOwnerChanged: it cannot be asked inside a signal, which the thread that reads the replies is running.
     private string? _linuxOwner;
 
+    // A call whose answer is not wanted: a failure (the bus is gone, it did not answer in time) is not left unobserved.
+    private static void Forget(Task task) => _ = task.ContinueWith(failed => _ = failed.Exception, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+
     private async Task ReadOwnerAsync(DBusConnection connection)
     {
         try
         {
-            var reply = await connection.CallAsync(BusService, BusPath, BusService, "GetNameOwner", "s", w => w.String(LinuxService)).ConfigureAwait(false);
+            var reply = await connection.CallAsync(BusService, BusPath, BusService, "GetNameOwner", "s", w => w.String(LinuxService), LinuxCallTimeout).ConfigureAwait(false);
             lock (_linuxGate)
                 _linuxOwner ??= reply.Reader().String();     // a NameOwnerChanged that came first is more recent
         }
-        catch (Exception ex) when (ex is IOException or InvalidOperationException or InvalidDataException)
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or InvalidDataException or TimeoutException)
         {
             // Nobody owns the service yet: the notification that is shown starts it, and NameOwnerChanged tells who it is.
         }

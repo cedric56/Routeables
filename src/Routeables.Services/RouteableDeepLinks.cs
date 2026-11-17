@@ -66,7 +66,7 @@ public static class RouteableDeepLinks
             : AfterTheScheme(uri);
 
         // "myapp:///" and "myapp://" name nothing.
-        path = "/" + path.Trim('/');
+        path = RouteAddress.Absolute(path);
         if (path == "/")
             return false;
 

@@ -29,13 +29,11 @@ internal static class RouteTarget
         try
         {
             if (!IsCurrent(router, route))
-                await router.GoToAsync("/" + Trim(route));
+                await router.GoToAsync(RouteAddress.Absolute(route));
         }
         catch (Exception ex)
         {
             RouteableErrors.Report(provider, ex, owner, route);
         }
     }
-
-    private static string Trim(string? value) => (value ?? string.Empty).Trim('/');
 }

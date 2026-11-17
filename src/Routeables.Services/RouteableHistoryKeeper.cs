@@ -114,19 +114,30 @@ public sealed class FileRouteableHistoryStore : IRouteableHistoryStore
     {
         ArgumentNullException.ThrowIfNull(text);
 
+        // The history of one user is not for the others of the machine. On Unix the folder that is created is for its owner (the mode of a folder that
+        // exists already is the choice of whoever made it), and the file is created with its mode: there is no moment when it is wider, as there is
+        // when the mode is set after the write. The umask can only remove rights, never add them.
+        var restricted = !OperatingSystem.IsWindows() && !OperatingSystem.IsBrowser();
         var folder = System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(Path));
         if (!string.IsNullOrEmpty(folder))
-            Directory.CreateDirectory(folder);
+        {
+            if (restricted)
+                Directory.CreateDirectory(folder, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+            else
+                Directory.CreateDirectory(folder);
+        }
 
         // Written aside and moved over the old file: a run that stops in the middle of a write keeps the previous history.
         // The name is unique: two instances of the application (or two saves) never write the same temporary file.
         var temporary = $"{Path}.{Guid.NewGuid():N}.tmp";
         try
         {
-            File.WriteAllText(temporary, text);
-            // The history of one user is not for the others of the machine (Unix: the mode is set before the file takes the place of the old one).
-            if (!OperatingSystem.IsWindows() && !OperatingSystem.IsBrowser())
-                File.SetUnixFileMode(temporary, UnixFileMode.UserRead | UnixFileMode.UserWrite);
+            var options = new FileStreamOptions { Mode = FileMode.CreateNew, Access = FileAccess.Write, Share = FileShare.None };
+            if (restricted)
+                options.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
+            using (var stream = new FileStream(temporary, options))
+            using (var writer = new StreamWriter(stream, new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false)))
+                writer.Write(text);
             File.Move(temporary, Path, overwrite: true);
         }
         catch

@@ -17,6 +17,10 @@ internal static class RouteAddress
     /// <param name="route">The route or address.</param>
     internal static string Rooted(string route) => "/" + route.TrimStart('/', '\\');
 
+    /// <summary>The route with exactly one slash before it and none at its end (<c>orders/42/</c> becomes <c>/orders/42</c>); the query, if any, is kept.</summary>
+    /// <param name="route">The route.</param>
+    internal static string Absolute(string? route) => "/" + (route ?? string.Empty).Trim('/');
+
     /// <summary>The path of a route: without its query and without the slashes around it. Blank for none.</summary>
     /// <param name="route">The route, the template or the address.</param>
     internal static string PathOf(string? route) => (route ?? string.Empty).Split('?')[0].Trim('/');

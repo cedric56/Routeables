@@ -52,7 +52,7 @@ public static class RouteableShellItems
                     if (content.Content is not null || content.ContentTemplate is not null || !IsDeclared(content.Route))
                         continue;
 
-                    routed[content] = ("/" + content.Route.Trim('/'), region);
+                    routed[content] = (RouteAddress.Absolute(content.Route), region);
                     content.ContentTemplate = new DataTemplate(() => NewPage(provider, region));
                 }
             }

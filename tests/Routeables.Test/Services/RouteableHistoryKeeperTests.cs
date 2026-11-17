@@ -109,6 +109,47 @@ public class RouteableHistoryKeeperTests
     }
 
     [Fact]
+    public void The_folder_of_the_history_that_is_created_is_for_its_owner_only_on_unix()
+    {
+        if (OperatingSystem.IsWindows())
+            return;
+        var folder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        try
+        {
+            new FileRouteableHistoryStore(Path.Combine(folder, "h.txt")).Save("x");
+            Assert.Equal(UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute, File.GetUnixFileMode(folder));
+            Assert.Equal("x", File.ReadAllText(Path.Combine(folder, "h.txt")));
+        }
+        finally
+        {
+            try { Directory.Delete(folder, true); } catch (IOException) { }
+        }
+    }
+
+    [Fact]
+    public void A_history_that_is_saved_again_keeps_its_mode_and_leaves_no_temporary_file()
+    {
+        if (OperatingSystem.IsWindows())
+            return;
+        var folder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        var path = Path.Combine(folder, "h.txt");
+        try
+        {
+            var store = new FileRouteableHistoryStore(path);
+            store.Save("first");
+            store.Save("second \u00e9");
+
+            Assert.Equal("second \u00e9", store.Load());
+            Assert.Equal(UnixFileMode.UserRead | UnixFileMode.UserWrite, File.GetUnixFileMode(path));
+            Assert.Single(Directory.GetFiles(folder));
+        }
+        finally
+        {
+            try { Directory.Delete(folder, true); } catch (IOException) { }
+        }
+    }
+
+    [Fact]
     public void The_file_of_the_history_is_for_its_owner_only_on_unix()
     {
         if (OperatingSystem.IsWindows())
