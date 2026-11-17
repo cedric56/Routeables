@@ -184,20 +184,16 @@ internal class Router(
     {
         // Like every route change, one at a time: the page asked about is the one that is shown when the guards answer, and a refresh
         // that comes in the middle of a route change waits for it.
-        var enter = gate.EnterAsync(cancellationToken);
-        try { await enter; } catch { gate.Abort(); throw; }
-        cancellationToken = gate.Observe(cancellationToken);
-
-        RouterEntry? asked;
-        RouteGuardDecision decision;
-        try
+        var (asked, decision, observed) = await RunGatedAsync(cancellationToken, async token =>
         {
-            asked = history.Current;
-            if (asked is null)
-                return RouteableResult.Ok();
-            decision = await AskGuardsAsync(RouteableKind.MoveTo, asked, asked, cancellationToken);
-        }
-        finally { gate.Exit(); }
+            var current = history.Current;
+            return current is null
+                ? (current, RouteGuardDecision.Allow, token)
+                : (current, await AskGuardsAsync(RouteableKind.MoveTo, current, current, token), token);
+        });
+        cancellationToken = observed;
+        if (asked is null)
+            return RouteableResult.Ok();
 
         if (decision.IsAllowed)
             return RouteableResult.Ok();
@@ -366,25 +362,21 @@ internal class Router(
 
     private async Task<RouteableResult> GoCoreAsync(object view, object viewModel, IRouteableArgs? args, Redirection redirection, CancellationToken cancellationToken)
     {
-        var enter = gate.EnterAsync(cancellationToken);
-        try { await enter; } catch { gate.Abort(); throw; }
-        cancellationToken = gate.Observe(cancellationToken);
-
-        try
+        return await RunGatedAsync(cancellationToken, async token =>
         {
             IRouteableFor? viewFor = view as IRouteableFor ?? provider.GetService<IRouteableViewBinder>()?.Adapt(view);
-            var previousContext = viewFor?.Context;    // inside the try: a throwing getter must not leave the gate held
+            var previousContext = viewFor?.Context;    // inside the gated body: a throwing getter must not leave the gate held
             args ??= RouteableArgs.Create();
 
             var previous = history.Current;
             var entering = new RouterEntry(viewModel, view, args);
 
-            return await ObserveAsync(RouteableKind.Push, previous, entering, cancellationToken, redirection: redirection, run: async () =>
+            return await ObserveAsync(RouteableKind.Push, previous, entering, token, redirection: redirection, run: async () =>
             {
                 try
                 {
                     // 1. Can the current page be left?
-                    if (previous is not null && !await lifecycle.CanLeaveAsync(previous, cancellationToken))
+                    if (previous is not null && !await lifecycle.CanLeaveAsync(previous, token))
                         return RouteableResult.Cancel();
 
                     // 2. Bind view <-> view-model
@@ -392,17 +384,17 @@ internal class Router(
                         viewFor.Context = viewModel;
 
                     // 3. Initialize the target (VM first, then view). Nothing has been torn down yet.
-                    await lifecycle.InitializeAsync(entering, cancellationToken);
+                    await lifecycle.InitializeAsync(entering, token);
 
                     // 4. Leave current + enter target (or just enter on first route change)
                     if (previous is not null)
-                        await lifecycle.TransitionAsync(previous, entering, cancellationToken);
+                        await lifecycle.TransitionAsync(previous, entering, token);
                     else
-                        await lifecycle.EnterAsync(entering, cancellationToken);
+                        await lifecycle.EnterAsync(entering, token);
 
                     // 5. Commit, then destroy what the push cut off (forward entries, evicted oldest)
                     var removed = history.Push(entering);
-                    await lifecycle.NotifyEnteredAsync(previous, entering, cancellationToken);
+                    await lifecycle.NotifyEnteredAsync(previous, entering, token);
                     if (removed.Count > 0) await lifecycle.DestroyAsync(removed, history.Snapshot());
                     return RouteableResult.Ok();
                 }
@@ -413,8 +405,7 @@ internal class Router(
                     throw;
                 }
             });
-        }
-        finally { gate.Exit(); }
+        });
     }
 
     /// <summary>

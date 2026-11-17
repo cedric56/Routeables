@@ -18,6 +18,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **`RouteableTable.Entries` cannot be changed by a caller**: it is a read-only collection, not the array that the table keeps. The read is still the collection itself, with no copy.
+
+- **The versions of xunit v3 are one**: `xunit.v3.assert` and `xunit.v3.extensibility.core` follow `xunit.v3` (4.0.2) instead of staying on 3.2.2.
+
 - **The router tells a word from a value everywhere**: the menus, the controls of navigation of the hosts, MAUI Shell and the router itself compare routes with the templates the router knows, as the address bar of Blazor does, so `/items/aB` and `/items/Ab` are two pages when the identifier is a token or a slug. The comparison of `RouteableState` and of MAUI Shell goes through the same rule.
 
 - **A saved history cannot give a command**: a route written `-/orders` (go back, then navigate) in a history file is skipped when the history is restored.

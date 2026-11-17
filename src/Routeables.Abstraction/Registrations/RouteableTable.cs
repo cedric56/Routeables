@@ -1,4 +1,5 @@
 ﻿using Routeables.Abstraction.Routing;
+using System.Collections.ObjectModel;
 namespace Routeables.Abstraction.Registrations;
 
 /// <summary>
@@ -9,8 +10,9 @@ namespace Routeables.Abstraction.Registrations;
 /// </summary>
 internal sealed class RouteableTable
 {
-    // Copy on write: a route change reads the table several times, and the routes are added at start, so a read is the array itself and an add builds a new one.
-    private volatile (string Template, Type? ViewModelType)[] _entries = [];
+    // Copy on write: a route change reads the table several times, and the routes are added at start, so a read is the collection itself (no copy, and nothing
+    // that a caller could cast back to an array and change: the table is the one of the whole application) and an add builds a new one.
+    private volatile ReadOnlyCollection<(string Template, Type? ViewModelType)> _entries = new([]);
     private readonly object _gate = new();
 
     /// <summary>
@@ -33,7 +35,7 @@ internal sealed class RouteableTable
     internal void Clear()
     {
         lock (_gate)
-            _entries = [];
+            _entries = new([]);
     }
 
     internal void Add(string template, Type? viewModelType)
@@ -42,7 +44,7 @@ internal sealed class RouteableTable
         {
             if (_entries.Any(e => RouteAddress.SamePath(e.Template, template)))
                 return;
-            _entries = [.. _entries, (template, viewModelType)];
+            _entries = new([.. _entries, (template, viewModelType)]);
         }
     }
 }
