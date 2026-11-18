@@ -1,7 +1,9 @@
 ﻿using Routeables.Abstraction;
 using Routeables.Abstraction.Routing;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using System.Text.RegularExpressions;
@@ -166,7 +168,7 @@ public static partial class RouteParser
         string template, string uri,
         IRouteableArgs? args = null,
         params string[] viewKeys)
-        => Mismatch(template, uri, args, viewKeys) is null;
+        => Check(template, uri, args, viewKeys, reasons: false) is null;
 
     /// <summary>
     /// Like <see cref="TryMatch"/>, but says why the route does not fit the template.
@@ -176,13 +178,24 @@ public static partial class RouteParser
         string template, string uri,
         IRouteableArgs? args = null,
         params string[] viewKeys)
-    {
-        args ??= RouteableArgs.Create();
+        => Check(template, uri, args ?? RouteableArgs.Create(), viewKeys, reasons: true);
 
-        var viewKeySet = new HashSet<string>(
-            viewKeys.Where(k => !string.IsNullOrWhiteSpace(k)),
-            StringComparer.OrdinalIgnoreCase);
-        var bound = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    // A mismatch without a reason (reasons false, the answer is only yes or no) is this text: no message is built and, without arguments to
+    // fill (args null), no set of bound names either. BestMatch asks this question of every candidate and keeps only the one it picks.
+    private const string NoReason = "";
+
+    private static string? Check(
+        string template, string uri,
+        IRouteableArgs? args, string[] viewKeys, bool reasons)
+    {
+        HashSet<string>? viewKeySet = null, bound = null;
+        if (args is not null)
+        {
+            viewKeySet = new HashSet<string>(
+                viewKeys.Where(k => !string.IsNullOrWhiteSpace(k)),
+                StringComparer.OrdinalIgnoreCase);
+            bound = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        }
 
         // The fragment is for the browser, never for the route: "/orders/42#top" is "/orders/42".
         if (uri.IndexOf('#') is var hash and >= 0)
@@ -196,11 +209,11 @@ public static partial class RouteParser
         var uSegs = uPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
         var restAt = parsed.RestAt;
         if (restAt >= 0 && restAt != tSegs.Length - 1)
-            return $"the catch-all placeholder {tSegs[restAt]} must be the last segment of the template";
+            return reasons ? $"the catch-all placeholder {tSegs[restAt]} must be the last segment of the template" : NoReason;
         if (parsed.OptionalNotLast is { } notLast)
-            return $"the optional placeholder {notLast} must be the last segment of the template";
+            return reasons ? $"the optional placeholder {notLast} must be the last segment of the template" : NoReason;
         if (restAt < 0 && uSegs.Length > tSegs.Length)
-            return $"the route has {uSegs.Length} segment(s), the template only {tSegs.Length} (unexpected \"{uSegs[tSegs.Length]}\")";
+            return reasons ? $"the route has {uSegs.Length} segment(s), the template only {tSegs.Length} (unexpected \"{uSegs[tSegs.Length]}\")" : NoReason;
 
         for (var i = 0; i < tSegs.Length; i++)
         {
@@ -210,7 +223,7 @@ public static partial class RouteParser
             if (m.Success && m.Groups["rest"].Success)
             {
                 var rest = string.Join('/', uSegs.Skip(i).Select(Uri.UnescapeDataString));
-                if (Bind(m, rest, args, viewKeySet, bound) is { } restFailure) return restFailure;
+                if (Bind(m, rest, args, viewKeySet, bound, reasons) is { } restFailure) return restFailure;
                 break;
             }
 
@@ -219,12 +232,13 @@ public static partial class RouteParser
             if (!m.Success) // literal segment
             {
                 if (!string.Equals(tSegs[i], raw, StringComparison.OrdinalIgnoreCase))
-                    return raw is null
-                        ? $"segment {i + 1} is missing, expected \"{tSegs[i]}\""
-                        : $"segment {i + 1} is \"{raw}\", expected \"{tSegs[i]}\"";
+                    return !reasons ? NoReason
+                        : raw is null
+                            ? $"segment {i + 1} is missing, expected \"{tSegs[i]}\""
+                            : $"segment {i + 1} is \"{raw}\", expected \"{tSegs[i]}\"";
                 continue;
             }
-            if (Bind(m, raw, args, viewKeySet, bound) is { } failure) return failure;
+            if (Bind(m, raw, args, viewKeySet, bound, reasons) is { } failure) return failure;
         }
 
         // --- query ---
@@ -240,20 +254,21 @@ public static partial class RouteParser
                 {
                     query.TryGetValue(part[..eq], out var got);
                     if (!string.Equals(got, part[(eq + 1)..], StringComparison.OrdinalIgnoreCase))
-                        return $"the query \"{part[..eq]}\" is \"{got}\", expected \"{part[(eq + 1)..]}\"";
+                        return reasons ? $"the query \"{part[..eq]}\" is \"{got}\", expected \"{part[(eq + 1)..]}\"" : NoReason;
                 }
                 continue;
             }
             query.TryGetValue(m.Groups["name"].Value, out var raw);
-            if (Bind(m, raw, args, viewKeySet, bound) is { } failure) return failure;
+            if (Bind(m, raw, args, viewKeySet, bound, reasons) is { } failure) return failure;
         }
 
         // Query values the template does not declare are neutral values (IRouteableArgs.Values, read by the lifecycle hooks): they
         // are not given to the constructor or injected into a property. The address is user input; letting it name what the page is
         // built with would break every link that carries a tracking parameter and let anyone fill a constructor parameter.
-        foreach (var (name, value) in query)
-            if (!bound.Contains(name))
-                args.ForValues(new RouteableArgument(value, name));
+        if (args is not null)
+            foreach (var (name, value) in query)
+                if (!bound!.Contains(name))
+                    args.ForValues(new RouteableArgument(value, name));
 
         return null;
     }
@@ -261,8 +276,8 @@ public static partial class RouteParser
     /// <summary>
     /// Binds a matched parameter pattern to its converted value and registers it in the arguments collection.
     /// </summary>
-    private static string? Bind(Match m, string? raw, IRouteableArgs args,
-                     HashSet<string> viewKeySet, HashSet<string> bound)
+    private static string? Bind(Match m, string? raw, IRouteableArgs? args,
+                     HashSet<string>? viewKeySet, HashSet<string>? bound, bool reasons)
     {
         var name = m.Groups["name"].Value;
         var type = m.Groups["type"].Value;
@@ -270,24 +285,27 @@ public static partial class RouteParser
         var optional = m.Groups["opt"].Success || m.Groups["rest"].Success;   // a catch-all may be empty
 
         if (AmbiguousNames.ContainsKey(type))
-            return $"the constraint \"{type}\" of {{{name}}} stands for several registered types: write the full name of the type";
+            return reasons ? $"the constraint \"{type}\" of {{{name}}} stands for several registered types: write the full name of the type" : NoReason;
 
         // A constraint that is neither built in nor registered is a mistake in the template: it never matches, and says so (instead of throwing
         // while the router looks for a route).
         if (!IsKnownConstraint(type))
-            return $"the constraint \"{type}\" of {{{name}}} is unknown (built in: {string.Join(", ", BuiltInConstraints)}; or register a serializer with RouteParser.RegisterSerializer)";
+            return reasons ? $"the constraint \"{type}\" of {{{name}}} is unknown (built in: {string.Join(", ", BuiltInConstraints)}; or register a serializer with RouteParser.RegisterSerializer)" : NoReason;
 
         if (string.IsNullOrEmpty(raw))
         {
             // a missing optional value is skipped, a missing required one is a mismatch
-            return optional ? null : $"the required parameter {{{name}}} is missing";
+            return optional ? null : reasons ? $"the required parameter {{{name}}} is missing" : NoReason;
         }
 
         if (!TryConvert(raw, type, out var value))
-            return $"\"{raw}\" is not a valid {(type.Length == 0 ? "value" : type)} for {{{name}}}";
+            return reasons ? $"\"{raw}\" is not a valid {(type.Length == 0 ? "value" : type)} for {{{name}}}" : NoReason;
 
-        bound.Add(name);
-        Add(args, viewKeySet, name, value, attribute);
+        if (args is not null)
+        {
+            bound!.Add(name);
+            Add(args, viewKeySet!, name, value, attribute);
+        }
         return null;
     }
 
@@ -369,10 +387,11 @@ public static partial class RouteParser
     {
         var best = default((string Template, Type? ViewModelType));
         int[]? bestRank = null;
-        foreach (var entry in entries)
+
+        void Consider((string Template, Type? ViewModelType) entry)
         {
             if (!TryMatch(entry.Template, uri))
-                continue;
+                return;
 
             var rank = Specificity(entry.Template);
             if (bestRank is null || CompareRanks(rank, bestRank) > 0)
@@ -382,7 +401,87 @@ public static partial class RouteParser
             }
         }
 
+        // The table of the application never changes once built (an add makes a new collection): it is indexed by the first literal
+        // segment, and only the templates that can open the address are tried, in the order they were registered (the order breaks a tie).
+        if (entries is ReadOnlyCollection<(string Template, Type? ViewModelType)> table && table.Count >= IndexFrom)
+        {
+            var index = Indexes.GetValue(table, t => new FirstSegmentIndex(t));
+            if (index.Count != table.Count)
+                index = new FirstSegmentIndex(table);   // a collection that was changed behind our back: the index is not trusted
+
+            foreach (var at in index.Candidates(FirstSegment(uri)))
+                Consider(table[at]);
+            return best;
+        }
+
+        foreach (var entry in entries)
+            Consider(entry);
         return best;
+    }
+
+    private const int IndexFrom = 8;                                // below this, trying every template is as quick as looking one up
+    private static readonly ConditionalWeakTable<ReadOnlyCollection<(string Template, Type? ViewModelType)>, FirstSegmentIndex> Indexes = new();
+
+    /// <summary>The first segment of an address as the matching reads it: the fragment and the query left out, empty segments skipped, unescaped.</summary>
+    private static string FirstSegment(string uri)
+    {
+        var end = uri.AsSpan().IndexOfAny('?', '#');
+        var path = end < 0 ? uri.AsSpan() : uri.AsSpan(0, end);
+        path = path.TrimStart('/');
+        var slash = path.IndexOf('/');
+        var first = slash < 0 ? path : path[..slash];
+        return first.IndexOf('%') < 0 ? first.ToString() : Uri.UnescapeDataString(first.ToString());
+    }
+
+    /// <summary>
+    /// The registered templates by their first segment: the ones that start with a literal under that literal, the ones that start
+    /// with a placeholder (or have no segment: "/") apart, because they can open any address.
+    /// </summary>
+    private sealed class FirstSegmentIndex
+    {
+        private readonly Dictionary<string, int[]> _byLiteral = new(StringComparer.OrdinalIgnoreCase);
+        private readonly int[] _open;
+        public int Count { get; }
+
+        public FirstSegmentIndex(ReadOnlyCollection<(string Template, Type? ViewModelType)> table)
+        {
+            Count = table.Count;
+            var literal = new Dictionary<string, List<int>>(StringComparer.OrdinalIgnoreCase);
+            var open = new List<int>();
+            for (var i = 0; i < table.Count; i++)
+            {
+                var parsed = ParseTemplate(table[i].Template);
+                if (parsed.Segments.Length > 0 && !parsed.SegmentMatches[0].Success)
+                {
+                    if (!literal.TryGetValue(parsed.Segments[0], out var list))
+                        literal[parsed.Segments[0]] = list = [];
+                    list.Add(i);
+                }
+                else
+                    open.Add(i);
+            }
+            foreach (var (key, list) in literal)
+                _byLiteral[key] = [.. list];
+            _open = [.. open];
+        }
+
+        /// <summary>The positions of the templates that can match an address starting with <paramref name="first"/>, in registration order.</summary>
+        public IEnumerable<int> Candidates(string first)
+        {
+            if (first.Length == 0 || !_byLiteral.TryGetValue(first, out var literal))
+                return _open;
+            if (_open.Length == 0)
+                return literal;
+
+            // both lists are in ascending order: the merge keeps the order of registration
+            var merged = new int[literal.Length + _open.Length];
+            int a = 0, b = 0, k = 0;
+            while (a < literal.Length && b < _open.Length)
+                merged[k++] = literal[a] < _open[b] ? literal[a++] : _open[b++];
+            while (a < literal.Length) merged[k++] = literal[a++];
+            while (b < _open.Length) merged[k++] = _open[b++];
+            return merged;
+        }
     }
 
     private static int[] Specificity(string template) => ParseTemplate(template).Rank;
