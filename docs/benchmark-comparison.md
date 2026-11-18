@@ -103,19 +103,18 @@ Written without being able to restore the packages: both steps of the CI job "Sa
 
 ## Results
 
-### Phase 1b: with views (one run, November 2026)
+### Phase 1b: with views (two runs, November 2026)
 
-.NET 10.0.15, Ubuntu 26.04.1 LTS, 4 cores, workstation GC, 200 steps, 30 runs after 5 warm-ups, Avalonia.Headless, a real view in a real window for every page. Every library ended on the expected page at every step (ReactiveUI: 180 of 200, no Forward). One run on a shared runner: read the allocations and the orders of magnitude.
+.NET 10.0.15, Ubuntu 26.04.1 LTS, 4 cores, workstation GC, 200 steps, 30 runs after 5 warm-ups, Avalonia.Headless, a real view in a real window for every page. Every library ended on the expected page at every step (ReactiveUI: 180 of 200, no Forward). Two runs on a shared runner: the allocations repeat to a few per cent, the times and the heap do not.
 
 | Library (Avalonia) | µs / step | B / step | heap after 1000 changes (KiB) | alive after the history is cleared |
 |---|---:|---:|---:|---:|
-| Routeables (12) | 412 | 61 262 | 9 371 | 0 of 100 |
-| ReactiveUI routing (12) | 180 | 30 041 | 1 244 | 0 of 100 |
-| Prism (11.3), **not comparable yet** | 35 | 4 691 | 286 | 100 of 100 |
+| Routeables (12) | 305 – 412 | 61 262 – 61 732 | 9 244 – 9 371 | 0 of 100 |
+| ReactiveUI routing (12) | 148 – 180 | 30 041 – 30 053 | 1 244 – 2 745 | 0 of 100 |
 
-- With the views, Routeables costs about 2.3 times the time and 2 times the allocations of ReactiveUI, against 3 times and 6 times without views: building and laying out a view is most of what a step costs, and it is the same work for both.
-- The heap that remains after 1000 changes is 7 times larger with Routeables (9.4 against 1.2 MiB). The measure does not say what holds it; it is not growing (the pages are released with the history). To look into.
-- **The Prism line is not comparable and is not a result.** It runs on another Avalonia (11.3), and its 4.7 KB per step is far below the cost of a view that the other two pay: the check of the driver only read the journal, not the window. The driver now fails if the region shows no view; until a run with that check is green, do not read the line. The 100 pages still alive after its history is cleared are not explained either: something holds them (Prism, its container, or the driver), and it is not written here as a defect of Prism.
+- With the views, Routeables costs about 2 times the time and 2 times the allocations of ReactiveUI (the two runs agree: 2.1 and 2.3 for the time, 2.0 for the allocations), against 3 and 6 times without views: building and laying out a view is most of what a step costs, and it is the same work for both.
+- The heap that remains after 1000 changes is 3 to 7 times larger with Routeables (the ReactiveUI figure moved from 1.2 to 2.7 MiB between the runs). The measure does not say what holds it; it is not growing (the pages are released with the history). To look into.
+- **Prism is not in this table**: it runs on another Avalonia (11.3), and its first line (35 µs, 4.7 KB per step, 100 pages still alive after the history is cleared) was far below the cost of a view that the other two pay, because the check of the driver only read the journal, not the window. The driver now fails if the region shows no view; its line is written here when a run with that check is green. The 100 pages alive are not explained and are not written as a defect of Prism.
 
 ### Phase 1, console (kept as a record; its ground is not equal)
 

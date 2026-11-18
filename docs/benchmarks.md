@@ -124,3 +124,14 @@ There are no screenshot tests. They compared each page with an image kept in the
 | **All** | **67.3%** | **64.9%** |
 
 The core libraries are at 88–99% of the lines. The hosts at the bottom (Native, Avalonia, Maui, Uno) are low because this job runs only `Routeables.Test`, on Windows: their code is exercised by `Routeables.Test.Maui`, `Routeables.Test.Uno`, `Routeables.Test.Avalonia` and the other test projects, whose coverage is not collected. A low figure there is a gap in what is measured, not proof that the code is untested. The CI fails under 65% of the lines of the whole (`--min 65` of `tools/coverage-summary.py`): a floor against a regression, raised by hand when the figure rises.
+
+The same libraries by the tests of their own host (one run each, the job summaries; a report is the lines that this one test run executed):
+
+| Host | Tests | Lines of the host covered |
+|---|---|---:|
+| Routeables.Maui | `Routeables.Test.Maui`, Windows device tests | 84.9% (1220 of 1437) |
+| Routeables.Uno | `Routeables.Test.Uno`, desktop | 74.2% (497 of 670) |
+| Routeables.Avalonia | `Routeables.Test.Avalonia`, headless | 17.2% (149 of 865) |
+| Routeables.Native | the same Maui run (the Windows part, 124 lines) | 1.6% |
+
+Avalonia is low even with its own tests: the headless tests drive the controls, not the Android and iOS bridges, the notifications or the platform services that make most of the assembly; read it with the list of what they do not reach before calling it untested. Android and Apple device tests are not measured (their code runs in an emulator the tool does not follow), so the Android and iOS parts of Maui and Native stay uncounted. The job "Code coverage, all the tests" merges the reports of the jobs, each line counted once, into one table.

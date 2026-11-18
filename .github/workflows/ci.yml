@@ -185,6 +185,30 @@ jobs:
           path: coverage/**/*.cobertura.xml
           if-no-files-found: warn
 
+  # The coverage of the libraries by every kind of test together: the reports of the jobs above, each line counted once (covered when any
+  # run covered it). Not gating: the floor of 65% is that of the job "Code coverage".
+  coverage-all:
+    name: Code coverage, all the tests
+    needs: [coverage, ui-avalonia, ui-uno, device-windows]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: '{coverage,coverage-avalonia,coverage-maui-windows,uno-results}'
+          path: reports
+
+      - name: Merge
+        run: |
+          reports=$(find reports -name '*.cobertura.xml')
+          if [ -z "$reports" ]; then echo "No coverage report was found." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
+          { echo "### Code coverage (all the tests together)"; python3 tools/coverage-summary.py $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
+
   # Phase 1 of docs/benchmark-comparison.md: the same 200-step navigation scenario on Routeables, ReactiveUI routing and a navigation
   # service of your own, on the console. The check (every step ends on the page the model expects) fails the job; the times and the
   # memory are written in the summary and are not gated: a shared runner is not a place to compare microseconds.
