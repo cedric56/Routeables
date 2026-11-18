@@ -225,8 +225,10 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             return;     // another site
 
         var path = Relative(context.TargetLocation);
-        if (SameAddress(AddressOf(router.History.Current), path))
-            return;     // the address of the page that is shown: the router moved first
+        // The address of the page that is shown: the router moved first (it is what the router itself writes, and must not start a route change).
+        // A link the user clicked is different: from a page that has no route, "/" is the home, not the page that is shown.
+        if (SameAddress(context.IsNavigationIntercepted ? OwnAddressOf(router.History.Current) : AddressOf(router.History.Current), path))
+            return;
 
         _pending = path;
         try
@@ -268,7 +270,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     private async Task<Outcome> ApplyAsync(string path, bool restore = true, CancellationToken cancellationToken = default, bool fromLink = false)
     {
         var history = router.History;
-        if (SameAddress(AddressOf(history.Current), path))
+        if (SameAddress(fromLink ? OwnAddressOf(history.Current) : AddressOf(history.Current), path))
             return Outcome.Done;
 
         RouteableResult result;
@@ -355,6 +357,11 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     private string? AddressOf(IHistoryEntry? entry)
         => entry is null ? null
            : entry.Args.Route is { } route && IsKnown(route) ? Url(route) : "/";
+
+    // The address a page has of its own: none for a page that has no route. Such a page is shown under "/" (the browser needs one), which is also
+    // the address of a home registered on "/": a link to "/" from that page must still go there, not be taken for the page that is shown.
+    private string? OwnAddressOf(IHistoryEntry? entry)
+        => entry?.Args.Route is { } route && IsKnown(route) ? Url(route) : null;
 
     // "about" and "/about" are the same address.
     // Exactly one leading slash: "//host" is a protocol-relative link (the browser leaves the application for host), and browsers

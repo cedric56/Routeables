@@ -95,6 +95,31 @@ public class AspNetCoreInteractionsTests
     }
 
     [Fact]
+    public async Task A_request_that_starts_an_action_waits_for_its_own_dialog_not_for_the_one_of_another_request()
+    {
+        using var interactions = new RouteableInteractions();
+        var gateA = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var gateB = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        // Request A starts an action that has not asked yet; request B (a double click, a second tab) starts another one.
+        var a = interactions.StartAsync(async () =>
+        {
+            await gateA.Task;
+            await interactions.AskAsync(new RouteableDialog("A", null, null, ["Ok"]));
+        });
+        var b = interactions.StartAsync(async () => await gateB.Task);
+
+        // The action of A asks: it is A that returns, B goes on waiting for its own action.
+        gateA.SetResult();
+        Assert.True(await EventuallyAsync(() => a.IsCompleted));
+        await Task.Delay(50, TestContext.Current.CancellationToken);
+        Assert.False(b.IsCompleted);
+
+        gateB.SetResult();
+        Assert.True(await EventuallyAsync(() => b.IsCompleted));
+    }
+
+    [Fact]
     public async Task An_action_left_waiting_for_a_dialog_is_finished_inside_the_request_that_answers_it()
     {
         using var interactions = new RouteableInteractions();

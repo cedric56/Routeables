@@ -356,6 +356,32 @@ public class RouteParserTests
         }
     }
 
+    public sealed record Fragile(string Name);
+
+    private sealed class FragileConverter : System.Text.Json.Serialization.JsonConverter<Fragile>
+    {
+        public override Fragile Read(ref System.Text.Json.Utf8JsonReader reader, Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+            => throw new InvalidOperationException("the converter of the application fails");
+        public override void Write(System.Text.Json.Utf8JsonWriter writer, Fragile value, System.Text.Json.JsonSerializerOptions options) { }
+    }
+
+    [Fact]
+    public void A_converter_that_fails_with_another_exception_is_an_address_that_does_not_match()
+    {
+        var options = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() };
+        options.Converters.Add(new FragileConverter());
+        try
+        {
+            RouteParser.RegisterSerializer<Fragile>(options.GetTypeInfo(typeof(Fragile)));
+
+            Assert.False(RouteParser.TryMatch("f/{x:Fragile}", "f/" + Uri.EscapeDataString("{\"Name\":\"a\"}")));
+        }
+        finally
+        {
+            RouteParser.UnregisterSerializer<Fragile>();
+        }
+    }
+
     [Fact]
     public void A_number_has_one_text_in_an_address()
     {
@@ -373,7 +399,7 @@ public class RouteParserTests
         foreach (var (template, refused) in new[]
         {
             ("x/{n:int}", new[] { "+42", "%2042", "42%20", "4,2", "007", "-0" }), ("x/{n:long}", new[] { "+42", "%2042", "007" }),
-            ("x/{n:decimal}", new[] { "+1.5", "%201.5", "1.5%20", "1,000.5" }), ("x/{n:double}", new[] { "+1.5", "%201.5", "NaN", "Infinity", "-Infinity" }),
+            ("x/{n:decimal}", new[] { "+1.5", "%201.5", "1.5%20", "1,000.5", "007", "01.5" }), ("x/{n:double}", new[] { "+1.5", "%201.5", "NaN", "Infinity", "-Infinity" }),
         })
         {
             foreach (var text in refused)

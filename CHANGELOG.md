@@ -6,6 +6,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **Blazor, a link to `/` from a page that has no route goes to the home registered on `/`**: such a page is shown under `/`, and the link was taken for the page that is shown, so the router did not move (`RouteableUrlSync`; only for a link the user clicked, what the router itself writes is still ignored).
+- **ASP.NET Core, a request waits for the dialog of its own action**: the signal "the action asked something" was one per visitor and replaced by each request, so with a double click or two tabs the dialog of request A woke request B and A stayed pending. The signal now belongs to the action (`RouteableInteractions`).
+- **A converter of the application that fails with any exception is an address that does not match**: only `JsonException` was caught, so another one came out of the search for a route for every address (`RouteParser`).
+- **`{n:decimal}` has one text too**: `007` and `01.5` are refused, like for the integers.
 - **A constructor parameter takes the value that has its name**: with `ProductViewModel(string category = "all", string id = "")` and `/products/{id}`, `/products/42` gave `category = "42"` and `id = ""`, because the values were handed out by type only. A value is now given to the parameter of its name first, and by type only to the parameter that no named value claims, with the generated code and with the reflection (`ConstructorArguments`, `RegisterRoute`).
 - **The generator writes the defaults of the constructors as literals of their type**: `float zoom = 1.5f`, `decimal price = 9.99m`, `double.NaN`, the infinities, `long.MinValue` and a negative enum value (`(E)(-1)`, not `(E)-1`) gave code that did not compile (`RouteBuilds`).
 - **A registered type named `Guid`, `String`, `Double`, `Decimal`... no longer replaces the constraint of that name**: `{id:guid}` kept reading JSON once such a type was registered; the built-in constraints come first, and the type is reached by its full name (`RouteParser`).

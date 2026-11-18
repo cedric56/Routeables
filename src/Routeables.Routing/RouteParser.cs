@@ -375,7 +375,12 @@ public static partial class RouteParser
         if (TryGetSerializer(type, out var info))
         {
             try { value = JsonSerializer.Deserialize(raw, info); }
-            catch (JsonException) { return false; }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                // Not only a JsonException: a converter of the application, a type the information cannot read... An address that cannot be read as
+                // the type is an address that does not match, not an exception out of the search for a route (it runs for every address).
+                return false;
+            }
             return value is not null;
         }
 
@@ -389,7 +394,7 @@ public static partial class RouteParser
             case "long": { long v = 0; var ok = long.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v) && v.ToString(inv) == raw; value = v; return ok; }
             case "bool": { var ok = raw == raw.Trim() && bool.TryParse(raw, out var v); value = ok && bool.Parse(raw); return ok; }
             case "guid": { var ok = Guid.TryParseExact(raw, "D", out var v); value = v; return ok; }
-            case "decimal": { decimal v = 0; var ok = !raw.StartsWith('+') && decimal.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, inv, out v); value = v; return ok; }
+            case "decimal": { decimal v = 0; var ok = !raw.StartsWith('+') && decimal.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, inv, out v) && v.ToString(inv) == raw; value = v; return ok; }
             case "double": { double v = 0; var ok = !raw.StartsWith('+') && double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v); value = v; return ok; }
             default:
                 value = null;

@@ -114,6 +114,11 @@ public class RouteableUrlSyncHistoryTests
     public sealed class DetailView : IRouteableFor { public object? Context { get; set; } }
     public sealed class DetailVm(int id) { public int Id { get; } = id; }
 
+    public sealed class RootView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class RootVm;
+    public sealed class OrphanView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class OrphanVm;
+
     public sealed class NamedView : IRouteableFor { public object? Context { get; set; } }
     public sealed class NamedVm(string name) { public string Name { get; } = name; }
 
@@ -152,6 +157,7 @@ public class RouteableUrlSyncHistoryTests
             services.RegisterRoute<HomeView, HomeVm>(route: "/home");
             services.RegisterRoute<DetailView, DetailVm>(route: "/detail/{id:int}");
             services.RegisterRoute<NamedView, NamedVm>(route: "/named/{name}");
+            services.RegisterRoute<RootView, RootVm>(route: "/");
             services.RegisterRoute<SlowView, SlowVm>(route: "/slow");
             services.AddSingleton<IRouteableErrorSink>(Errors);
             if (cancelCurrent)
@@ -193,6 +199,20 @@ public class RouteableUrlSyncHistoryTests
 
         Assert.Equal(-1, f.Scripts.Moves[0]);
         Assert.Empty(f.Navigation.Calls);                       // the address is not replaced: the browser moved itself
+    }
+
+    [Fact]
+    public async Task A_link_to_the_home_on_the_root_address_leaves_a_page_that_has_no_route()
+    {
+        using var f = new Fixture();
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+        Assert.True((await f.Router.GoAsync(new OrphanView(), new OrphanVm(), cancellationToken: TestContext.Current.CancellationToken)).Success);   // shown under "/", like the home
+        Assert.IsType<OrphanVm>(f.Router.CurrentViewModel);
+
+        Assert.True(await f.Navigation.ClickAsync("/"));
+
+        Assert.IsType<RootVm>(f.Router.CurrentViewModel);       // the link was taken for the page that is shown, and nothing moved
     }
 
     [Fact]

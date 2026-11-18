@@ -7,7 +7,7 @@ namespace Routeables.AspNetCore;
 /// awaits it; here the view model awaits too, but the answer comes with a later request: <see cref="StartAsync"/> runs an action until
 /// it ends or asks something, and <see cref="ContinueAsync(Action)"/> goes on once the visitor has answered.
 /// An instance belongs to one visitor, who runs one flow at a time: two requests of the same visitor that start or answer at the same moment
-/// (two tabs of the browser, a double click) share the signal that says "the action asked something", and one of them may return early.
+/// (two tabs of the browser, a double click) each wait for their own action: the signal that says "the action asked something" belongs to the action that asks.
 /// The lists it keeps (dialogs, toasts, system notifications) are safe to use from such requests: they are changed under a lock, and
 /// no callback of the application runs while it is held.
 /// </summary>
@@ -16,11 +16,15 @@ public sealed class RouteableInteractions : IDisposable
     private readonly object _gate = new();
     private readonly List<RouteableDialog> _dialogs = [];
     private readonly List<RouteableToast> _toasts = [];
-    private volatile TaskCompletionSource _asked = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     // The action that is running in the flow of the caller: the dialogs it asks belong to it, so that answering one waits for
     // that action, not for another one the visitor started in the meantime.
-    private sealed class Run { public Task? Task; }
+    // The signal "the action asked something" is its own: another request of the visitor must not be woken by it, nor wake this one.
+    private sealed class Run
+    {
+        public Task? Task;
+        public volatile TaskCompletionSource Asked = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    }
     private readonly AsyncLocal<Run?> _current = new();
     private int _nextToast;
     private readonly Dictionary<uint, RouteableBrowserNotification> _systemActive = [];
@@ -48,7 +52,7 @@ public sealed class RouteableInteractions : IDisposable
         dialog.Owner ??= _current.Value;
         lock (_gate)
             _dialogs.Add(dialog);
-        _asked.TrySetResult();
+        (dialog.Owner as Run)?.Asked.TrySetResult();
     }
 
     /// <summary>Completes when <paramref name="dialog"/> is answered, and removes it.</summary>
@@ -61,7 +65,6 @@ public sealed class RouteableInteractions : IDisposable
     /// <summary>Runs <paramref name="action"/> until it ends or shows a dialog.</summary>
     public Task StartAsync(Func<Task> action)
     {
-        _asked = new(TaskCreationOptions.RunContinuationsAsynchronously);
         var run = new Run();
         var outer = _current.Value;
         _current.Value = run;
@@ -75,7 +78,8 @@ public sealed class RouteableInteractions : IDisposable
 
     private Task ContinueAsync(Action answer, Run? owner)
     {
-        _asked = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        if (owner is not null)
+            owner.Asked = new(TaskCreationOptions.RunContinuationsAsynchronously);
         answer();
         return SettleAsync(owner);
     }
@@ -99,7 +103,7 @@ public sealed class RouteableInteractions : IDisposable
         if (run?.Task is not { } task)
             return;
 
-        await Task.WhenAny(task, _asked.Task);
+        await Task.WhenAny(task, run.Asked.Task);
         if (!task.IsCompleted)
             return;
 
