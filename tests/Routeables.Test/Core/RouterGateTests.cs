@@ -16,11 +16,11 @@ public class RouterGateTests
         gate.BeforeBegin = () =>
         {
             gate.BeforeBegin = null;
-            Task.Run(() => { second = gate.EnterAsync(); }, TestContext.Current.CancellationToken).Wait(TestContext.Current.CancellationToken);
+            Task.Run(() => { second = gate.EnterAsync(cancellationToken: TestContext.Current.CancellationToken); }, TestContext.Current.CancellationToken).Wait(TestContext.Current.CancellationToken);
         };
 
         await gate.EnterAsync(cancellationToken: TestContext.Current.CancellationToken);
-        try { Assert.True(gate.Observe(default).IsCancellationRequested); }
+        try { Assert.True(gate.Observe(TestContext.Current.CancellationToken).IsCancellationRequested); }
         finally { gate.Exit(); }
 
         Assert.NotNull(second);
@@ -73,8 +73,8 @@ public class RouterGateTests
         var mayEnd = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var running = Task.Run(async () =>
         {
-            await gate.EnterAsync();
-            try { entered.SetResult(gate.Observe(default)); await mayEnd.Task; }
+            await gate.EnterAsync(cancellationToken: TestContext.Current.CancellationToken);
+            try { entered.SetResult(gate.Observe(TestContext.Current.CancellationToken)); await mayEnd.Task; }
             finally { gate.Exit(); }
         }, TestContext.Current.CancellationToken);
         var token = await entered.Task;
@@ -115,7 +115,7 @@ public class RouterGateTests
         async Task Callback()
         {
             await Task.Yield();
-            try { await gate.EnterAsync(); }
+            try { await gate.EnterAsync(cancellationToken: TestContext.Current.CancellationToken); }
             catch (InvalidOperationException) { rejected = true; }
         }
 

@@ -224,7 +224,7 @@ public class RouteableUrlSyncHistoryTests
         await Task.Delay(200, TestContext.Current.CancellationToken);
 
         Assert.True(newer.Success);
-        Assert.Empty(f.Errors.Reported.Where(e => e is OperationCanceledException));
+        Assert.DoesNotContain(f.Errors.Reported, e => e is OperationCanceledException);
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => slow);
     }
 
