@@ -453,7 +453,7 @@ public static partial class RouteParser
             {
                 // The same path: the one that uses more of the query of the address is the more exact (/search?{q} over /search for /search?q=1).
                 queryScore = QueryScore(entry.Template, uri);
-                bestQuery ??= QueryScore(best.Template, uri);
+                bestQuery ??= QueryScore(best.Template!, uri);
                 if (queryScore > bestQuery)
                     order = 1;
             }
