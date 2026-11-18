@@ -21,7 +21,7 @@
     <PackageReference Include="Avalonia.Headless" />
     <PackageReference Include="Avalonia.Themes.Fluent" VersionOverride="12.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <!-- The coverage of Routeables.Avalonia (dotnet test --coverage): see the job "UI tests (Avalonia headless)". -->
+    <!-- The coverage of Routeables.Avalonia (the coverage option of dotnet test): see the job "UI tests (Avalonia headless)". -->
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio">
