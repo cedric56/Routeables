@@ -160,11 +160,12 @@ public static partial class RouteParser
 
     private static int Rank(Match m)
     {
-        if (!m.Success) return 3;                                   // literal
-        if (m.Groups["rest"].Success) return -1;                    // catch-all
-        if (m.Groups["opt"].Success) return 0;                      // optional
+        if (!m.Success) return 5;                                   // literal
+        if (m.Groups["rest"].Success) return 0;                     // catch-all
         var type = m.Groups["type"].Value;
-        return type is "" or "?" || type.Equals("string", StringComparison.OrdinalIgnoreCase) ? 1 : 2;   // untyped, or typed ({id:String} reads like {id})
+        var untyped = type is "" or "?" || type.Equals("string", StringComparison.OrdinalIgnoreCase);   // {id:String} reads like {id}
+        if (m.Groups["opt"].Success) return untyped ? 1 : 2;        // optional: {id:int?} before {tab?}
+        return untyped ? 3 : 4;                                     // untyped, typed
     }
 
     /// <summary>
@@ -404,7 +405,7 @@ public static partial class RouteParser
             case "bool": { var ok = raw == raw.Trim() && bool.TryParse(raw, out var v); value = ok && bool.Parse(raw); return ok; }
             case "guid": { var ok = Guid.TryParseExact(raw, "D", out var v); value = v; return ok; }
             case "decimal": { decimal v = 0; var ok = !raw.StartsWith('+') && decimal.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, inv, out v) && v.ToString(inv) == raw; value = v; return ok; }
-            case "double": { double v = 0; var ok = !raw.StartsWith('+') && double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v); value = v; return ok; }
+            case "double": { double v = 0; var ok = !raw.StartsWith('+') && double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v) && v.ToString(inv) == raw; value = v; return ok; }
             default:
                 value = null;
                 return false;   // not reached: Bind refuses an unknown constraint first

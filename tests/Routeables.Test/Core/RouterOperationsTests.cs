@@ -121,6 +121,24 @@ public class RouterOperationsTests
     }
 
     [Fact]
+    public async Task BackToRootAsync_DiscardsTheEntriesAfterTheRoot_EvenWhenTheCursorIsOnIt()
+    {
+        var router = CreateRouter();
+        var log = new CallLog();
+        await GoToAllAsync(router, log, "A", "B", "C");
+        await router.MoveToAsync(0, Ct);                     // on the root, with B and C after it
+        Assert.True(router.CanGoForward);
+        log.Clear();
+
+        var result = await router.GoBackToRootAsync(Ct);
+
+        Assert.True(result.Success);
+        Assert.Equal(1, router.History.Count);
+        Assert.False(router.CanGoForward);
+        Assert.Equal(4, Destroyed(log).Count());             // the view and the view model of B and C were destroyed
+    }
+
+    [Fact]
     public async Task BackToRootAsync_IsCancelled_WhenTheCurrentPageRefuses()
     {
         var router = CreateRouter();

@@ -84,18 +84,36 @@ public sealed class RouteableInteractions : IDisposable
         return SettleAsync(owner);
     }
 
-    /// <summary>Gives the button <paramref name="index"/> as the answer of the dialog that waits.</summary>
-    public Task AnswerAsync(int index)
-    {
-        var dialog = Pending;
+    /// <summary>
+    /// Gives the button <paramref name="index"/> as the answer of the dialog that waits. It answers whichever dialog waits when the request
+    /// arrives: a double click on the button of a dialog can answer the one that the first click made appear. Prefer
+    /// <see cref="AnswerAsync(int, long)"/>, which names the dialog.
+    /// </summary>
+    public Task AnswerAsync(int index) => AnswerAsync(Pending, index);
 
+    /// <summary>
+    /// Gives the button <paramref name="index"/> as the answer of the dialog <paramref name="dialogId"/> (<see cref="RouteableDialog.Id"/>, sent back by the
+    /// form that showed it), if it is the one that waits and nobody answered it yet; an answer to another dialog (a double click, another tab of
+    /// the browser) is ignored.
+    /// </summary>
+    public Task AnswerAsync(int index, long dialogId)
+        => Pending is { } dialog && dialog.Id == dialogId ? AnswerAsync(dialog, index) : Task.CompletedTask;
+
+    private Task AnswerAsync(RouteableDialog? dialog, int index)
+    {
         // The index comes from the form of the page: anyone can post another number. A button that does not exist is not an answer; the
         // dialog stays, and the action that waits for it must not be told to go on (nor the signal be replaced: the request would wait for ever).
         if (dialog is not null && (index < 0 || index >= dialog.Buttons.Count))
             return Task.CompletedTask;
+        if (dialog is not null && !dialog.TryClaim())
+            return Task.CompletedTask;     // answered by a request that is still being served
 
         return ContinueAsync(() => dialog?.Answer.TrySetResult(index), dialog?.Owner as Run);
     }
+
+    /// <summary>The same as <see cref="ContinueAsync(Action)"/> for the dialog <paramref name="dialogId"/> only: nothing is done when another one waits.</summary>
+    public Task ContinueAsync(Action answer, long dialogId)
+        => Pending is { } dialog && dialog.Id == dialogId && dialog.TryClaim() ? ContinueAsync(answer, dialog.Owner as Run) : Task.CompletedTask;
 
     // Waits for the action to end or to ask something; its failure reaches the request that waits for it.
     private async Task SettleAsync(Run? run)

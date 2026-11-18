@@ -170,7 +170,15 @@ namespace Routeables.Generated
                 if (routeableAttr is null && routeableViewAttr is null)
                     return CompiledModel.Empty;
 
-                foreach (var type in GetAllTypes(compilation))
+                // A type carries [Routeable] or [RouteableView] only in an assembly that references the one the attributes are in: the other
+                // referenced assemblies (the libraries of controls, of mapping, of logging...) are only searched, below, for the views the
+                // view models ask for by name, and cheaply: by the names of their types, without creating a symbol for each one of them.
+                var attributeAssemblies = new HashSet<string>(StringComparer.Ordinal);
+                if (routeableAttr is not null) attributeAssemblies.Add(routeableAttr.ContainingAssembly.Name);
+                if (routeableViewAttr is not null) attributeAssemblies.Add(routeableViewAttr.ContainingAssembly.Name);
+                var plainReferences = new List<IAssemblySymbol>();
+
+                foreach (var type in GetAllTypes(compilation, attributeAssemblies, plainReferences))
                 {
                     ct.ThrowIfCancellationRequested();
 
@@ -203,6 +211,16 @@ namespace Routeables.Generated
                     routes.Where(r => r.Name.Length > ViewModelSuffix.Length && r.Name.EndsWith(ViewModelSuffix, StringComparison.Ordinal))
                           .Select(r => r.Name.Substring(0, r.Name.Length - ViewModelSuffix.Length) + ViewSuffix),
                     StringComparer.Ordinal);
+                foreach (var assembly in plainReferences)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    if (routeableAttr is null || !assembly.TypeNames.Any(wanted.Contains))
+                        continue;
+                    foreach (var type in GetTypesInNamespace(assembly.GlobalNamespace))
+                        if (wanted.Contains(type.Name) && IsConventionView(type) && compilation.IsSymbolAccessibleWithin(type, compilation.Assembly))
+                            conventionViews.Add(type);
+                }
+
                 foreach (var type in conventionViews)
                 {
                     ct.ThrowIfCancellationRequested();
@@ -303,7 +321,9 @@ namespace Routeables.Generated
             return false;
         }
 
-        private static IEnumerable<INamedTypeSymbol> GetAllTypes(Compilation compilation)
+        // The types of the assembly being compiled and of the referenced assemblies that can hold a [Routeable] type (they reference the assembly of
+        // the attributes). The others, but the frameworks, are put in plainReferences.
+        private static IEnumerable<INamedTypeSymbol> GetAllTypes(Compilation compilation, HashSet<string> attributeAssemblies, List<IAssemblySymbol> plainReferences)
         {
             // The assembly being compiled only: compilation.GlobalNamespace is the merge of this assembly and of every reference
             // (the framework included), which the loop below would then walk a second time.
@@ -318,6 +338,12 @@ namespace Routeables.Generated
                 // Skip obvious framework / NuGet assemblies to limit cost
                 if (IsFrameworkAssembly(asm.Name))
                     continue;
+
+                if (!asm.Modules.Any(module => module.ReferencedAssemblies.Any(identity => attributeAssemblies.Contains(identity.Name))))
+                {
+                    plainReferences.Add(asm);
+                    continue;
+                }
 
                 foreach (var t in GetTypesInNamespace(asm.GlobalNamespace))
                     yield return t;

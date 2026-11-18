@@ -71,7 +71,7 @@ public class MainViewPageModel(IRouteableMenuViewModel main, IRouter router, ISe
         var form = Request.Form;
         var before = router.CurrentViewModel;
 
-        await PageActions.RunAsync(provider, form["target"].ToString(), form["do"].ToString(), form["value"].ToString());
+        await PageActions.RunAsync(provider, form["target"].ToString(), form["do"].ToString(), form["value"].ToString(), form["dialog"].ToString());
 
         // A button can move the router (Open Members, Sign out): the address follows the page that is shown.
         var url = Address(path ?? "") + Request.QueryString.Value;

@@ -95,6 +95,51 @@ public class AspNetCoreInteractionsTests
     }
 
     [Fact]
+    public async Task A_double_click_does_not_answer_the_next_dialog_with_the_button_of_the_first()
+    {
+        using var interactions = new RouteableInteractions();
+        var answers = new List<int>();
+        await interactions.StartAsync(async () =>
+        {
+            answers.Add(await interactions.AskAsync(new RouteableDialog("First", null, null, ["Yes", "No"])));
+            answers.Add(await interactions.AskAsync(new RouteableDialog("Second", null, null, ["Yes", "No"])));
+        });
+        var first = interactions.Pending!;
+
+        await interactions.AnswerAsync(0, first.Id);        // the first click: the second dialog is on the page now
+        var second = interactions.Pending!;
+        Assert.NotSame(first, second);
+        await interactions.AnswerAsync(0, first.Id);        // the second click of the double click: still the first dialog's id
+
+        Assert.Same(second, interactions.Pending);
+        Assert.Equal([0], answers);                         // the second dialog was not answered
+
+        await interactions.AnswerAsync(1, second.Id);
+        Assert.Equal([0, 1], answers);
+    }
+
+    [Fact]
+    public async Task Two_requests_that_answer_the_same_dialog_at_once_answer_it_once()
+    {
+        using var interactions = new RouteableInteractions();
+        var answers = new List<int>();
+        await interactions.StartAsync(async () =>
+        {
+            answers.Add(await interactions.AskAsync(new RouteableDialog("First", null, null, ["Yes", "No"])));
+            answers.Add(await interactions.AskAsync(new RouteableDialog("Second", null, null, ["Yes", "No"])));
+        });
+        var first = interactions.Pending!;
+
+        var one = interactions.AnswerAsync(0, first.Id);
+        var other = interactions.AnswerAsync(1, first.Id);      // no await between them: the dialog is still the one that waits
+        await Task.WhenAll(one, other).WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+
+        Assert.Equal([0], answers);
+        Assert.NotNull(interactions.Pending);
+        Assert.NotSame(first, interactions.Pending);
+    }
+
+    [Fact]
     public async Task A_request_that_starts_an_action_waits_for_its_own_dialog_not_for_the_one_of_another_request()
     {
         using var interactions = new RouteableInteractions();

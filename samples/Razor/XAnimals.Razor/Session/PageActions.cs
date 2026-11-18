@@ -40,7 +40,7 @@ public static class PageActions
             await provider.GetRouter(TabsViewModel.Region).GoToAsync(TabRoutes[0].Route);
     }
 
-    public static async Task RunAsync(IServiceProvider provider, string target, string action, string? value)
+    public static async Task RunAsync(IServiceProvider provider, string target, string action, string? value, string? dialog = null)
     {
         var (name, index) = Split(action);
         var interactions = provider.GetRequiredService<RouteableInteractions>();
@@ -48,7 +48,7 @@ public static class PageActions
         switch (target)
         {
             case Dialog:
-                await RunDialogAsync(interactions, name, index, value);
+                await RunDialogAsync(interactions, name, index, value, long.TryParse(dialog, out var dialogId) ? dialogId : null);
                 return;
             case Toast:
                 interactions.Dismiss(index, click: name == "click");
@@ -203,12 +203,12 @@ public static class PageActions
         return action is null ? Task.CompletedTask : interactions.StartAsync(action);
     }
 
-    private static Task RunDialogAsync(RouteableInteractions interactions, string name, int index, string? value)
+    private static Task RunDialogAsync(RouteableInteractions interactions, string name, int index, string? value, long? dialogId)
     {
         switch (name)
         {
             case "answer":
-                return interactions.AnswerAsync(index);
+                return dialogId is { } id ? interactions.AnswerAsync(index, id) : Task.CompletedTask;     // a form that does not name its dialog answers none
 
             case "note" when interactions.Pending?.ViewModel is NoteViewModel note:
                 // Save is the first command of the note, Cancel the second; an empty note cannot be saved.
@@ -217,7 +217,7 @@ public static class PageActions
                 if (index == 0)
                     note.Note = value!;
                 var command = (AsyncCommand)note.Commands[index == 0 ? 0 : 1].Command;
-                return interactions.ContinueAsync(() => command.Execute(null));
+                return dialogId is { } noteId ? interactions.ContinueAsync(() => command.Execute(null), noteId) : Task.CompletedTask;
 
             default:
                 return Task.CompletedTask;

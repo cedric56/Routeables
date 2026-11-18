@@ -439,7 +439,7 @@ public class RouteParserTests
         foreach (var (template, accepted) in new[]
         {
             ("x/{n:int}", new[] { "42", "-42", "0" }), ("x/{n:long}", new[] { "42", "-4200000000000" }),
-            ("x/{n:decimal}", new[] { "1.5", "-1.5", "10" }), ("x/{n:double}", new[] { "1.5", "-0.25", "1e3" }),
+            ("x/{n:decimal}", new[] { "1.5", "-1.5", "10" }), ("x/{n:double}", new[] { "1.5", "-0.25", "1000", "1E+20" }),
         })
         {
             foreach (var text in accepted)
@@ -449,7 +449,7 @@ public class RouteParserTests
         foreach (var (template, refused) in new[]
         {
             ("x/{n:int}", new[] { "+42", "%2042", "42%20", "4,2", "007", "-0" }), ("x/{n:long}", new[] { "+42", "%2042", "007" }),
-            ("x/{n:decimal}", new[] { "+1.5", "%201.5", "1.5%20", "1,000.5", "007", "01.5" }), ("x/{n:double}", new[] { "+1.5", "%201.5", "NaN", "Infinity", "-Infinity" }),
+            ("x/{n:decimal}", new[] { "+1.5", "%201.5", "1.5%20", "1,000.5", "007", "01.5" }), ("x/{n:double}", new[] { "+1.5", "%201.5", "NaN", "Infinity", "-Infinity", "7.0", "1e3", "07", "1.50" }),
         })
         {
             foreach (var text in refused)

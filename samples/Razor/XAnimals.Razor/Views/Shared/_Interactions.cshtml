@@ -22,6 +22,7 @@
     <div class="web-dialog-backdrop">
         <form method="post" class="web-dialog" role="dialog" aria-modal="true" aria-labelledby="web-dialog-title">
             <input type="hidden" name="target" value="dialog" />
+            <input type="hidden" name="dialog" value="@dialog.Id" />
             <h2 id="web-dialog-title">@dialog.Title</h2>
             @if (dialog.Header is { Length: > 0 }) { <p><strong>@dialog.Header</strong></p> }
             @if (dialog.Body is { Length: > 0 }) { <p>@dialog.Body</p> }

@@ -6,21 +6,59 @@
 /// </summary>
 internal class ScopedViewCache : IDisposable, IAsyncDisposable
 {
-    private readonly Dictionary<object, object> _cache = new();
+    // One entry per key: the factory (code of the application: a constructor) runs under the lock of its own entry, never under the one of the
+    // cache, so that a constructor that waits for another thread which asks this cache for something else does not block it for ever.
+    private sealed class Entry { public readonly object Gate = new(); public object? Value; }
+
+    private readonly Dictionary<object, Entry> _cache = new();
     private readonly object _gate = new();
     private bool _disposed;
 
     public object GetOrCreate(object key, Func<object> factory)
     {
+        Entry entry;
         // A plain Dictionary is not safe for concurrent reads and writes: every access takes the lock.
         lock (_gate)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
 
-            if (_cache.TryGetValue(key, out var existing))
+            if (!_cache.TryGetValue(key, out entry!))
+                _cache[key] = entry = new Entry();
+            else if (entry.Value is { } existing)
                 return existing;
+        }
 
-            return _cache[key] = factory();
+        lock (entry.Gate)
+        {
+            if (entry.Value is { } built)
+                return built;       // another caller built it while this one waited for the entry
+
+            object created;
+            try { created = factory(); }
+            catch
+            {
+                // Nothing was kept: the next caller builds it again.
+                lock (_gate)
+                {
+                    if (_cache.TryGetValue(key, out var current) && ReferenceEquals(current, entry))
+                        _cache.Remove(key);
+                }
+                throw;
+            }
+
+            lock (_gate)
+            {
+                if (!_disposed)
+                {
+                    entry.Value = created;
+                    return created;
+                }
+            }
+
+            // The cache was disposed while the page was being built: nobody will dispose it but this.
+            if (created is IDisposable disposable) disposable.Dispose();
+            else if (created is IAsyncDisposable asyncDisposable) AsyncDisposal.Start<ScopedViewCache>(asyncDisposable);
+            throw new ObjectDisposedException(GetType().Name);
         }
     }
 
@@ -28,7 +66,7 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
     public bool Owns(object instance)
     {
         lock (_gate)
-            return _cache.Values.Any(v => ReferenceEquals(v, instance));
+            return _cache.Values.Any(v => ReferenceEquals(v.Value, instance));
     }
 
     public void Dispose()
@@ -49,8 +87,11 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
 
     private static void Raise(List<Exception>? failures)
     {
-        if (failures is not null)
-            throw failures.Count == 1 ? failures[0] : new AggregateException(failures);
+        if (failures is null)
+            return;
+        if (failures.Count == 1)
+            System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failures[0]).Throw();     // with its own stack, not the one of this method
+        throw new AggregateException(failures);
     }
 
     public async ValueTask DisposeAsync()
@@ -75,7 +116,7 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
         {
             if (_disposed) return [];
             _disposed = true;
-            var items = _cache.Values.ToList();
+            var items = _cache.Values.Select(entry => entry.Value).OfType<object>().ToList();
             _cache.Clear();
             return items;
         }

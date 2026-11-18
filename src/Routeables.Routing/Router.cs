@@ -283,9 +283,19 @@ internal class Router(
     /// <inheritdoc />
     public async Task<RouteableResult> GoBackToRootAsync(CancellationToken cancellationToken = default)
     {
-        return await RunGatedAsync(cancellationToken, token =>
-            MoveAsync(RouteableKind.Root, history.Root,
-                history.MoveToRoot, token));
+        return await RunGatedAsync(cancellationToken, async token =>
+        {
+            // Already on the root with entries after it (it went back to it): nothing moves, but the entries after it are discarded all the same, as
+            // when the cursor comes from further away. They would otherwise be kept (and their pages) for a forward that was asked to be forgotten.
+            if (history.Current is { } current && ReferenceEquals(current, history.Root) && history.Count > 1)
+            {
+                var removed = history.MoveToRoot();
+                await lifecycle.DestroyAsync(removed, history.Snapshot());
+                return RouteableResult.Ok();
+            }
+
+            return await MoveAsync(RouteableKind.Root, history.Root, history.MoveToRoot, token);
+        });
     }
 
     /// <inheritdoc />

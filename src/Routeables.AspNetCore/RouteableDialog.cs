@@ -22,6 +22,19 @@ public sealed class RouteableDialog(string title, string? header, string? body, 
     /// <summary>The view model of a modal dialog (the note); a message has none.</summary>
     public object? ViewModel { get; init; }
 
+    private static long _lastId;
+
+    /// <summary>
+    /// The number of this dialog, unique in the process. The form of the page sends it back with the answer
+    /// (<c>RouteableInteractions.AnswerAsync(int, long)</c>): an answer to a dialog that is no longer the one waiting (a double click, another tab) is ignored.
+    /// </summary>
+    public long Id { get; } = Interlocked.Increment(ref _lastId);
+
+    private int _answered;
+
+    // The first answer takes the dialog; a second one for the same dialog (a double click that came before the next dialog was shown) is ignored.
+    internal bool TryClaim() => Interlocked.Exchange(ref _answered, 1) == 0;
+
     /// <summary>The action that asked it (see <c>RouteableInteractions.StartAsync</c>); the request that answers it waits for that action.</summary>
     internal object? Owner { get; set; }
 
