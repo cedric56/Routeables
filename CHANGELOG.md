@@ -6,6 +6,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A typed menu entry whose address is not its template finds its view**: `new RouteableMenuEntry<OrderVm>("Order 5", route: "/orders/5", template: "/orders/{id:int}")` looked the view up by the address (`No view is registered under the key "/orders/5"`); the keys come from the template, as everywhere else.
+- **`RouteableMenuEntry<T>` takes the route of its view model, as documented**: with no `template` (a `route` only) the template is the one the address matches; with neither, the registered route of the view model. Both held an internal key before, and the entry always failed.
+- **The type guards (`IRouteTypeGuard`) are asked for a page registered with no route**, opened from a menu: it is not in the table of routes, so the guard was skipped and the constructor ran. The type of the request is used when the table does not know it.
+- **A `decimal` has one text**: `1.50` and `1.0` are refused (`1.5`, `1` are the texts), and `Build` writes a decimal without its trailing zeros. A `bool` is still read in any case and a `Guid` in upper or lower case on purpose: links written by hand and by other tools use both.
 - **`ScopedViewCache`: a circular dependency is an error**: a constructor that asked its own cache for its own key built again, for ever, until the stack overflowed (the lock is re-entrant). It now throws `InvalidOperationException`, and the key can be built afterwards.
 - **ASP.NET Core, the buttons of a task dialog are translated**: `ShowTaskDialogAsync` wrote the name of the enum value, the other hosts go through `RouteableTexts.Button` (the translator of the application).
 - **The generator leaves out a `[Routeable]` view model it cannot reach** (private nested class, internal in another assembly): `ROUT207` instead of code that did not compile (CS0122).

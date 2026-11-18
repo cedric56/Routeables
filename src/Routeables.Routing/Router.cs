@@ -430,6 +430,7 @@ internal class Router(
         object? viewModel = null,
         object? view = null,
         CancellationToken cancellationToken = default,
+        Type? viewModelType = null,
         params string[] viewKeys)
     {
         // One route change, one arguments instance. The caller's (RouteableMenuEntry.Arguments is reused on every click) is only a
@@ -446,7 +447,7 @@ internal class Router(
             // What this call builds (not what the caller handed over, which it keeps): if the route change does not show it
             // (a guard or CanLeave refused, a redirect, an exception), nobody else would ever dispose it.
             // A page that is going to be built is first asked of the guards that need only its type (a visitor who is turned away costs no constructor).
-            if (viewModel is null && await AskTypeGuardsAsync(template, route, cancellationToken) is { } refused)
+            if (viewModel is null && await AskTypeGuardsAsync(template, route, viewModelType, cancellationToken) is { } refused)
                 return refused;
 
             var built = new List<object>();
@@ -503,14 +504,15 @@ internal class Router(
         .OrderBy(pair => pair.guard.Order).ThenBy(pair => pair.index).Select(pair => pair.guard)];
 
     // The result of a route change that the type guards refuse (null when they allow it): cancelled, or the route change of the redirection.
-    private async Task<RouteableResult?> AskTypeGuardsAsync(string template, string route, CancellationToken cancellationToken)
+    private async Task<RouteableResult?> AskTypeGuardsAsync(string template, string route, Type? requestedType, CancellationToken cancellationToken)
     {
         var guards = TypeGuards;
         if (guards.Length == 0)
             return null;
 
+        // The type of the route table; a page registered with no route (opened from a menu) is not in it, and is the type the request names.
         var type = provider.GetService<RouteableTable>()?.Entries
-            .FirstOrDefault(entry => RouteAddress.SamePath(entry.Template, template)).ViewModelType;
+            .FirstOrDefault(entry => RouteAddress.SamePath(entry.Template, template)).ViewModelType ?? requestedType;
         if (type is null)
             return null;
 
@@ -723,13 +725,14 @@ internal class Router(
         if (type is null)
             return GoToViewAsync(routeableView, routeableView.Template, routeableView.Template, cancellationToken, viewKeys, supplied);
 
-        var keys = RouteableKeys.GetKeys(type, routeableView.Route);
-        return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys, supplied);
+        ResolveTypedEntry(routeableView, type);
+        var keys = RouteableKeys.GetKeys(type, routeableView.Template);
+        return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys, supplied, type);
     }
 
     // Goes to the entry, then gives it back the page the router shows so that the next visit finds it.
     private async Task<RouteableResult> GoToViewAsync(
-        IRouteableMenuEntry routeableView, string viewKey, string viewModelKey, CancellationToken cancellationToken, string[] viewKeys, IRouteableArgs? supplied = null)
+        IRouteableMenuEntry routeableView, string viewKey, string viewModelKey, CancellationToken cancellationToken, string[] viewKeys, IRouteableArgs? supplied = null, Type? viewModelType = null)
     {
         var result = await GoToRouteAsync(
             routeableView.Arguments.Route ?? routeableView.Route,
@@ -740,7 +743,8 @@ internal class Router(
             Reusable(routeableView.ViewModel),
             Reusable(routeableView.View),
             cancellationToken,
-            viewKeys);
+            viewModelType,
+            viewKeys: viewKeys);
         // Only the page this entry asked for: a guard may have sent the user elsewhere (a sign-in), and the entry must not remember that page.
         if (result.Success && WentTo(routeableView))
         {
@@ -772,7 +776,7 @@ internal class Router(
         // RouteParser.TryMatch fills the instance it is given; without one the parsed route values would be lost.
         return GoToRouteAsync(
             route, template, keys.viewKey, keys.viewModelKey,
-            args ?? RouteableArgs.Create(), null, null, cancellationToken, viewKeys);
+            args ?? RouteableArgs.Create(), null, null, cancellationToken, viewModelType, viewKeys: viewKeys);
     }
 
     // What a route is called in the telemetry: its template, never the address (an address holds identifiers, and one series per address is unbounded).
@@ -819,7 +823,40 @@ internal class Router(
 
     private Task<RouteableResult> GoToEntryAsync(IRouteableMenuEntry routeableView, Type viewModelType, CancellationToken cancellationToken, string[] viewKeys)
     {
-        var keys = RouteableKeys.GetKeys(viewModelType, routeableView.Route);
-        return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys);
+        ResolveTypedEntry(routeableView, viewModelType);
+        var keys = RouteableKeys.GetKeys(viewModelType, routeableView.Template);
+        return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys, null, viewModelType);
+    }
+
+    // A typed entry (RouteableMenuEntry<T>) made with no template, or with no route, holds the internal key of its type for what it was not given.
+    // The registered route of the view model is read here (the entry has no access to the table): the template of the address it was given, or the
+    // route of the view model itself. The keys of the page are those of its template, as everywhere else.
+    private void ResolveTypedEntry(IRouteableMenuEntry entry, Type type)
+    {
+        if (entry is not RouteableMenuEntry typed)
+            return;
+
+        var internalKey = RouteableKeys.GetRoute(type);
+        var noTemplate = string.Equals(typed.Template, internalKey, StringComparison.Ordinal);
+        var noRoute = string.Equals(typed.Route, internalKey, StringComparison.Ordinal);
+        if (noTemplate && noRoute)
+        {
+            var registered = provider.GetService<RouteableTable>()?.Entries
+                .Where(e => e.ViewModelType == type).Select(e => e.Template).FirstOrDefault();
+            if (registered is not null)
+            {
+                typed.Template = registered;
+                typed.Route = registered;
+            }
+        }
+        else if (noTemplate)
+        {
+            if (TryTemplateOf(typed.Route, out var template))
+                typed.Template = template;
+        }
+        else if (noRoute && !typed.Template.Contains('{'))
+        {
+            typed.Route = typed.Template;
+        }
     }
 }

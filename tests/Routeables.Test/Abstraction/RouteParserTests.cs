@@ -504,4 +504,15 @@ public class RouteParserTests
         Assert.False(RouteParser.TryMatch("/dup/{id}?{id}", "/dup/1?id=2", RouteableArgs.Create()));
         Assert.Equal("/dup/1?x=2", RouteParser.Build("/dup/{id}?{x}", new { id = 1, x = 2 }));
     }
+
+    [Fact]
+    public void A_decimal_has_one_text_whatever_zeros_it_was_written_with()
+    {
+        Assert.True(RouteParser.TryMatch("x/{n:decimal}", "x/1.5", RouteableArgs.Create()));
+        Assert.False(RouteParser.TryMatch("x/{n:decimal}", "x/1.50", RouteableArgs.Create()));
+        Assert.False(RouteParser.TryMatch("x/{n:decimal}", "x/1.0", RouteableArgs.Create()));
+        Assert.True(RouteParser.TryMatch("x/{n:decimal}", "x/10", RouteableArgs.Create()));
+        Assert.Equal("x/1.5", RouteParser.Build("x/{n:decimal}", new { n = 1.50m }));
+        Assert.Equal("x/10", RouteParser.Build("x/{n:decimal}", new { n = 10.00m }));
+    }
 }
