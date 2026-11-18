@@ -645,6 +645,27 @@ jobs:
       - name: Test
         run: dotnet test --project tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
+      # What these tests cover of Routeables.Avalonia: the job "Code coverage" runs only Routeables.Test, which does not reach the controls.
+      # The tests run a second time with the coverage extension, in a step that cannot fail the job until one run is green.
+      - name: Coverage of Routeables.Avalonia
+        continue-on-error: true
+        shell: bash
+        run: |
+          dotnet test --project tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }} \
+            --coverage --coverage-output-format cobertura --coverage-settings tests/CodeCoverage.settings.xml \
+            --results-directory coverage-avalonia
+          reports=$(find coverage-avalonia -name '*.cobertura.xml')
+          if [ -z "$reports" ]; then echo "No coverage report was written." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
+          { echo "### Code coverage (Routeables.Test.Avalonia)"; python3 tools/coverage-summary.py $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-avalonia
+          path: coverage-avalonia/**/*.cobertura.xml
+          if-no-files-found: ignore
+
   ui-playwright:
     name: UI tests (Playwright, Blazor)
     runs-on: ubuntu-24.04
@@ -717,12 +738,28 @@ jobs:
           UNO_RUNTIME_TESTS_OUTPUT_PATH: ${{ github.workspace }}/uno-results.xml
         run: xvfb-run -a dotnet tests/Routeables.Test.Uno/bin/${{ env.CONFIGURATION }}/net10.0-desktop/Routeables.Test.Uno.dll
 
+      # What these tests cover of Routeables.Uno. The application is not a `dotnet test` run, so the coverage tool of Visual Studio
+      # (dotnet-coverage) starts it and follows its processes. Second run, in a step that cannot fail the job until one run is green.
+      - name: Coverage of Routeables.Uno
+        continue-on-error: true
+        env:
+          UNO_RUNTIME_TESTS_RUN_TESTS: '{}'
+          UNO_RUNTIME_TESTS_OUTPUT_PATH: ${{ github.workspace }}/uno-results-coverage.xml
+        run: |
+          dotnet tool install --global dotnet-coverage --version 18.12.0
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          xvfb-run -a dotnet-coverage collect --settings tests/CodeCoverage.settings.xml -f cobertura -o coverage-uno/uno.cobertura.xml \
+            "dotnet tests/Routeables.Test.Uno/bin/${{ env.CONFIGURATION }}/net10.0-desktop/Routeables.Test.Uno.dll"
+          { echo "### Code coverage (Routeables.Test.Uno)"; python3 tools/coverage-summary.py coverage-uno/uno.cobertura.xml; } | tee -a "$GITHUB_STEP_SUMMARY"
+
       - name: Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: uno-results
-          path: uno-results.xml
+          path: |
+            uno-results.xml
+            coverage-uno/*.cobertura.xml
           if-no-files-found: warn
 
 
@@ -797,6 +834,27 @@ jobs:
 
       - name: Test
         run: dotnet msbuild tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-windows10.0.19041.0 -p:Configuration=Debug
+
+      # What these tests cover of Routeables.Maui and of the Windows part of Routeables.Native. Android and Apple are not measured: their code
+      # runs in an emulator or a simulator that this tool does not follow. The tests run a second time under dotnet-coverage, in a step that
+      # cannot fail the job until one run is green.
+      - name: Coverage of Routeables.Maui (Windows)
+        continue-on-error: true
+        shell: bash
+        run: |
+          dotnet tool install --global dotnet-coverage --version 18.12.0
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet-coverage collect --settings tests/CodeCoverage.settings.xml -f cobertura -o coverage-maui/maui.cobertura.xml \
+            "dotnet msbuild tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-windows10.0.19041.0 -p:Configuration=Debug"
+          { echo "### Code coverage (Routeables.Test.Maui, Windows)"; python tools/coverage-summary.py coverage-maui/maui.cobertura.xml; } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-maui-windows
+          path: coverage-maui/*.cobertura.xml
+          if-no-files-found: ignore
 
 
   device-apple:
