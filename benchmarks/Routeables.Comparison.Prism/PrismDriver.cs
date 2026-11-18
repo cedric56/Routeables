@@ -50,10 +50,14 @@ public sealed class PrismDriver : INavigationDriver
 
         var parts = target.Split('/');
         var uri = parts.Length > 1 ? $"{parts[0]}?id={parts[1]}" : parts[0];
-        var done = new TaskCompletionSource();
-        _region.NavigationService.RequestNavigate(new Uri(uri, UriKind.Relative), _ => done.TrySetResult());
-        await done.Task;
+        var done = new TaskCompletionSource<bool>();
+        _region.NavigationService.RequestNavigate(new Uri(uri, UriKind.Relative), result => done.TrySetResult(result.Result == true));
+        var navigated = await done.Task;
         Flush();
+
+        // The journal says where the navigation went; the view must also be in the window, or the numbers would not be those of a page shown.
+        if (navigated && PrismBenchApp.Host.Content is null)
+            throw new InvalidOperationException($"Prism navigated to '{target}' but the region shows no view.");
     }
 
     public Task BackAsync()

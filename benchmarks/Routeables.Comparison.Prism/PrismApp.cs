@@ -59,6 +59,9 @@ public sealed class PrismBenchApp : PrismApplication
 
     public static Window Shell { get; private set; } = null!;
 
+    /// <summary>The control the region shows its view in.</summary>
+    public static ContentControl Host { get; private set; } = null!;
+
     public override void Initialize()
     {
         Styles.Add(new FluentTheme());
@@ -131,6 +134,7 @@ public sealed class PrismBenchApp : PrismApplication
     {
         Services = Container;
         var host = new ContentControl();
+        Host = host;
         RegionManager.SetRegionName(host, Region);
         Shell = new Window { Width = 400, Height = 300, Content = host };
         return Shell;
