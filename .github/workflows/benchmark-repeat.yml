@@ -1,0 +1,99 @@
+name: Benchmark, repeated
+
+# The comparison job of ci.yml, run five times, and the time ratios of the five runs put side by side. A shared runner moves the time of a
+# library by a factor of two from one job to the next: a ratio that stays in the same range over five runs is a difference, one that moves
+# from 0.7 to 1.3 is noise. By hand only (Actions > Benchmark, repeated > Run workflow): it costs five times the job.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  CI_PROPS: -p:CiBuild=true
+
+jobs:
+  run:
+    name: Run ${{ matrix.run }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        run: [1, 2, 3, 4, 5]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Where the figures are written
+        run: mkdir -p bench
+
+      - name: Console, with ReactiveUI routing
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          dotnet build benchmarks/Routeables.Comparison.ReactiveUI/Routeables.Comparison.ReactiveUI.csproj -c Release
+          { echo "### With ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.ReactiveUI/Routeables.Comparison.ReactiveUI.csproj -c Release --no-build; } | tee -a "$GITHUB_STEP_SUMMARY" bench/run-${{ matrix.run }}.txt
+
+      - name: With views, Routeables and ReactiveUI routing
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          dotnet build benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release ${{ env.CI_PROPS }}
+          { echo "### With views: Routeables and ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY" bench/run-${{ matrix.run }}.txt
+
+      - name: With views, Prism (KeepAlive = false)
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          dotnet build benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release ${{ env.CI_PROPS }}
+          { echo "### With views: Prism, KeepAlive = false (views dropped by the region)"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY" bench/run-${{ matrix.run }}.txt
+
+      - name: With views, Prism (views kept)
+        continue-on-error: true
+        timeout-minutes: 10
+        env:
+          ROUTEABLES_BENCH_PRISM_KEEP_VIEWS: "1"
+        run: |
+          { echo "### With views: Prism, views kept (the default of Prism)"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY" bench/run-${{ matrix.run }}.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bench-${{ matrix.run }}
+          path: bench/run-${{ matrix.run }}.txt
+          if-no-files-found: warn
+
+  aggregate:
+    name: The five runs together
+    needs: run
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: bench-*
+          path: runs
+          merge-multiple: true
+
+      - name: Time ratios of the runs
+        run: |
+          ls runs
+          python3 tools/benchmark-aggregate.py runs/run-*.txt | tee -a "$GITHUB_STEP_SUMMARY"

@@ -38,6 +38,8 @@ public static class Runner
         Console.WriteLine($".NET {Environment.Version}, {System.Runtime.InteropServices.RuntimeInformation.OSDescription}, " +
                           $"{Environment.ProcessorCount} cores, {(GCSettings.IsServerGC ? "server" : "workstation")} GC, {script.Count} steps, " +
                           $"{Runs} runs after {Warmups} warm-ups");
+        // Which machine measured, and when: the programs of one job run one after the other on the same runner, which is what lets their figures be read together.
+        Console.WriteLine($"Runner: {Environment.GetEnvironmentVariable("RUNNER_NAME") ?? "not a CI runner"}, process {Environment.ProcessId}, started {DateTime.UtcNow:HH:mm:ss} UTC");
         Console.WriteLine();
 
         if (all || args.Contains("--check"))
@@ -156,9 +158,20 @@ public static class Runner
                 for (var run = 0; run < Runs; run++)
                     ratios[run] = times[0][run] / times[d][run];
                 Array.Sort(ratios);
-                Console.WriteLine($"- against {names[d]}: {ratios[Runs / 2]:F2} (from {ratios[Runs / 4]:F2} to {ratios[3 * Runs / 4]:F2})");
+                var medianOf0 = Median(times[0]);
+                var medianOfD = Median(times[d]);
+                // The two ways of comparing are given: they agree when the runs are alike, and when they do not, the order of the measures or the
+                // noise of the machine weighs on the ratio, and neither figure is to be quoted alone.
+                Console.WriteLine($"- against {names[d]}: {ratios[Runs / 2]:F2} (from {ratios[Runs / 4]:F2} to {ratios[3 * Runs / 4]:F2}); ratio of the two median times: {medianOf0 / medianOfD:F2}");
             }
         }
+    }
+
+    private static double Median(double[] values)
+    {
+        var sorted = (double[])values.Clone();
+        Array.Sort(sorted);
+        return sorted[sorted.Length / 2];
     }
 
     private static async Task MemoryAsync(Func<INavigationDriver> make)
