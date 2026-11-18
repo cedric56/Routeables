@@ -263,6 +263,53 @@ public class RouteRegistrationGeneratorTests
         }
     }
 
+    [Fact]
+    public async Task Defaults_of_every_numeric_type_are_written_as_literals_of_their_type()
+    {
+        // The generated code must compile whatever the defaults are, and give the view model the values the constructor declares.
+        const string source = """
+            using Routeables.Abstraction;
+
+            public enum Level { Low = -1, High = 2 }
+
+            public class ZoomViewModel
+            {
+                public ZoomViewModel(float zoom = 1.5f, decimal price = 9.99m, double x = double.NaN, double y = double.NegativeInfinity,
+                    float z = float.PositiveInfinity, Level level = Level.Low, long min = long.MinValue, long big = 5L, ulong ubig = ulong.MaxValue,
+                    double whole = 1d, double tiny = 1E-300, Level? maybe = (Level)(-1), char c = '\'')
+                {
+                    Text = string.Join("|", zoom, price, double.IsNaN(x), y, z, level, min, big, ubig, whole, tiny, maybe, c);
+                }
+                public string Text { get; }
+            }
+
+            [RouteableView(typeof(ZoomViewModel), "/zoom")]
+            public class ZoomView { public object? Context { get; set; } }
+
+            public static class Setup
+            {
+                public static void Generated(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
+                    => Routeables.Generated.RouteRegistration.AddGeneratedRoutes(services);
+            }
+            """;
+
+        var assembly = Emit(source);
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        assembly.GetType("Setup")!.GetMethod("Generated")!.Invoke(null, [services]);
+
+        using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+        var routing = await router.GoToAsync("/zoom", cancellationToken: TestContext.Current.CancellationToken);
+        Assert.True(routing.Success, routing.Exception?.Message);
+
+        var viewModel = router.CurrentViewModel!;
+        var text = (string)viewModel.GetType().GetProperty("Text")!.GetValue(viewModel)!;
+        Assert.Equal(
+            string.Join("|", 1.5f, 9.99m, true, double.NegativeInfinity, float.PositiveInfinity, "Low", long.MinValue, 5L, ulong.MaxValue, 1d, 1E-300, "Low", '\''),
+            text);
+    }
+
     private static System.Reflection.Assembly Emit(string source, params MetadataReference[] more)
     {
         var compilation = CSharpCompilation.Create(

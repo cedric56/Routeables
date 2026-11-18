@@ -327,6 +327,36 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void A_registered_type_named_like_a_built_in_constraint_does_not_replace_it()
+    {
+        var options = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() };
+        var id = System.Guid.NewGuid();
+        try
+        {
+            RouteParser.RegisterSerializer<global::HomonymShadow.Guid>(options.GetTypeInfo(typeof(global::HomonymShadow.Guid)));
+            RouteParser.RegisterSerializer<global::HomonymShadow.String>(options.GetTypeInfo(typeof(global::HomonymShadow.String)));
+
+            var guid = RouteableArgs.Create();
+            Assert.True(RouteParser.TryMatch("g/{x:guid}", "g/" + id, guid));
+            Assert.Equal(id, guid.ViewModelParameters.Single().value);
+
+            var text = RouteableArgs.Create();
+            Assert.True(RouteParser.TryMatch("s/{x:string}", "s/plain", text));
+            Assert.Equal("plain", text.ViewModelParameters.Single().value);
+
+            // The type itself is still reached by its full name.
+            var typed = RouteableArgs.Create();
+            Assert.True(RouteParser.TryMatch("g/{x:HomonymShadow.Guid}", "g/" + Uri.EscapeDataString("{\"Name\":\"a\"}"), typed));
+            Assert.IsType<global::HomonymShadow.Guid>(typed.ViewModelParameters.Single().value);
+        }
+        finally
+        {
+            RouteParser.UnregisterSerializer<global::HomonymShadow.Guid>();
+            RouteParser.UnregisterSerializer<global::HomonymShadow.String>();
+        }
+    }
+
+    [Fact]
     public void A_number_has_one_text_in_an_address()
     {
         // "42", "+42" and " 42" were three addresses for one page.

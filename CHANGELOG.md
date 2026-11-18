@@ -6,6 +6,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A constructor parameter takes the value that has its name**: with `ProductViewModel(string category = "all", string id = "")` and `/products/{id}`, `/products/42` gave `category = "42"` and `id = ""`, because the values were handed out by type only. A value is now given to the parameter of its name first, and by type only to the parameter that no named value claims, with the generated code and with the reflection (`ConstructorArguments`, `RegisterRoute`).
+- **The generator writes the defaults of the constructors as literals of their type**: `float zoom = 1.5f`, `decimal price = 9.99m`, `double.NaN`, the infinities, `long.MinValue` and a negative enum value (`(E)(-1)`, not `(E)-1`) gave code that did not compile (`RouteBuilds`).
+- **A registered type named `Guid`, `String`, `Double`, `Decimal`... no longer replaces the constraint of that name**: `{id:guid}` kept reading JSON once such a type was registered; the built-in constraints come first, and the type is reached by its full name (`RouteParser`).
 - **A value has one text in an address, for the types that remained**: `{n:int}` and `{n:long}` refuse `007` and `-0` (the text `ToString` writes is the only one), `{g:guid}` takes the form with dashes only (no braces, no form without dashes), and `{b:bool}` refuses spaces around the word.
 - **The fragment of an address is not sent to the telemetry** (`IncludeAddress`): `/cb#access_token=...` of an implicit OAuth flow went out with the route.
 - **Two queries whose names are escaped differently are the same address** (`?%7A=1&b=2` and `?z=1&b=2`): the pairs were put in order by the escaped name and compared by the unescaped one (`RouteAddress`).

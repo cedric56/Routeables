@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Text;
@@ -159,14 +160,36 @@ namespace Routeables.Generated
 
             if (enumType is not null)
             {
-                literal = "(" + enumType.ToDisplayString(Fq) + ")" + SymbolDisplay.FormatPrimitive(value, quoteStrings: true, useHexadecimalNumbers: false);
+                // In parentheses: "(E)-1" reads as a subtraction, "(E)(-1)" is the cast.
+                literal = "(" + enumType.ToDisplayString(Fq) + ")(" + SymbolDisplay.FormatPrimitive(value, quoteStrings: true, useHexadecimalNumbers: false) + ")";
                 return true;
             }
 
-            if (value is string or bool or char or sbyte or byte or short or ushort or int or uint or long or ulong or float or double or decimal)
+            switch (value)
             {
-                literal = SymbolDisplay.FormatPrimitive(value, quoteStrings: true, useHexadecimalNumbers: false);
-                return literal is not null;
+                // The type of the literal is the type of the parameter: 1.5 is a double, not a float, and 9.99 is not a decimal.
+                case float f:
+                    literal = float.IsNaN(f) ? "float.NaN"
+                        : float.IsPositiveInfinity(f) ? "float.PositiveInfinity"
+                        : float.IsNegativeInfinity(f) ? "float.NegativeInfinity"
+                        : "(" + f.ToString("R", CultureInfo.InvariantCulture) + "f)";
+                    return true;
+                case double d:
+                    literal = double.IsNaN(d) ? "double.NaN"
+                        : double.IsPositiveInfinity(d) ? "double.PositiveInfinity"
+                        : double.IsNegativeInfinity(d) ? "double.NegativeInfinity"
+                        : "(" + d.ToString("R", CultureInfo.InvariantCulture) + "d)";
+                    return true;
+                case decimal m:
+                    literal = "(" + m.ToString(CultureInfo.InvariantCulture) + "m)";
+                    return true;
+                case long l:
+                    // -9223372036854775808 is a minus in front of a literal too large for a long.
+                    literal = l == long.MinValue ? "long.MinValue" : "(" + l.ToString(CultureInfo.InvariantCulture) + "L)";
+                    return true;
+                case string or bool or char or sbyte or byte or short or ushort or int or uint or ulong:
+                    literal = SymbolDisplay.FormatPrimitive(value, quoteStrings: true, useHexadecimalNumbers: false);
+                    return literal is not null;
             }
 
             return false;

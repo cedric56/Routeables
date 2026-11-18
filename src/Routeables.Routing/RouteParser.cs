@@ -351,10 +351,19 @@ public static partial class RouteParser
 
     private static readonly string[] BuiltInConstraints = ["string", "int", "long", "bool", "guid", "decimal", "double"];
 
+    private static bool IsBuiltIn(string type)
+        => type is "" or "?" || Array.Exists(BuiltInConstraints, c => string.Equals(c, type, StringComparison.OrdinalIgnoreCase));
+
+    // The registered type of a constraint. A built-in name is never a registered type: a type called Guid, String or Double that the
+    // application registers must not turn {id:guid} into a JSON value (it is reached by its full name, {id:Sales.Guid}).
+    private static bool TryGetSerializer(string type, out JsonTypeInfo info)
+    {
+        if (IsBuiltIn(type)) { info = null!; return false; }
+        return SerializationInfos.TryGetValue(type, out info!);
+    }
+
     private static bool IsKnownConstraint(string type)
-        => type is "" or "?"
-           || SerializationInfos.ContainsKey(type)
-           || Array.Exists(BuiltInConstraints, c => string.Equals(c, type, StringComparison.OrdinalIgnoreCase));
+        => IsBuiltIn(type) || SerializationInfos.ContainsKey(type);
 
     /// <summary>
     /// Converts a raw string parameter value into the specified target type constraint.
@@ -363,7 +372,7 @@ public static partial class RouteParser
     {
         value = null;
 
-        if (SerializationInfos.TryGetValue(type, out var info))
+        if (TryGetSerializer(type, out var info))
         {
             try { value = JsonSerializer.Deserialize(raw, info); }
             catch (JsonException) { return false; }
@@ -644,7 +653,7 @@ public static partial class RouteParser
 
     private static string Format(object value, string type)
     {
-        if (SerializationInfos.TryGetValue(type, out var info))
+        if (TryGetSerializer(type, out var info))
             return JsonSerializer.Serialize(value, info);
         return value switch
         {

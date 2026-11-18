@@ -114,4 +114,37 @@ public class ExternalAuditTests
         Assert.True(RouteAddress.Same("/a?b=2&z=1", "/a?%7a=1&b=2"));
         Assert.False(RouteAddress.Same("/a?%7A=1&b=2", "/a?z=2&b=2"));
     }
+
+    // ---- a value goes to the parameter of its name
+
+    public sealed class ProductView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class ProductVm(string category = "all", string id = "")
+    {
+        public string Category { get; } = category;
+        public string Id { get; } = id;
+    }
+
+    [Fact]
+    public void A_value_named_for_a_later_parameter_does_not_go_to_an_earlier_one_of_the_same_type_by_the_generated_code()
+    {
+        var args = RouteableArgs.Create().WithViewModel("id", "42");
+        var arguments = ConstructorArguments.ForViewModel(new ServiceCollection().BuildServiceProvider(), args, "ProductVm", ["category", "id"], takesRouter: false);
+
+        // What the generated constructor call asks for, in the order of the parameters.
+        Assert.Equal("all", arguments.Next("category", "all"));
+        Assert.Equal("42", arguments.Next("id", ""));
+    }
+
+    [Fact]
+    public async Task A_value_named_for_a_later_parameter_does_not_go_to_an_earlier_one_of_the_same_type_by_reflection()
+    {
+        await using var provider = Build(services => services.RegisterRoute<ProductView, ProductVm>(route: "/products/{id}"));
+        var router = provider.GetRequiredService<IRouter>();
+
+        Assert.True((await router.GoToAsync("/products/42", cancellationToken: Ct)).Success);
+
+        var page = Assert.IsType<ProductVm>(router.CurrentViewModel);
+        Assert.Equal("all", page.Category);
+        Assert.Equal("42", page.Id);
+    }
 }

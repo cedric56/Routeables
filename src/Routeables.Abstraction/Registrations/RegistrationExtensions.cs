@@ -424,8 +424,51 @@ public static partial class RegistrationExtensions
     /// </summary>
     private static List<object> BindByName(
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type type, IEnumerable<RouteableArgument> entries)
-        => BindByName(entries, type.GetConstructors()
+    {
+        var list = entries.ToList();
+        var ordered = BindByName(list, type.GetConstructors()
             .Select(c => c.GetParameters().Select((p, i) => (p.Name, i)).ToDictionary(x => x.Name!, x => x.i, StringComparer.OrdinalIgnoreCase)));
+
+        // ActivatorUtilities gives a value to the first parameter that fits its type, whatever its name: "/products/{id}" would give its
+        // text to a parameter "category" that comes before "id". A parameter with a default that is before the one a value is named for, and
+        // has a type that value fits, is handed that default, so that the value is left for its own parameter.
+        var named = list.Where(e => !string.IsNullOrEmpty(e.name) && e.value is not null).ToList();
+        if (named.Count == 0)
+            return ordered;
+
+        var constructor = type.GetConstructors()
+            .OrderByDescending(c => c.GetParameters().Count(p => named.Any(e => string.Equals(e.name, p.Name, StringComparison.OrdinalIgnoreCase))))
+            .FirstOrDefault();
+        if (constructor is null)
+            return ordered;
+
+        var parameters = constructor.GetParameters();
+        var result = new List<object>();
+        var consumed = new HashSet<object>(ReferenceEqualityComparer.Instance);
+        for (var i = 0; i < parameters.Length; i++)
+        {
+            var parameter = parameters[i];
+            var own = named.FirstOrDefault(e => string.Equals(e.name, parameter.Name, StringComparison.OrdinalIgnoreCase) && parameter.ParameterType.IsInstanceOfType(e.value));
+            if (own is not null)
+            {
+                result.Add(own.value!);
+                consumed.Add(own.value!);
+            }
+            else if (parameter.HasDefaultValue && parameter.DefaultValue is { } fallback
+                     && parameter.ParameterType.IsInstanceOfType(fallback)
+                     && named.Any(e => parameters.Skip(i + 1).Any(later => string.Equals(later.Name, e.name, StringComparison.OrdinalIgnoreCase))
+                                       && parameter.ParameterType.IsInstanceOfType(e.value)))
+            {
+                result.Add(fallback);
+            }
+        }
+
+        // What no parameter was named for (a router, a value of another name) keeps its place after them.
+        foreach (var value in ordered)
+            if (!consumed.Contains(value))
+                result.Add(value);
+        return result;
+    }
 
     /// <summary>The same, given the position of each parameter name in each constructor that could be called.</summary>
     internal static List<object> BindByName(IEnumerable<RouteableArgument> entries, IEnumerable<Dictionary<string, int>> constructors)
