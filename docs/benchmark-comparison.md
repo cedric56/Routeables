@@ -79,9 +79,10 @@ How each library is written, and where it differs, is part of the result:
 
 **The ReactiveUI version was written without being able to restore ReactiveUI.** It has since compiled and run in the CI. A reviewer who had only that file read it (not a daily user of the library) and found it honest on the functions: no Forward (`SupportsForward` is `false`), the guard and the refusal to leave written in front of `Navigate`. What the review changed, and what it did not:
 
-- **The dependency** of the five pages that have one was read from a field, while Routeables resolves it through the container: the ReactiveUI driver now asks the same container (`Microsoft.Extensions.DependencyInjection`, a singleton) each time. The numbers below were measured before this change, so ReactiveUI's will go up a little at the next run.
+- **The dependency** of the five pages that have one was read from a field, while Routeables resolves it through the container: the ReactiveUI driver now asks the same container (`Microsoft.Extensions.DependencyInjection`, a singleton) each time. The second run below was made after this change: the allocations did not move.
 - **The pattern of the pages with a parameter** (`['C', ..]`) took any name that starts with C: it is now restricted to `C` and a digit, with a parameter.
-- **Not changed, and stated:** Routeables builds a view and a view model through the container for every page, ReactiveUI only a view model (a console has no views to locate); Routeables calls the hooks of the page and disposes it when it leaves the history, ReactiveUI has no lifecycle (the pages are still collected: none is alive after the history is cleared). These are part of what the allocations pay for. The router of Routeables runs without a scheduler or a `Task.Yield`, as the immediate scheduler does here.
+- **The pages** are now built the way Routeables builds them: a view (transient) and a view model (the activator of the container, with the name and the screen as arguments) for every page, the view kept as long as the page is on the stack. Before, ReactiveUI built a view model with `new` and no view. The activator of the container is not the compiled factory Routeables may use: a difference that stays, and that favours Routeables a little. The numbers of the first two runs were measured **before** this change and are to be replaced by the next run.
+- **Not changed, and stated:** Routeables calls the hooks of the page and disposes it when it leaves the history, ReactiveUI has no lifecycle (the pages are still collected: none is alive after the history is cleared). The router of Routeables runs without a scheduler or a `Task.Yield`, as the immediate scheduler does here.
 - **Checked and already the same:** Back does not run the guards again in either (the guard of Routeables looks at pushes only); the return to the page that was asked for after signing in is done by the scenario for every driver (`Continue`), not by a library; the name of the page shown is compared with the model at every step.
 - **Not exercised by the scenario:** the order of the checks when a dirty edit page is left for a guarded page (leaving first, in the model). Both drivers do it in that order, but no step proves it.
 
@@ -89,29 +90,39 @@ The ReactiveUI step stays tolerated until someone who uses the library daily has
 
 Each phase ends with its results published in this page, with the date, the versions and the machine. Phases 2 and 3 need the packages of each library, the SDKs of each platform, and a person who knows each library to review its implementation: they are work for several people, not for one afternoon.
 
+## Phase 1b: the same application with views, in Avalonia.Headless
+
+The console comparison above does not give every library the same work: Routeables builds a view and a view model for each page, a navigation service of your own builds nothing, ReactiveUI has no view to locate on a console. Phase 1b gives them the same ground: an Avalonia application with no screen (`Avalonia.Headless`), a real window, and for every page a real view (a control with a text) that the library builds and shows. After each step the queued work of the application (binding, layout) is run, the same for everyone. The service of your own is left out: it has no views.
+
+- `benchmarks/Routeables.Comparison.Avalonia`: Routeables (a `RouteableRegion` in the window, 50 routes, a `RouteableFor<TViewModel>` view each) and ReactiveUI routing (the view host is written in the application: it shows the view of the page the router gives; `RoutedViewHost` of ReactiveUI.Avalonia does the same with its view locator and was not used because its API could not be checked here). Avalonia 12.
+- `benchmarks/Routeables.Comparison.Prism`: Prism.Avalonia (region navigation by name, the journal for Back and Forward, `IConfirmNavigationRequest` to refuse leaving, DryIoc). Prism.Avalonia 9 is built for Avalonia 11 (the support of 12 is not released), so it runs in a program of its own, on Avalonia 11.3: **the two programs do not run the same Avalonia**, and their numbers are read side by side, not as one table.
+
+What Prism does and does not give: it has Back and Forward (the journal) and a veto (`IConfirmNavigationRequest`), no guard (written in front of `RequestNavigate`), no typed route parameter (a query string, `C3?id=7`), and it keeps every view it has shown in the region until the application removes it (clearing the history removes them in the driver). Every Prism page gets its dependency injected (`IClock`, a singleton), the five pages that read it are not told apart.
+
+Written without being able to restore the packages: both steps of the CI job "Same application, with views" are tolerated until a run is green, and the Prism namespaces (`Prism.Navigation.Regions`) are the least certain part. Nobody who uses Prism daily has read the driver yet.
+
 ## Results
 
-Phase 1, one run of the CI job "Same application, three libraries" (November 2026): .NET 10.0.15, Ubuntu 26.04.1 LTS, 4 cores, workstation GC, 200 steps, 30 runs after 5 warm-ups. A shared CI runner is not a quiet machine: read the orders of magnitude, not the decimals.
+The results of phase 1b are published here when its job has run green. Until then, the console phase below is kept as a record: its ground is not equal (see above), so read it as the cost of the libraries with what each one was given, not as a ranking. Phase 1, two runs of the CI job "Same application, three libraries" (November 2026, the second after the ReactiveUI driver took its dependency from the container): .NET 10.0.15, Ubuntu 26.04.1 LTS, 4 cores, workstation GC, 200 steps, 30 runs after 5 warm-ups. Every library ended 200 of 200 steps on the expected page (ReactiveUI: 180 of 200, its 20 Forward steps are skipped because it has no Forward).
 
-Every library ended 200 of 200 steps on the expected page (ReactiveUI: 180 of 200, its 20 Forward steps are skipped because it has no Forward).
+A shared CI runner is not a quiet machine, and the two runs show it: every time was 1.5 to 2 times longer in the second, the service of your own included (0.04 to 0.08 ms), while the allocations did not move. Read the **allocations and the ratios**; the absolute times only give an order of magnitude.
 
-| Library | median ms / run | µs / step | KiB allocated / run | B / step |
+| Library | µs / step (first run, second run) | B / step | Time against ReactiveUI | Allocations against ReactiveUI |
 |---|---:|---:|---:|---:|
-| Routeables | 11.64 – 11.84 | 58 – 59 | 4971 – 4982 | 25 453 – 25 505 |
-| ReactiveUI routing (before the container for its dependency) | 5.56 | 27.8 | 786 | 4023 |
-| Service of your own | 0.04 – 0.05 | 0.2 | 17 | 86 |
-
-(Routeables and the service of your own were run twice, once in each job step; the range is the two runs.)
+| Routeables | 58 – 106 | about 25 400 | 2.1 times | 6.3 times |
+| ReactiveUI routing | 28 – 40 | about 4 000 | 1 | 1 |
+| Service of your own | 0.2 – 0.4 | 86 | | |
 
 | Library | heap after 1000 changes (KiB) | first 100 pages alive | alive after the history is cleared |
 |---|---:|---:|---:|
-| Routeables | 476 | 100 of 100 | 0 |
-| ReactiveUI routing | 247 | 100 of 100 | 0 |
-| Service of your own | 52 | 100 of 100 | 0 |
+| Routeables | 476 – 477 | 100 of 100 | 0 |
+| ReactiveUI routing | 247 – 252 | 100 of 100 | 0 |
+| Service of your own | 51 – 52 | 100 of 100 | 0 |
 
 What it says, and what it does not:
 
-- A page change costs Routeables about 58 µs and 25 KB here, about twice ReactiveUI's time and six times its allocations, and a few hundred times a dictionary of factories. That is the price of what the two others leave to the application in this scenario: route matching and typed parameters, guards that redirect, a veto on leaving, the history with Forward, the lifetime of each view model (created and disposed with its page) and the cancellation of a change that is overtaken.
-- At 58 µs a change is far below what a user can see (a frame is 16 000 µs); the figure matters for a test that runs thousands of changes, not for an application.
-- Nothing is leaked: after the history is cleared no page stays alive in any of the three. The heap that remains after 1000 changes is larger with Routeables (476 KiB against 52 and 247); the measure does not say what holds it, and it is not growing: the pages are released with the history.
+- A page change costs Routeables about twice the time of ReactiveUI and six times its allocations, and a few hundred times a dictionary of factories. That is the price of what the two others leave to the application in this scenario: route matching and typed parameters, guards that redirect, a veto on leaving, the history with Forward, the lifetime of each view model (created and disposed with its page) and the cancellation of a change that is overtaken.
+- Taking ReactiveUI's dependency from the container changed nothing measurable (786 to 787 KiB per run): a singleton resolved five times in 200 steps.
+- At 60 to 100 µs a change is far below what a user can see (a frame is 16 000 µs); the figure matters for a test that runs thousands of changes, not for an application.
+- Nothing is leaked: after the history is cleared no page stays alive in any of the three. The heap that remains after 1000 changes is larger with Routeables (476 KiB against 52 and 250); the measure does not say what holds it, and it is not growing: the pages are released with the history.
 - It does not compare the platforms (Blazor, MAUI, WPF…), the cost of drawing a page, nor the libraries on a task they were not built for.

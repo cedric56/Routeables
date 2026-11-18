@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The same application navigation as Routeables.Comparison.Avalonia, written for Prism.Avalonia (region navigation, DryIoc), in an Avalonia
+    application with no screen. Prism.Avalonia 9 is built for Avalonia 11 (the version of 12 is not released): this project is on Avalonia
+    11.3 and the other on 12, so it is a program of its own. It was written without being able to restore Prism.Avalonia: until one run is
+    green, its step in the CI cannot fail the job.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsPublishable>false</IsPublishable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <EnableAvaloniaXamlCompilation>false</EnableAvaloniaXamlCompilation>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Prism.DryIoc.Avalonia" />
+    <PackageReference Include="Avalonia.Headless" VersionOverride="11.3.23" />
+    <PackageReference Include="Avalonia.Themes.Fluent" VersionOverride="11.3.23" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Routeables.Comparison\Routeables.Comparison.csproj" />
+  </ItemGroup>
+
+</Project>

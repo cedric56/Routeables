@@ -66,6 +66,8 @@
   <Folder Name="/benchmarks/">
     <Project Path="benchmarks/Routeables.Comparison/Routeables.Comparison.csproj" />
     <Project Path="benchmarks/Routeables.Comparison.ReactiveUI/Routeables.Comparison.ReactiveUI.csproj" />
+    <Project Path="benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj" />
+    <Project Path="benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Routeables.Abstraction/Routeables.Abstraction.csproj" />

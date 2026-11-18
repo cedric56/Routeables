@@ -6,6 +6,9 @@ using Unit = System.Reactive.Unit;
 
 namespace Routeables.Comparison;
 
+/// <summary>The view of a page: nothing to draw on a console, but built by the container for each page, as the view of a Routeables page is.</summary>
+public sealed class RxView;
+
 /// <summary>A routable view model: the name it gives itself, and the screen that hosts it.</summary>
 public sealed class RxPage(string name, IScreen host) : ReactiveObject, IRoutableViewModel
 {
@@ -13,10 +16,13 @@ public sealed class RxPage(string name, IScreen host) : ReactiveObject, IRoutabl
 
     public string? UrlPathSegment => Name;
 
+    /// <summary>The view the page was built with, kept as long as the page is on the stack.</summary>
+    public RxView? View { get; set; }
+
     public IScreen HostScreen { get; } = host;
 
     /// <summary>ReactiveUI routing has no "can I leave": the application asks the page before it navigates.</summary>
-    public Func<bool> CanLeave { get; init; } = static () => true;
+    public Func<bool> CanLeave { get; set; } = static () => true;
 }
 
 public sealed class RxScreen : ReactiveObject, IScreen
@@ -33,9 +39,10 @@ public sealed class RxScreen : ReactiveObject, IScreen
 public sealed class ReactiveUiDriver : INavigationDriver
 {
     private readonly RxScreen _screen = new();
-    // The same container and the same lifetime (a singleton) as the Routeables driver: the five pages that have a dependency ask the container
-    // for it each time they are built, instead of reading a field. ReactiveUI has no container of its own; the application brings one.
-    private readonly ServiceProvider _provider = new ServiceCollection().AddSingleton<IClock, Clock>().BuildServiceProvider();
+    // The same container as the Routeables driver. Each page is built through it, a view (transient) and a view model (with the activator of
+    // the container, its name and its screen as arguments); the five pages that have a dependency ask it for a singleton. ReactiveUI has no
+    // container of its own: the application brings one.
+    private readonly ServiceProvider _provider = new ServiceCollection().AddSingleton<IClock, Clock>().AddTransient<RxView>().BuildServiceProvider();
 
     public ReactiveUiDriver() => State = new AppState();
 
@@ -83,17 +90,26 @@ public sealed class ReactiveUiDriver : INavigationDriver
 
     private RxPage Create(string[] parts) => parts[0] switch
     {
-        ['C', >= '0' and <= '9', ..] when parts.Length > 1 => new RxPage($"{parts[0]}:{parts[1]}", _screen),
-        "Detail" => new RxPage($"Detail:{parts[1]}", _screen),
-        "Edit" => new RxPage($"Edit:{parts[1]}", _screen) { CanLeave = () => !State.Dirty },
+        ['C', >= '0' and <= '9', ..] when parts.Length > 1 => Page($"{parts[0]}:{parts[1]}"),
+        "Detail" => Page($"Detail:{parts[1]}"),
+        "Edit" => Page($"Edit:{parts[1]}", () => !State.Dirty),
         ['P', '3', '0' or '1' or '2' or '3' or '4'] => PageWithDependency(parts[0]),
-        _ => new RxPage(parts[0], _screen),
+        _ => Page(parts[0]),
     };
 
     private RxPage PageWithDependency(string name)
     {
         _ = _provider.GetRequiredService<IClock>().Now;   // the dependency of the five pages that have one
-        return new RxPage(name, _screen);
+        return Page(name);
+    }
+
+    private RxPage Page(string name, Func<bool>? canLeave = null)
+    {
+        var page = ActivatorUtilities.CreateInstance<RxPage>(_provider, name, _screen);
+        page.View = _provider.GetRequiredService<RxView>();
+        if (canLeave is not null)
+            page.CanLeave = canLeave;
+        return page;
     }
 
     public void Dispose() => _provider.Dispose();

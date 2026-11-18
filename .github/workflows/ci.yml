@@ -221,6 +221,40 @@ jobs:
           dotnet build benchmarks/Routeables.Comparison.ReactiveUI/Routeables.Comparison.ReactiveUI.csproj -c Release
           { echo "### With ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.ReactiveUI/Routeables.Comparison.ReactiveUI.csproj -c Release --no-build; } | tee -a "$GITHUB_STEP_SUMMARY"
 
+  # Phase 1b: the same scenario in an Avalonia application with no screen (Avalonia.Headless), every page a real view in a real window, for
+  # Routeables, ReactiveUI routing and Prism. The home-made service has no view and is left out. Written without being able to restore
+  # Prism.Avalonia or the Avalonia packages of these projects: neither step can fail the job until one run is green.
+  comparison-avalonia:
+    name: Same application, with views
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Routeables and ReactiveUI routing
+        continue-on-error: true
+        run: |
+          dotnet build benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release
+          { echo "### With views: Routeables and ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release --no-build; } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Prism
+        continue-on-error: true
+        run: |
+          dotnet build benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release
+          { echo "### With views: Prism"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build; } | tee -a "$GITHUB_STEP_SUMMARY"
+
   # The Uno projects are in a job of their own: they were written without being able to restore Uno Platform, so a failure here
   # must not hide the result of the jobs above. Once it is green, fold it into web-and-desktop.
   uno:

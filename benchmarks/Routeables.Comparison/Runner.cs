@@ -16,19 +16,23 @@ public static class Runner
     private const int RouteChanges = 1_000;
     private const int Tracked = 100;
 
-    public static IReadOnlyList<Func<INavigationDriver>> Drivers(IEnumerable<Func<INavigationDriver>>? extra = null)
+    public static IReadOnlyList<Func<INavigationDriver>> Drivers(IEnumerable<Func<INavigationDriver>>? extra = null, bool console = true)
     {
-        List<Func<INavigationDriver>> list = [() => new RouteablesDriver()];
+        List<Func<INavigationDriver>> list = [];
+        if (console)
+            list.Add(() => new RouteablesDriver());
         if (extra is not null)
             list.AddRange(extra);
-        list.Add(() => new HomeGrownDriver());
+        if (console)
+            list.Add(() => new HomeGrownDriver());
         return list;
     }
 
-    public static async Task<int> RunAsync(string[] args, IEnumerable<Func<INavigationDriver>>? extra = null)
+    /// <param name="console">Whether the two console drivers (Routeables without a view, the service of your own) are part of the run: the Avalonia programs leave them out and bring their own, with a real view for every page.</param>
+    public static async Task<int> RunAsync(string[] args, IEnumerable<Func<INavigationDriver>>? extra = null, bool console = true)
     {
         var all = args.Length == 0;
-        var drivers = Drivers(extra);
+        var drivers = Drivers(extra, console);
         var failures = 0;
         var script = Scenario.Build();
         Console.WriteLine($".NET {Environment.Version}, {System.Runtime.InteropServices.RuntimeInformation.OSDescription}, " +
