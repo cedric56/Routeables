@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **`Routeables.Native` on Windows builds its desktop targets only** (`net10.0` and the Windows one): the Android and Apple targets it asked a Windows machine to restore need workloads that are not there (NETSDK1147), which failed the build of `Routeables.WinUI3` in CI. The packages are still packed on Linux with all the targets.
 - **Blazor, an address nobody serves shows the page of `UseNotFoundRoute()`**: `RouteableUrlSync` did nothing for it (a link changed the address bar and kept the page before, the first start opened the first entry of the menu); it goes through `GoToAsync` now, like any other address. Without a not-found page nothing changes.
 - **A tab or a line break does not hide the second slash of `//host`**: a browser drops them, so `/<tab>/evil.example` was `//evil.example` for it, and `RouteAddress.Rooted` and `RouteableAddress.Of` let it through.
 - **Two registered types with the same simple name as a built-in constraint (`Sales.Guid` and `Hr.Guid`) no longer disable `{id:guid}`**: the ambiguity of the name was checked before the built-in constraints.
