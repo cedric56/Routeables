@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The query of the address counts when two templates have the same path**: `/search` and `/search?{q?}` (or `/search?mode=grid`) matched `/search?q=1` with the same score and the order of registration decided, so a value the address gave could end in `Values` instead of the constructor. Between equal paths the template that uses more of the query of the address now wins, whatever the order.
 - **A typed menu entry whose address is not its template finds its view**: `new RouteableMenuEntry<OrderVm>("Order 5", route: "/orders/5", template: "/orders/{id:int}")` looked the view up by the address (`No view is registered under the key "/orders/5"`); the keys come from the template, as everywhere else.
 - **`RouteableMenuEntry<T>` takes the route of its view model, as documented**: with no `template` (a `route` only) the template is the one the address matches; with neither, the registered route of the view model. Both held an internal key before, and the entry always failed.
 - **The type guards (`IRouteTypeGuard`) are asked for a page registered with no route**, opened from a menu: it is not in the table of routes, so the guard was skipped and the constructor ran. The type of the request is used when the table does not know it.

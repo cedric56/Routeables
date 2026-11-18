@@ -439,6 +439,7 @@ public static partial class RouteParser
     {
         var best = default((string Template, Type? ViewModelType));
         int[]? bestRank = null;
+        int? bestQuery = null;
 
         void Consider((string Template, Type? ViewModelType) entry)
         {
@@ -446,10 +447,22 @@ public static partial class RouteParser
                 return;
 
             var rank = Specificity(entry.Template);
-            if (bestRank is null || CompareRanks(rank, bestRank) > 0)
+            var order = bestRank is null ? 1 : CompareRanks(rank, bestRank);
+            var queryScore = 0;
+            if (order == 0)
+            {
+                // The same path: the one that uses more of the query of the address is the more exact (/search?{q} over /search for /search?q=1).
+                queryScore = QueryScore(entry.Template, uri);
+                bestQuery ??= QueryScore(best.Template, uri);
+                if (queryScore > bestQuery)
+                    order = 1;
+            }
+
+            if (order > 0)
             {
                 best = entry;
                 bestRank = rank;
+                bestQuery = order == 1 && queryScore > 0 ? queryScore : null;
             }
         }
 
@@ -469,6 +482,32 @@ public static partial class RouteParser
         foreach (var entry in entries)
             Consider(entry);
         return best;
+    }
+
+    // How many entries of the query of the address a template uses: its fixed entries ("mode=grid") and its placeholders the address gives a value to.
+    private static int QueryScore(string template, string uri)
+    {
+        var parsed = ParseTemplate(template);
+        if (parsed.QueryParts.Length == 0)
+            return 0;
+
+        if (uri.IndexOf('#') is var hash and >= 0)
+            uri = uri[..hash];
+        var (_, uQuery) = Split(uri, template: false);
+        var query = uQuery.Length == 0 ? NoQuery : ParseQuery(uQuery);
+        var score = 0;
+        for (var q = 0; q < parsed.QueryParts.Length; q++)
+        {
+            var m = parsed.QueryMatches[q];
+            if (!m.Success)
+            {
+                if (parsed.QueryParts[q].IndexOf('=') > 0)
+                    score++;
+            }
+            else if (query.TryGetValue(m.Groups["name"].Value, out var raw) && !string.IsNullOrEmpty(raw))
+                score++;
+        }
+        return score;
     }
 
     private const int IndexFrom = 8;                                // below this, trying every template is as quick as looking one up

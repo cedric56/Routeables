@@ -515,4 +515,29 @@ public class RouteParserTests
         Assert.Equal("x/1.5", RouteParser.Build("x/{n:decimal}", new { n = 1.50m }));
         Assert.Equal("x/10", RouteParser.Build("x/{n:decimal}", new { n = 10.00m }));
     }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Of_two_templates_with_the_same_path_the_one_that_uses_the_query_of_the_address_wins(bool reversed)
+    {
+        (string Template, Type? ViewModelType)[] entries = [("/search", typeof(string)), ("/search?{q?}", typeof(int))];
+        if (reversed) Array.Reverse(entries);
+
+        Assert.Equal("/search?{q?}", RouteParser.BestMatch(entries, "/search?q=1").Template);
+        Assert.Equal("/search", RouteParser.BestMatch(new (string, Type?)[] { ("/search", typeof(string)), ("/search?{q?}", typeof(int)) }.Take(1), "/search").Template);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void A_fixed_query_entry_makes_a_template_more_exact_than_the_same_path_without_it(bool reversed)
+    {
+        (string Template, Type? ViewModelType)[] entries = [("/search", typeof(string)), ("/search?mode=grid", typeof(int))];
+        if (reversed) Array.Reverse(entries);
+
+        Assert.Equal("/search?mode=grid", RouteParser.BestMatch(entries, "/search?mode=grid").Template);
+        Assert.Equal("/search", RouteParser.BestMatch(entries, "/search").Template);
+        Assert.Equal("/search", RouteParser.BestMatch(entries, "/search?mode=list").Template);
+    }
 }
