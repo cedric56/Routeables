@@ -77,7 +77,15 @@ How each library is written, and where it differs, is part of the result:
 | Back / Forward | `GoBackAsync`, `ForwardAsync` | `NavigateBack`; **no Forward** (a stack, not a history): those 20 steps are skipped and the run says so | a list and an index |
 | Container | `Microsoft.Extensions.DependencyInjection` | the application's own (a plain object here, the dependency is a field) | `Microsoft.Extensions.DependencyInjection` |
 
-**The ReactiveUI version was written without being able to restore ReactiveUI.** It has since compiled and run in the CI (the results below), but nobody who uses ReactiveUI every day has read it yet: until one has, its numbers are shown as measured and not as a verdict on the library (the rule above applies to it first). Its step stays tolerated in the CI until then.
+**The ReactiveUI version was written without being able to restore ReactiveUI.** It has since compiled and run in the CI. A reviewer who had only that file read it (not a daily user of the library) and found it honest on the functions: no Forward (`SupportsForward` is `false`), the guard and the refusal to leave written in front of `Navigate`. What the review changed, and what it did not:
+
+- **The dependency** of the five pages that have one was read from a field, while Routeables resolves it through the container: the ReactiveUI driver now asks the same container (`Microsoft.Extensions.DependencyInjection`, a singleton) each time. The numbers below were measured before this change, so ReactiveUI's will go up a little at the next run.
+- **The pattern of the pages with a parameter** (`['C', ..]`) took any name that starts with C: it is now restricted to `C` and a digit, with a parameter.
+- **Not changed, and stated:** Routeables builds a view and a view model through the container for every page, ReactiveUI only a view model (a console has no views to locate); Routeables calls the hooks of the page and disposes it when it leaves the history, ReactiveUI has no lifecycle (the pages are still collected: none is alive after the history is cleared). These are part of what the allocations pay for. The router of Routeables runs without a scheduler or a `Task.Yield`, as the immediate scheduler does here.
+- **Checked and already the same:** Back does not run the guards again in either (the guard of Routeables looks at pushes only); the return to the page that was asked for after signing in is done by the scenario for every driver (`Continue`), not by a library; the name of the page shown is compared with the model at every step.
+- **Not exercised by the scenario:** the order of the checks when a dirty edit page is left for a guarded page (leaving first, in the model). Both drivers do it in that order, but no step proves it.
+
+The ReactiveUI step stays tolerated until someone who uses the library daily has read the driver. The runs were made on a shared CI runner, nothing was measured on a machine fit to be named. The CI job writes the three tables in the summary of each run; copy them below with the date, the versions and the runner when a run is clean.
 
 Each phase ends with its results published in this page, with the date, the versions and the machine. Phases 2 and 3 need the packages of each library, the SDKs of each platform, and a person who knows each library to review its implementation: they are work for several people, not for one afternoon.
 
@@ -90,7 +98,7 @@ Every library ended 200 of 200 steps on the expected page (ReactiveUI: 180 of 20
 | Library | median ms / run | µs / step | KiB allocated / run | B / step |
 |---|---:|---:|---:|---:|
 | Routeables | 11.64 – 11.84 | 58 – 59 | 4971 – 4982 | 25 453 – 25 505 |
-| ReactiveUI routing | 5.56 | 27.8 | 786 | 4023 |
+| ReactiveUI routing (before the container for its dependency) | 5.56 | 27.8 | 786 | 4023 |
 | Service of your own | 0.04 – 0.05 | 0.2 | 17 | 86 |
 
 (Routeables and the service of your own were run twice, once in each job step; the range is the two runs.)

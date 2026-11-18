@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
@@ -32,7 +33,9 @@ public sealed class RxScreen : ReactiveObject, IScreen
 public sealed class ReactiveUiDriver : INavigationDriver
 {
     private readonly RxScreen _screen = new();
-    private readonly IClock _clock = new Clock();
+    // The same container and the same lifetime (a singleton) as the Routeables driver: the five pages that have a dependency ask the container
+    // for it each time they are built, instead of reading a field. ReactiveUI has no container of its own; the application brings one.
+    private readonly ServiceProvider _provider = new ServiceCollection().AddSingleton<IClock, Clock>().BuildServiceProvider();
 
     public ReactiveUiDriver() => State = new AppState();
 
@@ -80,7 +83,7 @@ public sealed class ReactiveUiDriver : INavigationDriver
 
     private RxPage Create(string[] parts) => parts[0] switch
     {
-        ['C', ..] => new RxPage($"{parts[0]}:{parts[1]}", _screen),
+        ['C', >= '0' and <= '9', ..] when parts.Length > 1 => new RxPage($"{parts[0]}:{parts[1]}", _screen),
         "Detail" => new RxPage($"Detail:{parts[1]}", _screen),
         "Edit" => new RxPage($"Edit:{parts[1]}", _screen) { CanLeave = () => !State.Dirty },
         ['P', '3', '0' or '1' or '2' or '3' or '4'] => PageWithDependency(parts[0]),
@@ -89,11 +92,9 @@ public sealed class ReactiveUiDriver : INavigationDriver
 
     private RxPage PageWithDependency(string name)
     {
-        _ = _clock.Now;   // the dependency of the five pages that have one
+        _ = _provider.GetRequiredService<IClock>().Now;   // the dependency of the five pages that have one
         return new RxPage(name, _screen);
     }
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() => _provider.Dispose();
 }
