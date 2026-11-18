@@ -34,12 +34,12 @@ def main(argv):
 
     # Lines are counted once per file and number: the reports of several test projects can cover the same code.
     lines = {}      # assembly -> {(file, number): covered}
-    branches = {}   # assembly -> [covered, total]
+    branches = {}   # assembly -> {(file, number): (covered, total)}, the best of the reports
     for path in files:
         for package in ET.parse(path).getroot().iter("package"):
             name = package.get("name") or "?"
             seen = lines.setdefault(name, {})
-            counts = branches.setdefault(name, [0, 0])
+            counts = branches.setdefault(name, {})
             for cls in package.iter("class"):
                 file = repo_path(cls.get("filename") or "")
                 for line in cls.findall("lines/line"):
@@ -49,8 +49,9 @@ def main(argv):
                         text = line.get("condition-coverage") or ""
                         if "(" in text:
                             covered, total = text.split("(")[1].rstrip(")").split("/")
-                            counts[0] += int(covered)
-                            counts[1] += int(total)
+                            best = counts.get(key)
+                            if best is None or int(covered) > best[0]:
+                                counts[key] = (int(covered), int(total))
 
     def pct(covered, total):
         return "-" if total == 0 else f"{100.0 * covered / total:.1f}%"
@@ -61,7 +62,8 @@ def main(argv):
     for name in sorted(lines):
         total = len(lines[name])
         covered = sum(1 for hit in lines[name].values() if hit)
-        bc, bt = branches[name]
+        bc = sum(c for c, _ in branches[name].values())
+        bt = sum(t for _, t in branches[name].values())
         all_lines += total
         all_covered += covered
         all_bc += bc

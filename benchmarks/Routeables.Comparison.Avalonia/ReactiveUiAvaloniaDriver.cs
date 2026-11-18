@@ -49,11 +49,13 @@ public sealed class ReactiveUiAvaloniaDriver : INavigationDriver
     private readonly ServiceProvider _provider = new ServiceCollection().AddSingleton<IClock, Clock>().BuildServiceProvider();
     private readonly Window _window;
     private readonly IDisposable _host;
+    private readonly ContentControl _content = new();
+    private int _shown, _unsized;
 
     public ReactiveUiAvaloniaDriver()
     {
         State = new AppState();
-        var content = new ContentControl();
+        var content = _content;
         _host = _screen.Router.CurrentViewModel.Subscribe(
             vm => content.Content = vm is RxPage page ? ActivatorUtilities.CreateInstance<RxView>(_provider, page) : null);
         _window = new Window { Width = 400, Height = 300, Content = content };
@@ -129,10 +131,23 @@ public sealed class ReactiveUiAvaloniaDriver : INavigationDriver
         return page;
     }
 
-    private static void Flush() => Dispatcher.UIThread.RunJobs();
+    private void Flush()
+    {
+        Dispatcher.UIThread.RunJobs();
+
+        // Whether the view shown has been laid out: a view without a size was built and attached but never measured, which would make
+        // the numbers those of something else than a page shown.
+        if (_content.Content is Control view)
+        {
+            _shown++;
+            if (view.Bounds.Width <= 0 || view.Bounds.Height <= 0)
+                _unsized++;
+        }
+    }
 
     public void Dispose()
     {
+        Console.Error.WriteLine($"::notice title=Layout::{Name}: {_unsized} of {_shown} views shown had no size after the step.");
         _host.Dispose();
         _window.Close();
         Flush();
