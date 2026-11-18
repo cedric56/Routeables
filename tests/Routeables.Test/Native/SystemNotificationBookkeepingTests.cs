@@ -60,12 +60,19 @@ public class SystemNotificationBookkeepingTests
         var start = DateTime.UtcNow;
         await notification.ShowAsync();
         await Task.Delay(400, ct);
+        var updating = DateTime.UtcNow;
         await notification.ShowAsync();   // an update: the 600 ms start again
+        var updated = DateTime.UtcNow;
+
+        // A machine that stalls for 160 ms or more between the two displays lets the first 600 ms run out before the update: there is
+        // nothing to learn from that run (it failed once, on a runner that was running the tests of two platforms at once).
+        if (updating - start >= TimeSpan.FromMilliseconds(560))
+            return;
 
         var end = await completed.Task.WaitAsync(TimeSpan.FromSeconds(10), ct);
 
-        // Closed after the update (400 + 600 ms), not at the 600 ms of the first display.
-        Assert.True(end - start >= TimeSpan.FromMilliseconds(900), $"closed after {(end - start).TotalMilliseconds} ms");
+        // Closed 600 ms after the update, not at the 600 ms of the first display (which would be at most 200 ms after the update).
+        Assert.True(end - updated >= TimeSpan.FromMilliseconds(450), $"closed {(end - updated).TotalMilliseconds} ms after the update");
     }
 
     [Fact]
