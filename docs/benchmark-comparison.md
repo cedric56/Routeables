@@ -103,20 +103,26 @@ Written without being able to restore the packages: both steps of the CI job "Sa
 
 ## Results
 
-### Phase 1b: with views (four runs, November 2026)
+### Phase 1b: with views (three runs, November 2026)
 
-.NET 10.0.15, Ubuntu 26.04.1 LTS, 4 cores, workstation GC, 200 steps, 30 runs after 5 warm-ups, Avalonia.Headless, a real view in a real window for every page. Every library ended on the expected page at every step (ReactiveUI: 180 of 200, no Forward). Four runs on a shared runner: the allocations repeat to a few per cent, the times and the heap do not.
+.NET 10.0.15, Ubuntu 26.04.1 LTS, 4 cores, workstation GC, 200 steps, 30 runs after 5 warm-ups, Avalonia.Headless, a real view in a real window for every page. Every library ended on the expected page at every step (ReactiveUI: 180 of 200, no Forward). Three runs on a shared runner: the allocations repeat to a few per cent, the times and the heap do not.
 
 | Library | Avalonia | µs / step | B / step | heap after 1000 changes (KiB) | alive after the history is cleared |
 |---|---|---:|---:|---:|---:|
-| Routeables | 12 | 305 – 414 | 60 900 – 61 732 | 9 201 – 9 524 | 0 of 100 |
-| ReactiveUI routing | 12 | 148 – 213 | 30 022 – 30 053 | 452 – 2 745 | 0 of 100 |
-| ReactiveUI routing, with Prism | 11.3 | 320 (one run) | 29 619 | 900 | 0 of 100 |
-| Prism | 11.3 | 40 – 63 | 4 680 | 138 – 286 | 100 of 100 |
+| Routeables | 12 | 305 – 412 | 61 262 – 61 732 | 9 201 – 9 371 | 0 of 100 |
+| ReactiveUI routing | 12 | 148 – 213 | 30 022 – 30 053 | 1 202 – 2 745 | 0 of 100 |
+| Prism, one run | 11.3 | 40 (35 – 40 in two runs) | 4 680 | 286 | 100 of 100 |
 
 - With the views, Routeables costs about 2 times the time and 2 times the allocations of ReactiveUI (1.8 to 2.3 for the time, 2.0 for the allocations), against 3.7 and 6.5 times without views: building and laying out a view is most of what a step costs, and it is the same work for both.
-- The heap measured is what the application holds after 1000 changes, so it grows with the history, which keeps the pages it has shown: about 9 KB per entry with Routeables, 0.5 to 3 KB with ReactiveUI (its navigation stack keeps only the view models; the figure moved from 0.5 to 2.7 MiB between runs). The earlier note here that it "is not growing" had no measure behind it and is withdrawn. That the pages are released when the history is cleared (0 of 100) is measured; what makes an entry of Routeables 3 to 8 times heavier with views (the view kept for Back and Forward is the first thing to check) is not.
-- **ReactiveUI costs the same on Avalonia 11 and on 12** (29.6 against 30.0 KB per step): the version of Avalonia is not what separates Prism from the others. On the same Avalonia 11, Prism allocates 4.7 KB per step and ReactiveUI 29.6, six times more, for a view of the same kind. Either Prism is that much lighter, or its view is not laid out as the other is. The drivers now count the views shown that have no size after the step (a view built and attached but never measured), and write it as a notice of the run; until that count is read, the Prism line stays out of any ranking. The 100 pages still alive after its history is cleared are not explained and are not written as a defect of Prism.
+- The heap measured is what the application holds after 1000 changes, so it grows with the history, which keeps the pages it has shown: about 9 KB per entry with Routeables, 1 to 3 KB with ReactiveUI (its navigation stack keeps only the view models). The earlier note here that it "is not growing" had no measure behind it and is withdrawn. That the pages are released when the history is cleared (0 of 100) is measured; what makes an entry of Routeables 3 to 8 times heavier with views (the view kept for Back and Forward is the first thing to check) is not.
+- **The Prism line is not yet a comparison.** Its driver now checks that the region shows a view and passes, but its 4.7 KB per step is still six times below ReactiveUI's 30 KB for the same kind of view, and it runs on another Avalonia. Either Prism is that much lighter, or Avalonia 11 lays a view out for far less than Avalonia 12, or the view is not laid out as in the other two. To tell them apart the Prism program now also runs ReactiveUI routing on the same Avalonia 11: the next run gives ReactiveUI on 11 against Prism on 11 (the library alone), and against ReactiveUI on 12 (the Avalonia version alone). The 100 pages still alive after the history is cleared are not explained and are not written as a defect of Prism.
+
+### What changed after the first results (November 2026)
+
+- **The host of ReactiveUI was not the control of Routeables.** `RouteableRegion` is a `TransitioningContentControl` (two presenters and the machinery of a transition, none declared); the ReactiveUI host was a plain `ContentControl`. It is now a `TransitioningContentControl` too, so the figures of the views run before this change are not comparable with the ones after it. The next run says by how much it mattered.
+- **The route lookup of Routeables no longer tries every template**: on the console it went from 26 KB and about 100 µs per step to 5 KB and 32 µs, next to ReactiveUI's 4.1 KB and 30 µs. With views Routeables then took 41 KB and 284 µs per step against 30 KB and 117 µs; the remaining difference is in the views and the region, and has not been located.
+- **Memory with views.** The history of Routeables has no limit by default and each entry keeps its view for Back and Forward; ReactiveUI keeps the view models of its stack and lets the view go. The job "Same application, with views" now runs the memory measure a second time with `LimitHistory(50)` (the variable `ROUTEABLES_BENCH_HISTORY_LIMIT`) and writes how many entries the history kept; if the heap falls with the limit, the weight is the views of the history, not the router.
+- **Avalonia 11 against 12 is not what separates Prism.** ReactiveUI routing allocates 29.7 KB per step on Avalonia 11 and 30.1 KB on Avalonia 12: Prism's 4.7 KB is not a matter of the Avalonia version. Either Prism is that light or its views are not laid out like the others; the layout counter of the run says which.
 
 ### Phase 1, console (kept as a record; its ground is not equal)
 

@@ -1,7 +1,9 @@
 using Avalonia;
 using Avalonia.Headless;
 using Avalonia.Themes.Fluent;
+using Microsoft.Extensions.DependencyInjection;
 using Routeables.Avalonia;
+using Routeables.Routing;
 
 namespace Routeables.Comparison.Avalonia;
 
@@ -16,7 +18,20 @@ public sealed class BenchApp : Application
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<BenchApp>()
             .UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = true })
-            .UseRouteables(configure: RouteablesAvaloniaPages.Register, afterBuild: provider => Provider = provider);
+            .UseRouteables(configure: Configure, afterBuild: provider => Provider = provider);
+
+    /// <summary>
+    /// The history of the router has no limit by default, and each entry keeps its view for Back and Forward. To see what that costs,
+    /// the variable <c>ROUTEABLES_BENCH_HISTORY_LIMIT</c> (a number) limits the history; the CI runs the memory measure with and without it.
+    /// </summary>
+    public static int? HistoryLimit { get; } = int.TryParse(Environment.GetEnvironmentVariable("ROUTEABLES_BENCH_HISTORY_LIMIT"), out var n) && n > 0 ? n : null;
+
+    private static void Configure(IServiceCollection services)
+    {
+        RouteablesAvaloniaPages.Register(services);
+        if (HistoryLimit is { } limit)
+            services.LimitHistory(limit);
+    }
 }
 
 public static class Program

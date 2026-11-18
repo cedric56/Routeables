@@ -39,7 +39,8 @@ public sealed class RxScreen : ReactiveObject, IScreen
 
 /// <summary>
 /// The scenario on <c>RoutingState</c> of ReactiveUI, shown by a view host written here: the host shows the view of the page the router
-/// gives (<c>RoutedViewHost</c> of ReactiveUI.Avalonia does the same, with its view locator; its API could not be checked, so it is not used).
+/// gives (<c>RoutedViewHost</c> of ReactiveUI.Avalonia does the same, with its view locator; its API could not be checked, so it is not used). The host is a
+/// <c>TransitioningContentControl</c>, the control that <c>RouteableRegion</c> is, so that the two libraries pay the same for the control.
 /// The library has a navigation stack, not a history (no Forward), no route table and no guard: the guard and the refusal to leave are
 /// written in the application, in front of <c>Navigate</c>. Pages and views are built through the container, as Routeables builds its own.
 /// </summary>
@@ -49,13 +50,13 @@ public sealed class ReactiveUiAvaloniaDriver : INavigationDriver
     private readonly ServiceProvider _provider = new ServiceCollection().AddSingleton<IClock, Clock>().BuildServiceProvider();
     private readonly Window _window;
     private readonly IDisposable _host;
-    private readonly ContentControl _content = new();
-    private int _shown, _unsized;
 
     public ReactiveUiAvaloniaDriver()
     {
         State = new AppState();
-        var content = _content;
+        // The control of the region of Routeables (RouteableRegion is a TransitioningContentControl): two presenters and the machinery of a
+        // transition, with none declared. A plain ContentControl would leave that cost to Routeables alone.
+        var content = new TransitioningContentControl();
         _host = _screen.Router.CurrentViewModel.Subscribe(
             vm => content.Content = vm is RxPage page ? ActivatorUtilities.CreateInstance<RxView>(_provider, page) : null);
         _window = new Window { Width = 400, Height = 300, Content = content };
@@ -131,23 +132,10 @@ public sealed class ReactiveUiAvaloniaDriver : INavigationDriver
         return page;
     }
 
-    private void Flush()
-    {
-        Dispatcher.UIThread.RunJobs();
-
-        // Whether the view shown has been laid out: a view without a size was built and attached but never measured, which would make
-        // the numbers those of something else than a page shown.
-        if (_content.Content is Control view)
-        {
-            _shown++;
-            if (view.Bounds.Width <= 0 || view.Bounds.Height <= 0)
-                _unsized++;
-        }
-    }
+    private static void Flush() => Dispatcher.UIThread.RunJobs();
 
     public void Dispose()
     {
-        Console.Error.WriteLine($"::notice title=Layout::{Name}: {_unsized} of {_shown} views shown had no size after the step.");
         _host.Dispose();
         _window.Close();
         Flush();

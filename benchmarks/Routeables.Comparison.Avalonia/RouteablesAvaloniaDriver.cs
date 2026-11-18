@@ -33,7 +33,7 @@ public sealed class RouteablesAvaloniaDriver : INavigationDriver
         Flush();
     }
 
-    public string Name => "Routeables";
+    public string Name => BenchApp.HistoryLimit is { } limit ? $"Routeables (history limited to {limit})" : "Routeables";
 
     public AppState State { get; }
 
@@ -67,6 +67,8 @@ public sealed class RouteablesAvaloniaDriver : INavigationDriver
 
     public async Task<bool> ClearHistoryAsync()
     {
+        // What the memory measure has just weighed: the entries that the history still keeps (each one has its view model, its view and its arguments).
+        Console.Error.WriteLine($"::notice title=History::{Name}: {_router.History.Count} entries kept before the history is cleared");
         await _router.EraseHistoryAsync();
         Flush();
         return true;
