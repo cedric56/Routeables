@@ -184,14 +184,14 @@ internal class Router(
     {
         // Like every route change, one at a time: the page asked about is the one that is shown when the guards answer, and a refresh
         // that comes in the middle of a route change waits for it.
-        var (asked, decision, observed) = await RunGatedAsync(cancellationToken, async token =>
+        // The token of the caller goes on to the redirection: the one the gate gives is linked to a source that is released when the gate is.
+        var (asked, decision) = await RunGatedAsync(cancellationToken, async token =>
         {
             var current = history.Current;
             return current is null
-                ? (current, RouteGuardDecision.Allow, token)
-                : (current, await AskGuardsAsync(RouteableKind.MoveTo, current, current, token), token);
+                ? (current, RouteGuardDecision.Allow)
+                : (current, await AskGuardsAsync(RouteableKind.MoveTo, current, current, token));
         });
-        cancellationToken = observed;
         if (asked is null)
             return RouteableResult.Ok();
 
@@ -440,20 +440,29 @@ internal class Router(
                 return refused;
 
             var built = new List<object>();
-            if (viewModel is null && string.Equals(viewmodelkey, viewkey, StringComparison.Ordinal))
+            try
             {
-                if (view is null && provider.GetView(viewkey, args) is { } own) { view = own; built.Add(own); }
-                viewModel = view;
-            }
+                if (viewModel is null && string.Equals(viewmodelkey, viewkey, StringComparison.Ordinal))
+                {
+                    if (view is null && provider.GetView(viewkey, args) is { } own) { view = own; built.Add(own); }
+                    viewModel = view;
+                }
 
-            if (viewModel is null)
-            {
-                // A view declared without a view model (a Razor component, for instance) is shown with an empty object as its context:
-                // it is wanted, not a failure.
-                viewModel = provider.GetViewModel(viewmodelkey, args) ?? new object();
-                built.Add(viewModel);
+                if (viewModel is null)
+                {
+                    // A view declared without a view model (a Razor component, for instance) is shown with an empty object as its context:
+                    // it is wanted, not a failure.
+                    viewModel = provider.GetViewModel(viewmodelkey, args) ?? new object();
+                    built.Add(viewModel);
+                }
+                if (view is null && provider.GetView(viewkey, args) is { } created) { view = created; built.Add(created); }
             }
-            if (view is null && provider.GetView(viewkey, args) is { } created) { view = created; built.Add(created); }
+            catch
+            {
+                // The view model was built and the view could not be: nothing will show it, so nobody else would dispose it.
+                await DiscardAsync(built);
+                throw;
+            }
             if (view == null)
             {
                 await DiscardAsync(built);

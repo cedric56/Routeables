@@ -19,11 +19,20 @@ internal static class RouteAddress
 
     /// <summary>The route with exactly one slash before it and none at its end (<c>orders/42/</c> becomes <c>/orders/42</c>); the query, if any, is kept.</summary>
     /// <param name="route">The route.</param>
-    internal static string Absolute(string? route) => "/" + (route ?? string.Empty).Trim('/');
+    internal static string Absolute(string? route)
+    {
+        // Only the slashes of the path: the last character of a value of the query ("?dir=/") belongs to the value.
+        var text = route ?? string.Empty;
+        var at = text.IndexOf('?');
+        return "/" + (at < 0 ? text : text[..at]).Trim('/') + (at < 0 ? string.Empty : text[at..]);
+    }
 
     /// <summary>The path of a route: without its query and without the slashes around it. Blank for none.</summary>
     /// <param name="route">The route, the template or the address.</param>
-    internal static string PathOf(string? route) => (route ?? string.Empty).Split('?')[0].Trim('/');
+    internal static string PathOf(string? route) => WithoutFragment(route ?? string.Empty).Split('?')[0].Trim('/');
+
+    // The fragment is for the browser, never for the route: "/about#top" is "/about", as the parser reads it.
+    private static string WithoutFragment(string address) => address.IndexOf('#') is var hash and >= 0 ? address[..hash] : address;
 
     /// <summary>Whether two routes or templates have the same path, whatever their queries (the case and the slashes around the path do not count).</summary>
     /// <param name="a">The first route.</param>
@@ -45,8 +54,8 @@ internal static class RouteAddress
     {
         if (a is null || b is null)
             return false;
-        var (pathA, queryA) = SplitQuery(Rooted(a));
-        var (pathB, queryB) = SplitQuery(Rooted(b));
+        var (pathA, queryA) = SplitQuery(Rooted(WithoutFragment(a)));
+        var (pathB, queryB) = SplitQuery(Rooted(WithoutFragment(b)));
         return SamePathOnly(Unescape(pathA.TrimEnd('/')), Unescape(pathB.TrimEnd('/')), templateOf)
                && SameQuery(queryA, queryB);
     }
@@ -101,8 +110,8 @@ internal static class RouteAddress
         {
             var (nameA, valueA) = SplitPair(pairsA[i]);
             var (nameB, valueB) = SplitPair(pairsB[i]);
-            if (!string.Equals(Unescape(nameA), Unescape(nameB), StringComparison.OrdinalIgnoreCase)
-                || !string.Equals(Unescape(valueA), Unescape(valueB), StringComparison.Ordinal))
+            if (!string.Equals(UnescapeQuery(nameA), UnescapeQuery(nameB), StringComparison.OrdinalIgnoreCase)
+                || !string.Equals(UnescapeQuery(valueA), UnescapeQuery(valueB), StringComparison.Ordinal))
                 return false;
         }
         return true;
@@ -113,6 +122,9 @@ internal static class RouteAddress
         var at = pair.IndexOf('=');
         return at < 0 ? (pair, string.Empty) : (pair[..at], pair[(at + 1)..]);
     }
+
+    // In a query a plus is a space, as the parser reads it: "?q=a+b" and "?q=a%20b" are one address ("%2B" stays a plus).
+    private static string UnescapeQuery(string text) => Unescape(text.Replace('+', ' '));
 
     private static string Unescape(string text)
     {

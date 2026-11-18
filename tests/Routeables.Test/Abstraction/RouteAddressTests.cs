@@ -92,4 +92,27 @@ public class RouteAddressTests
         Assert.True(RouteAddress.SameFor(router, "/RA-items/ab", "/ra-items/ab"));      // a word that changed its case
         Assert.True(RouteAddress.SameFor(Substitute.For<IRouter>(), "/ra-items/aB", "/ra-items/Ab"));
     }
+
+    [Fact]
+    public void Addresses_are_compared_as_the_parser_reads_them()
+    {
+        // A plus in a query is a space; an escaped plus stays a plus.
+        Assert.True(RouteAddress.Same("/search?q=a+b", "/search?q=a%20b"));
+        Assert.False(RouteAddress.Same("/search?q=a+b", "/search?q=a%2Bb"));
+        // The fragment is not part of the route.
+        Assert.True(RouteAddress.Same("/about#top", "/about"));
+        Assert.True(RouteAddress.SamePath("/about#top", "/about"));
+        Assert.True(RouteAddress.Same("/about?x=1#top", "/about?x=1"));
+        Assert.Equal("about", RouteAddress.PathOf("/about#top"));
+    }
+
+    [Fact]
+    public void Absolute_keeps_the_end_of_the_query()
+    {
+        Assert.Equal("/files?dir=/", RouteAddress.Absolute("/files?dir=/"));
+        Assert.Equal("/orders/42?x=1", RouteAddress.Absolute("orders/42/?x=1"));
+        Assert.Equal("/orders/42", RouteAddress.Absolute("//orders/42//"));
+        Assert.Equal("/", RouteAddress.Absolute(null));
+        Assert.Equal("/", RouteAddress.Absolute("///"));
+    }
 }

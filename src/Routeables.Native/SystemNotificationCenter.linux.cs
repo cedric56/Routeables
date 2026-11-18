@@ -89,7 +89,11 @@ public sealed partial class SystemNotificationCenter
 
         connection.SignalReceived += message => OnLinuxSignal(message);
         // A closed bus is connected again by the next call.
-        connection.Closed += () => { lock (_linuxGate) { _linuxConnection = null; _linuxConnecting = null; _linuxOwner = null; } };
+        connection.Closed += () =>
+        {
+            lock (_linuxGate) { _linuxConnection = null; _linuxConnecting = null; _linuxOwner = null; }
+            EndServerNotifications();
+        };
         lock (_linuxGate)
             _linuxConnection = connection;
 
@@ -190,6 +194,21 @@ public sealed partial class SystemNotificationCenter
     // A call whose answer is not wanted: a failure (the bus is gone, it did not answer in time) is not left unobserved.
     private static void Forget(Task task) => _ = task.ContinueWith(failed => _ = failed.Exception, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
 
+    // The notifications of a server that is gone: their identifiers are forgotten and each one that was waiting is ended as dismissed.
+    private void EndServerNotifications()
+    {
+        uint[] ours;
+        lock (_linuxGate)
+        {
+            ours = [.. _linuxIds.Values];
+            _linuxIds.Clear();
+            _linuxServerIds.Clear();
+        }
+
+        foreach (var id in ours)
+            Complete(id, false, null, offThread: true);
+    }
+
     private async Task ReadOwnerAsync(DBusConnection connection)
     {
         try
@@ -212,10 +231,14 @@ public sealed partial class SystemNotificationCenter
             var change = message.Reader();
             if (message.Signature == "sss" && change.String() == LinuxService)
             {
-                change.String();
+                var previous = change.String();
                 var owner = change.String();
                 lock (_linuxGate)
                     _linuxOwner = owner.Length == 0 ? null : owner;
+                // The server that gave the identifiers is gone (or was replaced): they mean nothing to the next one, which could even
+                // replace the bubble of another application with one of them.
+                if (previous.Length > 0)
+                    EndServerNotifications();
             }
 
             return;

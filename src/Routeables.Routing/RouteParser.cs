@@ -473,6 +473,9 @@ public static partial class RouteParser
                     if (!TryConvert(restText, restType, out _))
                         throw new ArgumentException(
                             $"The value \"{restText}\" is not a valid {(restType.Length == 0 ? "value" : restType)} for {{**{m.Groups["name"].Value}}} in \"{template}\".", nameof(values));
+                    // cat/{age?}/{**rest} with a rest and no age: the rest would be read as the age.
+                    if (skippedOptional is { } skippedBefore)
+                        throw new ArgumentException($"The route \"{template}\" cannot leave out {skippedBefore} and give a later value: give both, or neither.", nameof(values));
                     segments.AddRange(restText.Split('/', StringSplitOptions.RemoveEmptyEntries).Select(Uri.EscapeDataString));
                 }
                 continue;

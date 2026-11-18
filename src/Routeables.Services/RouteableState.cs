@@ -49,7 +49,8 @@ public static class RouteableState
         ArgumentNullException.ThrowIfNull(router);
         ArgumentNullException.ThrowIfNull(routes);
 
-        var list = routes.Where(route => !string.IsNullOrWhiteSpace(route)).ToList();
+        // A saved route is an address, not a command: "-/orders" (go back, then navigate) in a file that was changed by hand would go back.
+        var list = routes.Where(route => !string.IsNullOrWhiteSpace(route) && !route.TrimStart().StartsWith('-')).ToList();
         if (list.Count == 0)
             return true;
 

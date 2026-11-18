@@ -4,6 +4,16 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ## Unreleased
 
+### Fixed
+
+- **`RouteParser.Build`**: a `{**rest}` after an optional that was left out is refused, like any later value (it built `/cat/a/b`, which the router read as the age).
+- **A view that cannot be built no longer leaks its view model**: the view model the route change had already built is disposed (`Router`).
+- **`RefreshGuardsAsync` with `RouterConcurrency.CancelCurrent`**: the redirection stops when the caller cancels; it used a token that was already released.
+- **`RouteAddress`** reads addresses as the parser does: the fragment (`/about#top`) is left out, a plus in a query is a space (`?q=a+b` is `?q=a%20b`), and `Absolute` keeps the end of the query (`/files?dir=/`).
+- **`RouteableState.RestoreAsync`** ignores a saved route that starts with `-` (go back), as `RestoreSnapshotsAsync` does.
+- **Linux notifications**: when the bus closes or the notification server is replaced, the identifiers it gave are forgotten and the notifications that were waiting end as dismissed (the next server could have replaced the bubble of another application with one of them).
+- **`BrowserSystemNotifications.DisposeAsync`** (Blazor) catches the same exceptions as the other services of the browser.
+
 ### Added
 
 - **Code coverage in the CI** (job "Code coverage"): `Routeables.Test` runs with `--coverage` (`Microsoft.Testing.Extensions.CodeCoverage`, settings in `tests/CodeCoverage.settings.xml`), the line and branch coverage of each assembly is written in the summary of the run (`tools/coverage-summary.py`), and the Cobertura reports are kept as an artifact. Nothing fails on a number yet. `coverlet.collector` is gone from the test project: it is a VSTest collector and never ran under Microsoft.Testing.Platform.

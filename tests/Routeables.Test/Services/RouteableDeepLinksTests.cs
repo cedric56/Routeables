@@ -437,4 +437,17 @@ public class RouteableDeepLinksTests
         Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
         Assert.Single(RouteableState.Capture(router));
     }
+
+    [Fact]
+    public async Task A_route_of_the_plain_restoration_is_an_address_too()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        var ct = TestContext.Current.CancellationToken;
+
+        await RouteableState.RestoreAsync(router, ["/link-first", "-/link-second"], ct);
+
+        Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
+        Assert.Single(RouteableState.Capture(router));
+    }
 }
