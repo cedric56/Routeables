@@ -22,6 +22,12 @@
     <PackageReference Include="Prism.DryIoc.Avalonia" />
     <PackageReference Include="Avalonia.Headless" VersionOverride="11.3.23" />
     <PackageReference Include="Avalonia.Themes.Fluent" VersionOverride="11.3.23" />
+    <PackageReference Include="ReactiveUI" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- ReactiveUI routing on the same Avalonia 11 as Prism: it separates what the library costs from what the version of Avalonia costs. -->
+    <Compile Include="..\Routeables.Comparison.Avalonia\ReactiveUiAvaloniaDriver.cs" Link="ReactiveUiAvaloniaDriver.cs" />
   </ItemGroup>
 
   <ItemGroup>

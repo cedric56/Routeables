@@ -103,18 +103,19 @@ Written without being able to restore the packages: both steps of the CI job "Sa
 
 ## Results
 
-### Phase 1b: with views (two runs, November 2026)
+### Phase 1b: with views (three runs, November 2026)
 
-.NET 10.0.15, Ubuntu 26.04.1 LTS, 4 cores, workstation GC, 200 steps, 30 runs after 5 warm-ups, Avalonia.Headless, a real view in a real window for every page. Every library ended on the expected page at every step (ReactiveUI: 180 of 200, no Forward). Two runs on a shared runner: the allocations repeat to a few per cent, the times and the heap do not.
+.NET 10.0.15, Ubuntu 26.04.1 LTS, 4 cores, workstation GC, 200 steps, 30 runs after 5 warm-ups, Avalonia.Headless, a real view in a real window for every page. Every library ended on the expected page at every step (ReactiveUI: 180 of 200, no Forward). Three runs on a shared runner: the allocations repeat to a few per cent, the times and the heap do not.
 
-| Library (Avalonia) | µs / step | B / step | heap after 1000 changes (KiB) | alive after the history is cleared |
-|---|---:|---:|---:|---:|
-| Routeables (12) | 305 – 412 | 61 262 – 61 732 | 9 244 – 9 371 | 0 of 100 |
-| ReactiveUI routing (12) | 148 – 180 | 30 041 – 30 053 | 1 244 – 2 745 | 0 of 100 |
+| Library | Avalonia | µs / step | B / step | heap after 1000 changes (KiB) | alive after the history is cleared |
+|---|---|---:|---:|---:|---:|
+| Routeables | 12 | 305 – 412 | 61 262 – 61 732 | 9 201 – 9 371 | 0 of 100 |
+| ReactiveUI routing | 12 | 148 – 213 | 30 022 – 30 053 | 1 202 – 2 745 | 0 of 100 |
+| Prism, one run | 11.3 | 40 (35 – 40 in two runs) | 4 680 | 286 | 100 of 100 |
 
-- With the views, Routeables costs about 2 times the time and 2 times the allocations of ReactiveUI (the two runs agree: 2.1 and 2.3 for the time, 2.0 for the allocations), against 3 and 6 times without views: building and laying out a view is most of what a step costs, and it is the same work for both.
-- The heap that remains after 1000 changes is 3 to 7 times larger with Routeables (the ReactiveUI figure moved from 1.2 to 2.7 MiB between the runs). The measure does not say what holds it; it is not growing (the pages are released with the history). To look into.
-- **Prism is not in this table**: it runs on another Avalonia (11.3), and its first line (35 µs, 4.7 KB per step, 100 pages still alive after the history is cleared) was far below the cost of a view that the other two pay, because the check of the driver only read the journal, not the window. The driver now fails if the region shows no view; its line is written here when a run with that check is green. The 100 pages alive are not explained and are not written as a defect of Prism.
+- With the views, Routeables costs about 2 times the time and 2 times the allocations of ReactiveUI (1.8 to 2.3 for the time, 2.0 for the allocations), against 3.7 and 6.5 times without views: building and laying out a view is most of what a step costs, and it is the same work for both.
+- The heap measured is what the application holds after 1000 changes, so it grows with the history, which keeps the pages it has shown: about 9 KB per entry with Routeables, 1 to 3 KB with ReactiveUI (its navigation stack keeps only the view models). The earlier note here that it "is not growing" had no measure behind it and is withdrawn. That the pages are released when the history is cleared (0 of 100) is measured; what makes an entry of Routeables 3 to 8 times heavier with views (the view kept for Back and Forward is the first thing to check) is not.
+- **The Prism line is not yet a comparison.** Its driver now checks that the region shows a view and passes, but its 4.7 KB per step is still six times below ReactiveUI's 30 KB for the same kind of view, and it runs on another Avalonia. Either Prism is that much lighter, or Avalonia 11 lays a view out for far less than Avalonia 12, or the view is not laid out as in the other two. To tell them apart the Prism program now also runs ReactiveUI routing on the same Avalonia 11: the next run gives ReactiveUI on 11 against Prism on 11 (the library alone), and against ReactiveUI on 12 (the Avalonia version alone). The 100 pages still alive after the history is cleared are not explained and are not written as a defect of Prism.
 
 ### Phase 1, console (kept as a record; its ground is not equal)
 

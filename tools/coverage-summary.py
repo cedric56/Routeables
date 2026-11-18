@@ -5,8 +5,18 @@ usage: coverage-summary.py [--min LINE_PERCENT] report.cobertura.xml [...]
 
 With --min the exit code is 1 when the line coverage of the whole is below it (the CI uses 65).
 """
+import re
 import sys
 import xml.etree.ElementTree as ET
+
+_ROOT = re.compile(r"^.*?(?:^|/)((?:src|reshapes|samples|tests|benchmarks)/.*)$")
+
+
+def repo_path(path):
+    """The path of a source file from the root of the repository, whatever the runner: D:\\a\\Routeables\\Routeables\\src\\X.cs and /home/runner/work/Routeables/Routeables/src/X.cs are the same file."""
+    path = path.replace("\\", "/")
+    found = _ROOT.match(path)
+    return found.group(1) if found else path
 
 
 def main(argv):
@@ -31,7 +41,7 @@ def main(argv):
             seen = lines.setdefault(name, {})
             counts = branches.setdefault(name, [0, 0])
             for cls in package.iter("class"):
-                file = cls.get("filename") or ""
+                file = repo_path(cls.get("filename") or "")
                 for line in cls.findall("lines/line"):
                     key = (file, line.get("number"))
                     seen[key] = seen.get(key, False) or int(line.get("hits", "0")) > 0
