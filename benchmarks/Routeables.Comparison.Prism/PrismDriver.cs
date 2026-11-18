@@ -8,8 +8,11 @@ namespace Routeables.Comparison.Prism;
 /// <summary>
 /// The scenario on the region navigation of Prism.Avalonia: <c>RequestNavigate</c> by the name a page was registered with, a journal with
 /// Back and Forward, and the page that refuses to be left (<c>IConfirmNavigationRequest</c>). Prism has no guard: it is written in the
-/// application, in front of <c>RequestNavigate</c>. Prism keeps the views it has shown in the region: clearing the history also removes them,
-/// which is what an application has to do.
+/// application, in front of <c>RequestNavigate</c>.
+/// Two configurations are measured: the pages say <c>KeepAlive = false</c> (<c>IRegionMemberLifetime</c>), so that the region drops the views
+/// that are no longer active, or they do not (the default of Prism, <see cref="PrismBenchApp.KeepViews"/>) and the region keeps them.
+/// When the history is cleared the driver removes the views that are left, so that both end in the same state; the count of the views alive
+/// after the clear says whether that was needed.
 /// </summary>
 public sealed class PrismDriver : INavigationDriver
 {
@@ -29,7 +32,7 @@ public sealed class PrismDriver : INavigationDriver
         Flush();
     }
 
-    public string Name => "Prism";
+    public string Name => PrismBenchApp.KeepViews ? "Prism (views kept)" : "Prism (KeepAlive = false)";
 
     public AppState State { get; }
 
@@ -91,12 +94,17 @@ public sealed class PrismDriver : INavigationDriver
 
     public Task<bool> ClearHistoryAsync()
     {
-        var current = _region.ActiveViews.FirstOrDefault();
         ViewCount.Note($"Prism: the region holds {_region.Views.Count()} views before the history is cleared.");
         ViewCount.NoteAlive("before the history is cleared");
+
+        // 1. Clear the journal
+        _region.NavigationService.Journal.Clear();
+
+        // 2. The views that are left (all of them when the region keeps its views): removed, but the current one.
+        var current = _region.ActiveViews.FirstOrDefault();
         foreach (var view in _region.Views.Where(v => !ReferenceEquals(v, current)).ToList())
             _region.Remove(view);
-        _region.NavigationService.Journal.Clear();
+
         Flush();
         ViewCount.Note($"Prism: the region holds {_region.Views.Count()} views after the history is cleared.");
         ViewCount.NoteAlive("after the history is cleared");

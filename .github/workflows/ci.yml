@@ -287,7 +287,15 @@ jobs:
         timeout-minutes: 10
         run: |
           dotnet build benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release ${{ env.CI_PROPS }}
-          { echo "### With views: Prism"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "### With views: Prism, KeepAlive = false (views dropped by the region)"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Prism with the views kept (its default)
+        continue-on-error: true
+        timeout-minutes: 10
+        env:
+          ROUTEABLES_BENCH_PRISM_KEEP_VIEWS: "1"
+        run: |
+          { echo "### With views: Prism, views kept (the default of Prism)"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY"
 
   # The Uno projects are in a job of their own: they were written without being able to restore Uno Platform, so a failure here
   # must not hide the result of the jobs above. Once it is green, fold it into web-and-desktop.

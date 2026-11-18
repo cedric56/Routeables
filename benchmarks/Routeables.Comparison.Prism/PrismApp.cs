@@ -10,8 +10,11 @@ using Prism.Navigation.Regions;
 namespace Routeables.Comparison.Prism;
 
 /// <summary>The view of a page: a control with a text, built by the container with its view model. One class for each page (PrismPages.cs).</summary>
-public abstract class PrismPage : UserControl
+public abstract class PrismPage : UserControl, IRegionMemberLifetime
 {
+    // Idiomatic Prism: tell the region it can drop this view when it is no longer active (the default of Prism keeps it; see KeepViews).
+    public bool KeepAlive => PrismBenchApp.KeepViews;
+
     protected PrismPage(PrismPageViewModel viewModel, string text)
     {
         DataContext = viewModel;
@@ -26,8 +29,10 @@ public sealed class PrismPageViewModel(IClock clock)
     public IClock Clock { get; } = clock;
 }
 
-public sealed class PrismEditPage : UserControl
+public sealed class PrismEditPage : UserControl, IRegionMemberLifetime
 {
+    public bool KeepAlive => PrismBenchApp.KeepViews;
+
     public PrismEditPage(PrismEditViewModel viewModel)
     {
         DataContext = viewModel;
@@ -56,6 +61,12 @@ public sealed class PrismEditViewModel(AppState state) : IConfirmNavigationReque
 public sealed class PrismBenchApp : PrismApplication
 {
     public const string Region = "Main";
+
+    /// <summary>
+    /// Whether the region keeps the views that are no longer active, which is what Prism does by default. Off (the variable is not set), the
+    /// pages say <c>KeepAlive = false</c> (<c>IRegionMemberLifetime</c>) and the region drops them; <c>ROUTEABLES_BENCH_PRISM_KEEP_VIEWS=1</c> measures the default.
+    /// </summary>
+    public static bool KeepViews { get; } = Environment.GetEnvironmentVariable("ROUTEABLES_BENCH_PRISM_KEEP_VIEWS") == "1";
 
     /// <summary>The container of Prism, set once the application is initialised.</summary>
     public static IContainerProvider Services { get; private set; } = null!;
