@@ -246,14 +246,14 @@ jobs:
       - name: Routeables and ReactiveUI routing
         continue-on-error: true
         run: |
-          dotnet build benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release
-          { echo "### With views: Routeables and ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release --no-build; } | tee -a "$GITHUB_STEP_SUMMARY"
+          dotnet build benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release ${{ env.CI_PROPS }}
+          { echo "### With views: Routeables and ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Prism
         continue-on-error: true
         run: |
-          dotnet build benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release
-          { echo "### With views: Prism"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build; } | tee -a "$GITHUB_STEP_SUMMARY"
+          dotnet build benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release ${{ env.CI_PROPS }}
+          { echo "### With views: Prism"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY"
 
   # The Uno projects are in a job of their own: they were written without being able to restore Uno Platform, so a failure here
   # must not hide the result of the jobs above. Once it is green, fold it into web-and-desktop.
