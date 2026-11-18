@@ -189,13 +189,12 @@ public static partial class RouteParser
         IRouteableArgs? args, string[] viewKeys, bool reasons)
     {
         HashSet<string>? viewKeySet = null, bound = null;
-        if (args is not null)
-        {
+        // Sets are built when there is something to put in them: no view key is the usual case, and the names bound by the path are
+        // only read against the query, which an address often does not have.
+        if (args is not null && viewKeys.Any(k => !string.IsNullOrWhiteSpace(k)))
             viewKeySet = new HashSet<string>(
                 viewKeys.Where(k => !string.IsNullOrWhiteSpace(k)),
                 StringComparer.OrdinalIgnoreCase);
-            bound = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        }
 
         // The fragment is for the browser, never for the route: "/orders/42#top" is "/orders/42".
         if (uri.IndexOf('#') is var hash and >= 0)
@@ -203,6 +202,8 @@ public static partial class RouteParser
 
         var parsed = ParseTemplate(template);
         var (uPath, uQuery) = Split(uri, template: false);
+        if (args is not null && uQuery.Length > 0)
+            bound = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         // --- path ---
         var tSegs = parsed.Segments;
@@ -242,7 +243,7 @@ public static partial class RouteParser
         }
 
         // --- query ---
-        var query = ParseQuery(uQuery);
+        var query = uQuery.Length == 0 ? NoQuery : ParseQuery(uQuery);   // read only below
         for (var q = 0; q < parsed.QueryParts.Length; q++)
         {
             var part = parsed.QueryParts[q];
@@ -267,7 +268,7 @@ public static partial class RouteParser
         // built with would break every link that carries a tracking parameter and let anyone fill a constructor parameter.
         if (args is not null)
             foreach (var (name, value) in query)
-                if (!bound!.Contains(name))
+                if (bound is null || !bound.Contains(name))
                     args.ForValues(new RouteableArgument(value, name));
 
         return null;
@@ -303,8 +304,8 @@ public static partial class RouteParser
 
         if (args is not null)
         {
-            bound!.Add(name);
-            Add(args, viewKeySet!, name, value, attribute);
+            bound?.Add(name);
+            Add(args, viewKeySet, name, value, attribute);
         }
         return null;
     }
@@ -312,10 +313,10 @@ public static partial class RouteParser
     /// <summary>
     /// Adds an entry to either the View or ViewModel parameter bags depending on whether the key matches a view key.
     /// </summary>
-    private static void Add(IRouteableArgs args, HashSet<string> viewKeySet,
+    private static void Add(IRouteableArgs args, HashSet<string>? viewKeySet,
                     string name, object? value, bool? attribute)
     {
-        if (viewKeySet.Contains(name))
+        if (viewKeySet?.Contains(name) == true)
             args.ForView(new RouteableArgument(value, name, attribute ?? true));
         else
             args.ForViewModel(new RouteableArgument(value, name, attribute ?? false));
@@ -648,6 +649,8 @@ public static partial class RouteParser
             url = url[..hash];
         return ParseQuery(Split(url, template: false).query);
     }
+
+    private static readonly Dictionary<string, string> NoQuery = new(StringComparer.OrdinalIgnoreCase);
 
     private static Dictionary<string, string> ParseQuery(string q)
     {

@@ -18,6 +18,7 @@ public sealed class PrismDriver : INavigationDriver
     public PrismDriver()
     {
         var services = PrismBenchApp.Services;
+        ViewCount.Owner = Name;
         State = services.Resolve<AppState>();
         State.SignedIn = false;
         State.Dirty = false;
@@ -59,9 +60,15 @@ public sealed class PrismDriver : INavigationDriver
         Flush();
         var navigated = !ReferenceEquals(before, journal.CurrentEntry);
 
-        // The journal says where the navigation went; the view must also be in the window, or the numbers would not be those of a page shown.
-        if (navigated && PrismBenchApp.Host.Content is null)
-            throw new InvalidOperationException($"Prism navigated to '{target}' but the region shows no view.");
+        // The journal says where the navigation went; the view must also be the one of that page, or the numbers would not be those of the page
+        // shown (Prism finds the view of a page by its type: see PrismPages.cs).
+        if (navigated)
+        {
+            var expected = parts[0] == "Edit" ? nameof(PrismEditPage) : parts[0] + "Page";
+            var shown = PrismBenchApp.Host.Content?.GetType().Name;
+            if (shown != expected)
+                throw new InvalidOperationException($"Prism navigated to '{target}' and the region shows {shown ?? "no view"}, expected {expected}.");
+        }
     }
 
     public Task BackAsync()
@@ -85,6 +92,7 @@ public sealed class PrismDriver : INavigationDriver
     public Task<bool> ClearHistoryAsync()
     {
         var current = _region.ActiveViews.FirstOrDefault();
+        Console.WriteLine($"Prism: the region holds {_region.Views.Count()} views before the history is cleared.");
         foreach (var view in _region.Views.Where(v => !ReferenceEquals(v, current)).ToList())
             _region.Remove(view);
         _region.NavigationService.Journal.Clear();

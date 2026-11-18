@@ -2,19 +2,21 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Themes.Fluent;
+using Routeables.Comparison.Avalonia;
 using Prism.DryIoc;
 using Prism.Ioc;
 using Prism.Navigation.Regions;
 
 namespace Routeables.Comparison.Prism;
 
-/// <summary>The view of a page: a control with a text, built by the container with its view model.</summary>
-public sealed class PrismPage : UserControl
+/// <summary>The view of a page: a control with a text, built by the container with its view model. One class for each page (PrismPages.cs).</summary>
+public abstract class PrismPage : UserControl
 {
-    public PrismPage(PrismPageViewModel viewModel)
+    protected PrismPage(PrismPageViewModel viewModel, string text)
     {
         DataContext = viewModel;
-        Content = new TextBlock { Text = "page" };
+        Content = new TextBlock { Text = text };
+        ViewCount.Built();
     }
 }
 
@@ -30,6 +32,7 @@ public sealed class PrismEditPage : UserControl
     {
         DataContext = viewModel;
         Content = new TextBlock { Text = "Edit" };
+        ViewCount.Built();
     }
 }
 
@@ -74,59 +77,59 @@ public sealed class PrismBenchApp : PrismApplication
         containerRegistry.RegisterSingleton<IClock, Clock>();
         containerRegistry.Register<PrismPageViewModel>();
         containerRegistry.Register<PrismEditViewModel>();
-        containerRegistry.RegisterForNavigation<PrismPage>("P00");
-        containerRegistry.RegisterForNavigation<PrismPage>("P01");
-        containerRegistry.RegisterForNavigation<PrismPage>("P02");
-        containerRegistry.RegisterForNavigation<PrismPage>("P03");
-        containerRegistry.RegisterForNavigation<PrismPage>("P04");
-        containerRegistry.RegisterForNavigation<PrismPage>("P05");
-        containerRegistry.RegisterForNavigation<PrismPage>("P06");
-        containerRegistry.RegisterForNavigation<PrismPage>("P07");
-        containerRegistry.RegisterForNavigation<PrismPage>("P08");
-        containerRegistry.RegisterForNavigation<PrismPage>("P09");
-        containerRegistry.RegisterForNavigation<PrismPage>("P10");
-        containerRegistry.RegisterForNavigation<PrismPage>("P11");
-        containerRegistry.RegisterForNavigation<PrismPage>("P12");
-        containerRegistry.RegisterForNavigation<PrismPage>("P13");
-        containerRegistry.RegisterForNavigation<PrismPage>("P14");
-        containerRegistry.RegisterForNavigation<PrismPage>("P15");
-        containerRegistry.RegisterForNavigation<PrismPage>("P16");
-        containerRegistry.RegisterForNavigation<PrismPage>("P17");
-        containerRegistry.RegisterForNavigation<PrismPage>("P18");
-        containerRegistry.RegisterForNavigation<PrismPage>("P19");
-        containerRegistry.RegisterForNavigation<PrismPage>("P20");
-        containerRegistry.RegisterForNavigation<PrismPage>("P21");
-        containerRegistry.RegisterForNavigation<PrismPage>("P22");
-        containerRegistry.RegisterForNavigation<PrismPage>("P23");
-        containerRegistry.RegisterForNavigation<PrismPage>("P24");
-        containerRegistry.RegisterForNavigation<PrismPage>("P25");
-        containerRegistry.RegisterForNavigation<PrismPage>("P26");
-        containerRegistry.RegisterForNavigation<PrismPage>("P27");
-        containerRegistry.RegisterForNavigation<PrismPage>("P28");
-        containerRegistry.RegisterForNavigation<PrismPage>("P29");
-        containerRegistry.RegisterForNavigation<PrismPage>("P30");
-        containerRegistry.RegisterForNavigation<PrismPage>("P31");
-        containerRegistry.RegisterForNavigation<PrismPage>("P32");
-        containerRegistry.RegisterForNavigation<PrismPage>("P33");
-        containerRegistry.RegisterForNavigation<PrismPage>("P34");
-        containerRegistry.RegisterForNavigation<PrismPage>("P35");
-        containerRegistry.RegisterForNavigation<PrismPage>("P36");
-        containerRegistry.RegisterForNavigation<PrismPage>("P37");
-        containerRegistry.RegisterForNavigation<PrismPage>("P38");
-        containerRegistry.RegisterForNavigation<PrismPage>("P39");
-        containerRegistry.RegisterForNavigation<PrismPage>("C0");
-        containerRegistry.RegisterForNavigation<PrismPage>("C1");
-        containerRegistry.RegisterForNavigation<PrismPage>("C2");
-        containerRegistry.RegisterForNavigation<PrismPage>("C3");
-        containerRegistry.RegisterForNavigation<PrismPage>("C4");
-        containerRegistry.RegisterForNavigation<PrismPage>("C5");
-        containerRegistry.RegisterForNavigation<PrismPage>("C6");
-        containerRegistry.RegisterForNavigation<PrismPage>("C7");
-        containerRegistry.RegisterForNavigation<PrismPage>("C8");
-        containerRegistry.RegisterForNavigation<PrismPage>("C9");
-        containerRegistry.RegisterForNavigation<PrismPage>("List");
-        containerRegistry.RegisterForNavigation<PrismPage>("Detail");
-        containerRegistry.RegisterForNavigation<PrismPage>("SignIn");
+        containerRegistry.RegisterForNavigation<P00Page>("P00");
+        containerRegistry.RegisterForNavigation<P01Page>("P01");
+        containerRegistry.RegisterForNavigation<P02Page>("P02");
+        containerRegistry.RegisterForNavigation<P03Page>("P03");
+        containerRegistry.RegisterForNavigation<P04Page>("P04");
+        containerRegistry.RegisterForNavigation<P05Page>("P05");
+        containerRegistry.RegisterForNavigation<P06Page>("P06");
+        containerRegistry.RegisterForNavigation<P07Page>("P07");
+        containerRegistry.RegisterForNavigation<P08Page>("P08");
+        containerRegistry.RegisterForNavigation<P09Page>("P09");
+        containerRegistry.RegisterForNavigation<P10Page>("P10");
+        containerRegistry.RegisterForNavigation<P11Page>("P11");
+        containerRegistry.RegisterForNavigation<P12Page>("P12");
+        containerRegistry.RegisterForNavigation<P13Page>("P13");
+        containerRegistry.RegisterForNavigation<P14Page>("P14");
+        containerRegistry.RegisterForNavigation<P15Page>("P15");
+        containerRegistry.RegisterForNavigation<P16Page>("P16");
+        containerRegistry.RegisterForNavigation<P17Page>("P17");
+        containerRegistry.RegisterForNavigation<P18Page>("P18");
+        containerRegistry.RegisterForNavigation<P19Page>("P19");
+        containerRegistry.RegisterForNavigation<P20Page>("P20");
+        containerRegistry.RegisterForNavigation<P21Page>("P21");
+        containerRegistry.RegisterForNavigation<P22Page>("P22");
+        containerRegistry.RegisterForNavigation<P23Page>("P23");
+        containerRegistry.RegisterForNavigation<P24Page>("P24");
+        containerRegistry.RegisterForNavigation<P25Page>("P25");
+        containerRegistry.RegisterForNavigation<P26Page>("P26");
+        containerRegistry.RegisterForNavigation<P27Page>("P27");
+        containerRegistry.RegisterForNavigation<P28Page>("P28");
+        containerRegistry.RegisterForNavigation<P29Page>("P29");
+        containerRegistry.RegisterForNavigation<P30Page>("P30");
+        containerRegistry.RegisterForNavigation<P31Page>("P31");
+        containerRegistry.RegisterForNavigation<P32Page>("P32");
+        containerRegistry.RegisterForNavigation<P33Page>("P33");
+        containerRegistry.RegisterForNavigation<P34Page>("P34");
+        containerRegistry.RegisterForNavigation<P35Page>("P35");
+        containerRegistry.RegisterForNavigation<P36Page>("P36");
+        containerRegistry.RegisterForNavigation<P37Page>("P37");
+        containerRegistry.RegisterForNavigation<P38Page>("P38");
+        containerRegistry.RegisterForNavigation<P39Page>("P39");
+        containerRegistry.RegisterForNavigation<C0Page>("C0");
+        containerRegistry.RegisterForNavigation<C1Page>("C1");
+        containerRegistry.RegisterForNavigation<C2Page>("C2");
+        containerRegistry.RegisterForNavigation<C3Page>("C3");
+        containerRegistry.RegisterForNavigation<C4Page>("C4");
+        containerRegistry.RegisterForNavigation<C5Page>("C5");
+        containerRegistry.RegisterForNavigation<C6Page>("C6");
+        containerRegistry.RegisterForNavigation<C7Page>("C7");
+        containerRegistry.RegisterForNavigation<C8Page>("C8");
+        containerRegistry.RegisterForNavigation<C9Page>("C9");
+        containerRegistry.RegisterForNavigation<ListPage>("List");
+        containerRegistry.RegisterForNavigation<DetailPage>("Detail");
+        containerRegistry.RegisterForNavigation<SignInPage>("SignIn");
         containerRegistry.RegisterForNavigation<PrismEditPage>("Edit");
     }
 

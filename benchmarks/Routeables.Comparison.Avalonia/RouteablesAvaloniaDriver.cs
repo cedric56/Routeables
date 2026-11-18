@@ -19,6 +19,7 @@ public sealed class RouteablesAvaloniaDriver : INavigationDriver
     public RouteablesAvaloniaDriver()
     {
         var provider = BenchApp.Provider;
+        ViewCount.Owner = Name;
         State = provider.GetRequiredService<AppState>();
         State.SignedIn = false;
         State.Dirty = false;

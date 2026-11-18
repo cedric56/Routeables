@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **`RouteParser`** no longer builds the set of view keys when there are none, the set of bound names when the address has no query, nor a dictionary for an empty query: about 250 B less per route change.
 - **Finding a route no longer costs a pass over every template**: `RouteParser.BestMatch` indexes the table of routes by the first literal segment (`/p00`, `/detail/...`) and tries only the templates that can open the address (the same literal, and the ones that start with a placeholder), in the order of registration, so the tie between two equally specific templates is broken as before. And the question "does this template match" (`TryMatch` without arguments) no longer builds an error message, a set of bound names or a set of view keys. Measured on the parser alone: a route change with 201 templates went from 126 KB and 136 µs to 0.5 KB and 1.2 µs, and no longer grows with the number of routes (below 8 templates the table is read as before). The reason of a mismatch is unchanged (`Mismatch`).
 - **`RouteParser.Build`**: a `{**rest}` after an optional that was left out is refused, like any later value (it built `/cat/a/b`, which the router read as the age).
 - **A view that cannot be built no longer leaks its view model**: the view model the route change had already built is disposed (`Router`).

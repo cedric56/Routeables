@@ -28,6 +28,7 @@ public sealed class RxView : UserControl
     {
         DataContext = page;
         Content = new TextBlock { Text = page.Name };
+        ViewCount.Built();
     }
 }
 
@@ -42,6 +43,24 @@ public sealed class RxScreen : ReactiveObject, IScreen
 /// the window never laid out would pay nothing for it, and its numbers would not be those of a page shown. Each driver adds what it
 /// sees, and the program writes the counts at the end of the run (to the output, which the job copies into its summary).
 /// </summary>
+public static class ViewCount
+{
+    private static readonly Dictionary<string, int> Counts = [];
+
+    /// <summary>The driver that is running: the views that get built are counted for it.</summary>
+    public static string Owner { get; set; } = "";
+
+    public static void Built()
+    {
+        Counts.TryGetValue(Owner, out var count);
+        Counts[Owner] = count + 1;
+    }
+
+    public static int BuiltBy(string driver) => Counts.TryGetValue(driver, out var count) ? count : 0;
+
+    public static void Clear() => Counts.Clear();
+}
+
 public static class LayoutCount
 {
     private static readonly Dictionary<string, (int Shown, int Unsized)> Counts = [];
@@ -59,8 +78,13 @@ public static class LayoutCount
     {
         Console.WriteLine();
         foreach (var (driver, count) in Counts)
-            Console.WriteLine($"Layout, {driver}: {count.Shown} views seen after a step, {count.Unsized} of them with no size ({(count.Shown == 0 ? 0 : 100.0 * count.Unsized / count.Shown):F1} %).");
+        {
+            var built = ViewCount.BuiltBy(driver);
+            Console.WriteLine($"Layout, {driver}: {count.Shown} views seen after a step, {count.Unsized} of them with no size ({(count.Shown == 0 ? 0 : 100.0 * count.Unsized / count.Shown):F1} %); {built} views built ({(count.Shown == 0 ? 0 : 100.0 * built / count.Shown):F1} % of the steps).");
+        }
+
         Counts.Clear();
+        ViewCount.Clear();
     }
 }
 
@@ -82,6 +106,7 @@ public sealed class ReactiveUiAvaloniaDriver : INavigationDriver
     public ReactiveUiAvaloniaDriver()
     {
         State = new AppState();
+        ViewCount.Owner = Name;
         // The control of the region of Routeables (RouteableRegion is a TransitioningContentControl): two presenters and the machinery of a
         // transition, with none declared. A plain ContentControl would leave that cost to Routeables alone.
         var content = _content = new TransitioningContentControl();
