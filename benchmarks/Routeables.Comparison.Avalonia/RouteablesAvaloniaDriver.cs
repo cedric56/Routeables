@@ -10,7 +10,10 @@ namespace Routeables.Comparison.Avalonia;
 public sealed class RouteablesAvaloniaDriver : INavigationDriver
 {
     private readonly IRouter _router;
-    private readonly Window _window;
+    // One window and one region for the whole run: the router of Routeables is the application's, and a region closed with the window of the
+    // previous driver is not one a new window can take over.
+    private static Window? s_window;
+
     private bool _started;
 
     public RouteablesAvaloniaDriver()
@@ -21,8 +24,12 @@ public sealed class RouteablesAvaloniaDriver : INavigationDriver
         State.Dirty = false;
         State.Requested = null;
         _router = provider.GetRouter(null);
-        _window = new Window { Width = 400, Height = 300, Content = new RouteableRegion() };
-        _window.Show();
+        if (s_window is null)
+        {
+            s_window = new Window { Width = 400, Height = 300, Content = new RouteableRegion() };
+            s_window.Show();
+        }
+
         Flush();
     }
 
@@ -76,9 +83,5 @@ public sealed class RouteablesAvaloniaDriver : INavigationDriver
     /// <summary>Runs what the application has queued after a step: the binding of the view, the layout of the window.</summary>
     private static void Flush() => Dispatcher.UIThread.RunJobs();
 
-    public void Dispose()
-    {
-        _window.Close();
-        Flush();
-    }
+    public void Dispose() => Flush();
 }

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Threading;
 using Application = System.Windows.Application;
 using Dispatcher = System.Windows.Threading.Dispatcher;
@@ -36,7 +37,23 @@ internal static class WpfHarness
                 }
 
                 // The application is not shut down when its last window closes: the next test needs it.
-                _ = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+                var application = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+
+                // A CI runner has no graphics card and a desktop session that can lose its render channel (UCEERR_RENDERTHREADFAILURE, raised
+                // from a window message and fatal for the whole test process): nothing here has to be seen, so the tests draw in software.
+                System.Windows.Media.RenderOptions.ProcessRenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
+
+                // The same failure still raised by the session is the machine's, not the code's: it is written and the test goes on. Any other
+                // exception stays unhandled.
+                application.DispatcherUnhandledException += (_, e) =>
+                {
+                    if (e.Exception is COMException { HResult: unchecked((int)0x88980406) })
+                    {
+                        Console.Error.WriteLine("WPF render thread failure ignored: " + e.Exception.Message);
+                        e.Handled = true;
+                    }
+                };
+
                 dispatcher = Dispatcher.CurrentDispatcher;
             }
             catch (Exception ex)
