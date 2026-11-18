@@ -6,6 +6,11 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A menu page opened with a query keeps its address**: `GoToAsync("/about?ref=x")` to a menu entry with no template wrote the address of the entry (`/about`) in the history, so Blazor could rewrite the address bar without the query. The address asked for is the route of the change (the query values are still in `Values`).
+- **`{n:double}` has no `-0`**: `/x/0` and `/x/-0` were two addresses; `-0` is refused and `Build` writes `0`.
+- **A literal written escaped in a template matches**: `/my%20page` was compared to the unescaped segment `my page` and never matched, although `Build` writes it as it is.
+- **`RouteAddress.Same` no longer confuses `%2F` with the character U+FFFF** (`%EF%BF%BF`): the escaped slash was replaced by a marker that a text can also decode to; the pieces are now unescaped one by one and joined by `%2F`.
+- **D-Bus, a variant nested too deep or a signature of several types is refused** (`InvalidDataException`, the message is dropped): the unbounded recursion could overflow the stack, which cannot be caught.
 - **The query of the address counts when two templates have the same path**: `/search` and `/search?{q?}` (or `/search?mode=grid`) matched `/search?q=1` with the same score and the order of registration decided, so a value the address gave could end in `Values` instead of the constructor. Between equal paths the template that uses more of the query of the address now wins, whatever the order.
 - **A typed menu entry whose address is not its template finds its view**: `new RouteableMenuEntry<OrderVm>("Order 5", route: "/orders/5", template: "/orders/{id:int}")` looked the view up by the address (`No view is registered under the key "/orders/5"`); the keys come from the template, as everywhere else.
 - **`RouteableMenuEntry<T>` takes the route of its view model, as documented**: with no `template` (a `route` only) the template is the one the address matches; with neither, the registered route of the view model. Both held an internal key before, and the entry always failed.

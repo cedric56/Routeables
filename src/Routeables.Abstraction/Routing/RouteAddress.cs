@@ -129,8 +129,13 @@ internal static class RouteAddress
     private static string Unescape(string text)
     {
         // An escaped slash is not a separator: "/files/a%2Fb" is one segment and "/files/a/b" is two, so the first must stay apart from a "/".
-        // It becomes a marker that no text unescapes to, so that "a%2Fb" and "a%252Fb" (the text "a%2Fb") stay two values.
-        try { return Uri.UnescapeDataString(text.Replace("%2F", "\uFFFF", StringComparison.OrdinalIgnoreCase)); }
+        // Each piece between the escaped slashes is unescaped, its percent signs are escaped again, and the pieces are joined by "%2F": no text
+        // gives the same result as another ("a%2Fb" is "a%2Fb", "a%252Fb" the text "a%2Fb" is "a%252Fb", and no character stands for a slash).
+        try
+        {
+            var pieces = text.Replace("%2f", "%2F").Split("%2F");
+            return string.Join("%2F", pieces.Select(piece => Uri.UnescapeDataString(piece).Replace("%", "%25")));
+        }
         catch (UriFormatException) { return text; }
     }
 }

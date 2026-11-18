@@ -254,7 +254,9 @@ public static partial class RouteParser
 
             if (!m.Success) // literal segment
             {
-                if (!string.Equals(tSegs[i], raw, StringComparison.OrdinalIgnoreCase))
+                // The literal of the template is compared as the address is: unescaped ("/my%20page" is the segment "my page", and Build writes it as it was).
+                var literal = tSegs[i].Contains('%') ? Uri.UnescapeDataString(tSegs[i]) : tSegs[i];
+                if (!string.Equals(literal, raw, StringComparison.OrdinalIgnoreCase))
                     return !reasons ? NoReason
                         : raw is null
                             ? $"segment {i + 1} is missing, expected \"{tSegs[i]}\""
@@ -419,7 +421,7 @@ public static partial class RouteParser
             case "bool": { var ok = raw == raw.Trim() && bool.TryParse(raw, out var v); value = ok && bool.Parse(raw); return ok; }
             case "guid": { var ok = Guid.TryParseExact(raw, "D", out var v); value = v; return ok; }
             case "decimal": { decimal v = 0; var ok = !raw.StartsWith('+') && decimal.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, inv, out v) && Plain(v).ToString(inv) == raw; value = v; return ok; }
-            case "double": { double v = 0; var ok = !raw.StartsWith('+') && double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v) && v.ToString(inv) == raw; value = v; return ok; }
+            case "double": { double v = 0; var ok = !raw.StartsWith('+') && double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v) && !(v == 0 && raw[0] == '-') && v.ToString(inv) == raw; value = v; return ok; }
             default:
                 value = null;
                 return false;   // not reached: Bind refuses an unknown constraint first
@@ -742,6 +744,7 @@ public static partial class RouteParser
         {
             string text => text,
             bool flag => flag ? "true" : "false",
+            double zero when zero == 0 => "0",     // -0 is the number 0: one text
             decimal money => Plain(money).ToString(CultureInfo.InvariantCulture),
             IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
             _ => value.ToString() ?? string.Empty,

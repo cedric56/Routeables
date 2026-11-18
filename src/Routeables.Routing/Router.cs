@@ -647,9 +647,8 @@ internal class Router(
                 supplied.ViewParameters.AddRange(args.ViewParameters);
                 supplied.Values.AddRange(args.Values);
             }
-            foreach (var (name, value) in query)
-                supplied.Values.Add(new RouteableArgument(value, name));
-            return await GoToEntryAsync(item, cancellationToken, [], supplied);
+            // The address asked for is the route of the change (history, URL of the browser), query included; matching it adds the query values.
+            return await GoToEntryAsync(item, cancellationToken, [], supplied, url);
         }
 
         // Nothing registered at all is the usual first mistake: say where to look.
@@ -718,24 +717,25 @@ internal class Router(
         return Task.FromResult(RouteableResult.Fail(failure!));
     }
 
-    private Task<RouteableResult> GoToEntryAsync(IRouteableMenuEntry routeableView, CancellationToken cancellationToken, string[] viewKeys, IRouteableArgs? supplied = null)
+    private Task<RouteableResult> GoToEntryAsync(IRouteableMenuEntry routeableView, CancellationToken cancellationToken, string[] viewKeys, IRouteableArgs? supplied = null, string? address = null)
     {
         // A typed entry (RouteableMenuEntry<TViewModel>) names the keys of its view model; any other is bound by its template alone.
         var type = GetRouteableEntryType(routeableView);
         if (type is null)
-            return GoToViewAsync(routeableView, routeableView.Template, routeableView.Template, cancellationToken, viewKeys, supplied);
+            return GoToViewAsync(routeableView, routeableView.Template, routeableView.Template, cancellationToken, viewKeys, supplied, null, address);
 
         ResolveTypedEntry(routeableView, type);
         var keys = RouteableKeys.GetKeys(type, routeableView.Template);
-        return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys, supplied, type);
+        return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys, supplied, type, address);
     }
 
     // Goes to the entry, then gives it back the page the router shows so that the next visit finds it.
     private async Task<RouteableResult> GoToViewAsync(
-        IRouteableMenuEntry routeableView, string viewKey, string viewModelKey, CancellationToken cancellationToken, string[] viewKeys, IRouteableArgs? supplied = null, Type? viewModelType = null)
+        IRouteableMenuEntry routeableView, string viewKey, string viewModelKey, CancellationToken cancellationToken, string[] viewKeys, IRouteableArgs? supplied = null, Type? viewModelType = null, string? address = null)
     {
+        var route = address ?? routeableView.Arguments.Route ?? routeableView.Route;
         var result = await GoToRouteAsync(
-            routeableView.Arguments.Route ?? routeableView.Route,
+            route,
             routeableView.Template,
             viewKey,
             viewModelKey,
@@ -746,7 +746,7 @@ internal class Router(
             viewModelType,
             viewKeys: viewKeys);
         // Only the page this entry asked for: a guard may have sent the user elsewhere (a sign-in), and the entry must not remember that page.
-        if (result.Success && WentTo(routeableView))
+        if (result.Success && WentTo(route))
         {
             routeableView.View = CurrentView;
             routeableView.ViewModel = CurrentViewModel;
@@ -755,8 +755,8 @@ internal class Router(
     }
 
     // Whether the page shown is the one of the entry (its route), and not the one a guard redirected to.
-    internal bool WentTo(IRouteableMenuEntry entry)
-        => RouteAddress.SameFor(this, history.Current?.Args.Route, entry.Arguments.Route ?? entry.Route);
+    private bool WentTo(string route)
+        => RouteAddress.SameFor(this, history.Current?.Args.Route, route);
 
     // A menu entry remembers the page it showed last. Not one the router has disposed since: a new one is created instead.
     private object? Reusable(object? remembered) => lifecycle.WasDestroyed(remembered) ? null : remembered;

@@ -540,4 +540,22 @@ public class RouteParserTests
         Assert.Equal("/search", RouteParser.BestMatch(entries, "/search").Template);
         Assert.Equal("/search", RouteParser.BestMatch(entries, "/search?mode=list").Template);
     }
+
+    [Fact]
+    public void A_double_zero_has_one_text()
+    {
+        Assert.True(RouteParser.TryMatch("x/{n:double}", "x/0", RouteableArgs.Create()));
+        Assert.False(RouteParser.TryMatch("x/{n:double}", "x/-0", RouteableArgs.Create()));
+        Assert.Equal("x/0", RouteParser.Build("x/{n:double}", new { n = -0.0 }));
+    }
+
+    [Fact]
+    public void A_template_literal_written_escaped_matches_its_own_output()
+    {
+        var args = RouteableArgs.Create();
+
+        Assert.True(RouteParser.TryMatch("/my%20page/{id:int}", "/my%20page/3", args));
+        Assert.True(RouteParser.TryMatch("/my%20page/{id:int}", "/my page/3", RouteableArgs.Create()));
+        Assert.Equal("/my%20page/3", RouteParser.Build("/my%20page/{id:int}", new { id = 3 }));
+    }
 }

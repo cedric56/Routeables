@@ -228,7 +228,7 @@ public class ExternalAuditTests
     private sealed class RefuseAll : IRouteTypeGuard
     {
         public Task<RouteGuardDecision> CanBuildAsync(Type viewModelType, string route, CancellationToken cancellationToken = default)
-            => Task.FromResult(RouteGuardDecision.Cancel());
+            => Task.FromResult(RouteGuardDecision.Cancel);
     }
 
     [Fact]

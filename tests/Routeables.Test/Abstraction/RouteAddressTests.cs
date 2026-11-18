@@ -133,4 +133,13 @@ public class RouteAddressTests
         Assert.False(RouteAddress.Same("/files/a%2Fb", "/files/a/b"));
         Assert.True(RouteAddress.Same("/files/a%252Fb", "/files/a%252fb"));
     }
+
+    [Fact]
+    public void An_escaped_slash_is_not_confused_with_any_character()
+    {
+        // No text stands for a slash: "%EF%BF%BF" (U+FFFF) is one more value.
+        Assert.False(RouteAddress.Same("/files/a%2Fb", "/files/a%EF%BF%BFb"));
+        Assert.True(RouteAddress.Same("/files/a%2Fb", "/files/a%2fb"));
+        Assert.False(RouteAddress.Same("/files/a%2Fb", "/files/a%252Fb"));
+    }
 }

@@ -266,5 +266,17 @@ public class DBusWireFormatTests
         // What the notification client does with a signal that has no body: the read fails with a refusal it can tell, which the reading thread catches.
         Assert.Throws<InvalidDataException>(() => message.Reader().UInt32());
     }
+
+    [Fact]
+    public void Variants_nested_too_deep_are_refused_instead_of_overflowing_the_stack()
+    {
+        var bytes = Enumerable.Range(0, 100).SelectMany(_ => new byte[] { 1, (byte)'v', 0 }).ToArray();
+
+        Assert.Throws<InvalidDataException>(() => new DBusReader(bytes).Skip("v"));
+    }
+
+    [Fact]
+    public void A_signature_of_several_types_is_not_one_value_to_skip()
+        => Assert.Throws<InvalidDataException>(() => new DBusReader(new byte[8]).Skip("ss"));
 }
 #endif

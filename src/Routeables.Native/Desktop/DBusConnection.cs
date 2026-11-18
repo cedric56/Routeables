@@ -136,10 +136,18 @@ internal sealed class DBusReader(byte[] bytes, int position = 0)
     /// Reads past one value of the given type without keeping it: the specification asks a reader to ignore the header fields that it does not know.
     /// Basic types, variants and arrays of basic types are known; a structure or a dictionary is refused (<see cref="InvalidDataException"/>).
     /// </summary>
-    public void Skip(string type)
+    public void Skip(string type) => Skip(type, 0);
+
+    // The specification bounds the nesting of variants (a variant holds one value, which may be a variant): the recursion is bounded too, a stack
+    // overflow cannot be caught.
+    private const int MaxVariantDepth = 32;
+
+    private void Skip(string type, int depth)
     {
         if (type.Length == 0)
             throw new InvalidDataException("An empty D-Bus type.");
+        if (type[0] != 'a' && type.Length != 1)
+            throw new InvalidDataException("A D-Bus value has one complete type: " + type);
 
         switch (type[0])
         {
@@ -149,7 +157,11 @@ internal sealed class DBusReader(byte[] bytes, int position = 0)
             case 'x' or 't' or 'd': Align(8); Need(8); Position += 8; break;
             case 's' or 'o': String(); break;
             case 'g': Signature(); break;
-            case 'v': Skip(Signature()); break;
+            case 'v':
+                if (depth >= MaxVariantDepth)
+                    throw new InvalidDataException("D-Bus variants nested too deep.");
+                Skip(Signature(), depth + 1);
+                break;
             case 'a' when type.Length == 2 && type[1] is 'y' or 'n' or 'q' or 'b' or 'i' or 'u' or 'h' or 'x' or 't' or 'd':
                 var length = UInt32();
                 Align(type[1] switch { 'y' => 1, 'n' or 'q' => 2, 'b' or 'i' or 'u' or 'h' => 4, _ => 8 });

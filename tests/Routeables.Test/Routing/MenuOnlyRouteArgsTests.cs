@@ -65,4 +65,16 @@ public class MenuOnlyRouteArgsTests
         Assert.True(result.Success, result.Exception?.ToString());
         Assert.IsType<SettingsView>(router.CurrentView);
     }
+
+    [Fact]
+    public async Task The_history_keeps_the_address_that_was_asked_for_with_its_query()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+
+        await router.GoToAsync("/settings?tab=2", cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.Equal("/settings?tab=2", router.History.Current!.Args.Route);
+        Assert.Equal("2", router.History.Current.Args.Values.Single(v => v.name == "tab").value?.ToString());
+    }
 }
