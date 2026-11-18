@@ -71,7 +71,7 @@ namespace Routeables.Generated
             else if (container.IsGenericType)
                 problem = "the class is generic";
             else if (!IsTypeReachable(container))
-                problem = "the class (or a class around it) is private or protected";
+                problem = "the class (or a class around it) is private, protected or declared file";
             else if (property.Type is ITypeParameterSymbol || property.Type.TypeKind == TypeKind.Pointer || property.Type.TypeKind == TypeKind.FunctionPointer)
                 problem = "its type cannot be saved";
             else if (property.Type is INamedTypeSymbol named && named.IsRefLikeType)
@@ -115,6 +115,8 @@ namespace Routeables.Generated
         {
             for (var t = type; t != null; t = t.ContainingType)
             {
+                if (t.IsFileLocal)
+                    return false;
                 if (!IsReachable(t.DeclaredAccessibility) && !(t.ContainingType is null && t.DeclaredAccessibility == Accessibility.NotApplicable))
                     return false;
             }

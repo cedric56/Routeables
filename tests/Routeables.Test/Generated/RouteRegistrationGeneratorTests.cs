@@ -895,4 +895,27 @@ public class RouteRegistrationGeneratorTests
             MetadataReference.CreateFromFile(typeof(ServiceCollectionContainerBuilderExtensions).Assembly.Location)
         ]).DistinctBy(reference => reference.Display);
     }
+
+    [Fact]
+    public void An_open_generic_or_file_local_view_model_is_reported_and_left_out_instead_of_code_that_does_not_compile()
+    {
+        var result = RunGenerator("""
+            using Routeables.Abstraction;
+
+            [Routeable("/generic")]
+            public class ListViewModel<T> { }
+
+            [Routeable("/hidden")]
+            file class HiddenViewModel { }
+
+            [Routeable("/fine")]
+            public class FineViewModel { }
+            """);
+
+        Assert.Equal(2, result.Diagnostics.Count(d => d.Id == "ROUT207"));
+        var code = GetGeneratedCode(result);
+        Assert.Contains("/fine", code);
+        Assert.DoesNotContain("ListViewModel", code);
+        Assert.DoesNotContain("HiddenViewModel", code);
+    }
 }

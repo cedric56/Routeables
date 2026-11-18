@@ -118,4 +118,42 @@ public class ScopedViewCacheTests
 
         Assert.Contains("FailHere", ex.StackTrace);
     }
+
+    [Fact]
+    public void A_caller_that_waited_for_a_failed_construction_builds_the_page_the_cache_keeps()
+    {
+        // The first constructor fails while a second caller waits on the same key: the second builds the page under the same lock, and the
+        // cache must keep it (it used to put it in an entry that the failure had already removed: two "singletons" and one never disposed).
+        var cache = new ScopedViewCache();
+        var started = new ManualResetEventSlim();
+        var fail = new ManualResetEventSlim();
+        var calls = 0;
+
+        var first = new Thread(() =>
+        {
+            try { cache.GetOrCreate("k", () => { Interlocked.Increment(ref calls); started.Set(); fail.Wait(); throw new InvalidOperationException("no"); }); }
+            catch (InvalidOperationException) { }
+        });
+        first.Start();
+        Assert.True(started.Wait(TimeSpan.FromSeconds(10)));
+
+        object? second = null;
+        var waiter = new Thread(() => second = cache.GetOrCreate("k", () => { Interlocked.Increment(ref calls); return new Item(); }));
+        waiter.Start();
+        var until = DateTime.UtcNow.AddSeconds(10);
+        while (!waiter.ThreadState.HasFlag(ThreadState.WaitSleepJoin) && DateTime.UtcNow < until)
+            Thread.Sleep(5);
+        Thread.Sleep(50);   // on the lock of the entry
+
+        fail.Set();
+        first.Join();
+        waiter.Join();
+
+        Assert.NotNull(second);
+        Assert.True(cache.Owns(second!));
+        Assert.Same(second, cache.GetOrCreate("k", () => { Interlocked.Increment(ref calls); return new Item(); }));
+        Assert.Equal(2, calls);
+        cache.Dispose();
+        Assert.Equal(1, ((Item)second!).Disposed);
+    }
 }

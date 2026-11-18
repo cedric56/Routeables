@@ -115,6 +115,7 @@ public static partial class RouteParser
         public required Match[] SegmentMatches { get; init; }      // one per segment, Success false for a literal
         public required int RestAt { get; init; }                  // index of the catch-all, or -1
         public required string? OptionalNotLast { get; init; }
+        public required string? DuplicateName { get; init; }       // a name given by the path and by the query (or twice), or null
         public required string[] QueryParts { get; init; }
         public required Match[] QueryMatches { get; init; }
         public required int[] Rank { get; init; }
@@ -140,6 +141,7 @@ public static partial class RouteParser
             OptionalNotLast = OptionalNotLast(segments),
             QueryParts = parts,
             QueryMatches = parts.Select(part => Realized(Param.Match(part))).ToArray(),
+            DuplicateName = DuplicateName(matches, parts),
             Rank = [.. matches.Select(Rank)],
         };
 
@@ -225,6 +227,8 @@ public static partial class RouteParser
             return reasons ? $"the catch-all placeholder {tSegs[restAt]} must be the last segment of the template" : NoReason;
         if (parsed.OptionalNotLast is { } notLast)
             return reasons ? $"the optional placeholder {notLast} must be the last segment of the template" : NoReason;
+        if (parsed.DuplicateName is { } twice)
+            return reasons ? $"the name {twice} is used twice in the template (path and query, or twice in one of them)" : NoReason;
         if (restAt < 0 && uSegs.Length > tSegs.Length)
             return reasons ? $"the route has {uSegs.Length} segment(s), the template only {tSegs.Length} (unexpected \"{uSegs[tSegs.Length]}\")" : NoReason;
 
@@ -353,6 +357,16 @@ public static partial class RouteParser
                 if (Param.Match(segments[j]) is not { Success: true } next || !(next.Groups["opt"].Success || next.Groups["rest"].Success))
                     return segments[i];
         }
+        return null;
+    }
+
+    // "/dup/{id}?{id}": one value would be given to both and the query would be lost. Such a template is a mistake: it never matches and cannot be built.
+    private static string? DuplicateName(Match[] segments, string[] queryParts)
+    {
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var m in segments.Concat(queryParts.Select(part => Param.Match(part))))
+            if (m.Success && !seen.Add(m.Groups["name"].Value))
+                return m.Groups["name"].Value;
         return null;
     }
 
@@ -567,6 +581,8 @@ public static partial class RouteParser
     {
         ArgumentNullException.ThrowIfNull(template);
         var bag = ValuesOf(values);
+        if (ParseTemplate(template).DuplicateName is { } twice)
+            throw new ArgumentException($"The name {twice} is used twice in \"{template}\": a value cannot be written in the path and in the query.", nameof(template));
         if (OptionalNotLast(Split(template).path.Split('/', StringSplitOptions.RemoveEmptyEntries)) is { } notLast)
             throw new ArgumentException($"The optional placeholder {notLast} of \"{template}\" must be the last segment of the template.", nameof(template));
 
@@ -609,6 +625,8 @@ public static partial class RouteParser
                     var restType = m.Groups["type"].Value;
                     if (!IsKnownConstraint(restType))
                         throw new ArgumentException($"The constraint \"{restType}\" of {{**{m.Groups["name"].Value}}} in \"{template}\" is unknown.", nameof(template));
+                    if (restText.Split('/').Any(part => part.Length == 0))
+                        throw new ArgumentException($"The value \"{restText}\" cannot be the rest of \"{template}\": an empty segment (a leading, trailing or doubled slash) is dropped from an address, so the value would not be read back.", nameof(values));
                     if (HasDotSegment(restText))
                         throw new ArgumentException($"The value \"{restText}\" cannot be the rest of \"{template}\": a browser resolves \".\" and \"..\" to another address.", nameof(values));
                     if (!TryConvert(restText, restType, out _))

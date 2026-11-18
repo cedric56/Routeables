@@ -57,6 +57,15 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
+        // A [Routeable] class the generated code cannot name (open generic, 'file' type): left out, with this warning, instead of code that does not compile.
+        private static readonly DiagnosticDescriptor UnusableViewModel = new DiagnosticDescriptor(
+            "ROUT207",
+            "[Routeable] on a type that cannot be registered",
+            "{0}",
+            "Routeables",
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         // A .razor file of the project that declares [RouteableView] with @attribute: the Razor compiler is another generator, and a
         // generator does not see the output of another one, so nothing is registered. Only reported when this project calls its own
         // AddGeneratedRoutes(): a component library whose views are registered by the application that references it is fine.
@@ -287,7 +296,11 @@ namespace Routeables.Generated
                 foreach (var v in localV) AddView(v);
                 foreach (var r in localR) AddRoute(r);
 
-                Generate(spc, viewsByKey.Values, routesByKey.Values, compiled.Candidates.ToList(), autoRegisterRoutes);
+                foreach (var bad in routesByKey.Values.Where(r => r.Problem is not null).OrderBy(r => r.TypeName, StringComparer.Ordinal))
+                    spc.ReportDiagnostic(Diagnostic.Create(UnusableViewModel, Location.None,
+                        "[Routeable] on " + bad.TypeName + " is ignored: " + bad.Problem));
+
+                Generate(spc, viewsByKey.Values, routesByKey.Values.Where(r => r.Problem is null).ToList(), compiled.Candidates.ToList(), autoRegisterRoutes);
             });
         }
 
@@ -508,7 +521,22 @@ namespace Routeables.Generated
                 //Contract: contract,
                 Lifetime: lifetime,
                 Build: RouteBuilds.Analyze(compilation, symbol),
-                IsLocal: SymbolEqualityComparer.Default.Equals(symbol.ContainingAssembly, compilation.Assembly));
+                IsLocal: SymbolEqualityComparer.Default.Equals(symbol.ContainingAssembly, compilation.Assembly),
+                Problem: ProblemOf(symbol));
+        }
+
+        // A view model the generated code cannot name: an open generic type (OrderViewModel<T>) or a type local to its file. Registering it would
+        // write code that does not compile, so it is reported and left out.
+        private static string? ProblemOf(INamedTypeSymbol symbol)
+        {
+            for (var t = symbol; t is not null; t = t.ContainingType)
+            {
+                if (t.IsGenericType)
+                    return "an open generic type cannot be registered: no type argument is known. Register a closed type, or write the registration by hand.";
+                if (t.IsFileLocal)
+                    return "a type declared 'file' cannot be named by the generated code. Make it internal or public.";
+            }
+            return null;
         }
 
         // ------------------------------------------------------------------ emit
@@ -889,7 +917,8 @@ namespace Routeables.Generated
             //string? Contract,
             ServiceLifetime Lifetime,
             RouteBuilds.BuildInfo? Build = null,
-            bool IsLocal = false);
+            bool IsLocal = false,
+            string? Problem = null);
     }
 }
 

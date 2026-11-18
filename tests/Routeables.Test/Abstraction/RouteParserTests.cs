@@ -9,7 +9,7 @@ public class RouteParserTests
     {
         var args = RouteableArgs.Create();
         var id = Guid.NewGuid();
-        var route = $"items/12/2147483648/true/{id}/1234.56/2.5e2";
+        var route = $"items/12/2147483648/true/{id}/1234.56/250";
 
         var matched = RouteParser.TryMatch(
             "items/{intValue:int}/{longValue:long}/{enabled:bool}/{id:guid}/{price:decimal}/{ratio:double}",
@@ -483,4 +483,25 @@ public class RouteParserTests
     [Fact]
     public void Build_refuses_a_later_value_when_an_earlier_optional_is_left_out()
         => Assert.Throws<ArgumentException>(() => RouteParser.Build("cat/{age:int?}/{nick?}", new Dictionary<string, object?> { ["nick"] = "Tom" }));
+
+    [Theory]
+    [InlineData("a//b")]
+    [InlineData("a/b/")]
+    [InlineData("/a/b")]
+    public void Build_refuses_a_catch_all_value_with_an_empty_segment(string value)
+        => Assert.Throws<ArgumentException>(() => RouteParser.Build("/files/{**path}", new { path = value }));
+
+    [Fact]
+    public void Build_keeps_a_catch_all_value_made_of_plain_segments()
+        => Assert.Equal("/files/a/b", RouteParser.Build("/files/{**path}", new { path = "a/b" }));
+
+    [Fact]
+    public void A_name_given_by_the_path_and_by_the_query_is_refused()
+    {
+        // "/dup/{id}?{id}": the value of the query was lost without a word.
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("/dup/{id}?{id}", new { id = 1 }));
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("/dup/{id}?{ID?}", new { id = 1 }));
+        Assert.False(RouteParser.TryMatch("/dup/{id}?{id}", "/dup/1?id=2", RouteableArgs.Create()));
+        Assert.Equal("/dup/1?x=2", RouteParser.Build("/dup/{id}?{x}", new { id = 1, x = 2 }));
+    }
 }

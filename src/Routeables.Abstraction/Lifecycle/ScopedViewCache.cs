@@ -33,18 +33,9 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
             if (entry.Value is { } built)
                 return built;       // another caller built it while this one waited for the entry
 
-            object created;
-            try { created = factory(); }
-            catch
-            {
-                // Nothing was kept: the next caller builds it again.
-                lock (_gate)
-                {
-                    if (_cache.TryGetValue(key, out var current) && ReferenceEquals(current, entry))
-                        _cache.Remove(key);
-                }
-                throw;
-            }
+            // A failure keeps the entry: a caller that waited on it builds the page under the same lock, and what it builds stays in the cache
+            // (removing the entry would leave that caller with a page the cache no longer owns).
+            var created = factory();
 
             lock (_gate)
             {

@@ -128,8 +128,9 @@ internal static class RouteAddress
 
     private static string Unescape(string text)
     {
-        // An escaped slash is not a separator: "/files/a%2Fb" is one segment and "/files/a/b" is two, so the first must stay escaped.
-        try { return Uri.UnescapeDataString(text.Replace("%2F", "%252F", StringComparison.OrdinalIgnoreCase)); }
+        // An escaped slash is not a separator: "/files/a%2Fb" is one segment and "/files/a/b" is two, so the first must stay apart from a "/".
+        // It becomes a marker that no text unescapes to, so that "a%2Fb" and "a%252Fb" (the text "a%2Fb") stay two values.
+        try { return Uri.UnescapeDataString(text.Replace("%2F", "\uFFFF", StringComparison.OrdinalIgnoreCase)); }
         catch (UriFormatException) { return text; }
     }
 }

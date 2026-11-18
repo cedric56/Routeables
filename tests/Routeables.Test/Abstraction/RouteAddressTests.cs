@@ -123,4 +123,14 @@ public class RouteAddressTests
         Assert.Equal("/", RouteAddress.Absolute(null));
         Assert.Equal("/", RouteAddress.Absolute("///"));
     }
+
+    [Fact]
+    public void An_escaped_slash_and_an_escaped_percent_sign_are_two_different_values()
+    {
+        // "a%2Fb" is the value a/b, "a%252Fb" the value a%2Fb: the parser reads two values, so they are two addresses.
+        Assert.False(RouteAddress.Same("/files/a%2Fb", "/files/a%252Fb"));
+        Assert.True(RouteAddress.Same("/files/a%2Fb", "/files/a%2fb"));
+        Assert.False(RouteAddress.Same("/files/a%2Fb", "/files/a/b"));
+        Assert.True(RouteAddress.Same("/files/a%252Fb", "/files/a%252fb"));
+    }
 }

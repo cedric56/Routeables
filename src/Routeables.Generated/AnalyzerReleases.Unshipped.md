@@ -5,3 +5,4 @@
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 ROUT206 | Routeables | Warning | Several view models for the same route
+ROUT207 | Routeables | Warning | [Routeable] on an open generic or file-local type is ignored

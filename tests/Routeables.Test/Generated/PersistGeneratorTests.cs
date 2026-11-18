@@ -216,4 +216,20 @@ public class PersistGeneratorTests
     }
 
     private static string Generated(GeneratorDriverRunResult result) => string.Join(Environment.NewLine, result.GeneratedTrees.Select(t => t.ToString()));
+
+    [Fact]
+    public void A_property_of_a_file_local_class_is_reported_and_left_out()
+    {
+        var result = Run("""
+            using Routeables.Abstraction.States;
+            file class Hidden
+            {
+                [Persist] public int Page { get; set; }
+            }
+            """);
+
+        var diagnostic = Assert.Single(result.Diagnostics);
+        Assert.Equal("ROUT401", diagnostic.Id);
+        Assert.DoesNotContain("Hidden", Generated(result));
+    }
 }
