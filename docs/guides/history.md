@@ -19,6 +19,8 @@ Each router keeps a history of entries (view model, view and arguments):
 
 ### Limiting the history
 
+**What an entry weighs.** An entry keeps its view model, its **view** and its arguments, so that Back and Forward give back the same page with its state. On a desktop or mobile host the view is a tree of controls: measured on Avalonia, about 9 KB per entry for a page that is a single text, and more for a real page. After 1 000 route changes with no limit the history held 9.2 MiB; with `LimitHistory(50)` it held 0.96 MiB. An application that can go through thousands of pages in one session (a list that opens a detail, over and over) should set a limit, or use `PopAsync` to leave a page for good.
+
 By default a history keeps every entry, except the one of a scoped router (Blazor Server, ASP.NET Core: one history per user session), which keeps the last 50. In an application that stays open for a long time, set a limit at startup (it also replaces the 50 of a scoped router):
 
 ```csharp

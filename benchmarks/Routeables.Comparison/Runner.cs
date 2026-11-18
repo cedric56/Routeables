@@ -49,8 +49,7 @@ public static class Runner
             Console.WriteLine();
             Console.WriteLine("| Library | median ms / run | µs / step | KiB allocated / run | B / step |");
             Console.WriteLine("|---|---:|---:|---:|---:|");
-            foreach (var make in drivers)
-                await MeasureAsync(make, script);
+            await MeasureAsync(drivers, script);
         }
 
         if (all || args.Contains("--memory"))
@@ -93,39 +92,73 @@ public static class Runner
         return 0;
     }
 
-    private static async Task MeasureAsync(Func<INavigationDriver> make, IReadOnlyList<Step> script)
+    // The libraries are measured in turns, in the same process and one after the other in each run (the order turns from one run to the
+    // next), not one library after the other: the noise of the machine, which moves the time of a library by a factor of two from one job
+    // to another, then falls on all of them alike, and the ratio of two libraries is the median of the ratios of the same run.
+    private static async Task MeasureAsync(IReadOnlyList<Func<INavigationDriver>> drivers, IReadOnlyList<Step> script)
     {
-        var times = new double[Runs];
-        var bytes = new long[Runs];
-        var name = "";
+        var count = drivers.Count;
+        var times = new double[count][];
+        var bytes = new long[count][];
+        var names = new string[count];
+        for (var d = 0; d < count; d++)
+        {
+            times[d] = new double[Runs];
+            bytes[d] = new long[Runs];
+        }
+
         for (var run = -Warmups; run < Runs; run++)
         {
-            using var driver = make();
-            name = driver.Name;
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            var before = GC.GetTotalAllocatedBytes(true);
-            var watch = Stopwatch.StartNew();
-            foreach (var step in script)
+            for (var k = 0; k < count; k++)
             {
-                if (step.Op == Op.Forward && !driver.SupportsForward)
-                    continue;
-                await Scenario.RunAsync(driver, step);
-            }
+                var d = (k + run + Warmups) % count;
+                using var driver = drivers[d]();
+                names[d] = driver.Name;
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                var before = GC.GetTotalAllocatedBytes(true);
+                var watch = Stopwatch.StartNew();
+                foreach (var step in script)
+                {
+                    if (step.Op == Op.Forward && !driver.SupportsForward)
+                        continue;
+                    await Scenario.RunAsync(driver, step);
+                }
 
-            watch.Stop();
-            if (run >= 0)
-            {
-                times[run] = watch.Elapsed.TotalMilliseconds;
-                bytes[run] = GC.GetTotalAllocatedBytes(true) - before;
+                watch.Stop();
+                if (run >= 0)
+                {
+                    times[d][run] = watch.Elapsed.TotalMilliseconds;
+                    bytes[d][run] = GC.GetTotalAllocatedBytes(true) - before;
+                }
             }
         }
 
-        Array.Sort(times);
-        Array.Sort(bytes);
-        var ms = times[Runs / 2];
-        var allocated = bytes[Runs / 2];
-        Console.WriteLine($"| {name} | {ms:F2} | {ms * 1000 / script.Count:F1} | {allocated / 1024.0:F0} | {allocated / script.Count} |");
+        for (var d = 0; d < count; d++)
+        {
+            var sorted = (double[])times[d].Clone();
+            var sortedBytes = (long[])bytes[d].Clone();
+            Array.Sort(sorted);
+            Array.Sort(sortedBytes);
+            var ms = sorted[Runs / 2];
+            var allocated = sortedBytes[Runs / 2];
+            Console.WriteLine($"| {names[d]} | {ms:F2} | {ms * 1000 / script.Count:F1} | {allocated / 1024.0:F0} | {allocated / script.Count} |");
+        }
+
+        if (count > 1)
+        {
+            Console.WriteLine();
+            Console.WriteLine($"Time of {names[0]} over the time of each other library, run by run (median, and the range of the middle half of the {Runs} runs; above 1 means {names[0]} is slower):");
+            Console.WriteLine();
+            for (var d = 1; d < count; d++)
+            {
+                var ratios = new double[Runs];
+                for (var run = 0; run < Runs; run++)
+                    ratios[run] = times[0][run] / times[d][run];
+                Array.Sort(ratios);
+                Console.WriteLine($"- against {names[d]}: {ratios[Runs / 2]:F2} (from {ratios[Runs / 4]:F2} to {ratios[3 * Runs / 4]:F2})");
+            }
+        }
     }
 
     private static async Task MemoryAsync(Func<INavigationDriver> make)
