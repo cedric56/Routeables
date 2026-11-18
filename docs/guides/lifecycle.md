@@ -45,7 +45,7 @@ When a step fails, the route change fails with that exception (`result.Exception
 
 ### Routing from a hook
 
-A router makes one route change at a time. A route change started **from a hook of that same router** (`CanLeaveAsync`, `InitializeAsync`, `OnLeavingAsync`, `OnEnteringAsync`, or a `Routing` or `Routed` handler) does not wait for the first one: the router throws an `InvalidOperationException` ("Reentrant route changes are not supported"). The history would otherwise change under a route change that has not finished.
+A router makes one route change at a time. A route change started **from a hook of that same router** (`CanLeaveAsync`, `InitializeAsync`, `OnLeavingAsync`, `OnEnteringAsync`, or a `Routing` or `Routed` handler) does not wait for the first one: the router throws an `InvalidOperationException` ("Reentrant route changes are not supported"). The same holds in `OnEnteredAsync` and `OnLeftAsync`, which run before the route change is over: a route change started there is refused too, and as the exception comes from your hook, the route change that ran it has already succeeded, its result says so, and the exception is only written to the debug output. Route from a `Routed` handler that queues the work instead. The history would otherwise change under a route change that has not finished.
 
 Route after the hook has returned: from the command that started the first route change, once it has its result, or from a handler that queues the work (a `RegionFollower` does exactly that for regions). The rule is per router, so a hook can route another router, a region for instance.
 
@@ -154,7 +154,7 @@ If the view overrides `InitializeAsync`, call `base.InitializeAsync(args, ct)` s
 
 ## Finding out why a route did not show
 
-`GoToRouteAsync` returns a `RouteableResult` (`Success`, `Cancelled`, `Exception`) instead of throwing. `RouteableMenuViewModelBase` writes the reason to the debug output when an entry is not shown, and calls the virtual `OnRoutingFailed(entry, result)`: override it to log, or put a breakpoint in it.
+`GoToRouteAsync` returns a `RouteableResult` (`Success`, `Cancelled`, `Exception`) when the address does not lead to a page or a guard refuses; an exception of your own code (a guard, the constructor of a view model, `InitializeAsync`, `OnEnteringAsync`) is thrown to the caller, once the page that was shown is current again, so a caller that only tests `result.Success` must also catch. A route change that the caller cancelled, or that `RouterConcurrency.CancelCurrent` replaced by a newer one, ends with an `OperationCanceledException`, not with a cancelled result. `RouteableMenuViewModelBase` writes the reason to the debug output when an entry is not shown, and calls the virtual `OnRoutingFailed(entry, result)`: override it to log, or put a breakpoint in it.
 
 ```csharp
 protected override void OnRoutingFailed(IRouteableMenuEntry entry, RouteableResult result)

@@ -8,7 +8,8 @@ namespace Routeables.Abstraction.Routing;
 /// <summary>
 /// The route change of an application, or of one region of it: it keeps a history of entries (a view model and its view) and moves a
 /// cursor through it. Every operation checks the guards of the page being left, runs the lifecycle (<see cref="IRouteable"/>),
-/// and returns a <see cref="RouteableResult"/> instead of throwing when the route change is refused or fails. The default router is
+/// and returns a <see cref="RouteableResult"/> when the route change is refused (an unknown address, a guard, a page that does not let go). An exception
+/// thrown by the code it runs (a guard, a view model constructor, a lifecycle hook) reaches the caller, after the page that was shown is current again. The default router is
 /// the main area; <c>AddRegion</c> registers one more, by name, for a <c>RouteableRegion</c>.
 /// </summary>
 public interface IRouter

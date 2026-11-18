@@ -49,32 +49,8 @@ public static class RouteableState
         ArgumentNullException.ThrowIfNull(router);
         ArgumentNullException.ThrowIfNull(routes);
 
-        // A saved route is an address, not a command: "-/orders" (go back, then navigate) in a file that was changed by hand would go back.
-        var list = routes.Where(route => !string.IsNullOrWhiteSpace(route) && !route.TrimStart().StartsWith('-')).ToList();
-        if (list.Count == 0)
-            return true;
-
-        var shownBefore = router.History.Current?.Args.Route;
-        await router.EraseHistoryAsync(cancellationToken);
-        try
-        {
-            foreach (var route in list)
-            {
-                var result = await router.GoToAsync(route, null, null, cancellationToken);
-                if (!result.Success)
-                {
-                    await BringBackAsync(router, shownBefore);
-                    return false;
-                }
-            }
-        }
-        catch
-        {
-            await BringBackAsync(router, shownBefore);
-            throw;
-        }
-
-        return true;
+        // The same restoration as the one that keeps values, with none to give back: a guard that sends a page elsewhere ends it there.
+        return await RestoreSnapshotsAsync(router, routes.Select(route => new RouteableSnapshot(route, new Dictionary<string, string>())), cancellationToken);
     }
 
     // The history was erased and the first page of the restoration could not be shown: the page that was there goes back (an address
@@ -125,7 +101,9 @@ public static class RouteableState
         ArgumentNullException.ThrowIfNull(router);
         ArgumentNullException.ThrowIfNull(snapshots);
 
-        var list = snapshots.Where(snapshot => !string.IsNullOrWhiteSpace(snapshot.Route)).ToList();
+        // A saved route is an address, not a command: "-/orders" (go back, then navigate) in a file that was changed by hand would go back.
+        // Left out before the history is erased: a list of them only would erase it and show nothing.
+        var list = snapshots.Where(snapshot => !string.IsNullOrWhiteSpace(snapshot.Route) && !snapshot.Route.TrimStart().StartsWith('-')).ToList();
         if (list.Count == 0)
             return true;
 

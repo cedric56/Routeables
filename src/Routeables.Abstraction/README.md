@@ -24,7 +24,7 @@ public class DogsViewModel(IRouter router)
 }
 ```
 
-`IRouter` also offers `GoBackAsync`, `ForwardAsync`, `PopAsync`, `GoBackToRootAsync`, `MoveToAsync` and `EraseHistoryAsync`. A route change that cannot happen (an unknown address, a page that vetoes leaving) returns a failed or cancelled `RouteableResult` and does not throw.
+`IRouter` also offers `GoBackAsync`, `ForwardAsync`, `PopAsync`, `GoBackToRootAsync`, `MoveToAsync` and `EraseHistoryAsync`. A route change that cannot happen (an unknown address, a page that vetoes leaving, a guard that refuses) returns a failed or cancelled `RouteableResult`. An exception thrown by your code (a guard, the constructor of a view model, a lifecycle hook) is not turned into a result: it reaches the caller, once the page that was shown is current again, and so does the `OperationCanceledException` of a route change that the caller cancelled (or that `RouterConcurrency.CancelCurrent` replaced by a newer one).
 
 ## Namespaces
 

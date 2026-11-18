@@ -57,6 +57,34 @@ public class ExternalAuditTests
     }
 
     [Fact]
+    public async Task A_restoration_of_routes_whose_pages_a_guard_redirects_does_not_pile_up_the_redirections()
+    {
+        await using var provider = Build(services => services.AddSingleton<IRouteGuard, SignInGuard>());
+        var router = provider.GetRequiredService<IRouter>();
+
+        var restored = await RouteableState.RestoreAsync(router, ["/home", "/orders", "/orders/42"], Ct);
+
+        Assert.True(restored);
+        Assert.Equal(2, router.History.Count);                      // the same answer as RestoreSnapshotsAsync
+        Assert.IsType<LoginVm>(router.CurrentViewModel);
+    }
+
+    [Fact]
+    public async Task A_restoration_of_commands_only_leaves_the_history_as_it_was()
+    {
+        await using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct);
+        var none = new Dictionary<string, string>();
+
+        Assert.True(await RouteableState.RestoreSnapshotsAsync(router, [new RouteableSnapshot("-/orders", none), new RouteableSnapshot("-", none)], Ct));
+        Assert.True(await RouteableState.RestoreAsync(router, ["-/orders"], Ct));
+
+        Assert.Equal(1, router.History.Count);                      // nothing was erased: there was nothing to restore
+        Assert.IsType<HomeVm>(router.CurrentViewModel);
+    }
+
+    [Fact]
     public async Task A_restoration_without_redirection_keeps_every_page()
     {
         await using var provider = Build();

@@ -327,6 +327,31 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void A_number_has_one_text_in_an_address()
+    {
+        // "42", "+42" and " 42" were three addresses for one page.
+        foreach (var (template, accepted) in new[]
+        {
+            ("x/{n:int}", new[] { "42", "-42", "0" }), ("x/{n:long}", new[] { "42", "-4200000000000" }),
+            ("x/{n:decimal}", new[] { "1.5", "-1.5", "10" }), ("x/{n:double}", new[] { "1.5", "-0.25", "1e3" }),
+        })
+        {
+            foreach (var text in accepted)
+                Assert.True(RouteParser.TryMatch(template, "x/" + text), template + " " + text);
+        }
+
+        foreach (var (template, refused) in new[]
+        {
+            ("x/{n:int}", new[] { "+42", "%2042", "42%20", "4,2" }), ("x/{n:long}", new[] { "+42", "%2042" }),
+            ("x/{n:decimal}", new[] { "+1.5", "%201.5", "1.5%20", "1,000.5" }), ("x/{n:double}", new[] { "+1.5", "%201.5", "NaN", "Infinity", "-Infinity" }),
+        })
+        {
+            foreach (var text in refused)
+                Assert.False(RouteParser.TryMatch(template, "x/" + text), template + " " + text);
+        }
+    }
+
+    [Fact]
     public void Optional_placeholders_one_after_the_other_at_the_end_match_and_build()
     {
         Assert.Null(RouteParser.Mismatch("cat/{age:int?}/{nick?}", "cat/7/Tom"));

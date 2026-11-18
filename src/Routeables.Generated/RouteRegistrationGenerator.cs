@@ -47,6 +47,16 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
+        // Two view models that declare the same route (and region): the table of routes keeps the first one it is given, the second is
+        // never reached, and the message at run time names the second as a route that is not registered.
+        private static readonly DiagnosticDescriptor SeveralViewModelsForOneRoute = new DiagnosticDescriptor(
+            "ROUT206",
+            "Several view models for the same route",
+            "{0}",
+            "Routeables",
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         // A .razor file of the project that declares [RouteableView] with @attribute: the Razor compiler is another generator, and a
         // generator does not see the output of another one, so nothing is registered. Only reported when this project calls its own
         // AddGeneratedRoutes(): a component library whose views are registered by the application that references it is fine.
@@ -487,6 +497,7 @@ namespace Routeables.Generated
             var viewList = viewsIn.ToList();
             AddConventionViews(spc, viewList, routesIn.ToList(), candidates);
             ReportSeveralViews(spc, viewList);
+            ReportSeveralViewModels(spc, routesIn.ToList());
 
             // Deterministic output
             var views = viewList
@@ -512,6 +523,27 @@ namespace Routeables.Generated
 
         private static bool IsExecutable(OutputKind kind) =>
             kind is OutputKind.ConsoleApplication or OutputKind.WindowsApplication or OutputKind.WindowsRuntimeApplication;
+
+        private static void ReportSeveralViewModels(SourceProductionContext spc, List<Route> routes)
+        {
+            // The same address as the table of routes reads it: the case and a trailing slash do not tell two routes apart.
+            var groups = routes
+                .Where(r => !string.IsNullOrEmpty(r.Path))
+                .GroupBy(r => (Path: r.Path!.Trim().TrimEnd('/').ToLowerInvariant(), Region: r.Region ?? string.Empty))
+                .OrderBy(g => g.Key.Path, StringComparer.Ordinal);
+
+            foreach (var group in groups)
+            {
+                var names = group.Select(r => r.TypeName).Distinct(StringComparer.Ordinal).OrderBy(n => n, StringComparer.Ordinal).ToList();
+                if (names.Count < 2)
+                    continue;
+
+                spc.ReportDiagnostic(Diagnostic.Create(
+                    SeveralViewModelsForOneRoute,
+                    Location.None,
+                    names.Count + " view models declare the route '" + group.First().Path + "' (" + string.Join(", ", names) + "): only the first registered is reached. Give each its own route."));
+            }
+        }
 
         private static void ReportSeveralViews(SourceProductionContext spc, List<ViewReg> views)
         {

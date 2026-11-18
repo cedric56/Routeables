@@ -374,12 +374,14 @@ public static partial class RouteParser
         switch (type.ToLowerInvariant())
         {
             case "" or "string" or "?": value = raw; return true;
-            case "int": { var ok = int.TryParse(raw, NumberStyles.Integer, inv, out var v); value = v; return ok; }
-            case "long": { var ok = long.TryParse(raw, NumberStyles.Integer, inv, out var v); value = v; return ok; }
+            // One text for one value: no space, no plus sign, no thousands separator, no NaN or Infinity. "42", "+42" and " 42" would
+            // otherwise be three addresses for one page (the history and the guards compare addresses).
+            case "int": { int v = 0; var ok = !raw.StartsWith('+') && int.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v); value = v; return ok; }
+            case "long": { long v = 0; var ok = !raw.StartsWith('+') && long.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v); value = v; return ok; }
             case "bool": { var ok = bool.TryParse(raw, out var v); value = v; return ok; }
             case "guid": { var ok = Guid.TryParse(raw, out var v); value = v; return ok; }
-            case "decimal": { var ok = decimal.TryParse(raw, NumberStyles.Number, inv, out var v); value = v; return ok; }
-            case "double": { var ok = double.TryParse(raw, NumberStyles.Float, inv, out var v); value = v; return ok; }
+            case "decimal": { decimal v = 0; var ok = !raw.StartsWith('+') && decimal.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, inv, out v); value = v; return ok; }
+            case "double": { double v = 0; var ok = !raw.StartsWith('+') && double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v); value = v; return ok; }
             default:
                 value = null;
                 return false;   // not reached: Bind refuses an unknown constraint first

@@ -708,6 +708,42 @@ public class RouteRegistrationGeneratorTests
         return MetadataReference.CreateFromImage(stream.ToArray());
     }
 
+    [Fact]
+    public void Two_view_models_that_declare_the_same_route_are_reported()
+    {
+        var result = RunGenerator("""
+            using Routeables.Abstraction;
+
+            [Routeable("/dup")]
+            public class FirstViewModel { }
+
+            [Routeable("/Dup/")]
+            public class SecondViewModel { }
+
+            [Routeable("/alone")]
+            public class AloneViewModel { }
+            """);
+
+        var warning = Assert.Single(result.Diagnostics, d => d.Id == "ROUT206");
+        Assert.Contains("FirstViewModel", warning.GetMessage());
+        Assert.Contains("SecondViewModel", warning.GetMessage());
+        Assert.DoesNotContain("AloneViewModel", warning.GetMessage());
+    }
+
+    [Fact]
+    public void One_view_model_with_two_routes_or_two_regions_is_not_reported()
+    {
+        var result = RunGenerator("""
+            using Routeables.Abstraction;
+
+            [Routeable("/one")]
+            [Routeable("/two")]
+            public class PageViewModel { }
+            """);
+
+        Assert.DoesNotContain(result.Diagnostics, d => d.Id == "ROUT206");
+    }
+
     [Theory]
     [InlineData("AvaloniaShop.Features")]
     [InlineData("PresentationLayer")]
