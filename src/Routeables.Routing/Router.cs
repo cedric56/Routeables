@@ -586,6 +586,8 @@ internal class Router(
             return forward;
         }
 
+        url = trimmed;      // the address the qualifier was read from: the spaces around it are not part of the route
+
         // A route registered with an explicit template (RegisterRoute(route: "/orders/{id:int}"), [Routeable]): the template
         // reads the parameters from the address. Given a template, it is the registered route with that template.
         var entries = provider.GetService<RouteableTable>()?.Entries ?? [];

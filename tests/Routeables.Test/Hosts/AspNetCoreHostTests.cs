@@ -149,6 +149,8 @@ public class AspNetCoreHostTests
     [InlineData("//evil.example", "/evil.example")]
     [InlineData("\\evil.example", "/evil.example")]
     [InlineData("/\\/evil.example", "/evil.example")]
+    [InlineData("/\t/evil.example", "/evil.example")]
+    [InlineData("/\n\\evil.example", "/evil.example")]
     [InlineData("", "/")]
     [InlineData(null, "/")]
     public void A_route_becomes_a_local_path_that_never_starts_like_another_site(string? route, string expected)

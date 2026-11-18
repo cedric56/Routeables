@@ -6,6 +6,12 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **Blazor, an address nobody serves shows the page of `UseNotFoundRoute()`**: `RouteableUrlSync` did nothing for it (a link changed the address bar and kept the page before, the first start opened the first entry of the menu); it goes through `GoToAsync` now, like any other address. Without a not-found page nothing changes.
+- **A tab or a line break does not hide the second slash of `//host`**: a browser drops them, so `/<tab>/evil.example` was `//evil.example` for it, and `RouteAddress.Rooted` and `RouteableAddress.Of` let it through.
+- **Two registered types with the same simple name as a built-in constraint (`Sales.Guid` and `Hr.Guid`) no longer disable `{id:guid}`**: the ambiguity of the name was checked before the built-in constraints.
+- **`RouterConcurrency.CancelCurrent`: a newer route change that arrives while the gate is held and the operation not yet published cancels it**, as the documentation says (it found nothing to cancel, and the older one ran to its end first).
+- **`GoToAsync` looks for the route with the address trimmed**, like it reads the qualifiers (`-`, `-/orders`).
+- **Documentation**: the routes the generator registers break a tie in the alphabetical order of their view models, not in the order of declaration.
 - **Blazor, a link to `/` from a page that has no route goes to the home registered on `/`**: such a page is shown under `/`, and the link was taken for the page that is shown, so the router did not move (`RouteableUrlSync`; only for a link the user clicked, what the router itself writes is still ignored).
 - **ASP.NET Core, a request waits for the dialog of its own action**: the signal "the action asked something" was one per visitor and replaced by each request, so with a double click or two tabs the dialog of request A woke request B and A stayed pending. The signal now belongs to the action (`RouteableInteractions`).
 - **A converter of the application that fails with any exception is an address that does not match**: only `JsonException` was caught, so another one came out of the search for a route for every address (`RouteParser`).

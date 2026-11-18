@@ -13,9 +13,9 @@ namespace Routeables.Abstraction.Routing;
 /// </summary>
 internal static class RouteAddress
 {
-    /// <summary>The address with exactly one leading slash. A protocol-relative <c>//host</c> (and <c>/\host</c>, read the same way by browsers) becomes <c>/host</c>: the address stays inside the application.</summary>
+    /// <summary>The address with exactly one leading slash. A protocol-relative <c>//host</c> (and <c>/\host</c>, read the same way by browsers) becomes <c>/host</c>: the address stays inside the application. A browser drops the tabs and line breaks of an address, so <c>/&lt;tab&gt;/host</c> is <c>//host</c> to it: they are dropped here too.</summary>
     /// <param name="route">The route or address.</param>
-    internal static string Rooted(string route) => "/" + route.TrimStart('/', '\\');
+    internal static string Rooted(string route) => "/" + route.TrimStart('/', '\\', '\t', '\r', '\n');
 
     /// <summary>The route with exactly one slash before it and none at its end (<c>orders/42/</c> becomes <c>/orders/42</c>); the query, if any, is kept.</summary>
     /// <param name="route">The route.</param>

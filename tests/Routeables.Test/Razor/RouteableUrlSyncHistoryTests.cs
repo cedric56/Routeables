@@ -114,6 +114,8 @@ public class RouteableUrlSyncHistoryTests
     public sealed class DetailView : IRouteableFor { public object? Context { get; set; } }
     public sealed class DetailVm(int id) { public int Id { get; } = id; }
 
+    public sealed class NotFoundView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class NotFoundVm;
     public sealed class RootView : IRouteableFor { public object? Context { get; set; } }
     public sealed class RootVm;
     public sealed class OrphanView : IRouteableFor { public object? Context { get; set; } }
@@ -149,7 +151,7 @@ public class RouteableUrlSyncHistoryTests
         public IRouter Router { get; }
         public RouteableUrlSync Sync { get; }
 
-        public Fixture(bool withScripts = true, bool cancelCurrent = false)
+        public Fixture(bool withScripts = true, bool cancelCurrent = false, bool notFound = false)
         {
             Scripts = new FakeScripts(Navigation);
             var services = new ServiceCollection();
@@ -158,6 +160,11 @@ public class RouteableUrlSyncHistoryTests
             services.RegisterRoute<DetailView, DetailVm>(route: "/detail/{id:int}");
             services.RegisterRoute<NamedView, NamedVm>(route: "/named/{name}");
             services.RegisterRoute<RootView, RootVm>(route: "/");
+            if (notFound)
+            {
+                services.RegisterRoute<NotFoundView, NotFoundVm>(route: "/not-found");
+                services.UseNotFoundRoute();
+            }
             services.RegisterRoute<SlowView, SlowVm>(route: "/slow");
             services.AddSingleton<IRouteableErrorSink>(Errors);
             if (cancelCurrent)
@@ -199,6 +206,40 @@ public class RouteableUrlSyncHistoryTests
 
         Assert.Equal(-1, f.Scripts.Moves[0]);
         Assert.Empty(f.Navigation.Calls);                       // the address is not replaced: the browser moved itself
+    }
+
+    [Fact]
+    public async Task A_link_to_an_address_nobody_serves_shows_the_not_found_page_when_there_is_one()
+    {
+        using var f = new Fixture(notFound: true);
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+
+        Assert.True(await f.Navigation.ClickAsync("/nope"));
+
+        Assert.IsType<NotFoundVm>(f.Router.CurrentViewModel);
+    }
+
+    [Fact]
+    public async Task An_address_nobody_serves_changes_nothing_without_a_not_found_page()
+    {
+        using var f = new Fixture();
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+
+        Assert.True(await f.Navigation.ClickAsync("/nope"));
+
+        Assert.IsType<HomeVm>(f.Router.CurrentViewModel);
+    }
+
+    [Fact]
+    public async Task Spaces_around_an_address_are_not_part_of_the_route()
+    {
+        using var f = new Fixture();
+        await f.Sync.StartAsync();
+
+        Assert.True((await f.Router.GoToAsync("  /detail/7  ", cancellationToken: TestContext.Current.CancellationToken)).Success);
+        Assert.IsType<DetailVm>(f.Router.CurrentViewModel);
     }
 
     [Fact]

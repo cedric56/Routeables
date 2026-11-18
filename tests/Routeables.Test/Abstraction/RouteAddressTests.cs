@@ -76,6 +76,14 @@ public class RouteAddressTests
         Assert.Equal("/about", RouteAddress.Rooted("about"));
     }
 
+    [Theory]
+    [InlineData("/\t/host")]
+    [InlineData("\t//host")]
+    [InlineData("/\n/host")]
+    [InlineData("/\r\n\\host")]
+    public void A_tab_or_a_line_break_does_not_hide_the_second_slash_from_the_browser_that_drops_them(string route)
+        => Assert.Equal("/host", RouteAddress.Rooted(route));
+
     public sealed class RaItemView : IRouteableFor { public object? Context { get; set; } }
     public sealed class RaItemVm;
 

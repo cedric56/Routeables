@@ -48,17 +48,29 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
         _inProgress.Value = token;
         if (wait.IsCompletedSuccessfully)
         {
-            Begin(token, cancelCurrent, cancellationToken);
+            Begin(token, cancelCurrent, cancellationToken, number);
             return wait;
         }
 
         return Acquire(wait, token, cancelCurrent, number, cancellationToken);
     }
 
-    private void Begin(object token, bool cancelCurrent, CancellationToken caller)
+    // For the tests: runs where a newer caller can come in, once the gate is held and before the operation is published.
+    internal Action? BeforeBegin;
+
+    private void Begin(object token, bool cancelCurrent, CancellationToken caller, long number)
     {
+        BeforeBegin?.Invoke();
         if (cancelCurrent)
-            Volatile.Write(ref _running, CancellationTokenSource.CreateLinkedTokenSource(caller));
+        {
+            var source = CancellationTokenSource.CreateLinkedTokenSource(caller);
+            Interlocked.Exchange(ref _running, source);     // a full fence: published before _latest is read below
+            // A newer caller that came after the wait and before this point found no source to cancel (it is published only now): it asked for
+            // this one to be replaced, so it is cancelled at once. Whichever of the two goes second sees the other.
+            if (Interlocked.Read(ref _latest) != number)
+                source.Cancel();
+        }
+
         Volatile.Write(ref _current, token);
     }
 
@@ -79,7 +91,7 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
             throw new OperationCanceledException("A newer route change replaced this one.");
         }
 
-        Begin(token, cancelCurrent, caller);
+        Begin(token, cancelCurrent, caller, number);
     }
 
     /// <summary>

@@ -8,6 +8,27 @@ public class RouterGateTests
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
     [Fact]
+    public async Task A_newer_caller_that_comes_before_the_operation_is_published_still_cancels_it()
+    {
+        // The gate is held, the operation is not yet the one in progress: a newer route change finds nothing to cancel, and asked for it to be replaced.
+        var gate = new RouterGate(RouterConcurrency.CancelCurrent);
+        Task? second = null;
+        gate.BeforeBegin = () =>
+        {
+            gate.BeforeBegin = null;
+            Task.Run(() => { second = gate.EnterAsync(); }, TestContext.Current.CancellationToken).Wait(TestContext.Current.CancellationToken);
+        };
+
+        await gate.EnterAsync(cancellationToken: TestContext.Current.CancellationToken);
+        try { Assert.True(gate.Observe(default).IsCancellationRequested); }
+        finally { gate.Exit(); }
+
+        Assert.NotNull(second);
+        await second!.WaitAsync(Timeout, cancellationToken: TestContext.Current.CancellationToken);
+        gate.Exit();
+    }
+
+    [Fact]
     public async Task Entering_twice_in_the_same_flow_throws_instead_of_waiting_forever()
     {
         var gate = new RouterGate();

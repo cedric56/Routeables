@@ -274,6 +274,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             return Outcome.Done;
 
         RouteableResult result;
+        string? template = null;
         if (!fromLink && history.CanGoBack && SameAddress(AddressOf(history.Entries[history.CurrentIndex - 1]), path))
         {
             result = await router.GoBackAsync(cancellationToken);
@@ -295,8 +296,10 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
                 Show(shownNow, replace: true);
             return Outcome.Refused;
         }
-        else if (RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], path).Template is { } template)
+        else if ((template = RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], path).Template) is not null
+                 || provider.GetService<RouteableNotFound>() is not null)
         {
+            // No template for the address and a page for such addresses (UseNotFoundRoute): the router shows it, as it does for GoToAsync.
             try
             {
                 result = await router.GoToAsync(path, RouteableArgs.Create(), template, cancellationToken);

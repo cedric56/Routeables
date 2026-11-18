@@ -296,7 +296,7 @@ public static partial class RouteParser
         var attribute = m.Groups["attribute"].Success;
         var optional = m.Groups["opt"].Success || m.Groups["rest"].Success;   // a catch-all may be empty
 
-        if (AmbiguousNames.ContainsKey(type))
+        if (!IsBuiltIn(type) && AmbiguousNames.ContainsKey(type))
             return reasons ? $"the constraint \"{type}\" of {{{name}}} stands for several registered types: write the full name of the type" : NoReason;
 
         // A constraint that is neither built in nor registered is a mistake in the template: it never matches, and says so (instead of throwing
