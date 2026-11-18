@@ -6,6 +6,11 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **`ScopedViewCache`: a circular dependency is an error**: a constructor that asked its own cache for its own key built again, for ever, until the stack overflowed (the lock is re-entrant). It now throws `InvalidOperationException`, and the key can be built afterwards.
+- **ASP.NET Core, the buttons of a task dialog are translated**: `ShowTaskDialogAsync` wrote the name of the enum value, the other hosts go through `RouteableTexts.Button` (the translator of the application).
+- **The generator leaves out a `[Routeable]` view model it cannot reach** (private nested class, internal in another assembly): `ROUT207` instead of code that did not compile (CS0122).
+- **`-/orders` shows the page that was left again when the route throws or is cancelled**, not only when it returns a failure (`GoToAsync`); the exception goes on.
+- **D-Bus, a big-endian message is dropped instead of closing the connection**: its lengths are read and the message skipped.
 - **`ScopedViewCache` keeps the page of a caller that waited for a failed construction**: when the constructor of a scoped or singleton page failed, the entry was removed from the cache; a second caller already waiting on it then built the page into that removed entry, so the cache did not own it (two "singleton" pages, one never disposed). A failure now keeps the entry: the waiting caller builds the page under the same lock and the cache keeps it.
 - **`/files/a%2Fb` and `/files/a%252Fb` are two addresses** (`RouteAddress.Same`): the parser reads the values `a/b` and `a%2Fb`, but the comparison gave the same text for both, so the URL synchronisation of Blazor could ignore a real navigation.
 - **`{**path}` is built only from a value it can read back**: `a//b/` became `/a/b` with no word; a value with an empty segment (doubled, leading or trailing slash) now throws `ArgumentException` in `RouteParser.Build`, like a `.` or `..` segment.

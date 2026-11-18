@@ -566,6 +566,14 @@ internal class Router(
             Transition = args.Transition,
         };
 
+    // "-/orders" left a page for a route that did not open: the user is not left on the page before. Only when nothing else moved the history in the
+    // meantime (the page left is still the next one), and without the caller's token, which may be the reason the route did not open.
+    private async Task ShowLeftAgainAsync(object? left)
+    {
+        if (ReferenceEquals(history.PeekForward(), left))
+            await ForwardAsync(CancellationToken.None);
+    }
+
     /// <inheritdoc />
     public async Task<RouteableResult> GoToAsync(
         string url, IRouteableArgs? args = null, string? template = null, CancellationToken cancellationToken = default)
@@ -585,13 +593,18 @@ internal class Router(
             if (!back.Success)
                 return back;
 
-            var forward = await GoToAsync(trimmed[1..], args, template, cancellationToken);
-            if (!forward.Success && ReferenceEquals(history.PeekForward(), left))
+            RouteableResult forward;
+            try { forward = await GoToAsync(trimmed[1..], args, template, cancellationToken); }
+            catch
             {
-                // The page was left for a route that did not open: the user is not left on the page before. Only when nothing else moved the history in the
-                // meantime (the page left is still the next one), and without the caller's token, which may be the reason the route did not open.
-                await ForwardAsync(CancellationToken.None);
+                // An exception (or a cancellation) is a route that did not open too: the page that was left is shown again, then it goes on.
+                try { await ShowLeftAgainAsync(left); }
+                catch (Exception) { /* the exception of the route is the one that matters */ }
+                throw;
             }
+
+            if (!forward.Success)
+                await ShowLeftAgainAsync(left);
 
             return forward;
         }

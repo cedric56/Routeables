@@ -174,4 +174,23 @@ public class ExternalAuditTests
         Assert.True(result.Success, result.Exception?.Message);
         Assert.IsType<TabVm>(router.CurrentViewModel);
     }
+
+    public sealed class BrokenView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class BrokenVm { public BrokenVm() => throw new InvalidOperationException("no"); }
+
+    [Fact]
+    public async Task A_go_back_then_to_route_that_does_not_open_shows_the_page_that_was_left()
+    {
+        await using var provider = Build(services => services.RegisterRoute<BrokenView, BrokenVm>(route: "/broken"));
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct);
+        await router.GoToAsync("/orders", cancellationToken: Ct);
+
+        RouteableResult? result = null;
+        try { result = await router.GoToAsync("-/broken", cancellationToken: Ct); }
+        catch (InvalidOperationException) { }
+
+        Assert.True(result is null || !result.Success);
+        Assert.IsType<OrdersVm>(router.CurrentViewModel);
+    }
 }

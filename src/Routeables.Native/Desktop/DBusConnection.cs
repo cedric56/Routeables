@@ -385,8 +385,18 @@ internal sealed class DBusConnection : IDisposable
             while (true)
             {
                 var fixedPart = ReadExactly(16);
+                if (fixedPart[0] == (byte)'B')
+                {
+                    // A big-endian message is not understood, but its lengths are readable: it is read whole and dropped, the connection goes on.
+                    var (skipBody, skipFields) = ValidateLengths(
+                        System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(fixedPart.AsSpan(4, 4)),
+                        System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(fixedPart.AsSpan(12, 4)));
+                    _ = ReadExactly(skipFields + (8 - (16 + skipFields) % 8) % 8 + skipBody);
+                    Trace.TraceWarning("Routeables: a big-endian D-Bus message was dropped.");
+                    continue;
+                }
                 if (fixedPart[0] != (byte)'l')
-                    throw new InvalidOperationException("Only little-endian messages are read.");
+                    throw new InvalidOperationException("Not a D-Bus message: the connection is closed.");
 
                 var type = fixedPart[1];
                 var serial = BitConverter.ToUInt32(fixedPart, 8);

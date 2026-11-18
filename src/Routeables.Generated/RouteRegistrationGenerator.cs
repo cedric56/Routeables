@@ -522,13 +522,15 @@ namespace Routeables.Generated
                 Lifetime: lifetime,
                 Build: RouteBuilds.Analyze(compilation, symbol),
                 IsLocal: SymbolEqualityComparer.Default.Equals(symbol.ContainingAssembly, compilation.Assembly),
-                Problem: ProblemOf(symbol));
+                Problem: ProblemOf(compilation, symbol));
         }
 
-        // A view model the generated code cannot name: an open generic type (OrderViewModel<T>) or a type local to its file. Registering it would
+        // A view model the generated code cannot name: an open generic type (OrderViewModel<T>), a type local to its file or one it cannot reach. Registering it would
         // write code that does not compile, so it is reported and left out.
-        private static string? ProblemOf(INamedTypeSymbol symbol)
+        private static string? ProblemOf(Compilation compilation, INamedTypeSymbol symbol)
         {
+            if (!compilation.IsSymbolAccessibleWithin(symbol, compilation.Assembly))
+                return "the type is not accessible from this project (private, or internal in another assembly), so the generated code could not name it. Make it public or internal.";
             for (var t = symbol; t is not null; t = t.ContainingType)
             {
                 if (t.IsGenericType)

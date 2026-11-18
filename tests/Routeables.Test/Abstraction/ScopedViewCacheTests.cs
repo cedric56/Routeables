@@ -135,7 +135,7 @@ public class ScopedViewCacheTests
             catch (InvalidOperationException) { }
         });
         first.Start();
-        Assert.True(started.Wait(TimeSpan.FromSeconds(10)));
+        Assert.True(started.Wait(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
 
         object? second = null;
         var waiter = new Thread(() => second = cache.GetOrCreate("k", () => { Interlocked.Increment(ref calls); return new Item(); }));
@@ -155,5 +155,16 @@ public class ScopedViewCacheTests
         Assert.Equal(2, calls);
         cache.Dispose();
         Assert.Equal(1, ((Item)second!).Disposed);
+    }
+
+    [Fact]
+    public void A_construction_that_asks_for_itself_fails_instead_of_overflowing_the_stack()
+    {
+        var cache = new ScopedViewCache();
+
+        Assert.Throws<InvalidOperationException>(() => cache.GetOrCreate("k", () => cache.GetOrCreate("k", () => new object())));
+
+        // Nothing was kept: the key can be built afterwards.
+        Assert.NotNull(cache.GetOrCreate("k", () => new object()));
     }
 }

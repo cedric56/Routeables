@@ -28,6 +28,10 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
                 return existing;
         }
 
+        // The lock is re-entrant: a constructor that asks for its own key (a circular dependency) would build again, for ever, until the stack ends.
+        if (Monitor.IsEntered(entry.Gate))
+            throw new InvalidOperationException($"A circular dependency: the construction of \"{key}\" asked for itself.");
+
         lock (entry.Gate)
         {
             if (entry.Value is { } built)

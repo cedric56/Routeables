@@ -47,7 +47,7 @@ public sealed class RouteableDialogService(RouteableInteractions interactions) :
         RouteableTaskDialogResult[] buttons = results.Length > 0 ? results : [RouteableTaskDialogResult.OK];
 
         RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpening, @params.Opening);
-        var dialog = new RouteableDialog(@params.Title ?? string.Empty, @params.Header, @params.Content?.ToString(), [.. buttons.Select(b => b.ToString())])
+        var dialog = new RouteableDialog(@params.Title ?? string.Empty, @params.Header, @params.Content?.ToString(), [.. buttons.Select(b => RouteableTexts.Button(b.ToString()))])
         {
             Footer = @params.ShowsFooter ? @params.Footer?.ToString() : null,
             ShowProgress = @params.ShowProgressBar

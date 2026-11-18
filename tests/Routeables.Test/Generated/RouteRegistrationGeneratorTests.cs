@@ -918,4 +918,26 @@ public class RouteRegistrationGeneratorTests
         Assert.DoesNotContain("ListViewModel", code);
         Assert.DoesNotContain("HiddenViewModel", code);
     }
+
+    [Fact]
+    public void A_private_nested_view_model_is_reported_and_left_out()
+    {
+        var result = RunGenerator("""
+            using Routeables.Abstraction;
+
+            public class Host
+            {
+                [Routeable("/inner")]
+                private class InnerViewModel { }
+            }
+
+            [Routeable("/fine")]
+            public class FineViewModel { }
+            """);
+
+        Assert.Single(result.Diagnostics, d => d.Id == "ROUT207");
+        var code = GetGeneratedCode(result);
+        Assert.Contains("/fine", code);
+        Assert.DoesNotContain("InnerViewModel", code);
+    }
 }
