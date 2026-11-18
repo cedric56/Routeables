@@ -374,12 +374,12 @@ public static partial class RouteParser
         switch (type.ToLowerInvariant())
         {
             case "" or "string" or "?": value = raw; return true;
-            // One text for one value: no space, no plus sign, no thousands separator, no NaN or Infinity. "42", "+42" and " 42" would
-            // otherwise be three addresses for one page (the history and the guards compare addresses).
-            case "int": { int v = 0; var ok = !raw.StartsWith('+') && int.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v); value = v; return ok; }
-            case "long": { long v = 0; var ok = !raw.StartsWith('+') && long.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v); value = v; return ok; }
-            case "bool": { var ok = bool.TryParse(raw, out var v); value = v; return ok; }
-            case "guid": { var ok = Guid.TryParse(raw, out var v); value = v; return ok; }
+            // A value has one text. A number: the one that ToString writes ("42", not "+42", " 42" or "007"); a Guid: with its dashes and
+            // without braces; a bool: with no space around it.
+            case "int": { int v = 0; var ok = int.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v) && v.ToString(inv) == raw; value = v; return ok; }
+            case "long": { long v = 0; var ok = long.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v) && v.ToString(inv) == raw; value = v; return ok; }
+            case "bool": { var ok = raw == raw.Trim() && bool.TryParse(raw, out var v); value = ok && bool.Parse(raw); return ok; }
+            case "guid": { var ok = Guid.TryParseExact(raw, "D", out var v); value = v; return ok; }
             case "decimal": { decimal v = 0; var ok = !raw.StartsWith('+') && decimal.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, inv, out v); value = v; return ok; }
             case "double": { double v = 0; var ok = !raw.StartsWith('+') && double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v); value = v; return ok; }
             default:

@@ -6,6 +6,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A value has one text in an address, for the types that remained**: `{n:int}` and `{n:long}` refuse `007` and `-0` (the text `ToString` writes is the only one), `{g:guid}` takes the form with dashes only (no braces, no form without dashes), and `{b:bool}` refuses spaces around the word.
+- **The fragment of an address is not sent to the telemetry** (`IncludeAddress`): `/cb#access_token=...` of an implicit OAuth flow went out with the route.
+- **Two queries whose names are escaped differently are the same address** (`?%7A=1&b=2` and `?z=1&b=2`): the pairs were put in order by the escaped name and compared by the unescaped one (`RouteAddress`).
+- **Blazor, `RouterConcurrency.CancelCurrent`**: a route change that a newer one replaced is no longer reported as an error by `RouteableUrlSync` (its cancellation does not carry the token of the browser).
 - **`RouteableState.RestoreAsync` (the routes only) stops at the first page a guard sends elsewhere**, like `RestoreSnapshotsAsync` does: with a guard that redirects to the sign-in page, `[/home, /orders, /orders/42]` came back as `[/home, /login, /login]`. It now is the same restoration, and a list of commands only (`-/orders`) no longer erases the history before finding nothing to show.
 - **A number has one text in an address**: `{n:int}`, `{n:long}`, `{n:decimal}` and `{n:double}` no longer accept a plus sign, a space around the number or a thousands separator, and `{n:double}` no longer accepts `NaN` or `Infinity`; `42`, `+42` and ` 42` were three addresses for one page.
 - **Diagnostic ROUT206**: two `[Routeable]` view models that declare the same route (the case and a trailing slash do not tell them apart) are reported; the second was ignored by the table of routes and failed later with a message that did not say why.

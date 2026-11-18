@@ -234,9 +234,9 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             if (await ApplyAsync(path, restore: false, context.CancellationToken, fromLink: context.IsNavigationIntercepted) == Outcome.Refused)
                 context.PreventNavigation();
         }
-        catch (OperationCanceledException) when (context.CancellationToken.IsCancellationRequested)
+        catch (OperationCanceledException)
         {
-            // Blazor dropped this navigation for a newer one: nothing to report, and nothing to prevent.
+            // Blazor dropped this navigation for a newer one, or the router replaced it (CancelCurrent): nothing to report, and nothing to prevent.
         }
         catch (Exception ex)
         {
@@ -299,9 +299,11 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             {
                 result = await router.GoToAsync(path, RouteableArgs.Create(), template, cancellationToken);
             }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            catch (OperationCanceledException)
             {
-                return Outcome.Refused;     // the browser asked for another address meanwhile: this one is no longer wanted
+                // The browser asked for another address meanwhile, or (RouterConcurrency.CancelCurrent) a newer route change replaced this
+                // one, and that cancels it with a token of the router, not the one of the browser: this address is no longer wanted either way.
+                return Outcome.Refused;
             }
             catch (Exception ex)    // a typed or refreshed address the page cannot be built for must not take the app down
             {

@@ -342,13 +342,25 @@ public class RouteParserTests
 
         foreach (var (template, refused) in new[]
         {
-            ("x/{n:int}", new[] { "+42", "%2042", "42%20", "4,2" }), ("x/{n:long}", new[] { "+42", "%2042" }),
+            ("x/{n:int}", new[] { "+42", "%2042", "42%20", "4,2", "007", "-0" }), ("x/{n:long}", new[] { "+42", "%2042", "007" }),
             ("x/{n:decimal}", new[] { "+1.5", "%201.5", "1.5%20", "1,000.5" }), ("x/{n:double}", new[] { "+1.5", "%201.5", "NaN", "Infinity", "-Infinity" }),
         })
         {
             foreach (var text in refused)
                 Assert.False(RouteParser.TryMatch(template, "x/" + text), template + " " + text);
         }
+    }
+
+    [Fact]
+    public void A_guid_and_a_bool_have_one_text_in_an_address()
+    {
+        var id = Guid.NewGuid();
+        Assert.True(RouteParser.TryMatch("x/{g:guid}", "x/" + id));
+        Assert.False(RouteParser.TryMatch("x/{g:guid}", "x/{" + id + "}"));
+        Assert.False(RouteParser.TryMatch("x/{g:guid}", "x/" + id.ToString("N")));
+        Assert.True(RouteParser.TryMatch("x/{b:bool}", "x/True"));
+        Assert.True(RouteParser.TryMatch("x/{b:bool}", "x/false"));
+        Assert.False(RouteParser.TryMatch("x/{b:bool}", "x/%20true%20"));
     }
 
     [Fact]

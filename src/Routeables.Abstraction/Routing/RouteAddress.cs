@@ -102,8 +102,8 @@ internal static class RouteAddress
     private static bool SameQuery(string? a, string? b)
     {
         // "?x=1&y=2" is "?y=2&x=1": the pairs are put in order of name (the sort is stable, so the values of a repeated name keep their order).
-        var pairsA = (a ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries).OrderBy(p => SplitPair(p).Name, StringComparer.OrdinalIgnoreCase).ToArray();
-        var pairsB = (b ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries).OrderBy(p => SplitPair(p).Name, StringComparer.OrdinalIgnoreCase).ToArray();
+        var pairsA = (a ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries).OrderBy(p => UnescapeQuery(SplitPair(p).Name), StringComparer.OrdinalIgnoreCase).ToArray();
+        var pairsB = (b ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries).OrderBy(p => UnescapeQuery(SplitPair(p).Name), StringComparer.OrdinalIgnoreCase).ToArray();
         if (pairsA.Length != pairsB.Length)
             return false;
         for (var i = 0; i < pairsA.Length; i++)

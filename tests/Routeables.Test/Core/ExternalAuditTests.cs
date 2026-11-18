@@ -96,4 +96,22 @@ public class ExternalAuditTests
         Assert.Equal(3, router.History.Count);
         Assert.IsType<OrderVm>(router.CurrentViewModel);
     }
+
+    [Fact]
+    public void The_fragment_of_an_address_is_not_sent_to_the_telemetry_either()
+    {
+        Assert.Equal("/cb", Router.PathOf("/cb#access_token=abc"));
+        Assert.Equal("/a", Router.PathOf("/a?x=1#f"));
+        Assert.Equal("/a", Router.PathOf("/a#f?x=1"));
+        Assert.Equal("/a", Router.PathOf("/a"));
+        Assert.Equal(string.Empty, Router.PathOf(null));
+    }
+
+    [Fact]
+    public void Two_queries_are_the_same_when_their_names_are_escaped_differently()
+    {
+        Assert.True(RouteAddress.Same("/a?%7A=1&b=2", "/a?z=1&b=2"));            // z is %7A: the pairs are put in order by what they say
+        Assert.True(RouteAddress.Same("/a?b=2&z=1", "/a?%7a=1&b=2"));
+        Assert.False(RouteAddress.Same("/a?%7A=1&b=2", "/a?z=2&b=2"));
+    }
 }

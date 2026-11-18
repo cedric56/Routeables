@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Errors;
+using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
 using Routeables.Routing;
@@ -115,15 +117,34 @@ public class RouteableUrlSyncHistoryTests
     public sealed class NamedView : IRouteableFor { public object? Context { get; set; } }
     public sealed class NamedVm(string name) { public string Name { get; } = name; }
 
+    // A page that waits for ever to be entered, until its route change is cancelled.
+    public sealed class SlowView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class SlowVm : IRouteable
+    {
+        public static volatile bool Entering;
+        public Task OnEnteringAsync(IRouteableArgs context, CancellationToken ct = default)
+        {
+            Entering = true;
+            return Task.Delay(Timeout.Infinite, ct);
+        }
+    }
+
+    private sealed class Errors : IRouteableErrorSink
+    {
+        public List<Exception> Reported { get; } = [];
+        public void Report(string source, Exception exception) { lock (Reported) Reported.Add(exception); }
+    }
+
     private sealed class Fixture : IDisposable
     {
+        public Errors Errors { get; } = new();
         public ServiceProvider Provider { get; }
         public FakeNavigation Navigation { get; } = new();
         public FakeScripts Scripts { get; }
         public IRouter Router { get; }
         public RouteableUrlSync Sync { get; }
 
-        public Fixture(bool withScripts = true)
+        public Fixture(bool withScripts = true, bool cancelCurrent = false)
         {
             Scripts = new FakeScripts(Navigation);
             var services = new ServiceCollection();
@@ -131,6 +152,10 @@ public class RouteableUrlSyncHistoryTests
             services.RegisterRoute<HomeView, HomeVm>(route: "/home");
             services.RegisterRoute<DetailView, DetailVm>(route: "/detail/{id:int}");
             services.RegisterRoute<NamedView, NamedVm>(route: "/named/{name}");
+            services.RegisterRoute<SlowView, SlowVm>(route: "/slow");
+            services.AddSingleton<IRouteableErrorSink>(Errors);
+            if (cancelCurrent)
+                services.SetConcurrency(RouterConcurrency.CancelCurrent);
             services.AddSingleton<NavigationManager>(Navigation);
             if (withScripts)
                 services.AddSingleton<IJSRuntime>(Scripts);
@@ -190,6 +215,23 @@ public class RouteableUrlSyncHistoryTests
         await f.Router.GoBackAsync(TestContext.Current.CancellationToken);
         await Fixture.Until(() => f.Scripts.Moves.Count == 1);
         Assert.Equal(-1, f.Scripts.Moves[0]);
+        Assert.IsType<DetailVm>(f.Router.CurrentViewModel);
+    }
+
+    [Fact]
+    public async Task A_route_change_that_a_newer_one_replaces_is_not_an_error()
+    {
+        using var f = new Fixture(cancelCurrent: true);
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+        SlowVm.Entering = false;
+
+        var slow = f.Navigation.ClickAsync("/slow");                       // the page waits to be entered
+        await Fixture.Until(() => SlowVm.Entering);
+        await f.GoAsync("/detail/1", "/detail/{id:int}");                  // the application routes elsewhere: the router replaces the first
+        await slow;
+
+        Assert.Empty(f.Errors.Reported);                                    // the cancellation of the replaced one is not reported as a fault
         Assert.IsType<DetailVm>(f.Router.CurrentViewModel);
     }
 

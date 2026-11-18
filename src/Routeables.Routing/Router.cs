@@ -757,8 +757,13 @@ internal class Router(
 
     internal const string UnmatchedRouteTag = "(unmatched)";
 
-    // The address without its query (the query can hold a token).
-    private static string PathOf(string? route) => (route ?? string.Empty).Split('?')[0];
+    // The address without its query and its fragment (both can hold a token: "#access_token=" of an implicit OAuth flow).
+    internal static string PathOf(string? route)
+    {
+        var address = route ?? string.Empty;
+        var end = address.AsSpan().IndexOfAny('?', '#');
+        return end < 0 ? address : address[..end];
+    }
 
     // The template registered for a route: the one that is the route, the one that matches it, the one of a menu entry, or the route itself.
     private string TemplateOf(string route) => TryTemplateOf(route, out var template) ? template : route;
