@@ -16,7 +16,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Added
 
-- **Code coverage in the CI** (job "Code coverage"): `Routeables.Test` runs with `--coverage` (`Microsoft.Testing.Extensions.CodeCoverage`, settings in `tests/CodeCoverage.settings.xml`), the line and branch coverage of each assembly is written in the summary of the run (`tools/coverage-summary.py`), and the Cobertura reports are kept as an artifact. Nothing fails on a number yet. `coverlet.collector` is gone from the test project: it is a VSTest collector and never ran under Microsoft.Testing.Platform.
+- **Code coverage in the CI** (job "Code coverage"): `Routeables.Test` runs with `--coverage` (`Microsoft.Testing.Extensions.CodeCoverage`, settings in `tests/CodeCoverage.settings.xml`), the line and branch coverage of each assembly is written in the summary of the run (`tools/coverage-summary.py`), and the Cobertura reports are kept as an artifact. First figures: 67.3% of the lines, 64.9% of the branches (88–99% for the core libraries; the device hosts are not measured by this job); the job fails under 65% of the lines. `coverlet.collector` is gone from the test project: it is a VSTest collector and never ran under Microsoft.Testing.Platform.
 
 - **The same application on three libraries, phase 1** (`benchmarks/`): a script of 200 navigation steps replayed on Routeables, ReactiveUI routing and a navigation service of your own, on the console, with the page of each step checked, the time and allocations of a run, and the memory after 1 000 route changes. CI job "Same application, three libraries". See [the protocol](docs/benchmark-comparison.md). The ReactiveUI version has not been compiled yet.
 

@@ -138,14 +138,13 @@ jobs:
         run: dotnet run --project src/Routeables.Benchmarks/Routeables.Benchmarks.csproj -c Release --no-build -- --perf
 
   # The line and branch coverage of the libraries by Routeables.Test, with Microsoft.Testing.Platform (`--coverage`, settings in
-  # tests/CodeCoverage.settings.xml). Reported in the summary of the run and kept as an artifact; nothing fails on a number yet: read the
-  # first reports, then set a floor with `tools/coverage-summary.py --min`. A job of its own, and not a step of "Build & test", because it
-  # was written without being able to run the extension: until one run is green, a failure here must not hide the tests above.
+  # tests/CodeCoverage.settings.xml). Reported in the summary of the run and kept as an artifact; the job fails under 65% of the lines of the whole (first
+  # report: 67.3%, the hosts that only a device runs pull it down; raise the floor by hand when the figure rises). A job of its own, and not
+  # a step of "Build & test", so that a failure here does not hide the tests above.
   coverage:
     name: Code coverage
     runs-on: windows-latest
     timeout-minutes: 30
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v7
@@ -177,7 +176,7 @@ jobs:
         run: |
           reports=$(find coverage -name '*.cobertura.xml')
           if [ -z "$reports" ]; then echo "No coverage report was written." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
-          { echo "### Code coverage (Routeables.Test)"; python tools/coverage-summary.py $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "### Code coverage (Routeables.Test)"; python tools/coverage-summary.py --min 65 $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
         if: always()

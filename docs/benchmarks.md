@@ -99,3 +99,28 @@ A change that moves the numbers on purpose (the library got faster, or does more
 ## Screenshots
 
 There are no screenshot tests. They compared each page with an image kept in the repository, and no image was ever kept: every one of those tests was skipped, so they checked nothing a functional test does not. The behaviour of the controls is tested by the headless tests of Avalonia, the Playwright tests of Blazor, the WPF tests and the contract of `Shared/RouterContract.cs`.
+
+## Code coverage
+
+`Routeables.Test` runs in the CI with `--coverage` (job "Code coverage", Windows, settings in `tests/CodeCoverage.settings.xml`); the summary of the run gives each assembly. First reports (November 2026), lines covered / branches covered:
+
+| Assembly | Lines | Branches |
+|---|---:|---:|
+| Locking | 99.1% | 97.5% |
+| Segments | 98.2% | 97.9% |
+| AspNetCore | 97.3% | 83.6% |
+| Regions | 97.1% | 93.3% |
+| Routing | 97.0% | 90.0% |
+| Services | 94.7% | 87.6% |
+| Generated | 92.5% | 81.5% |
+| Abstraction | 90.8% | 82.5% |
+| Core | 88.5% | 74.2% |
+| Blazor | 80.7% | 73.4% |
+| Wpf | 79.7% | 60.5% |
+| Native | 40.6% | 20.8% |
+| Avalonia | 17.7% | 7.1% |
+| Maui | 7.5% | 4.8% |
+| Uno | 4.3% | 4.3% |
+| **All** | **67.3%** | **64.9%** |
+
+The core libraries are at 88–99% of the lines. The hosts at the bottom (Native, Avalonia, Maui, Uno) are low because this job runs only `Routeables.Test`, on Windows: their code is exercised by `Routeables.Test.Maui`, `Routeables.Test.Uno`, `Routeables.Test.Avalonia` and the other test projects, whose coverage is not collected. A low figure there is a gap in what is measured, not proof that the code is untested. The CI fails under 65% of the lines of the whole (`--min 65` of `tools/coverage-summary.py`): a floor against a regression, raised by hand when the figure rises.

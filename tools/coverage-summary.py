@@ -3,7 +3,7 @@
 
 usage: coverage-summary.py [--min LINE_PERCENT] report.cobertura.xml [...]
 
-With --min the exit code is 1 when the line coverage of the whole is below it (not used by the CI until a first number is known).
+With --min the exit code is 1 when the line coverage of the whole is below it (the CI uses 65).
 """
 import sys
 import xml.etree.ElementTree as ET
