@@ -69,9 +69,11 @@ public sealed class RouteablesAvaloniaDriver : INavigationDriver
     public async Task<bool> ClearHistoryAsync()
     {
         // What the memory measure has just weighed: the entries that the history still keeps (each one has its view model, its view and its arguments).
-        Console.Error.WriteLine($"::notice title=History::{Name}: {_router.History.Count} entries kept before the history is cleared");
+        ViewCount.Note($"{Name}: the history keeps {_router.History.Count} entries before it is cleared.");
+        ViewCount.NoteAlive("before the history is cleared");
         await _router.EraseHistoryAsync();
         Flush();
+        ViewCount.NoteAlive("after the history is cleared");
         return true;
     }
 

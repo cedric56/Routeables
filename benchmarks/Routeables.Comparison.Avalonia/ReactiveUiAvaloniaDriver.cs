@@ -28,7 +28,7 @@ public sealed class RxView : UserControl
     {
         DataContext = page;
         Content = new TextBlock { Text = page.Name };
-        ViewCount.Built();
+        ViewCount.Built(this);
     }
 }
 
@@ -46,19 +46,54 @@ public sealed class RxScreen : ReactiveObject, IScreen
 public static class ViewCount
 {
     private static readonly Dictionary<string, int> Counts = [];
+    private static readonly List<string> Notes = [];
+    private static string s_owner = "";
+    private static List<WeakReference> s_views = [];
 
-    /// <summary>The driver that is running: the views that get built are counted for it.</summary>
-    public static string Owner { get; set; } = "";
+    /// <summary>The driver that is running: the views that get built are counted for it (and the ones kept in view are those it has built).</summary>
+    public static string Owner
+    {
+        get => s_owner;
+        set
+        {
+            s_owner = value;
+            s_views = [];
+        }
+    }
 
-    public static void Built()
+    public static void Built(object view)
     {
         Counts.TryGetValue(Owner, out var count);
         Counts[Owner] = count + 1;
+        s_views.Add(new WeakReference(view));
     }
 
     public static int BuiltBy(string driver) => Counts.TryGetValue(driver, out var count) ? count : 0;
 
-    public static void Clear() => Counts.Clear();
+    /// <summary>A line for the end of the run (the tables are written while the drivers run: a line written then would be inside one).</summary>
+    public static void Note(string text) => Notes.Add(text);
+
+    /// <summary>How many of the views this driver has built are still alive, after what the application has queued has run and the memory has been collected.</summary>
+    public static void NoteAlive(string when)
+    {
+        Dispatcher.UIThread.RunJobs();
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+        Notes.Add($"{Owner}, {when}: {s_views.Count(view => view.IsAlive)} of the {s_views.Count} views built since the driver was created are alive.");
+    }
+
+    public static void Clear()
+    {
+        Counts.Clear();
+        Notes.Clear();
+    }
+
+    public static void WriteNotes()
+    {
+        foreach (var note in Notes)
+            Console.WriteLine(note);
+    }
 }
 
 public static class LayoutCount
@@ -83,6 +118,7 @@ public static class LayoutCount
             Console.WriteLine($"Layout, {driver}: {count.Shown} views seen after a step, {count.Unsized} of them with no size ({(count.Shown == 0 ? 0 : 100.0 * count.Unsized / count.Shown):F1} %); {built} views built ({(count.Shown == 0 ? 0 : 100.0 * built / count.Shown):F1} % of the steps).");
         }
 
+        ViewCount.WriteNotes();
         Counts.Clear();
         ViewCount.Clear();
     }
@@ -152,11 +188,13 @@ public sealed class ReactiveUiAvaloniaDriver : INavigationDriver
 
     public Task<bool> ClearHistoryAsync()
     {
+        ViewCount.NoteAlive("before the history is cleared");
         var current = _screen.Router.NavigationStack.LastOrDefault();
         _screen.Router.NavigationStack.Clear();
         if (current is not null)
             _screen.Router.NavigationStack.Add(current);
         Flush();
+        ViewCount.NoteAlive("after the history is cleared");
         return Task.FromResult(true);
     }
 

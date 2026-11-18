@@ -92,11 +92,14 @@ public sealed class PrismDriver : INavigationDriver
     public Task<bool> ClearHistoryAsync()
     {
         var current = _region.ActiveViews.FirstOrDefault();
-        Console.WriteLine($"Prism: the region holds {_region.Views.Count()} views before the history is cleared.");
+        ViewCount.Note($"Prism: the region holds {_region.Views.Count()} views before the history is cleared.");
+        ViewCount.NoteAlive("before the history is cleared");
         foreach (var view in _region.Views.Where(v => !ReferenceEquals(v, current)).ToList())
             _region.Remove(view);
         _region.NavigationService.Journal.Clear();
         Flush();
+        ViewCount.Note($"Prism: the region holds {_region.Views.Count()} views after the history is cleared.");
+        ViewCount.NoteAlive("after the history is cleared");
         return Task.FromResult(true);
     }
 

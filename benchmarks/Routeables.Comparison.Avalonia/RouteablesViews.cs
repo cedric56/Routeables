@@ -6,64 +6,64 @@ using Routeables.Avalonia;
 
 namespace Routeables.Comparison.Avalonia;
 
-public sealed class P00AView : RouteableFor<P00Vm> { public P00AView() { ViewCount.Built(); Content = new TextBlock { Text = "P00" }; } }
-public sealed class P01AView : RouteableFor<P01Vm> { public P01AView() { ViewCount.Built(); Content = new TextBlock { Text = "P01" }; } }
-public sealed class P02AView : RouteableFor<P02Vm> { public P02AView() { ViewCount.Built(); Content = new TextBlock { Text = "P02" }; } }
-public sealed class P03AView : RouteableFor<P03Vm> { public P03AView() { ViewCount.Built(); Content = new TextBlock { Text = "P03" }; } }
-public sealed class P04AView : RouteableFor<P04Vm> { public P04AView() { ViewCount.Built(); Content = new TextBlock { Text = "P04" }; } }
-public sealed class P05AView : RouteableFor<P05Vm> { public P05AView() { ViewCount.Built(); Content = new TextBlock { Text = "P05" }; } }
-public sealed class P06AView : RouteableFor<P06Vm> { public P06AView() { ViewCount.Built(); Content = new TextBlock { Text = "P06" }; } }
-public sealed class P07AView : RouteableFor<P07Vm> { public P07AView() { ViewCount.Built(); Content = new TextBlock { Text = "P07" }; } }
-public sealed class P08AView : RouteableFor<P08Vm> { public P08AView() { ViewCount.Built(); Content = new TextBlock { Text = "P08" }; } }
-public sealed class P09AView : RouteableFor<P09Vm> { public P09AView() { ViewCount.Built(); Content = new TextBlock { Text = "P09" }; } }
-public sealed class P10AView : RouteableFor<P10Vm> { public P10AView() { ViewCount.Built(); Content = new TextBlock { Text = "P10" }; } }
-public sealed class P11AView : RouteableFor<P11Vm> { public P11AView() { ViewCount.Built(); Content = new TextBlock { Text = "P11" }; } }
-public sealed class P12AView : RouteableFor<P12Vm> { public P12AView() { ViewCount.Built(); Content = new TextBlock { Text = "P12" }; } }
-public sealed class P13AView : RouteableFor<P13Vm> { public P13AView() { ViewCount.Built(); Content = new TextBlock { Text = "P13" }; } }
-public sealed class P14AView : RouteableFor<P14Vm> { public P14AView() { ViewCount.Built(); Content = new TextBlock { Text = "P14" }; } }
-public sealed class P15AView : RouteableFor<P15Vm> { public P15AView() { ViewCount.Built(); Content = new TextBlock { Text = "P15" }; } }
-public sealed class P16AView : RouteableFor<P16Vm> { public P16AView() { ViewCount.Built(); Content = new TextBlock { Text = "P16" }; } }
-public sealed class P17AView : RouteableFor<P17Vm> { public P17AView() { ViewCount.Built(); Content = new TextBlock { Text = "P17" }; } }
-public sealed class P18AView : RouteableFor<P18Vm> { public P18AView() { ViewCount.Built(); Content = new TextBlock { Text = "P18" }; } }
-public sealed class P19AView : RouteableFor<P19Vm> { public P19AView() { ViewCount.Built(); Content = new TextBlock { Text = "P19" }; } }
-public sealed class P20AView : RouteableFor<P20Vm> { public P20AView() { ViewCount.Built(); Content = new TextBlock { Text = "P20" }; } }
-public sealed class P21AView : RouteableFor<P21Vm> { public P21AView() { ViewCount.Built(); Content = new TextBlock { Text = "P21" }; } }
-public sealed class P22AView : RouteableFor<P22Vm> { public P22AView() { ViewCount.Built(); Content = new TextBlock { Text = "P22" }; } }
-public sealed class P23AView : RouteableFor<P23Vm> { public P23AView() { ViewCount.Built(); Content = new TextBlock { Text = "P23" }; } }
-public sealed class P24AView : RouteableFor<P24Vm> { public P24AView() { ViewCount.Built(); Content = new TextBlock { Text = "P24" }; } }
-public sealed class P25AView : RouteableFor<P25Vm> { public P25AView() { ViewCount.Built(); Content = new TextBlock { Text = "P25" }; } }
-public sealed class P26AView : RouteableFor<P26Vm> { public P26AView() { ViewCount.Built(); Content = new TextBlock { Text = "P26" }; } }
-public sealed class P27AView : RouteableFor<P27Vm> { public P27AView() { ViewCount.Built(); Content = new TextBlock { Text = "P27" }; } }
-public sealed class P28AView : RouteableFor<P28Vm> { public P28AView() { ViewCount.Built(); Content = new TextBlock { Text = "P28" }; } }
-public sealed class P29AView : RouteableFor<P29Vm> { public P29AView() { ViewCount.Built(); Content = new TextBlock { Text = "P29" }; } }
-public sealed class P30AView : RouteableFor<P30Vm> { public P30AView() { ViewCount.Built(); Content = new TextBlock { Text = "P30" }; } }
-public sealed class P31AView : RouteableFor<P31Vm> { public P31AView() { ViewCount.Built(); Content = new TextBlock { Text = "P31" }; } }
-public sealed class P32AView : RouteableFor<P32Vm> { public P32AView() { ViewCount.Built(); Content = new TextBlock { Text = "P32" }; } }
-public sealed class P33AView : RouteableFor<P33Vm> { public P33AView() { ViewCount.Built(); Content = new TextBlock { Text = "P33" }; } }
-public sealed class P34AView : RouteableFor<P34Vm> { public P34AView() { ViewCount.Built(); Content = new TextBlock { Text = "P34" }; } }
-public sealed class P35AView : RouteableFor<P35Vm> { public P35AView() { ViewCount.Built(); Content = new TextBlock { Text = "P35" }; } }
-public sealed class P36AView : RouteableFor<P36Vm> { public P36AView() { ViewCount.Built(); Content = new TextBlock { Text = "P36" }; } }
-public sealed class P37AView : RouteableFor<P37Vm> { public P37AView() { ViewCount.Built(); Content = new TextBlock { Text = "P37" }; } }
-public sealed class P38AView : RouteableFor<P38Vm> { public P38AView() { ViewCount.Built(); Content = new TextBlock { Text = "P38" }; } }
-public sealed class P39AView : RouteableFor<P39Vm> { public P39AView() { ViewCount.Built(); Content = new TextBlock { Text = "P39" }; } }
-public sealed class C0AView : RouteableFor<C0Vm> { public C0AView() { ViewCount.Built(); Content = new TextBlock { Text = "C0" }; } }
-public sealed class C1AView : RouteableFor<C1Vm> { public C1AView() { ViewCount.Built(); Content = new TextBlock { Text = "C1" }; } }
-public sealed class C2AView : RouteableFor<C2Vm> { public C2AView() { ViewCount.Built(); Content = new TextBlock { Text = "C2" }; } }
-public sealed class C3AView : RouteableFor<C3Vm> { public C3AView() { ViewCount.Built(); Content = new TextBlock { Text = "C3" }; } }
-public sealed class C4AView : RouteableFor<C4Vm> { public C4AView() { ViewCount.Built(); Content = new TextBlock { Text = "C4" }; } }
-public sealed class C5AView : RouteableFor<C5Vm> { public C5AView() { ViewCount.Built(); Content = new TextBlock { Text = "C5" }; } }
-public sealed class C6AView : RouteableFor<C6Vm> { public C6AView() { ViewCount.Built(); Content = new TextBlock { Text = "C6" }; } }
-public sealed class C7AView : RouteableFor<C7Vm> { public C7AView() { ViewCount.Built(); Content = new TextBlock { Text = "C7" }; } }
-public sealed class C8AView : RouteableFor<C8Vm> { public C8AView() { ViewCount.Built(); Content = new TextBlock { Text = "C8" }; } }
-public sealed class C9AView : RouteableFor<C9Vm> { public C9AView() { ViewCount.Built(); Content = new TextBlock { Text = "C9" }; } }
-public sealed class ListAView : RouteableFor<ListVm> { public ListAView() { ViewCount.Built(); Content = new TextBlock { Text = "List" }; } }
-public sealed class DetailAView : RouteableFor<DetailVm> { public DetailAView() { ViewCount.Built(); Content = new TextBlock { Text = "Detail" }; } }
-public sealed class SignInAView : RouteableFor<SignInVm> { public SignInAView() { ViewCount.Built(); Content = new TextBlock { Text = "SignIn" }; } }
+public sealed class P00AView : RouteableFor<P00Vm> { public P00AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P00" }; } }
+public sealed class P01AView : RouteableFor<P01Vm> { public P01AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P01" }; } }
+public sealed class P02AView : RouteableFor<P02Vm> { public P02AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P02" }; } }
+public sealed class P03AView : RouteableFor<P03Vm> { public P03AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P03" }; } }
+public sealed class P04AView : RouteableFor<P04Vm> { public P04AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P04" }; } }
+public sealed class P05AView : RouteableFor<P05Vm> { public P05AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P05" }; } }
+public sealed class P06AView : RouteableFor<P06Vm> { public P06AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P06" }; } }
+public sealed class P07AView : RouteableFor<P07Vm> { public P07AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P07" }; } }
+public sealed class P08AView : RouteableFor<P08Vm> { public P08AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P08" }; } }
+public sealed class P09AView : RouteableFor<P09Vm> { public P09AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P09" }; } }
+public sealed class P10AView : RouteableFor<P10Vm> { public P10AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P10" }; } }
+public sealed class P11AView : RouteableFor<P11Vm> { public P11AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P11" }; } }
+public sealed class P12AView : RouteableFor<P12Vm> { public P12AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P12" }; } }
+public sealed class P13AView : RouteableFor<P13Vm> { public P13AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P13" }; } }
+public sealed class P14AView : RouteableFor<P14Vm> { public P14AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P14" }; } }
+public sealed class P15AView : RouteableFor<P15Vm> { public P15AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P15" }; } }
+public sealed class P16AView : RouteableFor<P16Vm> { public P16AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P16" }; } }
+public sealed class P17AView : RouteableFor<P17Vm> { public P17AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P17" }; } }
+public sealed class P18AView : RouteableFor<P18Vm> { public P18AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P18" }; } }
+public sealed class P19AView : RouteableFor<P19Vm> { public P19AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P19" }; } }
+public sealed class P20AView : RouteableFor<P20Vm> { public P20AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P20" }; } }
+public sealed class P21AView : RouteableFor<P21Vm> { public P21AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P21" }; } }
+public sealed class P22AView : RouteableFor<P22Vm> { public P22AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P22" }; } }
+public sealed class P23AView : RouteableFor<P23Vm> { public P23AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P23" }; } }
+public sealed class P24AView : RouteableFor<P24Vm> { public P24AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P24" }; } }
+public sealed class P25AView : RouteableFor<P25Vm> { public P25AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P25" }; } }
+public sealed class P26AView : RouteableFor<P26Vm> { public P26AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P26" }; } }
+public sealed class P27AView : RouteableFor<P27Vm> { public P27AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P27" }; } }
+public sealed class P28AView : RouteableFor<P28Vm> { public P28AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P28" }; } }
+public sealed class P29AView : RouteableFor<P29Vm> { public P29AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P29" }; } }
+public sealed class P30AView : RouteableFor<P30Vm> { public P30AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P30" }; } }
+public sealed class P31AView : RouteableFor<P31Vm> { public P31AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P31" }; } }
+public sealed class P32AView : RouteableFor<P32Vm> { public P32AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P32" }; } }
+public sealed class P33AView : RouteableFor<P33Vm> { public P33AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P33" }; } }
+public sealed class P34AView : RouteableFor<P34Vm> { public P34AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P34" }; } }
+public sealed class P35AView : RouteableFor<P35Vm> { public P35AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P35" }; } }
+public sealed class P36AView : RouteableFor<P36Vm> { public P36AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P36" }; } }
+public sealed class P37AView : RouteableFor<P37Vm> { public P37AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P37" }; } }
+public sealed class P38AView : RouteableFor<P38Vm> { public P38AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P38" }; } }
+public sealed class P39AView : RouteableFor<P39Vm> { public P39AView() { ViewCount.Built(this); Content = new TextBlock { Text = "P39" }; } }
+public sealed class C0AView : RouteableFor<C0Vm> { public C0AView() { ViewCount.Built(this); Content = new TextBlock { Text = "C0" }; } }
+public sealed class C1AView : RouteableFor<C1Vm> { public C1AView() { ViewCount.Built(this); Content = new TextBlock { Text = "C1" }; } }
+public sealed class C2AView : RouteableFor<C2Vm> { public C2AView() { ViewCount.Built(this); Content = new TextBlock { Text = "C2" }; } }
+public sealed class C3AView : RouteableFor<C3Vm> { public C3AView() { ViewCount.Built(this); Content = new TextBlock { Text = "C3" }; } }
+public sealed class C4AView : RouteableFor<C4Vm> { public C4AView() { ViewCount.Built(this); Content = new TextBlock { Text = "C4" }; } }
+public sealed class C5AView : RouteableFor<C5Vm> { public C5AView() { ViewCount.Built(this); Content = new TextBlock { Text = "C5" }; } }
+public sealed class C6AView : RouteableFor<C6Vm> { public C6AView() { ViewCount.Built(this); Content = new TextBlock { Text = "C6" }; } }
+public sealed class C7AView : RouteableFor<C7Vm> { public C7AView() { ViewCount.Built(this); Content = new TextBlock { Text = "C7" }; } }
+public sealed class C8AView : RouteableFor<C8Vm> { public C8AView() { ViewCount.Built(this); Content = new TextBlock { Text = "C8" }; } }
+public sealed class C9AView : RouteableFor<C9Vm> { public C9AView() { ViewCount.Built(this); Content = new TextBlock { Text = "C9" }; } }
+public sealed class ListAView : RouteableFor<ListVm> { public ListAView() { ViewCount.Built(this); Content = new TextBlock { Text = "List" }; } }
+public sealed class DetailAView : RouteableFor<DetailVm> { public DetailAView() { ViewCount.Built(this); Content = new TextBlock { Text = "Detail" }; } }
+public sealed class SignInAView : RouteableFor<SignInVm> { public SignInAView() { ViewCount.Built(this); Content = new TextBlock { Text = "SignIn" }; } }
 
 /// <summary>The edit page refuses to be left while it holds changes: the view asks its view model, as the router asks the view.</summary>
 public sealed class EditAView : RouteableFor<EditVm>
 {
-    public EditAView() { ViewCount.Built(); Content = new TextBlock { Text = "Edit" }; }
+    public EditAView() { ViewCount.Built(this); Content = new TextBlock { Text = "Edit" }; }
 
     public override Task<bool> CanLeaveAsync(CancellationToken ct = default) => ViewModel.CanLeaveAsync(ct);
 }

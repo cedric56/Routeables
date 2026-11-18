@@ -16,7 +16,7 @@ public abstract class PrismPage : UserControl
     {
         DataContext = viewModel;
         Content = new TextBlock { Text = text };
-        ViewCount.Built();
+        ViewCount.Built(this);
     }
 }
 
@@ -32,7 +32,7 @@ public sealed class PrismEditPage : UserControl
     {
         DataContext = viewModel;
         Content = new TextBlock { Text = "Edit" };
-        ViewCount.Built();
+        ViewCount.Built(this);
     }
 }
 
