@@ -48,10 +48,21 @@ public static partial class RouteParser
             }
 
             var simple = type.Name;
+            if (type.FullName == simple)
+            {
+                // No namespace: the simple name is the full name, stored above. The type owns it, and a homonym of a namespace is reached by
+                // its own full name.
+                AmbiguousNames.TryRemove(simple, out _);
+                return;
+            }
+
             if (AmbiguousNames.ContainsKey(simple))
                 return;
             if (SerializationTypes.TryGetValue(simple, out var owner) && owner != type)
             {
+                if (owner.FullName == simple)
+                    return;     // the type with no namespace keeps the name that is its full name
+
                 // A second type with this simple name: nobody owns it any more.
                 SerializationInfos.TryRemove(simple, out _);
                 SerializationTypes.TryRemove(simple, out _);

@@ -157,10 +157,12 @@ public static class RouteableState
                 return false;
             }
 
-            // Not when a guard sent the user to another page: those values are not for it.
-            if (snapshot.State.Count > 0
-                && RouteAddress.SameFor(router, router.History.Current?.Args.Route, snapshot.Route)
-                && router.CurrentViewModel is { } shown)
+            // A guard sent the user to another page (the login, say): the next entries would be sent there too and pile up behind it, and
+            // the values saved for this page are not for the page shown.
+            if (!RouteAddress.SameFor(router, router.History.Current?.Args.Route, snapshot.Route))
+                return true;
+
+            if (snapshot.State.Count > 0 && router.CurrentViewModel is { } shown)
             {
                 if (shown is IRouteableState keeper)
                     keeper.LoadState(snapshot.State.Where(pair => !pair.Key.StartsWith(ValuePrefix, StringComparison.Ordinal)

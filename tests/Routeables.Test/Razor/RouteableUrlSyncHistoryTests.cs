@@ -36,6 +36,32 @@ public class RouteableUrlSyncHistoryTests
             NotifyLocationChanged(isInterceptedLink: false);
         }
 
+        // A link the user clicks: Blazor asks the handlers first (intercepted), then the browser pushes the entry.
+        public async Task<bool> ClickAsync(string route) => await MoveAsync(route, intercepted: true);
+
+        // The Back button of the browser to the entry before: the handlers are asked too, but it is not a link.
+        public async Task<bool> BackButtonAsync()
+        {
+            var target = _entries[_at - 1];
+            if (!await NotifyLocationChangingAsync(target, null, isNavigationIntercepted: false))
+                return false;
+            Go(-1);
+            return true;
+        }
+
+        private async Task<bool> MoveAsync(string route, bool intercepted)
+        {
+            var absolute = ToAbsoluteUri(route).AbsoluteUri;
+            if (!await NotifyLocationChangingAsync(absolute, null, intercepted))
+                return false;
+            _entries.RemoveRange(_at + 1, _entries.Count - _at - 1);
+            _entries.Add(absolute);
+            _at++;
+            Uri = absolute;
+            NotifyLocationChanged(isInterceptedLink: intercepted);
+            return true;
+        }
+
         public void Go(int delta)
         {
             _at = Math.Clamp(_at + delta, 0, _entries.Count - 1);
@@ -142,6 +168,45 @@ public class RouteableUrlSyncHistoryTests
 
         Assert.Equal(-1, f.Scripts.Moves[0]);
         Assert.Empty(f.Navigation.Calls);                       // the address is not replaced: the browser moved itself
+    }
+
+    [Fact]
+    public async Task A_link_to_the_page_before_is_a_new_page_for_the_router_as_it_is_for_the_browser()
+    {
+        using var f = new Fixture();
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+        await f.GoAsync("/detail/1", "/detail/{id:int}");
+        var before = f.Router.History.Count;
+
+        Assert.True(await f.Navigation.ClickAsync("/home"));        // the browser pushed an entry for the link
+
+        Assert.Equal(before + 1, f.Router.History.Count);            // the router pushed too: it did not go back
+        Assert.Equal(before, f.Router.History.CurrentIndex);
+        Assert.IsType<HomeVm>(f.Router.CurrentViewModel);
+
+        // The two histories agree: a Back of the router is a Back of the browser, not a move of the router alone.
+        f.Navigation.Calls.Clear();
+        await f.Router.GoBackAsync(TestContext.Current.CancellationToken);
+        await Fixture.Until(() => f.Scripts.Moves.Count == 1);
+        Assert.Equal(-1, f.Scripts.Moves[0]);
+        Assert.IsType<DetailVm>(f.Router.CurrentViewModel);
+    }
+
+    [Fact]
+    public async Task The_back_button_of_the_browser_still_goes_back_in_the_router()
+    {
+        using var f = new Fixture();
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+        await f.GoAsync("/detail/1", "/detail/{id:int}");
+        var before = f.Router.History.Count;
+
+        Assert.True(await f.Navigation.BackButtonAsync());
+
+        Assert.Equal(before, f.Router.History.Count);
+        Assert.Equal(before - 2, f.Router.History.CurrentIndex);
+        Assert.IsType<HomeVm>(f.Router.CurrentViewModel);
     }
 
     [Fact]

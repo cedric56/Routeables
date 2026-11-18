@@ -231,7 +231,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         _pending = path;
         try
         {
-            if (await ApplyAsync(path, restore: false, context.CancellationToken) == Outcome.Refused)
+            if (await ApplyAsync(path, restore: false, context.CancellationToken, fromLink: context.IsNavigationIntercepted) == Outcome.Refused)
                 context.PreventNavigation();
         }
         catch (OperationCanceledException) when (context.CancellationToken.IsCancellationRequested)
@@ -263,19 +263,21 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         }
     }
 
-    private async Task<Outcome> ApplyAsync(string path, bool restore = true, CancellationToken cancellationToken = default)
+    // fromLink: a link the user clicked. The browser pushed a new entry for it, even when it leads to the page before or after the current one,
+    // so the router pushes too: going back would leave the router and the browser with different histories.
+    private async Task<Outcome> ApplyAsync(string path, bool restore = true, CancellationToken cancellationToken = default, bool fromLink = false)
     {
         var history = router.History;
         if (SameAddress(AddressOf(history.Current), path))
             return Outcome.Done;
 
         RouteableResult result;
-        if (history.CanGoBack && SameAddress(AddressOf(history.Entries[history.CurrentIndex - 1]), path))
+        if (!fromLink && history.CanGoBack && SameAddress(AddressOf(history.Entries[history.CurrentIndex - 1]), path))
         {
             result = await router.GoBackAsync(cancellationToken);
             Moved(result);
         }
-        else if (history.CanGoForward && SameAddress(AddressOf(history.Entries[history.CurrentIndex + 1]), path))
+        else if (!fromLink && history.CanGoForward && SameAddress(AddressOf(history.Entries[history.CurrentIndex + 1]), path))
         {
             result = await router.ForwardAsync(cancellationToken);
             Moved(result);

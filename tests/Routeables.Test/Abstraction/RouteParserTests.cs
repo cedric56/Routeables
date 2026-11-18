@@ -302,6 +302,31 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void A_type_with_no_namespace_keeps_its_name_when_a_homonym_of_a_namespace_is_registered()
+    {
+        var options = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() };
+        var json = "p/" + Uri.EscapeDataString("{\"Name\":\"a\"}");
+        try
+        {
+            RouteParser.RegisterSerializer<global::Patron>(options.GetTypeInfo(typeof(global::Patron)));
+            RouteParser.RegisterSerializer<global::HomonymSales.Patron>(options.GetTypeInfo(typeof(global::HomonymSales.Patron)));
+
+            var plain = RouteableArgs.Create();
+            Assert.True(RouteParser.TryMatch("p/{who:Patron}", json, plain));       // its only name: it was lost to the homonym
+            Assert.IsType<global::Patron>(plain.ViewModelParameters.Single().value);
+
+            var sales = RouteableArgs.Create();
+            Assert.True(RouteParser.TryMatch("p/{who:HomonymSales.Patron}", json, sales));
+            Assert.IsType<global::HomonymSales.Patron>(sales.ViewModelParameters.Single().value);
+        }
+        finally
+        {
+            RouteParser.UnregisterSerializer<global::Patron>();
+            RouteParser.UnregisterSerializer<global::HomonymSales.Patron>();
+        }
+    }
+
+    [Fact]
     public void Optional_placeholders_one_after_the_other_at_the_end_match_and_build()
     {
         Assert.Null(RouteParser.Mismatch("cat/{age:int?}/{nick?}", "cat/7/Tom"));
