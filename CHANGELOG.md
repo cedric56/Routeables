@@ -6,6 +6,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A singleton of a module loaded while running is built with the application's container**, not with the scope of the first visitor that reached it: on Blazor Server, what it took from that scope (the router, the authentication state) was served to every other visitor (`RouteableModuleServices`).
+- **The generator finds the pages of a library whose name only starts like a framework** (`AvaloniaShop.Features`, `PresentationLayer`, `SystemMonitor.Pages`, `MudBlazorKit`): the prefixes of the frameworks are matched whole or followed by a dot, and those libraries were skipped without a message (`RouteRegistrationGenerator`).
+- **`{id:String}` ranks as untyped**, like `{id}` and `{id:string}`: its case was not read by the ranking, so it tied with `{id:int}` and the order of registration decided where `/a/42` went (`RouteParser`).
+- **`packages.json`** (the output of `dotnet list package`, with a local path) is no longer in the repository, and is ignored.
 - **Blazor, a link to the page before or after the current one** is a new page for the router, as it is for the browser: the router pushed nothing and went back (or forward) instead, and its history no longer followed the one of the browser (`RouteableUrlSync`: only the Back and Forward buttons of the browser move the router through the history now).
 - **Restoring a saved history stops at the first page a guard sends elsewhere**: with a guard that redirects to the sign-in page, `[/home, /orders, /orders/42]` came back as `[/home, /login, /login]` (`RouteableState`).
 - **`RouteParser.RegisterSerializer`**: a type with no namespace keeps its name when a homonym of a namespace is registered; its simple name is its full name, it was the only name it had, and it became ambiguous.

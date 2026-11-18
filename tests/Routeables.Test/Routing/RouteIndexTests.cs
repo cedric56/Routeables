@@ -44,6 +44,18 @@ public class RouteIndexTests
     }
 
     [Fact]
+    public void A_string_constraint_is_untyped_whatever_its_case()
+    {
+        // {id:String} reads the text as {id} does: it must not rank as a typed placeholder and tie with {id:int}.
+        foreach (var untyped in new[] { "/a/{id:String}", "/a/{id:STRING}", "/a/{id:string}", "/a/{id}" })
+        {
+            var table = new ReadOnlyCollection<(string Template, Type? ViewModelType)>([(untyped, null), ("/a/{id:int}", null)]);
+            Assert.Equal("/a/{id:int}", RouteParser.BestMatch(table, "/a/42").Template);
+            Assert.Equal(untyped, RouteParser.BestMatch(table, "/a/abc").Template);
+        }
+    }
+
+    [Fact]
     public void An_address_that_starts_with_no_registered_literal_still_reaches_the_parameter_templates()
     {
         var table = new ReadOnlyCollection<(string Template, Type? ViewModelType)>(Entries());

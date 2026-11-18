@@ -686,6 +686,52 @@ public class RouteRegistrationGeneratorTests
         Assert.Equal(IncrementalStepRunReason.Unchanged, steps.Single().Outputs.Single().Reason);
     }
 
+    // A library the application references, with one page: the generator finds it unless it is a framework.
+    private static MetadataReference Library(string assemblyName)
+    {
+        var compilation = CSharpCompilation.Create(
+            assemblyName,
+            [CSharpSyntaxTree.ParseText("""
+                using Routeables.Abstraction;
+
+                [Routeable("/shop")]
+                public class ShopViewModel { }
+
+                [RouteableView(typeof(ShopViewModel))]
+                public class ShopView { }
+                """)],
+            GetMetadataReferences(),
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+        using var stream = new MemoryStream();
+        var emitted = compilation.Emit(stream);
+        Assert.True(emitted.Success, string.Join(" | ", emitted.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).Take(3)));
+        return MetadataReference.CreateFromImage(stream.ToArray());
+    }
+
+    [Theory]
+    [InlineData("AvaloniaShop.Features")]
+    [InlineData("PresentationLayer")]
+    [InlineData("SystemMonitor.Pages")]
+    [InlineData("MudBlazorKit")]
+    public void The_pages_of_a_library_whose_name_only_starts_like_a_framework_are_found(string assemblyName)
+    {
+        var generated = GetGeneratedCode(RunGenerator("public class Marker { }", Library(assemblyName)));
+
+        Assert.Contains("route: \"/shop\"", generated);
+    }
+
+    [Theory]
+    [InlineData("Avalonia.Controls")]
+    [InlineData("PresentationFramework")]
+    [InlineData("System.Windows.Forms")]
+    [InlineData("Uno.UI")]
+    public void The_assemblies_of_a_framework_are_still_skipped(string assemblyName)
+    {
+        var generated = GetGeneratedCode(RunGenerator("public class Marker { }", Library(assemblyName)));
+
+        Assert.DoesNotContain("route: \"/shop\"", generated);
+    }
+
     private static GeneratorDriverRunResult RunGenerator(string source, params MetadataReference[] more)
     {
         var compilation = CSharpCompilation.Create(

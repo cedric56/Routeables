@@ -164,7 +164,7 @@ public static partial class RouteParser
         if (m.Groups["rest"].Success) return -1;                    // catch-all
         if (m.Groups["opt"].Success) return 0;                      // optional
         var type = m.Groups["type"].Value;
-        return type is "" or "?" or "string" ? 1 : 2;               // untyped, or typed
+        return type is "" or "?" || type.Equals("string", StringComparison.OrdinalIgnoreCase) ? 1 : 2;   // untyped, or typed ({id:String} reads like {id})
     }
 
     /// <summary>

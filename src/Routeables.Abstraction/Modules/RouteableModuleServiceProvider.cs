@@ -43,6 +43,9 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         .GroupBy(d => d.ServiceType)
         .ToDictionary(g => g.Key, g => g.ToList());
 
+    /// <summary>The container of the application itself: what a singleton of the module is built with (null: the provider that asked).</summary>
+    public IServiceProvider? Root { get; init; }
+
     private readonly Dictionary<ServiceDescriptor, object> _singletons = [];
     private readonly List<object> _created = [];
     private readonly object _gate = new();
@@ -93,8 +96,9 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         {
             if (!_singletons.TryGetValue(descriptor, out var known))
             {
-                // Built against the application's own container, never against one scope of it.
-                known = Create(descriptor, new RouteableModuleServiceProvider(application, this));
+                // Built against the application's own container, never against one scope of it: on a server, the provider that asks is the
+                // scope of one visitor, and what a singleton took from it would be served to every other visitor.
+                known = Create(descriptor, new RouteableModuleServiceProvider(Root ?? application, this));
                 _singletons[descriptor] = known;
                 if (descriptor.ImplementationInstance is null)          // an instance given by the module is not ours to dispose
                     _created.Add(known);

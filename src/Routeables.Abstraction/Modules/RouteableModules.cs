@@ -68,7 +68,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
             var table = collection.Select(d => d.ImplementationInstance).OfType<RouteableTable>().FirstOrDefault();
             var routes = (table?.Entries.Select(e => e.Template) ?? []).ToArray();
             var menus = collection.Where(d => d.ServiceType == typeof(RouteableMenuEntries)).Select(d => (RouteableMenuEntries)d.ImplementationInstance!).ToArray();
-            var services = new RouteableModuleServices(collection.Where(d => !Infrastructure.Contains(d.ServiceType) && !IsRouteFactory(d)));
+            var services = new RouteableModuleServices(collection.Where(d => !Infrastructure.Contains(d.ServiceType) && !IsRouteFactory(d))) { Root = root };
 
             foreach (var main in AliveMains())
                 foreach (var menu in menus)

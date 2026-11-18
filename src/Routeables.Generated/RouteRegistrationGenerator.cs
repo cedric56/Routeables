@@ -272,6 +272,27 @@ namespace Routeables.Generated
             && type.Name.Length > ViewSuffix.Length
             && type.Name.EndsWith(ViewSuffix, StringComparison.Ordinal);
 
+        // The assemblies of the frameworks and big libraries: none of their types is a view of the application. A name is matched whole or
+        // followed by a dot: "AvaloniaShop.Features", "PresentationLayer" or "SystemMonitor.Pages" are the application's own libraries.
+        private static readonly string[] FrameworkAssemblies =
+        [
+            "System", "Microsoft", "Avalonia", "WindowsBase", "Uno", "WinRT", "MudBlazor",
+            // WPF: PresentationFramework has a ListView, a TreeView, a GridView...
+            "PresentationFramework", "PresentationCore", "PresentationUI",
+            // The bindings of Android and iOS and the graphics libraries: tens of thousands of types, none of them a view of the application.
+            "Mono.Android", "Xamarin", "Java.Interop", "SkiaSharp", "HarfBuzzSharp",
+            "mscorlib", "netstandard",
+        ];
+
+        internal static bool IsFrameworkAssembly(string name)
+        {
+            foreach (var framework in FrameworkAssemblies)
+                if (name.Equals(framework, StringComparison.Ordinal)
+                    || name.Length > framework.Length && name[framework.Length] == '.' && name.StartsWith(framework, StringComparison.Ordinal))
+                    return true;
+            return false;
+        }
+
         private static IEnumerable<INamedTypeSymbol> GetAllTypes(Compilation compilation)
         {
             // The assembly being compiled only: compilation.GlobalNamespace is the merge of this assembly and of every reference
@@ -285,23 +306,7 @@ namespace Routeables.Generated
                     continue;
 
                 // Skip obvious framework / NuGet assemblies to limit cost
-                var name = asm.Name;
-                if (name.StartsWith("System", StringComparison.Ordinal) ||
-                    name.StartsWith("Microsoft.", StringComparison.Ordinal) ||
-                    name.StartsWith("Avalonia", StringComparison.Ordinal) ||
-                    name.StartsWith("Presentation", StringComparison.Ordinal) ||   // WPF: PresentationFramework has a ListView, a TreeView, a GridView...
-                    name.StartsWith("WindowsBase", StringComparison.Ordinal) ||
-                    name.StartsWith("Uno.", StringComparison.Ordinal) ||
-                    name.StartsWith("WinRT.", StringComparison.Ordinal) ||
-                    name.StartsWith("MudBlazor", StringComparison.Ordinal) ||
-                    // The bindings of Android and iOS and the graphics libraries: tens of thousands of types, none of them a view of the application.
-                    name.StartsWith("Mono.Android", StringComparison.Ordinal) ||
-                    name.StartsWith("Xamarin.", StringComparison.Ordinal) ||
-                    name.StartsWith("Java.Interop", StringComparison.Ordinal) ||
-                    name.StartsWith("SkiaSharp", StringComparison.Ordinal) ||
-                    name.StartsWith("HarfBuzzSharp", StringComparison.Ordinal) ||
-                    name.Equals("mscorlib", StringComparison.Ordinal) ||
-                    name.StartsWith("netstandard", StringComparison.Ordinal))
+                if (IsFrameworkAssembly(asm.Name))
                     continue;
 
                 foreach (var t in GetTypesInNamespace(asm.GlobalNamespace))

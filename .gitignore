@@ -474,3 +474,6 @@ tests/Routeables.Test.Maui/Snapshots/_actual/
 
 # The results of agent-desktop/run.ps1 when it is started from its own folder
 /agent-desktop/out/
+
+# Output of "dotnet list package", written to the root by mistake once
+/packages.json

@@ -79,6 +79,29 @@ public class RouteableModulesTests
         Assert.Same(first.Repository, second.Repository);
     }
 
+    public sealed class Visitor;
+    public sealed class Session(Visitor visitor) { public Visitor Visitor { get; } = visitor; }
+
+    [Fact]
+    public void A_singleton_of_a_module_is_not_built_with_the_scope_of_the_first_visitor()
+    {
+        using var provider = Application(more: services => services.AddScoped<Visitor>());
+        provider.GetRequiredService<IRouteableModules>().Load("Sessions", services =>
+        {
+            services.AddSingleton<Session>();
+            services.RegisterRoute("/session", (sp, _) => sp.GetRequiredService<Session>());
+        });
+        using var first = provider.CreateScope();
+        using var second = provider.CreateScope();
+
+        var a = (Session)first.ServiceProvider.GetViewModel("/session", new RouteableArgs())!;
+        var b = (Session)second.ServiceProvider.GetViewModel("/session", new RouteableArgs())!;
+
+        Assert.Same(a, b);                                                                          // one singleton
+        Assert.NotSame(first.ServiceProvider.GetRequiredService<Visitor>(), a.Visitor);            // not holding what belongs to the first visitor
+        Assert.NotSame(second.ServiceProvider.GetRequiredService<Visitor>(), a.Visitor);
+    }
+
     [Fact]
     public void The_routes_of_a_module_can_be_reached_from_an_address()
     {
