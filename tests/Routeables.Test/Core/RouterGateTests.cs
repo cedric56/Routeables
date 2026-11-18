@@ -29,6 +29,66 @@ public class RouterGateTests
     }
 
     [Fact]
+    public async Task A_caller_cancelled_by_its_own_token_does_not_replace_the_ones_before_it()
+    {
+        // A runs, B waits, C comes and is cancelled: the last one still wanted is B, which must run.
+        var gate = new RouterGate(RouterConcurrency.CancelCurrent);
+        var aEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var aMayEnd = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        async Task<string> Run(CancellationToken caller, Func<Task>? inside = null)
+        {
+            try { await gate.EnterAsync(cancellationToken: caller); }
+            catch (OperationCanceledException) { gate.Abort(); return "cancelled"; }
+            try
+            {
+                var token = gate.Observe(caller);
+                if (inside is not null) await inside();
+                token.ThrowIfCancellationRequested();
+                return "ran";
+            }
+            catch (OperationCanceledException) { return "cancelled"; }
+            finally { gate.Exit(); }
+        }
+
+        var a = Task.Run(() => Run(default, async () => { aEntered.SetResult(); await aMayEnd.Task; }), TestContext.Current.CancellationToken);
+        await aEntered.Task;
+        var b = Task.Run(() => Run(default), TestContext.Current.CancellationToken);
+        await Task.Delay(50, TestContext.Current.CancellationToken);
+        using var own = new CancellationTokenSource();
+        var c = Task.Run(() => Run(own.Token), TestContext.Current.CancellationToken);
+        await Task.Delay(50, TestContext.Current.CancellationToken);
+        own.Cancel();
+        await Task.Delay(50, TestContext.Current.CancellationToken);
+        aMayEnd.SetResult();
+
+        Assert.Equal(["cancelled", "ran", "cancelled"], await Task.WhenAll(a, b, c).WaitAsync(Timeout, TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public async Task A_caller_that_is_already_cancelled_replaces_nobody()
+    {
+        var gate = new RouterGate(RouterConcurrency.CancelCurrent);
+        var entered = new TaskCompletionSource<CancellationToken>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var mayEnd = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var running = Task.Run(async () =>
+        {
+            await gate.EnterAsync();
+            try { entered.SetResult(gate.Observe(default)); await mayEnd.Task; }
+            finally { gate.Exit(); }
+        }, TestContext.Current.CancellationToken);
+        var token = await entered.Task;
+
+        using var cancelled = new CancellationTokenSource();
+        cancelled.Cancel();
+        Assert.Throws<OperationCanceledException>(() => { _ = gate.EnterAsync(cancellationToken: cancelled.Token); });
+
+        Assert.False(token.IsCancellationRequested);
+        mayEnd.SetResult();
+        await running.WaitAsync(Timeout, TestContext.Current.CancellationToken);
+    }
+
+    [Fact]
     public async Task Entering_twice_in_the_same_flow_throws_instead_of_waiting_forever()
     {
         var gate = new RouterGate();

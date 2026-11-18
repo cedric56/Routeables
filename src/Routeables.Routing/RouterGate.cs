@@ -11,6 +11,9 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
     // caller: a caller that is no longer the latest when its turn comes has been replaced by a newer one and does not start.
     private CancellationTokenSource? _running;
     private long _latest;
+    // The numbers of the callers that still want to run (waiting for the gate, or entering): one that is cancelled by its own caller stops
+    // wanting to, and no longer replaces the ones before it ("the last one wins" is the last one that is still wanted).
+    private readonly SortedSet<long> _wanted = [];
     // The token of the operation that holds the gate, and the one each flow carries. A flow is reentrant only while the token it carries is
     // the one in progress: work started without waiting (Task.Run, FireAndForget) copies the token of the operation that was running, and
     // keeps it for ever, so a boolean would call every later route change from that work "reentrant".
@@ -38,12 +41,15 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
         var number = 0L;
         if (cancelCurrent)
         {
-            number = Interlocked.Increment(ref _latest);
+            cancellationToken.ThrowIfCancellationRequested();   // already cancelled: it replaces nobody
+            number = Want();
             try { Volatile.Read(ref _running)?.Cancel(); }
             catch (ObjectDisposedException) { }   // it finished at the same time
         }
 
-        var wait = _gate.WaitAsync(cancellationToken);
+        Task wait;
+        try { wait = _gate.WaitAsync(cancellationToken); }
+        catch { Unwant(number); throw; }
         var token = new object();
         _inProgress.Value = token;
         if (wait.IsCompletedSuccessfully)
@@ -55,6 +61,30 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
         return Acquire(wait, token, cancelCurrent, number, cancellationToken);
     }
 
+    private long Want()
+    {
+        lock (_wanted)
+        {
+            var number = ++_latest;
+            _wanted.Add(number);
+            return number;
+        }
+    }
+
+    private void Unwant(long number)
+    {
+        if (number == 0)
+            return;
+        lock (_wanted)
+            _wanted.Remove(number);
+    }
+
+    private bool Replaced(long number)
+    {
+        lock (_wanted)
+            return _wanted.Count > 0 && _wanted.Max > number;
+    }
+
     // For the tests: runs where a newer caller can come in, once the gate is held and before the operation is published.
     internal Action? BeforeBegin;
 
@@ -64,11 +94,12 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
         if (cancelCurrent)
         {
             var source = CancellationTokenSource.CreateLinkedTokenSource(caller);
-            Interlocked.Exchange(ref _running, source);     // a full fence: published before _latest is read below
+            Interlocked.Exchange(ref _running, source);     // a full fence: published before the wanted numbers are read below
             // A newer caller that came after the wait and before this point found no source to cancel (it is published only now): it asked for
             // this one to be replaced, so it is cancelled at once. Whichever of the two goes second sees the other.
-            if (Interlocked.Read(ref _latest) != number)
+            if (Replaced(number))
                 source.Cancel();
+            Unwant(number);
         }
 
         Volatile.Write(ref _current, token);
@@ -83,10 +114,13 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
     // The operation holds the gate only once the wait is over: another caller that waits must not take its place as the one in progress.
     private async Task Acquire(Task wait, object token, bool cancelCurrent, long number, CancellationToken caller)
     {
-        await wait.ConfigureAwait(false);
-        if (cancelCurrent && Interlocked.Read(ref _latest) != number)
+        try { await wait.ConfigureAwait(false); }
+        catch { Unwant(number); throw; }     // cancelled by its own caller while it waited: the ones before it are no longer replaced by it
+
+        if (cancelCurrent && Replaced(number))
         {
             // A newer route change came while this one waited: it replaces this one, which never starts.
+            Unwant(number);
             _gate.Release();
             throw new OperationCanceledException("A newer route change replaced this one.");
         }

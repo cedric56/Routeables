@@ -403,6 +403,35 @@ public class RouteParserTests
         }
     }
 
+    [Theory]
+    [InlineData("..")]
+    [InlineData(".")]
+    [InlineData("a/../b")]
+    public void A_dot_segment_is_not_a_value_a_browser_would_resolve_it(string value)
+    {
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("/users/{name}/edit", new { name = value }));
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("/files/{**path}", new { path = "x/" + value }));
+        Assert.False(RouteParser.TryMatch("/users/{name}/edit", "/users/" + Uri.EscapeDataString(value) + "/edit"));
+    }
+
+    [Fact]
+    public void A_dot_segment_is_refused_written_by_hand_too_and_a_query_value_is_not_a_segment()
+    {
+        Assert.False(RouteParser.TryMatch("/users/{name}/edit", "/users/../edit"));
+        Assert.False(RouteParser.TryMatch("/users/{name}/edit", "/users/%2E%2E/edit"));
+        Assert.False(RouteParser.TryMatch("/files/{**path}", "/files/a/../../admin"));
+        Assert.True(RouteParser.TryMatch("/files/{**path}", "/files/a.b/c..d"));
+        Assert.True(RouteParser.TryMatch("/list?{dir}", "/list?dir=.."));
+        Assert.Equal("/list?dir=..", RouteParser.Build("/list?{dir}", new { dir = ".." }));
+    }
+
+    [Fact]
+    public void Values_in_a_dictionary_of_any_type_are_read()
+    {
+        Assert.Equal("/p/43", RouteParser.Build("/p/{id:int}", new Dictionary<string, int> { ["id"] = 43 }));
+        Assert.Equal("/p/a", RouteParser.Build("/p/{id}", new Dictionary<string, string> { ["id"] = "a" }));
+    }
+
     [Fact]
     public void A_number_has_one_text_in_an_address()
     {

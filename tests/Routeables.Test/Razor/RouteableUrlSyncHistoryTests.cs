@@ -209,6 +209,26 @@ public class RouteableUrlSyncHistoryTests
     }
 
     [Fact]
+    public async Task A_back_of_the_browser_that_a_newer_route_change_replaces_is_not_an_error()
+    {
+        using var f = new Fixture(cancelCurrent: true);
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+        await f.GoAsync("/detail/1", "/detail/{id:int}");
+        SlowVm.Entering = false;
+        var slow = f.Router.GoToAsync("/slow", cancellationToken: TestContext.Current.CancellationToken);       // holds the router
+        await Fixture.Until(() => SlowVm.Entering);
+
+        f.Navigation.Go(-1);        // the browser goes back to /home: the router queues a Back behind the slow page
+        var newer = await f.Router.GoToAsync("/detail/2", cancellationToken: TestContext.Current.CancellationToken);   // replaces it
+        await Task.Delay(200, TestContext.Current.CancellationToken);
+
+        Assert.True(newer.Success);
+        Assert.Empty(f.Errors.Reported.Where(e => e is OperationCanceledException));
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => slow);
+    }
+
+    [Fact]
     public async Task A_link_to_an_address_nobody_serves_shows_the_not_found_page_when_there_is_one()
     {
         using var f = new Fixture(notFound: true);

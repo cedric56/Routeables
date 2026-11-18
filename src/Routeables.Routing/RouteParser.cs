@@ -235,11 +235,17 @@ public static partial class RouteParser
             if (m.Success && m.Groups["rest"].Success)
             {
                 var rest = string.Join('/', uSegs.Skip(i).Select(Uri.UnescapeDataString));
+                if (HasDotSegment(rest))
+                    return reasons ? $"\"{rest}\" has a \".\" or \"..\" segment, which a browser resolves to another address" : NoReason;
                 if (Bind(m, rest, args, viewKeySet, bound, reasons) is { } restFailure) return restFailure;
                 break;
             }
 
             var raw = i < uSegs.Length ? Uri.UnescapeDataString(uSegs[i]) : null;
+
+            // "." and ".." are not values: a browser resolves them (/users/../edit is /edit, even written %2E%2E), so the address shown would not be the one routed.
+            if (m.Success && HasDotSegment(raw))
+                return reasons ? $"\"{raw}\" is a \".\" or \"..\" segment, which a browser resolves to another address" : NoReason;
 
             if (!m.Success) // literal segment
             {
@@ -348,6 +354,9 @@ public static partial class RouteParser
         }
         return null;
     }
+
+    private static bool HasDotSegment(string? value)
+        => value is not null && Array.Exists(value.Split('/'), part => part is "." or "..");
 
     private static readonly string[] BuiltInConstraints = ["string", "int", "long", "bool", "guid", "decimal", "double"];
 
@@ -573,6 +582,8 @@ public static partial class RouteParser
             }
 
             var text = Format(value, type);
+            if (where == "path" && HasDotSegment(text))
+                throw new ArgumentException($"The value \"{text}\" cannot be a segment of \"{template}\" for {{{name}}}: a browser resolves \".\" and \"..\" to another address.", nameof(values));
             // What is written must be read back: the router would refuse a route that its own template does not accept.
             if (!TryConvert(text, type, out _))
                 throw new ArgumentException(
@@ -597,6 +608,8 @@ public static partial class RouteParser
                     var restType = m.Groups["type"].Value;
                     if (!IsKnownConstraint(restType))
                         throw new ArgumentException($"The constraint \"{restType}\" of {{**{m.Groups["name"].Value}}} in \"{template}\" is unknown.", nameof(template));
+                    if (HasDotSegment(restText))
+                        throw new ArgumentException($"The value \"{restText}\" cannot be the rest of \"{template}\": a browser resolves \".\" and \"..\" to another address.", nameof(values));
                     if (!TryConvert(restText, restType, out _))
                         throw new ArgumentException(
                             $"The value \"{restText}\" is not a valid {(restType.Length == 0 ? "value" : restType)} for {{**{m.Groups["name"].Value}}} in \"{template}\".", nameof(values));
@@ -645,6 +658,10 @@ public static partial class RouteParser
                 break;
             case IDictionary<string, object?> map:
                 foreach (var (key, value) in map) bag[key] = value;
+                break;
+            case System.Collections.IDictionary map when map.GetType().IsGenericType && map.GetType().GetGenericArguments() is [var key, _] && key == typeof(string):
+                // Dictionary<string, int>, Dictionary<string, string>...: the generic interfaces are not covariant, so none of the cases above takes them.
+                foreach (System.Collections.DictionaryEntry entry in map) bag[(string)entry.Key] = entry.Value;
                 break;
             default:
                 foreach (var property in values.GetType().GetProperties())

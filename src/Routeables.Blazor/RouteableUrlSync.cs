@@ -256,6 +256,10 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
         try { await ApplyAsync(Relative(e.Location)); }
+        catch (OperationCanceledException)
+        {
+            // A newer route change replaced this one (RouterConcurrency.CancelCurrent): it decides what the address shows.
+        }
         catch (Exception ex)
         {
             RouteableErrors.Report<RouteableUrlSync>(provider, ex);

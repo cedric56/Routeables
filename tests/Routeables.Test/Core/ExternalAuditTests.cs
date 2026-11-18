@@ -147,4 +147,31 @@ public class ExternalAuditTests
         Assert.Equal("all", page.Category);
         Assert.Equal("42", page.Id);
     }
+
+    [Fact]
+    public async Task A_template_given_without_its_first_slash_is_the_registered_template()
+    {
+        await using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+
+        var result = await router.GoToAsync("/orders", template: "orders", cancellationToken: Ct);
+
+        Assert.True(result.Success, result.Exception?.Message);
+        Assert.IsType<OrdersVm>(router.CurrentViewModel);
+    }
+
+    public sealed class TabView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class TabVm;
+
+    [Fact]
+    public async Task A_route_value_the_constructor_does_not_ask_for_is_left_out_by_reflection_as_it_is_by_the_generated_code()
+    {
+        await using var provider = Build(services => services.RegisterRoute<TabView, TabVm>(route: "/tabs/{tab:int}"));
+        var router = provider.GetRequiredService<IRouter>();
+
+        var result = await router.GoToAsync("/tabs/3", cancellationToken: Ct);
+
+        Assert.True(result.Success, result.Exception?.Message);
+        Assert.IsType<TabVm>(router.CurrentViewModel);
+    }
 }

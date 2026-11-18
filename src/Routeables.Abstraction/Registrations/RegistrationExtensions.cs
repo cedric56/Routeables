@@ -424,6 +424,40 @@ public static partial class RegistrationExtensions
     /// </summary>
     private static List<object> BindByName(
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type type, IEnumerable<RouteableArgument> entries)
+        => WithoutUntakeable(type, BindByNameCore(type, entries));
+
+    // ActivatorUtilities refuses a value no constructor parameter takes ("a suitable constructor could not be located"); the generated code
+    // ignores it. A route value the view model does not ask for is not an error in either mode: it stays in args.Values for the hooks.
+    private static List<object> WithoutUntakeable(
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type type, List<object> values)
+    {
+        var constructors = type.GetConstructors();
+        if (constructors.Length == 1)
+        {
+            var parameters = constructors[0].GetParameters();
+            var taken = new bool[parameters.Length];
+            var kept = new List<object>();
+            foreach (var value in values)
+            {
+                var at = -1;
+                for (var i = 0; i < parameters.Length && at < 0; i++)
+                    if (!taken[i] && parameters[i].ParameterType.IsInstanceOfType(value))
+                        at = i;
+
+                if (at < 0)
+                    continue;
+                taken[at] = true;
+                kept.Add(value);
+            }
+
+            return kept;
+        }
+
+        return [.. values.Where(v => constructors.Any(c => c.GetParameters().Any(p => p.ParameterType.IsInstanceOfType(v))))];
+    }
+
+    private static List<object> BindByNameCore(
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type type, IEnumerable<RouteableArgument> entries)
     {
         var list = entries.ToList();
         var ordered = BindByName(list, type.GetConstructors()

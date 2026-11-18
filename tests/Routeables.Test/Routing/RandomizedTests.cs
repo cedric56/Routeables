@@ -38,6 +38,13 @@ public class RandomizedRouteAndStateTests
             if (t.Contains("{tag?}")) vals["tag"] = Rand(r);
             if (t.Contains("{id:int}")) vals["id"] = r.Next(-5, 100000);
             if (t.Contains("{**path}")) vals["path"] = Rand(r, 4).Replace("//", "/");
+            // "." and ".." are no segment value (a browser resolves them): refused, and the rest of the values still round-trip.
+            if (IsDotted(vals.GetValueOrDefault("name")) || IsDotted(vals.GetValueOrDefault("path")))
+            {
+                try { RouteParser.Build(t, vals); bad.Add($"DOT {t} {Show(vals)} was built"); } catch (ArgumentException) { }
+                continue;
+            }
+
             string route;
             try { route = RouteParser.Build(t, vals); } catch (Exception e) { bad.Add($"BUILD {t} {Show(vals)} -> {e.GetType().Name}"); continue; }
             var args = RouteableArgs.Create();
@@ -53,6 +60,8 @@ public class RandomizedRouteAndStateTests
         }
         Assert.True(bad.Count == 0, string.Join("\n", bad.Distinct().Take(15)) + $"\n(total {bad.Count})");
     }
+
+    static bool IsDotted(object? value) => value?.ToString()?.Split('/').Any(part => part is "." or "..") == true;
 
     static string Show(Dictionary<string, object?> d) => string.Join(",", d.Select(p => $"{p.Key}=[{p.Value}]"));
 

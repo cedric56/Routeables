@@ -593,7 +593,7 @@ internal class Router(
         var entries = provider.GetService<RouteableTable>()?.Entries ?? [];
         var found = template is null
             ? RouteParser.BestMatch(entries, url)   // several templates may match: the most specific one
-            : entries.FirstOrDefault(e => string.Equals(e.Template, template, StringComparison.OrdinalIgnoreCase));
+            : entries.FirstOrDefault(e => string.Equals(RouteAddress.Absolute(e.Template), RouteAddress.Absolute(template), StringComparison.OrdinalIgnoreCase));   // "about" and "/about" are one template, as for the table
         if (found.Template is not null)
         {
             var keys = found.ViewModelType is null
