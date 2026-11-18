@@ -103,10 +103,12 @@ public static class Runner
         var times = new double[count][];
         var bytes = new long[count][];
         var names = new string[count];
+        var positions = new int[count][];                       // in which place of its run each library was measured
         for (var d = 0; d < count; d++)
         {
             times[d] = new double[Runs];
             bytes[d] = new long[Runs];
+            positions[d] = new int[Runs];
         }
 
         for (var run = -Warmups; run < Runs; run++)
@@ -132,6 +134,7 @@ public static class Runner
                 {
                     times[d][run] = watch.Elapsed.TotalMilliseconds;
                     bytes[d][run] = GC.GetTotalAllocatedBytes(true) - before;
+                    positions[d][run] = k;
                 }
             }
         }
@@ -158,11 +161,24 @@ public static class Runner
                 for (var run = 0; run < Runs; run++)
                     ratios[run] = times[0][run] / times[d][run];
                 Array.Sort(ratios);
+                // A library can go faster or slower for the place it has in the run (what the one before left behind, the state of the caches of
+                // the framework). The ratio is therefore also given for the runs where the first library came before the other one and for those where it
+                // came after, and the geometric mean of the two cancels an effect that multiplies the time of whoever comes second.
+                var before = new List<double>();
+                var after = new List<double>();
+                for (var run = 0; run < Runs; run++)
+                    (positions[0][run] < positions[d][run] ? before : after).Add(times[0][run] / times[d][run]);
                 var medianOf0 = Median(times[0]);
                 var medianOfD = Median(times[d]);
                 // The two ways of comparing are given: they agree when the runs are alike, and when they do not, the order of the measures or the
                 // noise of the machine weighs on the ratio, and neither figure is to be quoted alone.
                 Console.WriteLine($"- against {names[d]}: {ratios[Runs / 2]:F2} (from {ratios[Runs / 4]:F2} to {ratios[3 * Runs / 4]:F2}); ratio of the two median times: {medianOf0 / medianOfD:F2}");
+                if (before.Count > 0 && after.Count > 0)
+                {
+                    var b = Median([.. before]);
+                    var a = Median([.. after]);
+                    Console.WriteLine($"  - {names[0]} measured first: {b:F2}, measured second: {a:F2}; the order cancelled: {Math.Sqrt(b * a):F2}");
+                }
             }
         }
     }
