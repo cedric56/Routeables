@@ -245,12 +245,14 @@ jobs:
 
       - name: Routeables and ReactiveUI routing
         continue-on-error: true
+        timeout-minutes: 10
         run: |
           dotnet build benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release ${{ env.CI_PROPS }}
           { echo "### With views: Routeables and ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Prism
         continue-on-error: true
+        timeout-minutes: 10
         run: |
           dotnet build benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release ${{ env.CI_PROPS }}
           { echo "### With views: Prism"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY"
