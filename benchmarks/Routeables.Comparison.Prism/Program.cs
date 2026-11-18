@@ -5,5 +5,9 @@ using Routeables.Comparison.Prism;
 
 using var session = HeadlessUnitTestSession.StartNew(typeof(PrismBenchApp));
 var code = 1;
-await session.Dispatch(async () => code = await Runner.RunAsync(args, [() => new PrismDriver(), () => new ReactiveUiAvaloniaDriver()], console: false), CancellationToken.None);
+await session.Dispatch(async () =>
+{
+    code = await Runner.RunAsync(args, [() => new PrismDriver(), () => new ReactiveUiAvaloniaDriver()], console: false);
+    LayoutCount.Report();
+}, CancellationToken.None);
 return code;

@@ -38,6 +38,33 @@ public sealed class RxScreen : ReactiveObject, IScreen
 }
 
 /// <summary>
+/// Whether the page that a step shows was laid out: after each step, the view in the host must have a size. A driver that shows a view
+/// the window never laid out would pay nothing for it, and its numbers would not be those of a page shown. Each driver adds what it
+/// sees, and the program writes the counts at the end of the run (to the output, which the job copies into its summary).
+/// </summary>
+public static class LayoutCount
+{
+    private static readonly Dictionary<string, (int Shown, int Unsized)> Counts = [];
+
+    public static void Observe(string driver, object? shown)
+    {
+        if (shown is not global::Avalonia.Visual visual)
+            return;
+        Counts.TryGetValue(driver, out var count);
+        var unsized = visual.Bounds.Width <= 0 || visual.Bounds.Height <= 0;
+        Counts[driver] = (count.Shown + 1, count.Unsized + (unsized ? 1 : 0));
+    }
+
+    public static void Report()
+    {
+        Console.WriteLine();
+        foreach (var (driver, count) in Counts)
+            Console.WriteLine($"Layout, {driver}: {count.Shown} views seen after a step, {count.Unsized} of them with no size ({(count.Shown == 0 ? 0 : 100.0 * count.Unsized / count.Shown):F1} %).");
+        Counts.Clear();
+    }
+}
+
+/// <summary>
 /// The scenario on <c>RoutingState</c> of ReactiveUI, shown by a view host written here: the host shows the view of the page the router
 /// gives (<c>RoutedViewHost</c> of ReactiveUI.Avalonia does the same, with its view locator; its API could not be checked, so it is not used). The host is a
 /// <c>TransitioningContentControl</c>, the control that <c>RouteableRegion</c> is, so that the two libraries pay the same for the control.
@@ -49,6 +76,7 @@ public sealed class ReactiveUiAvaloniaDriver : INavigationDriver
     private readonly RxScreen _screen = new();
     private readonly ServiceProvider _provider = new ServiceCollection().AddSingleton<IClock, Clock>().BuildServiceProvider();
     private readonly Window _window;
+    private readonly ContentControl _content;
     private readonly IDisposable _host;
 
     public ReactiveUiAvaloniaDriver()
@@ -56,7 +84,7 @@ public sealed class ReactiveUiAvaloniaDriver : INavigationDriver
         State = new AppState();
         // The control of the region of Routeables (RouteableRegion is a TransitioningContentControl): two presenters and the machinery of a
         // transition, with none declared. A plain ContentControl would leave that cost to Routeables alone.
-        var content = new TransitioningContentControl();
+        var content = _content = new TransitioningContentControl();
         _host = _screen.Router.CurrentViewModel.Subscribe(
             vm => content.Content = vm is RxPage page ? ActivatorUtilities.CreateInstance<RxView>(_provider, page) : null);
         _window = new Window { Width = 400, Height = 300, Content = content };
@@ -132,13 +160,17 @@ public sealed class ReactiveUiAvaloniaDriver : INavigationDriver
         return page;
     }
 
-    private static void Flush() => Dispatcher.UIThread.RunJobs();
+    private void Flush()
+    {
+        Dispatcher.UIThread.RunJobs();
+        LayoutCount.Observe(Name, _content.Content);
+    }
 
     public void Dispose()
     {
         _host.Dispose();
         _window.Close();
-        Flush();
+        Dispatcher.UIThread.RunJobs();   // not counted: a closed window has no size
         _provider.Dispose();
     }
 }

@@ -42,7 +42,11 @@ public static class Program
         var code = 1;
         // Everything runs on the UI thread of the application, as the code of a real application does.
         await session.Dispatch(
-            async () => code = await Runner.RunAsync(args, [() => new RouteablesAvaloniaDriver(), () => new ReactiveUiAvaloniaDriver()], console: false),
+            async () =>
+            {
+                code = await Runner.RunAsync(args, [() => new RouteablesAvaloniaDriver(), () => new ReactiveUiAvaloniaDriver()], console: false);
+                LayoutCount.Report();
+            },
             CancellationToken.None);
         return code;
     }

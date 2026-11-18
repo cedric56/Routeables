@@ -83,7 +83,11 @@ public sealed class RouteablesAvaloniaDriver : INavigationDriver
     }
 
     /// <summary>Runs what the application has queued after a step: the binding of the view, the layout of the window.</summary>
-    private static void Flush() => Dispatcher.UIThread.RunJobs();
+    private void Flush()
+    {
+        Dispatcher.UIThread.RunJobs();
+        LayoutCount.Observe(Name, (s_window?.Content as RouteableRegion)?.Content);
+    }
 
     public void Dispose() => Flush();
 }

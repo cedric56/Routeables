@@ -1,5 +1,5 @@
-using Avalonia.Controls;
 using Avalonia.Threading;
+using Routeables.Comparison.Avalonia;
 using Prism.Ioc;
 using Prism.Navigation.Regions;
 
@@ -14,7 +14,6 @@ namespace Routeables.Comparison.Prism;
 public sealed class PrismDriver : INavigationDriver
 {
     private readonly IRegion _region;
-    private int _shown, _unsized;
 
     public PrismDriver()
     {
@@ -103,19 +102,8 @@ public sealed class PrismDriver : INavigationDriver
     private void Flush()
     {
         Dispatcher.UIThread.RunJobs();
-
-        // Whether the view shown has been laid out (see the same check in the ReactiveUI driver).
-        if (PrismBenchApp.Host.Content is Control view)
-        {
-            _shown++;
-            if (view.Bounds.Width <= 0 || view.Bounds.Height <= 0)
-                _unsized++;
-        }
+        LayoutCount.Observe(Name, PrismBenchApp.Host?.Content);
     }
 
-    public void Dispose()
-    {
-        Console.Error.WriteLine($"::notice title=Layout::{Name}: {_unsized} of {_shown} views shown had no size after the step.");
-        Reset();
-    }
+    public void Dispose() => Reset();
 }
