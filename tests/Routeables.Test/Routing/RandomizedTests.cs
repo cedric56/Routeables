@@ -45,6 +45,13 @@ public class RandomizedRouteAndStateTests
                 continue;
             }
 
+            // A rest with an empty segment (a leading, trailing or doubled slash) would not be read back: refused.
+            if (HasEmptySegment(vals.GetValueOrDefault("path")))
+            {
+                try { RouteParser.Build(t, vals); bad.Add($"EMPTY {t} {Show(vals)} was built"); } catch (ArgumentException) { }
+                continue;
+            }
+
             string route;
             try { route = RouteParser.Build(t, vals); } catch (Exception e) { bad.Add($"BUILD {t} {Show(vals)} -> {e.GetType().Name}"); continue; }
             var args = RouteableArgs.Create();
@@ -60,6 +67,8 @@ public class RandomizedRouteAndStateTests
         }
         Assert.True(bad.Count == 0, string.Join("\n", bad.Distinct().Take(15)) + $"\n(total {bad.Count})");
     }
+
+    static bool HasEmptySegment(object? value) => value?.ToString() is { Length: > 0 } text && text.Split('/').Any(part => part.Length == 0);
 
     static bool IsDotted(object? value) => value?.ToString()?.Split('/').Any(part => part is "." or "..") == true;
 
