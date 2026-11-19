@@ -138,9 +138,10 @@ jobs:
         run: dotnet run --project src/Routeables.Benchmarks/Routeables.Benchmarks.csproj -c Release --no-build -- --perf
 
   # The line and branch coverage of the libraries by Routeables.Test, with Microsoft.Testing.Platform (`--coverage`, settings in
-  # tests/CodeCoverage.settings.xml). Reported in the summary of the run and kept as an artifact; the job fails under 65% of the lines of the whole (first
-  # report: 67.3%, the hosts that only a device runs pull it down; raise the floor by hand when the figure rises). A job of its own, and not
-  # a step of "Build & test", so that a failure here does not hide the tests above.
+  # tests/CodeCoverage.settings.xml). Kept as an artifact and printed in the log of the step, not in the summary of the run (the one table of the
+  # summary is that of "Code coverage, all the tests"). The job fails under 65% of the lines of the whole (the hosts that only a device runs pull it
+  # down) and under a floor for each library of the core, set just under its figure: raise a floor by hand when its figure rises. A job of its own,
+  # and not a step of "Build & test", so that a failure here does not hide the tests above.
   coverage:
     name: Code coverage
     runs-on: windows-latest
@@ -176,7 +177,8 @@ jobs:
         run: |
           reports=$(find coverage -name '*.cobertura.xml')
           if [ -z "$reports" ]; then echo "No coverage report was written." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
-          { echo "### Code coverage (Routeables.Test)"; python tools/coverage-summary.py --min 65 --files 25 $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
+          # Gate only: the table of the summary is the one of the job "Code coverage, all the tests".
+          python tools/coverage-summary.py --min 65 --min-assembly Routeables.Segments=95 --min-assembly Routeables.Routing=95 --min-assembly Routeables.Regions=95 --min-assembly Routeables.Locking=95 --min-assembly Routeables.Services=92 --min-assembly Routeables.Generated=90 --min-assembly Routeables.Abstraction=88 --min-assembly Routeables.Core=85 --min-assembly Routeables.AspNetCore=94 --files 25 $reports
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -186,7 +188,7 @@ jobs:
           if-no-files-found: warn
 
   # The coverage of the libraries by every kind of test together: the reports of the jobs above, each line counted once (covered when any
-  # run covered it). Not gating: the floor of 65% is that of the job "Code coverage". It also holds a floor for Routeables.Avalonia (40%, the
+  # run covered it). It writes the only coverage table of the summary. Not gating: the floors of the core are those of the job "Code coverage". It also holds a floor for Routeables.Avalonia (40%, the
   # figure is a guess until the first report: raise it by hand when the figure rises, and take the "continue-on-error" off this job once it is green).
   coverage-all:
     name: Code coverage, all the tests
@@ -699,7 +701,7 @@ jobs:
             --results-directory coverage-avalonia
           reports=$(find coverage-avalonia -name '*.cobertura.xml')
           if [ -z "$reports" ]; then echo "No coverage report was written." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
-          { echo "### Code coverage (Routeables.Test.Avalonia)"; python3 tools/coverage-summary.py --files 25 --files-of Avalonia $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
+          python3 tools/coverage-summary.py --files 25 --files-of Avalonia $reports
 
       - name: Upload the coverage reports
         if: always()
@@ -793,7 +795,7 @@ jobs:
           export PATH="$PATH:$HOME/.dotnet/tools"
           xvfb-run -a dotnet-coverage collect --settings tests/CodeCoverage.settings.xml -f cobertura -o coverage-uno/uno.cobertura.xml \
             "dotnet tests/Routeables.Test.Uno/bin/${{ env.CONFIGURATION }}/net10.0-desktop/Routeables.Test.Uno.dll"
-          { echo "### Code coverage (Routeables.Test.Uno)"; python3 tools/coverage-summary.py coverage-uno/uno.cobertura.xml; } | tee -a "$GITHUB_STEP_SUMMARY"
+          python3 tools/coverage-summary.py coverage-uno/uno.cobertura.xml
 
       - name: Results
         if: always()
@@ -889,7 +891,7 @@ jobs:
           export PATH="$PATH:$HOME/.dotnet/tools"
           dotnet-coverage collect --settings tests/CodeCoverage.settings.xml -f cobertura -o coverage-maui/maui.cobertura.xml \
             "dotnet msbuild tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-windows10.0.19041.0 -p:Configuration=Debug"
-          { echo "### Code coverage (Routeables.Test.Maui, Windows)"; python tools/coverage-summary.py coverage-maui/maui.cobertura.xml; } | tee -a "$GITHUB_STEP_SUMMARY"
+          python tools/coverage-summary.py coverage-maui/maui.cobertura.xml
 
       - name: Upload the coverage report
         if: always()

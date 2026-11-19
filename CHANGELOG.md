@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- CI: the summary of a run has one coverage table (all the tests together); the partial reports stay in the step logs and as artifacts. The job "Code coverage" now fails under a floor for each core library (Segments, Routing, Regions, Locking 95%; AspNetCore 94%; Services 92%; Generated 90%; Abstraction 88%; Core 85%), as well as under 65% for the whole.
 - `docs/benchmark-comparison.md` starts with the current state of the comparison and marks the first results (2 times the time, 6 times the allocations of ReactiveUI) as superseded.
 - Comments in `src/`, `tests/`, `samples/`, `benchmarks/`, `reshapes/`, the build props and the JavaScript files rewritten in plain, shorter English: comments that only repeated the code or divided a file are gone; the ones that say why (invariants, concurrency traps) stay. No code change.
 - **The three largest files are cut by concern, with no change of behaviour**: `Router.cs` (905 lines) into `Router.cs` (events, state, the observation of a route change), `Router.Guards.cs`, `Router.History.cs`, `Router.Navigate.cs`, `Router.Address.cs` and `Router.MenuEntries.cs`; `RouteParser.cs` (836) into `RouteParser.cs` (matching), `.Serializers.cs`, `.BestMatch.cs` and `.Build.cs`; `RouteCoordinationGenerator.cs` (1273) into `.Analysis.cs`, `.Template.cs`, `.Parameters.cs`, `.Emit.cs` and `.Model.cs`. The classes are `partial`; every line moved as it was, so the tests are the same.
