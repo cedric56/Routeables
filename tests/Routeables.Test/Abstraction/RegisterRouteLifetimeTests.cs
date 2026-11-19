@@ -1,17 +1,12 @@
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Test.Abstraction;
 
 public class RegisterRouteLifetimeTests
 {
-    private sealed class StubView : IRouteableFor
-    {
-        public object? Context { get; set; }
-    }
-
-    private sealed class StubVm;
 
     [Fact]
     public void RegisterRoute_default_shares_same_IRouter_instance()

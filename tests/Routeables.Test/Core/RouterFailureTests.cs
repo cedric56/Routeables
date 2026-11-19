@@ -5,6 +5,8 @@ using Routeables.Test.Abstraction;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
+using ListView = Routeables.Tests.Pages.ListView;
 
 namespace Routeables.Tests.Core;
 
@@ -130,8 +132,6 @@ public class RouterFailureTests
         public void Dispose() => Interlocked.Increment(ref Disposed);
     }
 
-    public sealed class UnbuildableView : IRouteableFor { public object? Context { get; set; } }
-
     [Fact]
     public async Task A_view_model_whose_view_cannot_be_built_is_disposed()
     {
@@ -163,10 +163,6 @@ public class RouterFailureTests
     // ---- a go back then to a route that does not open
 
     public sealed class StartView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class StartVm;
-    public sealed class ListView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class ListVm;
-    public sealed class ThrowingView : IRouteableFor { public object? Context { get; set; } }
     public sealed class ThrowingVm { public ThrowingVm() => throw new InvalidOperationException("no"); }
 
     [Fact]

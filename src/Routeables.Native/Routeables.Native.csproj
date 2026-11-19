@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>net10.0;net10.0-android;net10.0-ios;net10.0-maccatalyst;net10.0-windows10.0.19041.0</TargetFrameworks>
-    <!-- A runner only has the SDK packs of its own OS: Linux cannot restore the Apple or Windows targets, macOS cannot the Windows one, and Windows does not restore the Android and Apple ones (their workloads are not installed there: NETSDK1147). -->
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">net10.0;net10.0-windows10.0.19041.0</TargetFrameworks>
+    <!-- A runner only has the SDK packs of its own OS: Linux cannot restore the Apple or Windows targets, macOS cannot the Windows one, and the Windows runner of GitHub does not restore the Android and Apple ones (their workloads are not installed there: NETSDK1147). A developer's Windows keeps them, with the MAUI workload: Routeables.Maui for Android needs the Android target of this library, or it gets the plain net10.0 one that has no HandleIntent. -->
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) And '$(GITHUB_ACTIONS)' == 'true'">net10.0;net10.0-windows10.0.19041.0</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('linux'))">net10.0;net10.0-android</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('osx'))">net10.0;net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
     <TargetFrameworks Condition="'$(CiBuild)' == 'true'">net10.0</TargetFrameworks>

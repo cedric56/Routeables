@@ -6,6 +6,8 @@ using Routeables.Locking;
 using Routeables.Routing;
 using System.Collections.ObjectModel;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
+using ListView = Routeables.Tests.Pages.ListView;
 namespace Routeables.Tests.Core;
 
 public class RouteableMenuViewModelBaseTests
@@ -57,7 +59,6 @@ public class RouteableMenuViewModelBaseTests
         Assert.Same(sut.Entries[0], sut.SelectedEntry);
     }
 
-    public sealed class StayView : IRouteableFor { public object? Context { get; set; } }
     public sealed class StayVm : IRouteable
     {
         // A page with unsaved changes: it answers at once, so the menu is still inside the setter when the refusal is known.
@@ -65,8 +66,6 @@ public class RouteableMenuViewModelBaseTests
         public Task OnEnteringAsync(IRouteableArgs args, CancellationToken ct = default) => Task.CompletedTask;
         public Task OnLeavingAsync(IRouteableArgs args, CancellationToken ct = default) => Task.CompletedTask;
     }
-    public sealed class OtherView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class OtherVm;
 
     private sealed class GuardedMenu(IRouter router) : RouteableMenuViewModelBase(router, initialize: false)
     {
@@ -119,9 +118,6 @@ public class RouteableMenuViewModelBaseTests
         Assert.True(sut.AnnouncedAfterSetter > before);        // and the control is told once the setter has returned
     }
 
-    public sealed class ListView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class ListVm;
-    public sealed class DetailView : IRouteableFor { public object? Context { get; set; } }
     public sealed class DetailVm;
 
     private sealed class ListMenu(IRouter router) : RouteableMenuViewModelBase(router, initialize: false)
@@ -161,8 +157,6 @@ public class RouteableMenuViewModelBaseTests
         Assert.IsType<ListVm>(router.CurrentViewModel);
     }
 
-    public sealed class OrdersView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class OrdersVm;
     public sealed class OrderView : IRouteableFor { public object? Context { get; set; } }
     public sealed class OrderVm(int id) { public int Id { get; } = id; }
 

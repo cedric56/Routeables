@@ -6,24 +6,19 @@ using Routeables.Abstraction.Routing;
 using Routeables.Abstraction.States;
 using Routeables.Routing;
 using Routeables.Services;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Services;
 
 /// <summary>At start, the history of the last run is put back first and the address that opened the application is followed after it.</summary>
 public class StartupOrderTests
 {
-    public sealed class SoHomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class SoHomeVm;
-    public sealed class SoOldView : IRouteableFor { public object? Context { get; set; } }
 
     /// <summary>A page that takes its time to be entered: the restoration is still running when a link could be followed.</summary>
     public sealed class SoOldVm : IRouteable
     {
         public async Task OnEnteringAsync(IRouteableArgs args, CancellationToken cancellationToken = default) => await Task.Delay(300, cancellationToken);
     }
-
-    public sealed class SoLinkView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class SoLinkVm;
 
     private sealed class MemoryStore(string kept) : IRouteableHistoryStore
     {

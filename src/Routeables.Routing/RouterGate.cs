@@ -54,16 +54,24 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
         {
             cancellationToken.ThrowIfCancellationRequested();   // already cancelled: it replaces nobody
             number = Want();
+        }
+
+        // The place in the queue is taken before the operation in progress is asked to stop: that operation can end as soon as it is asked (the
+        // cancellation runs its continuation on the spot), release the gate and let this caller in before the callers that come after it have
+        // said that they want to replace it. Waiting first, the gate goes to this caller through the semaphore, whose waiters resume apart.
+        Task wait;
+        try { wait = _gate.WaitAsync(cancellationToken); }
+        catch { Unwant(number); throw; }
+        var immediate = wait.IsCompletedSuccessfully;     // the gate was free: there is nothing to wait for, and nothing to replace
+        if (cancelCurrent)
+        {
             try { Volatile.Read(ref _running)?.Cancel(); }
             catch (ObjectDisposedException) { }   // it finished at the same time
         }
 
-        Task wait;
-        try { wait = _gate.WaitAsync(cancellationToken); }
-        catch { Unwant(number); throw; }
         var token = new Pass(RouteableHelper.DetachedFlow.Value);
         _inProgress.Value = token;
-        if (wait.IsCompletedSuccessfully)
+        if (immediate)
         {
             Begin(token, cancelCurrent, cancellationToken, number);
             return wait;
@@ -127,6 +135,11 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
     {
         try { await wait.ConfigureAwait(false); }
         catch { Unwant(number); throw; }     // cancelled by its own caller while it waited: the ones before it are no longer replaced by it
+
+        // The gate can be ours already when the operation in progress ended as soon as it was asked to (its cancellation runs on the spot). The
+        // caller gets its task back and may start the route changes that replace this one before this one starts: it takes its turn after them.
+        if (cancelCurrent)
+            await Task.Yield();
 
         if (cancelCurrent && Replaced(number))
         {

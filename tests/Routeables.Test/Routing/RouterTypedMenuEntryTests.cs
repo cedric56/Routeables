@@ -4,6 +4,7 @@ using Routeables.Abstraction.Guards;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Routing;
 
@@ -12,13 +13,8 @@ public class RouterTypedMenuEntryTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class HomeVm;
-    public sealed class OrdersView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class OrdersVm;
     public sealed class OrderView : IRouteableFor { public object? Context { get; set; } }
     public sealed class OrderVm(int id) { public int Id { get; } = id; }
-    public sealed class UnroutedView : IRouteableFor { public object? Context { get; set; } }
     public sealed class UnroutedVm { public UnroutedVm() => Built++; public static int Built; }
 
     private sealed class RefuseAll : IRouteTypeGuard

@@ -7,6 +7,7 @@ using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Test.Abstraction;
 using static Routeables.Test.Abstraction.RouterTestKit;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Core;
 
@@ -48,13 +49,6 @@ public class RouterBoundaryTests
         await router.EraseHistoryAsync(Ct);                // must not throw
         Assert.Equal(0, router.History.Count);
     }
-
-    public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class HomeVm;
-    public sealed class OtherView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class OtherVm;
-    public sealed class LoginView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class LoginVm;
 
     // A guard that waits before it answers, so that a route change can come in between.
     private sealed class SlowGuard : IRouteGuard

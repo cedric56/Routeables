@@ -5,15 +5,12 @@ using Routeables.Routing;
 using Routeables.Services;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.States;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Services;
 
 /// <summary>The addresses that come from outside the application, and the history that is saved and restored.</summary>
 public class RouteableDeepLinksTests
 {
-    public sealed class LinkFirstView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class LinkFirstVm;
-    public sealed class LinkSecondView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class LinkSecondVm;
 
     private static ServiceProvider Build()
     {
@@ -201,7 +198,6 @@ public class RouteableDeepLinksTests
         Assert.Empty(RouteableState.Deserialize(string.Empty));
     }
 
-    public sealed class KeepingView : IRouteableFor { public object? Context { get; set; } }
     public sealed class KeepingVm : IRouteableState
     {
         public string Draft { get; set; } = "";

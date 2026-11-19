@@ -7,6 +7,7 @@ using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
 using Routeables.Routing;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Razor;
 
@@ -55,7 +56,6 @@ public class RouteableUnloadWarningTests
         }
     }
 
-    public sealed class FormView : IRouteableFor { public object? Context { get; set; } }
     public sealed class FormVm : IRouteableUnsavedChanges
     {
         private bool _dirty;

@@ -3,16 +3,12 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Routing;
 
 /// <summary>The catch-all placeholder <c>{**path}</c>: it takes what is left of the path, slashes included.</summary>
 public class RouteCatchAllTests
 {
-    public sealed class DocsView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class DocsVm(string? path = null) { public string? Path { get; } = path; }
-
-    public sealed class IntroView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class IntroVm { }
 
     private static IRouter Build(Action<IServiceCollection> configure)
     {

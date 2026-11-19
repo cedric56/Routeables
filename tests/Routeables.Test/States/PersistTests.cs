@@ -6,6 +6,7 @@ using Routeables.Abstraction.Routing;
 using Routeables.Abstraction.States;
 using Routeables.Routing;
 using Routeables.Services;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.States;
 
@@ -18,8 +19,6 @@ public class PersistTests
     public enum Access { None = 0, Read = 1, Write = 2 }
 
     public sealed record Filter(string Text, int Page);
-
-    public sealed class FormView : IRouteableFor { public object? Context { get; set; } }
 
     public class BaseVm
     {

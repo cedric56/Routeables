@@ -5,6 +5,7 @@ using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Core;
 using Routeables.Routing;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Hosts;
 
@@ -15,7 +16,6 @@ namespace Routeables.Tests.Hosts;
 /// </summary>
 public class CustomContainerTests
 {
-    public sealed class PageView : IRouteableFor { public object? Context { get; set; } }
     public sealed class PageViewModel(string name) { public string Name { get; } = name; }
     public sealed class Clock { }
 

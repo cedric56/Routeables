@@ -1,12 +1,12 @@
 using Routeables.Abstraction.Routing;
 using Routeables.Segments;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Routing;
 
 /// <summary>The edges of <see cref="RouteCoordination"/>, its builder, the event data and the string overload of the coordinator.</summary>
 public class RouteCoordinationBuilderTests
 {
-    private sealed class OrdersViewModel;
 
     [Fact]
     public void A_segment_without_a_name_is_a_format_error_like_the_other_malformed_uris()

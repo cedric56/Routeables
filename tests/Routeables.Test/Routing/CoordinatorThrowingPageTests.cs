@@ -5,14 +5,12 @@ using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Segments;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Routing;
 
 /// <summary>An absolute coordination erases the histories first: a page that throws must not leave the regions empty.</summary>
 public class CoordinatorThrowingPageTests
 {
-    public sealed class CtHomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class CtHomeVm;
-    public sealed class CtBoomView : IRouteableFor { public object? Context { get; set; } }
     public sealed class CtBoomVm : IRouteable
     {
         public Task OnEnteringAsync(IRouteableArgs args, CancellationToken cancellationToken = default) => throw new InvalidOperationException("the page failed");

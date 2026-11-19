@@ -10,6 +10,7 @@ using Routeables.Blazor;
 using Routeables.Routing;
 using Dispatcher = Microsoft.AspNetCore.Components.Dispatcher;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Razor;
 
 /// <summary>The component of a page that receives a region renders what the router of that region displays, and follows it.</summary>
@@ -23,8 +24,6 @@ public class RouteableRegionTests
 
     private sealed class FirstView : RouteableFor { protected override void OpenComponent(RenderTreeBuilder builder) => builder.OpenComponent<Hello>(0); }
     private sealed class SecondView : RouteableFor { protected override void OpenComponent(RenderTreeBuilder builder) => builder.OpenComponent<Hello>(0); }
-    private sealed class FirstViewModel;
-    private sealed class SecondViewModel;
 
     private sealed class TestRenderer(IServiceProvider provider) : Renderer(provider, NullLoggerFactory.Instance)
     {

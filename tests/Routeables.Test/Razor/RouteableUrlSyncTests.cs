@@ -7,6 +7,7 @@ using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
 using Routeables.Routing;
 using Routeables.Tests.Core;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Razor;
 
@@ -37,10 +38,6 @@ public class RouteableUrlSyncTests
         }
     }
 
-    public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class HomeVm;
-
-    public sealed class CustomerView : IRouteableFor { public object? Context { get; set; } }
     public sealed class CustomerVm(int id) : IRouteable
     {
         public int Id { get; } = id;
@@ -299,9 +296,6 @@ public class RouteableUrlSyncTests
         Assert.Equal("http://localhost/", f.Routing.Uri);
     }
 
-    public sealed class SlugView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class SlugVm(string slug) { public string Slug { get; } = slug; }
-
     [Theory]
     [InlineData("//attacker.example")]
     [InlineData("///attacker.example/x")]
@@ -428,7 +422,6 @@ public class RouteableUrlSyncTests
         Assert.IsType<CustomerVm>(f.Router.CurrentViewModel);
     }
 
-    public sealed class BoomView : IRouteableFor { public object? Context { get; set; } }
     public sealed class BoomVm : IRouteable
     {
         public BoomVm() => throw new InvalidOperationException("cannot be built");

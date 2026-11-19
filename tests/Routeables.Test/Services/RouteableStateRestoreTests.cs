@@ -5,6 +5,7 @@ using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Services;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Services;
 
@@ -13,12 +14,6 @@ public class RouteableStateRestoreTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class HomeVm;
-    public sealed class LoginView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class LoginVm;
-    public sealed class OrdersView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class OrdersVm;
     public sealed class OrderView : IRouteableFor { public object? Context { get; set; } }
     public sealed class OrderVm(int id) { public int Id { get; } = id; }
 

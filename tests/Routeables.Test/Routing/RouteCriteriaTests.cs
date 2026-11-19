@@ -3,6 +3,7 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Services;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Routing;
 
@@ -19,15 +20,11 @@ public class RouteCriteriaTests
         public bool Rush { get; } = rush;
     }
 
-    public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class HomeVm { }
-
     public sealed class ConfirmView : IRouteableModalFor<ConfirmVm, bool>
     {
         public object? Context { get; set; }
         public Task<bool> ShowModalAsync() => Task.FromResult(true);
     }
-    public sealed class ConfirmVm { }
 
     private static Microsoft.Extensions.DependencyInjection.ServiceProvider Build(Action<RouteBuilder> configure)
     {
@@ -190,9 +187,6 @@ public class RouteCriteriaTests
         Assert.Equal("/home", RouteBuilder.DefaultRoute(typeof(HomeVm)));
         Assert.True((await provider.GetRequiredService<IRouter>().GoToAsync("/home", cancellationToken: TestContext.Current.CancellationToken)).Success);
     }
-
-    public sealed class FormView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class FormVm { }
 
     [Fact]
     public async Task The_values_a_page_was_reached_with_come_back_with_the_page()

@@ -5,15 +5,12 @@ using Routeables.Abstraction.Transitions;
 using Routeables.AspNetCore;
 using Routeables.Routing;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Razor;
 
 /// <summary>The transition of a region on a host that sends whole pages: <see cref="RouteableTransitions"/>.</summary>
 public class RouteableTransitionsTests
 {
-    public sealed class FirstView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class FirstVm;
-    public sealed class SecondView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class SecondVm;
 
     private static ServiceProvider Application()
     {

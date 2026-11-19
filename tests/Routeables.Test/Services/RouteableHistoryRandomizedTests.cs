@@ -4,6 +4,7 @@ using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Services;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Services;
 
 /// <summary>
@@ -12,8 +13,6 @@ namespace Routeables.Tests.Services;
 /// </summary>
 public class RouteableHistoryRandomizedTests
 {
-    public sealed class RandomPageView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class RandomPageVm;
 
     private sealed class MemoryStore : IRouteableHistoryStore
     {

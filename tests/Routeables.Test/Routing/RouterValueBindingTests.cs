@@ -3,6 +3,7 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Routing;
 
@@ -11,18 +12,11 @@ public class RouterValueBindingTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    public sealed class OrdersView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class OrdersVm;
-
-    public sealed class ProductView : IRouteableFor { public object? Context { get; set; } }
     public sealed class ProductVm(string category = "all", string id = "")
     {
         public string Category { get; } = category;
         public string Id { get; } = id;
     }
-
-    public sealed class TabView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class TabVm;
 
     private static ServiceProvider Build()
     {

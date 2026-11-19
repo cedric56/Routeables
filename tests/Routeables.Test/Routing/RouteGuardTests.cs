@@ -7,17 +7,12 @@ using Routeables.Routing;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Routing;
 
 /// <summary>A <see cref="IRouteGuard"/> is asked before every route change of a router; it lets it go on, cancels it, or sends the user elsewhere.</summary>
 public class RouteGuardTests
 {
-    public sealed class GuardHomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class GuardHomeVm;
-    public sealed class GuardAdminView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class GuardAdminVm;
-    public sealed class GuardLoginView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class GuardLoginVm;
 
     private sealed class Guard(Func<RouteableRoutingEventArgs, RouteGuardDecision> decide, List<string>? asked = null) : IRouteGuard
     {
@@ -264,7 +259,6 @@ public class RouteGuardTests
     // ---- diagnostics ----
 
     public sealed class MeterHomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class MeterHomeVm;
 
     [Fact]
     public async Task A_route_change_is_reported_as_an_activity_and_a_duration_to_whoever_listens()
@@ -332,9 +326,6 @@ public class RouteGuardTests
         Assert.Null(entry.View);
         Assert.Null(entry.ViewModel);
     }
-
-    public sealed class MeterItemView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class MeterItemVm(int id) { public int Id { get; } = id; }
 
     /// <summary>The telemetry names a route by its template: an address holds identifiers and tokens, and one series per address has no bound.</summary>
     [Fact]

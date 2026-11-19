@@ -5,15 +5,13 @@ using Routeables.Abstraction.Registrations;
 using Routeables.Core;
 using Routeables.Regions;
 using Routeables.Routing;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Core;
 
 /// <summary>An application without a menu: the menu view model the hosts register for <c>UseRouteables()</c>, and the region that starts the routing.</summary>
 public class DefaultRouteableMenuViewModelTests
 {
-    public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class HomeVm;
-    public sealed class DetailView : IRouteableFor { public object? Context { get; set; } }
     public sealed class DetailVm;
 
     private static ServiceProvider Build(string homeRoute = "/")

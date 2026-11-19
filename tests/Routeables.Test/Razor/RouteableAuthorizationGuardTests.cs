@@ -6,13 +6,13 @@ using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
 using Routeables.Routing;
 using System.Security.Claims;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Razor;
 
 /// <summary><c>[Authorize]</c> and <c>[AllowAnonymous]</c> on the view models, asked by <see cref="RouteableAuthorizationGuard"/>.</summary>
 public class RouteableAuthorizationGuardTests
 {
-    public sealed class OpenVm;
 
     [Authorize]
     public sealed class PrivateVm;

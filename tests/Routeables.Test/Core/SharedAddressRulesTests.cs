@@ -6,6 +6,7 @@ using Routeables.Core;
 using Routeables.Routing;
 using Routeables.Services;
 using System.Collections.ObjectModel;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Core;
 
 /// <summary>
@@ -14,8 +15,6 @@ namespace Routeables.Tests.Core;
 /// </summary>
 public class SharedAddressRulesTests
 {
-    public sealed class SaProductView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class SaProductVm;
 
     private sealed class Menu(IRouter router) : RouteableMenuViewModelBase(router, initialize: false)
     {

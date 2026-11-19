@@ -6,15 +6,12 @@ using Routeables.Abstraction.Routing;
 using Routeables.Core;
 using Routeables.Routing;
 using System.Collections.ObjectModel;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Core;
 
 /// <summary>Several entries of a menu can show the same view model type with other routes: the menu follows the route, not the type.</summary>
 public class MenuSameTypeEntriesTests
 {
-    public sealed class MsProductView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class MsProductVm;
-    public sealed class MsOtherView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class MsOtherVm;
 
     private sealed class Menu(IRouter router) : RouteableMenuViewModelBase(router, initialize: false)
     {
@@ -99,11 +96,6 @@ public class MenuSameTypeEntriesTests
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => router.MoveBackAsync(0, ct));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => router.MoveBackAsync(-1, ct));
     }
-
-    public sealed class MsSecretView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class MsSecretVm;
-    public sealed class MsLoginView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class MsLoginVm;
 
     private sealed class SecretGuard : IRouteGuard
     {

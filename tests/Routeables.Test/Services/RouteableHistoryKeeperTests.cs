@@ -4,14 +4,11 @@ using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Services;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Services;
 
 public class RouteableHistoryKeeperTests
 {
-    public sealed class KeptFirstView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class KeptFirstVm;
-    public sealed class KeptSecondView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class KeptSecondVm;
 
     private sealed class MemoryStore(string? kept = null) : IRouteableHistoryStore
     {

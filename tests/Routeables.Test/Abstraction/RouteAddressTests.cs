@@ -5,6 +5,7 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Abstraction;
 
@@ -83,9 +84,6 @@ public class RouteAddressTests
     [InlineData("/\r\n\\host")]
     public void A_tab_or_a_line_break_does_not_hide_the_second_slash_from_the_browser_that_drops_them(string route)
         => Assert.Equal("/host", RouteAddress.Rooted(route));
-
-    public sealed class RaItemView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class RaItemVm;
 
     [Fact]
     public void The_router_tells_the_words_of_a_path_from_its_values_and_a_router_that_does_not_know_its_templates_cannot()

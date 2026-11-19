@@ -8,6 +8,7 @@ using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
 using Routeables.Routing;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Razor;
 
 /// <summary>A Back or a Forward the router makes itself (<c>GoBackAsync</c> from a view model) is the same move in the history of the browser.</summary>
@@ -109,20 +110,7 @@ public class RouteableUrlSyncHistoryTests
         public FakeNavigation Browser { get; } = browser;
     }
 
-    public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class HomeVm;
-    public sealed class DetailView : IRouteableFor { public object? Context { get; set; } }
     public sealed class DetailVm(int id) { public int Id { get; } = id; }
-
-    public sealed class NotFoundView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class NotFoundVm;
-    public sealed class RootView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class RootVm;
-    public sealed class OrphanView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class OrphanVm;
-
-    public sealed class NamedView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class NamedVm(string name) { public string Name { get; } = name; }
 
     // A page that waits for ever to be entered, until its route change is cancelled.
     public sealed class SlowView : IRouteableFor { public object? Context { get; set; } }

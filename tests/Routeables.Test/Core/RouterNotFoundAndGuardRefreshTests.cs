@@ -7,6 +7,7 @@ using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Abstraction.Lifecycle;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Core;
 
@@ -14,13 +15,6 @@ namespace Routeables.Tests.Core;
 public class RouterNotFoundAndGuardRefreshTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
-
-    public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class HomeVm;
-    public sealed class MissingView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class MissingVm;
-    public sealed class LoginView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class LoginVm;
 
     private sealed class Session : INotifyPropertyChanged
     {

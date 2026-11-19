@@ -7,6 +7,7 @@ using Routeables.Routing;
 using Routeables.Segments;
 using RouteableArgument = Routeables.Abstraction.Routing.RouteableArgument;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Routing;
 
 /// <summary>Segment routing: parsing of <see cref="RouteCoordination"/> and its dispatch to routers by <see cref="IRouteCoordinator"/>.</summary>
@@ -14,11 +15,6 @@ public class RouteCoordinatorTests
 {
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class ParamAttribute : Attribute;
-
-    public sealed class OrdersView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class DetailView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class SideView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class OrphanView : IRouteableFor { public object? Context { get; set; } }
 
     public sealed class OrdersVm
     {
@@ -28,7 +24,6 @@ public class RouteCoordinatorTests
 
     public sealed class DetailVm { [Param] public string? Id { get; set; } }
     public sealed class SideVm { [Param] public string? Topic { get; set; } }
-    public sealed class OrphanVm;
 
     private static ServiceProvider Build(Action<IServiceCollection>? configure = null)
     {

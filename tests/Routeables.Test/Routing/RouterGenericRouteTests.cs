@@ -4,12 +4,12 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Routing;
 
 /// <summary>Routing by route template through a real <see cref="Router"/> and real route registrations.</summary>
 public class RouterGenericRouteTests
 {
-    public sealed class DetailView : IRouteableFor { public object? Context { get; set; } }
 
     public sealed class DetailVm(int id, string title = "none")
     {
@@ -18,8 +18,6 @@ public class RouterGenericRouteTests
     }
 
     public sealed record Animal(string Name);
-
-    public sealed class ProbeView : IRouteableFor { public object? Context { get; set; } }
 
     private static IRouter Build(Action<IServiceCollection> configure)
     {
@@ -76,8 +74,6 @@ public class RouterGenericRouteTests
         Assert.True(result.Success);
         Assert.Equal(7, Assert.IsType<DetailVm>(router.CurrentViewModel).Id);
     }
-
-    public sealed class MenuVm;
 
     [Fact]
     public async Task GoToRouteAsync_goes_to_a_route_by_its_name_with_the_view_model_given()
@@ -161,10 +157,6 @@ public class RouterGenericRouteTests
         Assert.True(found.Success);
         Assert.Equal(9, Assert.IsType<DetailVm>(router.CurrentViewModel).Id);
     }
-
-    public sealed class SoloView : IRouteableFor { public object? Context { get; set; } }
-
-    public sealed class LostVm;
 
     /// <summary>A view declared without a view model is shown with an empty object as its context (a Razor component has no view model).</summary>
     [Fact]

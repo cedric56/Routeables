@@ -10,6 +10,7 @@ using Routeables.Blazor;
 using Routeables.Routing;
 using Routeables.Segments;
 using Routeables.Services;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Core;
 
@@ -18,18 +19,8 @@ public class ReviewFixesTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class HomeVm;
-    public sealed class OtherView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class OtherVm;
-    public sealed class BlockedView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class BlockedVm;
     // The pages a coordination goes to are found by their view model (a segment), not by an address.
     public sealed class SegView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class SegVm;
-    public sealed class SegBlockedView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class SegBlockedVm;
-    public sealed class DirtyView : IRouteableFor { public object? Context { get; set; } }
     public sealed class DirtyVm : IRouteable
     {
         public static bool Dirty;

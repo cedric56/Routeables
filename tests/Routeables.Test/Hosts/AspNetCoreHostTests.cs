@@ -4,12 +4,12 @@ using Routeables.Abstraction.Routing;
 using Routeables.AspNetCore;
 using Routeables.Services;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Hosts;
 
 /// <summary>What the ASP.NET Core host does with a page address that a Razor view cannot take itself.</summary>
 public class AspNetCoreHostTests
 {
-    public sealed class ThingView : IRouteableFor { public object? Context { get; set; } }
 
     /// <summary>The view model of a detail whose value comes by attribute (<c>{thing::}</c>), as <c>PandaDetailViewModel</c> of the samples.</summary>
     public sealed class ThingViewModel

@@ -9,6 +9,7 @@ using Routeables.Blazor;
 using Routeables.Routing;
 using Dispatcher = Microsoft.AspNetCore.Components.Dispatcher;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Razor;
 
 /// <summary>The history handed from a prerendered page (or a paused circuit) to the one that takes over: <see cref="RouteableHistoryPersistence"/>.</summary>
@@ -38,9 +39,6 @@ public class RouteableHistoryPersistenceTests
         protected override Task UpdateDisplayAsync(in RenderBatch renderBatch) => Task.CompletedTask;
     }
 #pragma warning restore BL0006 // Do not use RenderTree types
-
-    public sealed class PageView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class PageVm(int id) { public int Id { get; } = id; }
 
     private static ServiceProvider Application()
     {

@@ -4,14 +4,13 @@ using Routeables.Abstraction.Errors;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Services;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Routing;
 
 /// <summary>What every host's RouteableLink does when its button is clicked.</summary>
 public class RouteableLinkActionTests
 {
-    public sealed class HelloView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class HelloVm { }
 
     private sealed class Sink : IRouteableErrorSink
     {

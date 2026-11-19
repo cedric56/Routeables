@@ -4,13 +4,13 @@ using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Tests.Core;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Routing;
 
 /// <summary>A page that only the menu knows (no route registered, so no template to read an address with) still gets what the caller gave.</summary>
 public class MenuOnlyRouteArgsTests
 {
-    public sealed class SettingsView : IRouteableFor { public object? Context { get; set; } }
 
     private static ServiceProvider Build()
     {

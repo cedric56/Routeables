@@ -4,17 +4,12 @@ using Routeables.Abstraction.Guards;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Routing;
 
 /// <summary>Going back several pages, or to a page, is worked out once the route change may start, not when it is asked.</summary>
 public class MoveBackGateTests
 {
-    public sealed class MbAView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class MbAVm;
-    public sealed class MbBView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class MbBVm;
-    public sealed class MbCView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class MbCVm;
 
     private sealed class SlowGuard : IRouteGuard
     {

@@ -3,15 +3,12 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Routing;
 
 /// <summary>"/search" and "/search?mode=grid" are two routes: registering both keeps both, whatever the order, and each address shows its own page.</summary>
 public class QueryOnlyRoutesTests
 {
-    public sealed class QoListView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class QoListVm;
-    public sealed class QoGridView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class QoGridVm;
 
     private static ServiceProvider Build(bool queryFirst)
     {

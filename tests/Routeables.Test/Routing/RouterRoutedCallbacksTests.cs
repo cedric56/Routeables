@@ -4,6 +4,7 @@ using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Routing;
 
 /// <summary><see cref="IRouteable.OnLeftAsync"/> / <see cref="IRouteable.OnEnteredAsync"/> through a real <see cref="Router"/>.</summary>
@@ -45,7 +46,6 @@ public class RouterRoutedCallbacksTests
         public void Dispose() => Disposed = true;
     }
 
-    public sealed class OtherView : IRouteableFor { public object? Context { get; set; } }
     public sealed class OtherVm : IRouteable
     {
         public Task OnEnteredAsync(IRouteableArgs context, CancellationToken ct = default) { Log.Add("OtherVm:routedTo"); return Task.CompletedTask; }

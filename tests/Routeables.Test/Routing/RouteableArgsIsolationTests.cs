@@ -3,13 +3,12 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Routing;
 
 /// <summary>An arguments object given to the router is a model: the router never writes its state on the caller's instance.</summary>
 public class RouteableArgsIsolationTests
 {
-    public sealed class IsoView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class IsoVm;
 
     [Fact]
     public async Task The_same_arguments_used_for_two_route_changes_keep_no_state_of_the_first()

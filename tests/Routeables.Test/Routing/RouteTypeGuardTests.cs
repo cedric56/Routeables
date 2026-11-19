@@ -4,14 +4,12 @@ using Routeables.Abstraction.Guards;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Routing;
 
 /// <summary>An <see cref="IRouteTypeGuard"/> is asked from the view model type, before the page is built.</summary>
 public class RouteTypeGuardTests
 {
-    public sealed class TgHomeView : IRouteableFor { public object? Context { get; set; } }
-    public sealed class TgHomeVm;
-    public sealed class TgSecretView : IRouteableFor { public object? Context { get; set; } }
     public sealed class TgSecretVm { public TgSecretVm() => Built++; public static int Built; }
 
     private sealed class TypeGuard(Func<Type, RouteGuardDecision> decide, List<string> asked) : IRouteTypeGuard
