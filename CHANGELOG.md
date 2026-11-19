@@ -7,7 +7,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 ### Changed
 
 - **The tests are sorted by what they test**: the 25 tests of three classes named after audits (`RouterAuditFixesTests`, `ExternalAuditTests`, `AuditFollowUpTests`) now sit with the tests of their feature (route parser, route address, constructor arguments, modules, form lock, view cache, `RouteableReturn`, Blazor address comparison, router failures and guard refresh), or in new classes: `RouterValueBindingTests`, `RouterTypedMenuEntryTests`, `RouteableStateRestoreTests`.
-- **The README is a page**: what the library is, one install, one first page on Avalonia, and links. The table of areas moved to [What Routeables offers](docs/features.md), and the hosts, the families of UI, the demos and the packages to [Hosts and packages](docs/packages.md).
+- **The README is shorter**: what the library is, one install, one first page on Avalonia, the demos, the packages and links. The table of areas moved to [What Routeables offers](docs/features.md), and the table of hosts and the families of UI to [Hosts and packages](docs/packages.md).
 - **New in the docs**: [recipes](docs/guides/recipes.md) for five tasks (a sign-in guard, master and detail with a region, passing an object, asking before leaving, tabs with their own history) and a [glossary](docs/guides/glossary.md) of the words of the project.
 - **Each diagnostic of the generators and analyzers links to its line** of the diagnostics page (`helpLinkUri`, an anchor for each `ROUT...`).
 - **The README of the templates and the page of the hosts said the templates cover Avalonia and Blazor only**; there are five (`routeables-maui`, `-uno` and `-winui3` too).
