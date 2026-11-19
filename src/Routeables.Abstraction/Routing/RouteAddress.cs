@@ -29,16 +29,29 @@ internal static class RouteAddress
 
     /// <summary>The path of a route: without its query and without the slashes around it. Blank for none.</summary>
     /// <param name="route">The route, the template or the address.</param>
-    internal static string PathOf(string? route) => WithoutFragment(route ?? string.Empty).Split('?')[0].Trim('/');
+    internal static string PathOf(string? route)
+    {
+        var text = WithoutFragment(route ?? string.Empty);
+        // The query starts at the first question mark that is not the one of an optional parameter ("products/{tab?}").
+        var depth = 0;
+        for (var i = 0; i < text.Length; i++)
+        {
+            if (text[i] == '{') depth++;
+            else if (text[i] == '}' && depth > 0) depth--;
+            else if (text[i] == '?' && depth == 0) { text = text[..i]; break; }
+        }
+        return text.Trim('/');
+    }
 
     // The fragment is for the browser, never for the route: "/about#top" is "/about", as the parser reads it.
     private static string WithoutFragment(string address) => address.IndexOf('#') is var hash and >= 0 ? address[..hash] : address;
 
-    /// <summary>Whether two routes or templates have the same path, whatever their queries (the case and the slashes around the path do not count).</summary>
+    /// <summary>Whether two routes or templates have the same path, whatever their queries (the case, the slashes around the path and its empty segments do not count, and an escaped path is the one written plainly).</summary>
     /// <param name="a">The first route.</param>
     /// <param name="b">The second route.</param>
     internal static bool SamePath(string? a, string? b)
-        => a is not null && b is not null && string.Equals(PathOf(a), PathOf(b), StringComparison.OrdinalIgnoreCase);
+        => a is not null && b is not null
+           && string.Equals(Unescape(Collapsed("/" + PathOf(a))), Unescape(Collapsed("/" + PathOf(b))), StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Whether two addresses are the same page: the same path and the same query (see the rules of the type).

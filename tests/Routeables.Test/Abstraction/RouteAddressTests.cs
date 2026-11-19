@@ -173,4 +173,20 @@ public class RouteAddressTests
         Assert.True(RouteAddress.Same("/s?dir=a%2fb", "/s?dir=a/b"));
         Assert.False(RouteAddress.Same("/files/a/b", "/files/a%2Fb"));
     }
+
+    [Fact]
+    public void An_escaped_path_and_a_path_with_empty_segments_have_the_same_path()
+    {
+        Assert.True(RouteAddress.SamePath("/%C3%A0-propos", "/à-propos"));
+        Assert.True(RouteAddress.SamePath("/a//b", "/a/b/"));
+        Assert.False(RouteAddress.SamePath("/files/a%2Fb", "/files/a/b"));
+    }
+
+    [Fact]
+    public void The_question_mark_of_an_optional_parameter_does_not_start_the_query()
+    {
+        Assert.Equal("products/{tab?}", RouteAddress.PathOf("products/{tab?}"));
+        Assert.Equal("products/{tab?}", RouteAddress.PathOf("/products/{tab?}?x=1"));
+        Assert.True(RouteAddress.SamePath("products/{tab?}", "/Products/{tab?}/"));
+    }
 }

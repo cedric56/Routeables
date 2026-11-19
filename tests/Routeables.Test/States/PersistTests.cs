@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
@@ -265,5 +265,27 @@ public class PersistTests
 
         var odd = new PersistBag((IReadOnlyDictionary<string, string>)new Dictionary<string, string> { ["persist:A"] = "v8" });
         Assert.False(odd.TryGet<Access>("A", out _));
+    }
+
+    [Fact]
+    public void The_wide_and_native_integers_that_are_written_are_read_back()
+    {
+        Assert.True(PersistBag.TryWrite(Int128.MinValue, null, out var a));
+        Assert.True(PersistBag.TryRead<Int128>(a, null, out var wideSigned));
+        Assert.Equal(Int128.MinValue, wideSigned);
+
+        Assert.True(PersistBag.TryWrite(UInt128.MaxValue, null, out var b));
+        Assert.True(PersistBag.TryRead<UInt128>(b, null, out var wideUnsigned));
+        Assert.Equal(UInt128.MaxValue, wideUnsigned);
+
+        Assert.True(PersistBag.TryWrite((nint)(-42), null, out var c));
+        Assert.True(PersistBag.TryRead<nint>(c, null, out var native));
+        Assert.Equal((nint)(-42), native);
+
+        Assert.True(PersistBag.TryWrite((nuint)42, null, out var d));
+        Assert.True(PersistBag.TryRead<nuint>(d, null, out var nativeUnsigned));
+        Assert.Equal((nuint)42, nativeUnsigned);
+        Assert.True(PersistBag.TryRead<Int128?>(a, null, out var maybe));
+        Assert.Equal(Int128.MinValue, maybe);
     }
 }

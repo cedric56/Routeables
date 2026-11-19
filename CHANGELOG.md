@@ -6,6 +6,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **`[Persist]` reads back what it writes for `Int128`, `UInt128`, `nint` and `nuint`**: the codec wrote them and the read side did not know them, so the value was lost at the restore without a word.
+- **`RouteAddress.SamePath` follows the rules of its class**: an escaped path (`/%C3%A0-propos`) is the one written plainly and an empty segment does not count, so a menu page is found by a deep link written either way; and `PathOf` no longer ends a template at the question mark of an optional parameter (`products/{tab?}`).
 - **The case of a value that holds an escaped `?` or `#` counts**: `RouteAddress.Same` looked the template up with the unescaped path, which the parser cut at the question mark, so `/x/q%3F/B` and `/x/q%3F/b` were taken for one page. The two characters are escaped again for the lookup.
 - **In a query, `/` and `%2F` are the same**: `?dir=a/b` and `?dir=a%2Fb` (what `RouteParser.Build` writes) are one address, as the parser reads them; in a path an escaped slash stays a character.
 - **A history keeper disposed before its restore starts no longer holds the deep links**: `EndRestore` is called on that path too, so `RouteableLinkInbox` does not wait for ever.

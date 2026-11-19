@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace Routeables.Abstraction.States;
 
@@ -175,6 +175,10 @@ internal static class PersistCodec
         else if (type == typeof(uint)) read = uint.TryParse(text, NumberStyles.Integer, inv, out var ui) ? ui : null;
         else if (type == typeof(ulong)) read = ulong.TryParse(text, NumberStyles.Integer, inv, out var ul) ? ul : null;
         else if (type == typeof(ushort)) read = ushort.TryParse(text, NumberStyles.Integer, inv, out var us) ? us : null;
+        else if (type == typeof(Int128)) read = Int128.TryParse(text, NumberStyles.Integer, inv, out var i128) ? i128 : null;
+        else if (type == typeof(UInt128)) read = UInt128.TryParse(text, NumberStyles.Integer, inv, out var u128) ? u128 : null;
+        else if (type == typeof(nint)) read = nint.TryParse(text, NumberStyles.Integer, inv, out var ni) ? ni : null;
+        else if (type == typeof(nuint)) read = nuint.TryParse(text, NumberStyles.Integer, inv, out var nu) ? nu : null;
         else if (type == typeof(double)) read = double.TryParse(text, NumberStyles.Float, inv, out var d) ? d : null;
         else if (type == typeof(float)) read = float.TryParse(text, NumberStyles.Float, inv, out var f) ? f : null;
         else if (type == typeof(decimal)) read = decimal.TryParse(text, NumberStyles.Number, inv, out var m) ? m : null;
