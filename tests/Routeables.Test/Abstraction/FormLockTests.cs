@@ -60,4 +60,20 @@ public class FormLockTests
         Assert.False(formLock.IsLocked);
         Assert.False(menu.Entries[0].IsLock);
     }
+
+    [Fact]
+    public void A_subscriber_that_throws_on_lock_does_not_leave_the_form_locked_for_ever()
+    {
+        var broker = new RouteableLockBroker();
+        var formLock = new RouteableFormLock(broker);
+        var fail = true;
+        broker.Subscribe("LockChanged", _ => { if (fail) throw new InvalidOperationException("subscriber"); });
+
+        Assert.ThrowsAny<Exception>(() => formLock.Lock());
+        Assert.False(formLock.IsLocked);
+
+        fail = false;
+        using var token = formLock.Lock();
+        Assert.True(formLock.IsLocked);
+    }
 }

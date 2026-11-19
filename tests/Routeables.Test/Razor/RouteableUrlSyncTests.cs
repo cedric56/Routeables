@@ -506,4 +506,14 @@ public class RouteableUrlSyncTests
         Assert.False(await f.Sync.PrerenderAsync());
         Assert.Null(f.Router.CurrentViewModel);
     }
+
+    [Fact]
+    public void The_values_of_the_query_are_data_and_the_path_is_not()
+    {
+        Assert.False(RouteableUrlSync.Same("/search?q=ABC", "/search?q=abc"));
+        Assert.False(RouteableUrlSync.Same("/search?path=folder/", "/search?path=folder"));
+        Assert.True(RouteableUrlSync.Same("/Search?Q=abc", "/search?q=abc"));
+        Assert.True(RouteableUrlSync.Same("/orders/", "/orders"));
+        Assert.True(RouteableUrlSync.Same("/dogs/Afghan%20Hound", "/dogs/Afghan Hound"));
+    }
 }

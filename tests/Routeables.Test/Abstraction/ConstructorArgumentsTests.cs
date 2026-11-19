@@ -1,6 +1,7 @@
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Routeables.Tests.Abstraction;
 
@@ -119,5 +120,16 @@ public class ConstructorArgumentsTests
         Assert.Equal("A", arguments.Next<string>("a"));
         Assert.Equal(1, arguments.Next<int>("n"));
         Assert.Equal("none", arguments.Next("hidden", "none"));
+    }
+
+    [Fact]
+    public void A_value_named_for_a_later_parameter_does_not_go_to_an_earlier_one_of_the_same_type_by_the_generated_code()
+    {
+        var args = RouteableArgs.Create().WithViewModel("id", "42");
+        var arguments = ConstructorArguments.ForViewModel(new ServiceCollection().BuildServiceProvider(), args, "ProductVm", ["category", "id"], takesRouter: false);
+
+        // What the generated constructor call asks for, in the order of the parameters.
+        Assert.Equal("all", arguments.Next("category", "all"));
+        Assert.Equal("42", arguments.Next("id", ""));
     }
 }

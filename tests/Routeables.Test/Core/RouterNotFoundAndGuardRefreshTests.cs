@@ -6,6 +6,7 @@ using Routeables.Abstraction.Guards;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
+using Routeables.Abstraction.Lifecycle;
 
 namespace Routeables.Tests.Core;
 
@@ -183,5 +184,57 @@ public class RouterNotFoundAndGuardRefreshTests
     {
         await using var provider = Build(notFound: false, new Session());
         Assert.True((await provider.GetRequiredService<IRouter>().RefreshGuardsAsync(Ct)).Success);
+    }
+
+    // ---- RefreshGuardsAsync and the token of the caller
+
+    /// <summary>The sign-in page: its arrival lasts until the token it is given is cancelled.</summary>
+    public sealed class SlowLoginVm : IRouteable
+    {
+        public static TaskCompletionSource Arriving { get; set; } = new();
+
+        public async Task OnEnteringAsync(IRouteableArgs context, CancellationToken ct = default)
+        {
+            Arriving.TrySetResult();
+            await Task.Delay(Timeout.Infinite, ct);
+        }
+    }
+
+    private sealed class RedirectsHomeToLogin : IRouteGuard
+    {
+        public bool Active { get; set; }
+
+        public Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
+            => Task.FromResult(Active && change.To.ViewModel is HomeVm ? RouteGuardDecision.Redirect("/login") : RouteGuardDecision.Allow);
+    }
+
+    [Fact]
+    public async Task The_redirection_of_RefreshGuardsAsync_stops_when_the_caller_cancels()
+    {
+        await StopsWhenTheCallerCancelsAsync(RouterConcurrency.Queue);
+        await StopsWhenTheCallerCancelsAsync(RouterConcurrency.CancelCurrent);
+    }
+
+    private static async Task StopsWhenTheCallerCancelsAsync(RouterConcurrency concurrency)
+    {
+        SlowLoginVm.Arriving = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var guard = new RedirectsHomeToLogin();
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.SetConcurrency(concurrency);
+        services.RegisterRoute<HomeView, HomeVm>(route: "/home");
+        services.RegisterRoute<LoginView, SlowLoginVm>(route: "/login");
+        services.AddSingleton<IRouteGuard>(guard);
+        await using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct).WaitAsync(TimeSpan.FromSeconds(5), Ct);
+        guard.Active = true;
+
+        using var source = CancellationTokenSource.CreateLinkedTokenSource(Ct);
+        var refresh = router.RefreshGuardsAsync(source.Token);
+        await SlowLoginVm.Arriving.Task.WaitAsync(TimeSpan.FromSeconds(5), Ct);
+        source.Cancel();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => refresh.WaitAsync(TimeSpan.FromSeconds(5), Ct));
     }
 }

@@ -329,4 +329,60 @@ public class RouteableModulesTests
 
         Assert.Equal("module", ((Tag)provider.GetService(typeof(Tag))!).Name);
     }
+
+    // ---- the provider a module service asks for, and the disposal of a module that fails
+
+    public sealed class Wanted;
+    public sealed class AsksForProvider(IServiceProvider provider) { public IServiceProvider Provider { get; } = provider; }
+    public sealed class Tracked(List<string> log, string name, bool fails = false) : IDisposable
+    {
+        public void Dispose() { log.Add(name); if (fails) throw new InvalidOperationException(name); }
+    }
+
+    private static ServiceProvider MenuApplication()
+    {
+        var services = new ServiceCollection();
+        services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Singleton);
+        return services.BuildServiceProvider();
+    }
+
+    [Fact]
+    public void A_service_of_a_module_that_asks_for_the_provider_gets_the_one_of_the_module()
+    {
+        using var provider = MenuApplication();
+        provider.GetRequiredService<IRouteableModules>().Load("M", services =>
+        {
+            services.AddSingleton<Wanted>();
+            services.AddSingleton<AsksForProvider>();
+            services.RegisterRoute("/asks", (sp, _) => sp.GetRequiredService<AsksForProvider>());
+        });
+
+        var asks = (AsksForProvider)provider.GetViewModel("/asks", new RouteableArgs())!;
+
+        Assert.NotNull(asks.Provider.GetService<Wanted>());       // a service only the module registered
+    }
+
+    [Fact]
+    public void A_module_service_that_fails_to_dispose_does_not_keep_the_others_alive()
+    {
+        var log = new List<string>();
+        var provider = MenuApplication();
+        provider.GetRequiredService<IRouteableModules>().Load("N", services =>
+        {
+            services.AddSingleton(_ => new Tracked(log, "second", fails: true));
+            services.RegisterRoute("/u", (sp, _) => sp.GetRequiredService<Tracked>());
+        });
+        provider.GetRequiredService<IRouteableModules>().Load("M", services =>
+        {
+            services.AddSingleton(_ => new Tracked(log, "first"));
+            services.RegisterRoute("/t", (sp, _) => sp.GetRequiredService<Tracked>());
+        });
+        _ = provider.GetViewModel("/t", new RouteableArgs());
+        _ = provider.GetViewModel("/u", new RouteableArgs());
+
+        Assert.ThrowsAny<Exception>(() => provider.Dispose());
+
+        Assert.Contains("first", log);        // the module that comes after the one that failed was still disposed
+        Assert.Contains("second", log);
+    }
 }

@@ -627,4 +627,36 @@ public class RouteParserTests
         Assert.Throws<ArgumentException>(() => RouteParser.Build("/files/{**path}/edit", new Dictionary<string, object?> { ["path"] = "a/b" }));
         Assert.Equal("/files/a/b", RouteParser.Build("/files/{**path}", new Dictionary<string, object?> { ["path"] = "a/b" }));
     }
+
+    // ---- Build: a rest after an optional, and the constraint of a catch-all
+
+    [Fact]
+    public void A_rest_after_a_left_out_optional_is_refused_like_any_later_value()
+    {
+        foreach (var template in new[] { "/cat/{age:int?}/{**rest}", "/cat/{nick?}/{**rest}" })
+        {
+            var values = new Dictionary<string, object?> { ["rest"] = "a/b" };
+
+            var error = Assert.Throws<ArgumentException>(() => RouteParser.Build(template, values));
+
+            Assert.Contains("cannot leave out", error.Message);
+        }
+    }
+
+    [Fact]
+    public void A_rest_after_a_given_optional_and_a_rest_alone_are_built()
+    {
+        Assert.Equal("/cat/3/a/b", RouteParser.Build("/cat/{age:int?}/{**rest}", new Dictionary<string, object?> { ["age"] = 3, ["rest"] = "a/b" }));
+        Assert.Equal("/cat/3", RouteParser.Build("/cat/{age:int?}/{**rest}", new Dictionary<string, object?> { ["age"] = 3 }));
+        Assert.Equal("/files/a/b", RouteParser.Build("/files/{**rest}", new Dictionary<string, object?> { ["rest"] = "a/b" }));
+    }
+
+    [Fact]
+    public void A_catch_all_value_must_satisfy_its_constraint_as_the_other_placeholders_do()
+    {
+        Assert.Equal("/files/12", "/" + RouteParser.Build("files/{**path:int}", new Dictionary<string, object?> { ["path"] = "12" }).TrimStart('/'));
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("files/{**path:int}", new Dictionary<string, object?> { ["path"] = "not-an-int" }));
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("files/{**path:nonsense}", new Dictionary<string, object?> { ["path"] = "a/b" }));
+        Assert.Equal("files/a/b", RouteParser.Build("files/{**path}", new Dictionary<string, object?> { ["path"] = "a/b" }).TrimStart('/'));
+    }
 }

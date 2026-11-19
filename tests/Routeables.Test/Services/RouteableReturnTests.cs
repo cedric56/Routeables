@@ -1,9 +1,11 @@
 using NSubstitute;
 using Routeables.Abstraction;
 using Routeables.Abstraction.History;
+using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Services;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Routeables.Tests.Services;
 
@@ -165,4 +167,22 @@ public class RouteableReturnTests
     [Fact]
     public void AddRouteableReturn_refuses_no_services()
         => Assert.Throws<ArgumentNullException>(() => RouteableReturnExtensions.AddRouteableReturn(null!));
+
+    [Fact]
+    public void RouteableReturn_follows_the_lifetime_of_the_host_so_each_visitor_has_its_own()
+    {
+        var scoped = new ServiceCollection();
+        scoped.TryAddSingleton(new RouteableHostLifetime(ServiceLifetime.Scoped));
+        scoped.AddRouteableReturn();
+        using var visitors = scoped.BuildServiceProvider(validateScopes: true);
+        using var a = visitors.CreateScope();
+        using var b = visitors.CreateScope();
+        Assert.NotSame(a.ServiceProvider.GetRequiredService<RouteableReturn>(), b.ServiceProvider.GetRequiredService<RouteableReturn>());
+        Assert.Same(a.ServiceProvider.GetRequiredService<RouteableReturn>(), a.ServiceProvider.GetRequiredService<RouteableReturn>());
+
+        var single = new ServiceCollection();
+        single.AddRouteableReturn();
+        using var application = single.BuildServiceProvider();
+        Assert.Same(application.GetRequiredService<RouteableReturn>(), application.GetRequiredService<RouteableReturn>());
+    }
 }

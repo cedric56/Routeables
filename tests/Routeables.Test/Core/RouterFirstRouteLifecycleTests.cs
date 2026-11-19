@@ -8,9 +8,8 @@ namespace Routeables.Tests.Core;
 /// <summary>
 /// Guards first-routing lifecycle order.
 ///
-/// BUG (docs/AUDIT.md #1): when history is empty, Router.GoTo runs TransitionAsync with a
-/// synthetic previous equal to the target, so OnLeaving fires before OnEntering.
-/// Desired: first routing only calls OnEntering.
+/// When the history is empty, the first route change has no page to leave: it calls OnEntering only, never OnLeaving
+/// (it once ran the transition with a synthetic previous page equal to the target, so OnLeaving fired before OnEntering).
 /// </summary>
 public class RouterFirstRoutingLifecycleTests
 {

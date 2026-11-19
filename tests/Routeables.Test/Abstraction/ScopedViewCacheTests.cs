@@ -167,4 +167,23 @@ public class ScopedViewCacheTests
         // Nothing was kept: the key can be built afterwards.
         Assert.NotNull(cache.GetOrCreate("k", () => new object()));
     }
+
+    private sealed class LoggedItem(List<string> log, string name, bool fails = false) : IDisposable
+    {
+        public void Dispose() { log.Add(name); if (fails) throw new InvalidOperationException(name); }
+    }
+
+    [Fact]
+    public void A_view_that_fails_to_dispose_does_not_keep_the_others_of_the_cache_alive()
+    {
+        var log = new List<string>();
+        var cache = new ScopedViewCache();
+        cache.GetOrCreate("a", () => new LoggedItem(log, "a"));
+        cache.GetOrCreate("b", () => new LoggedItem(log, "b", fails: true));
+        cache.GetOrCreate("c", () => new LoggedItem(log, "c"));
+
+        Assert.ThrowsAny<Exception>(() => cache.Dispose());
+
+        Assert.Equal(3, log.Count);
+    }
 }
