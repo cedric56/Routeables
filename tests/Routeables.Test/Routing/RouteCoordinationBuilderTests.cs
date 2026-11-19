@@ -48,6 +48,7 @@ public class RouteCoordinationBuilderTests
     public void The_records_refuse_what_the_builder_refuses()
     {
         Assert.Throws<ArgumentException>(() => new RouteSegment("..", null, RouteSegmentKind.Push));
+        Assert.Throws<ArgumentException>(() => new RouteSegment(".", null, RouteSegmentKind.Push));
         Assert.Throws<ArgumentException>(() => new RouteCoordination([]));
         Assert.Equal("..", new RouteSegment("..", null, RouteSegmentKind.Back).Name);   // the way back is a segment of its own
     }

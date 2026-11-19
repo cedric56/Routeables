@@ -41,8 +41,8 @@ public sealed record RouteSegment(
     public const string BackName = "..";
 
     /// <inheritdoc cref="RouteSegment"/>
-    /// <exception cref="ArgumentException">A segment that pushes a view is named <c>..</c>: written in an address it is read as the way back.</exception>
-    public string Name { get; init; } = Kind == RouteSegmentKind.Push && Name == BackName
-        ? throw new ArgumentException("A segment that pushes a view cannot be named \"..\": in an address it is the way back.", nameof(Name))
+    /// <exception cref="ArgumentException">A segment that pushes a view is named <c>..</c> or <c>.</c>: the builder and the parser refuse these names, and written in an address <c>..</c> is read as the way back.</exception>
+    public string Name { get; init; } = Kind == RouteSegmentKind.Push && Name is BackName or "."
+        ? throw new ArgumentException("A segment that pushes a view cannot be named \"..\" or \".\": in an address it is the way back, not a page.", nameof(Name))
         : Name;
 }

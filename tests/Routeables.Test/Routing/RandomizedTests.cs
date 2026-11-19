@@ -227,7 +227,7 @@ public class RandomizedCoordinationTests
                 if (r.Next(5) == 0) { segs.Add(new RouteSegment("..", r.Next(2) == 0 ? null : R(r), RouteSegmentKind.Back)); continue; }
                 var ps = new List<KeyValuePair<string, object?>>();
                 for (var k = 0; k < r.Next(0, 3); k++) ps.Add(new(R(r), r.Next(4) == 0 ? null : R(r)));
-                var nm = R(r); if (nm == "..") nm = "x"; segs.Add(new RouteSegment(nm, r.Next(2) == 0 ? null : R(r), RouteSegmentKind.Push, ps));
+                var nm = R(r); if (nm is ".." or ".") nm = "x"; segs.Add(new RouteSegment(nm, r.Next(2) == 0 ? null : R(r), RouteSegmentKind.Push, ps));
             }
             var c = new RouteCoordination(segs, r.Next(2) == 0);
             var text = c.ToString();
