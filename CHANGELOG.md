@@ -6,6 +6,11 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A menu whose `GetEntries()` reads a field of the derived class says why it failed**: `GetEntries()` runs while the base class is constructed, so a field or a constructor parameter is still null; the `NullReferenceException` is now an `InvalidOperationException` that names the cause and the way out (`initialize: false`). The guide and the remarks of the class say it too.
+- **The generated `GoToXxxAsync` write a number with one text**: `GoToProductAsync(router, 19.90m)` wrote `19.90`, which the parser refuses since a number has one text (the call failed with "not a valid decimal"); a `decimal` is now written without its trailing zeros and a `double` `-0.0` as `0`, as `RouteParser.Build` does.
+- **An escaped literal is found in a table of eight routes or more**: the index by first segment held the raw text of the template (`my%20page`) while the address is looked up unescaped.
+- **A fixed query entry written escaped in a template is read back** (`/x?mode=a+b`): the address is decoded (a plus is a space) but the template text was compared raw.
+- **`RouteAddress.Same`: `/a//b` is `/a/b`**, as the parser reads it (empty segments are skipped), so Blazor does not synchronise the URL for nothing. The case of a query value still counts: a value that a placeholder binds keeps its case.
 - **A menu page opened with a query keeps its address**: `GoToAsync("/about?ref=x")` to a menu entry with no template wrote the address of the entry (`/about`) in the history, so Blazor could rewrite the address bar without the query. The address asked for is the route of the change (the query values are still in `Values`).
 - **`{n:double}` has no `-0`**: `/x/0` and `/x/-0` were two addresses; `-0` is refused and `Build` writes `0`.
 - **A literal written escaped in a template matches**: `/my%20page` was compared to the unescaped segment `my page` and never matched, although `Build` writes it as it is.

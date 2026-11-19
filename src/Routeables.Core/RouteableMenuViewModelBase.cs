@@ -38,6 +38,8 @@ namespace Routeables.Core;
 /// <para>
 /// <see cref="RouteableMenuViewModelBase.GetEntries"/> runs while the base class is being constructed, before the fields of
 /// the derived class exist: build the entries from the code alone (as above), not from a field or a constructor parameter.
+/// To build them from something your class holds, pass <c>initialize: false</c> to the base constructor: the entries are then built on their
+/// first read, after the construction, and the host selects the first one when it starts (or call <see cref="IRouteableMenuViewModel.SelectFirst"/>).
 /// </para>
 /// </remarks>
 public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, IDisposable, IRouteable, IRouteableMenuViewModel
@@ -328,7 +330,23 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     /// <summary>
     /// The entries of the menu, built by <see cref="GetEntries"/> on first access.
     /// </summary>
-    public ObservableCollection<IRouteableMenuEntry> Entries { get { return _routeables ??= GetEntries(); } }
+    public ObservableCollection<IRouteableMenuEntry> Entries { get { return _routeables ??= BuildEntries(); } }
+
+    private ObservableCollection<IRouteableMenuEntry> BuildEntries()
+    {
+        try
+        {
+            return GetEntries();
+        }
+        catch (NullReferenceException exception)
+        {
+            // The usual cause: GetEntries() read a field or a constructor parameter of the derived class while the base class was being constructed.
+            throw new InvalidOperationException(
+                $"{GetType().Name}.GetEntries() threw a NullReferenceException. It runs while the base class is being constructed, before the fields and the constructor "
+                + "parameters of the derived class are set: build the entries from the code alone, or pass initialize: false to the base constructor "
+                + "(the entries are then built on their first read, after the construction).", exception);
+        }
+    }
 
     /// <inheritdoc />
     public virtual string? CurrentTitle { get => SelectedEntry?.DisplayName ?? RouteableTexts.ApplicationTitle; }

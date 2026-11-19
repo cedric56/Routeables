@@ -277,9 +277,11 @@ public static partial class RouteParser
                 // A fixed entry of the template ("mode=grid") must be in the address as written; "flag" alone only names a parameter.
                 if (part.IndexOf('=') is var eq and > 0)
                 {
-                    query.TryGetValue(part[..eq], out var got);
-                    if (!string.Equals(got, part[(eq + 1)..], StringComparison.OrdinalIgnoreCase))
-                        return reasons ? $"the query \"{part[..eq]}\" is \"{got}\", expected \"{part[(eq + 1)..]}\"" : NoReason;
+                    // Read as the address is (a plus is a space, an escape is its character), so that what Build writes is read back.
+                    var (fixedName, fixedValue) = (DecodeQuery(part[..eq]), DecodeQuery(part[(eq + 1)..]));
+                    query.TryGetValue(fixedName, out var got);
+                    if (!string.Equals(got, fixedValue, StringComparison.OrdinalIgnoreCase))
+                        return reasons ? $"the query \"{fixedName}\" is \"{got}\", expected \"{fixedValue}\"" : NoReason;
                 }
                 continue;
             }
@@ -546,8 +548,10 @@ public static partial class RouteParser
                 var parsed = ParseTemplate(table[i].Template);
                 if (parsed.Segments.Length > 0 && !parsed.SegmentMatches[0].Success)
                 {
-                    if (!literal.TryGetValue(parsed.Segments[0], out var list))
-                        literal[parsed.Segments[0]] = list = [];
+                    // The address is looked up unescaped (FirstSegment), so the literal is too ("my%20page" is "my page").
+                    var first = parsed.Segments[0].Contains('%') ? Uri.UnescapeDataString(parsed.Segments[0]) : parsed.Segments[0];
+                    if (!literal.TryGetValue(first, out var list))
+                        literal[first] = list = [];
                     list.Add(i);
                 }
                 else

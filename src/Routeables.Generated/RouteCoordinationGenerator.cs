@@ -1038,9 +1038,13 @@ namespace Routeables.Generated
             {
                 case ClrKind.Int:
                 case ClrKind.Long:
-                case ClrKind.Decimal:
-                case ClrKind.Double:
                     return "global::System.Uri.EscapeDataString(" + value + ".ToString(global::System.Globalization.CultureInfo.InvariantCulture))";
+                case ClrKind.Decimal:
+                    // 19.90m is the text 19.9: a number has one text (RouteParser.Build writes the same).
+                    return "global::System.Uri.EscapeDataString((" + value + " / 1.0000000000000000000000000000m).ToString(global::System.Globalization.CultureInfo.InvariantCulture))";
+                case ClrKind.Double:
+                    // -0.0 is the text 0.
+                    return "global::System.Uri.EscapeDataString((" + value + " == 0d ? 0d : " + value + ").ToString(global::System.Globalization.CultureInfo.InvariantCulture))";
                 case ClrKind.Bool:
                     return "(" + value + " ? \"true\" : \"false\")";
                 case ClrKind.Guid:

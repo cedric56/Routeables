@@ -195,4 +195,39 @@ public class MenuSameTypeEntriesTests
         Assert.IsType<MsSecretVm>(router.CurrentViewModel);
         Assert.Equal("Secret", menu.SelectedEntry?.DisplayName);
     }
+
+    private sealed class MenuOfAField : RouteableMenuViewModelBase
+    {
+        private readonly string[] _names;
+
+        public MenuOfAField(IRouter router, string[] names, bool initialize) : base(router, initialize) => _names = names;
+
+        protected override ObservableCollection<IRouteableMenuEntry> GetEntries()
+            => new(_names.Select(name => (IRouteableMenuEntry)new RouteableMenuEntry<MsOtherVm>(name, route: "/ms-other", template: "/ms-other")));
+
+        protected override void NotifyPropertyChanged(string? propertyName) { }
+    }
+
+    [Fact]
+    public void Entries_built_from_a_field_while_the_base_is_constructed_say_why_they_failed()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+
+        var failure = Assert.Throws<InvalidOperationException>(() => new MenuOfAField(router, ["Other"], initialize: true));
+
+        Assert.Contains("initialize: false", failure.Message);
+        Assert.IsType<NullReferenceException>(failure.InnerException);
+    }
+
+    [Fact]
+    public void With_initialize_false_the_entries_can_be_built_from_a_field()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+
+        var menu = new MenuOfAField(router, ["Other"], initialize: false);
+
+        Assert.Equal("Other", Assert.Single(menu.Entries).DisplayName);
+    }
 }

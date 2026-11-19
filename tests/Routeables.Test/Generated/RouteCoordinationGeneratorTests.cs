@@ -359,6 +359,8 @@ public class RouteCoordinationGeneratorTests
                     await Check(home.GoToGuidAsync(router, Guid.Parse("6f9619ff-8b86-d011-b42d-00c04fc964ff")), vm => ((GuidViewModel)vm!).Value);
                     await Check(home.GoToDecAsync(router, 1234.56m), vm => ((DecViewModel)vm!).Value);
                     await Check(home.GoToDblAsync(router, 0.25), vm => ((DblViewModel)vm!).Value);
+                    await Check(home.GoToDecAsync(router, 19.90m), vm => ((DecViewModel)vm!).Value);
+                    await Check(home.GoToDblAsync(router, -0.0), vm => ((DblViewModel)vm!).Value);
                     await Check(home.GoToStrAsync(router, "a b/c&d%e?f#g+h"), vm => ((StrViewModel)vm!).Value);
                     await Check(home.GoToQueryAsync(router, "x y&z=1", 7), vm => ((QueryViewModel)vm!).Value);
                     await Check(home.GoToOptAsync(router, 5), vm => ((OptViewModel)vm!).Value);
@@ -369,7 +371,7 @@ public class RouteCoordinationGeneratorTests
             """);
 
         Assert.Equal(
-            "42|9999999999|True|6f9619ff-8b86-d011-b42d-00c04fc964ff|1234.56|0.25|a b/c&d%e?f#g+h|x y&z=1/7|5|null",
+            "42|9999999999|True|6f9619ff-8b86-d011-b42d-00c04fc964ff|1234.56|0.25|19.9|0|a b/c&d%e?f#g+h|x y&z=1/7|5|null",
             summary);
     }
 

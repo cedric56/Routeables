@@ -142,4 +142,13 @@ public class RouteAddressTests
         Assert.True(RouteAddress.Same("/files/a%2Fb", "/files/a%2fb"));
         Assert.False(RouteAddress.Same("/files/a%2Fb", "/files/a%252Fb"));
     }
+
+    [Fact]
+    public void Empty_segments_do_not_make_another_page()
+    {
+        // The parser skips them: "/a//b" is "/a/b".
+        Assert.True(RouteAddress.Same("/a//b", "/a/b"));
+        Assert.True(RouteAddress.Same("/a/b/", "//a/b"));
+        Assert.False(RouteAddress.Same("/a//b", "/a/c"));
+    }
 }

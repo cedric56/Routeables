@@ -56,7 +56,7 @@ internal static class RouteAddress
             return false;
         var (pathA, queryA) = SplitQuery(Rooted(WithoutFragment(a)));
         var (pathB, queryB) = SplitQuery(Rooted(WithoutFragment(b)));
-        return SamePathOnly(Unescape(pathA.TrimEnd('/')), Unescape(pathB.TrimEnd('/')), templateOf)
+        return SamePathOnly(Unescape(Collapsed(pathA)), Unescape(Collapsed(pathB)), templateOf)
                && SameQuery(queryA, queryB);
     }
 
@@ -91,6 +91,13 @@ internal static class RouteAddress
         }
 
         return true;
+    }
+
+    // The parser skips empty segments: "/a//b/" is the page "/a/b".
+    private static string Collapsed(string path)
+    {
+        var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        return segments.Length == 0 ? string.Empty : "/" + string.Join('/', segments);
     }
 
     private static (string Path, string? Query) SplitQuery(string address)

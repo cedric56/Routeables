@@ -558,4 +558,23 @@ public class RouteParserTests
         Assert.True(RouteParser.TryMatch("/my%20page/{id:int}", "/my page/3", RouteableArgs.Create()));
         Assert.Equal("/my%20page/3", RouteParser.Build("/my%20page/{id:int}", new { id = 3 }));
     }
+
+    [Fact]
+    public void An_escaped_literal_is_found_in_a_large_table_too()
+    {
+        // From eight templates the first segment is looked up in an index: it holds the literal as the address is read (unescaped).
+        var entries = Enumerable.Range(0, 10).Select(i => ($"/page{i}/{{id:int}}", (Type?)typeof(string))).ToList();
+        entries.Add(("/my%20page/{id:int}", typeof(int)));
+
+        Assert.Equal("/my%20page/{id:int}", RouteParser.BestMatch(entries.AsReadOnly(), "/my%20page/3").Template);
+        Assert.Equal("/my%20page/{id:int}", RouteParser.BestMatch(entries.AsReadOnly(), "/my page/3").Template);
+    }
+
+    [Fact]
+    public void A_fixed_query_entry_with_a_plus_reads_back_the_address_that_Build_writes()
+    {
+        Assert.True(RouteParser.TryMatch("/x?mode=a+b", "/x?mode=a+b", RouteableArgs.Create()));
+        Assert.True(RouteParser.TryMatch("/x?mode=a+b", "/x?mode=a%20b", RouteableArgs.Create()));
+        Assert.False(RouteParser.TryMatch("/x?mode=a+b", "/x?mode=ab", RouteableArgs.Create()));
+    }
 }

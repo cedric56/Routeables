@@ -215,6 +215,8 @@ The verbs of the setup calls follow one rule:
 | `Register` | Declares **one thing** of your application | `RegisterRoute`, `RegisterMenuViewModel`, `RegisterSegment` |
 | `Add` | Turns **a feature** on | `AddGeneratedRoutes`, `AddLocking`, `AddRegion`, `AddRouteCoordinator` |
 
+A menu view model builds its entries in `GetEntries()`, which runs **while the base class is being constructed**: before the fields and the constructor parameters of your class are set. Build the entries from the code alone; to build them from something your class holds, pass `initialize: false` to the base constructor (the entries are then built on their first read, and the host selects the first one when it starts). A `GetEntries()` that reads such a field throws an `InvalidOperationException` that says so.
+
 ### 3. Route from a view model
 
 The shortest form is one line:
