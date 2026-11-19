@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
@@ -327,5 +327,45 @@ public class PersistTests
         RouteablePersistence.Save(new HiddenDerived(), into);
 
         Assert.Equal("v7", into["persist:V"]);
+    }
+
+    public class ShadowBase { public int Value { get; set; } = 1; }
+    public class ShadowDerived : ShadowBase { public new string Value { get; set; } = "x"; }
+
+    [Fact]
+    public void Saving_twice_into_the_same_dictionary_writes_the_second_time_too()
+    {
+        RouteablePersistence.Register<ShadowBase>(
+            (vm, bag) => bag.Capture<ShadowBase, int>(vm, "Value", x => x.Value),
+            (vm, bag) => bag.Restore<ShadowBase, int>(vm, "Value", (x, v) => x.Value = v));
+        var into = new Dictionary<string, string>();
+        var page = new ShadowBase { Value = 1 };
+        RouteablePersistence.Save(page, into);
+
+        page.Value = 2;
+        RouteablePersistence.Save(page, into);
+
+        Assert.Equal("v2", into["persist:Value"]);
+    }
+
+    [Fact]
+    public void A_property_hidden_by_one_of_the_same_name_is_not_given_the_value_of_the_class_that_hides_it()
+    {
+        RouteablePersistence.Register<ShadowBase>(
+            (vm, bag) => bag.Capture<ShadowBase, int>(vm, "Value", x => x.Value),
+            (vm, bag) => bag.Restore<ShadowBase, int>(vm, "Value", (x, v) => x.Value = v));
+        RouteablePersistence.Register<ShadowDerived>(
+            (vm, bag) => bag.Capture<ShadowDerived, string>(vm, "Value", x => x.Value),
+            (vm, bag) => bag.Restore<ShadowDerived, string>(vm, "Value", (x, v) => x.Value = v));
+        var page = new ShadowDerived { Value = "42" };
+        ((ShadowBase)page).Value = 7;
+        var into = new Dictionary<string, string>();
+        RouteablePersistence.Save(page, into);
+        var back = new ShadowDerived { Value = "" };
+
+        RouteablePersistence.Load(back, into);
+
+        Assert.Equal("42", back.Value);
+        Assert.Equal(1, ((ShadowBase)back).Value);     // not 42: it keeps its own value, which was not saved under this name
     }
 }

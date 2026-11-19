@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
@@ -202,5 +202,12 @@ public class RouteAddressTests
     {
         Assert.True(RouteAddress.Same("/p/{tab?}?a=1&b=2", "/p/{tab?}?b=2&a=1"));
         Assert.False(RouteAddress.Same("/p/{tab?}?a=1", "/p/{tab?}?a=2"));
+    }
+
+    [Fact]
+    public void A_brace_that_nothing_closes_in_a_typed_address_does_not_hide_its_query()
+    {
+        Assert.True(RouteAddress.Same("/notes/a{b?x=1&y=2", "/notes/a{b?y=2&x=1"));
+        Assert.False(RouteAddress.Same("/notes/a{b?x=1", "/notes/a{b?x=2"));
     }
 }

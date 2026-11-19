@@ -1,4 +1,4 @@
-﻿namespace Routeables.Abstraction.Routing;
+namespace Routeables.Abstraction.Routing;
 
 /// <summary>
 /// The one place that says whether two routes or addresses are the same. The router, the menus, the type guards, the controls of navigation and the
@@ -43,7 +43,8 @@ internal static class RouteAddress
         var depth = 0;
         for (var i = 0; i < text.Length; i++)
         {
-            if (text[i] == '{') depth++;
+            // A brace that nothing closes is a character of an address typed by hand, not the start of a placeholder.
+            if (text[i] == '{' && text.IndexOf('}', i) >= 0) depth++;
             else if (text[i] == '}' && depth > 0) depth--;
             else if (text[i] == '?' && depth == 0) return i;
         }

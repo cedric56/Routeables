@@ -1,4 +1,4 @@
-﻿using Routeables.Abstraction.Routing;
+using Routeables.Abstraction.Routing;
 
 namespace Routeables.Abstraction.Guards;
 

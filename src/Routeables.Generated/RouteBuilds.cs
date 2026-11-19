@@ -459,9 +459,10 @@ namespace Routeables.Generated
                 var names = p.Attributes.Count == 0
                     ? "global::System.Array.Empty<string>()"
                     : "new string[] { " + string.Join(", ", p.Attributes.Select(Quote)) + " }";
-                var get = p.CanGet ? $"o => (({info.TypeName})o).{p.Name}" : "null";
+                var member = SyntaxFacts.GetKeywordKind(p.Name) != SyntaxKind.None ? "@" + p.Name : p.Name;      // a property named like a keyword (@event)
+                var get = p.CanGet ? $"o => (({info.TypeName})o).{member}" : "null";
                 sb.AppendLine($"            new({Quote(p.Name)}, typeof({p.RawType}), {names},");
-                sb.AppendLine($"                (o, v) => (({info.TypeName})o).{p.Name} = v is null ? default! : ({p.Type})v,");
+                sb.AppendLine($"                (o, v) => (({info.TypeName})o).{member} = v is null ? default! : ({p.Type})v,");
                 sb.AppendLine($"                {get}),");
             }
             sb.AppendLine("        });");

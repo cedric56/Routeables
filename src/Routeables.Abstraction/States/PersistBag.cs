@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 
 namespace Routeables.Abstraction.States;
 
@@ -9,13 +9,40 @@ namespace Routeables.Abstraction.States;
 public sealed class PersistBag
 {
     private readonly IDictionary<string, string>? _write;
-    private readonly bool _keepFirst;
     private readonly IReadOnlyDictionary<string, string>? _read;
+    // Set for one Save or one Load, which go from the most derived class to its bases: the names of the classes done are taken, and a property of a base class
+    // that one of them hides (same name, "new") neither writes over its value nor reads it. Within one class a name can be asked as often as it is.
+    private readonly HashSet<string>? _taken;
+    private readonly HashSet<string>? _current;
 
-    // keepFirst: a name that is already written stays as it is (the properties of the most derived class are written first: a base property hidden by one of the same name does not replace it).
-    internal PersistBag(IDictionary<string, string> write, bool keepFirst = false) => (_write, _keepFirst) = (write, keepFirst);
+    internal PersistBag(IDictionary<string, string> write, bool exclusive = false)
+    {
+        _write = write;
+        if (exclusive) { _taken = []; _current = []; }
+    }
 
-    internal PersistBag(IReadOnlyDictionary<string, string> read) => _read = read;
+    internal PersistBag(IReadOnlyDictionary<string, string> read, bool exclusive = false)
+    {
+        _read = read;
+        if (exclusive) { _taken = []; _current = []; }
+    }
+
+    /// <summary>The class that was done is over: its names are taken for the next one (its base class).</summary>
+    internal void NextClass()
+    {
+        _taken?.UnionWith(_current!);
+        _current?.Clear();
+    }
+
+    private bool Taken(string name)
+    {
+        if (_taken is null)
+            return false;
+        if (_taken.Contains(name))
+            return true;
+        _current!.Add(name);
+        return false;
+    }
 
     /// <summary>Writes the value of a property; nothing is written when it cannot be (a type that is not supported, a text that is too long).</summary>
     /// <returns><see langword="true"/> when the value was written.</returns>
@@ -28,7 +55,7 @@ public sealed class PersistBag
             return false;
         try
         {
-            if (_keepFirst && _write.ContainsKey(RouteablePersistence.KeyPrefix + name))
+            if (Taken(name))
                 return true;
 
             if (value is null)
@@ -58,6 +85,8 @@ public sealed class PersistBag
     public bool TryGet<T>(string name, IPersistConverter<T>? converter, out T value)
     {
         value = default!;
+        if (Taken(name))
+            return false;
         if (_read is null || !_read.TryGetValue(RouteablePersistence.KeyPrefix + name, out var stored) || stored.Length == 0)
             return false;
 
