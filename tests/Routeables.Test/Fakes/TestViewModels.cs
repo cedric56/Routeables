@@ -51,7 +51,7 @@ public sealed class SegVm;
 public sealed class SlugVm(string slug) { public string Slug { get; } = slug; }
 public sealed class SoHomeVm;
 public sealed class SoLinkVm;
-public sealed class StartVm;
+//public sealed class StartVm;
 public sealed class StubVm;
 public sealed class TabVm;
 public sealed class TgHomeVm;

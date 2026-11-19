@@ -2,6 +2,15 @@
 
 [Benchmarks](benchmarks.md) measures the router of Routeables alone. It does not say how Routeables compares with Prism, ReactiveUI, MAUI Shell, MvvmCross or a navigation service of your own: that needs the **same application** written once for each of them, and the same measures taken on each. This page is the protocol for that comparison. **Phase 1 is written (see below); phases 2 and 3 are not, and there are no results below**: a table of numbers that nobody measured on a machine that is named would be worse than none.
 
+## Where it stands now
+
+Read this before the tables: the first results below (about 2 times the time and 6 times the allocations of ReactiveUI) are **out of date**.
+
+- **With real views (Avalonia.Headless), Routeables and ReactiveUI are level.** Measured in turns over several runs, the time ratio is between 0.81 and 1.03 (never above 1.03), and the allocations are within 5 % (about 41 KB against 39 KB per step).
+- **On the console, routing alone, Routeables is still 10 to 15 % slower and allocates about a quarter more** (5.1 KB against 4.1 KB per step). The route lookup no longer tries every template: it went from 25.5 KB and about 100 µs per step to 5.0 KB and 16 to 33 µs.
+- **The early gap came partly from the protocol:** ReactiveUI was shown in a plain `ContentControl` while Routeables uses a `TransitioningContentControl`, and the libraries were measured one after the other, which let the noise of the machine count as a difference. Both are fixed.
+- **The one real cost is memory.** By default the history has no limit and keeps every view (about 9 KB per entry on Avalonia: 9.2 MiB after 1 000 route changes, 0.96 MiB with `LimitHistory(50)`). It is a design choice, since Back gives back the same view with its state, and not a leak: everything is released when the history is cleared.
+
 ## The application
 
 A small business application, large enough to use what a navigation library is for:
@@ -141,6 +150,8 @@ Same machine type, one run each; only the allocations are comparable from one jo
 - **Prism in the same program.** Not possible today: `Prism.Avalonia` 9 asks for Avalonia 11.3 and `Routeables.Avalonia` for Avalonia 12, and a process holds one version of Avalonia. The day Prism.Avalonia supports Avalonia 12 (its work item 3391): in `Routeables.Comparison.Prism.csproj` drop the two `VersionOverride="11.3.23"`, move `PrismApp.cs`, `PrismPages.cs` and `PrismDriver.cs` into `Routeables.Comparison.Avalonia`, add `new PrismDriver()` to the drivers of its `Program.cs` (an application can only start one `PrismApplication`, so the Prism driver will need the application of the program to be the Prism one and Routeables to be started inside it), remove the program and the two Prism steps of `ci.yml` and `benchmark-repeat.yml`. Prism and Routeables will then be measured in turns in one process, and the indirect comparison through ReactiveUI will no longer be needed.
 
 ### Phase 1, console (kept as a record; its ground is not equal)
+
+> **Superseded.** These are the first figures, taken before the route lookup was optimized and before ReactiveUI was given the same host control and the measures were run in turns. See [Where it stands now](#where-it-stands-now) and [What changed after the first results](#what-changed-after-the-first-results-november-2026).
 
 Phase 1, two runs of the CI job "Same application, three libraries" (November 2026, the second after the ReactiveUI driver took its dependency from the container): .NET 10.0.15, Ubuntu 26.04.1 LTS, 4 cores, workstation GC, 200 steps, 30 runs after 5 warm-ups. Every library ended 200 of 200 steps on the expected page (ReactiveUI: 180 of 200, its 20 Forward steps are skipped because it has no Forward).
 

@@ -159,7 +159,7 @@ public class RouterFailureTests
     }
 
 
-    public sealed class StartView : IRouteableFor { public object? Context { get; set; } }
+    //public sealed class StartView : IRouteableFor { public object? Context { get; set; } }
     public sealed class ThrowingVm { public ThrowingVm() => throw new InvalidOperationException("no"); }
 
     [Fact]
@@ -167,7 +167,7 @@ public class RouterFailureTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<StartView, StartVm>(route: "/home");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
         services.RegisterRoute<ListView, ListVm>(route: "/orders");
         services.RegisterRoute<ThrowingView, ThrowingVm>(route: "/broken");
         await using var provider = services.BuildServiceProvider();
