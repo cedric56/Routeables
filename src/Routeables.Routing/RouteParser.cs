@@ -295,7 +295,7 @@ public static partial class RouteParser
         if (args is not null)
             foreach (var (name, value) in query)
                 if (bound is null || !bound.Contains(name))
-                    args.ForValues(new RouteableArgument(value, name));
+                    SetValue(args.Values, new RouteableArgument(value, name));
 
         return null;
     }
@@ -372,6 +372,14 @@ public static partial class RouteParser
             if (m.Success && !seen.Add(m.Groups["name"].Value))
                 return m.Groups["name"].Value;
         return null;
+    }
+
+    // A named value is there once: the one that is added replaces the one that has its name (without the case), as Get<T> refuses two.
+    internal static void SetValue(List<RouteableArgument> values, RouteableArgument entry)
+    {
+        if (!string.IsNullOrEmpty(entry.name))
+            values.RemoveAll(e => string.Equals(e.name, entry.name, StringComparison.OrdinalIgnoreCase));
+        values.Add(entry);
     }
 
     private static bool HasDotSegment(string? value)

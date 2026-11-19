@@ -96,6 +96,16 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void A_value_of_the_address_replaces_the_value_of_the_same_name_instead_of_doubling_it()
+    {
+        var args = RouteableArgs.Create().WithValue("tab", "general");
+
+        Assert.True(RouteParser.TryMatch("s/{q}", "s/a?Tab=privacy", args));
+
+        Assert.Equal("privacy", Assert.Single(args.Values, e => string.Equals(e.name, "tab", StringComparison.OrdinalIgnoreCase)).value);
+    }
+
+    [Fact]
     public void A_plus_in_a_query_is_a_space_and_in_a_path_it_is_a_plus()
     {
         var args = RouteableArgs.Create();

@@ -6,6 +6,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A named value is there once**: the value of the address, or of the caller, replaces the one of the menu entry that has its name (without the case) instead of being added next to it, so that `Get<T>` no longer fails with "2 values are named" (a link with `?tab=` on an entry with a `tab` value, and the restore of the saved history).
+- **The link that opened the application is no longer lost when the first page is shown late**: the pump of `RouteableLinkInbox` started from a `Routed` handler carried the navigation lock of the change in progress and was refused as a reentrant route change. It starts without that context.
+- **A menu entry whose template is written `about` for a page registered as `/about`** finds its view: the entry takes the spelling the page was registered with.
 - **`RouteBuilder.Tab` without a route is `/home` for a `HomeViewModel`**, as documented (or the `[Routeable]` path of the view model): it registered the internal key of the view as an address.
 - **A selection of the menu that is cancelled while it waits gives the current version back to the newest selection that is still alive**: with A running and B, C waiting, cancelling B then C made A think it had been replaced.
 - **The generated `GoToXxxAsync` refuse a path value with a `.` or `..` piece** (`a/..`), not only the value `..`.

@@ -647,7 +647,8 @@ internal class Router(
             {
                 supplied.ViewModelParameters.AddRange(args.ViewModelParameters);
                 supplied.ViewParameters.AddRange(args.ViewParameters);
-                supplied.Values.AddRange(args.Values);
+                foreach (var value in args.Values)
+                    RouteParser.SetValue(supplied.Values, value);    // a value of the caller replaces the one of the entry that has its name
             }
             // The address asked for is the route of the change (history, URL of the browser), query included; matching it adds the query values.
             return await GoToEntryAsync(item, cancellationToken, [], supplied, url);
@@ -725,12 +726,14 @@ internal class Router(
 
     private Task<RouteableResult> GoToEntryAsync(IRouteableMenuEntry routeableView, CancellationToken cancellationToken, string[] viewKeys, IRouteableArgs? supplied = null, string? address = null)
     {
+        Respell(routeableView);
         // A typed entry (RouteableMenuEntry<TViewModel>) names the keys of its view model; any other is bound by its template alone.
         var type = GetRouteableEntryType(routeableView);
         if (type is null)
             return GoToViewAsync(routeableView, routeableView.Template, routeableView.Template, cancellationToken, viewKeys, supplied, null, address);
 
         ResolveTypedEntry(routeableView, type);
+        Respell(routeableView);
         var keys = RouteableKeys.GetKeys(type, routeableView.Template);
         return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys, supplied, type, address);
     }
@@ -836,8 +839,24 @@ internal class Router(
     private Task<RouteableResult> GoToEntryAsync(IRouteableMenuEntry routeableView, Type viewModelType, CancellationToken cancellationToken, string[] viewKeys)
     {
         ResolveTypedEntry(routeableView, viewModelType);
+        Respell(routeableView);
         var keys = RouteableKeys.GetKeys(viewModelType, routeableView.Template);
         return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys, null, viewModelType);
+    }
+
+    // "about" and "/about" are one template, and a page is registered under the spelling it was registered with: the entry that writes it the other way
+    // is given that spelling, or its keys would name a view that does not exist.
+    private void Respell(IRouteableMenuEntry entry)
+    {
+        if (entry is not RouteableMenuEntry typed || string.IsNullOrEmpty(typed.Template))
+            return;
+
+        var registered = provider.GetService<RouteableTable>()?.Entries
+            .Select(e => e.Template)
+            .FirstOrDefault(t => !string.Equals(t, typed.Template, StringComparison.Ordinal)
+                && string.Equals(RouteAddress.Absolute(t), RouteAddress.Absolute(typed.Template), StringComparison.OrdinalIgnoreCase));
+        if (registered is not null && !provider.GetService<RouteableTable>()!.Entries.Any(e => string.Equals(e.Template, typed.Template, StringComparison.Ordinal)))
+            typed.Template = registered;
     }
 
     // A typed entry (RouteableMenuEntry<T>) made with no template, or with no route, holds the internal key of its type for what it was not given.

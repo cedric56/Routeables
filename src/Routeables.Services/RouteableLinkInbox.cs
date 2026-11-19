@@ -118,7 +118,10 @@ public sealed class RouteableLinkInbox
             pumping = true;
         }
 
-        RouteableHelper.FireAndForget(() => Task.Run(PumpAsync), provider, "RouteableLinkInbox.PumpAsync");
+        // Without the execution context of the caller: Kick may run inside a route change (a Routed handler), and the pump would carry the token
+        // of the navigation lock that is still held, so that its own navigation would be taken for a reentrant one and the link would be lost.
+        using (ExecutionContext.SuppressFlow())
+            RouteableHelper.FireAndForget(() => Task.Run(PumpAsync), provider, "RouteableLinkInbox.PumpAsync");
     }
 
     private async Task PumpAsync()
