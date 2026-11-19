@@ -24,6 +24,21 @@ public class RouteableTableTests
     }
 
     [Fact]
+    public void A_route_registered_again_for_another_view_model_follows_the_last_one_like_the_container()
+    {
+        var table = new RouteableTable();
+
+        table.Add("/rt-x", typeof(string));
+        table.Add("/rt-x", null);               // no view model: nothing changes
+        Assert.Equal(typeof(string), table.Entries[0].ViewModelType);
+
+        table.Add("/rt-x", typeof(int));        // another view model: the last one, as the container keeps the last view
+
+        var entry = Assert.Single(table.Entries);
+        Assert.Equal(typeof(int), entry.ViewModelType);
+    }
+
+    [Fact]
     public void Two_routes_that_differ_only_by_their_query_are_both_kept()
     {
         var table = new RouteableTable();

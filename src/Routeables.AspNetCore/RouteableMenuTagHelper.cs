@@ -55,7 +55,7 @@ public sealed class RouteableMenuTagHelper : TagHelper
         {
             var address = RouteableAddress.Of(entry.Route);
             var href = RouteableAddress.Of(entry.Route, ViewContext.HttpContext.Request.PathBase);
-            var active = string.Equals(FirstSegment(address), current, StringComparison.OrdinalIgnoreCase);
+            var active = string.Equals(FirstSegment(address, unescape: true), current, StringComparison.OrdinalIgnoreCase);
             var link = new TagBuilder(entry.IsLock ? "span" : "a");
             link.AddCssClass("rt-menu-link");
             if (entry.IsLock)
@@ -98,6 +98,10 @@ public sealed class RouteableMenuTagHelper : TagHelper
         return span;
     }
 
-    private static string FirstSegment(string? address)
-        => "/" + (address?.Split('?')[0].Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "");
+    // The address of an entry keeps its escapes ("/caf%C3%A9"); the path of the request is already read ("/café"): the first one is unescaped to compare.
+    private static string FirstSegment(string? address, bool unescape = false)
+    {
+        var segment = address?.Split('?')[0].Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "";
+        return "/" + (unescape ? Uri.UnescapeDataString(segment) : segment);
+    }
 }

@@ -94,6 +94,17 @@ public class RouterTypedExtensionsTests
     }
 
     [Fact]
+    public async Task A_route_that_reaches_another_view_model_fails_instead_of_dropping_the_data()
+    {
+        var router = Build(s => s.RegisterRoute<PlainView, PlainVm>(route: "/plain"));
+
+        var result = await router.GoToRouteAsync<AnimalVm, Animal>("/plain", new Animal("Tom"), cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.False(result.Success);
+        Assert.Contains("AnimalVm", result.Exception!.Message);
+    }
+
+    [Fact]
     public async Task A_null_router_is_refused()
         => await Assert.ThrowsAsync<ArgumentNullException>(() =>
             RouterTypedExtensions.GoToRouteAsync<PlainVm, string>(null!, "/plain", "x", cancellationToken: TestContext.Current.CancellationToken));

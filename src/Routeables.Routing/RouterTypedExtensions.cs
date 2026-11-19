@@ -40,7 +40,7 @@ public static class RouterTypedExtensions
     /// <param name="template">The route template; found from the route when omitted.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The route change result.</returns>
-    public static Task<RouteableResult> GoToRouteAsync<TViewModel, TData>(
+    public static async Task<RouteableResult> GoToRouteAsync<TViewModel, TData>(
         this IRouter router,
         string route,
         TData data,
@@ -49,6 +49,14 @@ public static class RouterTypedExtensions
         where TViewModel : class, IInitializeAsync<TData>
     {
         ArgumentNullException.ThrowIfNull(router);
-        return router.GoToAsync(route, TypedInitialization.CreateArgs(data), template, cancellationToken);
+        var result = await router.GoToAsync(route, TypedInitialization.CreateArgs(data), template, cancellationToken);
+
+        // TViewModel is only checked by the compiler against the data; the route decides the page. A route that reaches another view model did not
+        // give it the data, and saying so is better than a success with a page that never received what it was given.
+        if (result.Success && router.CurrentViewModel is not TViewModel && router.CurrentView is not TViewModel)
+            return RouteableResult.Fail(new InvalidOperationException(
+                $"The route \"{route}\" did not reach a {typeof(TViewModel).Name}: the data was not given to the page that is shown."));
+
+        return result;
     }
 }

@@ -6,6 +6,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A route registered again for another view model follows the last registration**, as the container does for the view: the table kept the first view model, so the view of one page was shown with the view model of the other.
+- **`GoToRouteAsync<TViewModel, TData>` fails when the route does not reach a `TViewModel`**: the data was dropped and the result was a success.
+- **`<routeable-menu>` marks an entry whose route is written escaped** (`/caf%C3%A9`) when the page is `/café`.
 - **A named value is there once**: the value of the address, or of the caller, replaces the one of the menu entry that has its name (without the case) instead of being added next to it, so that `Get<T>` no longer fails with "2 values are named" (a link with `?tab=` on an entry with a `tab` value, and the restore of the saved history).
 - **The link that opened the application is no longer lost when the first page is shown late**: the pump of `RouteableLinkInbox` started from a `Routed` handler carried the navigation lock of the change in progress and was refused as a reentrant route change. It starts without that context.
 - **A menu entry whose template is written `about` for a page registered as `/about`** finds its view: the entry takes the spelling the page was registered with.

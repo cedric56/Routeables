@@ -43,8 +43,25 @@ internal sealed class RouteableTable
         lock (_gate)
         {
             // The same template, query included: "/search" and "/search?mode=grid" are two routes (the parser tells them apart), not one registered twice.
-            if (_entries.Any(e => RouteAddress.Same(e.Template, template)))
+            var at = -1;
+            for (var i = 0; i < _entries.Count && at < 0; i++)
+                if (RouteAddress.Same(_entries[i].Template, template))
+                    at = i;
+
+            if (at >= 0)
+            {
+                // The container keeps the last view registered under a route (a module replaces the view of a page): the table follows it, so that the
+                // view model read here is the one of that view. A registration without a view model, or on a route that has none, changes nothing.
+                if (viewModelType is not null && _entries[at].ViewModelType is { } known && known != viewModelType)
+                {
+                    var replaced = _entries.ToArray();
+                    replaced[at] = (template, viewModelType);
+                    _entries = new(replaced);
+                }
+
                 return;
+            }
+
             _entries = new([.. _entries, (template, viewModelType)]);
         }
     }
