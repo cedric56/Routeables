@@ -4,6 +4,10 @@
   href: getting-started.md
 - name: Guides
   href: guides/
+- name: What Routeables offers
+  href: features.md
+- name: Hosts and packages
+  href: packages.md
 - name: Benchmarks
   href: benchmarks.md
 - name: Host scenarios

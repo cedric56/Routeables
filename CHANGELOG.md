@@ -4,6 +4,13 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ## Unreleased
 
+### Changed
+
+- **The README is a page**: what the library is, one install, one first page on Avalonia, and links. The table of areas moved to [What Routeables offers](docs/features.md), and the hosts, the families of UI, the demos and the packages to [Hosts and packages](docs/packages.md).
+- **New in the docs**: [recipes](docs/guides/recipes.md) for five tasks (a sign-in guard, master and detail with a region, passing an object, asking before leaving, tabs with their own history) and a [glossary](docs/guides/glossary.md) of the words of the project.
+- **Each diagnostic of the generators and analyzers links to its line** of the diagnostics page (`helpLinkUri`, an anchor for each `ROUT...`).
+- **The README of the templates and the page of the hosts said the templates cover Avalonia and Blazor only**; there are five (`routeables-maui`, `-uno` and `-winui3` too).
+
 ### Fixed
 
 - **The coverage summary lists the files that tests reach least** (`tools/coverage-summary.py --files N`), and can hold a floor for one assembly (`--min-assembly`); more headless tests of the Avalonia pages, the headers, the drawer and the automation peers.

@@ -22,7 +22,7 @@ public sealed class MenuViewModelLifetimeAnalyzer : DiagnosticAnalyzer
         "IRouteableMenuViewModel must be Scoped (Blazor Server) or Singleton (Avalonia, MAUI): a transient one gives each consumer another instance than the one that is displayed. Use RegisterMenuViewModel<T>().",
         "Routeables",
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout301");
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(TransientMain);
 

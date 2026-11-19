@@ -25,7 +25,7 @@ namespace Routeables.Generated
             "{0}",
             "Routeables",
             DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
+            isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout201");
 
         // A [Routeable] view model with no [RouteableView] is paired with the view the name says (OrderViewModel => OrderView), but
         // two views of that name leave the choice to the author.
@@ -35,7 +35,7 @@ namespace Routeables.Generated
             "{0}",
             "Routeables",
             DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
+            isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout202");
 
         // Two views registered for the same view model, route and region replace one another: the last registered is the one the
         // router builds. It happens when an assembly brings the views of several hosts, or when a view is left behind after a copy.
@@ -45,7 +45,7 @@ namespace Routeables.Generated
             "{0}",
             "Routeables",
             DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
+            isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout203");
 
         // Two view models that declare the same route (and region): the table of routes keeps the first one it is given, the second is
         // never reached, and the message at run time names the second as a route that is not registered.
@@ -55,7 +55,7 @@ namespace Routeables.Generated
             "{0}",
             "Routeables",
             DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
+            isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout206");
 
         // A [Routeable] class the generated code cannot name (open generic, 'file' type): left out, with this warning, instead of code that does not compile.
         private static readonly DiagnosticDescriptor UnusableViewModel = new DiagnosticDescriptor(
@@ -64,7 +64,7 @@ namespace Routeables.Generated
             "{0}",
             "Routeables",
             DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
+            isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout207");
 
         // A .razor file of the project that declares [RouteableView] with @attribute: the Razor compiler is another generator, and a
         // generator does not see the output of another one, so nothing is registered. Only reported when this project calls its own
@@ -75,7 +75,7 @@ namespace Routeables.Generated
             "{0}",
             "Routeables",
             DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
+            isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout204");
 
         // A [Routeable] view model of a project that has views of its own, and none called after it: most often a name that does not
         // follow the convention. Information only: a view model with no view is a legitimate route (a redirect, a headless one).
@@ -86,7 +86,7 @@ namespace Routeables.Generated
             "{0}",
             "Routeables",
             DiagnosticSeverity.Info,
-            isEnabledByDefault: true);
+            isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout205");
 
         private static readonly System.Text.RegularExpressions.Regex RazorViewAttribute = new System.Text.RegularExpressions.Regex(
             @"^[ \t]*@attribute[ \t]*\[[ \t]*(?:Routeables\.Abstraction\.)?RouteableView(?:Attribute)?\b",

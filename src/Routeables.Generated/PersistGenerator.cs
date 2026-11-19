@@ -20,7 +20,7 @@ namespace Routeables.Generated
 
         private static readonly DiagnosticDescriptor Unsupported = new DiagnosticDescriptor(
             "ROUT401", "A [Persist] property cannot be saved", "{0}", "Routeables.Persistence",
-            DiagnosticSeverity.Warning, isEnabledByDefault: true);
+            DiagnosticSeverity.Warning, isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout401");
 
         private static readonly SymbolDisplayFormat TypeFormat = SymbolDisplayFormat.FullyQualifiedFormat.WithMiscellaneousOptions(
             SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers |

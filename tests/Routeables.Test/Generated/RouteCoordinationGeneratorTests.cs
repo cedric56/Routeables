@@ -1007,6 +1007,10 @@ public class RouteCoordinationGeneratorTests
 
         Assert.Contains(output.GeneratorDiagnostics, d => d.Id == id);
         Assert.Empty(output.Generated);
+
+        // Each diagnostic leads to its own line of the diagnostics page.
+        var reported = output.GeneratorDiagnostics.First(d => d.Id == id);
+        Assert.EndsWith("/guides/diagnostics.html#" + id.ToLowerInvariant(), reported.Descriptor.HelpLinkUri);
     }
 
     private static Output Generate(string source)

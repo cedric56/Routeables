@@ -9,36 +9,30 @@
   <a href="https://www.nuget.org/packages/Routeables"><img src="https://img.shields.io/nuget/v/Routeables?label=Routeables" alt="NuGet Routeables"></a>
   <a href="https://www.nuget.org/packages/Routeables.Avalonia"><img src="https://img.shields.io/nuget/v/Routeables.Avalonia?label=Routeables.Avalonia" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Blazor"><img src="https://img.shields.io/nuget/v/Routeables.Blazor?label=Routeables.Blazor" alt="NuGet"></a>
-  <a href="https://www.nuget.org/packages/Routeables.AspNetCore"><img src="https://img.shields.io/nuget/v/Routeables.AspNetCore?label=Routeables.AspNetCore" alt="NuGet"></a>
-  <a href="https://www.nuget.org/packages/Routeables.Maui"><img src="https://img.shields.io/nuget/v/Routeables.Maui?label=Routeables.Maui" alt="NuGet"></a>
-  <a href="https://www.nuget.org/packages/Routeables.Uno"><img src="https://img.shields.io/nuget/v/Routeables.Uno?label=Routeables.Uno" alt="NuGet"></a>
-  <a href="https://www.nuget.org/packages/Routeables.WinUI3"><img src="https://img.shields.io/nuget/v/Routeables.WinUI3?label=Routeables.WinUI3" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Wpf"><img src="https://img.shields.io/nuget/v/Routeables.Wpf?label=Routeables.Wpf" alt="NuGet"></a>
-  <a href="https://www.nuget.org/packages/Routeables.Abstraction"><img src="https://img.shields.io/nuget/v/Routeables.Abstraction?label=Routeables.Abstraction" alt="NuGet"></a>
-  <a href="https://www.nuget.org/packages/Reshapes.Avalonia.Fluent"><img src="https://img.shields.io/nuget/v/Reshapes.Avalonia.Fluent?label=Reshapes.Avalonia.Fluent" alt="NuGet"></a>
-  <a href="https://www.nuget.org/packages/Reshapes.Blazor.MudBlazor"><img src="https://img.shields.io/nuget/v/Reshapes.Blazor.MudBlazor?label=Reshapes.Blazor.MudBlazor" alt="NuGet"></a>
-  <a href="https://www.nuget.org/packages/Reshapes.Maui.Community"><img src="https://img.shields.io/nuget/v/Reshapes.Maui.Community?label=Reshapes.Maui.Community" alt="NuGet"></a>
 </p>
 
 # Routeables
 
-**C# MVVM View-model-first routing and navigation for Blazor, ASP.NET Core (Razor Pages and .cshtml views), .NET MAUI, Avalonia, Uno Platform, WinUI 3 and WPF.**
+**View-model-first routing for .NET 10: Avalonia, WPF, .NET MAUI, Uno Platform, WinUI 3, Blazor and ASP.NET Core.**
 
-A view model asks an `IRouter` to go somewhere. It never touches a page, a frame or a navigation API of the framework, so the same code runs on every host. A route, a view and a zone of the screen that shows it: that is the whole model.
+A view model asks an `IRouter` to go somewhere. It never touches a page, a frame or a navigation API of the framework, so the same code runs on every host.
 
-Moving an existing Prism application to .NET 10? [Migrating from Prism](docs/guides/migrating-from-prism.md) maps each concept, so you can convert one screen at a time. Want to see it first? [The Animals sample runs in your browser](https://cedric56.github.io/Routeables/demo/avalonia/) (Avalonia, WebAssembly).
+Four ideas make the whole model: a **route**, a **view**, a **region** (a zone of the screen that shows pages) and the **router**. Everything else is optional and comes later. A [glossary](docs/guides/glossary.md) explains the words.
+
+[See the Animals sample in your browser](https://cedric56.github.io/Routeables/demo/avalonia/) (Avalonia, WebAssembly).
 
 ## Install
 
 ```bash
-dotnet add package Routeables.Avalonia   # or Routeables.Blazor, .Maui, .Uno, .WinUI3, .Wpf
+dotnet add package Routeables.Avalonia
 ```
 
-The host package brings everything else, the source generator included. You need the .NET 10 SDK. A class library that only holds view models (or a module) takes `Routeables` itself: `dotnet add package Routeables`.
+You need the .NET 10 SDK. The package brings everything else, the source generator included. Another host? Use `Routeables.Wpf`, `.Maui`, `.Uno`, `.WinUI3`, `.Blazor` or `.AspNetCore`: [all the hosts](docs/packages.md).
 
 ## Your first page
 
-**1. A page: a view model with its route, and the view with the matching name:**
+**1. A page** is a view model with its route, and the view with the matching name:
 
 ```csharp
 [Routeable("/hello/{name}")]
@@ -50,137 +44,42 @@ public sealed class HelloViewModel(string name)
 public partial class HelloView : RouteableFor<HelloViewModel> { public HelloView() => InitializeComponent(); }
 ```
 
-The router finds `HelloView` by its name and gives it the view model (`ViewModel`, typed). `RouteableFor<T>` is the base class of your host; it also brings the lifecycle of a page (initialization, disposal, leaving guards): [Getting started](docs/getting-started.md) and the [lifecycle guide](docs/guides/lifecycle.md). A view of your own (a plain `UserControl`, `Window` or `Page`) works too and gets the view model as its `DataContext` (`BindingContext` on MAUI); `[RouteableView(typeof(HelloViewModel))]` on it is only needed when its name does not match.
+The router finds `HelloView` by its name and gives it the view model (`ViewModel`, typed).
 
-**2. Start Routeables** (Avalonia shown; each host has its own line, see below):
+**2. Start Routeables.** The window it shows is the one you give with `view:`:
 
 ```csharp
 AppBuilder.Configure<App>()
     .UseRouteables(view: lifetime => new MainWindow());
 ```
 
-> **Avalonia: remove the creation of the window** from `OnFrameworkInitializationCompleted` of your `App`. Routeables shows the window it is given with `view:`; if yours also creates one, the application opens two.
+> Remove the creation of the window from `OnFrameworkInitializationCompleted` in your `App`. If both create one, the application opens two.
 
-**3. The zone where pages appear, and the page it opens first**, in the main view:
+**3. A zone** in the main view shows the pages, and `Route` is the first one:
 
 ```xml
 xmlns:routeables="clr-namespace:Routeables.Avalonia;assembly=Routeables.Avalonia"
 <routeables:RouteableRegion Route="/hello/World" />
 ```
 
-**4. Go somewhere**, from any view model that asks for an `IRouter` in its constructor:
+**4. Go somewhere** from any view model that asks for an `IRouter` in its constructor:
 
 ```csharp
 await router.GoToAsync("/hello/Claire");
 ```
 
-The complete first page, step by step, with the other way to register a page (one line per page, no generator): [Getting started](docs/getting-started.md).
+To start from a template instead: `dotnet new install Routeables.Templates`, then `dotnet new routeables-avalonia -n MyApp`.
 
-## Your host
+## Next
 
-| Host | Package | Setup |
-| --- | --- | --- |
-| Blazor | [`Routeables.Blazor`](src/Routeables.Blazor/README.md) | `services.UseRouteablesServer(r => { ... })`; the region goes in your own layout, which inherits `RouteableMainLayoutBase` (the ready-made `RouteableMainLayout` has no menu and opens `/`) |
-| ASP.NET Core (Razor Pages, MVC) | [`Routeables.AspNetCore`](src/Routeables.AspNetCore/README.md) | `services.UseRouteables(r => { ... })` |
-| .NET MAUI | [`Routeables.Maui`](src/Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables(r => { ... })` |
-| Avalonia | [`Routeables.Avalonia`](src/Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables(r => { ... })` |
-| Uno Platform | [`Routeables.Uno`](src/Routeables.Uno/README.md) | `this.UseRouteables(r => { ... })` |
-| WinUI 3 | [`Routeables.WinUI3`](src/Routeables.WinUI3/README.md) | `this.UseRouteables(r => { ... })` |
-| WPF | [`Routeables.Wpf`](src/Routeables.Wpf/README.md) | `this.UseRouteables(r => { ... })` |
-
-The generated routes are added for you: in an application, the generator writes a module initializer and the host registers the routes after your block. The block is for your own services and routes, the same on every host: `r => r.AddSingleton<IClock, Clock>()`. An application with a menu gives its menu view model, `UseRouteables<MainViewModel>(...)` (`UseRouteablesServer<MainViewModel>` on Blazor). To start from a template: `dotnet new install Routeables.Templates`, then `dotnet new routeables-avalonia -n MyApp` or `dotnet new routeables-blazor -n MyWeb` (Avalonia and Blazor for now).
-
-The same view models drive the Animals sample on each host: only the views differ.
-
-<table>
-  <tr>
-    <td align="center"><img src="images/demos/avalonia-desktop.gif" alt="The Animals sample on Avalonia" width="220"><br><sub>Avalonia</sub></td>
-    <td align="center"><img src="images/demos/wpf.gif" alt="The Animals sample on WPF" width="220"><br><sub>WPF</sub></td>
-    <td align="center"><img src="images/demos/uno.gif" alt="The Animals sample on Uno Platform" width="220"><br><sub>Uno Platform</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="images/demos/maui-desktop.gif" alt="The Animals sample on .NET MAUI" width="220"><br><sub>.NET MAUI</sub></td>
-    <td align="center"><img src="images/demos/mauihybrid.gif" alt="The Animals sample on MAUI Blazor Hybrid" width="220"><br><sub>MAUI Blazor Hybrid</sub></td>
-    <td align="center"><img src="images/demos/blazor-server.gif" alt="The Animals sample on Blazor Server" width="220"><br><sub>Blazor Server</sub></td>
-  </tr>
-</table>
-
-## Four families of UI, one model
-
-Seven hosts, but four families of UI underneath. The core (router, history, regions, guards, lifecycle, the source generator)
-is shared by all of them; what a host adds is the binding to its family's API.
-
-| Family | Hosts | What they share |
-| --- | --- | --- |
-| Windows XAML | WPF (`System.Windows`); WinUI 3 and Uno Platform (`Microsoft.UI.Xaml`) | WinUI 3 and Uno compile the same sources ([`src/Routeables.WinUI`](src/Routeables.WinUI)): the same API, two assemblies. WPF has its own. |
-| Avalonia | Avalonia: desktop (Windows, Linux, macOS), Android, iOS, browser | One package for every platform Avalonia draws on. |
-| .NET MAUI | .NET MAUI: Android, iOS, Mac Catalyst, Windows | Its own model (`Microsoft.Maui.Controls`, Shell, handlers), even where it runs on WinUI 3 underneath. |
-| Web | Blazor (Server, WebAssembly, Web App, MAUI Blazor Hybrid); ASP.NET Core (Razor Pages, MVC views) | Both on ASP.NET Core; Blazor routes components, ASP.NET Core routes requests. |
-
-Sharing code is not sharing behaviour: the same sources behave differently on each platform (rendering, accessibility,
-how a drawer or a dialog is shown). So every host is tested where it runs, not once per family: the
-[native smoke tests](agent-desktop/README.md) open every page, a detail and every dialog of the Animals sample on Windows,
-Linux, macOS, Android and iOS.
-
-## When you need more
-
-Nothing below is needed for a first page. Each line has its own guide.
-
-| Area | What Routeables offers | Guide |
-| --- | --- | --- |
-| Routes | `[Routeable("/path/{id:int}")]` on the view model; view paired by name; constraints; most specific template wins; query strings | [Routes](docs/guides/routes.md) |
-| Declarative navigation | `routeables:RouteableLink.Route="/hello/World"` on a button, in XAML, no code in the view model (Avalonia, WPF, Uno, MAUI) | [Routes](docs/guides/routes.md) |
-| Typed routing | `GoToMonkeyDetailAsync(router, name)` generated from the constructor | [Typed routes](docs/guides/typed-routes.md) |
-| Arguments | Route values, query values and objects passed to the target | [Arguments](docs/guides/arguments.md) |
-| History | Back, forward, pop, back to root, move to an entry, erase; no limit by default (50 per server session), `LimitHistory` to set one | [History](docs/guides/history.md) |
-| Regions | Several zones, each with its own router and history | [Regions](docs/guides/regions.md) |
-| Lifecycle | Initialize, entering, leaving, `CanLeaveAsync` veto, `OnSubscribe`/`OnUnsubscribe`, destroy | [Lifecycle](docs/guides/lifecycle.md) |
-| Guards | `IRouteGuard` with an order; allow, redirect or cancel a route change | [Routes](docs/guides/routes.md) |
-| Transitions | 15 built-in transitions, custom ones registered per host | [Transitions](docs/guides/transitions.md) |
-| Dialogs and notifications | One dialog service and one notification service on every host, replaceable at startup, system notifications (Avalonia, Blazor, MAUI) | [System integration](docs/guides/system-integration.md) |
-| Deep links | Open a route from a URL or a system activation | [System integration](docs/guides/system-integration.md) |
-| Modules | A feature is one extension method, loaded at startup or on demand | [Hosts](docs/guides/hosts.md) |
-| Locking | Pages that block leaving, a locked menu | [Locking](src/Routeables.Locking/README.md) |
-| Menu | `RouteableMenu` on every host (a `<routeable-menu />` tag helper on ASP.NET Core), items bound to routes | [Hosts](docs/guides/hosts.md) |
-| Errors | `RouteableResult`, `IRouteableErrorSink` | [Lifecycle](docs/guides/lifecycle.md) |
-| Diagnostics | Tracing and metrics for route changes | [Diagnostics](docs/guides/diagnostics.md) |
-| Native AOT | Source generated; nothing scans assemblies at run time | [AOT](docs/guides/aot.md) |
-| Hosts | Blazor, ASP.NET Core, .NET MAUI, Avalonia, Uno Platform, WinUI 3, WPF | [Hosts](docs/guides/hosts.md) |
-| Dialog libraries | MudBlazor, CommunityToolkit.Maui, FluentAvalonia | [Reshapes](reshapes/README.md) |
+- **A task to do?** The [recipes](docs/guides/recipes.md): sign-in guard, master and detail, passing an object, asking before leaving, tabs with their own history.
+- **The whole first page, step by step**, with the one-line-per-page registration and the other hosts: [Getting started](docs/getting-started.md).
+- **A word you do not know?** The [glossary](docs/guides/glossary.md).
+- **Coming from another library?** [Migrating from Prism](docs/guides/migrating-from-prism.md), and [Routeables compared with other routers](docs/guides/comparison.md).
+- **Everything it can do:** [What Routeables offers](docs/features.md), one line and one guide for each area.
+- **Hosts, packages, samples:** [Hosts and packages](docs/packages.md) and the [samples](samples).
+- [Documentation site](https://cedric56.github.io/Routeables/), [contributing](CONTRIBUTING.md), [third-party notices](THIRD-PARTY-NOTICES.md).
 
 Routeables is the navigation layer, dialogs and notifications included. It ships no commands, view-model locator or event aggregator: use CommunityToolkit.Mvvm, ReactiveUI or plain C#.
-
-## Packages
-
-The host package already holds the dialogs, modals and notifications of its framework. For MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs, add a package of [`Reshapes`](reshapes/README.md). Everything else is in the one `Routeables` package that every host brings; its parts ([`Abstraction`](src/Routeables.Abstraction/README.md), [`Routing`](src/Routeables.Routing/README.md), [`Core`](src/Routeables.Core/README.md), [`Regions`](src/Routeables.Regions/README.md), [`Segments`](src/Routeables.Segments/README.md), [`Locking`](src/Routeables.Locking/README.md), [`Services`](src/Routeables.Services/README.md)) are separate projects of this repository.
-
-### On NuGet
-
-All the packages are released together (see [VERSIONING.md](VERSIONING.md)); the current version is on each badge.
-
-| Package | Version | What it is |
-|---------|---------|------------|
-| [`Routeables`](https://www.nuget.org/packages/Routeables) | [![Routeables](https://img.shields.io/nuget/v/Routeables?label=)](https://www.nuget.org/packages/Routeables) | The core: router, history, regions, modules, guards, lifecycle, generator. Every host brings it; a class library of view models takes it alone. |
-| [`Routeables.Abstraction`](https://www.nuget.org/packages/Routeables.Abstraction) | [![Routeables.Abstraction](https://img.shields.io/nuget/v/Routeables.Abstraction?label=)](https://www.nuget.org/packages/Routeables.Abstraction) | The contracts and attributes only. |
-| [`Routeables.Avalonia`](https://www.nuget.org/packages/Routeables.Avalonia) | [![Routeables.Avalonia](https://img.shields.io/nuget/v/Routeables.Avalonia?label=)](https://www.nuget.org/packages/Routeables.Avalonia) | Host for Avalonia. |
-| [`Routeables.Blazor`](https://www.nuget.org/packages/Routeables.Blazor) | [![Routeables.Blazor](https://img.shields.io/nuget/v/Routeables.Blazor?label=)](https://www.nuget.org/packages/Routeables.Blazor) | Host for Blazor (Server, WebAssembly, Web App). |
-| [`Routeables.AspNetCore`](https://www.nuget.org/packages/Routeables.AspNetCore) | [![Routeables.AspNetCore](https://img.shields.io/nuget/v/Routeables.AspNetCore?label=)](https://www.nuget.org/packages/Routeables.AspNetCore) | Host for Razor Pages and `.cshtml` views. |
-| [`Routeables.Maui`](https://www.nuget.org/packages/Routeables.Maui) | [![Routeables.Maui](https://img.shields.io/nuget/v/Routeables.Maui?label=)](https://www.nuget.org/packages/Routeables.Maui) | Host for .NET MAUI. |
-| [`Routeables.Uno`](https://www.nuget.org/packages/Routeables.Uno) | [![Routeables.Uno](https://img.shields.io/nuget/v/Routeables.Uno?label=)](https://www.nuget.org/packages/Routeables.Uno) | Host for Uno Platform. |
-| [`Routeables.WinUI3`](https://www.nuget.org/packages/Routeables.WinUI3) | [![Routeables.WinUI3](https://img.shields.io/nuget/v/Routeables.WinUI3?label=)](https://www.nuget.org/packages/Routeables.WinUI3) | Host for WinUI 3. |
-| [`Routeables.Wpf`](https://www.nuget.org/packages/Routeables.Wpf) | [![Routeables.Wpf](https://img.shields.io/nuget/v/Routeables.Wpf?label=)](https://www.nuget.org/packages/Routeables.Wpf) | Host for WPF. |
-| [`Routeables.Native`](https://www.nuget.org/packages/Routeables.Native) | [![Routeables.Native](https://img.shields.io/nuget/v/Routeables.Native?label=)](https://www.nuget.org/packages/Routeables.Native) | System notifications (Windows, Android, Apple). |
-| [`Routeables.Templates`](https://www.nuget.org/packages/Routeables.Templates) | [![Routeables.Templates](https://img.shields.io/nuget/v/Routeables.Templates?label=)](https://www.nuget.org/packages/Routeables.Templates) | `dotnet new` templates: `routeables-avalonia`, `-blazor`, `-maui`, `-uno`, `-winui3`. |
-| [`Reshapes.Avalonia.Fluent`](https://www.nuget.org/packages/Reshapes.Avalonia.Fluent) | [![Reshapes.Avalonia.Fluent](https://img.shields.io/nuget/v/Reshapes.Avalonia.Fluent?label=)](https://www.nuget.org/packages/Reshapes.Avalonia.Fluent) | FluentAvalonia dialogs. |
-| [`Reshapes.Blazor.MudBlazor`](https://www.nuget.org/packages/Reshapes.Blazor.MudBlazor) | [![Reshapes.Blazor.MudBlazor](https://img.shields.io/nuget/v/Reshapes.Blazor.MudBlazor?label=)](https://www.nuget.org/packages/Reshapes.Blazor.MudBlazor) | MudBlazor dialogs and notifications. |
-| [`Reshapes.Maui.Community`](https://www.nuget.org/packages/Reshapes.Maui.Community) | [![Reshapes.Maui.Community](https://img.shields.io/nuget/v/Reshapes.Maui.Community?label=)](https://www.nuget.org/packages/Reshapes.Maui.Community) | CommunityToolkit.Maui popups. |
-
-## Learn more
-
-- [Getting started](docs/getting-started.md) and the [guides](docs/guides/routes.md): routes, typed routing, arguments, lifecycle, history, regions, modules, hosts.
-- [Compared with other routers](docs/guides/comparison.md): Prism, ReactiveUI, MAUI Shell, Uno.Extensions and the Blazor router, and where each one fits.
-- [Samples](samples): the same Animals app on Blazor, ASP.NET Core, MAUI, Avalonia, Uno, WinUI 3 and WPF.
-- [Documentation site](https://cedric56.github.io/Routeables/) and API reference.
-- [Contributing](CONTRIBUTING.md), [third-party notices](THIRD-PARTY-NOTICES.md).
 
 Released under the [MIT License](LICENSE.txt).

@@ -38,7 +38,8 @@ namespace Routeables.Generated
         };
 
         private static DiagnosticDescriptor Descriptor(string id, string title, DiagnosticSeverity severity) =>
-            new DiagnosticDescriptor(id, title, "{0}", Category, severity, isEnabledByDefault: true);
+            new DiagnosticDescriptor(id, title, "{0}", Category, severity, isEnabledByDefault: true,
+                helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#" + id.ToLowerInvariant());
 
         // Mirrors RouteParser.Param: {name}, {name:type}, {name:type?}, {name::type} (view-bound), {**name} (the rest of the path).
         private static readonly Regex Placeholder =

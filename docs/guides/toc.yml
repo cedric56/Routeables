@@ -1,3 +1,7 @@
+- name: Recipes
+  href: recipes.md
+- name: Glossary
+  href: glossary.md
 - name: Routes and templates
   href: routes.md
 - name: Typed routing methods
