@@ -29,7 +29,7 @@ public static class RouteGuardRefreshExtensions
 
     /// <summary>
     /// Re-evaluates the guards each time <paramref name="source"/> raises <c>PropertyChanged</c> for one of <paramref name="properties"/> (all of them when none is
-    /// given): <c>router.RefreshGuardsOn(session, nameof(Session.IsSignedIn))</c>. Dispose the result to stop. Raise the event on the thread of the interface.
+    /// given): <c>router.RefreshGuardsOn(session, provider, nameof(Session.IsSignedIn))</c> (<c>provider</c> may be <c>null</c>). Dispose the result to stop. Raise the event on the thread of the interface.
     /// A failure of the refresh is reported to <see cref="Errors.RouteableErrors"/> through <paramref name="provider"/> when one is given.
     /// </summary>
     public static IDisposable RefreshGuardsOn(this IRouter router, INotifyPropertyChanged source, IServiceProvider? provider = null, params string[] properties)

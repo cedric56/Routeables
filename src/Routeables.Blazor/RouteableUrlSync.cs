@@ -221,7 +221,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     // a route the router refuses cancels the navigation, and Blazor puts the browser back where it was.
     private async ValueTask OnLocationChanging(LocationChangingContext context)
     {
-        if (!context.TargetLocation.StartsWith(navigation.BaseUri, StringComparison.OrdinalIgnoreCase))
+        if (!IsInsideBase(context.TargetLocation))
             return;     // another site
 
         var path = Relative(context.TargetLocation);
@@ -351,6 +351,15 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         {
             RouteableErrors.Report<RouteableUrlSync>(provider, ex, route);
         }
+    }
+
+    // The base address ends with a slash ("https://site/app/"); the address of the application without it ("https://site/app") is the same page,
+    // and Blazor reads it so (ToBaseRelativePath gives "").
+    private bool IsInsideBase(string location)
+    {
+        var baseUri = navigation.BaseUri;
+        return location.StartsWith(baseUri, StringComparison.OrdinalIgnoreCase)
+               || (location.Length == baseUri.Length - 1 && baseUri.StartsWith(location, StringComparison.OrdinalIgnoreCase));
     }
 
     private string Relative(string uri)

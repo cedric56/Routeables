@@ -511,8 +511,10 @@ internal class Router(
             return null;
 
         // The type of the route table; a page registered with no route (opened from a menu) is not in it, and is the type the request names.
-        var type = provider.GetService<RouteableTable>()?.Entries
-            .FirstOrDefault(entry => RouteAddress.SamePath(entry.Template, template)).ViewModelType ?? requestedType;
+        // The template itself first (query included), then the one with the same path.
+        var table = provider.GetService<RouteableTable>()?.Entries ?? [];
+        var known = table.Where(entry => RouteAddress.Same(entry.Template, template)).Concat(table.Where(entry => RouteAddress.SamePath(entry.Template, template))).FirstOrDefault();
+        var type = known.ViewModelType ?? requestedType;
         if (type is null)
             return null;
 
@@ -802,13 +804,19 @@ internal class Router(
     private bool TryTemplateOf(string route, out string template)
     {
         var entries = provider.GetService<RouteableTable>()?.Entries ?? [];
-        var exact = entries.FirstOrDefault(e => RouteAddress.SamePath(e.Template, route));
+        // The template that is the route itself (query included: "/search" and "/search?mode=grid" are two routes), then the one that matches it,
+        // then the one that has its path.
+        var exact = entries.FirstOrDefault(e => RouteAddress.Same(e.Template, route));
         if (exact.Template is not null)
             return Found(exact.Template, out template);
 
         var matching = RouteParser.BestMatch(entries, route);
         if (matching.Template is not null)
             return Found(matching.Template, out template);
+
+        var samePath = entries.FirstOrDefault(e => RouteAddress.SamePath(e.Template, route));
+        if (samePath.Template is not null)
+            return Found(samePath.Template, out template);
 
         var item = provider.GetService<IRouteableMenuViewModel>()?.Entries
             .FirstOrDefault(r => RouteAddress.SamePath(r.Route, route) && !string.IsNullOrEmpty(r.Template));

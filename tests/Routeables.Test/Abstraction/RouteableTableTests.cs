@@ -1,4 +1,4 @@
-using Routeables.Abstraction.Registrations;
+﻿using Routeables.Abstraction.Registrations;
 
 namespace Routeables.Tests.Abstraction;
 
@@ -21,5 +21,17 @@ public class RouteableTableTests
         Assert.Single(before);                   // a list read before an add does not change under the reader
         Assert.Equal(2, table.Entries.Count);
         Assert.Equal("/rt-second", table.Entries[1].Template);
+    }
+
+    [Fact]
+    public void Two_routes_that_differ_only_by_their_query_are_both_kept()
+    {
+        var table = new RouteableTable();
+
+        table.Add("/rt-search", typeof(string));
+        table.Add("/rt-search?mode=grid", typeof(int));
+        table.Add("/RT-search/?mode=grid", typeof(long));    // the same route as the one above: not added twice
+
+        Assert.Equal(["/rt-search", "/rt-search?mode=grid"], table.Entries.Select(e => e.Template));
     }
 }

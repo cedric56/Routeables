@@ -42,7 +42,8 @@ internal sealed class RouteableTable
     {
         lock (_gate)
         {
-            if (_entries.Any(e => RouteAddress.SamePath(e.Template, template)))
+            // The same template, query included: "/search" and "/search?mode=grid" are two routes (the parser tells them apart), not one registered twice.
+            if (_entries.Any(e => RouteAddress.Same(e.Template, template)))
                 return;
             _entries = new([.. _entries, (template, viewModelType)]);
         }
