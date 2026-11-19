@@ -1,8 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Browser;
-using Routeables.Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Fonts;
+using Routeables.Avalonia;
 using System;
 using System.Threading.Tasks;
 using XAnimals.Avalonia;

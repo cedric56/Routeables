@@ -1,5 +1,4 @@
-﻿using Routeables.Abstraction;
-using Routeables.Abstraction.Injections;
+﻿using Routeables.Abstraction.Injections;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 

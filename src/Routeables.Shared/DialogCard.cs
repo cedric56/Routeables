@@ -9,18 +9,18 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using System.Windows.Input;
 using Routeables.Services;
+using System.Windows.Input;
 using Button = Avalonia.Controls.Button;
-using Orientation = Avalonia.Layout.Orientation;
 using Element = Avalonia.Controls.Control;
+using Orientation = Avalonia.Layout.Orientation;
 using Picture = Avalonia.Media.IImage;
 #elif WPF
+using Routeables.Services;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Routeables.Services;
 using Element = System.Windows.UIElement;
 using Picture = System.Windows.Media.ImageSource;
 #else

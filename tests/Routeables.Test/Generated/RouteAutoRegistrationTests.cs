@@ -2,9 +2,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Routeables.Abstraction;
+using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Generated;
-using Routeables.Abstraction.Registrations;
 namespace Routeables.Tests.Generated;
 
 /// <summary>The generated routes reach the host without <c>AddGeneratedRoutes()</c>: the module initializer of an executable, and the merge the host does.</summary>

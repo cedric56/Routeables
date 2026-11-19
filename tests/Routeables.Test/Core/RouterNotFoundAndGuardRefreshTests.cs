@@ -1,13 +1,10 @@
-using System.ComponentModel;
-using Microsoft.Extensions.DependencyInjection;
-using Routeables.Abstraction;
-using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Guards;
+using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
-using Routeables.Abstraction.Lifecycle;
 using Routeables.Tests.Pages;
+using System.ComponentModel;
 
 namespace Routeables.Tests.Core;
 

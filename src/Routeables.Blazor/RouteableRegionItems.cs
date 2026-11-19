@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using Routeables.Abstraction;
 using Routeables.Abstraction.Routing;
 using Routeables.Regions;
 

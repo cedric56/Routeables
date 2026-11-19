@@ -1,5 +1,3 @@
-using Routeables.Abstraction;
-using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
@@ -16,13 +14,13 @@ public class QueryOnlyRoutesTests
         services.RegisterRouting();
         if (queryFirst)
         {
-            services.RegisterRoute<QoGridView, QoGridVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search?mode=grid");
-            services.RegisterRoute<QoListView, QoListVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search");
+            services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search?mode=grid");
+            services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search");
         }
         else
         {
-            services.RegisterRoute<QoListView, QoListVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search");
-            services.RegisterRoute<QoGridView, QoGridVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search?mode=grid");
+            services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search");
+            services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search?mode=grid");
         }
         return services.BuildServiceProvider();
     }
@@ -37,10 +35,10 @@ public class QueryOnlyRoutesTests
         var router = provider.GetRequiredService<IRouter>();
 
         Assert.True((await router.GoToAsync("/qo-search?mode=grid", cancellationToken: ct)).Success);
-        Assert.IsType<QoGridVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
 
         Assert.True((await router.GoToAsync("/qo-search", cancellationToken: ct)).Success);
-        Assert.IsType<QoListVm>(router.CurrentViewModel);
+        Assert.IsType<OtherFakeViewModel>(router.CurrentViewModel);
     }
 
     [Theory]
@@ -50,7 +48,7 @@ public class QueryOnlyRoutesTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<QoListView, QoListVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, template);
+        services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, template);
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
 

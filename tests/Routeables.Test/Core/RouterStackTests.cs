@@ -108,7 +108,7 @@ public class RouterStackTests
     {
         var (router, pages) = await ThreePagesAsync();
 
-        Assert.True((await router.GoToAsync("-",cancellationToken:TestContext.Current.CancellationToken)).Success);
+        Assert.True((await router.GoToAsync("-", cancellationToken: TestContext.Current.CancellationToken)).Success);
         Assert.Same(pages[1].ViewModel, router.CurrentViewModel);
 
         Assert.True((await router.GoToAsync(" - ", cancellationToken: TestContext.Current.CancellationToken)).Success);          // spaces are ignored

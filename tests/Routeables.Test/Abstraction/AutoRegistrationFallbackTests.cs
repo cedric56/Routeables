@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction.Registrations;
 
 namespace Routeables.Tests.Abstraction;

@@ -1,7 +1,6 @@
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Routeables.Tests.Abstraction;
 

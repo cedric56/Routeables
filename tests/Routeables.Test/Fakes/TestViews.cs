@@ -43,7 +43,6 @@ public sealed class FormView : IRouteableFor { public object? Context { get; set
 public sealed class GuardAdminView : IRouteableFor { public object? Context { get; set; } }
 public sealed class GuardHomeView : IRouteableFor { public object? Context { get; set; } }
 public sealed class GuardLoginView : IRouteableFor { public object? Context { get; set; } }
-//public sealed class HelloView : IRouteableFor { public object? Context { get; set; } }
 public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
 public sealed class IntroView : IRouteableFor { public object? Context { get; set; } }
 public sealed class IsoView : IRouteableFor { public object? Context { get; set; } }
@@ -66,10 +65,6 @@ public sealed class OtherView : IRouteableFor { public object? Context { get; se
 public sealed class PageView : IRouteableFor { public object? Context { get; set; } }
 public sealed class ProbeView : IRouteableFor { public object? Context { get; set; } }
 public sealed class ProductView : IRouteableFor { public object? Context { get; set; } }
-public sealed class QoGridView : IRouteableFor { public object? Context { get; set; } }
-public sealed class QoListView : IRouteableFor { public object? Context { get; set; } }
-public sealed class RaItemView : IRouteableFor { public object? Context { get; set; } }
-//public sealed class RandomPageView : IRouteableFor { public object? Context { get; set; } }
 public sealed class RootView : IRouteableFor { public object? Context { get; set; } }
 public sealed class SaProductView : IRouteableFor { public object? Context { get; set; } }
 public sealed class SegBlockedView : IRouteableFor { public object? Context { get; set; } }

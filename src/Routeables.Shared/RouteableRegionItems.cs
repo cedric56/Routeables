@@ -15,8 +15,6 @@ using Avalonia.VisualTree;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #endif
-using Routeables.Abstraction;
-using Routeables.Abstraction.Routing;
 using Routeables.Regions;
 
 // Shared source for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui (which define WPF, AVALONIA or MAUI), Routeables.Uno and Routeables.WinUI3.

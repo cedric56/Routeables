@@ -2,10 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Themes.Fluent;
-using Routeables.Comparison.Avalonia;
 using Prism.DryIoc;
-using Prism.Ioc;
-using Prism.Navigation.Regions;
+using Routeables.Comparison.Avalonia;
 
 namespace Routeables.Comparison.Prism;
 

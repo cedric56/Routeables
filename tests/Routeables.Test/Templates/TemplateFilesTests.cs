@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace Routeables.Tests.Templates;
 
 /// <summary>

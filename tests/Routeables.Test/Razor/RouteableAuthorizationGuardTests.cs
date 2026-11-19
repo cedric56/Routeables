@@ -5,8 +5,8 @@ using Routeables.Abstraction.History;
 using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
 using Routeables.Routing;
-using System.Security.Claims;
 using Routeables.Tests.Pages;
+using System.Security.Claims;
 
 namespace Routeables.Tests.Razor;
 

@@ -1,9 +1,9 @@
 #if !ANDROID && !IOS && !MACCATALYST && !WINDOWS
 
+using Routeables.Native.Desktop;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Routeables.Native.Desktop;
 
 namespace Routeables.Native;
 

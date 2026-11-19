@@ -513,8 +513,15 @@ internal sealed class DBusConnection : IDisposable
 
         return new DBusMessage
         {
-            Type = type, Serial = serial, ReplySerial = replySerial, Interface = @interface, Member = member,
-            ErrorName = errorName, Signature = signature, Sender = sender, Body = body
+            Type = type,
+            Serial = serial,
+            ReplySerial = replySerial,
+            Interface = @interface,
+            Member = member,
+            ErrorName = errorName,
+            Signature = signature,
+            Sender = sender,
+            Body = body
         };
     }
 

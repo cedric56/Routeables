@@ -1,11 +1,10 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
-using Routeables.Abstraction;
 using Routeables.Abstraction.History;
 using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Services;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Routeables.Tests.Services;
 

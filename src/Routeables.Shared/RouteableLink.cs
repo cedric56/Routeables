@@ -22,8 +22,6 @@ using LinkTarget = Microsoft.UI.Xaml.DependencyObject;
 using LinkButton = Microsoft.UI.Xaml.Controls.Primitives.ButtonBase;
 using LinkClickArgs = Microsoft.UI.Xaml.RoutedEventArgs;
 #endif
-using Routeables.Abstraction;
-using Routeables.Abstraction.Routing;
 using Routeables.Services;
 
 // Shared source for every host that has a button: Routeables.Wpf, Routeables.Maui and Routeables.Avalonia (which define WPF, MAUI or AVALONIA),

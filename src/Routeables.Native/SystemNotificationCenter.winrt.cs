@@ -1,8 +1,8 @@
 #if !ANDROID && !IOS && !MACCATALYST && !WINDOWS
 
+using Microsoft.Win32;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
-using Microsoft.Win32;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 

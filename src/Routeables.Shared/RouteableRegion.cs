@@ -23,7 +23,6 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 #endif
 using Routeables.Abstraction.Bases;
-using Routeables.Abstraction.Routing;
 using Routeables.Regions;
 
 // Shared source for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui (which define WPF, AVALONIA or MAUI), Routeables.Uno and

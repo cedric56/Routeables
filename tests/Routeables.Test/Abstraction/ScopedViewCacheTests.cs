@@ -1,5 +1,4 @@
-﻿using Routeables.Abstraction;
-using Routeables.Abstraction.Lifecycle;
+﻿using Routeables.Abstraction.Lifecycle;
 
 namespace Routeables.Test.Abstraction;
 

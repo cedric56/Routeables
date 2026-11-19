@@ -8,10 +8,10 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Routeables.Services;
-using Orientation = Avalonia.Layout.Orientation;
-using ProgressBar = Avalonia.Controls.ProgressBar;
 using Element = Avalonia.Controls.Control;
+using Orientation = Avalonia.Layout.Orientation;
 using Owner = Avalonia.Controls.TopLevel;
+using ProgressBar = Avalonia.Controls.ProgressBar;
 #elif WPF
 using Routeables.Services;
 using System.Windows;
@@ -24,8 +24,8 @@ using Microsoft.UI.Xaml.Controls;
 using Routeables.Native;
 using Routeables.Services;
 using Element = Microsoft.UI.Xaml.UIElement;
-using Owner = Microsoft.UI.Xaml.XamlRoot;
 using Orientation = Microsoft.UI.Xaml.Controls.Orientation;
+using Owner = Microsoft.UI.Xaml.XamlRoot;
 using ProgressBar = Microsoft.UI.Xaml.Controls.ProgressBar;
 #endif
 

@@ -1,18 +1,18 @@
 #if AVALONIA
 using Avalonia.Automation.Peers;
-using RegionPeerBase = Avalonia.Automation.Peers.ContentControlAutomationPeer;
-using RegionItemsPeerBase = Avalonia.Automation.Peers.ItemsControlAutomationPeer;
 using ForPeerBase = Avalonia.Automation.Peers.ContentControlAutomationPeer;
+using RegionItemsPeerBase = Avalonia.Automation.Peers.ItemsControlAutomationPeer;
+using RegionPeerBase = Avalonia.Automation.Peers.ContentControlAutomationPeer;
 #elif WPF
 using System.Windows.Automation.Peers;
-using RegionPeerBase = System.Windows.Automation.Peers.FrameworkElementAutomationPeer;
-using RegionItemsPeerBase = System.Windows.Automation.Peers.FrameworkElementAutomationPeer;
 using ForPeerBase = System.Windows.Automation.Peers.FrameworkElementAutomationPeer;
+using RegionItemsPeerBase = System.Windows.Automation.Peers.FrameworkElementAutomationPeer;
+using RegionPeerBase = System.Windows.Automation.Peers.FrameworkElementAutomationPeer;
 #else
 using Microsoft.UI.Xaml.Automation.Peers;
-using RegionPeerBase = Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer;
-using RegionItemsPeerBase = Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer;
 using ForPeerBase = Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer;
+using RegionItemsPeerBase = Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer;
+using RegionPeerBase = Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer;
 #endif
 
 // Shared source for every host with automation peers: Routeables.Wpf and Routeables.Avalonia (which define WPF or AVALONIA), Routeables.Uno and

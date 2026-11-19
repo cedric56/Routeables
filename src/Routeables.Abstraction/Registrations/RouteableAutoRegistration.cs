@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction.Injections;
-using Routeables.Abstraction.Registrations;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;

@@ -1,7 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
-using Routeables.Abstraction;
-using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
@@ -90,7 +87,7 @@ public class RouteAddressTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<RaItemView, RaItemVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ra-items/{id}");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ra-items/{id}");
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
 

@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Components;
-using Routeables.Abstraction;
+using Routeables.Abstraction.Registrations;
 using Routeables.AspNetCore;
 using Routeables.Avalonia;
 using Routeables.Blazor;
 using Routeables.Tests.Core;
-using AvaloniaApplication = global::Avalonia.Application;
-using Routeables.Abstraction.Registrations;
 using Routeables.Tests.Pages;
+using AvaloniaApplication = global::Avalonia.Application;
 namespace Routeables.Tests.Hosts;
 
 /// <summary>

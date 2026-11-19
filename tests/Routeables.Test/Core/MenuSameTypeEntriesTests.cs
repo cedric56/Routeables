@@ -1,12 +1,11 @@
-using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Guards;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Core;
 using Routeables.Routing;
-using System.Collections.ObjectModel;
 using Routeables.Tests.Pages;
+using System.Collections.ObjectModel;
 namespace Routeables.Tests.Core;
 
 /// <summary>Several entries of a menu can show the same view model type with other routes: the menu follows the route, not the type.</summary>

@@ -1,5 +1,3 @@
-using Routeables.Abstraction.Routing;
-
 namespace Routeables.Tests.Pages;
 
 /// <summary>The view models of the tests that hold nothing but what their constructor is given. A test with a behaviour of its own (a hook, a counter) keeps its view model.</summary>
@@ -46,10 +44,6 @@ public sealed class OrdersVm;
 public sealed class OrphanVm;
 public sealed class OtherVm;
 public sealed class PageVm(int id) { public int Id { get; } = id; }
-public sealed class QoGridVm;
-public sealed class QoListVm;
-public sealed class RaItemVm;
-//public sealed class RandomPageVm;
 public sealed class RootVm;
 public sealed class SaProductVm;
 public sealed class SegBlockedVm;

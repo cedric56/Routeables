@@ -4,8 +4,6 @@ using Avalonia.Threading;
 #else
 using System.Windows.Controls;
 #endif
-using Routeables.Abstraction;
-using Routeables.Abstraction.Routing;
 using Routeables.Regions;
 
 // Shared source for Routeables.Wpf and Routeables.Avalonia (which define WPF or AVALONIA): a TabControl has the same members in both.

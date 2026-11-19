@@ -64,7 +64,7 @@ public class ModuleServiceProviderDisposeTests
         var application = new ServiceCollection().BuildServiceProvider();
         services.TryGet(typeof(Slow), application, application, out _);
 
-        await Task.Run(services.Dispose, cancellationToken:TestContext.Current.CancellationToken);
+        await Task.Run(services.Dispose, cancellationToken: TestContext.Current.CancellationToken);
 
         // Started, not awaited: it finishes afterwards.
         var deadline = DateTime.UtcNow.AddSeconds(5);

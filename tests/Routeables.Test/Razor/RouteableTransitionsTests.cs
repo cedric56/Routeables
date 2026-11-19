@@ -1,10 +1,9 @@
 using Routeables.Abstraction;
-using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Abstraction.Transitions;
 using Routeables.AspNetCore;
 using Routeables.Routing;
-using Routeables.Abstraction.Registrations;
 using Routeables.Tests.Pages;
 namespace Routeables.Tests.Razor;
 

@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Errors;
 using Routeables.Abstraction.Lifecycle;
+using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
 using Routeables.Routing;
-using Routeables.Abstraction.Registrations;
 using Routeables.Tests.Pages;
 namespace Routeables.Tests.Razor;
 

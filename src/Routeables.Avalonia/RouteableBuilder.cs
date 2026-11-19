@@ -2,12 +2,8 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
-using Routeables.Abstraction.Errors;
-using Routeables.Abstraction.Lifecycle;
-using Routeables.Abstraction.Routing;
 using Routeables.Avalonia.Services;
 using Routeables.Core;
 using Routeables.Services;

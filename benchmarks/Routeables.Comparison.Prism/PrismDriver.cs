@@ -1,7 +1,5 @@
 using Avalonia.Threading;
 using Routeables.Comparison.Avalonia;
-using Prism.Ioc;
-using Prism.Navigation.Regions;
 
 namespace Routeables.Comparison.Prism;
 

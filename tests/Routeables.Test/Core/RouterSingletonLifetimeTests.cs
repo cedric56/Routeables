@@ -1,6 +1,5 @@
-using Routeables.Abstraction;
-using Routeables.Routing;
 using Routeables.Abstraction.Registrations;
+using Routeables.Routing;
 namespace Routeables.Tests.Core;
 
 /// <summary>A page registered as a singleton is shared: leaving the history must not dispose it while the container keeps handing it out.</summary>

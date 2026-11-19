@@ -2,7 +2,6 @@ using Avalonia.Automation;
 using Avalonia.Automation.Peers;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using Routeables.Abstraction;
 using Routeables.Abstraction.Routing;
 using Routeables.Avalonia;
 using Xunit;

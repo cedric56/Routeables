@@ -2,7 +2,6 @@ using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
-using Routeables.Abstraction;
 using Routeables.Abstraction.Routing;
 using Routeables.Avalonia;
 using Xunit;
