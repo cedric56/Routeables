@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
@@ -87,7 +87,7 @@ public static class RouteablePersistence
         ArgumentNullException.ThrowIfNull(viewModel);
         ArgumentNullException.ThrowIfNull(into);
         var found = false;
-        var bag = new PersistBag(into);
+        var bag = new PersistBag(into, keepFirst: true);
         for (var type = viewModel.GetType(); type is not null; type = type.BaseType)
         {
             if (Entries.TryGetValue(type, out var entry))

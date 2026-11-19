@@ -6,6 +6,11 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A converter registered for a nullable type is used to read as well as to write**: `RegisterConverter<DateTime?>` wrote the property and the read looked for the type under it, so the value was lost at the restore. Both sides look the type the property declares first (then the type under a nullable); a converter of a subclass is no longer used to write a property of its base type, which the read could never find.
+- **A `[Persist]` property hidden by one of the same name** (`new`) keeps the value of the most derived class: the base class used to write over it under the same key.
+- **`[Persist]` on a property of a struct is reported** (ROUT401) instead of producing generated code that does not compile.
+- **The menu follows a move between two routes served by one instance**, not only between two instances.
+- **`RouteAddress.Same` reads the query of a template with an optional parameter**: the order of the pairs of `/p/{tab?}?a=1&b=2` does not count, as for any address.
 - **A page that is its own view model is asked once**: `CanLeaveAsync`, `OnLeavingAsync` and `OnEnteringAsync` ran on the view model and then on the view, which is the same object for a route registered without a view model: a confirmation to leave was shown twice and a load ran twice.
 - **`RouteAddress.Absolute` keeps the `?` of an optional parameter in the path** (`products/{tab?}/` is `/products/{tab?}`), as `PathOf` does since the last fix, and so does the comparison of the words of a template.
 - **A `[Persist]` property named like a keyword compiles** (`@class`): the generated code writes the `@`.

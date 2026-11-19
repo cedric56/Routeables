@@ -123,7 +123,7 @@ internal static class RouteAddress
 
     private static (string Path, string? Query) SplitQuery(string address)
     {
-        var at = address.IndexOf('?');
+        var at = QueryStart(address);
         return at < 0 ? (address, null) : (address[..at], address[(at + 1)..]);
     }
 

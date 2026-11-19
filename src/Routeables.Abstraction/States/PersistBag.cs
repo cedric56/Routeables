@@ -9,9 +9,11 @@ namespace Routeables.Abstraction.States;
 public sealed class PersistBag
 {
     private readonly IDictionary<string, string>? _write;
+    private readonly bool _keepFirst;
     private readonly IReadOnlyDictionary<string, string>? _read;
 
-    internal PersistBag(IDictionary<string, string> write) => _write = write;
+    // keepFirst: a name that is already written stays as it is (the properties of the most derived class are written first: a base property hidden by one of the same name does not replace it).
+    internal PersistBag(IDictionary<string, string> write, bool keepFirst = false) => (_write, _keepFirst) = (write, keepFirst);
 
     internal PersistBag(IReadOnlyDictionary<string, string> read) => _read = read;
 
@@ -26,6 +28,9 @@ public sealed class PersistBag
             return false;
         try
         {
+            if (_keepFirst && _write.ContainsKey(RouteablePersistence.KeyPrefix + name))
+                return true;
+
             if (value is null)
             {
                 _write[RouteablePersistence.KeyPrefix + name] = "n";
@@ -111,7 +116,9 @@ internal static class PersistCodec
             return own is not null;
         }
 
-        if (!Converters.IsEmpty && (Converters.TryGetValue(value!.GetType(), out var adapter) || Converters.TryGetValue(typeof(T), out adapter)))
+        // The type the property declares decides, as for the read (a converter of Dog on a property of Animal is not found by the read, so it is not used to write);
+        // a converter of DateTime? and one of DateTime are both the one of a DateTime? property.
+        if (!Converters.IsEmpty && (Converters.TryGetValue(typeof(T), out var adapter) || (Nullable.GetUnderlyingType(typeof(T)) is { } inner && Converters.TryGetValue(inner, out adapter))))
         {
             var written = adapter.Write(value!);
             text = written ?? "";
@@ -162,7 +169,7 @@ internal static class PersistCodec
         if (converter is not null)
             return converter.TryRead(text, out value);
 
-        if (!Converters.IsEmpty && Converters.TryGetValue(type, out var adapter))
+        if (!Converters.IsEmpty && (Converters.TryGetValue(typeof(T), out var adapter) || Converters.TryGetValue(type, out adapter)))
             read = adapter.Read(text);
         else if (type == typeof(string)) read = text;
         else if (type == typeof(bool)) read = bool.TryParse(text, out var b) ? b : null;

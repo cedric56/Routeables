@@ -69,6 +69,8 @@ namespace Routeables.Generated
             else if (!IsReachable(property.GetMethod.DeclaredAccessibility) || !IsReachable(property.SetMethod.DeclaredAccessibility)
                      || !IsReachable(property.DeclaredAccessibility))
                 problem = "its getter and setter must be public or internal";
+            else if (container.TypeKind != TypeKind.Class)
+                problem = "only a class is saved: a struct has no base chain to walk and an interface is never the type of a view model";
             else if (container.IsGenericType)
                 problem = "the class is generic";
             else if (!IsTypeReachable(container))

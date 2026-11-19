@@ -73,6 +73,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
             return;
 
         _followed = viewModel;
+        _followedRoute = _router.History.Current?.Args.Route;
 
         // The entry of that page: the one whose route is the route of the page that is shown (several entries can show the same type with
         // other routes: /products/shoes and /products/hats). Else the entry whose route is the type name, or a RouteableMenuEntry<T> of that type.
@@ -92,6 +93,12 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     // A page that moves the router itself (its own Back or Pop button, for instance) does not tell the menu: the router does.
     // A selection of the menu, and a move that the menu has already followed, are not told twice.
     private object? _followed;
+    // The route of the page that was followed: two routes can be served by one instance (a cached view model), and moving from one to the other is a move.
+    private string? _followedRoute;
+
+    private bool Follows(object? viewModel)
+        => ReferenceEquals(viewModel, _followed)
+           && (_router.History.Current?.Args.Route is not { } route ? _followedRoute is null : RouteAddress.SameFor(_router, route, _followedRoute));
 
     // Greater than 0 while GoBackAsync and GoForwardAsync of this menu run: they follow the router themselves, once the move is done.
     // A count, not a flag: two of them that overlap (a double click) must not let the first one to end switch it off for the other.
@@ -120,7 +127,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     {
         // A Push that the menu asked for (a selection) is announced by the selection itself; any other one (router.GoToAsync, a RouteableLink,
         // the redirection of a guard) is a page the menu did not choose, and it follows it like a Back.
-        if (Volatile.Read(ref _selfMoving) > 0 || !e.Succeeded || (e.Kind == RouteableKind.Push && _selecting > 0) || ReferenceEquals(_router.CurrentViewModel, _followed))
+        if (Volatile.Read(ref _selfMoving) > 0 || !e.Succeeded || (e.Kind == RouteableKind.Push && _selecting > 0) || Follows(_router.CurrentViewModel))
             return;
 
         OnRouterMoved(_router.CurrentViewModel);
@@ -409,7 +416,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
                 var redirected = _router.History.Current is { } current
                     && !RouteAddress.SameFor(_router, current.Args.Route, value.Arguments.Route ?? value.Route);
                 // The redirection is a Push that came while the selection ran, and OnRouted left it out: the menu follows that page now.
-                if (redirected && !ReferenceEquals(_router.CurrentViewModel, _followed))
+                if (redirected && !Follows(_router.CurrentViewModel))
                     OnRouterMoved(_router.CurrentViewModel);
                 if (redirected && ReferenceEquals(_routeable, value))
                     _routeable = Previous(old, version);

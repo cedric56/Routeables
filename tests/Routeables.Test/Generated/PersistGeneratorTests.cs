@@ -48,6 +48,22 @@ public class PersistGeneratorTests
         Assert.Empty(result.Diagnostics);
     }
 
+    [Fact]
+    public void A_property_of_a_struct_is_reported_and_left_out()
+    {
+        var result = Run("""
+            using Routeables.Abstraction.States;
+            public struct Vm
+            {
+                [Persist] public int X { get; set; }
+            }
+            """);
+
+        var diagnostic = Assert.Single(result.Diagnostics);
+        Assert.Equal("ROUT401", diagnostic.Id);
+        Assert.Contains("only a class", diagnostic.GetMessage());
+    }
+
     [Theory]
     [InlineData("[Persist] public static string S { get; set; } = \"\";", "static")]
     [InlineData("[Persist] public string R { get; } = \"\";", "getter and a setter")]

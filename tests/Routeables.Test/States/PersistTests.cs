@@ -288,4 +288,44 @@ public class PersistTests
         Assert.True(PersistCodec.TryRead<Int128?>(a, null, out var maybe));
         Assert.Equal(Int128.MinValue, maybe);
     }
+
+    [Fact]
+    public void A_converter_registered_for_a_nullable_type_is_used_to_write_and_to_read()
+    {
+        RouteablePersistence.RegisterConverter<DateTime?>(
+            d => d?.ToString("yyyyMMdd"),
+            (string text, out DateTime? d) => { d = DateTime.ParseExact(text, "yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture); return true; });
+        try
+        {
+            var into = new Dictionary<string, string>();
+            new PersistBag((IDictionary<string, string>)into).Set<DateTime?>("D", new DateTime(2026, 1, 2));
+
+            Assert.Equal("v20260102", into["persist:D"]);
+            Assert.True(new PersistBag((IReadOnlyDictionary<string, string>)into).TryGet<DateTime?>("D", out var back));
+            Assert.Equal(new DateTime(2026, 1, 2), back);
+        }
+        finally
+        {
+            PersistCodec.Converters.TryRemove(typeof(DateTime?), out _);
+        }
+    }
+
+    public class HiddenBase { public string V { get; set; } = "base"; }
+    public class HiddenDerived : HiddenBase { public new int V { get; set; } = 7; }
+
+    [Fact]
+    public void A_property_hidden_by_one_of_the_same_name_keeps_the_value_of_the_most_derived_class()
+    {
+        RouteablePersistence.Register<HiddenBase>(
+            (vm, bag) => bag.Capture<HiddenBase, string>(vm, "V", x => x.V),
+            (vm, bag) => bag.Restore<HiddenBase, string>(vm, "V", (x, v) => x.V = v));
+        RouteablePersistence.Register<HiddenDerived>(
+            (vm, bag) => bag.Capture<HiddenDerived, int>(vm, "V", x => x.V),
+            (vm, bag) => bag.Restore<HiddenDerived, int>(vm, "V", (x, v) => x.V = v));
+        var into = new Dictionary<string, string>();
+
+        RouteablePersistence.Save(new HiddenDerived(), into);
+
+        Assert.Equal("v7", into["persist:V"]);
+    }
 }

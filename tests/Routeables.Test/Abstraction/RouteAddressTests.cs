@@ -196,4 +196,11 @@ public class RouteAddressTests
         Assert.Equal("/products/{tab?}", RouteAddress.Absolute("products/{tab?}/"));
         Assert.Equal("/products/{tab?}?x=1", RouteAddress.Absolute("products/{tab?}/?x=1"));
     }
+
+    [Fact]
+    public void The_order_of_the_pairs_of_a_query_does_not_count_after_an_optional_parameter()
+    {
+        Assert.True(RouteAddress.Same("/p/{tab?}?a=1&b=2", "/p/{tab?}?b=2&a=1"));
+        Assert.False(RouteAddress.Same("/p/{tab?}?a=1", "/p/{tab?}?a=2"));
+    }
 }
