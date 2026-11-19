@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **The page on modules says that a guard registered by a module is not consulted**: the guards are read once from the container of the application, and the services of a module serve its own views and view models.
 - **The views and view models of the tests are in one place**: `tests/Routeables.Test/Fakes/TestViews.cs` (67 views that hold only their context) and `TestViewModels.cs` (59 view models that hold only what their constructor is given), namespace `Routeables.Tests.Pages`, instead of 169 copies declared in the test classes (42 files). A test with a behaviour of its own (a hook, a counter, a failing constructor), a type that has an attribute (`[Authorize]`) or a comment above it keeps its own. Not touched: the tests of the generators (their sources are strings) and of WPF, MAUI, Avalonia and the native code.
 - **The coverage summary leaves out the lines that hold only a brace, a blank or a comment** from "Not covered" and "Lines not run" (the coverage tool counts them, and marks the closing brace of a method that throws as not run), and lists twelve ranges instead of eight: what is left is code a test can reach.
 - **The tests are sorted by what they test**: the 25 tests of three classes named after audits (`RouterAuditFixesTests`, `ExternalAuditTests`, `AuditFollowUpTests`) now sit with the tests of their feature (route parser, route address, constructor arguments, modules, form lock, view cache, `RouteableReturn`, Blazor address comparison, router failures and guard refresh), or in new classes: `RouterValueBindingTests`, `RouterTypedMenuEntryTests`, `RouteableStateRestoreTests`.
@@ -16,6 +17,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **`AddRegion` refuses `ServiceLifetime.Transient`**, as `RegisterRouting` does: each resolve of a transient region got a history of its own, so the pages shown were lost without a word. It throws an `ArgumentOutOfRangeException` at registration.
 - **Two test classes no longer disturb each other through `RouteableErrors.Default`**: `RouteableLinkActionTests` replaces that process-wide default while `RouteableErrorsGuardTests` listens to what goes to it, so under parallel runs one saw the reports of the other (a missing trace, three reports instead of one). Both are in one xUnit collection, and the link test counts only its own report.
 - **`EraseHistoryAsync` told the page it was left after disposing it**: `OnLeftAsync` ran after `OnUnsubscribe` and `Dispose`, so a transient page that gave back a resource there got an `ObjectDisposedException` (reported, the clean-up half done). `OnLeftAsync` now runs first, as in every other route change.
 - **`RefreshGuardsOn(source, provider, null)` no longer ends the process**: an explicit `null` for the list of properties was read in an `async void` handler and raised a `NullReferenceException` at the next `PropertyChanged`. It now means every property, as an empty list does.

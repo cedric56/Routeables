@@ -65,13 +65,20 @@ public static class Extensions
     /// </summary>
     /// <param name="services">The service collection to add to.</param>
     /// <param name="route">The region's identifier, e.g. "main" or "side". Resolve it later with <see cref="RouterExtensions.GetRouter"/></param>
-    /// <param name="lifetime"><see cref="ServiceLifetime.Scoped"/></param>
+    /// <param name="lifetime"><see cref="ServiceLifetime.Scoped"/> (the default) or <see cref="ServiceLifetime.Singleton"/>.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="lifetime"/> is <see cref="ServiceLifetime.Transient"/>.</exception>
     /// <returns>The same <paramref name="services"/> instance, for chaining.</returns>
     public static IServiceCollection AddRegion(
         this IServiceCollection services, string route, ServiceLifetime lifetime = ServiceLifetime.Scoped)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(route);
+        // As RegisterRouting: each resolve of a Transient region would get a history of its own, and the pages shown would be lost without a word.
+        if (lifetime == ServiceLifetime.Transient)
+            throw new ArgumentOutOfRangeException(
+                nameof(lifetime),
+                lifetime,
+                "A Transient region is not supported: each resolve would get a separate history. Use Singleton or Scoped.");
         RouteableRegionNames.Record(services, route);
         services.Add(new ServiceDescriptor(typeof(RouterHistory), route, (sp, k) => new RouterHistory(sp.GetService<HistoryLimits>()?.For((string)k!) ?? (lifetime == ServiceLifetime.Scoped ? DefaultScopedHistoryLimit : null)), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterGate), route, (sp, k) => new RouterGate(sp.GetService<ConcurrencyPolicies>()?.For((string)k!) ?? RouterConcurrency.Queue), lifetime));

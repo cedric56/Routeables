@@ -73,7 +73,7 @@ The Birds module of the samples is the other shape, a module that serves several
 
 #### Loading a module while the application runs
 
-`IRouteableModules`, registered with `RegisterMenuViewModel`, loads a module when the application asks for it, as Prism does with `OnDemand`. The routes of the module can be reached at once (by the router and from an address), its entries are added to the menu of every menu view model alive and of the ones built later, and its services are available to its own views and view models.
+`IRouteableModules`, registered with `RegisterMenuViewModel`, loads a module when the application asks for it, as Prism does with `OnDemand`. The routes of the module can be reached at once (by the router and from an address), its entries are added to the menu of every menu view model alive and of the ones built later, and its services are available to its own views and view models only: a guard (`IRouteGuard`) that a module registers is not consulted, because the guards are read once from the container of the application. Register the guards of an application at startup.
 
 ```csharp
 // A module linked in the application, activated on demand: nothing is read by reflection, trimming and Native AOT are safe.

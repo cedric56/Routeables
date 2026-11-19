@@ -50,6 +50,14 @@ public class RegisterRouteLifetimeTests
     }
 
     [Fact]
+    public void AddRegion_rejects_Transient()
+    {
+        var services = new ServiceCollection();
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            services.AddRegion("content", ServiceLifetime.Transient));
+    }
+
+    [Fact]
     public async Task Shared_router_preserves_history_across_resolves()
     {
         var services = new ServiceCollection();
