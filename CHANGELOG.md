@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A route change started by work that nobody awaits waits for its turn** (`RouteableHelper.FireAndForget` from `OnEnteringAsync`, `RefreshGuardsOn` raised during a route change): it copied the mark of the route change in progress and was refused as "Reentrant route changes are not supported". A nested change that is awaited is still refused.
 - **A value named in `viewKeys` reaches the property of the view**, as documented: it was marked as a constructor argument and, without a matching constructor, lost.
 - **The positional `RegisterRoute<TView, TViewModel, TArg1, …>` read the arguments of the constructor by their place among the constructor arguments**, not among all the entries (a property entry before them gave the wrong value).
 - **The address and the caller no longer both give a value of the same name to the constructor**: the value of the address replaces the one of the caller, as it does for the property.

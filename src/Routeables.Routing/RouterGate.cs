@@ -1,4 +1,6 @@
-﻿namespace Routeables.Routing;
+﻿using Routeables.Abstraction;
+
+namespace Routeables.Routing;
 
 /// <summary>
 /// Provides asynchronous reentrancy protection and serialization for routing operations per router instance
@@ -20,6 +22,12 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
     private readonly AsyncLocal<object?> _inProgress = new();
     private object? _current;
 
+    // The token of an operation, with the detached mark of the flow that took the gate.
+    private sealed class Pass(object? detached)
+    {
+        public object? Detached { get; } = detached;
+    }
+
     /// <summary>
     /// Asynchronously enters the route change gate, throwing an exception if reentrant routing is attempted.
     /// </summary>
@@ -34,7 +42,9 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
     /// <exception cref="InvalidOperationException">Thrown if reentrant routing is detected.</exception>
     public Task EnterAsync(CancellationToken cancellationToken = default)
     {
-        if (_inProgress.Value is { } carried && ReferenceEquals(carried, Volatile.Read(ref _current)))
+        // Nested: the flow carries the token of the operation in progress, and was not detached since (FireAndForget) from the flow that took it.
+        if (_inProgress.Value is Pass carried && ReferenceEquals(carried, Volatile.Read(ref _current))
+            && ReferenceEquals(carried.Detached, RouteableHelper.DetachedFlow.Value))
             throw new InvalidOperationException("Reentrant route changes are not supported.");
 
         var cancelCurrent = concurrency == RouterConcurrency.CancelCurrent;
@@ -50,7 +60,7 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
         Task wait;
         try { wait = _gate.WaitAsync(cancellationToken); }
         catch { Unwant(number); throw; }
-        var token = new object();
+        var token = new Pass(RouteableHelper.DetachedFlow.Value);
         _inProgress.Value = token;
         if (wait.IsCompletedSuccessfully)
         {

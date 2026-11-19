@@ -43,10 +43,22 @@ public static class RouteableHelper
         ArgumentNullException.ThrowIfNull(work);
 
         Task task;
-        try { task = work(); }
+        try { task = Detach(work); }
         catch (Exception ex) { Fail(ex, provider, detail, onError); return; }
 
         Forget(task, provider, detail, onError);
+    }
+
+    // Marks the flow of work that nobody awaits. A route change started from it is not a nested one: it waits for the one in progress (see RouterGate)
+    // instead of being refused as reentrant because it copied the mark of the route change that started it.
+    internal static readonly AsyncLocal<object?> DetachedFlow = new();
+
+    internal static T Detach<T>(Func<T> start)
+    {
+        var previous = DetachedFlow.Value;
+        DetachedFlow.Value = new object();
+        try { return start(); }
+        finally { DetachedFlow.Value = previous; }
     }
 
     /// <summary>

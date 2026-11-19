@@ -1,4 +1,5 @@
-﻿using Routeables.Routing;
+﻿using Routeables.Abstraction;
+using Routeables.Routing;
 
 namespace Routeables.Tests.Core;
 
@@ -6,6 +7,25 @@ namespace Routeables.Tests.Core;
 public class RouterGateTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
+
+    [Fact]
+    public async Task Work_that_nobody_awaits_waits_for_the_route_change_in_progress_instead_of_being_refused_as_reentrant()
+    {
+        var gate = new RouterGate();
+        await gate.EnterAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // A nested route change, awaited by the one in progress, is still refused.
+        Assert.Throws<InvalidOperationException>(() => { _ = gate.EnterAsync(cancellationToken: TestContext.Current.CancellationToken); });
+
+        Task? detached = null;
+        RouteableHelper.FireAndForget(() => detached = gate.EnterAsync(cancellationToken: TestContext.Current.CancellationToken));
+        Assert.NotNull(detached);
+        Assert.False(detached!.IsCompleted);      // it waits its turn
+
+        gate.Exit();
+        await detached.WaitAsync(Timeout, cancellationToken: TestContext.Current.CancellationToken);
+        gate.Exit();
+    }
 
     [Fact]
     public async Task A_newer_caller_that_comes_before_the_operation_is_published_still_cancels_it()
