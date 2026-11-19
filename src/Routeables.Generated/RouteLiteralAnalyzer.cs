@@ -41,6 +41,7 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
             var router = start.Compilation.GetTypeByMetadataName("Routeables.Abstraction.Routing.IRouter");
             if (routeable is null || router is null)
                 return;
+            var extensions = start.Compilation.GetTypeByMetadataName("Routeables.Abstraction.Routing.RouterExtensions");
 
             var templates = new ConcurrentBag<string>();
             var calls = new ConcurrentBag<(string Route, Location Where)>();
@@ -59,6 +60,7 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
                     // Only the router's own method: another library's GoToAsync(string url) is not a route of this application.
                     var owner = method.ContainingType;
                     if (!SymbolEqualityComparer.Default.Equals(owner, router)
+                        && !SymbolEqualityComparer.Default.Equals(owner, extensions)
                         && !owner.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(i, router)))
                         return;
                     if (Argument(invocation, "template") is not null)
