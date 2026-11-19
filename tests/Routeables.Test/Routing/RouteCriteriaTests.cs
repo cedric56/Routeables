@@ -143,6 +143,16 @@ public class RouteCriteriaTests
         Assert.True(await provider.ShowModalAsync<ConfirmVm, bool>());
     }
 
+    [Fact]
+    public void A_modal_is_found_without_naming_its_route()
+    {
+        using var provider = Build(n => n.Modal<ConfirmView, ConfirmVm>());
+
+        var view = provider.GetModalFor<ConfirmVm, bool>();
+
+        Assert.IsType<ConfirmView>(view);
+    }
+
     public sealed class MenuMain : IRouteableMenuViewModel
     {
         public System.Collections.ObjectModel.ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];

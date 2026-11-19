@@ -26,7 +26,7 @@ public static partial class Extensions
     /// <param name="provider">The provider passed to the factory (determines scope).</param>
     /// <param name="route">The view-model registration key.</param>
     /// <param name="args">Arguments for the factory; a new empty <see cref="IRouteableArgs"/> when omitted.</param>
-    /// <exception cref="InvalidOperationException">Nothing is registered for the key, or the factory returned null.</exception>
+    /// <returns>The view model; <see langword="null"/> when nothing is registered for the key (a view declared without a view model has none).</returns>
     public static object? GetViewModel(this IServiceProvider provider, string route, IRouteableArgs? args = null)
     {
         var factory = provider.FindFactory(route, out var factoryProvider);
@@ -128,13 +128,13 @@ public static partial class Extensions
     /// </summary>
     /// <param name="provider">The provider used to resolve the view.</param>
     /// <param name="args">Optional routing arguments.</param>
-    /// <param name="route">Optional view key; defaults to the view model's type name.</param>
+    /// <param name="route">Optional view key; defaults to the key the view of <typeparamref name="TViewModel"/> is registered under.</param>
     /// <exception cref="InvalidOperationException">The view's result type mismatches, or it is not a modal for these types.</exception>
     public static IRouteableModalFor<TViewModel, TResult>? GetModalFor<TViewModel, TResult>(
         this IServiceProvider provider, IRouteableArgs? args = null, string? route = null)
         where TViewModel : class
     {
-        var view = provider.GetView(route ?? typeof(TViewModel).Name, args);
+        var view = provider.GetView(route ?? RouteableKeys.GetKeys(typeof(TViewModel)).viewKey, args);
 
         // The closed interface is the whole check: a view whose result type is another one is not this modal.
         return view as IRouteableModalFor<TViewModel, TResult>

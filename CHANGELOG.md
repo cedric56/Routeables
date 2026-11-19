@@ -6,6 +6,16 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **`GetModalFor<TViewModel, TResult>()` finds the view without a `route`**: it looked for the view under the name of the view model type, a key nothing is registered under, so the call always failed; it now uses the key the view is registered under, as `ShowModalAsync` does.
+- **Uno and WinUI 3: `RouteTransitionDuration` alone plays the theme transition**: an unset `RouteTransition` was read as the transition "None", so the fall back on the duration never happened; the other hosts already ignored a blank name.
+- **`RouteableLinkInbox` does not spin when no router is registered**: it started its pump again and again; it now stops, as it does when no page ever comes.
+- **The contract of `GetViewModel` says what it does**: it gives `null` when nothing is registered for the key (a view without a view model), it does not throw.
+- **A second `RouteablePersistence.Save` into the same dictionary writes again**: the rule that keeps the value of the most derived class for a hidden property (the last fix) kept the first value of a dictionary that already had the key. The names are now those of one pass, and a name is taken class by class.
+- **A property hidden by `new` is not given the value of the class that hides it**: the base class read the same key as the derived one (a `7` became `42`); it no longer reads a name that a more derived class took.
+- **A property named like a keyword compiles in the injection code** (`@event`), as it does in the other generated code.
+- **A catch-all with a default value can be left out of a generated `GoToXxxAsync`** (`/files` is a valid address of `/files/{**path}`, and `FilesViewModel(string? path = null)` is the way to say so); it used to throw.
+- **The generated catch-all refuses what `RouteParser.Build` refuses**: an empty piece (`a//b`), `.` and `..` raise an `ArgumentException` instead of being dropped.
+- **`RouteAddress.Same` reads the query of an address that has a brace nothing closes** (`/notes/a{b?x=1`) as it always did: only a brace that is closed hides a `?`.
 - **A converter registered for a nullable type is used to read as well as to write**: `RegisterConverter<DateTime?>` wrote the property and the read looked for the type under it, so the value was lost at the restore. Both sides look the type the property declares first (then the type under a nullable); a converter of a subclass is no longer used to write a property of its base type, which the read could never find.
 - **A `[Persist]` property hidden by one of the same name** (`new`) keeps the value of the most derived class: the base class used to write over it under the same key.
 - **`[Persist]` on a property of a struct is reported** (ROUT401) instead of producing generated code that does not compile.

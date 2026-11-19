@@ -125,7 +125,11 @@ public sealed class RouteableLinkInbox
         {
             var services = provider!;
             if (services.GetService<IRouter>() is not { } router)
+            {
+                // No router is registered (a mistake of configuration): starting again would spin for ever, as for a page that never comes.
+                noFirstPage = true;
                 return;
+            }
             if (!await WaitForFirstPageAsync(router))
             {
                 // No page after the wait: the links stay, and the next one that arrives (or the next Attach) tries again. Starting again here

@@ -415,7 +415,7 @@ public partial class RouteableRegion : ContentControl
         // The transition of the navigation, else the one of the region, else the theme transition of RouteTransitionDuration: set before the
         // content changes, which is what plays it.
         ContentTransitions = RouteTransitions.Create(
-            change.Resolve(Routeables.Abstraction.Transitions.RouteTransition.Named(RouteTransition), RouteTransitionDuration), ActualWidth, ActualHeight);
+            change.Resolve(string.IsNullOrWhiteSpace(RouteTransition) ? null : Routeables.Abstraction.Transitions.RouteTransition.Named(RouteTransition), RouteTransitionDuration), ActualWidth, ActualHeight);
         Content = view;
 #endif
     }
