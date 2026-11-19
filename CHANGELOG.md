@@ -6,6 +6,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **`EraseHistoryAsync` tells the page shown that it is left** (`OnLeavingAsync`, then `OnLeftAsync`): a page kept by a cache was entered twice in a row, and what it took in `OnEntering` was never given back.
+- **A `RouteSegment` that pushes a view cannot be named `..`, and a `RouteCoordination` cannot be empty**, whoever builds them (the records are public), not only the builder.
+- **A generated method of a route with optional values only and a query** writes `/?q=x`, as `RouteParser.Build` does.
+- **The lifecycle guide says what the router does** when the view of the page left fails in `OnLeavingAsync` (the view model is entered again, the view is not).
 - **A declared query parameter that is sent empty** (`/search?q=` for `search?{q?}`) is no longer given to the hooks as an undeclared value.
 - **`check-packages.sh` no longer fails, or passes, by chance**: `grep -q` stopped `unzip` with SIGPIPE under `pipefail`.
 - **The wait for the first page uses a monotonic clock**, not the system time.

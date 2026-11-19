@@ -166,6 +166,26 @@ public class RouterTests
     }
 
     [Fact]
+    public async Task EraseHistoryAsync_tells_the_page_shown_that_it_is_left()
+    {
+        var router = CreateRouter();
+        var page = new LeavingCounter();
+        await router.GoAsync(new TestView(), page, cancellationToken: TestContext.Current.CancellationToken);
+
+        await router.EraseHistoryAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.Equal(1, page.Left);
+    }
+
+    private sealed class LeavingCounter : IRouteable
+    {
+        public int Left { get; private set; }
+        public Task<bool> CanLeaveAsync(CancellationToken ct = default) => Task.FromResult(true);
+        public Task OnEnteringAsync(IRouteableArgs context, CancellationToken ct = default) => Task.CompletedTask;
+        public Task OnLeavingAsync(IRouteableArgs context, CancellationToken ct = default) { Left++; return Task.CompletedTask; }
+    }
+
+    [Fact]
     public async Task GoTo_ThrowsOnNullViewOrViewModel()
     {
         var router = CreateRouter();

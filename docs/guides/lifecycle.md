@@ -40,7 +40,7 @@ When a step fails, the route change fails with that exception (`result.Exception
 
 | Where it fails | What the router does |
 |----------------|----------------------|
-| `OnLeavingAsync` of A (view model or view) | Stops there. B is not touched and A's `OnEnteringAsync` is **not** called again: A never stopped being current. What the callbacks of A that already ran did is not undone, so keep `OnLeavingAsync` free of effects that cannot be repeated or must not be half done. |
+| `OnLeavingAsync` of A (view model or view) | Stops there. B is not touched. If the **view model** of A fails, nothing of A was left and A's `OnEnteringAsync` is **not** called again. If the **view** fails after the view model of A ran its `OnLeavingAsync`, the router calls `OnEnteringAsync` of the view model of A again (the view never left, so it is not entered a second time): A is still the current page. What the callbacks of A that already ran did is not undone, so keep `OnLeavingAsync` free of effects that cannot be repeated or must not be half done. |
 | `OnEnteringAsync` of B | A already ran `OnLeavingAsync`, so the router calls A's `OnEnteringAsync` again to make it current again. If that fails too, the second exception goes to the `IRouteableErrorSink` and the first one is the result. |
 
 ### Routing from a hook

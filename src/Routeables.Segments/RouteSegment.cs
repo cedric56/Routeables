@@ -39,4 +39,10 @@ public sealed record RouteSegment(
 {
     /// <summary>The name used by <see cref="RouteSegmentKind.Back"/> segments.</summary>
     public const string BackName = "..";
+
+    /// <inheritdoc cref="RouteSegment"/>
+    /// <exception cref="ArgumentException">A segment that pushes a view is named <c>..</c>: written in an address it is read as the way back.</exception>
+    public string Name { get; init; } = Kind == RouteSegmentKind.Push && Name == BackName
+        ? throw new ArgumentException("A segment that pushes a view cannot be named \"..\": in an address it is the way back.", nameof(Name))
+        : Name;
 }

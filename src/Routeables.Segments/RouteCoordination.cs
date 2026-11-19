@@ -20,6 +20,12 @@ namespace Routeables.Segments;
 /// <param name="Absolute">Whether the histories of the routers involved are cleared before the first segment.</param>
 public sealed record RouteCoordination(IReadOnlyList<RouteSegment> Segments, bool Absolute = false)
 {
+    /// <summary>The segments, in coordination order. Never empty.</summary>
+    /// <exception cref="ArgumentException">The list is null or empty: such a coordination does nothing and has no text.</exception>
+    public IReadOnlyList<RouteSegment> Segments { get; init; } = Segments is { Count: > 0 }
+        ? Segments
+        : throw new ArgumentException("A coordination needs at least one segment.", nameof(Segments));
+
     /// <summary>Starts a fluent description of a coordination.</summary>
     public static RouteCoordinationBuilder Create() => new();
 

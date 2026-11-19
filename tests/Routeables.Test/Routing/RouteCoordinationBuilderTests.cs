@@ -27,6 +27,14 @@ public class RouteCoordinationBuilderTests
     }
 
     [Fact]
+    public void The_records_refuse_what_the_builder_refuses()
+    {
+        Assert.Throws<ArgumentException>(() => new RouteSegment("..", null, RouteSegmentKind.Push));
+        Assert.Throws<ArgumentException>(() => new RouteCoordination([]));
+        Assert.Equal("..", new RouteSegment("..", null, RouteSegmentKind.Back).Name);   // the way back is a segment of its own
+    }
+
+    [Fact]
     public void A_null_uri_does_not_parse()
     {
         Assert.False(RouteCoordination.TryParse(null, out var coordination, out var error));

@@ -352,8 +352,15 @@ internal class Router(
     {
         await RunGatedAsync<object?>(cancellationToken, async _ =>
         {
+            // The page shown stops being current: it is told, as for any other route change, so that what it took in OnEntering is given back
+            // (a page that is kept, in a cache, is not disposed below and would otherwise be entered twice in a row).
+            var shown = history.Current;
+            if (shown is not null)
+                await lifecycle.NotifyLeavingAsync(shown);
             var removed = history.Clear();
             await lifecycle.DestroyAsync(removed, history.Snapshot());   // snapshot is empty now
+            if (shown is not null)
+                await lifecycle.NotifyLeftAsync(shown);
             return null;
         });
     }

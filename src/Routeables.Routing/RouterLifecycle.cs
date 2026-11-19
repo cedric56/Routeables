@@ -136,6 +136,12 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
         await NotifyAsync(entering, (r, args) => r.OnEnteredAsync(args, ct));
     }
 
+    /// <summary>Tells the entry that it is being left (<see cref="IRouteable.OnLeavingAsync"/>, view model then view); a failure is reported, not thrown.</summary>
+    public Task NotifyLeavingAsync(RouterEntry entry, CancellationToken ct = default) => NotifyAsync(entry, (r, args) => r.OnLeavingAsync(args, ct));
+
+    /// <summary>Tells the entry that it was left (<see cref="IRouteable.OnLeftAsync"/>); a failure is reported, not thrown.</summary>
+    public Task NotifyLeftAsync(RouterEntry entry, CancellationToken ct = default) => NotifyAsync(entry, (r, args) => r.OnLeftAsync(args, ct));
+
     private async Task NotifyAsync(RouterEntry entry, Func<IRouteable, IRouteableArgs, Task> call)
     {
         foreach (var target in entry.ViewModel is not null && ReferenceEquals(entry.ViewModel, entry.View)

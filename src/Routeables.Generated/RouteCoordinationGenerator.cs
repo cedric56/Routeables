@@ -1020,6 +1020,14 @@ namespace Routeables.Generated
                 return;
             }
 
+            // A path of optional values left out, before a query: "/?q=x", as RouteParser.Build writes it (a template with no path at all stays "?q=x").
+            var hasPathParam = false;
+            foreach (var op in m.RouteOps)
+                if (op.Kind == RouteOpKind.PathParam)
+                    hasPathParam = true;
+            if (hasPathParam)
+                sb.AppendLine(indent + "if (__route.Length == 0) __route = \"/\";");
+
             sb.AppendLine(indent + "var __separator = '?';");
             foreach (var op in queryOps)
             {
