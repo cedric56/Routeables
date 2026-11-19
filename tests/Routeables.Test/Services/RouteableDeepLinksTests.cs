@@ -16,10 +16,10 @@ public class RouteableDeepLinksTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<LinkFirstView, LinkFirstVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-first");
-        services.RegisterRoute<LinkSecondView, LinkSecondVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-second");
-        services.AddTransient<LinkFirstVm>();
-        services.AddTransient<LinkSecondVm>();
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-first");
+        services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-second");
+        services.AddTransient<FakeViewModel>();
+        services.AddTransient<OtherFakeViewModel>();
         return services.BuildServiceProvider();
     }
 
@@ -120,7 +120,7 @@ public class RouteableDeepLinksTests
         var result = await RouteableDeepLinks.GoToAsync(provider, new Uri("myapp://link-second"), ["myapp"], TestContext.Current.CancellationToken);
 
         Assert.True(result.Success);
-        Assert.IsType<LinkSecondVm>(provider.GetRequiredService<IRouter>().CurrentViewModel);
+        Assert.IsType<OtherFakeViewModel>(provider.GetRequiredService<IRouter>().CurrentViewModel);
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public class RouteableDeepLinksTests
         var restored = await RouteableState.RestoreAsync(router, ["/link-first", "/link-second"], TestContext.Current.CancellationToken);
 
         Assert.True(restored);
-        Assert.IsType<LinkSecondVm>(router.CurrentViewModel);
+        Assert.IsType<OtherFakeViewModel>(router.CurrentViewModel);
         Assert.Equal(2, router.History.Entries.Count);
     }
 
@@ -174,7 +174,7 @@ public class RouteableDeepLinksTests
         var restored = await RouteableState.RestoreAsync(router, ["/link-first", "/nowhere", "/link-second"], TestContext.Current.CancellationToken);
 
         Assert.False(restored);
-        Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -185,7 +185,7 @@ public class RouteableDeepLinksTests
         await router.GoToAsync("/link-first", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(await RouteableState.RestoreAsync(router, [], TestContext.Current.CancellationToken));
-        Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -210,7 +210,7 @@ public class RouteableDeepLinksTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<KeepingView, KeepingVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/keeping");
+        services.RegisterRoute<FakeViewFor, KeepingVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/keeping");
         services.AddTransient<KeepingVm>();
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
@@ -246,16 +246,16 @@ public class RouteableDeepLinksTests
         services.RegisterRouting();
         services.AddSingleton(returns);
         services.AddSingleton<IRouteGuard>(new SignInGuard(returns));
-        services.RegisterRoute<LinkFirstView, LinkFirstVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-first");
-        services.RegisterRoute<LinkSecondView, LinkSecondVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-second");
-        services.AddTransient<LinkFirstVm>();
-        services.AddTransient<LinkSecondVm>();
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-first");
+        services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-second");
+        services.AddTransient<FakeViewModel>();
+        services.AddTransient<OtherFakeViewModel>();
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
 
         await router.GoToAsync("/link-second", cancellationToken: TestContext.Current.CancellationToken);
 
-        Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
         Assert.Equal("/link-second", returns.Take());
     }
 
@@ -278,9 +278,9 @@ public class RouteableDeepLinksTests
 
         await router.GoToAsync("/link-first", cancellationToken: TestContext.Current.CancellationToken);
 
-        for (var i = 0; i < 200 && router.CurrentViewModel is not LinkSecondVm; i++)
+        for (var i = 0; i < 200 && router.CurrentViewModel is not OtherFakeViewModel; i++)
             await Task.Delay(10, TestContext.Current.CancellationToken);
-        Assert.IsType<LinkSecondVm>(router.CurrentViewModel);
+        Assert.IsType<OtherFakeViewModel>(router.CurrentViewModel);
     }
 
 
@@ -326,7 +326,7 @@ public class RouteableDeepLinksTests
 
         inbox.Restore(RouteableState.Serialize(["/link-first", "/link-second"]));
 
-        await UntilAsync(() => router.CurrentViewModel is LinkSecondVm);
+        await UntilAsync(() => router.CurrentViewModel is OtherFakeViewModel);
         Assert.Equal(2, router.History.Count);
     }
 
@@ -342,7 +342,7 @@ public class RouteableDeepLinksTests
         inbox.Restore("");
         await Task.Delay(150, TestContext.Current.CancellationToken);
 
-        Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
         Assert.Equal(1, router.History.Count);
     }
 
@@ -358,8 +358,8 @@ public class RouteableDeepLinksTests
 
         inbox.Attach(provider);
 
-        await UntilAsync(() => router.History.Count == 2 && router.CurrentViewModel is LinkFirstVm);
-        Assert.IsType<LinkSecondVm>(router.History.Entries[0].ViewModel);
+        await UntilAsync(() => router.History.Count == 2 && router.CurrentViewModel is FakeViewModel);
+        Assert.IsType<OtherFakeViewModel>(router.History.Entries[0].ViewModel);
     }
 
     [Fact]
@@ -374,7 +374,7 @@ public class RouteableDeepLinksTests
         inbox.Push(new Uri("other://link-second"));
         await Task.Delay(300, TestContext.Current.CancellationToken);
 
-        Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -387,7 +387,7 @@ public class RouteableDeepLinksTests
 
         inbox.Push(new Uri("myapp://link-second"));
 
-        await UntilAsync(() => router.CurrentViewModel is LinkSecondVm);
+        await UntilAsync(() => router.CurrentViewModel is OtherFakeViewModel);
     }
 
     [Fact]
@@ -429,7 +429,7 @@ public class RouteableDeepLinksTests
         // "-/route" is go back, then navigate: in a history file that was changed by hand it must not run.
         await RouteableState.RestoreSnapshotsAsync(router, [new RouteableSnapshot("/link-first"), new RouteableSnapshot("-/link-second")], ct);
 
-        Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
         Assert.Single(RouteableState.Capture(router));
     }
 
@@ -442,7 +442,7 @@ public class RouteableDeepLinksTests
 
         await RouteableState.RestoreAsync(router, ["/link-first", "-/link-second"], ct);
 
-        Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
         Assert.Single(RouteableState.Capture(router));
     }
 
@@ -459,8 +459,8 @@ public class RouteableDeepLinksTests
 
         await router.GoToAsync("/link-first", cancellationToken: TestContext.Current.CancellationToken);
 
-        for (var i = 0; i < 200 && router.CurrentViewModel is not LinkSecondVm; i++)
+        for (var i = 0; i < 200 && router.CurrentViewModel is not OtherFakeViewModel; i++)
             await Task.Delay(10, TestContext.Current.CancellationToken);
-        Assert.IsType<LinkSecondVm>(router.CurrentViewModel);
+        Assert.IsType<OtherFakeViewModel>(router.CurrentViewModel);
     }
 }

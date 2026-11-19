@@ -28,8 +28,8 @@ public class RouteableHistoryRandomizedTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         foreach (var route in Routes)
-            services.RegisterRoute<RandomPageView, RandomPageVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, route);
-        services.AddTransient<RandomPageVm>();
+            services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, route);
+        services.AddTransient<FakeViewModel>();
         if (limit is { } max)
             services.LimitHistory(max);
         services.AddSingleton(store);
@@ -122,8 +122,8 @@ public class RouteableHistoryRandomizedTests
                 var services = new ServiceCollection();
                 services.RegisterRouting();
                 foreach (var route in Routes)
-                    services.RegisterRoute<RandomPageView, RandomPageVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, route);
-                services.AddTransient<RandomPageVm>();
+                    services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, route);
+                services.AddTransient<FakeViewModel>();
                 services.AddRouteableHistory(path);
                 var provider = services.BuildServiceProvider();
                 provider.StartRouteableHistory();

@@ -19,8 +19,8 @@ public class RouteableTransitionsTests
         services.RegisterRouting();
         services.AddRegion("side");
         services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());
-        services.RegisterRoute<FirstView, FirstVm>(route: "/first");
-        services.RegisterRoute<SecondView, SecondVm>(route: "/second");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/first");
+        services.RegisterRoute<OtherView, OtherFakeViewModel>(route: "/second");
         services.AddScoped<RouteableTransitions>();
         return services.BuildServiceProvider();
     }

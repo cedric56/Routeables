@@ -12,27 +12,18 @@ public class FakeViewModel;
 /// A second distinct view-model type for tests that need two different VM types.
 /// </summary>
 public class OtherFakeViewModel;
-
-public sealed class BackFirstVm;
-public sealed class BackSecondVm;
 public sealed class BlockedVm;
 public sealed class ConfirmVm;
 public sealed class CtHomeVm;
 public sealed class DocsVm(string? path = null) { public string? Path { get; } = path; }
-public sealed class FirstViewModel;
-public sealed class FirstVm;
 public sealed class FormVm;
 public sealed class GuardAdminVm;
 public sealed class GuardHomeVm;
 public sealed class GuardLoginVm;
-public sealed class HelloVm;
+//public sealed class HelloVm;
 public sealed class HomeVm;
 public sealed class IntroVm;
 public sealed class IsoVm;
-public sealed class KeptFirstVm;
-public sealed class KeptSecondVm;
-public sealed class LinkFirstVm;
-public sealed class LinkSecondVm;
 public sealed class ListVm;
 public sealed class LoginVm;
 public sealed class LostVm;
@@ -58,11 +49,9 @@ public sealed class PageVm(int id) { public int Id { get; } = id; }
 public sealed class QoGridVm;
 public sealed class QoListVm;
 public sealed class RaItemVm;
-public sealed class RandomPageVm;
+//public sealed class RandomPageVm;
 public sealed class RootVm;
 public sealed class SaProductVm;
-public sealed class SecondViewModel;
-public sealed class SecondVm;
 public sealed class SegBlockedVm;
 public sealed class SegVm;
 public sealed class SlugVm(string slug) { public string Slug { get; } = slug; }

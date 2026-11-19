@@ -56,10 +56,10 @@ public class RouteableRegionTests
         var services = new ServiceCollection();
         services.AddRegion("detail");
         services.AddSingleton<IRouter>(sp => new Router(new RouterHistory(), new RouterGate(), new RouterLifecycle(sp), sp));
-        services.RegisterRoute<FirstView, FirstViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/first");
-        services.RegisterRoute<SecondView, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/second");
-        services.AddTransient<FirstViewModel>();
-        services.AddTransient<SecondViewModel>();
+        services.RegisterRoute<FirstView, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/first");
+        services.RegisterRoute<SecondView, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/second");
+        services.AddTransient<FakeViewModel>();
+        services.AddTransient<OtherFakeViewModel>();
         return services.BuildServiceProvider();
     }
 
@@ -71,14 +71,14 @@ public class RouteableRegionTests
         await renderer.Render<RouteableRegion>(new() { ["Region"] = "detail" });
         Assert.Empty(renderer.Texts);
 
-        var first = new RouteableMenuEntry<FirstViewModel>("First", null, "/first", "/first") { Region = "detail" };
+        var first = new RouteableMenuEntry<FakeViewModel>("First", null, "/first", "/first") { Region = "detail" };
         await renderer.Dispatcher.InvokeAsync(() => provider.GoToAsync(first, TestContext.Current.CancellationToken));
-        await WaitFor(renderer, "hello-FirstViewModel");
+        await WaitFor(renderer, "hello-FakeViewModel");
 
         renderer.Texts.Clear();
-        var second = new RouteableMenuEntry<SecondViewModel>("Second", null, "/second", "/second") { Region = "detail" };
+        var second = new RouteableMenuEntry<OtherFakeViewModel>("Second", null, "/second", "/second") { Region = "detail" };
         await renderer.Dispatcher.InvokeAsync(() => provider.GoToAsync(second, TestContext.Current.CancellationToken));
-        await WaitFor(renderer, "hello-SecondViewModel");
+        await WaitFor(renderer, "hello-OtherFakeViewModel");
 
         // A component that is gone is no longer rendered by the router.
         renderer.Dispose();

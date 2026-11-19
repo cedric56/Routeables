@@ -19,8 +19,8 @@ public class DefaultRouteableMenuViewModelTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.AddRegion("detail");
-        services.RegisterRoute<HomeView, HomeVm>(route: homeRoute);
-        services.RegisterRoute<DetailView, DetailVm>(route: "/empty");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: homeRoute);
+        services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(route: "/empty");
         services.RegisterMenuViewModel<DefaultRouteableMenuViewModel>(ServiceLifetime.Singleton);
         return services.BuildServiceProvider();
     }
@@ -51,8 +51,8 @@ public class DefaultRouteableMenuViewModelTests
 
         Assert.True(main.Start());
 
-        await UntilAsync(() => provider.GetRequiredService<IRouter>().CurrentViewModel is HomeVm);
-        await UntilAsync(() => provider.GetRequiredService<IRouter>().CurrentView is HomeView);
+        await UntilAsync(() => provider.GetRequiredService<IRouter>().CurrentViewModel is FakeViewModel);
+        await UntilAsync(() => provider.GetRequiredService<IRouter>().CurrentView is FakeViewFor);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class DefaultRouteableMenuViewModelTests
         Assert.True(main.Start());
         Assert.False(main.Start()); // two regions, or the region attached again, before the first page is there
 
-        await UntilAsync(() => provider.GetRequiredService<IRouter>().CurrentViewModel is HomeVm);
+        await UntilAsync(() => provider.GetRequiredService<IRouter>().CurrentViewModel is FakeViewModel);
         Assert.False(main.Start());
         Assert.Single(provider.GetRequiredService<IRouter>().History.Entries);
     }
@@ -87,8 +87,8 @@ public class DefaultRouteableMenuViewModelTests
 
         RegionStart.Begin(provider, null, "/home");
 
-        await UntilAsync(() => router.CurrentViewModel is HomeVm);
-        await UntilAsync(() => router.CurrentView is HomeView);
+        await UntilAsync(() => router.CurrentViewModel is FakeViewModel);
+        await UntilAsync(() => router.CurrentView is FakeViewFor);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class DefaultRouteableMenuViewModelTests
 
         RegionStart.Begin(provider, null, "/home");
         RegionStart.Begin(provider, null, "/home");
-        await UntilAsync(() => router.CurrentViewModel is HomeVm);
+        await UntilAsync(() => router.CurrentViewModel is FakeViewModel);
         RegionStart.Begin(provider, null, "/home");
         await Task.Delay(50, TestContext.Current.CancellationToken);
 
@@ -117,7 +117,7 @@ public class DefaultRouteableMenuViewModelTests
         Assert.Null(detail.CurrentView);
 
         RegionStart.Begin(provider, "detail", "/empty");
-        await UntilAsync(() => detail.CurrentViewModel is DetailVm);
+        await UntilAsync(() => detail.CurrentViewModel is OtherFakeViewModel);
         Assert.Null(provider.GetRequiredService<IRouter>().CurrentView);
     }
 
@@ -132,7 +132,7 @@ public class DefaultRouteableMenuViewModelTests
         Assert.Null(router.CurrentView); // an address may choose the first page
 
         RegionStart.StartDefault(provider);
-        await UntilAsync(() => router.CurrentViewModel is HomeVm);
+        await UntilAsync(() => router.CurrentViewModel is FakeViewModel);
     }
 
     [Fact]

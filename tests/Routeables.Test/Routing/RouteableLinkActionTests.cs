@@ -23,7 +23,7 @@ public class RouteableLinkActionTests
     private static ServiceProvider Build(Sink sink)
     {
         var services = new ServiceCollection();
-        services.AddRoutes(n => n.Page<HelloView, HelloVm>("/hello"));
+        services.AddRoutes(n => n.Page<FakeViewFor, FakeViewModel>("/hello"));
         services.AddSingleton<IRouteableErrorSink>(sink);
         return services.BuildServiceProvider();
     }
@@ -36,7 +36,7 @@ public class RouteableLinkActionTests
 
         await RouteableLinkAction.GoAsync(provider, "/hello", null);
 
-        Assert.IsType<HelloVm>(provider.GetRequiredService<IRouter>().CurrentViewModel);
+        Assert.IsType<FakeViewModel>(provider.GetRequiredService<IRouter>().CurrentViewModel);
         Assert.Empty(sink.Reports);
     }
 
