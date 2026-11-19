@@ -55,7 +55,7 @@ internal sealed class RouteableTable
                 if (viewModelType is not null && _entries[at].ViewModelType is { } known && known != viewModelType)
                 {
                     var replaced = _entries.ToArray();
-                    replaced[at] = (template, viewModelType);
+                    replaced[at] = (_entries[at].Template, viewModelType);
                     _entries = new(replaced);
                 }
 

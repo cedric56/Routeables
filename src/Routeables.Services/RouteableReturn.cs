@@ -49,13 +49,13 @@ public sealed class RouteableReturn
 
     /// <summary>
     /// Remembers the route the change was going to and redirects to <paramref name="route"/>. A change with no route of its own
-    /// (a view and a view model given to <see cref="IRouter.GoAsync"/>) remembers nothing. Only a <c>Push</c> is remembered, since
+    /// (a view and a view model given to <see cref="IRouter.GoAsync"/>) has nothing to come back to: what was remembered before is forgotten. Only a <c>Push</c> is remembered, since
     /// Back, Forward and Pop are cancelled rather than redirected.
     /// </summary>
     public RouteGuardDecision RedirectFrom(RouteableRoutingEventArgs change, string route)
     {
         ArgumentNullException.ThrowIfNull(change);
-        if (change.Kind == RouteableKind.Push && !string.IsNullOrEmpty(change.To.Args.Route))
+        if (change.Kind == RouteableKind.Push)
             Remember(change.To.Args.Route);
         return RouteGuardDecision.Redirect(route);
     }
