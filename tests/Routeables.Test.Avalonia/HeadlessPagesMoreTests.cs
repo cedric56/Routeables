@@ -177,7 +177,8 @@ public sealed class HeadlessPagesMoreTests(HeadlessApp app)
     [Fact]
     public Task A_view_is_a_group_named_after_its_view_model_without_the_suffix() => app.RunAsync(() =>
     {
-        var peer = ControlAutomationPeer.CreatePeerForElement(new PageAView());
+        // Without content: the name of a control that has some is the one of the base peer (the text of its content), the fallback comes after it.
+        var peer = ControlAutomationPeer.CreatePeerForElement(new PageAView { Content = null });
 
         Assert.Equal(AutomationControlType.Group, peer.GetAutomationControlType());
         Assert.Equal("PageA", peer.GetName());
