@@ -256,6 +256,11 @@ public class RouteParserTests
         Assert.Contains("last segment", RouteParser.Mismatch("tabs/{tab?}/end", "tabs/x/end"));
         Assert.Contains("last segment", RouteParser.Mismatch("tabs/{tab?}/end", "tabs/end"));
         Assert.Throws<ArgumentException>(() => RouteParser.Build("tabs/{tab?}/end", new Dictionary<string, object?>()));
+        // A value whose text is empty is no value: a required one is refused, an optional one is left out.
+        var empty = new System.Text.StringBuilder();
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("a/{x}/b", new { x = empty }));
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("s?{x}", new { x = empty }));
+        Assert.Equal("a", RouteParser.Build("a/{x?}", new { x = empty }));
         Assert.Null(RouteParser.Mismatch("tabs/{tab?}", "tabs"));
     }
 

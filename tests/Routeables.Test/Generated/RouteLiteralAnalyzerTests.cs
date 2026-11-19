@@ -46,6 +46,11 @@ public class RouteLiteralAnalyzerTests
     }
 
     [Fact]
+    public async Task A_GoToAsync_of_another_type_is_not_checked()
+        => Assert.Empty(await Analyze("""await new Other().GoToAsync("/monkies");""",
+            "public class Other { public Task GoToAsync(string url) => Task.CompletedTask; }"));
+
+    [Fact]
     public async Task A_misspelled_route_is_reported()
         => Assert.Equal(["ROUT501"], await Analyze("""await router.GoToAsync("/monkies");"""));
 

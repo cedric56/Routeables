@@ -56,6 +56,11 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
 
                 if (method.Name == "GoToAsync")
                 {
+                    // Only the router's own method: another library's GoToAsync(string url) is not a route of this application.
+                    var owner = method.ContainingType;
+                    if (!SymbolEqualityComparer.Default.Equals(owner, router)
+                        && !owner.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(i, router)))
+                        return;
                     if (Argument(invocation, "template") is not null)
                         return;                                          // the route to go to is given by the template
                     if (Argument(invocation, "url") is { } url && url.Value.ConstantValue is { HasValue: true, Value: string text })

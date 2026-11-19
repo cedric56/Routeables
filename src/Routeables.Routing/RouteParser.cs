@@ -666,6 +666,13 @@ public static partial class RouteParser
             }
 
             var text = Format(value, type);
+            // A value whose text is empty (a StringBuilder with nothing in it) is no value, as an empty string is none.
+            if (text.Length == 0)
+            {
+                if (m.Groups["opt"].Success) return null;
+                throw new ArgumentException($"The route \"{template}\" needs a value for {{{name}}} ({where}).", nameof(values));
+            }
+
             if (where == "path" && HasDotSegment(text))
                 throw new ArgumentException($"The value \"{text}\" cannot be a segment of \"{template}\" for {{{name}}}: a browser resolves \".\" and \"..\" to another address.", nameof(values));
             // What is written must be read back: the router would refuse a route that its own template does not accept.
