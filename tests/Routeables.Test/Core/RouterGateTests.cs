@@ -28,6 +28,22 @@ public class RouterGateTests
     }
 
     [Fact]
+    public async Task The_refresh_of_the_guards_waits_for_the_route_change_in_progress_without_cancelling_it()
+    {
+        var gate = new RouterGate(RouterConcurrency.CancelCurrent);
+        await gate.EnterAsync(cancellationToken: TestContext.Current.CancellationToken);
+        var running = gate.Observe(TestContext.Current.CancellationToken);
+
+        var refresh = RouteableHelper.Detach(() => gate.EnterAsync(cancellationToken: TestContext.Current.CancellationToken), quiet: true);
+
+        Assert.False(refresh.IsCompleted);
+        Assert.False(running.IsCancellationRequested);   // a refresh is not a newer route change
+        gate.Exit();
+        await refresh.WaitAsync(Timeout, cancellationToken: TestContext.Current.CancellationToken);
+        gate.Exit();
+    }
+
+    [Fact]
     public async Task A_newer_caller_that_comes_before_the_operation_is_published_still_cancels_it()
     {
         // The gate is held, the operation is not yet the one in progress: a newer route change finds nothing to cancel, and asked for it to be replaced.

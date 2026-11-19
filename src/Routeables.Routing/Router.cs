@@ -645,8 +645,12 @@ internal class Router(
             var supplied = Snapshot(item.Arguments);
             if (args is not null)
             {
-                supplied.ViewModelParameters.AddRange(args.ViewModelParameters);
-                supplied.ViewParameters.AddRange(args.ViewParameters);
+                // By name, as the values: a parameter of the caller replaces the one of the entry that has its name (the constructor takes the first
+                // of a name and the property the last: both must see the same one).
+                foreach (var parameter in args.ViewModelParameters)
+                    RouteParser.SetValue(supplied.ViewModelParameters, parameter);
+                foreach (var parameter in args.ViewParameters)
+                    RouteParser.SetValue(supplied.ViewParameters, parameter);
                 foreach (var value in args.Values)
                     RouteParser.SetValue(supplied.Values, value);    // a value of the caller replaces the one of the entry that has its name
             }

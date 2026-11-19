@@ -53,12 +53,22 @@ public static class RouteableHelper
     // instead of being refused as reentrant because it copied the mark of the route change that started it.
     internal static readonly AsyncLocal<object?> DetachedFlow = new();
 
-    internal static T Detach<T>(Func<T> start)
+    // Set for work that must not replace the route change in progress (RouterConcurrency.CancelCurrent): the re-evaluation of the guards waits its turn.
+    internal static readonly AsyncLocal<object?> QuietFlow = new();
+
+    internal static T Detach<T>(Func<T> start, bool quiet = false)
     {
         var previous = DetachedFlow.Value;
+        var previousQuiet = QuietFlow.Value;
         DetachedFlow.Value = new object();
+        if (quiet)
+            QuietFlow.Value = new object();
         try { return start(); }
-        finally { DetachedFlow.Value = previous; }
+        finally
+        {
+            DetachedFlow.Value = previous;
+            QuietFlow.Value = previousQuiet;
+        }
     }
 
     /// <summary>

@@ -47,7 +47,8 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
             && ReferenceEquals(carried.Detached, RouteableHelper.DetachedFlow.Value))
             throw new InvalidOperationException("Reentrant route changes are not supported.");
 
-        var cancelCurrent = concurrency == RouterConcurrency.CancelCurrent;
+        // The re-evaluation of the guards (RefreshGuardsOn) never replaces the route change in progress: it waits for it.
+        var cancelCurrent = concurrency == RouterConcurrency.CancelCurrent && RouteableHelper.QuietFlow.Value is null;
         var number = 0L;
         if (cancelCurrent)
         {

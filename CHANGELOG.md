@@ -6,6 +6,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The re-evaluation of the guards (`RefreshGuardsOn`) no longer cancels the route change in progress** under `RouterConcurrency.CancelCurrent`: it waits for it, and a refresh that is replaced is not reported as an error.
+- **A parameter of the caller replaces the one of the menu entry that has its name**, for the constructor and the view as it already did for the values (the constructor and the property read the same one).
+- **`RouteableReturn.RedirectFrom` keeps the route it remembered** when the change has no route of its own.
 - **A segment of a coordination cannot be named `..` or `.`**: written `..`, it was read back as the way back. The documentation of `RouteCoordination` says that a `/` in a value of a hand-written address is `%2F`.
 - **A route change started by work that nobody awaits waits for its turn** (`RouteableHelper.FireAndForget` from `OnEnteringAsync`, `RefreshGuardsOn` raised during a route change): it copied the mark of the route change in progress and was refused as "Reentrant route changes are not supported". A nested change that is awaited is still refused.
 - **A value named in `viewKeys` reaches the property of the view**, as documented: it was marked as a constructor argument and, without a matching constructor, lost.

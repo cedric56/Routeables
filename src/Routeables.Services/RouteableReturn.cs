@@ -55,7 +55,7 @@ public sealed class RouteableReturn
     public RouteGuardDecision RedirectFrom(RouteableRoutingEventArgs change, string route)
     {
         ArgumentNullException.ThrowIfNull(change);
-        if (change.Kind == RouteableKind.Push)
+        if (change.Kind == RouteableKind.Push && !string.IsNullOrEmpty(change.To.Args.Route))
             Remember(change.To.Args.Route);
         return RouteGuardDecision.Redirect(route);
     }

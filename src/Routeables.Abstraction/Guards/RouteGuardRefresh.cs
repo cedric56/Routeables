@@ -41,7 +41,8 @@ public static class RouteGuardRefreshExtensions
             // A null or empty name means "everything changed" (the INotifyPropertyChanged convention): it concerns every property.
             if (properties.Length > 0 && !string.IsNullOrEmpty(e.PropertyName) && !properties.Contains(e.PropertyName, StringComparer.Ordinal))
                 return;
-            try { await RouteableHelper.Detach(() => router.RefreshGuardsAsync()); }
+            try { await RouteableHelper.Detach(() => router.RefreshGuardsAsync(), quiet: true); }
+            catch (OperationCanceledException) { }      // a route change that came meanwhile replaced it: nothing to report
             catch (Exception ex) { Errors.RouteableErrors.Report(provider, "RefreshGuardsOn", ex); }
         }
 
