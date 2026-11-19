@@ -772,6 +772,7 @@ public static partial class RouteParser
             string text => text,
             bool flag => flag ? "true" : "false",
             double zero when zero == 0 => "0",     // -0 is the number 0: one text
+            float zeroF when zeroF == 0 => "0",
             decimal money => Plain(money).ToString(CultureInfo.InvariantCulture),
             IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
             _ => value.ToString() ?? string.Empty,

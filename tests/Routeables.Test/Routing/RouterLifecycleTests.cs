@@ -109,7 +109,8 @@ public class RouterLifecycleTests
         var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => lifecycle.TransitionAsync(leaving, entering, ct: TestContext.Current.CancellationToken));
 
         Assert.Same(failure, thrown);
-        Assert.Equal(["leaving-vm:from", "leaving-view:from", "leaving-vm:to", "leaving-view:to"], calls);
+        // The view never left (its OnLeaving failed): only the view model is entered again.
+        Assert.Equal(["leaving-vm:from", "leaving-view:from", "leaving-vm:to"], calls);
     }
 
     [Fact]

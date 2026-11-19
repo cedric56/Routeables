@@ -461,7 +461,15 @@ public static partial class RegistrationExtensions
     {
         var list = entries.ToList();
         var ordered = BindByName(list, type.GetConstructors()
-            .Select(c => c.GetParameters().Select((p, i) => (p.Name, i)).ToDictionary(x => x.Name!, x => x.i, StringComparer.OrdinalIgnoreCase)));
+            .Select(c =>
+            {
+                // Two parameters that differ only by case ((int id, int Id)) are one name here: the first keeps it, the second is reached by position.
+                var byName = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                var parameters = c.GetParameters();
+                for (var i = 0; i < parameters.Length; i++)
+                    byName.TryAdd(parameters[i].Name!, i);
+                return byName;
+            }));
 
         // ActivatorUtilities gives a value to the first parameter that fits its type, whatever its name: "/products/{id}" would give its
         // text to a parameter "category" that comes before "id". A parameter with a default that is before the one a value is named for, and

@@ -547,6 +547,7 @@ public class RouteParserTests
         Assert.True(RouteParser.TryMatch("x/{n:double}", "x/0", RouteableArgs.Create()));
         Assert.False(RouteParser.TryMatch("x/{n:double}", "x/-0", RouteableArgs.Create()));
         Assert.Equal("x/0", RouteParser.Build("x/{n:double}", new { n = -0.0 }));
+        Assert.Equal("x/0", RouteParser.Build("x/{n}", new { n = -0f }));
     }
 
     [Fact]

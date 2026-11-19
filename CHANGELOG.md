@@ -6,6 +6,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **`RouteableAddress.Of` keeps the escapes of a route** (`/tags/c%23`, `?q=a%26b`): the implicit string to `PathString` conversion decoded them.
+- **A constructor with parameters that differ only by case** (`int id, int Id`) no longer crashes the binding by name: the first one keeps the name.
+- **A view whose `OnLeavingAsync` fails is not entered a second time**: the recovery enters again only the view model, which was the one that had left.
+- **`RouteParser.Build` writes `-0f` as `0`**, as it already did for a `double`.
 - **`RouteParser.Build` refuses a template whose catch-all is not the last segment** (`/files/{**path}/edit`): it wrote an address that the router refuses to read.
 - **ROUT501 no longer reports valid routes**: an address with a fragment (`#top`), with an escaped literal (`/mon%6Beys`) or that leaves out an optional value followed by a catch-all (`/cat` for `/cat/{age?}/{**rest}`).
 - **The default menu starts again after a failed first try**: `Start` kept its flag when the home route could not be opened, so it never tried again.

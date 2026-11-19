@@ -16,5 +16,5 @@ public static class RouteableAddress
     /// <param name="route">The route (<c>cats</c>, <c>/cats?x=1</c>).</param>
     /// <param name="pathBase">The <c>Request.PathBase</c> of the application, when it is not hosted at the root.</param>
     public static string Of(string? route, PathString pathBase = default)
-        => pathBase.Add("/" + (route ?? string.Empty).TrimStart('/', '\\', '\t', '\r', '\n')).Value ?? "/";
+        => pathBase.Add(new PathString("/" + (route ?? string.Empty).TrimStart('/', '\\', '\t', '\r', '\n'))).Value ?? "/";
 }

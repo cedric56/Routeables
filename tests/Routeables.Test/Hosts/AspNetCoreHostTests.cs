@@ -163,4 +163,12 @@ public class AspNetCoreHostTests
         Assert.Equal("/app/", RouteableAddress.Of("", "/app"));
         Assert.Equal("/app/evil.example", RouteableAddress.Of("//evil.example", "/app"));
     }
+
+    [Fact]
+    public void An_escaped_route_keeps_its_escapes()
+    {
+        Assert.Equal("/tags/c%23", RouteableAddress.Of("/tags/c%23"));
+        Assert.Equal("/app/search?q=a%26b", RouteableAddress.Of("search?q=a%26b", "/app"));
+        Assert.Equal("/files/a%2Fb", RouteableAddress.Of("files/a%2Fb"));
+    }
 }

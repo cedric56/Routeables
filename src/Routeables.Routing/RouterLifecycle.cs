@@ -47,7 +47,9 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
             {
                 try
                 {
-                    await EnterAsync(leaving, CancellationToken.None);
+                    // Only the view model: the view never left (its OnLeaving failed), so it must not be entered a second time.
+                    Subscribe(leaving);
+                    if (leaving.ViewModel is IRouteable left) await left.OnEnteringAsync(leaving.Args, CancellationToken.None);
                 }
                 catch (Exception recovery)
                 {
