@@ -1,4 +1,5 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Text;
@@ -167,12 +168,12 @@ namespace Routeables.Generated
                 sb.AppendLine("                static (m, bag) =>");
                 sb.AppendLine("                {");
                 foreach (var p in ordered)
-                    sb.AppendLine($"                    bag.Capture<{type}, {p.PropertyType}>(m, \"{p.Name}\", static x => x.{p.Name}{Converter(p)});");
+                    sb.AppendLine($"                    bag.Capture<{type}, {p.PropertyType}>(m, \"{p.Name}\", static x => x.{Id(p.Name)}{Converter(p)});");
                 sb.AppendLine("                },");
                 sb.AppendLine("                static (m, bag) =>");
                 sb.AppendLine("                {");
                 foreach (var p in ordered)
-                    sb.AppendLine($"                    bag.Restore<{type}, {p.PropertyType}>(m, \"{p.Name}\", static (x, v) => x.{p.Name} = v{Converter(p)});");
+                    sb.AppendLine($"                    bag.Restore<{type}, {p.PropertyType}>(m, \"{p.Name}\", static (x, v) => x.{Id(p.Name)} = v{Converter(p)});");
                 sb.AppendLine("                });");
             }
 
@@ -182,6 +183,9 @@ namespace Routeables.Generated
 
             spc.AddSource("Routeables.Persistence." + Sanitize(assemblyName) + ".g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
         }
+
+        // A property named like a keyword is written with its @ ('@class').
+        private static string Id(string name) => SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None ? "@" + name : name;
 
         private static string Converter(PersistProperty p) => p.Converter is null ? "" : $", new {p.Converter}()";
 

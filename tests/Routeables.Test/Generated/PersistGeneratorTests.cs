@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Routeables.Generated;
 
@@ -27,6 +27,24 @@ public class PersistGeneratorTests
         Assert.Contains("bag.Restore<global::SearchViewModel, int?>(m, \"Page\", static (x, v) => x.Page = v);", code);
         Assert.DoesNotContain("NotKept", code);
         Assert.DoesNotContain("typeof(", code);
+        Assert.Empty(result.Diagnostics);
+    }
+
+    [Fact]
+    public void A_property_named_like_a_keyword_is_written_with_its_at_sign()
+    {
+        var result = Run("""
+            using Routeables.Abstraction.States;
+            public class Vm
+            {
+                [Persist] public string @class { get; set; } = "";
+            }
+            """);
+
+        var code = Generated(result);
+
+        Assert.Contains("static x => x.@class)", code);
+        Assert.Contains("static (x, v) => x.@class = v)", code);
         Assert.Empty(result.Diagnostics);
     }
 

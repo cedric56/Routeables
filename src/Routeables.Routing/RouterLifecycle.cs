@@ -19,7 +19,8 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
     public async Task<bool> CanLeaveAsync(RouterEntry entry, CancellationToken ct = default)
     {
         if (entry.ViewModel is IRouteable vm && !await vm.CanLeaveAsync(ct)) return false;
-        if (entry.View is IRouteable v && !await v.CanLeaveAsync(ct)) return false;
+        // A page that is its own view model (a route registered without one) is asked once.
+        if (entry.View is IRouteable v && !ReferenceEquals(v, entry.ViewModel) && !await v.CanLeaveAsync(ct)) return false;
         return true;
     }
 
@@ -36,7 +37,7 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
         {
             if (leaving.ViewModel is IRouteable vm) await vm.OnLeavingAsync(leaving.Args, ct);
             viewModelLeft = true;
-            if (leaving.View is IRouteable v) await v.OnLeavingAsync(leaving.Args, ct);
+            if (leaving.View is IRouteable v && !ReferenceEquals(v, leaving.ViewModel)) await v.OnLeavingAsync(leaving.Args, ct);
         }
         catch
         {
@@ -111,7 +112,7 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
     {
         Subscribe(entry);
         if (entry.ViewModel is IRouteable vm) await vm.OnEnteringAsync(entry.Args, ct);
-        if (entry.View is IRouteable v) await v.OnEnteringAsync(entry.Args, ct);
+        if (entry.View is IRouteable v && !ReferenceEquals(v, entry.ViewModel)) await v.OnEnteringAsync(entry.Args, ct);
     }
 
     /// <summary>

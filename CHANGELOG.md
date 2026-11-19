@@ -6,6 +6,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A page that is its own view model is asked once**: `CanLeaveAsync`, `OnLeavingAsync` and `OnEnteringAsync` ran on the view model and then on the view, which is the same object for a route registered without a view model: a confirmation to leave was shown twice and a load ran twice.
+- **`RouteAddress.Absolute` keeps the `?` of an optional parameter in the path** (`products/{tab?}/` is `/products/{tab?}`), as `PathOf` does since the last fix, and so does the comparison of the words of a template.
+- **A `[Persist]` property named like a keyword compiles** (`@class`): the generated code writes the `@`.
+- **The guide of `IRouteTypeGuard` says that a rule that depends on the visitor must also be an `IRouteGuard`**: a page shown again from the history or from a menu entry is not asked of the type guards.
 - **`[Persist]` reads back what it writes for `Int128`, `UInt128`, `nint` and `nuint`**: the codec wrote them and the read side did not know them, so the value was lost at the restore without a word.
 - **`RouteAddress.SamePath` follows the rules of its class**: an escaped path (`/%C3%A0-propos`) is the one written plainly and an empty segment does not count, so a menu page is found by a deep link written either way; and `PathOf` no longer ends a template at the question mark of an optional parameter (`products/{tab?}`).
 - **The case of a value that holds an escaped `?` or `#` counts**: `RouteAddress.Same` looked the template up with the unescaped path, which the parser cut at the question mark, so `/x/q%3F/B` and `/x/q%3F/b` were taken for one page. The two characters are escaped again for the lookup.

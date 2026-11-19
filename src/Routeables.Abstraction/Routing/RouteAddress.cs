@@ -23,7 +23,7 @@ internal static class RouteAddress
     {
         // Only the slashes of the path: the last character of a value of the query ("?dir=/") belongs to the value.
         var text = route ?? string.Empty;
-        var at = text.IndexOf('?');
+        var at = QueryStart(text);
         return "/" + (at < 0 ? text : text[..at]).Trim('/') + (at < 0 ? string.Empty : text[at..]);
     }
 
@@ -32,15 +32,22 @@ internal static class RouteAddress
     internal static string PathOf(string? route)
     {
         var text = WithoutFragment(route ?? string.Empty);
-        // The query starts at the first question mark that is not the one of an optional parameter ("products/{tab?}").
+        var at = QueryStart(text);
+        if (at >= 0) text = text[..at];
+        return text.Trim('/');
+    }
+
+    // The query starts at the first question mark that is not the one of an optional parameter ("products/{tab?}"); -1 for none.
+    private static int QueryStart(string text)
+    {
         var depth = 0;
         for (var i = 0; i < text.Length; i++)
         {
             if (text[i] == '{') depth++;
             else if (text[i] == '}' && depth > 0) depth--;
-            else if (text[i] == '?' && depth == 0) { text = text[..i]; break; }
+            else if (text[i] == '?' && depth == 0) return i;
         }
-        return text.Trim('/');
+        return -1;
     }
 
     // The fragment is for the browser, never for the route: "/about#top" is "/about", as the parser reads it.
@@ -93,7 +100,7 @@ internal static class RouteAddress
         if (templateOf?.Invoke(a.Replace("?", "%3F").Replace("#", "%23")) is not { } template)
             return true;
 
-        var templateSegments = template.Split('?')[0].Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var templateSegments = (QueryStart(template) is var queryAt and >= 0 ? template[..queryAt] : template).Split('/', StringSplitOptions.RemoveEmptyEntries);
         var segmentsA = a.Split('/', StringSplitOptions.RemoveEmptyEntries);
         var segmentsB = b.Split('/', StringSplitOptions.RemoveEmptyEntries);
         for (var i = 0; i < segmentsA.Length && i < segmentsB.Length; i++)

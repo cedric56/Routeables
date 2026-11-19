@@ -1,3 +1,5 @@
+using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Test.Abstraction;
@@ -157,5 +159,29 @@ public class RouterInitializeTests
 
         Assert.Same(c.ViewModel, router.CurrentViewModel);
         Assert.Equal(2, router.History.Count);
+    }
+
+    private sealed class OwnViewModel : IRouteableFor, IRouteable
+    {
+        public object? Context { get; set; }
+        public int CanLeave, Entering, Leaving;
+
+        Task<bool> IRouteable.CanLeaveAsync(CancellationToken ct) { CanLeave++; return Task.FromResult(true); }
+        Task IRouteable.OnEnteringAsync(IRouteableArgs context, CancellationToken ct) { Entering++; return Task.CompletedTask; }
+        Task IRouteable.OnLeavingAsync(IRouteableArgs context, CancellationToken ct) { Leaving++; return Task.CompletedTask; }
+    }
+
+    [Fact]
+    public async Task The_hooks_of_a_page_that_is_its_own_view_model_run_once()
+    {
+        var router = CreateRouter();
+        var own = new OwnViewModel();
+
+        await router.GoAsync(own, own, cancellationToken: Ct);
+        await GoToAsync(router, "B", new CallLog());
+
+        Assert.Equal(1, own.Entering);
+        Assert.Equal(1, own.CanLeave);
+        Assert.Equal(1, own.Leaving);
     }
 }

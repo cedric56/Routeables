@@ -189,4 +189,11 @@ public class RouteAddressTests
         Assert.Equal("products/{tab?}", RouteAddress.PathOf("/products/{tab?}?x=1"));
         Assert.True(RouteAddress.SamePath("products/{tab?}", "/Products/{tab?}/"));
     }
+
+    [Fact]
+    public void Absolute_keeps_the_question_mark_of_an_optional_parameter_in_the_path()
+    {
+        Assert.Equal("/products/{tab?}", RouteAddress.Absolute("products/{tab?}/"));
+        Assert.Equal("/products/{tab?}?x=1", RouteAddress.Absolute("products/{tab?}/?x=1"));
+    }
 }
