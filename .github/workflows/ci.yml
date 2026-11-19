@@ -695,7 +695,7 @@ jobs:
         shell: bash
         run: |
           dotnet test --project tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }} \
-            --coverage --coverage-output-format cobertura --coverage-settings tests/CodeCoverage.settings.xml \
+            --coverage --coverage-output-format cobertura --coverage-settings tests/CodeCoverage.avalonia.settings.xml \
             --results-directory coverage-avalonia
           reports=$(find coverage-avalonia -name '*.cobertura.xml')
           if [ -z "$reports" ]; then echo "No coverage report was written." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi

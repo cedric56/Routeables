@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The same as CodeCoverage.settings.xml, with the instrumentation that is not verifiable: the headless tests of Avalonia drive the pages, the
+     regions and the bridges, and their report shows 0% for code that passing tests run (NavigationPageBridge). If this file gives the figures
+     that the tests deserve, the verifiable instrumentation was skipping that code, and the first file can use the same setting.
+     What the coverage option of `dotnet test` measures (Microsoft.Testing.Extensions.CodeCoverage): the libraries of Routeables, not the tests, the
+     packages they use, or the code the generators and the compiler write. Passed with the coverage-settings option. -->
+<Configuration>
+  <CodeCoverage>
+    <ModulePaths>
+      <Include>
+        <ModulePath>.*[\\/]Routeables\.[^\\/]*\.dll$</ModulePath>
+      </Include>
+      <Exclude>
+        <ModulePath>.*[\\/]Routeables\.Test[^\\/]*\.dll$</ModulePath>
+        <ModulePath>.*[\\/]Routeables\.Benchmarks[^\\/]*\.dll$</ModulePath>
+      </Exclude>
+    </ModulePaths>
+    <Attributes>
+      <Exclude>
+        <Attribute>^System\.Diagnostics\.CodeAnalysis\.ExcludeFromCodeCoverageAttribute$</Attribute>
+        <Attribute>^System\.CodeDom\.Compiler\.GeneratedCodeAttribute$</Attribute>
+        <Attribute>^System\.Runtime\.CompilerServices\.CompilerGeneratedAttribute$</Attribute>
+      </Exclude>
+    </Attributes>
+    <Sources>
+      <Exclude>
+        <Source>.*[\\/]obj[\\/].*</Source>
+      </Exclude>
+    </Sources>
+    <CollectFromChildProcesses>True</CollectFromChildProcesses>
+    <UseVerifiableInstrumentation>False</UseVerifiableInstrumentation>
+  </CodeCoverage>
+</Configuration>
