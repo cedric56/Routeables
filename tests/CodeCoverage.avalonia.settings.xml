@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The same as CodeCoverage.settings.xml, with the instrumentation that is not verifiable: the headless tests of Avalonia drive the pages, the
-     regions and the bridges, and their report shows 0% for code that passing tests run (NavigationPageBridge). If this file gives the figures
-     that the tests deserve, the verifiable instrumentation was skipping that code, and the first file can use the same setting.
+<!-- The same as CodeCoverage.settings.xml, except that the code the compiler writes is not left out. The headless tests of Avalonia drive dialogs, pages and
+     regions, and their report shows 0% for code they run: DialogPresenter has 111 lines at 0% while the dialog tests open its windows, and
+     DefaultMessageBoxService, 380 lines of async methods, has 6 lines in the report. An async method or a lambda is a class the compiler writes,
+     marked CompilerGenerated, and excluding that attribute may leave its body out of the report. If this file gives the figures that the tests
+     deserve, the first file can drop the exclusion too (the floor of the job "Code coverage" would have to follow the new figures).
      What the coverage option of `dotnet test` measures (Microsoft.Testing.Extensions.CodeCoverage): the libraries of Routeables, not the tests, the
-     packages they use, or the code the generators and the compiler write. Passed with the coverage-settings option. -->
+     packages they use. Passed with the coverage-settings option. -->
 <Configuration>
   <CodeCoverage>
     <ModulePaths>
@@ -19,7 +21,6 @@
       <Exclude>
         <Attribute>^System\.Diagnostics\.CodeAnalysis\.ExcludeFromCodeCoverageAttribute$</Attribute>
         <Attribute>^System\.CodeDom\.Compiler\.GeneratedCodeAttribute$</Attribute>
-        <Attribute>^System\.Runtime\.CompilerServices\.CompilerGeneratedAttribute$</Attribute>
       </Exclude>
     </Attributes>
     <Sources>
@@ -28,6 +29,6 @@
       </Exclude>
     </Sources>
     <CollectFromChildProcesses>True</CollectFromChildProcesses>
-    <UseVerifiableInstrumentation>False</UseVerifiableInstrumentation>
+    <UseVerifiableInstrumentation>True</UseVerifiableInstrumentation>
   </CodeCoverage>
 </Configuration>
