@@ -50,7 +50,6 @@ public class RouteGuardDecisionAndLifetimeTests
     public void Each_redirect_is_its_own_decision()
         => Assert.NotSame(RouteGuardDecision.Redirect("/a"), RouteGuardDecision.Redirect("/a"));
 
-    // ------------------------------------------------------------------------------------------------ the lifetime of the host
 
     [Fact]
     public void Without_a_host_the_lifetime_is_singleton()
@@ -81,7 +80,6 @@ public class RouteGuardDecisionAndLifetimeTests
     public void The_lifetime_refuses_no_services()
         => Assert.Throws<ArgumentNullException>(() => ((IServiceCollection)null!).GetRouteableLifetime());
 
-    // ------------------------------------------------------------------------------------------------ the keys
 
     [Fact]
     public void Without_a_route_the_key_of_a_view_is_made_of_its_type()

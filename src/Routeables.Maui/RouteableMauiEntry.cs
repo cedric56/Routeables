@@ -71,7 +71,7 @@ public class RouteableMauiEntry : ContentView
         set => SetValue(UnderlineThicknessProperty, value);
     }
 
-    // Read-only from the outside: the state of the validation indicator, set from the view model's errors.
+    // Read-only from outside: the state of the validation indicator, set from the view model's errors.
     static readonly BindablePropertyKey HasErrorPropertyKey = BindableProperty.CreateReadOnly(
             nameof(HasError), typeof(bool), typeof(RouteableMauiEntry), false);
     /// <summary>The <see cref="HasError"/> property.</summary>
@@ -99,8 +99,8 @@ public class RouteableMauiEntry : ContentView
         RefreshErrorState();
     }
 
-    // The view model outlives the entry: it listens to the view model only while the entry is on screen (has a handler),
-    // or the view model would keep every entry it was ever bound to.
+    // The view model outlives the entry, so listen to it only while the entry is on screen (has a handler), or the view model would keep every
+    // entry it was ever bound to.
     /// <inheritdoc />
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
@@ -134,8 +134,8 @@ public class RouteableMauiEntry : ContentView
 
     void OnErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
     {
-        // PropertyName is null when the source signals "errors may have changed broadly"
-        // (e.g. ValidateAllProperties()), so refresh unconditionally in that case too.
+        // PropertyName is null when the source signals "errors may have changed broadly" (e.g. ValidateAllProperties()), so refresh unconditionally
+        // in that case too.
         if (e.PropertyName is null || e.PropertyName == ColumnName)
             RefreshErrorState();
     }
@@ -163,8 +163,8 @@ public class RouteableMauiEntry : ContentView
         ShowError();
     }
 
-    // The visual tree is built once and updated from code: no binding of any kind (a binding by path resolves the property
-    // by reflection, which the trimmer and Native AOT cannot follow).
+    // The visual tree is built once and updated from code, with no binding of any kind (a binding by path resolves the property by reflection,
+    // which the trimmer and Native AOT cannot follow).
     private Entry? _entry;
     private Border? _frame;
     private Border? _marker;
@@ -192,7 +192,7 @@ public class RouteableMauiEntry : ContentView
 
         _marker = new Border
         {
-            Margin = new Thickness(8, 0, 0, 0), // gap before the icon; icon only occupies space when shown
+            Margin = new Thickness(8, 0, 0, 0), // gap before the icon; the icon only takes space when shown
             Stroke = null,
             StrokeThickness = 0
         };
@@ -201,7 +201,7 @@ public class RouteableMauiEntry : ContentView
         return grid;
     }
 
-    // Red frame, error icon and its tooltip while the view model reports an error for ColumnName.
+    // Red frame, error icon and tooltip while the view model reports an error for ColumnName.
     private void ShowError()
     {
         if (_frame is null || _marker is null)

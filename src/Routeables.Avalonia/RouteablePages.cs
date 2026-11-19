@@ -125,7 +125,7 @@ public static class RouteablePages
         });
     }
 
-    // The index of a page among the pages of the control (the ones the user sees), -1 when it is not one of them.
+    // The index of a page among the control's pages (the ones the user sees), or -1 when it is not one of them.
     private static int IndexOfPage(this TabbedPage tabs, Page page)
     {
         var index = 0;

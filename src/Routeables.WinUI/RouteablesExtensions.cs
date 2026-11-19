@@ -182,7 +182,7 @@ public static class UnoRouteablesExtensions
     }
 
 #endif
-    // What UseRouteables does, without an Application: the tests of the contract of the hosts call it, as an Application cannot be created outside Uno.
+    // What UseRouteables does without an Application: the tests of the hosts' contract call it, since an Application cannot be created outside Uno.
     internal static IServiceProvider StartRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMenu>(
         Action<IServiceCollection>? configure = null,
         Action<IServiceProvider>? afterBuild = null)
@@ -192,7 +192,7 @@ public static class UnoRouteablesExtensions
             services.RegisterMenuViewModel<TMenu>();
             services.UseRouteablesServices();
             configure?.Invoke(services);
-            // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
+            // Add the routes the generator found, unless the application registered them (or called AddGeneratedRoutes()).
             global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
         }, afterBuild);
 

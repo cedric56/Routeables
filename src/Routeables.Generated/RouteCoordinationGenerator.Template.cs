@@ -11,7 +11,6 @@ namespace Routeables.Generated
     // Reading a route template: its path and query pieces and the type each one asks for.
     public sealed partial class RouteCoordinationGenerator
     {
-        // ---- template
 
         private static bool TryParseTemplate(string template, out List<TemplatePart> parts, out string error)
         {

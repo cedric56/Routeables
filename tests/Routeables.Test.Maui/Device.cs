@@ -4,7 +4,7 @@ using Routeables.Abstraction.Transitions;
 using Routeables.Routing;
 using Xunit;
 
-// xunit.v3 3.2.2 (see the project file): ParallelizationAttribute is new in 4.0, and CollectionBehavior is obsolete only there.
+// xunit.v3 3.2.2 (see the project file): ParallelizationAttribute only exists from 4.0, and CollectionBehavior is obsolete only there.
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace Routeables.Test.Maui;

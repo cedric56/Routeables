@@ -283,7 +283,6 @@ public class RouteableDeepLinksTests
         Assert.IsType<LinkSecondVm>(router.CurrentViewModel);
     }
 
-    // ------------------------------------------------------------------------------------------------ the inbox: save, restore, filter
 
     private static async Task UntilAsync(Func<bool> condition)
     {
@@ -455,7 +454,7 @@ public class RouteableDeepLinksTests
         var inbox = new RouteableLinkInbox(["myapp"]) { FirstPageWait = TimeSpan.FromMilliseconds(100) };
         inbox.Push(new Uri("myapp://link-second"));
         inbox.Attach(provider);
-        await Task.Delay(500, TestContext.Current.CancellationToken);       // the wait ended with no page
+        await Task.Delay(500, TestContext.Current.CancellationToken);
         Assert.Null(router.CurrentViewModel);
 
         await router.GoToAsync("/link-first", cancellationToken: TestContext.Current.CancellationToken);

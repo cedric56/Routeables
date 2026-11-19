@@ -14,7 +14,6 @@ namespace Routeables.Test.Maui;
 /// </summary>
 public class DialogServiceDeviceTests
 {
-    // ------------------------------------------------------------------------------------------------ doubles
 
     /// <summary>A message box service that records every call it receives and answers what the test chose.</summary>
     private sealed class RecordingBox : IMessageBoxService
@@ -161,7 +160,7 @@ public class DialogServiceDeviceTests
     /// <summary>Presses the button by hand: the click is sent to the control, no finger is needed.</summary>
     private static void Tap(Button button) => ((IButton)button).Clicked();
 
-    // A dialog that a test left on the window (it failed before closing it) would be taken for the one the next test opens.
+    // A dialog left on the window by a failed test would be mistaken for the one the next test opens.
     /// <summary>Pops every modal left on the window, so the next test starts from an empty stack.</summary>
     private static async Task CleanAsync()
     {
@@ -187,7 +186,6 @@ public class DialogServiceDeviceTests
     /// <summary>Waits for the modal stack to be back down to <paramref name="remaining"/> dialogs.</summary>
     private static async Task ClosedAsync(int remaining = 0, Func<string>? describe = null) => await Device.UntilAsync(() => Modals.Count == remaining, describe: describe);
 
-    // ------------------------------------------------------------------------------------------------ the message box service it was given
 
     /// <summary>A message is handed to the message box service, and its index comes back to the caller.</summary>
     [UIFact]
@@ -264,7 +262,6 @@ public class DialogServiceDeviceTests
         Assert.Contains("returned null", ex.Message);
     }
 
-    // ------------------------------------------------------------------------------------------------ content dialogs in a modal page
 
     /// <summary>A content dialog opens over the page, shows its content, and ends with the button that was pressed.</summary>
     [UIFact]
@@ -431,12 +428,11 @@ public class DialogServiceDeviceTests
         }
         catch (TimeoutException ex)
         {
-            // Where the stack stood when it stopped is what says which dialog did not close.
+            // The stack as it was when the wait stopped tells which dialog did not close.
             throw new InvalidOperationException(ex.Message + " " + State(("below", below), ("above", above)), ex);
         }
     }
 
-    // ------------------------------------------------------------------------------------------------ task dialogs and modals
 
     /// <summary>A task dialog shows its header and sub-header, and ends with the result of the button that was pressed.</summary>
     [UIFact]
@@ -488,7 +484,6 @@ public class DialogServiceDeviceTests
         viewModel.CloseRequested += (s, v) => Assert.Equal("done", v);
         await viewModel.CloseAsync("done");
 
-        //Assert.Equal("done", await ResultAsync(shown));
         await ClosedAsync(describe: () => State(("shown", shown)));
     }
 

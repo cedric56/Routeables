@@ -93,9 +93,8 @@ public class RouterFirstRoutingLifecycleTests
         var view2 = new TrackingView();
 
         await router.GoAsync(view1, vm1, cancellationToken: TestContext.Current.CancellationToken);
-        // Reset counters after first nav (whatever order it used)
-        // We only assert the second transition shape via a fresh pair after a successful first push.
-        // If first nav wrongly called From on vm1, FromCalls may already be 1.
+        // Reset the counters after the first navigation, whatever order it used: only the second transition is asserted, through a fresh pair after a
+        // successful first push (if the first navigation wrongly called From on vm1, FromCalls could already be 1).
         var fromBefore = vm1.FromCalls;
 
         await router.GoAsync(view2, vm2, cancellationToken: TestContext.Current.CancellationToken);

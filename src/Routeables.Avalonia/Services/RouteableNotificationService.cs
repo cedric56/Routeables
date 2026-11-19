@@ -9,8 +9,8 @@ namespace Routeables.Avalonia.Services;
 
 internal partial class RouteableNotificationService(IMessageBoxService service) : IRouteableNotificationService
 {
-    // The manager of the window the notifications are shown in. It draws nothing until its template is applied: what is shown
-    // meanwhile waits in the slot, so two notifications asked in a row share one manager instead of creating a second one.
+    // The manager of the window the notifications are shown in. It draws nothing until its template is applied, so what is shown meanwhile
+    // waits in the slot: two notifications asked for in a row share one manager instead of creating a second.
     private sealed class Slot(WindowNotificationManager manager, TopLevel host)
     {
         public WindowNotificationManager Manager { get; } = manager;
@@ -26,7 +26,7 @@ internal partial class RouteableNotificationService(IMessageBoxService service) 
     public void Show(string title, string message, RouteableNotificationType type = default,
                      TimeSpan? expiration = null, Action? onClick = null, Action? onClose = null)
     {
-        // Controls belong to the UI thread: the manager is created and used there.
+        // Controls belong to the UI thread: create and use the manager there.
         if (!Dispatcher.UIThread.CheckAccess())
         {
             Dispatcher.UIThread.Post(() => Show(title, message, type, expiration, onClick, onClose));
@@ -37,8 +37,8 @@ internal partial class RouteableNotificationService(IMessageBoxService service) 
         if (topLevel == null)
             return;
 
-        // A new manager only for another window (and only one the service can display in): the one of this window is kept, even
-        // before it is attached to the visual tree, which is when asking the manager for its top level gives nothing yet.
+        // Create a new manager only for another window (and only one the service can display in). The manager of this window is kept, even before
+        // it is attached to the visual tree, which is when asking it for its top level gives nothing yet.
         if (_slot is null || (!ReferenceEquals(_slot.Host, topLevel) && service.IsDisplayable(topLevel)))
         {
             var slot = _slot = new Slot(new WindowNotificationManager(topLevel), topLevel);

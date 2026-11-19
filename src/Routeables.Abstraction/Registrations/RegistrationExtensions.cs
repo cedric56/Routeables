@@ -58,7 +58,7 @@ public static partial class RegistrationExtensions
                 }
                 catch (Exception ex)
                 {
-                    // Surface the failure to the caller via args, then rethrow.
+                    // Surface the failure to the caller through args, then rethrow.
                     args.Exception = ex;
                     RouteableErrors.Report(sp, $"create scoped '{route}'", ex);
                     throw;
@@ -98,11 +98,11 @@ public static partial class RegistrationExtensions
         Func<IServiceProvider, IRouteableArgs, T> create)
         where T : class
     {
-        // The instance is kept by the provider (SingletonViewCache), not by this delegate: a delegate registered in the
-        // collection is shared by every provider built from it, and nobody disposes what it holds.
-        // On a host whose routers live in a scope (Blazor Server: one per circuit) the page is built from the services of that
-        // scope (the user, the JS runtime, the router): a page shared by every circuit would show the first user's data to the others.
-        // There a Singleton page is kept per scope, like a Scoped one.
+        // The provider keeps the instance (SingletonViewCache), not this delegate: a delegate registered in the collection is shared by every
+        // provider built from it, and nobody disposes what it holds.
+        // On a host whose routers live in a scope (Blazor Server: one per circuit), the page is built from that scope's services (the user, the
+        // JS runtime, the router), and a page shared by every circuit would show the first user's data to the others. So there a Singleton page
+        // is kept per scope, like a Scoped one.
         return (sp, args) =>
         {
             try
@@ -115,7 +115,7 @@ public static partial class RegistrationExtensions
             catch (Exception ex)
             {
                 args.Exception = ex;
-                // Log the registration key (ViewModel type name, etc.), not only T
+                // Log the registration key (view model type name, etc.), not only T.
                 RouteableErrors.Report(sp, $"create singleton '{route}' ({typeof(T).Name})", ex);
                 throw;
             }
@@ -214,8 +214,8 @@ public static partial class RegistrationExtensions
         registerViewModel(keys.viewModelKey);
         services.RegisterFactory(keys.viewKey, viewLifetime, createView);
 
-        // A route given by the caller ("about", "/customers/{id:int}") can be reached from an address (Blazor URL,
-        // deep link): remember how to go to it. The default keys (no route given) are not addresses.
+        // A route given by the caller ("about", "/customers/{id:int}") can be reached from an address (Blazor URL, deep link), so remember how
+        // to go to it. The default keys (no route given) are not addresses.
         if (!string.IsNullOrWhiteSpace(route))
             services.GetRouteableTable().Add(route, typeof(TViewModel));
     }
@@ -238,7 +238,7 @@ public static partial class RegistrationExtensions
             services.GetRouteableTable().Add(route, null);
     }
 
-    // One table per collection, found through its instance registration so the order of calls does not matter.
+    // One table per collection, found through its instance registration so that the order of calls does not matter.
     internal static RouteableTable GetRouteableTable(this IServiceCollection services)
     {
         var table = services.Select(d => d.ImplementationInstance).OfType<RouteableTable>().FirstOrDefault();
@@ -278,7 +278,7 @@ public static partial class RegistrationExtensions
             {
                 if (func != null)
                     return func(sp, args.ViewParameters.Resolve<TArg1>(0)).InjectView(sp, args);
-                return ResolveView<TView>(sp, args);   // injected by ResolveView
+                return ResolveView<TView>(sp, args); // injected by ResolveView
 
             }, viewModelLifetime, viewLifetime, route);
     }
@@ -303,7 +303,7 @@ public static partial class RegistrationExtensions
             {
                 return func is not null ?
                     func(sp, args.ViewParameters.Resolve<TArg1>(0), args.ViewParameters.Resolve<TArg2>(1)).InjectView(sp, args) :
-                    ResolveView<TView>(sp, args);   // injected by ResolveView
+                    ResolveView<TView>(sp, args); // injected by ResolveView
 
             }, viewModelLifetime, viewLifetime, route);
 
@@ -327,7 +327,7 @@ public static partial class RegistrationExtensions
             {
                 return func is not null ?
                     func(sp, args.ViewParameters.Resolve<TArg1>(0), args.ViewParameters.Resolve<TArg2>(1), args.ViewParameters.Resolve<TArg3>(2)).InjectView(sp, args) :
-                    ResolveView<TView>(sp, args);   // injected by ResolveView
+                    ResolveView<TView>(sp, args); // injected by ResolveView
             },
             viewModelLifetime, viewLifetime, route);
 
@@ -351,7 +351,7 @@ public static partial class RegistrationExtensions
             {
                 return func is not null ?
                     func(sp, args.ViewParameters.Resolve<TArg1>(0), args.ViewParameters.Resolve<TArg2>(1), args.ViewParameters.Resolve<TArg3>(2), args.ViewParameters.Resolve<TArg4>(3)).InjectView(sp, args) :
-                    ResolveView<TView>(sp, args);   // injected by ResolveView
+                    ResolveView<TView>(sp, args); // injected by ResolveView
             },
             viewModelLifetime, viewLifetime, route);
 
@@ -375,7 +375,7 @@ public static partial class RegistrationExtensions
             {
                 return func is not null ?
                     func(sp, args.ViewParameters.Resolve<TArg1>(0), args.ViewParameters.Resolve<TArg2>(1), args.ViewParameters.Resolve<TArg3>(2), args.ViewParameters.Resolve<TArg4>(3), args.ViewParameters.Resolve<TArg5>(4)).InjectView(sp, args) :
-                    ResolveView<TView>(sp, args);   // injected by ResolveView
+                    ResolveView<TView>(sp, args); // injected by ResolveView
             },
             viewModelLifetime, viewLifetime, route);
 
@@ -426,8 +426,8 @@ public static partial class RegistrationExtensions
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type type, IEnumerable<RouteableArgument> entries)
         => WithoutUntakeable(type, BindByNameCore(type, entries));
 
-    // ActivatorUtilities refuses a value no constructor parameter takes ("a suitable constructor could not be located"); the generated code
-    // ignores it. A route value the view model does not ask for is not an error in either mode: it stays in args.Values for the hooks.
+    // ActivatorUtilities rejects a value that no constructor parameter takes ("a suitable constructor could not be located"); the generated
+    // code ignores it. A route value the view model does not ask for is not an error in either mode: it stays in args.Values for the hooks.
     private static List<object> WithoutUntakeable(
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type type, List<object> values)
     {
@@ -463,7 +463,7 @@ public static partial class RegistrationExtensions
         var ordered = BindByName(list, type.GetConstructors()
             .Select(c =>
             {
-                // Two parameters that differ only by case ((int id, int Id)) are one name here: the first keeps it, the second is reached by position.
+                // Two parameters that differ only by case ((int id, int Id)) count as one name here: the first keeps it, the second is reached by position.
                 var byName = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
                 var parameters = c.GetParameters();
                 for (var i = 0; i < parameters.Length; i++)
@@ -471,9 +471,9 @@ public static partial class RegistrationExtensions
                 return byName;
             }));
 
-        // ActivatorUtilities gives a value to the first parameter that fits its type, whatever its name: "/products/{id}" would give its
-        // text to a parameter "category" that comes before "id". A parameter with a default that is before the one a value is named for, and
-        // has a type that value fits, is handed that default, so that the value is left for its own parameter.
+        // ActivatorUtilities gives a value to the first parameter that fits its type, whatever its name: "/products/{id}" would give its text to
+        // a parameter "category" that comes before "id". A parameter with a default that comes before the one the value is named for, and whose
+        // type the value fits, is given that default, so that the value is left for its own parameter.
         var named = list.Where(e => !string.IsNullOrEmpty(e.name) && e.value is not null).ToList();
         if (named.Count == 0)
             return ordered;
@@ -505,7 +505,7 @@ public static partial class RegistrationExtensions
             }
         }
 
-        // What no parameter was named for (a router, a value of another name) keeps its place after them.
+        // What no parameter was named for (a router, a value with another name) keeps its place after the named ones.
         foreach (var value in ordered)
             if (!consumed.Contains(value))
                 result.Add(value);
@@ -520,7 +520,7 @@ public static partial class RegistrationExtensions
         if (names.Count == 0)
             return [.. list.Select(e => e.value!)];
 
-        // The constructor that has the most of the names; its parameter order is the order of the values.
+        // The constructor that matches the most names; its parameter order is the order of the values.
         var order = constructors
             .OrderByDescending(d => names.Count(d.ContainsKey))
             .FirstOrDefault();
@@ -528,7 +528,7 @@ public static partial class RegistrationExtensions
         int Position(RouteableArgument e)
             => order is not null && !string.IsNullOrEmpty(e.name) && order.TryGetValue(e.name, out var i) ? i : int.MaxValue;
 
-        // OrderBy is stable: the values that are not named by a parameter stay in the order they were given.
+        // OrderBy is stable: values not named by a parameter keep the order they were given in.
         return [.. list.OrderBy(Position).Select(e => e.value!)];
     }
 
@@ -554,9 +554,8 @@ public static partial class RegistrationExtensions
             var parameters = BindByName(typeof(TViewModel), args.ViewModelParameters
                 .Where(p => p.attribute == false && p.value is not null));
 
-            // The router that routes is the one the view model receives, when it takes one and none was given: a page shown
-            // in a region routes that region. (Extra arguments that no constructor parameter takes are refused by
-            // ActivatorUtilities, hence the check.)
+            // The router that routes is the one the view model receives, when it takes one and none was given: a page shown in a region routes that
+            // region. (ActivatorUtilities rejects extra arguments that no constructor parameter takes, hence the check.)
             if (args.Router is { } router && !parameters.Any(p => p is IRouter) && TakesRouter(typeof(TViewModel)))
                 parameters.Add(router);
 

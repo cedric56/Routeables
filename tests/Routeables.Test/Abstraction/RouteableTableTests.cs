@@ -13,12 +13,12 @@ public class RouteableTableTests
         var before = table.Entries;
 
         table.Add("/rt-second", null);
-        table.Add("/RT-first/", typeof(int));   // the same path: not added twice
+        table.Add("/RT-first/", typeof(int)); // same path: not added twice
 
         Assert.False(before is (string, Type?)[]);
         Assert.True(((System.Collections.Generic.IList<(string Template, Type? ViewModelType)>)before).IsReadOnly);
         Assert.Throws<NotSupportedException>(() => ((System.Collections.Generic.IList<(string Template, Type? ViewModelType)>)before).Add(("/rt-hack", null)));
-        Assert.Single(before);                   // a list read before an add does not change under the reader
+        Assert.Single(before); // a list read before an add does not change under the reader
         Assert.Equal(2, table.Entries.Count);
         Assert.Equal("/rt-second", table.Entries[1].Template);
     }
@@ -29,10 +29,10 @@ public class RouteableTableTests
         var table = new RouteableTable();
 
         table.Add("/rt-x", typeof(string));
-        table.Add("/rt-x", null);               // no view model: nothing changes
+        table.Add("/rt-x", null); // no view model: nothing changes
         Assert.Equal(typeof(string), table.Entries[0].ViewModelType);
 
-        table.Add("/rt-x", typeof(int));        // another view model: the last one, as the container keeps the last view
+        table.Add("/rt-x", typeof(int)); // another view model: the last one wins, as the container keeps the last view
 
         var entry = Assert.Single(table.Entries);
         Assert.Equal(typeof(int), entry.ViewModelType);
@@ -45,7 +45,7 @@ public class RouteableTableTests
 
         table.Add("/rt-search", typeof(string));
         table.Add("/rt-search?mode=grid", typeof(int));
-        table.Add("/RT-search/?mode=grid", typeof(long));    // the same route as the one above: not added twice
+        table.Add("/RT-search/?mode=grid", typeof(long)); // same route as above: not added twice
 
         Assert.Equal(["/rt-search", "/rt-search?mode=grid"], table.Entries.Select(e => e.Template));
     }

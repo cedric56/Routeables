@@ -9,10 +9,9 @@ using System.Windows.Threading;
 
 namespace Routeables.Wpf.Services;
 
-// WPF has no notification control: a notification is a small window owned by the active window, at the top centre of it,
-// stacked under the ones already open. It closes when clicked or when its time is up. It is placed in pixels of the screen
-// (NotificationLayout, NativeMethods): the units of Window.Left and Window.Top depend on the monitor, and the window may be
-// shown on one and belong to another.
+// WPF has no notification control: a notification is a small window owned by the active window, at its top centre, stacked under the ones
+// already open. It closes when clicked or when its time is up. It is placed in screen pixels (NotificationLayout, NativeMethods), because the
+// units of Window.Left and Window.Top depend on the monitor, and the window may be shown on one and belong to another.
 internal sealed class RouteableNotificationService(IMessageBoxService service) : IRouteableNotificationService
 {
     // Notifications currently open, oldest first. Only touched on the UI thread.
@@ -41,21 +40,21 @@ internal sealed class RouteableNotificationService(IMessageBoxService service) :
             WindowStyle = WindowStyle.None,
             ResizeMode = ResizeMode.NoResize,
             ShowInTaskbar = false,
-            ShowActivated = false,          // the user keeps typing where they were
+            ShowActivated = false, // the user keeps typing where they were
             SizeToContent = SizeToContent.WidthAndHeight,
             MaxWidth = 420,
             WindowStartupLocation = WindowStartupLocation.Manual,
             Content = Create(session)
         };
 
-        // The window is first shown on the monitor of its owner (its position is exact once its size is known: Arrange below).
+        // The window is first shown on its owner's monitor (its position is exact once its size is known: see Arrange below).
         window.Left = owner.Left;
         window.Top = owner.Top;
         _ = new WindowInteropHelper(window).EnsureHandle();
 
         void Place(object? sender, EventArgs e) => Arrange(owner);
         window.SizeChanged += Place;
-        // WPF places a window again when it shows it and when it renders it for the first time: the place is given after that too.
+        // WPF places a window again when it shows it and when it renders it for the first time, so give the position after that too.
         window.Loaded += Place;
         window.ContentRendered += Place;
         owner.LocationChanged += Place;
@@ -121,15 +120,15 @@ internal sealed class RouteableNotificationService(IMessageBoxService service) :
         return border;
     }
 
-    // Lays the open notifications out under the top edge of the window, centred, one under the other, in pixels of the screen.
+    // Lay the open notifications out under the top edge of the window, centred, one under the other, in screen pixels.
     private static void Arrange(Window owner)
     {
-        // A window that is closing has no presentation source any more: its notifications are closing too. A minimized one has no place.
+        // A window that is closing has no presentation source any more, and its notifications are closing too. A minimized one has no place.
         if (owner.WindowState == WindowState.Minimized || PresentationSource.FromVisual(owner) is null)
             return;
 
         var scale = VisualTreeHelper.GetDpi(owner).DpiScaleX;
-        var origin = owner.PointToScreen(new Point(0, 0));          // pixels
+        var origin = owner.PointToScreen(new Point(0, 0)); // pixels
         var ownerWidth = (int)Math.Round(owner.ActualWidth * scale);
 
         var placed = new List<IntPtr>();

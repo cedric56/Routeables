@@ -31,7 +31,7 @@ public sealed class RegionTabs<TTab> where TTab : class
     private readonly Type _owner;
     private readonly Func<TTab, string?>? _regionOf;
     private readonly Func<string, object>? _createHost;
-    private readonly IReadOnlyList<TTab> _stacked;      // the tabs that have a region of their own: each keeps its own pile of pages
+    private readonly IReadOnlyList<TTab> _stacked; // the tabs that have a region of their own: each keeps its own stack of pages
 
     /// <summary>Creates the follower; nothing happens until <see cref="Start"/>.</summary>
     /// <param name="provider">The container of the host.</param>
@@ -76,7 +76,7 @@ public sealed class RegionTabs<TTab> where TTab : class
         _regionOf = regionOf;
         _createHost = createHost;
         var all = tabs.ToList();
-        // A tab with a region of its own is not served by the shared host: it gets a host of its region, and keeps the pile of pages of that region.
+        // A tab with its own region is not served by the shared host: it gets a host for its region and keeps that region's stack of pages.
         _stacked = createHost is null || regionOf is null
             ? []
             : all.Where(tab => routeOf(tab) is not null && regionOf(tab) is { Length: > 0 } && contentOf(tab) is null).ToList();
@@ -92,7 +92,7 @@ public sealed class RegionTabs<TTab> where TTab : class
         _router.History.Changed += OnHistoryChanged;
         _post(() =>
         {
-            if (_disposed) return;      // disposed before the interface ran this: it must not put the host or route again
+            if (_disposed) return; // disposed before the UI thread ran this: it must not set the host or route again
             MoveHost();
             GoSelected();
         });
@@ -128,7 +128,7 @@ public sealed class RegionTabs<TTab> where TTab : class
 
     private void GoSelected()
     {
-        // A tab with its own region goes to its route the first time only: coming back to it shows the pile it left.
+        // A tab with its own region goes to its route only the first time: coming back to it shows the stack it left.
         if (_selected() is { } stacked && _stacked.Contains(stacked) && _routeOf(stacked) is { } first && _regionOf!(stacked) is { } region)
         {
             try
@@ -139,7 +139,7 @@ public sealed class RegionTabs<TTab> where TTab : class
             }
             catch (InvalidOperationException ex)
             {
-                Routeables.Abstraction.Errors.RouteableErrors.Report(_provider, ex, _owner, region);   // a region that is not registered: AddRegion
+                Routeables.Abstraction.Errors.RouteableErrors.Report(_provider, ex, _owner, region); // a region that is not registered: AddRegion
             }
             return;
         }
@@ -148,7 +148,7 @@ public sealed class RegionTabs<TTab> where TTab : class
             _ = RouteTarget.GoAsync(_provider, _router, route, _owner);
     }
 
-    // The router holds its gate while it signals: the tab is selected after, and does not route again (the route is the current one).
+    // The router holds its gate while it signals, so the tab is selected afterwards and does not route again (the route is already the current one).
     private void OnHistoryChanged(object? sender, EventArgs e) => _post(() =>
     {
         if (_disposed) return;

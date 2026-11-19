@@ -13,9 +13,9 @@ namespace Routeables.Routing;
 // The types a route can carry: the built-in constraints, and the serializers registered for the others.
 public static partial class RouteParser
 {
-    // Serialization information for complex route parameters (System.Text.Json), by type name, case-insensitive.
-    // Private: callers register through RegisterSerializer, nobody can replace or empty the table.
-    // A type is known by its full name (always) and by its simple name (until another type takes it: the simple name is then ambiguous).
+    // Serialization info for complex route parameters (System.Text.Json), by type name, case-insensitive.
+    // Private: callers go through RegisterSerializer, so nobody can replace or empty the table.
+    // A type is known by its full name (always) and by its simple name, until another type takes that name (the simple name is then ambiguous).
     private static readonly ConcurrentDictionary<string, JsonTypeInfo> SerializationInfos =
         new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConcurrentDictionary<string, Type> SerializationTypes = new(StringComparer.OrdinalIgnoreCase);
@@ -47,8 +47,8 @@ public static partial class RouteParser
             var simple = type.Name;
             if (type.FullName == simple)
             {
-                // No namespace: the simple name is the full name, stored above. The type owns it, and a homonym of a namespace is reached by
-                // its own full name.
+                // No namespace: the simple name is the full name, stored above. The type owns it; a type that has the same name as a namespace
+                // is reached by its full name.
                 AmbiguousNames.TryRemove(simple, out _);
                 return;
             }
@@ -58,9 +58,9 @@ public static partial class RouteParser
             if (SerializationTypes.TryGetValue(simple, out var owner) && owner != type)
             {
                 if (owner.FullName == simple)
-                    return;     // the type with no namespace keeps the name that is its full name
+                    return; // a type without a namespace keeps its full name
 
-                // A second type with this simple name: nobody owns it any more.
+                // A second type with this simple name: nobody owns the name any more.
                 SerializationInfos.TryRemove(simple, out _);
                 SerializationTypes.TryRemove(simple, out _);
                 AmbiguousNames[simple] = true;
@@ -101,8 +101,8 @@ public static partial class RouteParser
     private static bool IsBuiltIn(string type)
         => type is "" or "?" || Array.Exists(BuiltInConstraints, c => string.Equals(c, type, StringComparison.OrdinalIgnoreCase));
 
-    // The registered type of a constraint. A built-in name is never a registered type: a type called Guid, String or Double that the
-    // application registers must not turn {id:guid} into a JSON value (it is reached by its full name, {id:Sales.Guid}).
+    // The registered type of a constraint. A built-in name never refers to a registered type: an application type named Guid, String or Double
+    // must not turn {id:guid} into a JSON value (reach it by its full name, {id:Sales.Guid}).
     private static bool TryGetSerializer(string type, out JsonTypeInfo info)
     {
         if (IsBuiltIn(type)) { info = null!; return false; }
@@ -124,8 +124,8 @@ public static partial class RouteParser
             try { value = JsonSerializer.Deserialize(raw, info); }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                // Not only a JsonException: a converter of the application, a type the information cannot read... An address that cannot be read as
-                // the type is an address that does not match, not an exception out of the search for a route (it runs for every address).
+                // Catch more than JsonException: an application converter, or a type the info cannot read, may throw anything. An address that cannot be read
+                // as the type does not match; it must not throw out of the route search, which runs for every address.
                 return false;
             }
             return value is not null;
@@ -135,8 +135,8 @@ public static partial class RouteParser
         switch (type.ToLowerInvariant())
         {
             case "" or "string" or "?": value = raw; return true;
-            // A value has one text. A number: the one that ToString writes ("42", not "+42", " 42" or "007"); a Guid: with its dashes and
-            // without braces; a bool: with no space around it.
+            // A value has exactly one text. A number is what ToString writes ("42", not "+42", " 42" or "007"); a Guid has its dashes and no braces;
+            // a bool has no space around it.
             case "int": { int v = 0; var ok = int.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v) && v.ToString(inv) == raw; value = v; return ok; }
             case "long": { long v = 0; var ok = long.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v) && v.ToString(inv) == raw; value = v; return ok; }
             case "bool": { var ok = raw == raw.Trim() && bool.TryParse(raw, out var v); value = ok && bool.Parse(raw); return ok; }
@@ -145,7 +145,7 @@ public static partial class RouteParser
             case "double": { double v = 0; var ok = !raw.StartsWith('+') && double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v) && !(v == 0 && raw[0] == '-') && v.ToString(inv) == raw; value = v; return ok; }
             default:
                 value = null;
-                return false;   // not reached: Bind refuses an unknown constraint first
+                return false; // unreachable: Bind rejects an unknown constraint first
         }
     }
 }

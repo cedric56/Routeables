@@ -70,7 +70,7 @@ public class RouteTransitionMappingTests
         var narrow = Entrance(RouteTransitions.Create(Of("Slide"), 10, 300)).FromHorizontalOffset;
 
         Assert.IsTrue(wide > narrow);
-        // Under forty the width no longer counts.
+        // Below forty, the width no longer counts.
         Assert.AreEqual(narrow, Entrance(RouteTransitions.Create(Of("Slide"), 20, 300)).FromHorizontalOffset);
     }
 

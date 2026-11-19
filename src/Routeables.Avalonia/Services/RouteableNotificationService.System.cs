@@ -3,7 +3,7 @@ using Routeables.Services;
 
 namespace Routeables.Avalonia.Services;
 
-// The system notifications (notification center of the OS) of IRouteableNotificationService, on Routeables.Native: Android and iOS have one.
+// The system notifications (the OS notification center) of IRouteableNotificationService, on Routeables.Native: Android and iOS have one.
 // Elsewhere (desktop, the browser) nothing is active and nothing is created. Without WithAppNotifications nothing is created either.
 internal partial class RouteableNotificationService
 {

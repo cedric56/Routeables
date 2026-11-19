@@ -49,11 +49,11 @@ public static class RouteableHelper
         Forget(task, provider, detail, onError);
     }
 
-    // Marks the flow of work that nobody awaits. A route change started from it is not a nested one: it waits for the one in progress (see RouterGate)
-    // instead of being refused as reentrant because it copied the mark of the route change that started it.
+    // Marks work that nobody awaits. A navigation started from it is not a nested one: it waits for the one in progress (see RouterGate)
+    // instead of being rejected as reentrant because it copied the mark of the navigation that started it.
     internal static readonly AsyncLocal<object?> DetachedFlow = new();
 
-    // Set for work that must not replace the route change in progress (RouterConcurrency.CancelCurrent): the re-evaluation of the guards waits its turn.
+    // Set for work that must not replace the navigation in progress (RouterConcurrency.CancelCurrent): re-evaluating the guards waits its turn.
     internal static readonly AsyncLocal<object?> QuietFlow = new();
 
     internal static T Detach<T>(Func<T> start, bool quiet = false)
@@ -92,7 +92,7 @@ public static class RouteableHelper
     private static async Task Observe(Task task, IServiceProvider? provider, string? detail, Action<Exception>? onError)
     {
         try { await task.ConfigureAwait(true); }
-        catch (OperationCanceledException) { }   // a cancelled operation is not an error
+        catch (OperationCanceledException) { } // a cancelled operation is not an error
         catch (Exception ex) { Fail(ex, provider, detail, onError); }
     }
 

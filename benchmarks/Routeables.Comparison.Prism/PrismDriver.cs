@@ -63,8 +63,8 @@ public sealed class PrismDriver : INavigationDriver
         Flush();
         var navigated = !ReferenceEquals(before, journal.CurrentEntry);
 
-        // The journal says where the navigation went; the view must also be the one of that page, or the numbers would not be those of the page
-        // shown (Prism finds the view of a page by its type: see PrismPages.cs).
+        // The journal says where the navigation went. The view must also be that page's, or the numbers would not be those of the page shown
+        // (Prism finds a page's view by its type: see PrismPages.cs).
         if (navigated)
         {
             var expected = parts[0] == "Edit" ? nameof(PrismEditPage) : parts[0] + "Page";
@@ -97,10 +97,9 @@ public sealed class PrismDriver : INavigationDriver
         ViewCount.Note($"Prism: the region holds {_region.Views.Count()} views before the history is cleared.");
         ViewCount.NoteAlive("before the history is cleared");
 
-        // 1. Clear the journal
         _region.NavigationService.Journal.Clear();
 
-        // 2. The views that are left (all of them when the region keeps its views): removed, but the current one.
+        // The views that are left (all of them when the region keeps its views) are removed, except the current one.
         var current = _region.ActiveViews.FirstOrDefault();
         foreach (var view in _region.Views.Where(v => !ReferenceEquals(v, current)).ToList())
             _region.Remove(view);

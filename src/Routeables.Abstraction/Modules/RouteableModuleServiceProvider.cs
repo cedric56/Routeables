@@ -10,8 +10,8 @@ internal sealed class RouteableModuleServiceProvider(IServiceProvider applicatio
 {
     public object? GetService(Type serviceType)
     {
-        // A service of the module that asks for IServiceProvider gets this provider, not the application's: what it resolves later
-        // must find the services of the module too.
+        // A module service that asks for IServiceProvider gets this provider, not the application's: what it resolves later must find the
+        // module's services too.
         if (serviceType == typeof(IServiceProvider))
             return this;
         if (serviceType == typeof(IServiceProviderIsService))
@@ -19,13 +19,13 @@ internal sealed class RouteableModuleServiceProvider(IServiceProvider applicatio
         return module.TryGet(serviceType, this, application, out var service) ? service : application.GetService(serviceType);
     }
 
-    // ActivatorUtilities asks which parameters the container can fill: the services of the module count, as well as the application's.
+    // ActivatorUtilities asks which parameters the container can fill: the module's services count, as well as the application's.
     private sealed class ModuleIsService(RouteableModuleServices module, IServiceProviderIsService? application) : IServiceProviderIsService
     {
         public bool IsService(Type serviceType) => module.Has(serviceType) || application?.IsService(serviceType) == true;
     }
 
-    // The keyed services of a module are not registered (see IRouteableModules); the application's are reachable.
+    // A module's keyed services are not registered (see IRouteableModules); the application's are reachable.
     public object? GetKeyedService(Type serviceType, object? serviceKey)
         => application is IKeyedServiceProvider keyed ? keyed.GetKeyedService(serviceType, serviceKey) : null;
 
@@ -37,7 +37,7 @@ internal sealed class RouteableModuleServiceProvider(IServiceProvider applicatio
 /// <summary>The services a module registered, built when they are asked for (singletons once, the others each time).</summary>
 internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> descriptors) : IDisposable, IAsyncDisposable
 {
-    // Every registration of a type, in the order they were made: the last one answers GetService, all of them answer IEnumerable<T>, as in the container.
+    // Every registration of a type, in registration order: the last one answers GetService, all of them answer IEnumerable<T>, as in the container.
     private readonly Dictionary<Type, List<ServiceDescriptor>> _descriptors = descriptors
         .Where(d => !d.IsKeyedService)
         .GroupBy(d => d.ServiceType)
@@ -62,7 +62,7 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         }
 
         // IEnumerable<T> of a type the module registers: all its registrations (the application's are not mixed in).
-        // Only for a reference type T: the array of T[] of a value type would need code that Native AOT may not have generated.
+        // Only for a reference type T: the array type for a value type T might not have been generated for Native AOT.
         if (serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IEnumerable<>)
             && serviceType.GetGenericArguments()[0] is { IsValueType: false } element
             && _descriptors.TryGetValue(element, out var all))
@@ -74,7 +74,7 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         return false;
     }
 
-    // An array of a reference type is the same code for every T (shared generics), so it exists even when Native AOT compiled the application.
+    // An array of a reference type uses the same code for every T (shared generics), so it exists even in an application compiled with Native AOT.
     [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("AOT", "IL3050:RequiresDynamicCode",
         Justification = "Only called for a reference type: arrays of reference types use the canonical shared code, which AOT always has.")]
     private Array BuildArray(Type element, List<ServiceDescriptor> all, IServiceProvider scope, IServiceProvider application)
@@ -85,8 +85,8 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         return items;
     }
 
-    // Transient: built at each request, and owned by whoever asked. Singleton and Scoped: built once. A module loaded while running has no scope
-    // of its own (see IRouteableModules), so a scoped service lives as long as the application, which is what the guide says.
+    // Transient: built on each request, and owned by the caller. Singleton and Scoped: built once. A module loaded at run time has no scope
+    // of its own (see IRouteableModules), so a scoped service lives as long as the application, as the guide says.
     private object Resolve(ServiceDescriptor descriptor, IServiceProvider scope, IServiceProvider application)
     {
         if (descriptor.Lifetime == ServiceLifetime.Transient)
@@ -96,11 +96,11 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         {
             if (!_singletons.TryGetValue(descriptor, out var known))
             {
-                // Built against the application's own container, never against one scope of it: on a server, the provider that asks is the
-                // scope of one visitor, and what a singleton took from it would be served to every other visitor.
+                // Build against the application's own container, never against one of its scopes: on a server, the asking provider is one visitor's scope,
+                // and whatever a singleton took from it would be served to every other visitor.
                 known = Create(descriptor, new RouteableModuleServiceProvider(Root ?? application, this));
                 _singletons[descriptor] = known;
-                if (descriptor.ImplementationInstance is null)          // an instance given by the module is not ours to dispose
+                if (descriptor.ImplementationInstance is null) // an instance given by the module is not ours to dispose
                     _created.Add(known);
             }
             return known;
@@ -119,10 +119,9 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         throw new InvalidOperationException($"The module registered '{descriptor.ServiceType}' without a way to build it.");
     }
 
-    // The services the module built once are disposed in the reverse order of their creation. Synchronously, a service that has Dispose is
-    // disposed with it, like the container of the application does; a service that has nothing but DisposeAsync is started and not waited for
-    // (AsyncDisposal: blocking would deadlock a thread with a synchronization context, and is impossible on Blazor WebAssembly).
-    // Prefer DisposeAsync of the module services when you can.
+    // Services the module built once are disposed in reverse order of creation. In a synchronous Dispose, a service with Dispose is disposed
+    // as the application's container does; one that only has DisposeAsync is started and not awaited (see AsyncDisposal: blocking could
+    // deadlock a thread with a synchronization context, and is impossible on Blazor WebAssembly). Prefer DisposeAsync when you can.
     public void Dispose()
     {
         var failures = new List<Exception>();
@@ -142,7 +141,7 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         Raise(failures);
     }
 
-    // The services to dispose, the last created first; the module forgets them.
+    // The services to dispose, last created first; the module forgets them.
     private object[] TakeCreated()
     {
         lock (_gate)
@@ -154,7 +153,7 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         }
     }
 
-    // One service that fails to dispose must not keep the others (created before it) alive: every one is tried, the failures are raised together.
+    // One service that fails to dispose must not keep the others (created before it) alive: each is tried, and the failures are raised together.
     private static void Raise(List<Exception> failures)
     {
         if (failures.Count > 0)

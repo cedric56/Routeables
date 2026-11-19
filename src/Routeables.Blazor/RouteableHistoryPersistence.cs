@@ -48,7 +48,7 @@ public sealed class RouteableHistoryPersistence(PersistentComponentState state, 
         return snapshots.Count > 0 && await RouteableState.RestoreSnapshotsAsync(router, snapshots);
     }
 
-    // The text only: a string is serialized without anything that trimming could remove.
+    // Text only: a string is serialized without anything that trimming could remove.
     [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Only a string is serialized.")]
     [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Only a string is serialized.")]
     private Task Persist()

@@ -18,7 +18,7 @@ public sealed class RouteableContentDialogSession
 {
     private readonly RouteableContentDialog _dialog;
     private readonly Action _complete;
-    private bool _completed;   // the result is decided: a second button, or the code, must neither run again nor change it
+    private bool _completed; // the result is decided: a second button, or code, must neither run again nor change it
 
     /// <summary>Starts the session of <paramref name="dialog"/>.</summary>
     /// <param name="dialog">The dialog to show.</param>
@@ -109,20 +109,20 @@ public sealed class RouteableContentDialogSession
 
     private bool Submit(RouteableContentDialogResult requested, ICommand? command, object? parameter, Action? click)
     {
-        // A second click while the dialog is closing: the command of the button already ran.
+        // A second click while the dialog is closing: the button's command already ran.
         if (_completed)
             return false;
 
         if (command is not null && !command.CanExecute(parameter))
             return false;
 
-        // A command that throws is reported, as a click callback is: the exception must not leave through the event of the host's button.
+        // A command that throws is reported, like a click callback: the exception must not leave through the host button's event.
         RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogClick, command is not null ? () => command.Execute(parameter) : click);
 
         if (RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogClosing, _dialog.Closing, requested.ToString()))
             return false;
 
-        // The command may have asked the dialog to close from code: that decided the result already.
+        // The command may have asked the dialog to close from code, which already decided the result.
         if (_completed)
             return false;
 

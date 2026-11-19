@@ -96,7 +96,7 @@ public class RouteableUnloadWarningTests
         await router.GoToAsync("/form", cancellationToken: ct);
         var form = (FormVm)router.CurrentViewModel!;
         await Task.Delay(50, ct);
-        Assert.Equal(0, scripts.Imports);                            // a page with nothing to lose does not load the script either
+        Assert.Equal(0, scripts.Imports);
 
         form.Edit(true);
         await Until(() => scripts.Warn.Count == 1);
@@ -111,6 +111,6 @@ public class RouteableUnloadWarningTests
         Assert.Equal(2, scripts.Warn.Count);
 
         await sync.DisposeAsync();
-        Assert.Equal(1, scripts.Disposed);                             // the listener of the tab does not outlive the circuit
+        Assert.Equal(1, scripts.Disposed);
     }
 }

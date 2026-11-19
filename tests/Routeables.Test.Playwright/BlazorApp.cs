@@ -34,7 +34,7 @@ public sealed class BlazorApp : IAsyncLifetime
         var port = FreePort();
         BaseUrl = $"http://127.0.0.1:{port}/";
 
-        // The sample was built by the project reference, in the configuration of this project (bin/<configuration>/<framework>).
+        // The project reference built the sample in this project's configuration (bin/<configuration>/<framework>).
         var configuration = new DirectoryInfo(AppContext.BaseDirectory.TrimEnd('/', '\\')).Parent!.Name;
         var start = new ProcessStartInfo("dotnet")
         {
@@ -45,7 +45,7 @@ public sealed class BlazorApp : IAsyncLifetime
         };
         foreach (var argument in new[] { "run", "--project", Project, "--no-build", "-c", configuration, "--no-launch-profile", "--urls", BaseUrl.TrimEnd('/') })
             start.ArgumentList.Add(argument);
-        start.Environment["ASPNETCORE_ENVIRONMENT"] = "Development";   // serves the static files of the libraries (Routeables.Blazor, MudBlazor)
+        start.Environment["ASPNETCORE_ENVIRONMENT"] = "Development"; // serves the static files of the libraries (Routeables.Blazor, MudBlazor)
 
         _process = Process.Start(start) ?? throw new InvalidOperationException("The sample could not be started.");
         _process.OutputDataReceived += (_, e) => Remember(e.Data);
@@ -55,7 +55,7 @@ public sealed class BlazorApp : IAsyncLifetime
 
         await WaitUntilReadyAsync();
 
-        // Idempotent: does nothing when the browser is already there. CI installs it in a step of its own as well.
+        // Idempotent: does nothing when the browser is already installed. CI installs it in its own step too.
         Microsoft.Playwright.Program.Main(["install", "chromium"]);
         _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
         Browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions

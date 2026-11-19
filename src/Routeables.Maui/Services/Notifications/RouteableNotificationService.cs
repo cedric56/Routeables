@@ -25,7 +25,7 @@ internal class RouteableNotificationService(
     public override void Show(string title, string message, RouteableNotificationType type = RouteableNotificationType.Information, TimeSpan? expiration = null, Action? onClick = null, Action? onClose = null)
     {
 #if WINDOWS || ANDROID || IOS || MACCATALYST
-        RouteableDefaultNotifications.Show(null!, title, message, type, expiration, onClick, onClose);   // the platform's own toast needs no page
+        RouteableDefaultNotifications.Show(null!, title, message, type, expiration, onClick, onClose); // the platform's own toast needs no page
 #else
         RouteableDefaultNotifications.Show(context, title, message, type, expiration, onClick, onClose);
 #endif

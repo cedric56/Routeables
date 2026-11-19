@@ -81,7 +81,6 @@ public sealed class HeadlessTransitionTests(HeadlessApp app)
         return data;
     }
 
-    // ------------------------------------------------------------------------------------------------ built-in transitions
 
     /// <summary>Every built-in region transition shows pages correctly going forward and back.</summary>
     [Theory]
@@ -177,7 +176,6 @@ public sealed class HeadlessTransitionTests(HeadlessApp app)
         await UntilAsync(() => screen.Main.Content is PageAView);
     });
 
-    // ------------------------------------------------------------------------------------------------ the transition of the Avalonia control
 
     /// <summary>A <see cref="RouteableRegion.Transition"/> set by the user is preserved when no named transition is declared.</summary>
     [Fact]
@@ -192,7 +190,6 @@ public sealed class HeadlessTransitionTests(HeadlessApp app)
         Assert.Same(own, screen.Main.PageTransition);
     });
 
-    // ------------------------------------------------------------------------------------------------ custom transitions
 
     /// <summary>A custom transition is built with the direction and duration of each navigation change.</summary>
     [Fact]
@@ -290,7 +287,6 @@ public sealed class HeadlessTransitionTests(HeadlessApp app)
         await UntilAsync(() => screen.Main.Content is PageBView);
     });
 
-    // ------------------------------------------------------------------------------------------------ sequences
 
     /// <summary>Going back while a page is still leaving shows the previous page correctly for the control's transition.</summary>
     [Fact]

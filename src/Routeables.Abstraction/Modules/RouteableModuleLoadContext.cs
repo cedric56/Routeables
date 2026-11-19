@@ -19,7 +19,7 @@ internal sealed class RouteableModuleLoadContext(string path) : AssemblyLoadCont
     {
         try
         {
-            return Default.LoadFromAssemblyName(assemblyName);          // shared with the application
+            return Default.LoadFromAssemblyName(assemblyName); // shared with the application
         }
         catch (FileNotFoundException)
         {

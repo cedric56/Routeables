@@ -92,7 +92,6 @@ public class ViewAndServicesTests
         Assert.AreEqual(0, view.Subscribed);
     }
 
-    // ------------------------------------------------------------------------------------------------ the dispatcher
 
     /// <summary>The dispatcher recognizes the UI thread.</summary>
     [TestMethod]
@@ -127,7 +126,6 @@ public class ViewAndServicesTests
         await TestHost.UntilAsync(() => done);
     }
 
-    // ------------------------------------------------------------------------------------------------ the services of the application
 
     /// <summary>The application registered the core Routeables services.</summary>
     [TestMethod]

@@ -114,21 +114,21 @@ public sealed class FileRouteableHistoryStore : IRouteableHistoryStore
     {
         ArgumentNullException.ThrowIfNull(text);
 
-        // The history of one user is not for the others of the machine. On Unix the folder that is created is for its owner (the mode of a folder that
-        // exists already is the choice of whoever made it), and the file is created with its mode: there is no moment when it is wider, as there is
-        // when the mode is set after the write. The umask can only remove rights, never add them.
+        // One user's history is not for the other users of the machine. On Unix, a newly created folder is for its owner (the mode of an existing
+        // folder is whoever created it's choice), and the file is created with its final mode, so there is no moment when it is wider, as there
+        // would be if the mode were set after the write. The umask can only remove rights, never add them.
         var folder = System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(Path));
         if (!string.IsNullOrEmpty(folder))
         {
-            // The platform test is written in the condition itself: it is what the platform analyzer (CA1416) recognises as a guard.
+            // The platform test is written in the condition itself, which is what the platform analyzer (CA1416) recognizes as a guard.
             if (!OperatingSystem.IsWindows() && !OperatingSystem.IsBrowser())
                 Directory.CreateDirectory(folder, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
             else
                 Directory.CreateDirectory(folder);
         }
 
-        // Written aside and moved over the old file: a run that stops in the middle of a write keeps the previous history.
-        // The name is unique: two instances of the application (or two saves) never write the same temporary file.
+        // Write aside, then move over the old file: a run that stops in the middle of a write keeps the previous history.
+        // The name is unique, so two instances of the application (or two saves) never write the same temporary file.
         var temporary = $"{Path}.{Guid.NewGuid():N}.tmp";
         try
         {
@@ -179,8 +179,8 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
     private volatile bool _disposed;
     private readonly CancellationTokenSource _stopped = new();
     private string? _last;
-    private long _ticket;       // taken before a history is read
-    private long _savedTicket;  // the one of the history that was written last
+    private long _ticket; // taken before a history is read
+    private long _savedTicket; // the ticket of the history written last
 
     /// <summary>Starts keeping the history: reads what was kept, and writes the history after each route change from then on. Safe to call twice.</summary>
     public void Start()
@@ -200,7 +200,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         router.Routed += OnRouted;
         router.History.Changed += OnHistoryChanged;
 
-        // Nothing is written before the pages are back: the first page of the new run must not replace the history that is waiting.
+        // Write nothing before the pages are back: the first page of the new run must not replace the history that is waiting.
         if (kept.Count == 0)
         {
             _active = true;
@@ -212,7 +212,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         RouteableHelper.FireAndForget(() => Task.Run(() => RestoreAsync(router, kept)), provider, "RouteableHistoryKeeper.Restore");
     }
 
-    // How long one wait for the first page lasts; the wait starts again until the keeper is disposed. Changed by the tests only.
+    // How long one wait for the first page lasts. The wait restarts until the keeper is disposed. Changed by tests only.
     internal static TimeSpan FirstPageSlice = TimeSpan.FromSeconds(30);
 
     private async Task RestoreAsync(IRouter router, IReadOnlyList<RouteableSnapshot> kept)
@@ -222,15 +222,15 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         try { stop = _stopped.Token; }
         catch (ObjectDisposedException)
         {
-            // The restore was announced (BeginRestore): the addresses that wait for it must not wait for ever.
+            // The restore was announced (BeginRestore): the addresses waiting for it must not wait forever.
             RouteableStartup.EndRestore(router);
             return;
         }
 
         try
         {
-            // The saved history is put back once the first page is shown, however late that is (a sign-in window, a splash screen outside the router):
-            // giving up after a delay would let the next route change write over it with a single page.
+            // Restore the saved history once the first page is shown, however late that is (a sign-in window, a splash screen outside the router).
+            // Giving up after a delay would let the next navigation overwrite it with a single page.
             while (!await RouteableLinkInbox.WaitForFirstPageAsync(router, stop, FirstPageSlice))
             {
                 if (_disposed || stop.IsCancellationRequested)
@@ -245,7 +245,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
                 if (await RouteableState.RestoreSnapshotsAsync(router, kept))
                     RouteableMenu.Moved(provider, router);
                 else
-                    SaveNow();   // what was kept cannot be shown: the page that is there replaces it, or the same failure comes back at every start
+                    SaveNow(); // what was kept cannot be shown: the page that is there replaces it, or the same failure would come back at every start
             }
 
             if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
@@ -259,16 +259,16 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         }
         finally
         {
-            // A keeper that was disposed while it restored stays off: it must not write the history again.
+            // A keeper disposed while it restored stays off: it must not write the history again.
             if (!_disposed)
                 _active = true;
             RouteableStartup.EndRestore(router);
             try
             {
-                // The history belongs to the thread of the interface: read it there, as the route changes that save it do.
+                // The history belongs to the UI thread: read it there, as the navigations that save it do.
                 if (_disposed)
                 {
-                    // nothing is written by a keeper that is over
+                    // A keeper that is over writes nothing.
                 }
                 else if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
                     await dispatcher.InvokeAsync(SaveNow);
@@ -288,7 +288,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             SaveNow();
     }
 
-    // An erased history raises no route change: without this, the pages that were erased would come back at the next start.
+    // An erased history raises no navigation: without this, the erased pages would come back at the next start.
     private void OnHistoryChanged(object? sender, EventArgs e)
     {
         if (_active && _router is { } router && router.History.Count == 0)
@@ -301,7 +301,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         if (_active) SaveNow();
     }
 
-    // A history that cannot be unprotected (another key, a file that was changed) is left out: the application starts with no history.
+    // A history that cannot be unprotected (another key, a modified file) is left out: the application starts with no history.
     private string? Unprotect(string? kept)
     {
         if (protector is null || string.IsNullOrEmpty(kept))
@@ -318,12 +318,12 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             if (_router is not { } router)
                 return;
 
-            // Two saves may overlap (a route change and a Flush from another thread): the one that read the history last must be the one that is
-            // written last. The history is read outside the lock (a view model saves its state there: user code), so each read takes a number
-            // first, and a read that is older than what is already written is dropped.
+            // Two saves can overlap (a navigation and a Flush from another thread): the one that read the history last must be written last. The history
+            // is read outside the lock (a view model saves its state there, which is user code), so each read first takes a number, and a read older than
+            // what is already written is dropped.
             var ticket = Interlocked.Increment(ref _ticket);
             var snapshots = RouteableState.CaptureSnapshots(router);
-            // An empty history is written only when it was erased: the first page of a new run is not yet there when the keeper starts.
+            // An empty history is written only when it was erased: the first page of a new run is not there yet when the keeper starts.
             if (snapshots.Count == 0 && !allowEmpty)
                 return;
 
@@ -332,7 +332,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             {
                 if (ticket < _savedTicket)
                     return;
-                // Nothing to write, but this read is now the newest one that was looked at: an older read, that differs, must not be written after it.
+                // Nothing to write, but this read is now the newest one looked at: an older, different read must not be written after it.
                 if (text == _last)
                 {
                     _savedTicket = ticket;
@@ -345,7 +345,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         }
         catch (Exception ex)
         {
-            // A history that cannot be written (a read-only disk) must not fail a route change.
+            // A history that cannot be written (a read-only disk) must not make a navigation fail.
             RouteableErrors.Report<RouteableHistoryKeeper>(provider, ex, "Save");
         }
     }
@@ -360,7 +360,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             _stopped.Cancel();
             _stopped.Dispose();
         }
-        catch (ObjectDisposedException) { }   // already stopped
+        catch (ObjectDisposedException) { } // already stopped
         if (_router is { } router)
             router.Routed -= OnRouted;
         if (_router is { } erased)

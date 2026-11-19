@@ -57,9 +57,8 @@ internal partial class Router(
     /// </summary>
     public object? CurrentView => history.Current?.View;
 
-    // ------------------------------------------------------------------ events
 
-    // Observers must never break, or mask the error of, a route change.
+    // Observers must never break, or mask the error of, a navigation.
     private void Raise<T>(EventHandler<T>? handlers, object sender, T args) where T : EventArgs
         => RouteableEvents.Raise(provider, typeof(Router), handlers, sender, args);
 
@@ -73,7 +72,7 @@ internal partial class Router(
         if (activity is not null)
         {
             activity.SetTag("routeables.kind", kind.ToString());
-            // The template (/clients/{id:int}), as http.route: a bounded set of values, and no identifier or token of the address.
+            // The template (/clients/{id:int}) as http.route: a bounded set of values, with no identifier or token from the address.
             activity.SetTag("routeables.route", RouteTag(to.Args.Route));
             if (RouteableDiagnostics.IncludeAddress)
                 activity.SetTag("routeables.address", PathOf(to.Args.Route));
@@ -92,7 +91,7 @@ internal partial class Router(
             }
             else
             {
-                // A redirect is made after this route change ended: the gate is held until then.
+                // A redirect runs after this navigation has ended: the gate is held until then.
                 if (decision.RedirectTo is not null && redirection is not null)
                     redirection.Route = decision.RedirectTo;
                 result = RouteableResult.Cancel();

@@ -9,7 +9,6 @@ public class RouterOperationsTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    // ------------------------------------------------------------------ PopAsync
 
     [Fact]
     public async Task PopAsync_ReturnsCancelled_WhenThereIsNoPreviousEntry()
@@ -89,7 +88,6 @@ public class RouterOperationsTests
         Assert.Empty(Destroyed(log));
     }
 
-    // ------------------------------------------------------------ BackToRootAsync
 
     [Fact]
     public async Task BackToRootAsync_ReturnsCancelled_WhenAlreadyAtTheRoot()
@@ -155,7 +153,6 @@ public class RouterOperationsTests
         Assert.Empty(Destroyed(log));
     }
 
-    // -------------------------------------------------------------- MoveToAsync
 
     [Fact]
     public async Task MoveToAsync_JumpsToTheEntry_AndKeepsEveryEntry()
@@ -240,7 +237,6 @@ public class RouterOperationsTests
         Assert.Equal(3, router.History.Count);
     }
 
-    // ------------------------------------------------------------------- shared
 
     [Fact]
     public async Task TheRouter_StaysUsable_AfterAFailedOrCancelledOperation()

@@ -87,8 +87,8 @@ public sealed record RouteCoordination(IReadOnlyList<RouteSegment> Segments, boo
                 return false;
             }
 
-            // The builder refuses a segment named "." or "..": the parser reads the same. ".." written plainly is the way back; "." or an escaped
-            // "%2E%2E" is no page, and read as one it would not give back the address it came from.
+            // The builder rejects a segment named "." or "..", and the parser does the same. A plain ".." is the way back; "." or an escaped "%2E%2E"
+            // is not a page, and read as one it would not give back the address it came from.
             if (name == "." || (name == RouteSegment.BackName && head != RouteSegment.BackName))
             {
                 error = new FormatException($"Segment '{piece}' cannot be named \".\" or \"..\" (only a plain \"..\" is the way back).");
@@ -174,7 +174,7 @@ public sealed class RouteCoordinationBuilder
         return this;
     }
 
-    // ".." is the back segment in an address: a segment of that name would be written "..", and read back as a way back.
+    // ".." is the back segment in an address: a segment with that name would be written "..", and read back as a way back.
     internal static void ThrowIfBack(string name)
     {
         if (name.Trim() is ".." or ".")

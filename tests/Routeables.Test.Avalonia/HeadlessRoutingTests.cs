@@ -125,7 +125,7 @@ public sealed class HeadlessRoutingTests(HeadlessApp app)
     [Fact]
     public Task A_page_shown_again_while_its_transition_out_is_still_playing_is_released() => RunAsync(async (provider, screen) =>
     {
-        // The control keeps the page it leaves in a second presenter until the animation ends: Back right away asks it to hold that page twice.
+        // The control keeps the page it leaves in a second presenter until the animation ends, so a quick Back asks it to hold that page twice.
         screen.Main.PageTransition = new CrossFade(TimeSpan.FromSeconds(3));
         await provider.GoToAsync("/a");
         await UntilAsync(() => screen.Main.Content is PageAView);

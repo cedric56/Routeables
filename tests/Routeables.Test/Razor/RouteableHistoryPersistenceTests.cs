@@ -31,14 +31,14 @@ public class RouteableHistoryPersistenceTests
         public bool SupportsRenderMode(IComponentRenderMode? renderMode) => true;
     }
 
-#pragma warning disable BL0006 // Do not use RenderTree types
+#pragma warning disable BL0006
     private sealed class TestRenderer(IServiceProvider provider) : Renderer(provider, NullLoggerFactory.Instance)
     {
         public override Dispatcher Dispatcher { get; } = Dispatcher.CreateDefault();
         protected override void HandleException(Exception exception) => throw exception;
         protected override Task UpdateDisplayAsync(in RenderBatch renderBatch) => Task.CompletedTask;
     }
-#pragma warning restore BL0006 // Do not use RenderTree types
+#pragma warning restore BL0006
 
     private static ServiceProvider Application()
     {

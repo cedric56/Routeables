@@ -20,7 +20,6 @@ namespace Routeables.Generated
         private static readonly SymbolDisplayFormat FqNullable = SymbolDisplayFormat.FullyQualifiedFormat
             .AddMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
 
-        // ------------------------------------------------------------------ model
 
         internal sealed record ParamInfo(string Name, string Type, bool HasDefault, string? Default);
 
@@ -35,7 +34,6 @@ namespace Routeables.Generated
             EquatableArray<string> TypeAttributes,
             EquatableArray<PropInfo> Properties);
 
-        // ------------------------------------------------------------------ analysis
 
         public static BuildInfo Analyze(Compilation compilation, INamedTypeSymbol type)
         {
@@ -96,7 +94,7 @@ namespace Routeables.Generated
         }
 
         // The constructor ActivatorUtilities would call: the only public one, or the one marked [ActivatorUtilitiesConstructor].
-        // With several the choice is made at run time from what can be resolved: that is left to ActivatorUtilities.
+        // With several, the choice is made at run time from what can be resolved, so it is left to ActivatorUtilities.
         private static bool TryReadConstructor(Compilation compilation, INamedTypeSymbol type, List<ParamInfo> parameters, out bool takesRouter)
         {
             takesRouter = false;
@@ -167,7 +165,7 @@ namespace Routeables.Generated
 
             switch (value)
             {
-                // The type of the literal is the type of the parameter: 1.5 is a double, not a float, and 9.99 is not a decimal.
+                // The literal's type is the parameter's type: 1.5 is a double, not a float, and 9.99 is not a decimal.
                 case float f:
                     literal = float.IsNaN(f) ? "float.NaN"
                         : float.IsPositiveInfinity(f) ? "float.PositiveInfinity"
@@ -202,17 +200,17 @@ namespace Routeables.Generated
                 yield return t;
         }
 
-        // The properties the injection could write, and the attributes of the type. It is complete when every property that could be
-        // written (it has an attribute, or the type names properties through its own attributes) can be written by code outside the type.
+        // The properties the injection could write, and the type's attributes. It is complete when every property that could be written (it has an
+        // attribute, or the type names properties through its own attributes) can be written by code outside the type.
         private static bool TryReadInjection(Compilation compilation, INamedTypeSymbol type, List<string> typeAttributes, List<PropInfo> properties)
         {
-            // The compiler hands the generator only the public and protected members of the types of other assemblies. An internal
-            // property there (an [Inject] internal on a base component, say) is invisible to the generator and found by reflection:
-            // such a type cannot be described completely, so it is left to reflection.
+            // The compiler hands the generator only the public and protected members of types from other assemblies. An internal property there (an
+            // [Inject] internal on a base component, say) is invisible to the generator and is found by reflection, so such a type cannot be
+            // described completely and is left to reflection.
             if (WithBaseTypes(type).Any(t => !SymbolEqualityComparer.Default.Equals(t.ContainingAssembly, compilation.Assembly)))
                 return false;
 
-            // The attributes of the type, those it inherits included, as expressions that build them.
+            // The type's attributes, inherited ones included, as expressions that build them.
             var typeAttributeData = WithBaseTypes(type)
                 .SelectMany(t => t.GetAttributes().Where(attribute =>
                     attribute.AttributeClass is { } attributeClass
@@ -243,8 +241,8 @@ namespace Routeables.Generated
 
                     if (seen.TryGetValue(property.Name, out var derived))
                     {
-                        // The override of a property is the one found first, in the most derived type; a property that hides
-                        // another with the same name would be two for reflection.
+                        // The override of a property is the one found first, in the most derived type; a property that hides another with the same name would be
+                        // two properties for reflection.
                         if (!Overrides(derived, property))
                             return false;
                         continue;
@@ -304,7 +302,7 @@ namespace Routeables.Generated
             return false;
         }
 
-        // The full names (as Type.FullName gives them) of the attributes declared on a property and of their base types.
+        // The full names (as Type.FullName gives them) of the attributes declared on a property and on their base types.
         // PropertyInfo.IsDefined ignores "inherit", so an override does not see the attributes of the property it overrides.
         private static HashSet<string> AttributeNames(IPropertySymbol property)
         {
@@ -325,7 +323,7 @@ namespace Routeables.Generated
             return names;
         }
 
-        // Attributes the injection has no use for: the ones of the compiler and the base library, and the ones that declare the routes.
+        // Attributes the injection has no use for: those of the compiler and the base library, and those that declare the routes.
         private static bool IsNoise(INamedTypeSymbol attribute, bool typeLevel)
         {
             var ns = attribute.ContainingNamespace is { IsGlobalNamespace: false } containing ? containing.ToDisplayString() : "";
@@ -405,7 +403,6 @@ namespace Routeables.Generated
             return sb.ToString();
         }
 
-        // ------------------------------------------------------------------ emission
 
         /// <summary>The method that builds a view model or a view: the constructor is called, then the injection finishes it.</summary>
         public static void EmitFactory(StringBuilder sb, string methodName, BuildInfo info, bool viewModel)
@@ -459,7 +456,7 @@ namespace Routeables.Generated
                 var names = p.Attributes.Count == 0
                     ? "global::System.Array.Empty<string>()"
                     : "new string[] { " + string.Join(", ", p.Attributes.Select(Quote)) + " }";
-                var member = SyntaxFacts.GetKeywordKind(p.Name) != SyntaxKind.None ? "@" + p.Name : p.Name;      // a property named like a keyword (@event)
+                var member = SyntaxFacts.GetKeywordKind(p.Name) != SyntaxKind.None ? "@" + p.Name : p.Name; // a property named like a keyword (@event)
                 var get = p.CanGet ? $"o => (({info.TypeName})o).{member}" : "null";
                 sb.AppendLine($"            new({Quote(p.Name)}, typeof({p.RawType}), {names},");
                 sb.AppendLine($"                (o, v) => (({info.TypeName})o).{member} = v is null ? default! : ({p.Type})v,");

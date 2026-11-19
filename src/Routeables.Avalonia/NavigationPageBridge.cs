@@ -23,7 +23,7 @@ internal sealed class NavigationPageBridge
     private readonly Dictionary<IHistoryEntry, Page> _pages = new(ReferenceEqualityComparer.Instance);
     private readonly Dictionary<Page, IHistoryEntry> _entries = new(ReferenceEqualityComparer.Instance);
 
-    private bool _applying;     // the bridge itself is popping: the control may do it
+    private bool _applying; // the bridge itself is popping: the control may do it
     private bool _dirty;
     private bool _running;
     private bool _disposed;
@@ -52,7 +52,7 @@ internal sealed class NavigationPageBridge
         _entries.Clear();
     }
 
-    // The history changes on the thread of the route change, which is not always the one of the interface.
+    // The history changes on the navigation's thread, which is not always the UI thread.
     private void OnHistoryChanged(object? sender, EventArgs e) => Dispatcher.UIThread.Post(Request);
 
     private void Request()
@@ -64,7 +64,7 @@ internal sealed class NavigationPageBridge
         _ = PumpAsync();
     }
 
-    // One pass at a time: the control ignores a navigation asked while another one runs (IsNavigating).
+    // One pass at a time: the control ignores a navigation requested while another one runs (IsNavigating).
     private async Task PumpAsync()
     {
         try
@@ -127,7 +127,7 @@ internal sealed class NavigationPageBridge
         }
     }
 
-    // A control ignores a navigation asked during a transition: waits for the end of the one that runs.
+    // A control ignores a navigation requested during a transition, so wait for the one that is running to end.
     private async Task WaitUntilIdleAsync()
     {
         while (_navigation.IsNavigating && !_disposed)
@@ -164,7 +164,7 @@ internal sealed class NavigationPageBridge
         return page;
     }
 
-    // The pages of the entries that left the history are not kept.
+    // Do not keep the pages of entries that left the history.
     private void Forget(IReadOnlyList<IHistoryEntry> inHistory)
     {
         if (_pages.Count <= inHistory.Count) return;
@@ -178,8 +178,8 @@ internal sealed class NavigationPageBridge
         }
     }
 
-    // The user pops the page (back button, swipe): the router answers, not the control. The pop is cancelled here; when the router agrees, its history
-    // changes and the bridge pops the page itself. Not awaited: the control waits for this handler, and the bridge waits for the control.
+    // The user pops the page (back button, swipe): the router answers, not the control. The pop is cancelled here, and when the router agrees its
+    // history changes and the bridge pops the page itself. Not awaited: the control waits for this handler, and the bridge waits for the control.
     private Task OnNavigating(NavigatingFromEventArgs args)
     {
         if (_applying || args.NavigationType != NavigationType.Pop)
@@ -195,7 +195,6 @@ internal sealed class NavigationPageBridge
         return Task.CompletedTask;
     }
 
-    // "DogDetailsViewModel" -> "Dog Details".
     private static object? DefaultHeader(IHistoryEntry entry)
     {
         var name = entry.ViewModel.GetType().Name;

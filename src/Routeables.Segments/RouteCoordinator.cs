@@ -38,8 +38,8 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
         var shownBefore = new Dictionary<IRouter, string?>();
         try
         {
-            // 2. Absolute: start from empty histories, once per router. Erasing is not leaving: the page shown is asked first, as a route
-            // change would (a page with unsaved changes can say no), and one "no" stops the whole coordination before anything is touched.
+            // 2. Absolute: start from empty histories, once per router. Erasing is not leaving: the page shown is asked first, as in a navigation
+            // (a page with unsaved changes can say no), and a single "no" stops the whole coordination before anything is touched.
             if (coordination.Absolute)
             {
                 var routers = steps.Select(s => s.Router).Distinct().ToList();
@@ -60,7 +60,7 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
                 }
             }
 
-            // 3. One coordination per segment, in order, stopping at the first that does not succeed.
+            // 3. Run one coordination per segment, in order, stopping at the first that does not succeed.
             foreach (var step in steps)
             {
                 result = await RunAsync(step, cancellationToken);
@@ -69,14 +69,14 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
                 completed++;
             }
 
-            // A segment that did not succeed after the histories were erased: a router that is still empty gets the page it showed back,
-            // so that the application is not left with a blank region (what was applied before the failure stays).
+            // A segment failed after the histories were erased: a router that is still empty gets back the page it showed, so that the application is
+            // not left with a blank region (whatever was applied before the failure stays).
             if (!result.Success)
                 await BringBackAsync(shownBefore);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            // A page that throws or a cancellation after the histories were erased leaves the same blank regions as a failed result does.
+            // A page that throws, or a cancellation, after the histories were erased leaves the same blank regions as a failed result.
             await BringBackAsync(shownBefore);
             Raise(Coordinated, new RouteCoordinatedEventArgs(coordination, RouteableResult.Cancel(), completed));
             throw;
@@ -88,8 +88,8 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
             throw;
         }
 
-        // A failure is returned, not thrown: an application that ignores the result would never know, so it is reported too.
-        // A cancellation (a guard that said no) is an answer, not an error.
+        // A failure is returned, not thrown, so an application that ignores the result would never know: report it too.
+        // A cancellation (a guard said no) is an answer, not an error.
         if (!result.Success && !result.Cancelled && result.Exception is { } failure)
             ReportFailure(failure);
 
@@ -114,7 +114,7 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
             if (router.History.Count > 0 || string.IsNullOrWhiteSpace(route))
                 continue;
             try { await router.GoToAsync(route, null, null, CancellationToken.None); }
-            catch (Exception ex) { RouteableErrors.Report<RouteCoordinator>(provider, ex); }   // the failure of the segment is what the caller gets
+            catch (Exception ex) { RouteableErrors.Report<RouteCoordinator>(provider, ex); } // the segment's failure is what the caller gets
         }
     }
 

@@ -27,7 +27,7 @@ public static class RouteableShellRoutes
             if (!e.CanCancel || !IsRequest(e.Source) || RouteOf(e) is not { } route)
                 return;
 
-            // The decision is asynchronous (the router runs guards and the lifecycle): Shell waits for it.
+            // The decision is asynchronous (the router runs guards and the lifecycle), so Shell waits for it.
             var deferral = e.GetDeferral();
             _ = Route(provider, e, route, deferral);
         }
@@ -40,7 +40,7 @@ public static class RouteableShellRoutes
     private static bool IsRequest(ShellNavigationSource source)
         => source is not (ShellNavigationSource.Pop or ShellNavigationSource.PopToRoot or ShellNavigationSource.Remove or ShellNavigationSource.Insert);
 
-    // "//orders/42?x=1", "/orders/42" and "orders/42" are the same address; nothing after the slashes is nothing to route.
+    // "//orders/42?x=1", "/orders/42" and "orders/42" are the same address; nothing after the slashes means nothing to route.
     private static string? RouteOf(ShellNavigatingEventArgs e)
     {
         var text = e.Target?.Location.OriginalString?.Trim();

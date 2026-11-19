@@ -1,4 +1,4 @@
-// Uno is what is left when no other host is named: the Routeables.Uno project links this file without defining a symbol.
+// Uno is what is left when no other host is defined: Routeables.Uno links this file without defining a symbol.
 #if !WPF && !AVALONIA && !MAUI && !WINUI3
 #define ROUTEABLE_UNO
 #endif
@@ -19,8 +19,7 @@ using Routeables.Abstraction;
 using Routeables.Abstraction.Routing;
 using Routeables.Regions;
 
-// One file for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui link it (and define WPF, AVALONIA or MAUI),
-// Routeables.Uno and Routeables.WinUI3 link it too.
+// Shared source for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui (which define WPF, AVALONIA or MAUI), Routeables.Uno and Routeables.WinUI3.
 #if WPF
 namespace Routeables.Wpf;
 #elif AVALONIA
@@ -93,7 +92,7 @@ public partial class RouteableRegionItems : ContentControl
 
     static RouteableRegionItems()
     {
-        // The views are laid out in rows and columns by default; a style or an ItemsPanel in XAML replaces it.
+        // The views are laid out in rows and columns by default; a style or an ItemsPanel in XAML replaces this.
         ItemsPanelProperty.OverrideMetadata(typeof(RouteableRegionItems),
             new FrameworkPropertyMetadata(new ItemsPanelTemplate(new FrameworkElementFactory(typeof(WrapPanel)))));
     }
@@ -221,7 +220,7 @@ public partial class RouteableRegionItems : ContentControl
             Reconnect();
     }
 #elif MAUI
-    // The handler exists while the control is displayed: the router is listened to for that time only.
+    // The handler exists while the control is displayed: listen to the router only for that time.
     /// <inheritdoc />
     protected override void OnHandlerChanged()
     {
@@ -245,7 +244,7 @@ public partial class RouteableRegionItems : ContentControl
 
     private void Connect() => _connection.ConnectItems(Provider, Region, Show);
 
-    // A view has one parent: they are released when the control is no longer displayed, so another control can display them.
+    // A view has one parent: release them when the control is no longer displayed, so that another control can display them.
     private void Disconnect()
     {
         _connection.Disconnect();
@@ -288,7 +287,7 @@ public partial class RouteableRegionItems : ContentControl
                 throw RegionErrors.AlreadyDisplayed(view, holder, Region);
 
         // A copy: the list belongs to the binding, and the control must not follow a list that is replaced.
-        // The views are released first: one that stays is a child of the control until its container is cleared.
+        // Release the views first: one that stays is a child of the control until its container is cleared.
         ItemsSource = null;
         ItemsSource = views.ToList();
 #elif AVALONIA
@@ -311,7 +310,7 @@ public partial class RouteableRegionItems : ContentControl
         // The views leave the old layout before they enter the new one.
         Release();
 
-        // A view is its own element: the repeater lays the views out in a grid that wraps, and scrolls when the rows do not fit.
+        // A view is its own element: the repeater lays the views out in a wrapping grid, and scrolls when the rows do not fit.
         var repeater = new ItemsRepeater
         {
             Layout = new UniformGridLayout { MinItemWidth = MinItemWidth, MinColumnSpacing = Spacing, MinRowSpacing = Spacing },

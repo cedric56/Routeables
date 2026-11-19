@@ -39,7 +39,7 @@ public sealed class RegionConnection
         }
         catch
         {
-            Active = false;     // no binding: nothing is connected, and a late show must not be applied
+            Active = false; // no binding: nothing is connected, and a late show must not be applied
             throw;
         }
         return true;
@@ -61,7 +61,7 @@ public sealed class RegionConnection
         if (!Connect(provider, region, router => new RegionBinding(router, show)))
             return false;
 
-        // The default region starts the routing of an application that has no menu (the binding is there to show the first page).
+        // The default region starts the routing of an application without a menu (the binding is there to show the first page).
         RegionStart.Begin(provider!, region, route);
         return true;
     }
@@ -74,7 +74,6 @@ public sealed class RegionConnection
     public bool ConnectItems(IServiceProvider? provider, string? region, Action<IReadOnlyList<object>> show)
     {
         ArgumentNullException.ThrowIfNull(show);
-        // The binding gives the views of now as soon as it is built.
         return Connect(provider, region, router => new RegionItemsBinding(router, show));
     }
 

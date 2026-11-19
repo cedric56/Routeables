@@ -58,10 +58,10 @@ public static class MauiRouteablesExtensions
         builder.Services.AddSingleton<IRouteableViewBinder, RouteableViewBinder>();
         builder.Services.RegisterMenuViewModel<TMenu>();
         builder.UseRouteablesServices();
-        // The history of the previous run is put back once the app is built, when the application asked for it (AddRouteableHistory).
+        // Restore the previous run's history once the app is built, when the application asked for it (AddRouteableHistory).
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<Microsoft.Maui.Hosting.IMauiInitializeService, RouteableHistoryInitializer>());
         configure?.Invoke(builder.Services);
-        // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
+        // Add the routes the generator found, unless the application registered them (or called AddGeneratedRoutes()).
         global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(builder.Services);
         return builder;
     }
@@ -87,7 +87,7 @@ public static class MauiRouteablesExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        // The dialogs of the platform follow the activity in front: started before the first one.
+        // The platform dialogs follow the activity in front: start this before the first one.
         Routeables.Native.NativeDialogs.Initialize();
 
         builder.Services.RemoveAll<IRouteableDialogService>();
@@ -161,7 +161,7 @@ public static class MauiRouteablesExtensions
         ArgumentNullException.ThrowIfNull(builder);
         SystemNotificationCenter.Current.Configure(options ?? new AppNotificationOptions());
 #if ANDROID
-        // A tap on a system notification starts or comes back to the activity with the id of the notification as an extra.
+        // A tap on a system notification starts, or returns to, the activity with the notification's id as an extra.
         builder.ConfigureLifecycleEvents(events => events.AddAndroid(android => android
             .OnCreate((activity, _) => SystemNotificationCenter.HandleIntent(activity.Intent))
             .OnNewIntent((_, intent) => SystemNotificationCenter.HandleIntent(intent))));

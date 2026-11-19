@@ -123,7 +123,6 @@ public class LinkAndItemsTests
         Assert.AreEqual("side", RouteableLink.GetRegion(button));
     }
 
-    // ------------------------------------------------------------------------------------------------ RouteableRegionItems
 
     /// <summary>Returns the views currently shown by the items control, oldest first.</summary>
     private static IReadOnlyList<object> Views(RouteableRegionItems items)

@@ -27,17 +27,17 @@ public static class RouterResultExtensions
     private static async Task<RouteableResult<TResult>> WaitForResultAsync<TResult>(
         this IRouter router, Func<Task<RouteableResult>> navigate, CancellationToken cancellationToken)
     {
-        // Completed from the handler of the history, which runs while the router holds its gate: whoever awaits must not run there.
+        // Completed from the history handler, which runs while the router holds its gate: whoever awaits must not continue there.
         var done = new TaskCompletionSource<RouteableResult<TResult>>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        // The page is watched from the moment it opens, not once the route change call returns: by then it may already have been left
-        // (popped by whoever saw it open), and History.Current would be another page.
+        // Watch the page from the moment it opens, not once the navigation call returns: by then it may already have been left (popped by
+        // whoever saw it open), and History.Current would be another page.
         var before = router.History.Current;
         IHistoryEntry? entry = null;
         RouteableResult? navigation = null;
 
-        // The page is left when it is no longer between the first entry and the current one: popped, gone back from, cleared. A page
-        // that opened another one on top of itself is still in that range.
+        // The page is left when it is no longer between the first entry and the current one: popped, gone back from, or cleared. A page that
+        // opened another page on top of itself is still in that range.
         bool IsLeft() => entry is not null
             && !router.History.Entries.Take(router.History.CurrentIndex + 1).Any(e => ReferenceEquals(e, entry));
 
@@ -68,7 +68,7 @@ public static class RouterResultExtensions
             if (entry is null)
                 return new RouteableResult<TResult> { OpenResult = navigation };
 
-            if (IsLeft())      // left between the navigation and now
+            if (IsLeft()) // left between the navigation and now
                 done.TrySetResult(Read<TResult>(entry, navigation));
 
             return await done.Task.ConfigureAwait(false);

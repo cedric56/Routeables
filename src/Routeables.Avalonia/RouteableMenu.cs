@@ -50,9 +50,9 @@ public class RouteableMenu : ListBox
         }
     }
 
-    // The entry that was clicked stays selected in the list when the page refused to be left (CanLeaveAsync) and the view model took
-    // the previous entry back: the binding does not always push that value to the list. Whenever the view model announces its entry,
-    // the list shows it, once the current update of the selection is over.
+    // The clicked entry stays selected in the list when the page refused to be left (CanLeaveAsync) and the view model took the previous entry
+    // back, because the binding does not always push that value to the list. Whenever the view model announces its entry, the list shows it,
+    // once the current selection update is over.
     private void OnMenuViewModelChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName != nameof(IRouteableMenuViewModel.SelectedEntry))
@@ -106,12 +106,10 @@ public class RouteableMenu : ListBox
     /// </summary>
     public RouteableMenu()
     {
-        // Bindings against the DataContext
         Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create<IRouteableMenuViewModel, ObservableCollection<IRouteableMenuEntry>>(r => r.Entries));
         Bind(SelectingItemsControl.SelectedItemProperty,
             CompiledBinding.Create<IRouteableMenuViewModel, IRouteableMenuEntry?>(r => r.SelectedEntry, mode: BindingMode.TwoWay));
 
-        // Item template (live bindings)
         ItemTemplate = new FuncDataTemplate<RouteableMenuEntry>((_, _) =>
         {
             var icon = new ContentControl { VerticalAlignment = VerticalAlignment.Center };
@@ -144,7 +142,6 @@ public class RouteableMenu : ListBox
             return stack;
         });
 
-        // Item style
         Styles.Add(new Style(x => x.OfType<ListBoxItem>())
         {
             Setters =

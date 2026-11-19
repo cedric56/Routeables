@@ -6,8 +6,8 @@ using Windows.UI.Core;
 
 namespace Routeables.Uno;
 
-// The Back request of the system (the hardware button or gesture of Android, the back button of a title bar), answered by the router.
-// It is listened to only while the router has a page to go back to: on Android 16 and later, whoever listens consumes the request, and the
+// The system's Back request (the hardware button or gesture on Android, the back button of a title bar), answered by the router. It is
+// listened to only while the router has a page to go back to: on Android 16 and later, whoever listens consumes the request, and the
 // application could not be left from its first page.
 internal sealed class BackRequests : IDisposable
 {
@@ -40,7 +40,7 @@ internal sealed class BackRequests : IDisposable
 
     private void OnSelectionChanged(object? sender, object? view) => OnHistoryChanged(sender, EventArgs.Empty);
 
-    // The history may change on any thread; the manager belongs to the one of the interface.
+    // The history may change on any thread; the manager belongs to the UI thread.
     private void OnHistoryChanged(object? sender, EventArgs e)
     {
         var dispatcher = _provider.GetService<IRouteableDispatcher>();
@@ -80,7 +80,7 @@ internal sealed class BackRequests : IDisposable
         }
         catch (Exception)
         {
-            // A platform that has no such manager (a desktop head without a title bar back button): the system keeps its Back.
+            // A platform without such a manager (a desktop head without a title bar back button): the system keeps its Back.
         }
     }
 
@@ -106,7 +106,7 @@ internal sealed class BackRequests : IDisposable
         }
         catch (Exception)
         {
-            // Nothing to let go of.
+            // Nothing to release.
         }
 
         _listening = false;

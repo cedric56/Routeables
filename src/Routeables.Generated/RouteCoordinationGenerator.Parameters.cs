@@ -11,7 +11,6 @@ namespace Routeables.Generated
     // Choosing the constructor and telling where each parameter comes from: the route, the container or the caller.
     public sealed partial class RouteCoordinationGenerator
     {
-        // ---- constructor
 
         private static bool TrySelectConstructor(
             AnalysisContext context,
@@ -110,7 +109,7 @@ namespace Routeables.Generated
             if (failed)
                 return null;
 
-            // Route placeholders -> constructor parameters (by name, like the route parser fills them).
+            // Route placeholders map to constructor parameters (by name, as the route parser fills them).
             foreach (var part in parts)
             {
                 if (!part.IsPlaceholder)
@@ -152,7 +151,7 @@ namespace Routeables.Generated
                     continue;
                 }
 
-                // A catch-all may be empty for the router ("/files" matches "/files/{**path}"): with a default value its parameter is optional.
+                // A catch-all may be empty for the router ("/files" matches "/files/{**path}"), so with a default value its parameter is optional.
                 target.BecomeRoute(part.Optional || (part.IsRest && target.HasDefault), part.IsRest ? ClrKind.Rest : expected);
             }
 
@@ -189,9 +188,9 @@ namespace Routeables.Generated
             return false;
         }
 
-        // ActivatorUtilities matches the given arguments to constructor parameters by type, in order.
-        // A parameter that may not receive an entry of its own (optional, from the container, or filled
-        // from the route afterwards) can swallow the value meant for another parameter of a compatible type.
+        // ActivatorUtilities matches the given arguments to constructor parameters by type, in order. A parameter that may not receive an entry
+        // of its own (optional, from the container, or filled from the route afterwards) can swallow the value meant for another parameter of a
+        // compatible type.
         private static void WarnAboutAmbiguousMatching(
             AnalysisContext context,
             INamedTypeSymbol destination,
@@ -233,7 +232,6 @@ namespace Routeables.Generated
             return c.Exists && c.IsImplicit && (c.IsIdentity || c.IsReference || c.IsBoxing || c.IsNullable);
         }
 
-        // ---- route operations
 
         private static List<RouteOp> BuildRouteOps(List<TemplatePart> parts, List<ParamInfo> parameters)
         {

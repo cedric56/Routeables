@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace Routeables.Wpf.Services;
 
-// Windows places a window in the pixels of the screen; WPF gives only units that depend on the monitor the window is on.
+// Windows places a window in screen pixels; WPF only gives units that depend on the monitor the window is on.
 internal static class NativeMethods
 {
     private const uint SwpNoSize = 0x0001;

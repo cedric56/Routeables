@@ -14,7 +14,6 @@ namespace Routeables.Test.Maui;
 /// </summary>
 public class ShellDeviceTests
 {
-    // ------------------------------------------------------------------------------------------------ the fixture
 
     /// <summary>An entry of the menu: a name, a route, and a description if the test wants a caption.</summary>
     private sealed class Entry(string name, string? description = null) : IRouteableMenuEntry
@@ -73,7 +72,7 @@ public class ShellDeviceTests
         /// <summary>Raises <see cref="LockChanged"/> by hand, as a real host would after locking or unlocking its entries.</summary>
         public void NotifyLockChanged() => LockChanged?.Invoke(this, EventArgs.Empty);
 
-        // Lock and Unlock are default members of the interface: they are reached through it.
+        // Lock and Unlock are default interface members, so they are called through the interface.
         public void LockAll() => ((IRouteableMenuViewModel)this).Lock();
 
         public void UnlockAll() => ((IRouteableMenuViewModel)this).Unlock();
@@ -142,7 +141,6 @@ public class ShellDeviceTests
     /// <summary>The titles of the navigation items of the shell, in order.</summary>
     private static List<string> Titles(Shell shell) => [.. shell.Items.Select(i => i.Items[0].Items[0].Title)];
 
-    // ------------------------------------------------------------------------------------------------ the items
 
     /// <summary>Initial menu order is preserved in both Shell navigation items and their pages.</summary>
     [UIFact]
@@ -210,7 +208,6 @@ public class ShellDeviceTests
         Assert.IsType<ContentView>(PageOf(shell, 0).Content);
     }
 
-    // ------------------------------------------------------------------------------------------------ the entries that arrive
 
     /// <summary>Collection changes are picked up when the shell becomes attached to the UI.</summary>
     [UIFact]
@@ -276,7 +273,6 @@ public class ShellDeviceTests
         Assert.Equal(["Home", "Cats"], Titles(shell));
     }
 
-    // ------------------------------------------------------------------------------------------------ the locks
 
     /// <summary>Lock state is propagated through the Shell item, section, and content hierarchy.</summary>
     [UIFact]
@@ -332,7 +328,6 @@ public class ShellDeviceTests
         Assert.False(shell.Items[1].IsEnabled);
     }
 
-    // ------------------------------------------------------------------------------------------------ the view
 
     /// <summary>A new current view replaces the previous content in the selected entry's host.</summary>
     [UIFact]
@@ -410,7 +405,6 @@ public class ShellDeviceTests
         await Device.UntilAsync(() => ReferenceEquals(HostOf(shell, 0).Content, view));
     }
 
-    // ------------------------------------------------------------------------------------------------ letting go
 
     /// <summary>Reattaching must not duplicate event handlers; detaching must unsubscribe from both events.</summary>
     [UIFact]
@@ -450,7 +444,6 @@ public class ShellDeviceTests
         Assert.Null(HostOf(shell, 0).Content);
     }
 
-    // ------------------------------------------------------------------------------------------------ the helpers of Shell
 
     /// <summary>Routing setup rejects missing required arguments immediately.</summary>
     [UIFact]
@@ -490,7 +483,7 @@ public class ShellDeviceTests
         var routed = new ShellContent { Title = "A", Route = "a" };
         var own = new ShellContent { Title = "Own", Route = "own", Content = new ContentPage() };
         var unrouted = new ShellContent { Title = "None" };
-        // The hierarchy is written out: adding a ShellContent straight to the shell wraps it in items that Shell names itself.
+        // The hierarchy is written out: a ShellContent added straight to the shell would be wrapped in items that Shell names itself.
         var section = new ShellSection { Title = "Section", Route = "section" };
         section.Items.Add(routed);
         section.Items.Add(own);
@@ -506,7 +499,6 @@ public class ShellDeviceTests
         Assert.Null(unrouted.ContentTemplate);
     }
 
-    // ------------------------------------------------------------------------------------------------ Shell.GoToAsync reaching the router
 
     /// <summary>
     /// What Shell raises when it is asked for an address. Shell raises it itself, from <c>GoToAsync</c>, and a shell that is not in a window
@@ -545,7 +537,7 @@ public class ShellDeviceTests
 
         var args = Navigate(shell, "//nowhere");
 
-        // Nothing to wait for: the router answers that it has no such route, and Shell is not told to stop.
+        // Nothing to wait for: the router says it has no such route, and Shell is not told to stop.
         await Task.Delay(500, TestContext.Current.CancellationToken);
         Assert.False(args.Cancelled);
         Assert.Null(Device.Router().CurrentView);
@@ -563,7 +555,7 @@ public class ShellDeviceTests
 
         var args = Navigate(shell, "//b");
 
-        // Refused is an answer: Shell must not go on to look for the address in its own routes.
+        // A refusal is an answer: Shell must not go on to look for the address in its own routes.
         await Device.UntilAsync(() => args.Cancelled);
         Assert.IsType<PageAView>(Device.Router().CurrentView);
     }

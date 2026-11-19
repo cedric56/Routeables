@@ -20,10 +20,10 @@ public static class RouteableLockingExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        // TryAdd: an application-provided broker registration takes precedence. Scoped, like the router it serves.
+        // TryAdd: a broker registered by the application takes precedence. Scoped, like the router it serves.
         services.TryAdd(new ServiceDescriptor(typeof(IRouteableLockBroker), typeof(RouteableLockBroker), ServiceLifetime.Scoped));
         services.RegisterLockCoordinator<RouteableLockCoordinator>();
-        // The lock of a form: view models ask for it through the contract of Routeables.Abstraction. Scoped, like the broker it publishes on.
+        // The form lock: view models ask for it through the contract in Routeables.Abstraction. Scoped, like the broker it publishes on.
         services.TryAddScoped<IRouteableFormLock, RouteableFormLock>();
         return services;
     }

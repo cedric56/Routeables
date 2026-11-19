@@ -28,7 +28,7 @@ internal sealed class DefaultRouteableMenuViewModel(IRouter router) : RouteableM
 
     private int _started;
 
-    // The default region calls it when it appears and has no Route of its own. SelectFirst is not overridden: with no entry it selects nothing.
+    // The default region calls this when it appears and has no Route of its own. SelectFirst is not overridden: with no entry it selects nothing.
     bool IRouteableMenuViewModel.Start()
     {
         if (_router.CurrentView is not null || Interlocked.Exchange(ref _started, 1) == 1)
@@ -47,7 +47,7 @@ internal sealed class DefaultRouteableMenuViewModel(IRouter router) : RouteableM
                 OnRouterMoved(_router.CurrentViewModel);
             else
             {
-                // The next time the region appears it starts again: a failure of the first try is not a decision.
+                // The next time the region appears it starts again: a failure of the first attempt is not a final decision.
                 Interlocked.Exchange(ref _started, 0);
                 OnSelectionFailed(result.Exception ?? new InvalidOperationException(
                     $"The route '{HomeRoute}' could not be opened. Give the region the page to show: <RouteableRegion Route=\"/your/page\" />."));

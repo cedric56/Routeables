@@ -46,7 +46,7 @@ public class RouteableModuleServicesTests
         Assert.Same(uow[0], uow[1]);
 
         var connections = Get<Connection[]>(provider, "/conn");
-        Assert.NotSame(connections[0], connections[1]);        // transient: one for each request
+        Assert.NotSame(connections[0], connections[1]); // transient: one per request
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class RouteableModuleServicesTests
         Assert.IsType<PluginA>(all[0]);
         Assert.IsType<PluginB>(all[1]);
         Assert.IsType<PluginB>(Get<IPlugin>(provider, "/one"));
-        Assert.Same(all[1], Get<IPlugin>(provider, "/one"));       // the same singleton in both
+        Assert.Same(all[1], Get<IPlugin>(provider, "/one")); // the same singleton in both
     }
 
     [Fact]

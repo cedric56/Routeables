@@ -9,7 +9,7 @@ namespace Routeables.Tests.Abstraction;
 /// </summary>
 public class AsyncDisposalTests
 {
-    // The UI thread, blocked in Dispose: whatever is posted to it never runs.
+    // The UI thread, blocked in Dispose: anything posted to it never runs.
     private sealed class BlockedContext : SynchronizationContext
     {
         public override void Post(SendOrPostCallback d, object? state) { }
@@ -24,18 +24,18 @@ public class AsyncDisposalTests
 
         public async ValueTask DisposeAsync()
         {
-            await Task.Yield();   // continues on the context it was started on, when there is one
+            await Task.Yield(); // continues on the context it started on, if there is one
             Interlocked.Exchange(ref _disposed, 1);
             if (fail)
                 throw new InvalidOperationException("dispose failed");
         }
     }
 
-    // Its disposal waits until the test lets it go: what the tests of the end of a disposal need is "after Dispose has returned", and a wait that
-    // depends on the thread pool to resume (Task.Yield) fails when the pool is busy with the other tests of a run.
+    // Its disposal waits until the test releases it. Tests of the end of a disposal need "after Dispose has returned", and a wait that needs the
+    // thread pool to resume (Task.Yield) fails when the pool is busy with other tests.
     private sealed class GatedAsyncOnly(bool fail = false) : IAsyncDisposable
     {
-        private readonly TaskCompletionSource _go = new();      // resumed on the thread that lets it go: no thread of the pool is needed
+        private readonly TaskCompletionSource _go = new(); // resumed on the thread that releases it: no pool thread needed
         private readonly TaskCompletionSource _done = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public bool Disposed { get; private set; }
@@ -89,7 +89,7 @@ public class AsyncDisposalTests
         var cache = new ScopedViewCache();
         var item = (GatedAsyncOnly)cache.GetOrCreate("k", () => new GatedAsyncOnly());
 
-        cache.Dispose();                    // returns while the disposal waits: it does not block on it
+        cache.Dispose(); // returns while the disposal waits: it does not block on it
         Assert.False(item.Disposed);
 
         item.Go();

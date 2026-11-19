@@ -45,14 +45,13 @@ public static partial class Extensions
             throw new ArgumentException(
                 "The main routeables must be Scoped or Singleton: a Transient one gives each consumer another instance.", nameof(lifetime));
 
-        // The container builds TMenu under a key, so that it can check its dependencies when it is built. TMenu and IRouteableMenuViewModel
-        // both give that instance once the entries of the modules (AddMenuEntries) have been added to its menu: whichever of the two
-        // a consumer asks for, the menu is the same.
+        // The container builds TMenu under a key, so that it can check its dependencies when it is built. TMenu and IRouteableMenuViewModel both
+        // give that instance once the module entries (AddMenuEntries) have been added to its menu, so the consumer gets the same menu either way.
         services.Add(new ServiceDescriptor(typeof(TMenu), MenuKey, typeof(TMenu), chosen));
         services.Add(new ServiceDescriptor(typeof(TMenu), sp => WithModuleEntries(sp.GetRequiredKeyedService<TMenu>(MenuKey), sp), chosen));
         services.Add(new ServiceDescriptor(typeof(IRouteableMenuViewModel), sp => sp.GetRequiredService<TMenu>(), chosen));
 
-        // The service that loads modules while the application runs; one for the application, whatever the main's lifetime.
+        // The service that loads modules while the application runs: one per application, whatever the lifetime of the main view model.
         services.TryAddSingleton<RouteableModules>(sp => new RouteableModules(sp));
         services.TryAddSingleton<IRouteableModules>(sp => sp.GetRequiredService<RouteableModules>());
         return services;
@@ -102,7 +101,7 @@ public static partial class Extensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(entries);
 
-        // A module added twice (a host that calls it and a helper that calls it too) adds its entries once.
+        // A module added twice (by a host and by a helper that calls it too) adds its entries only once.
         if (services.Any(d => d.ServiceType == typeof(RouteableMenuEntries) && d.ImplementationInstance is RouteableMenuEntries known && known.Build.Equals(entries)))
             return services;
 
@@ -118,7 +117,7 @@ public static partial class Extensions
         foreach (var module in provider.GetServices<RouteableMenuEntries>())
             module.AddTo(menuViewModel);
 
-        // The modules loaded while running: the ones already loaded add their entries now, the next ones when they are loaded.
+        // Modules loaded at run time: those already loaded add their entries now, later ones when they are loaded.
         provider.GetService<RouteableModules>()?.Attach(menuViewModel);
 
         return menuViewModel;
@@ -133,7 +132,7 @@ public static partial class Extensions
     public static void RegisterLockCoordinator<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TLockCoordinator>(this IServiceCollection services)
         where TLockCoordinator : IRouteableLockCoordinator
     {
-        // The factory captures the provider it is resolved from. Scoped, so that provider is the router's own scope.
+        // The factory captures the provider it is resolved from. It is scoped, so that provider is the router's own scope.
         services.TryAdd(new ServiceDescriptor(
             typeof(Func<IRouteableMenuViewModel, IRouteableLockCoordinator>),
             sp => (Func<IRouteableMenuViewModel, IRouteableLockCoordinator>)(manager =>

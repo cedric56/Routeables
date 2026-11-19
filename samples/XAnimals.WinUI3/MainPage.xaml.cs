@@ -17,7 +17,7 @@ public sealed partial class MainPage : Page
 
     private void PaneToggleButton_Click(object sender, RoutedEventArgs e)
     {
-        // Inverser l'état d'ouverture/fermeture du panneau
+        // Toggle the pane open or closed
         RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
     }
 }

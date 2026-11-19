@@ -8,13 +8,14 @@ using Windows.UI.Notifications;
 
 namespace Routeables.Native;
 
-// Windows, from the plain net10.0 target (the desktop of Avalonia, WPF, a console: no Windows target needed): the toasts of Windows 10 and 11 through the
-// WindowsContracts.Net.Foundation.UniversalApiContract package (the types of the Windows runtime, compile-time only: PrivateAssets="all"). An application with no
-// package has no identity for the system, so one is registered for the user (HKCU\Software\Classes\AppUserModelId). A tap is a tap; the toast going away is a dismissal.
+// Windows, from the plain net10.0 target (the desktop of Avalonia, WPF, a console: no Windows target needed): the toasts of Windows 10 and 11
+// through the WindowsContracts.Net.Foundation.UniversalApiContract package (the Windows runtime types, compile-time only:
+// PrivateAssets="all"). An application without a package has no identity for the system, so one is registered for the user
+// (HKCU\Software\Classes\AppUserModelId). A tap is a tap; the toast going away is a dismissal.
 public sealed partial class SystemNotificationCenter
 {
     private readonly object _windowsGate = new();
-    private readonly Dictionary<uint, object> _windowsToasts = [];   // the toasts must stay referenced while shown, or their events stop
+    private readonly Dictionary<uint, object> _windowsToasts = []; // the toasts must stay referenced while shown, or their events stop
 
     [SupportedOSPlatform("windows")]
     private static string WindowsAppId()
@@ -45,7 +46,7 @@ public sealed partial class SystemNotificationCenter
     [SupportedOSPlatform("windows10.0.17763.0")]
     private static bool WindowsCheck() => ToastNotificationManager.CreateToastNotifier(WindowsAppId()) is not null;
 
-    // No toast where the system or the Windows runtime types cannot show one (a session with no desktop, the types missing): the notification completes as dismissed.
+    // No toast where the system or the Windows runtime types cannot show one (a session with no desktop, missing types): the notification completes as dismissed.
     [SupportedOSPlatform("windows10.0.17763.0")]
     private void WindowsShow(SystemNotification notification)
     {
@@ -81,13 +82,13 @@ public sealed partial class SystemNotificationCenter
         toast.Tag = id.ToString(System.Globalization.CultureInfo.InvariantCulture);
         toast.Group = "routeables";
 
-        // The events of a toast that was replaced are not the notification's any more.
+        // The events of a toast that was replaced are no longer the notification's.
         bool IsCurrent() { lock (_windowsGate) return _windowsToasts.TryGetValue(id, out var current) && ReferenceEquals(current, toast); }
         toast.Activated += (_, _) => { if (IsCurrent()) WindowsEnded(id, activated: true); };
         toast.Dismissed += (_, e) =>
         {
             // Only the user closing it ends the notification. The banner leaving the screen after a few seconds (TimedOut) keeps the notification in the
-            // notification center, where it can still be clicked; the application hiding it (Cancel) is not the user either.
+            // notification center, where it can still be clicked, and the application hiding it (Cancel) is not the user either.
             if (e.Reason == ToastDismissalReason.UserCanceled && IsCurrent())
                 WindowsEnded(id, activated: false);
         };

@@ -8,9 +8,10 @@ using Application = Android.App.Application;
 
 namespace Routeables.Native;
 
-// Android: the activity in front, the main thread and the permission to post (all here, with no MAUI Essentials; StartTracking must run before the first
-// activity: Configure and NativeDialogs.Initialize do it), Notification.Builder and NotificationManager (no AndroidX, no MAUI Essentials). A tap starts the application with the id of the notification as an extra, which
-// SystemNotificationCenter.HandleIntent reads (the lifecycle events registered by UseRouteables); a swipe is a broadcast to a receiver of the application.
+// Android: the activity in front, the main thread and the permission to post (all here, without MAUI Essentials; StartTracking must run before
+// the first activity, and Configure and NativeDialogs.Initialize do it), plus Notification.Builder and NotificationManager (no AndroidX).
+// A tap starts the application with the notification's id as an extra, which SystemNotificationCenter.HandleIntent reads (the lifecycle
+// events registered by UseRouteables); a swipe is a broadcast to a receiver of the application.
 public sealed partial class SystemNotificationCenter
 {
     private const string ChannelId = "routeables.notifications";
@@ -162,7 +163,7 @@ public sealed partial class SystemNotificationCenter
         dismissed.PutExtra(ExtraId, id);
         var swipe = PendingIntent.GetBroadcast(context, id, dismissed, flags);
 
-        // Notification.Builder(context, channel) exists from Android 8, the one with the context alone (no channel) before.
+        // Notification.Builder(context, channel) exists from Android 8; before that, use the one with the context alone (no channel).
 #pragma warning disable CA1422 // Validate platform compatibility: the constructor without a channel is for the versions that have none.
         var builder = OperatingSystem.IsAndroidVersionAtLeast(26) ? new Notification.Builder(context, ChannelId) : new Notification.Builder(context);
 #pragma warning restore CA1422

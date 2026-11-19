@@ -58,13 +58,13 @@ public class RouterEventsTests
         var log = new CallLog();
         var (_, routed) = Observe(router);
 
-        await GoToAllAsync(router, log, "A", "B", "C");              // Push x3
-        await router.GoBackAsync(Ct);                                  // Back          (B)
-        await router.ForwardAsync(Ct);                               // Forward       (C)
-        await router.MoveToAsync(0, Ct);                             // MoveTo        (A)
-        await router.MoveToAsync(2, Ct);                             // MoveTo        (C)
-        await router.PopAsync(Ct);                                   // Pop           (B)
-        await router.GoBackToRootAsync(Ct);                            // Root          (A)
+        await GoToAllAsync(router, log, "A", "B", "C");
+        await router.GoBackAsync(Ct);
+        await router.ForwardAsync(Ct);
+        await router.MoveToAsync(0, Ct);
+        await router.MoveToAsync(2, Ct);
+        await router.PopAsync(Ct);
+        await router.GoBackToRootAsync(Ct);
 
         Assert.Equal(
         [
@@ -226,7 +226,6 @@ public class RouterEventsTests
         Assert.Contains("Reentrant", ex.Message);
     }
 
-    // ------------------------------------------------------------- History.Changed
 
     [Fact]
     public async Task HistoryChanged_IsRaisedOncePerChange_AndNotForNoOps()

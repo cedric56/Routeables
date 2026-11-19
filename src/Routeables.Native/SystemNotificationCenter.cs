@@ -13,11 +13,11 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     private readonly Dictionary<uint, SystemNotification> _active = [];
     private readonly object _gate = new();
     private int _lastId;
-    // The identifiers of the notifications that a platform keeps after the process (Android, iOS, macOS, Windows) must not be the ones of the next launch:
-    // the high half is chosen at random for each run, the low half counts. A tap on a notification of an earlier run then finds no notification here
-    // (it is ignored) instead of the wrong one, and the notification of a new run never replaces one that is still shown.
+    // The identifiers of notifications that a platform keeps after the process ends (Android, iOS, macOS, Windows) must not be those of the next
+    // launch: the high half is chosen at random for each run, and the low half counts. A tap on a notification from an earlier run then finds no
+    // notification here (it is ignored) instead of the wrong one, and a new run's notification never replaces one that is still shown.
     private uint _idBase = (uint)Random.Shared.Next(1, 0x8000) << 16;
-    // The context of the interface, taken when the notifications are turned on: NotificationCompleted is raised there.
+    // The UI context, taken when the notifications are turned on: NotificationCompleted is raised there.
     private SynchronizationContext? _context;
     private readonly Dictionary<uint, CancellationTokenSource> _expirations = [];
     private EventHandler<RouteableSystemNotificationEventArgs>? _completed;
@@ -87,7 +87,7 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
 
     internal uint NextId() => _idBase + (uint)(Interlocked.Increment(ref _lastId) & 0xFFFF);
 
-    // For the tests: the base of the identifiers of "this run".
+    // For tests: the base of this run's identifiers.
     internal void SetIdBaseForTests(uint idBase) => _idBase = idBase;
 
     /// <summary>Cancels every active notification and raises <see cref="NotificationCompleted"/> for each one.</summary>
@@ -101,7 +101,7 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
             Complete(id, activated: false, action: null);
     }
 
-    // Tests replace the platform (a toast, a D-Bus call, a browser) so that the bookkeeping is tested on any operating system without showing anything.
+    // Tests replace the platform (a toast, a D-Bus call, a browser), so the bookkeeping is tested on any operating system without showing anything.
     internal Action<SystemNotification>? PresentOverride { get; set; }
 
     internal Action<uint>? CancelOverride { get; set; }
@@ -123,8 +123,8 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
             throw;
         }
 
-        // Not every platform lets a notification expire by itself: it is withdrawn from here. The time runs from the last display: showing the
-        // notification again (an update) starts it again, and the delay of the earlier display is dropped.
+        // Not every platform lets a notification expire by itself, so it is withdrawn from here. The time runs from the last display: showing the
+        // notification again (an update) restarts it, and the earlier display's delay is dropped.
         CancellationTokenSource? expiring = null;
         if (notification.Expiration is { } expiration && expiration > TimeSpan.Zero)
             expiring = new CancellationTokenSource();
@@ -187,9 +187,9 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
             IsCancelled = !activated
         };
 
-        // The platforms call back on a thread of their own (the D-Bus reader, a pool thread of the expiration): the handler goes to the
-        // interface (a route change, a dialog) and runs there, when the context of the interface is known. Without one it runs where the
-        // platform called, but never on the thread that reads the D-Bus replies (see offThread).
+        // The platforms call back on a thread of their own (the D-Bus reader, a pool thread of the expiration). The handler goes to the UI (a
+        // navigation, a dialog) and runs there, when the UI context is known. Without one it runs where the platform called, but never on the thread
+        // that reads the D-Bus replies (see offThread).
         var context = _context;
         if (context is not null && SynchronizationContext.Current != context)
             context.Post(_ => Raise(args), null);
@@ -219,7 +219,7 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     /// <summary>Presents the notification in the system notification center.</summary>
     private partial void Present(SystemNotification notification);
 
-    // Shows it; the platforms that answer late (D-Bus) are awaited, the others are done by Present.
+    // Show it. Platforms that answer late (D-Bus) are awaited; the others are completed by Present.
     private partial Task PresentAsync(SystemNotification notification);
 
     /// <summary>Cancels the notification with the given id on the platform.</summary>

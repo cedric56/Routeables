@@ -11,7 +11,6 @@ namespace Routeables.Generated
     // Writing the generated source: one extension method per caller, and the route each one builds.
     public sealed partial class RouteCoordinationGenerator
     {
-        // ------------------------------------------------------------------ emission
 
         private static void Emit(SourceProductionContext spc, ImmutableArray<AnalysisResult> results)
         {
@@ -174,7 +173,7 @@ namespace Routeables.Generated
 
             if (queryOps.Count == 0)
             {
-                // Only optional values, none given: the home address, as RouteParser.Build writes it (the router refuses an empty one).
+                // Only optional values, none given: the home address, as RouteParser.Build writes it (the router rejects an empty one).
                 sb.AppendLine(indent + "if (__route.Length == 0) __route = \"/\";");
                 return;
             }
@@ -216,19 +215,19 @@ namespace Routeables.Generated
                     return "global::System.Uri.EscapeDataString((" + value + " / 1.0000000000000000000000000000m).ToString(global::System.Globalization.CultureInfo.InvariantCulture))";
                 case ClrKind.Double:
                     // -0.0 is the text 0.
-                    // NaN and infinity are not numbers a route can read back (RouteParser.Build refuses them).
+                    // NaN and infinity are not numbers a route can read back (RouteParser.Build rejects them).
                     return "global::System.Uri.EscapeDataString((!global::System.Double.IsFinite(" + value + ") ? throw new global::System.ArgumentException(\"A route value cannot be NaN or infinity.\") : " + value + " == 0d ? 0d : " + value + ").ToString(global::System.Globalization.CultureInfo.InvariantCulture))";
                 case ClrKind.Bool:
                     return "(" + value + " ? \"true\" : \"false\")";
                 case ClrKind.Guid:
                     return "global::System.Uri.EscapeDataString(" + value + ".ToString())";
                 case ClrKind.Rest:
-                    // The rest of the path keeps its slashes; each piece is escaped (RouteParser.Build does the same), and an empty piece, "." or ".." is refused, as Build does.
+                    // The rest of the path keeps its slashes and each piece is escaped (RouteParser.Build does the same). An empty piece, "." or ".." is rejected, as in Build.
                     return "(" + value + ".Length == 0 ? \"\" : global::System.String.Join(\"/\", global::System.Linq.Enumerable.Select(" + value
                         + ".Split('/'), new global::System.Func<string, string>(__piece => __piece.Length == 0 || __piece == \".\" || __piece == \"..\""
                         + " ? throw new global::System.ArgumentException(\"A catch-all value has no empty, \\\".\\\" or \\\"..\\\" segment.\") : global::System.Uri.EscapeDataString(__piece)))))";
                 default:
-                    // "." and ".." are not a segment of a path: a browser resolves them to another address (RouteParser.Build refuses them).
+                    // "." and ".." are not a path segment: a browser resolves them to another address (RouteParser.Build rejects them).
                     return path
                         ? "(global::System.Array.Exists(" + value + ".Split('/'), __part => __part is \".\" or \"..\") ? throw new global::System.ArgumentException(\"A path value cannot be \\\".\\\" or \\\"..\\\".\") : global::System.Uri.EscapeDataString(" + value + "))"
                         : "global::System.Uri.EscapeDataString(" + value + ")";

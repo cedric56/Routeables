@@ -1,14 +1,14 @@
 <Project>
 
-  <!-- The README of a project is the readme of its package (PackageReadmeFile is set in the project).
-       Lives in .targets: the SDK adds README.md to None only after .props are read, so Remove + Include works whether or not the glob already added it. -->
+  <!-- A project's README is its package's readme (PackageReadmeFile is set in the project).
+       This is in .targets because the SDK adds README.md to None only after the .props are read, so Remove + Include works whether or not the glob already added it. -->
   <ItemGroup Condition="Exists('$(MSBuildProjectDirectory)/README.md')">
     <None Remove="README.md" />
     <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
-  <!-- The samples reference the source generator as a project, not through the package: the same rule as build/Routeables.targets
-       of Routeables.Core, so that their Android and iOS applications (compiled as libraries) register their generated routes too. -->
+  <!-- The samples reference the source generator as a project, not through the package. This is the same rule as build/Routeables.targets in
+       Routeables.Core, so their Android and iOS applications (compiled as libraries) register their generated routes too. -->
   <ItemGroup>
     <CompilerVisibleProperty Include="RouteablesAutoRegister" />
   </ItemGroup>
@@ -16,11 +16,12 @@
     <RouteablesAutoRegister>true</RouteablesAutoRegister>
   </PropertyGroup>
 
-  <!-- On Android OutputType is Library when the compiler runs and AndroidApplication is true. The file of the compiler that carries the
+  <!-- On Android, OutputType is Library when the compiler runs, while AndroidApplication is true. The compiler's config file that carries the
        property is written by GenerateMSBuildEditorConfigFileCore, and the dependencies of GenerateMSBuildEditorConfigFile run before a target
-       that is only its BeforeTargets: this one comes before the Core target. The same decision, taken when the compiler is about to run: a project of a mobile platform can change its OutputType after the
-       properties above were read, and the Android SDK tells an application by AndroidApplication. Without this the generator wrote no
-       registration for the MAUI application of Android ("No view is registered under the key ..."). -->
+       that only has it in BeforeTargets, so this target runs before the Core target. It makes the same decision as above, but just before the
+       compiler runs: a mobile project can change its OutputType after the properties above were read, and the Android SDK identifies an
+       application by AndroidApplication. Without this the generator wrote no registration for the MAUI Android application
+       ("No view is registered under the key ..."). -->
   <Target Name="RouteablesAutoRegisterOfApplication" BeforeTargets="GenerateMSBuildEditorConfigFileShouldRun;GenerateMSBuildEditorConfigFileCore;CoreCompile"
           Condition="'$(RouteablesAutoRegister)' == '' And ('$(AndroidApplication)' == 'true' Or '$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe')">
     <PropertyGroup>

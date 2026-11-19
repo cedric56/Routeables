@@ -23,7 +23,7 @@ public class RouteCreationBenchmarks
     {
         provider = Bench.Build(Factories);
         router = provider.GetRequiredService<IRouter>();
-        // Warm-up: the first routing of each route pays for the one-time caches; the steady state is measured below.
+        // Warm-up: the first navigation to each route pays for one-time caches; the steady state is measured below.
         foreach (var url in new[] { "/a", "/b", "/dep", "/orders/1", "/a" })
             Bench.Ok(await router.GoToAsync(url));
     }
@@ -48,8 +48,8 @@ public class RouteCreationBenchmarks
         Bench.Ok(await cold.GetRequiredService<IRouter>().GoToAsync("/a"));
     }
 
-    // Each operation below goes to the partner route "/a" and then to the route measured: OperationsPerInvoke = 2
-    // reports the cost of one routing. "/a" is the same in every row, so the rows compare the routes.
+    // Each operation below goes to the partner route "/a" and then to the route being measured, and OperationsPerInvoke = 2 reports the cost of
+    // one navigation. "/a" is the same in every row, so the rows compare the routes.
 
     /// <summary>Page and view model without constructor arguments.</summary>
     [Benchmark(OperationsPerInvoke = 2)]

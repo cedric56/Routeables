@@ -39,7 +39,7 @@ public class RegionHostSharedTests
         Assert.True(activeWhileBinding);
         Assert.True(connection.IsConnected);
 
-        // Connected already: nothing is built twice.
+        // Already connected: nothing is built twice.
         Assert.False(connection.Connect(provider, "tabs", _ => throw new InvalidOperationException()));
 
         connection.Disconnect();
@@ -115,18 +115,18 @@ public class RegionHostSharedTests
         Assert.Same(host, cats.Content);
         await WaitForAsync(() => router.History.Current?.Args.Route?.Trim('/') == "cats", ct);
 
-        // The user chooses the other tab: the host follows, the router goes to its route.
+        // The user picks the other tab: the host follows and the router goes to its route.
         selected = dogs;
         follower.OnSelectionChanged();
         Assert.Null(cats.Content);
         Assert.Same(host, dogs.Content);
         await WaitForAsync(() => router.History.Current?.Args.Route?.Trim('/') == "dogs", ct);
 
-        // A tab with a content of its own, or without a route, is left alone.
+        // A tab with its own content, or without a route, is left alone.
         Assert.Equal("mine", own.Content);
         Assert.Null(plain.Content);
 
-        // Back reaches the first route by another way: its tab is selected.
+        // Back reaches the first route another way: its tab is selected.
         await router.GoBackAsync(ct);
         Assert.Same(cats, selected);
 
@@ -151,18 +151,18 @@ public class RegionHostSharedTests
             tab => tab.Region, region => "host:" + region);
 
         follower.Start();
-        Assert.Equal("host:cats", cats.Content);                       // each tab with a region has a host of its region
+        Assert.Equal("host:cats", cats.Content); // each tab with a region gets a host for it
         Assert.Equal("host:dogs", dogs.Content);
-        Assert.Null(shared.Content);                                   // the tab without one is not selected: the shared host is not on it
+        Assert.Null(shared.Content); // the tab without one is not selected: the shared host is not on it
         await WaitForAsync(() => provider.GetRouter("cats").History.Current?.Args.Route?.Trim('/') == "cats", ct);
-        Assert.Equal(0, provider.GetRouter("dogs").History.Count);     // routed when selected, not before
+        Assert.Equal(0, provider.GetRouter("dogs").History.Count); // routed when selected, not before
 
-        await provider.GetRouter("cats").GoToAsync("/dogs", cancellationToken: ct);   // a second page on the pile of the first tab
+        await provider.GetRouter("cats").GoToAsync("/dogs", cancellationToken: ct); // a second page on the first tab's stack
         selected = dogs;
         follower.OnSelectionChanged();
         await WaitForAsync(() => provider.GetRouter("dogs").History.Count == 1, ct);
 
-        selected = cats;                                               // coming back: nothing is routed again, the pile is as it was
+        selected = cats; // coming back: nothing is routed again, the stack is as it was
         follower.OnSelectionChanged();
         await Task.Delay(50, ct);
         Assert.Equal(2, provider.GetRouter("cats").History.Count);

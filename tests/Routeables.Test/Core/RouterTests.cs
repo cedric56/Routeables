@@ -199,8 +199,8 @@ public class RouterTests
         var router = CreateRouter();
         var reentrant = new ReentrantViewModel(router);
 
-        // The message matters: before the gate was fixed this test passed for the wrong reason, because the
-        // nested call failed with "No such view registered" instead of being rejected as reentrant.
+        // The message matters: before the gate was fixed this test passed for the wrong reason, because the nested call failed with "No such view
+        // registered" instead of being rejected as reentrant.
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => router.GoAsync(new TestView(), reentrant, cancellationToken: TestContext.Current.CancellationToken).WaitAsync(TimeSpan.FromSeconds(5), cancellationToken: TestContext.Current.CancellationToken));
 
@@ -221,7 +221,6 @@ public class RouterTests
 
         public async Task OnEnteringAsync(IRouteableArgs context, CancellationToken ct = default)
         {
-            // Attempt nested routing while gate is held
             await router.GoAsync(new TestView(), new TestViewModel(), cancellationToken: TestContext.Current.CancellationToken);
         }
 

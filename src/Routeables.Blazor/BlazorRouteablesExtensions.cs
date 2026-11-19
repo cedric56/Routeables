@@ -110,7 +110,7 @@ public static class BlazorRouteablesExtensions
         services.TryAddSingleton(new RouteableHostLifetime(ServiceLifetime.Scoped));
 
         services.AddScoped<RouteableUrlSync>();
-        // One activator for the circuit: Blazor asks it for the components it renders, and the views of the router get it injected.
+        // One activator per circuit: Blazor asks it for the components it renders, and the router's views get it injected.
         services.AddScoped<RouteableComponentActivator>();
         services.TryAddScoped<Microsoft.AspNetCore.Components.IComponentActivator>(sp => sp.GetRequiredService<RouteableComponentActivator>());
         services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());
@@ -128,7 +128,7 @@ public static class BlazorRouteablesExtensions
         services.RegisterMenuViewModel<TMenu>();
         services.UseRouteablesServices();
         configure?.Invoke(services);
-        // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
+        // Add the routes the generator found, unless the application registered them (or called AddGeneratedRoutes()).
         global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
         return services;
     }
@@ -164,7 +164,7 @@ public static class BlazorRouteablesExtensions
         services.AddScoped<RouteableContentDialogQueue>();
         services.AddScoped<RouteableTaskDialogQueue>();
 
-        // The message box service draws the dialogs; one dialog service asks it, whatever draws them.
+        // The message box service draws the dialogs; a single dialog service asks it, whatever draws them.
         services.RemoveAll<DefaultMessageBoxService>();
         services.RemoveAll<IMessageBoxService>();
         services.RemoveAll<IRouteableDialogService>();
@@ -208,8 +208,8 @@ public static class BlazorRouteablesExtensions
         services.RemoveAll<IRouteableSystemNotificationSource>();
         services.AddSingleton(options);
 
-        // MAUI Blazor Hybrid runs in the web view of the platform, which has no usable Notification API: the notification center
-        // of the platform (Routeables.Native) takes its place. Server and WebAssembly keep the one of the browser.
+        // MAUI Blazor Hybrid runs in the platform's web view, which has no usable Notification API, so the platform's notification center
+        // (Routeables.Native) takes its place. Server and WebAssembly keep the browser's.
         if (SystemNotificationCenter.IsPlatformBuild)
         {
             SystemNotificationCenter.Current.Configure(options);

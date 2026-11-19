@@ -91,8 +91,8 @@ internal sealed class DBusReader(byte[] bytes, int position = 0)
             Position++;
     }
 
-    // What a peer sends is not trusted: a message that is cut short or that lies about a length is refused (InvalidDataException), never read past
-    // its end, and never allocated at the size it claims.
+    // What a peer sends is not trusted: a message that is cut short or that lies about a length is rejected (InvalidDataException), never read
+    // past its end, and never allocated at the size it claims.
     private void Need(long count)
     {
         if (count < 0 || Position + count > bytes.Length)
@@ -117,7 +117,7 @@ internal sealed class DBusReader(byte[] bytes, int position = 0)
     public string String()
     {
         var length = UInt32();
-        Need((long)length + 1);                           // the text and its zero
+        Need((long)length + 1); // the text and its zero terminator
         var text = Encoding.UTF8.GetString(bytes, Position, (int)length);
         Position += (int)length + 1;
         return text;
@@ -138,8 +138,8 @@ internal sealed class DBusReader(byte[] bytes, int position = 0)
     /// </summary>
     public void Skip(string type) => Skip(type, 0);
 
-    // The specification bounds the nesting of variants (a variant holds one value, which may be a variant): the recursion is bounded too, a stack
-    // overflow cannot be caught.
+    // The specification bounds the nesting of variants (a variant holds one value, which may itself be a variant), so the recursion is bounded
+    // too: a stack overflow cannot be caught.
     private const int MaxVariantDepth = 32;
 
     private void Skip(string type, int depth)
@@ -220,14 +220,14 @@ internal sealed class DBusConnection : IDisposable
                 using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(3));
                 await socket.ConnectAsync(endpoint, timeout.Token);
 
-                // The authentication is synchronous: a bus that does not answer must not hold a thread for ever. The reading thread waits without a limit.
+                // The authentication is synchronous: a bus that does not answer must not hold a thread forever. The reading thread waits without a limit.
                 socket.ReceiveTimeout = socket.SendTimeout = 3000;
                 Authenticate(socket);
                 socket.ReceiveTimeout = socket.SendTimeout = 0;
 
                 var connection = new DBusConnection(socket);
                 new Thread(connection.ReadLoop) { IsBackground = true, Name = "Routeables D-Bus" }.Start();
-                // A bus that accepts the authentication and then says nothing must not hold the connection for ever.
+                // A bus that accepts the authentication and then says nothing must not hold the connection forever.
                 await connection.CallAsync("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "Hello", null, null, TimeSpan.FromSeconds(3));
                 return connection;
             }
@@ -266,7 +266,7 @@ internal sealed class DBusConnection : IDisposable
             }
         }
 
-        // The usual place of the bus of the session when the variable is not set (a service started outside the session).
+        // The usual place of the session bus when the variable is not set (a service started outside the session).
         if (!found)
             yield return new UnixDomainSocketEndPoint($"/run/user/{getuid()}/bus");
     }
@@ -288,8 +288,8 @@ internal sealed class DBusConnection : IDisposable
 
     private static string ReadLine(Socket socket)
     {
-        // One byte at a time (what comes after the line belongs to the messages), but the end of the line is looked at where it can be: the last two
-        // characters. The answer of a bus is a few dozen bytes: a line that goes on is not a bus.
+        // Read one byte at a time (what comes after the line belongs to the messages), but check for the end of the line where it can be: the last two
+        // characters. A bus's answer is a few dozen bytes, so a line that goes on is not a bus.
         var text = new StringBuilder();
         var one = new byte[1];
         while (text.Length < 2 || text[^2] != '\r' || text[^1] != '\n')
@@ -402,7 +402,7 @@ internal sealed class DBusConnection : IDisposable
                 var fixedPart = ReadExactly(16);
                 if (fixedPart[0] == (byte)'B')
                 {
-                    // A big-endian message is not understood, but its lengths are readable: it is read whole and dropped, the connection goes on.
+                    // A big-endian message is not understood, but its lengths are readable: read it whole and drop it, and the connection goes on.
                     var (skipBody, skipFields) = ValidateLengths(
                         System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(fixedPart.AsSpan(4, 4)),
                         System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(fixedPart.AsSpan(12, 4)));
@@ -425,7 +425,7 @@ internal sealed class DBusConnection : IDisposable
                 Array.Copy(rest, 0, header, 16, fieldsLength);
                 var body = rest[(fieldsLength + padding)..];
 
-                // The message is whole, so what follows it is still readable: one that cannot be understood is dropped, the connection goes on.
+                // The message is whole, so what follows it is still readable: one that cannot be understood is dropped, and the connection goes on.
                 DBusMessage message;
                 try { message = ParseMessage(type, serial, header, body); }
                 catch (Exception ex) when (ex is InvalidDataException or InvalidOperationException or ArgumentException or OverflowException)
@@ -439,7 +439,7 @@ internal sealed class DBusConnection : IDisposable
         }
         catch (Exception ex)
         {
-            // Whatever ends the reading ends the connection, and is told: nothing is thrown on this thread, where nobody could catch it.
+            // Whatever ends the reading ends the connection, and is reported: nothing is thrown on this thread, where nobody could catch it.
             foreach (var pair in _pending)
                 if (_pending.TryRemove(pair.Key, out var source))
                     source.TrySetException(new IOException("The session bus connection ended.", ex));
@@ -451,7 +451,7 @@ internal sealed class DBusConnection : IDisposable
     /// <summary>The lengths of a message, from the fixed part of its header: refused when a peer claims more than the specification allows.</summary>
     internal static (int BodyLength, int FieldsLength) ValidateLengths(uint bodyLength, uint fieldsLength)
     {
-        // As unsigned numbers: a cast to int first would turn a huge length into a negative one.
+        // As unsigned numbers: casting to int first would turn a huge length into a negative one.
         if (bodyLength > MaxMessageLength || fieldsLength > MaxMessageLength || (ulong)bodyLength + fieldsLength + 16 + 8 > MaxMessageLength)
             throw new InvalidOperationException("A D-Bus message is longer than the 128 MiB the specification allows.");
         return ((int)bodyLength, (int)fieldsLength);
@@ -505,7 +505,7 @@ internal sealed class DBusConnection : IDisposable
                     if (code == 5) replySerial = number;
                     break;
                 default:
-                    // A field that this client does not know is read past, as the specification asks: the message is still delivered.
+                    // A field this client does not know is skipped, as the specification asks: the message is still delivered.
                     r.Skip(kind);
                     break;
             }
@@ -529,7 +529,7 @@ internal sealed class DBusConnection : IDisposable
                 failed.TrySetException(new InvalidOperationException("D-Bus error " + message.ErrorName));
                 break;
             case Signal:
-                // A handler that throws must not end the thread that reads the bus (and the application with it: nobody catches there).
+                // A handler that throws must not end the thread that reads the bus (and the application with it, since nobody catches there).
                 try { SignalReceived?.Invoke(message); }
                 catch (Exception ex) { Trace.TraceWarning($"Routeables: a D-Bus signal could not be handled: {ex}"); }
                 break;

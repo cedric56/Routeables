@@ -9,7 +9,6 @@ public class RouteableArgsExtensionsTests
     private static readonly RouteableKey<string> Name = new("name");
     private static readonly RouteableKey<int> Count = new("count");
 
-    // ------------------------------------------------------------------------------------------------ by name
 
     [Fact]
     public void A_value_is_read_by_its_name_with_its_type()
@@ -91,7 +90,6 @@ public class RouteableArgsExtensionsTests
         Assert.False(args.TryGet<string>("none", out _));
     }
 
-    // ------------------------------------------------------------------------------------------------ by type
 
     [Fact]
     public void A_value_is_read_by_its_type_when_it_is_the_only_one()
@@ -123,7 +121,6 @@ public class RouteableArgsExtensionsTests
         Assert.Single(args.Get<IEnumerable<int>>()!);
     }
 
-    // ------------------------------------------------------------------------------------------------ typed keys
 
     [Fact]
     public void A_typed_key_writes_and_reads_a_value_with_its_type()

@@ -22,7 +22,7 @@ public class IconRegistryIsolationTests
         var own = new RouteableIconResolverRegistry();
         IRouteableMenuEntry view = new RouteableMenuEntry("/a", "/a", "A", key) { Icons = own };
 
-        Assert.Null(view.Icon);                                 // its registry is empty
+        Assert.Null(view.Icon);
         var local = new object();
         own.Register(new Fixed(key, local));
         Assert.Same(local, view.Icon);

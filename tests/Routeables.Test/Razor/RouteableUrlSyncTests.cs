@@ -62,7 +62,7 @@ public class RouteableUrlSyncTests
             services.RegisterRouting();
             services.RegisterRoute<HomeView, HomeVm>(route: "/home");
             services.RegisterRoute<CustomerView, CustomerVm>(route: "/customers/{id:int}");
-            services.RegisterRoute<PlainView, PlainVm>();            // no URL
+            services.RegisterRoute<PlainView, PlainVm>();
             Routing = new TestNavigationManager(uri);
             services.AddSingleton<NavigationManager>(Routing);
             if (menu is not null)
@@ -104,7 +104,7 @@ public class RouteableUrlSyncTests
 
         Assert.True(first.Success);
         Assert.True(second.Success);
-        Assert.Empty(args.ViewModelParameters);   // the caller's instance is a model, never filled
+        Assert.Empty(args.ViewModelParameters);
         Assert.Null(args.Route);
     }
 
@@ -142,7 +142,7 @@ public class RouteableUrlSyncTests
         var chosen = await sync.StartAsync();
 
         Assert.True(chosen);                                   // the layout then keeps this page instead of the default one
-        Assert.IsType<CustomerView>(router.CurrentView);       // and displays it
+        Assert.IsType<CustomerView>(router.CurrentView);
     }
 
     [Fact]
@@ -278,7 +278,7 @@ public class RouteableUrlSyncTests
         f.Routing.BrowserGoesTo("/customers/2");
 
         await Fixture.Until(() => f.Router.CurrentViewModel is CustomerVm { Id: 2 });
-        Assert.Equal(3, f.Router.History.Count);                        // home, 1, 2: none lost, none duplicated
+        Assert.Equal(3, f.Router.History.Count);
     }
 
     [Fact]
@@ -346,12 +346,12 @@ public class RouteableUrlSyncTests
         await f.Router.GoToRouteAsync<PlainVm>(
             new RouteableMenuEntry<PlainVm>("plain"), TestContext.Current.CancellationToken);
 
-        f.Routing.BrowserGoesTo("/home");                   // Back
+        f.Routing.BrowserGoesTo("/home");
         await Fixture.Until(() => f.Router.CurrentViewModel is HomeVm);
-        f.Routing.BrowserGoesTo("/");                       // Forward
+        f.Routing.BrowserGoesTo("/");
         await Fixture.Until(() => f.Router.CurrentViewModel is PlainVm);
 
-        Assert.Equal(2, f.Router.History.Count);               // moved inside the history, nothing pushed
+        Assert.Equal(2, f.Router.History.Count);
     }
 
     [Fact]
@@ -363,7 +363,7 @@ public class RouteableUrlSyncTests
 
         Assert.True(handled);
         Assert.Equal(7, Assert.IsType<CustomerVm>(f.Router.CurrentViewModel).Id);
-        Assert.Empty(f.Routing.Calls);       // the address already was right
+        Assert.Empty(f.Routing.Calls);
     }
 
     [Fact]

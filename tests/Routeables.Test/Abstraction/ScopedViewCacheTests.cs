@@ -64,7 +64,7 @@ public class ScopedViewCacheTests
     [Fact]
     public void A_factory_that_waits_for_another_thread_that_asks_the_cache_does_not_block_it()
     {
-        // A constructor that hands work to another thread, which uses the cache for another key, and waits for it.
+        // A constructor that hands work to another thread, which uses the cache for another key and waits for it.
         var cache = new ScopedViewCache();
         object? other = null;
         var owned = false;
@@ -122,8 +122,8 @@ public class ScopedViewCacheTests
     [Fact]
     public void A_caller_that_waited_for_a_failed_construction_builds_the_page_the_cache_keeps()
     {
-        // The first constructor fails while a second caller waits on the same key: the second builds the page under the same lock, and the
-        // cache must keep it (it used to put it in an entry that the failure had already removed: two "singletons" and one never disposed).
+        // The first constructor fails while a second caller waits on the same key: the second builds the page under the same lock, and the cache must
+        // keep it. It used to store it in an entry that the failure had already removed: two "singletons", one never disposed.
         var cache = new ScopedViewCache();
         var started = new ManualResetEventSlim();
         var fail = new ManualResetEventSlim();
@@ -143,7 +143,7 @@ public class ScopedViewCacheTests
         var until = DateTime.UtcNow.AddSeconds(10);
         while (!waiter.ThreadState.HasFlag(ThreadState.WaitSleepJoin) && DateTime.UtcNow < until)
             Thread.Sleep(5);
-        Thread.Sleep(50);   // on the lock of the entry
+        Thread.Sleep(50); // on the entry's lock
 
         fail.Set();
         first.Join();
@@ -193,7 +193,7 @@ public class ScopedViewCacheTests
         using var cache = new ScopedViewCache();
         using var both = new Barrier(2);
 
-        // X is being built and asks for Y, while Y is being built and asks for X: one of the two fails like a circular dependency, the other finishes.
+        // X is being built and asks for Y, while Y is being built and asks for X: one of them fails like a circular dependency, the other finishes.
         object Build(string mine, string other)
             => cache.GetOrCreate(mine, () =>
             {

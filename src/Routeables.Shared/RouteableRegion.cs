@@ -1,4 +1,4 @@
-// Uno is what is left when no other host is named: the Routeables.Uno project links this file without defining a symbol.
+// Uno is what is left when no other host is defined: Routeables.Uno links this file without defining a symbol.
 #if !WPF && !AVALONIA && !MAUI && !WINUI3
 #define ROUTEABLE_UNO
 #endif
@@ -26,9 +26,9 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Routing;
 using Routeables.Regions;
 
-// One file for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui link it (and define WPF, AVALONIA or MAUI),
-// Routeables.Uno and Routeables.WinUI3 link it too. What the hosts do the same way is written once; what each does with its own
-// controls (the properties, the way a view comes in) is in a branch of its own.
+// Shared source for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui (which define WPF, AVALONIA or MAUI), Routeables.Uno and
+// Routeables.WinUI3. What the hosts do the same way is written once; what each does with its own controls (the properties, how a view comes in)
+// has a branch of its own.
 #if WPF
 namespace Routeables.Wpf;
 #elif AVALONIA
@@ -283,12 +283,12 @@ public partial class RouteableRegion : ContentControl
     public IServiceProvider? Services { get; set; }
 
 #if MAUI
-    // The routers of the regions are scoped (AddRegion), and the view models that route them are built from the provider of the
-    // application. MAUI gives each window a scope of its own: resolving the router there would give the control another router,
-    // with another history, than the one that is routed, and the zone would stay empty. The application's provider is the one.
+    // The regions' routers are scoped (AddRegion), and the view models that route them are built from the application's provider. MAUI gives each
+    // window a scope of its own, so resolving the router there would give the control another router, with another history, than the one being
+    // routed, and the region would stay empty. The application's provider is the right one.
     private IServiceProvider? Provider => Services ?? IPlatformApplication.Current?.Services ?? Handler?.MauiContext?.Services;
 
-    // The handler exists while the control is displayed: the router is listened to for that time only.
+    // The handler exists while the control is displayed: listen to the router only for that time.
     /// <inheritdoc />
     protected override void OnHandlerChanged()
     {
@@ -343,17 +343,17 @@ public partial class RouteableRegion : ContentControl
         Connect();
     }
 
-    // Shows the current view as soon as it is built, then starts the routing of an application that has no menu.
+    // Show the current view as soon as it is built, then start the routing of an application that has no menu.
     private void Connect() => _connection.ConnectCurrent(Provider, Region, Route, Show);
 
-    // A view has one parent: it is released when the control is no longer displayed, so another control can display it.
+    // A view has one parent: release it when the control is no longer displayed, so that another control can display it.
     private void Disconnect()
     {
         _connection.Disconnect();
         Content = null;
     }
 
-    // The call can come from another thread: Apply then runs later, on the UI thread, and its failure reaches nobody who could take the view for not shown.
+    // The call can come from another thread: Apply then runs later, on the UI thread, and its failure reaches nobody who could take the view as not shown.
     private void Show(object? view, RegionChange change) => this.Post(() =>
     {
         try
@@ -374,19 +374,18 @@ public partial class RouteableRegion : ContentControl
             return;
 
 #if WPF
-        // A view has one parent. Say who holds it instead of the bare "Specified element is already the logical child of another element".
+        // A view has one parent. Say who holds it, instead of the bare "Specified element is already the logical child of another element".
         if (view is DependencyObject shown && LogicalTreeHelper.GetParent(shown) is { } holder && !ReferenceEquals(holder, this))
             throw RegionErrors.AlreadyDisplayed(view, holder, Region);
 
         Content = view;
 
-        // The transition of the navigation, else the one of the region, else the fade of TransitionDuration.
+        // The navigation's transition, else the region's, else the fade of TransitionDuration.
         if (view is not null)
             RouteTransitions.Play(this, change.Resolve(string.IsNullOrWhiteSpace(Transition) ? null : RouteTransition.Named(Transition), TransitionDuration));
 #elif AVALONIA
-        // A view has one parent. A host that has left the screen can still hold the view of the router (its transition never ends, so
-        // its presenter keeps the page): that one is released. Any other holder is a real duplicate: say who it is instead of the
-        // bare "already has a visual parent" of the framework.
+        // A view has one parent. A host that has left the screen can still hold the router's view (its transition never ends, so its presenter keeps
+        // the page): release that one. Any other holder is a real duplicate: say who it is, instead of the framework's bare "already has a visual parent".
         if (view is Visual shown && shown.GetVisualParent() is { } holder)
         {
             if (this.IsVisualAncestorOf(shown))
@@ -404,16 +403,16 @@ public partial class RouteableRegion : ContentControl
         Release(shown);
         Content = shown;
 
-        // The transition of the navigation, else the one of the region, else the fade of TransitionDuration.
+        // The navigation's transition, else the region's, else the fade of TransitionDuration.
         if (Content is not null)
             _ = RouteTransitions.PlayAsync(this, change.Resolve(string.IsNullOrWhiteSpace(Transition) ? null : RouteTransition.Named(Transition), TransitionDuration));
 #else
-        // A view has one parent. Say who holds it instead of the bare error of the framework.
+        // A view has one parent. Say who holds it, instead of the framework's bare error.
         if (view is DependencyObject shown && VisualTreeHelper.GetParent(shown) is { } holder && !IsAncestorOf(shown))
             throw RegionErrors.AlreadyDisplayed(view, holder, Region);
 
-        // The transition of the navigation, else the one of the region, else the theme transition of RouteTransitionDuration: set before the
-        // content changes, which is what plays it.
+        // The navigation's transition, else the region's, else the theme transition of RouteTransitionDuration. Set before the content changes,
+        // which is what plays it.
         ContentTransitions = RouteTransitions.Create(
             change.Resolve(string.IsNullOrWhiteSpace(RouteTransition) ? null : Routeables.Abstraction.Transitions.RouteTransition.Named(RouteTransition), RouteTransitionDuration), ActualWidth, ActualHeight);
         Content = view;
@@ -421,7 +420,7 @@ public partial class RouteableRegion : ContentControl
     }
 
 #if AVALONIA
-    // The transition of the navigation, else the one of the region, else the PageTransition set on the control.
+    // The navigation's transition, else the region's, else the PageTransition set on the control.
     // A custom one is an IPageTransition for the control; a built-in one is played on the view (see RouteTransitions.AnimateIn), and the
     // control then swaps the content at once. Returns whether a built-in transition has to be played on the view.
     private bool ApplyTransition(RegionChange change, out RegionTransition transition)
@@ -456,18 +455,18 @@ public partial class RouteableRegion : ContentControl
         return custom is null && !transition.IsNone;
     }
 
-    // A page that is shown again while the transition that took it out is still playing (Back right after a push, a quick Forward): the control
-    // keeps the page it is leaving in its second presenter until the animation ends, and cannot add it to the first one at the same time.
-    // That page is going to be the current one again, so the second presenter lets it go. The binding of the first presenter is not touched
-    // (SetCurrentValue), and the transition goes on over an empty presenter.
+    // A page shown again while the transition that took it out is still playing (Back right after a push, a quick Forward): the control keeps the
+    // page it is leaving in its second presenter until the animation ends, and cannot add it to the first one at the same time. That page is going to
+    // be the current one again, so the second presenter lets it go. The first presenter's binding is not touched (SetCurrentValue), and the
+    // transition goes on over an empty presenter.
     private void ReleaseFromTransition(Visual holder, object view)
     {
         if (!ReferenceEquals(Content, view) && holder is ContentPresenter presenter)
             presenter.SetCurrentValue(ContentPresenter.ContentProperty, null);
     }
 
-    // The holder is the presenter of a RouteableRegion that is no longer connected (it left the visual tree): it is not showing the
-    // view any more, so the view is taken back from it. A host that is still connected keeps its view.
+    // The holder is the presenter of a RouteableRegion that is no longer connected (it left the visual tree): it no longer shows the view, so take the
+    // view back from it. A host that is still connected keeps its view.
     private static bool ReleaseFromLeftHost(Visual holder)
     {
         var other = holder as RouteableRegion ?? holder.FindAncestorOfType<RouteableRegion>();
@@ -478,8 +477,8 @@ public partial class RouteableRegion : ContentControl
         return true;
     }
 #elif MAUI
-    // Another region bound to the same router (the pages of a Shell written in XAML) can still hold the view: a view has one parent,
-    // so the last region to show it takes it.
+    // Another region bound to the same router (the pages of a Shell written in XAML) can still hold the view. A view has one parent, so the last
+    // region to show it takes it.
     private void Release(View? view)
     {
         switch (view?.Parent)

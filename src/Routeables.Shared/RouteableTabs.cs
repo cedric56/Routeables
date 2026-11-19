@@ -8,8 +8,8 @@ using Routeables.Abstraction;
 using Routeables.Abstraction.Routing;
 using Routeables.Regions;
 
-// One file for Routeables.Wpf and Routeables.Avalonia, which link it (and define WPF or AVALONIA): a TabControl has the same members in both.
-// Only how an action goes to the interface thread and what an event says it came from differ.
+// Shared source for Routeables.Wpf and Routeables.Avalonia (which define WPF or AVALONIA): a TabControl has the same members in both.
+// Only how an action reaches the UI thread and what an event says it came from differ.
 #if AVALONIA
 namespace Routeables.Avalonia;
 #else

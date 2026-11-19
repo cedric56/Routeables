@@ -61,9 +61,9 @@ public class ViewForTests
         var view = new TestView();
         var viewModel = new TestViewModel();
 
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+#pragma warning disable BL0005
         view.Context = viewModel;
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+#pragma warning restore BL0005
 
         Assert.Same(viewModel, view.ViewModel);
         Assert.Same(viewModel, view.Context);
@@ -72,9 +72,9 @@ public class ViewForTests
     [Fact]
     public void IsLocked_is_false_when_the_context_is_not_a_routeables_view_model()
     {
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+#pragma warning disable BL0005
         var view = new TestView { Context = new TestViewModel() };
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+#pragma warning restore BL0005
 
         Assert.False(view.IsLocked);
     }
@@ -83,9 +83,9 @@ public class ViewForTests
     public void IsLocked_requires_at_least_one_routeable_and_all_routeables_to_be_locked()
     {
         var viewModel = new RouteablesViewModel();
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+#pragma warning disable BL0005
         var view = new TestView { Context = viewModel };
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+#pragma warning restore BL0005
 
         Assert.False(view.IsLocked);
 
@@ -100,13 +100,13 @@ public class ViewForTests
     public async Task Render_passes_context_and_dictionary_parameters_to_the_child_component()
     {
         var viewModel = new TestViewModel();
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+#pragma warning disable BL0005
         var view = new TestView
         {
             Context = viewModel,
             DictionaryParameters = new RouteableParameters { ["Label"] = "Rendered" }
         };
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+#pragma warning restore BL0005
         var services = new ServiceCollection();
         services.AddLogging();
         using var provider = services.BuildServiceProvider();

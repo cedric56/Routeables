@@ -1,4 +1,4 @@
-// Asks the browser to confirm before the tab is closed, reloaded or left for another site, while the page holds changes that are not saved.
+// Asks the browser to confirm before the tab is closed, reloaded or left for another site while the page has unsaved changes.
 // The text of the question is the browser's own. Moves inside the application go through the router (CanLeaveAsync), not through here.
 let warn = false;
 

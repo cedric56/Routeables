@@ -174,7 +174,7 @@ not supported: Apple's licence allows macOS only on Apple hardware.
 
 ## iOS: `run-ios.ps1`
 
-MAUI and Avalonia in the iOS Simulator, on a Mac: `pwsh agent-desktop/run-ios.ps1 -Setup -Build`. The test is the one of Android
+MAUI and Avalonia in the iOS Simulator, on a Mac: `pwsh agent-desktop/run-ios.ps1 -Setup -Build`. The test is the same as on Android
 (the same module, `lib/Android.Smoke.psm1`, with another backend). agent-desktop cannot read the Simulator (its window is one
 picture to macOS accessibility), so the screen is read with idb (`idb ui describe-all`: the accessibility tree of the app in front,
 in points) and tapped with `idb ui tap`; the app is installed, started and stopped with `xcrun simctl`.

@@ -19,7 +19,7 @@ public class RouteableMenuViewModelBaseDisposeTests
         coordinator.Received(1).Subscribe();
 
         viewModel.Dispose();
-        viewModel.Dispose();        // twice is harmless
+        viewModel.Dispose();
 
         coordinator.Received(1).Unsubscribe();
     }

@@ -26,8 +26,8 @@ public class RouteableMenu : ContentView
         Content = list;
     }
 
-    // Icon, Description and HasDescription are default members of the interface, which a binding does not see on the class: converters read
-    // them from the entry itself.
+    // Icon, Description and HasDescription are default interface members, which a binding does not see on the class, so converters read them
+    // from the entry itself.
     private static View CreateRow()
     {
         var icon = new Label { FontSize = 20, VerticalOptions = LayoutOptions.Center, WidthRequest = 28, HorizontalTextAlignment = TextAlignment.Center };

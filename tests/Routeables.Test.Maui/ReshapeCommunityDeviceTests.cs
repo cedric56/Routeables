@@ -43,7 +43,6 @@ public class ReshapeCommunityDeviceTests
     /// <summary>A message box service over a context that has no page: every show must be refused.</summary>
     private static ReshapeMessageBoxService WithoutPage() => new(new Context());
 
-    // ------------------------------------------------------------------------------------------------ no page
 
     /// <summary>A message box asked without a page is refused, not silently ignored.</summary>
     [UIFact]
@@ -66,7 +65,6 @@ public class ReshapeCommunityDeviceTests
         => await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithoutPage().ShowModalAsync<ClosingViewModel, int>(new ClosingViewModel(), () => new Label()));
 
-    // ------------------------------------------------------------------------------------------------ what it refuses
 
     /// <summary>A content dialog or a task dialog without its parameters is refused before the page is even looked at.</summary>
     [UIFact]
@@ -84,7 +82,6 @@ public class ReshapeCommunityDeviceTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => WithoutPage().ShowModalAsync<ClosingViewModel, int>(new ClosingViewModel(), null!));
     }
 
-    // ------------------------------------------------------------------------------------------------ the popups
 
     /// <summary>The popups of the Reshape look like dialogs: rounded corners, and a tap outside does not dismiss them.</summary>
     [UIFact]
@@ -119,7 +116,6 @@ public class ReshapeCommunityDeviceTests
         Assert.False(popup.CanBeDismissedByTappingOutsideOfPopup);
     }
 
-    // ------------------------------------------------------------------------------------------------ notifications
 
     /// <summary>A notification without a page falls back silently: showing a notification never throws at the caller.</summary>
     [UIFact]

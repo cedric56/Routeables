@@ -1,6 +1,6 @@
-// The service worker of the system notifications of Routeables.Blazor: it must be served from the root of the site
-// (a worker only controls the pages under its own path), for instance /routeables-notifications-worker.js.
-// It tells the open pages what the user did with a notification: HandleNotificationClick, HandleNotificationClose, HandleNotificationReply.
+// Service worker for the system notifications of Routeables.Blazor. Serve it from the root of the site (a worker only controls pages
+// under its own path), for example /routeables-notifications-worker.js.
+// It tells the open pages what the user did with a notification: HandleNotificationClick, HandleNotificationClose or HandleNotificationReply.
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
 

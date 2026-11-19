@@ -38,7 +38,7 @@ public static partial class RouteParser
             var queryScore = 0;
             if (order == 0)
             {
-                // The same path: the one that uses more of the query of the address is the more exact (/search?{q} over /search for /search?q=1).
+                // Same path: the template that uses more of the address's query is the better match (/search?{q} beats /search for /search?q=1).
                 queryScore = QueryScore(entry.Template, uri);
                 bestQuery ??= QueryScore(best.Template!, uri);
                 if (queryScore > bestQuery)
@@ -53,13 +53,13 @@ public static partial class RouteParser
             }
         }
 
-        // The table of the application never changes once built (an add makes a new collection): it is indexed by the first literal
-        // segment, and only the templates that can open the address are tried, in the order they were registered (the order breaks a tie).
+        // The application's table never changes once built (adding a route creates a new collection), so it is indexed by its first literal
+        // segment. Only templates that can open the address are tried, in registration order, which also breaks ties.
         if (entries is ReadOnlyCollection<(string Template, Type? ViewModelType)> table && table.Count >= IndexFrom)
         {
             var index = Indexes.GetValue(table, t => new FirstSegmentIndex(t));
             if (index.Count != table.Count)
-                index = new FirstSegmentIndex(table);   // a collection that was changed behind our back: the index is not trusted
+                index = new FirstSegmentIndex(table); // the collection was modified behind our back: do not trust the index
 
             foreach (var at in index.Candidates(FirstSegment(uri)))
                 Consider(table[at]);
@@ -71,7 +71,7 @@ public static partial class RouteParser
         return best;
     }
 
-    // How many entries of the query of the address a template uses: its fixed entries ("mode=grid") and its placeholders the address gives a value to.
+    // How many query entries of the address a template uses: its fixed entries ("mode=grid") plus the placeholders that get a value.
     private static int QueryScore(string template, string uri)
     {
         var parsed = ParseTemplate(template);
@@ -97,7 +97,7 @@ public static partial class RouteParser
         return score;
     }
 
-    private const int IndexFrom = 8;                                // below this, trying every template is as quick as looking one up
+    private const int IndexFrom = 8; // below this size, trying every template is as fast as an index lookup
     private static readonly ConditionalWeakTable<ReadOnlyCollection<(string Template, Type? ViewModelType)>, FirstSegmentIndex> Indexes = new();
 
     /// <summary>The first segment of an address as the matching reads it: the fragment and the query left out, empty segments skipped, unescaped.</summary>
@@ -131,7 +131,7 @@ public static partial class RouteParser
                 var parsed = ParseTemplate(table[i].Template);
                 if (parsed.Segments.Length > 0 && !parsed.SegmentMatches[0].Success)
                 {
-                    // The address is looked up unescaped (FirstSegment), so the literal is too ("my%20page" is "my page").
+                    // The address is looked up unescaped (see FirstSegment), so the literal is unescaped too ("my%20page" is "my page").
                     var first = parsed.Segments[0].Contains('%') ? Uri.UnescapeDataString(parsed.Segments[0]) : parsed.Segments[0];
                     if (!literal.TryGetValue(first, out var list))
                         literal[first] = list = [];
@@ -153,7 +153,7 @@ public static partial class RouteParser
             if (_open.Length == 0)
                 return literal;
 
-            // both lists are in ascending order: the merge keeps the order of registration
+            // Both lists are sorted by index: merging them keeps the registration order.
             var merged = new int[literal.Length + _open.Length];
             int a = 0, b = 0, k = 0;
             while (a < literal.Length && b < _open.Length)

@@ -3,7 +3,7 @@ using System.Windows.Threading;
 
 namespace Routeables.Wpf;
 
-// Dialogs and notifications may be asked for from any thread: they are always shown by the dispatcher of the application.
+// Dialogs and notifications may be requested from any thread: they are always shown by the application's dispatcher.
 internal static class UiThread
 {
     public static Dispatcher Dispatcher =>

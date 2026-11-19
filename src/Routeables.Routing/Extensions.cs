@@ -40,7 +40,7 @@ public static class Extensions
                 lifetime,
                 "A Transient router is not supported: each resolve would get a separate history use Regions instead.");
 
-        // Router collaborators share the router's lifetime so they live and die together.
+        // Collaborators share the router's lifetime, so they live and die together.
         services.Add(new ServiceDescriptor(typeof(RouterHistory), sp => new RouterHistory(sp.GetService<HistoryLimits>()?.For(null) ?? (lifetime == ServiceLifetime.Scoped ? DefaultScopedHistoryLimit : null)), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterGate), sp => new RouterGate(sp.GetService<ConcurrencyPolicies>()?.For(null) ?? RouterConcurrency.Queue), lifetime));
         services.Add(new ServiceDescriptor(typeof(RouterLifecycle), sp => new RouterLifecycle(sp), lifetime));
@@ -73,7 +73,7 @@ public static class Extensions
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(route);
-        // As RegisterRouting: each resolve of a Transient region would get a history of its own, and the pages shown would be lost without a word.
+        // Like RegisterRouting: a transient region would get a new history on every resolve, and the pages shown would be lost silently.
         if (lifetime == ServiceLifetime.Transient)
             throw new ArgumentOutOfRangeException(
                 nameof(lifetime),

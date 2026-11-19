@@ -39,9 +39,9 @@ public sealed class RxScreen : ReactiveObject, IScreen
 public sealed class ReactiveUiDriver : INavigationDriver
 {
     private readonly RxScreen _screen = new();
-    // The same container as the Routeables driver. Each page is built through it, a view (transient) and a view model (with the activator of
-    // the container, its name and its screen as arguments); the five pages that have a dependency ask it for a singleton. ReactiveUI has no
-    // container of its own: the application brings one.
+    // The same container as the Routeables driver. Each page is built through it: a view (transient) and a view model (built with the container's
+    // activator, its name and its screen as arguments). The five pages that have a dependency ask it for a singleton. ReactiveUI has no container
+    // of its own: the application brings one.
     private readonly ServiceProvider _provider = new ServiceCollection().AddSingleton<IClock, Clock>().AddTransient<RxView>().BuildServiceProvider();
 
     public ReactiveUiDriver() => State = new AppState();
@@ -99,7 +99,7 @@ public sealed class ReactiveUiDriver : INavigationDriver
 
     private RxPage PageWithDependency(string name)
     {
-        _ = _provider.GetRequiredService<IClock>().Now;   // the dependency of the five pages that have one
+        _ = _provider.GetRequiredService<IClock>().Now; // the dependency of the five pages that have one
         return Page(name);
     }
 

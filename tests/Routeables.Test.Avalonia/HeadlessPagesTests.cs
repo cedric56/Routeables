@@ -86,10 +86,10 @@ public sealed class HeadlessPagesTests(HeadlessApp app)
             await provider.GoToAsync("/b", HeadlessApp.Side);
             await UntilAsync(() => navigation.StackDepth == 2 && !navigation.IsNavigating);
 
-            await navigation.PopAsync();      // what the back button does
+            await navigation.PopAsync();
 
             await UntilAsync(() => navigation.StackDepth == 1 && !navigation.IsNavigating);
-            Assert.Equal(0, router.History.CurrentIndex);   // the router went back too
+            Assert.Equal(0, router.History.CurrentIndex);
         }
         finally { window.Close(); }
     });

@@ -34,7 +34,7 @@ public sealed class RxView : UserControl
 
 public sealed class RxScreen : ReactiveObject, IScreen
 {
-    // The immediate scheduler: the application's own thread is the UI thread, already the one the commands run on.
+    // The immediate scheduler: the application's thread is already the UI thread the commands run on.
     public RoutingState Router { get; } = new(ImmediateScheduler.Instance);
 }
 
@@ -143,8 +143,8 @@ public sealed class ReactiveUiAvaloniaDriver : INavigationDriver
     {
         State = new AppState();
         ViewCount.Owner = Name;
-        // The control of the region of Routeables (RouteableRegion is a TransitioningContentControl): two presenters and the machinery of a
-        // transition, with none declared. A plain ContentControl would leave that cost to Routeables alone.
+        // The control of Routeables' region (RouteableRegion is a TransitioningContentControl): two presenters and the transition machinery, with none
+        // declared. A plain ContentControl would leave that cost to Routeables alone.
         var content = _content = new TransitioningContentControl();
         _host = _screen.Router.CurrentViewModel.Subscribe(
             vm => content.Content = vm is RxPage page ? ActivatorUtilities.CreateInstance<RxView>(_provider, page) : null);
@@ -211,7 +211,7 @@ public sealed class ReactiveUiAvaloniaDriver : INavigationDriver
 
     private RxPage PageWithDependency(string name)
     {
-        _ = _provider.GetRequiredService<IClock>().Now;   // the dependency of the five pages that have one
+        _ = _provider.GetRequiredService<IClock>().Now; // the dependency of the five pages that have one
         return Page(name);
     }
 
@@ -233,7 +233,7 @@ public sealed class ReactiveUiAvaloniaDriver : INavigationDriver
     {
         _host.Dispose();
         _window.Close();
-        Dispatcher.UIThread.RunJobs();   // not counted: a closed window has no size
+        Dispatcher.UIThread.RunJobs(); // not counted: a closed window has no size
         _provider.Dispose();
     }
 }

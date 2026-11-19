@@ -53,8 +53,8 @@ public static class RouteableState
         return await RestoreSnapshotsAsync(router, routes.Select(route => new RouteableSnapshot(route, new Dictionary<string, string>())), cancellationToken);
     }
 
-    // The history was erased and the first page of the restoration could not be shown: the page that was there goes back (an address
-    // goes through the menu or the route table like any other). Best effort: it must not hide why the restoration failed.
+    // The history was erased and the first page of the restoration could not be shown: put back the page that was there (an address goes
+    // through the menu or the route table like any other). Best effort: it must not hide why the restoration failed.
     private static async Task BringBackAsync(IRouter router, string? shownBefore)
     {
         if (router.History.Count > 0 || string.IsNullOrWhiteSpace(shownBefore))
@@ -84,7 +84,7 @@ public static class RouteableState
             var values = new Dictionary<string, string>();
             if (entries[i].ViewModel is IRouteableState keeper)
                 keeper.SaveState(values);
-            RouteablePersistence.Save(entries[i].ViewModel, values);   // the [Persist] properties
+            RouteablePersistence.Save(entries[i].ViewModel, values); // the [Persist] properties
             CaptureValues(entries[i].Args, route, values);
             snapshots.Add(new RouteableSnapshot(route, values));
         }
@@ -101,8 +101,8 @@ public static class RouteableState
         ArgumentNullException.ThrowIfNull(router);
         ArgumentNullException.ThrowIfNull(snapshots);
 
-        // A saved route is an address, not a command: "-/orders" (go back, then navigate) in a file that was changed by hand would go back.
-        // Left out before the history is erased: a list of them only would erase it and show nothing.
+        // A saved route is an address, not a command: "-/orders" (go back, then navigate) in a hand-edited file would go back.
+        // Filter before the history is erased: a list of only these would erase it and show nothing.
         var list = snapshots.Where(snapshot => !string.IsNullOrWhiteSpace(snapshot.Route) && !snapshot.Route.TrimStart().StartsWith('-')).ToList();
         if (list.Count == 0)
             return true;
@@ -124,7 +124,7 @@ public static class RouteableState
     {
         foreach (var snapshot in list)
         {
-            // A saved route is an address, not a command: "-/orders" (go back, then navigate) in a file that was changed by hand would go back.
+            // A saved route is an address, not a command: "-/orders" (go back, then navigate) in a hand-edited file would go back.
             if (snapshot.Route.TrimStart().StartsWith('-'))
                 continue;
 
@@ -135,8 +135,8 @@ public static class RouteableState
                 return false;
             }
 
-            // A guard sent the user to another page (the login, say): the next entries would be sent there too and pile up behind it, and
-            // the values saved for this page are not for the page shown.
+            // A guard sent the user to another page (the login, say): the next entries would be sent there too and pile up behind it, and the values
+            // saved for this page are not for the page shown.
             if (!RouteAddress.SameFor(router, router.History.Current?.Args.Route, snapshot.Route))
                 return true;
 
@@ -146,7 +146,7 @@ public static class RouteableState
                     keeper.LoadState(snapshot.State.Where(pair => !pair.Key.StartsWith(ValuePrefix, StringComparison.Ordinal)
                             && !pair.Key.StartsWith(RouteablePersistence.KeyPrefix, StringComparison.Ordinal))
                         .ToDictionary(pair => pair.Key, pair => pair.Value));
-                RouteablePersistence.Load(shown, snapshot.State);   // the [Persist] properties, after LoadState
+                RouteablePersistence.Load(shown, snapshot.State); // the [Persist] properties, after LoadState
             }
         }
 
@@ -154,9 +154,9 @@ public static class RouteableState
     }
 
 
-    // The values of a page that are not in its address (RouteableArgs.WithValue) are kept in the same dictionary as what its view model
-    // saves, under a prefix: "value:<type>:<name>". Only what can be written as text and read back is kept (text, numbers, bool, Guid,
-    // dates); the values the route itself brings (its query) come back with the route.
+    // Values of a page that are not in its address (RouteableArgs.WithValue) are kept in the same dictionary as what its view model saves, under
+    // the prefix "value:<type>:<name>". Only what can be written as text and read back is kept (text, numbers, bool, Guid, dates); the values
+    // the route itself brings (its query) come back with the route.
     internal const string ValuePrefix = "value:";
 
     private static void CaptureValues(IRouteableArgs args, string route, Dictionary<string, string> into)
@@ -165,7 +165,7 @@ public static class RouteableState
         if (route.IndexOf('?') is var at and >= 0)
         {
             foreach (var pair in route[(at + 1)..].Split('&', StringSplitOptions.RemoveEmptyEntries))
-                inAddress.Add(Uri.UnescapeDataString(pair.Split('=', 2)[0].Replace('+', ' ')));   // a query: + is a space
+                inAddress.Add(Uri.UnescapeDataString(pair.Split('=', 2)[0].Replace('+', ' '))); // in a query, + is a space
         }
 
         foreach (var (value, name, _) in args.Values)
@@ -302,7 +302,7 @@ public sealed record RouteableSnapshot(string Route, IReadOnlyDictionary<string,
     {
         var hash = new HashCode();
         hash.Add(Route, StringComparer.Ordinal);
-        // Order of the values does not count: the entries are combined by addition.
+        // The order of the values does not matter: the entries are combined by addition.
         var values = 0;
         foreach (var pair in State)
             values += HashCode.Combine(pair.Key, pair.Value);

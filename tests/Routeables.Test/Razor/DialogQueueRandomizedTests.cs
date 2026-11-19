@@ -37,8 +37,8 @@ public class DialogQueueRandomizedTests
         queue.Changed += () => { };
 
         var all = new List<Request>();
-        var open = new List<Request>();                 // oldest first
-        var finished = new Dictionary<Request, int>();  // the result each closed request must have
+        var open = new List<Request>(); // oldest first
+        var finished = new Dictionary<Request, int>(); // the result each closed request must have
 
         for (var step = 0; step < 300; step++)
         {

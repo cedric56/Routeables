@@ -96,7 +96,7 @@ A tab bound to a route (`RouteableTabs`, `RegionTabs`) changes page through the 
 
 | Host | What raises it |
 |---|---|
-| WPF, Avalonia | The window closing (`SleepNow`: waits at most 2 seconds, a page must not await work that needs the interface thread there) |
+| WPF, Avalonia | The window closing (`SleepNow`: waits at most 2 seconds, a page must not await work that needs the UI thread there) |
 | MAUI | `Window.UseRouteablesLifecycle(services)` in `CreateWindow`: `Stopped`, `Resumed`, `Destroying` |
 | Others | Call `provider.GetRequiredService<RouteableAppLifecycle>().SleepAsync()` / `ResumeAsync()` from the host's own suspend and resume events |
 

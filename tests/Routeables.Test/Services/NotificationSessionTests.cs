@@ -15,7 +15,7 @@ public class NotificationSessionTests
 
     [Theory]
     [InlineData(2000, 2000)]
-    [InlineData(-1, null)]      // RouteableNotificationDefaults.Never
+    [InlineData(-1, null)] // RouteableNotificationDefaults.Never
     [InlineData(0, null)]
     public void The_delay_is_kept_unless_it_is_not_positive(int milliseconds, int? expected)
     {

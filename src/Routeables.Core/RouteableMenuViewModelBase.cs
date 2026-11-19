@@ -75,8 +75,8 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         _followed = viewModel;
         _followedRoute = _router.History.Current?.Args.Route;
 
-        // The entry of that page: the one whose route is the route of the page that is shown (several entries can show the same type with
-        // other routes: /products/shoes and /products/hats). Else the entry whose route is the type name, or a RouteableMenuEntry<T> of that type.
+        // The entry for that page: the one whose route is the route of the page shown (several entries can show the same type with different
+        // routes: /products/shoes and /products/hats). Otherwise the entry whose route is the type name, or a RouteableMenuEntry<T> of that type.
         var type = viewModel.GetType();
         IRouteableMenuEntry? entry = null;
         if (ReferenceEquals(viewModel, _router.CurrentViewModel) && _router.History.Current?.Args.Route is { } shownRoute)
@@ -90,21 +90,21 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         base.OnViewModelChanged(viewModel);
     }
 
-    // A page that moves the router itself (its own Back or Pop button, for instance) does not tell the menu: the router does.
-    // A selection of the menu, and a move that the menu has already followed, are not told twice.
+    // A page that moves the router itself (its own Back or Pop button, for instance) does not tell the menu; the router does.
+    // A selection made by the menu, and a move the menu has already followed, are not announced twice.
     private object? _followed;
-    // The route of the page that was followed: two routes can be served by one instance (a cached view model), and moving from one to the other is a move.
+    // The route of the page that was followed: one instance (a cached view model) can serve two routes, and moving from one to the other is a move.
     private string? _followedRoute;
 
     private bool Follows(object? viewModel)
         => ReferenceEquals(viewModel, _followed)
            && (_router.History.Current?.Args.Route is not { } route ? _followedRoute is null : RouteAddress.SameFor(_router, route, _followedRoute));
 
-    // Greater than 0 while GoBackAsync and GoForwardAsync of this menu run: they follow the router themselves, once the move is done.
-    // A count, not a flag: two of them that overlap (a double click) must not let the first one to end switch it off for the other.
+    // Greater than 0 while this menu's GoBackAsync and GoForwardAsync run: they follow the router themselves once the move is done.
+    // It is a count, not a flag: when two of them overlap (a double click), the first to finish must not switch it off for the other.
     private int _selfMoving;
 
-    // Greater than 0 while a selection of this menu asks the router for its page.
+    // Greater than 0 while a selection of this menu is asking the router for its page.
     private int _selecting;
 
     /// <inheritdoc />
@@ -125,8 +125,8 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
 
     private void OnRouted(object? sender, RouteableRoutedEventArgs e)
     {
-        // A Push that the menu asked for (a selection) is announced by the selection itself; any other one (router.GoToAsync, a RouteableLink,
-        // the redirection of a guard) is a page the menu did not choose, and it follows it like a Back.
+        // A Push that the menu asked for (a selection) is announced by the selection itself. Any other one (router.GoToAsync, a RouteableLink, a
+        // guard's redirection) is a page the menu did not choose, so it follows it like a Back.
         if (Volatile.Read(ref _selfMoving) > 0 || !e.Succeeded || (e.Kind == RouteableKind.Push && _selecting > 0) || Follows(_router.CurrentViewModel))
             return;
 
@@ -148,14 +148,14 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
 
     private IRouteableMenuEntry? _routeable;
 
-    // The entry whose page the router has shown. A selection that a newer one replaced before it started never showed its page, so it is
-    // not the entry to go back to when the newer selection is refused.
+    // The entry whose page the router has shown. A selection replaced by a newer one before it started never showed its page, so it is not the
+    // entry to go back to when the newer selection is refused.
     private IRouteableMenuEntry? _confirmed;
     private readonly SemaphoreSlim _selectionGate = new(1, 1);
     private int _selectionVersion;
 
-    // The versions of the selections that are running or waiting for the gate. When the newest one is cancelled, the version that is current
-    // again is the newest of these, not simply the one before it (that one may have been cancelled too).
+    // The versions of the selections that are running or waiting for the gate. When the newest is cancelled, the version that becomes current
+    // again is the newest of these, not simply the one before it (which may have been cancelled too).
     private readonly SortedSet<int> _liveSelections = [];
 
     /// <summary>
@@ -171,16 +171,14 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
             var old = _routeable;
             _routeable = value;
 
-            // Fire-and-forget for XAML two-way binding (the setter itself can't be async).
-            // SelectAsync below does the actual serialized, version-guarded work; callers that
-            // need to await completion or observe failure should call SelectAsync directly
-            // instead of going through this property.
+            // Fire-and-forget, for XAML two-way binding (a setter cannot be async). SelectAsync below does the real work, serialized and
+            // version-guarded. Callers that need to await completion or observe failure should call SelectAsync directly.
             _ = ObserveAsync(SelectAsync(value, old), value);
         }
     }
 
-    // The entry is the selected one, but the router shows another page: a page opened from the code (a detail, for instance) has no entry,
-    // and the menu keeps the entry it was on. Selecting that entry again must open its page, not be ignored.
+    // The entry is the selected one, but the router shows another page: a page opened from code (a detail, for instance) has no entry, and the menu
+    // keeps the entry it was on. Selecting that entry again must open its page, not be ignored.
     private bool PageIsElsewhere(IRouteableMenuEntry? entry)
         => entry is not null && _selectionVersion != 0 && _router.History.Current is { } current
            && !RouteAddress.SameFor(_router, current.Args.Route, entry.Arguments.Route ?? entry.Route);
@@ -212,7 +210,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         _routeable = value;
         var selection = SelectAsync(value, old, cancellationToken);
         await ObserveAsync(selection, value);
-        // A selection that was cancelled did not select anything, whatever the menu shows: it answers "no".
+        // A cancelled selection did not select anything, whatever the menu shows, so it answers "no".
         return !selection.IsCanceled && ReferenceEquals(_routeable, value);
     }
 
@@ -256,16 +254,16 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         }
         catch (OperationCanceledException)
         {
-            // A selection that was cancelled (the navigation that asked for it was given up) is not a failure to report.
+            // A cancelled selection (the navigation that asked for it was abandoned) is not a failure to report.
         }
         catch (Exception exception)
         {
             OnSelectionFailed(exception);
         }
 
-        // The control that selected the entry is still inside the selected entry when a guard answers at once, and it ignores
-        // a notification raised there: it would keep showing the refused entry as selected. Announce the entry that is selected
-        // after the setter has returned, on the same context.
+        // When a guard answers immediately, the control that selected the entry is still inside the selected entry and ignores a notification
+        // raised there, so it would keep showing the refused entry as selected. Announce the selected entry after the setter has returned, on
+        // the same context.
         if (requested is not null && !ReferenceEquals(_routeable, requested))
         {
             await Task.Yield();
@@ -307,9 +305,9 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         }
         catch (OperationCanceledException)
         {
-            // Cancelled while it waited for another selection: it never ran. If it is still the newest, the menu goes back to the entry
-            // it was on, and the selection that holds the gate is the newest again (it would otherwise think that it was replaced and leave
-            // the menu on the wrong entry). A newer selection owns the state: nothing to do then.
+            // Cancelled while waiting for another selection, so it never ran. If it is still the newest, the menu goes back to the entry it was on, and the
+            // selection holding the gate becomes the newest again (otherwise it would think it was replaced and leave the menu on the wrong entry).
+            // A newer selection owns the state: nothing to do then.
             int newest;
             lock (_liveSelections)
             {
@@ -329,12 +327,11 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
 
         try
         {
-            // A newer selection was requested while we were waiting for the gate — our work
-            // is already stale before it even started, so don't touch any state.
+            // A newer selection was requested while we waited for the gate, so our work is already stale before it starts: do not touch any state.
             if (version != _selectionVersion)
                 return;
 
-            // The selections are serialized by the gate: the token of the one that runs is the one the router is given.
+            // The gate serializes the selections: the token of the one that runs is the one the router is given.
             _selectionToken = cancellationToken;
             await OnRouteableChangedAsync(value, old, version);
         }
@@ -362,7 +359,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         }
         catch (Exception exception) when (exception is NullReferenceException or ArgumentNullException)
         {
-            // The usual cause: GetEntries() read a field or a constructor parameter of the derived class while the base class was being constructed.
+            // The usual cause: GetEntries() read a field or constructor parameter of the derived class while the base class was still being constructed.
             throw new InvalidOperationException(
                 $"{GetType().Name}.GetEntries() threw a {exception.GetType().Name}. It runs while the base class is being constructed, before the fields and the constructor "
                 + "parameters of the derived class are set: build the entries from the code alone, or pass initialize: false to the base constructor "
@@ -390,8 +387,8 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         => System.Diagnostics.Debug.WriteLine(
             $"Routeables: '{entry.Route}' was not shown ({(result.Cancelled ? "cancelled by a guard (CanLeaveAsync / CanEnter) or a newer route" : "failed")}){(result.Exception is null ? "" : ": " + result.Exception)}");
 
-    // The entry to select again when a selection is not shown: the one whose page the router shows. The `old` of a selection that a newer
-    // one replaced before it started was never shown, so it is only the answer when no page was shown through this menu yet.
+    // The entry to select again when a selection is not shown: the one whose page the router shows. The `old` of a selection replaced by a newer
+    // one before it started was never shown, so it is the answer only when no page was shown through this menu yet.
     private IRouteableMenuEntry? Previous(IRouteableMenuEntry? old, int version) => version != 0 ? _confirmed ?? old : old;
 
     /// <summary>
@@ -415,7 +412,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
             finally { Interlocked.Decrement(ref _selecting); }
             var result = outcome.Success;
 
-            // Whatever a newer selection does next, the router now shows this entry: it is the one to go back to if that one is refused.
+            // Whatever a newer selection does next, the router now shows this entry: it is the one to go back to if that selection is refused.
             if (result && _router.History.Current is { } shown
                 && RouteAddress.SameFor(_router, shown.Args.Route, value.Arguments.Route ?? value.Route))
                 _confirmed = value;
@@ -426,11 +423,11 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
 
             if (result)
             {
-                // A guard sent the user to another page (a sign-in): the menu does not claim the entry that was refused,
-                // unless the page shown has an entry of its own (OnViewModelChanged selected it).
+                // A guard sent the user to another page (a sign-in): the menu does not claim the refused entry, unless the page shown has an entry of its own
+                // (OnViewModelChanged selected it).
                 var redirected = _router.History.Current is { } current
                     && !RouteAddress.SameFor(_router, current.Args.Route, value.Arguments.Route ?? value.Route);
-                // The redirection is a Push that came while the selection ran, and OnRouted left it out: the menu follows that page now.
+                // The redirection is a Push that arrived while the selection ran, and OnRouted left it out: the menu follows that page now.
                 if (redirected && !Follows(_router.CurrentViewModel))
                     OnRouterMoved(_router.CurrentViewModel);
                 if (redirected && ReferenceEquals(_routeable, value))
@@ -467,7 +464,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     /// </summary>
     public virtual void Dispose()
     {
-        // The broker keeps the coordinator, and the coordinator this view model, for as long as the broker lives.
+        // The broker keeps the coordinator, and the coordinator keeps this view model, for as long as the broker lives.
         _coordinator?.Unsubscribe();
         _coordinator = null;
         _router.Routed -= OnRouted;

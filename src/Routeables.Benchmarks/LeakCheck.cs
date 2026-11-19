@@ -21,7 +21,7 @@ internal static class LeakCheck
             if (!ok) failures++;
         }
 
-        // 1. The history has no limit: one entry for each route change, and none left once it is erased.
+        // 1. The history has no limit: one entry per navigation, and none left once it is erased.
         using (var provider = Bench.Build(factories: true))
         {
             var router = provider.GetRequiredService<IRouter>();
@@ -38,7 +38,7 @@ internal static class LeakCheck
         {
             var router = provider.GetRequiredService<IRouter>();
             var weak = await GoTo(router, RouteChanges, track: 200);
-            await router.EraseHistoryAsync();   // the history keeps every page until it is erased
+            await router.EraseHistoryAsync(); // the history keeps every page until it is erased
             Collect();
             var alive = weak.Count(w => w.IsAlive);
             Report("dropped view models are collectable", alive == 0, $"{alive} of the first {weak.Count} view models are still alive");
@@ -56,7 +56,7 @@ internal static class LeakCheck
                 $"{VmDisposable.Disposed} disposed of {VmDisposable.Created} created");
         }
 
-        // 4. The managed heap does not grow with the number of route_changes.
+        // 4. The managed heap does not grow with the number of navigations.
         using (var provider = Bench.Build(factories: true))
         {
             var router = provider.GetRequiredService<IRouter>();
@@ -65,7 +65,7 @@ internal static class LeakCheck
             Collect();
             var before = GC.GetTotalMemory(true);
             await Churn(router, RouteChanges);
-            await router.EraseHistoryAsync();   // the history keeps every page until it is erased
+            await router.EraseHistoryAsync(); // the history keeps every page until it is erased
             Collect();
             var growth = GC.GetTotalMemory(true) - before;
             Report("heap does not grow", growth < 1_000_000, $"{growth / 1024.0:F0} KiB more after {RouteChanges} route_changes");

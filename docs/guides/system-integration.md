@@ -1,16 +1,16 @@
 ﻿# Back, deep links, guards and diagnostics
 
-What an application needs around the route changes themselves: the Back button of the system, an address opened from outside, pages that come back after the system killed the process, a rule that applies to every route, and numbers about what the router does.
+What an application needs around the route changes themselves: the system Back button, an address opened from outside, pages that come back after the system killed the process, a rule that applies to every route, and numbers about what the router does.
 
-## The Back button of the system
+## The system Back button
 
 Every host answers it for you: one page back in the history when there is one, otherwise the system decides (the application closes, the previous app comes forward).
 
 | Host | What is wired |
 | --- | --- |
-| Avalonia | `TopLevel.BackRequested` (Android Back), the Back button of the mouse, `Alt+Left` (not in the browser) |
+| Avalonia | `TopLevel.BackRequested` (Android Back), the mouse Back button, `Alt+Left` (not in the browser) |
 | MAUI | `Shell.OnBackButtonPressed` of `RouteablesShell` |
-| WPF | the `NavigationCommands.BrowseBack` command of the window (the Back button of the mouse and the keyboard) |
+| WPF | the `NavigationCommands.BrowseBack` command of the window (the mouse and keyboard Back buttons) |
 | Uno | `SystemNavigationManager.BackRequested`, subscribed only while the history has a page to go back to, because from Android 16 a subscribed handler consumes the request |
 
 A host of your own calls `RouteableBack.TryGoBack(provider)`: it returns `false` when there is nothing to go back to, and then the request is yours to leave to the system.
@@ -151,7 +151,7 @@ The values are saved in the same snapshots as above (`CaptureSnapshots`, the Bla
   - **For every property of a type:** `RouteablePersistence.RegisterConverter<T>(converter)` (or the two-delegate overload), once at start. It also replaces a built-in format (a `DateTime` kept as ticks, say).
   - **JSON, ready-made:** `RouteablePersistence.RegisterJson(MyJsonContext.Default.SearchFilter)` uses System.Text.Json's own generator (no reflection, trim-safe). It is one converter among the others, not a requirement.
 
-  The property's own converter wins over the one of the type, which wins over the built-in formats. A converter that returns `null` from `Write`, or a type with no format at all, leaves the property out (the rest is kept).
+  The property's own converter wins over the type's own, which wins over the built-in formats. A converter that returns `null` from `Write`, or a type with no format at all, leaves the property out (the rest is kept).
 - **Limit:** a value whose text is longer than `RouteablePersistence.MaxValueLength` (64 KB by default) is left out.
 - **Rules:** an instance property of a non-generic class, with a getter and a setter that are public or internal (not `init`). Otherwise, or when the `Converter` does not implement `IPersistConverter<T>` for the property's type or has no public parameterless constructor, the generator reports `ROUT401` and skips the property. Properties of base classes are kept too. A view model that also implements `IRouteableState` keeps working; it never sees the `persist:` keys.
 - **Not kept:** secrets. The values go wherever the snapshots go (a file, a bundle, the page sent to the browser by Blazor).
@@ -161,13 +161,13 @@ The values are saved in the same snapshots as above (`CaptureSnapshots`, the Bla
 Every host keeps the pages the user had open, and what they saved, from one run of the application to the next. One line registers it:
 
 ```csharp
-services.AddRouteableHistory();                 // a file in the local application data of the user
+services.AddRouteableHistory();                 // a file in the user's local application data
 services.AddRouteableHistory("history.txt");    // or the file you choose
 ```
 
 The host starts it when it builds its container (WPF, Avalonia, WinUI, Uno, WinUI 3 and MAUI). After each route change the history is written; when the application starts again, it is put back once the first page is shown, and the menu follows. Nothing is written before the pages are back, so the first page of the new run does not replace the history that is waiting. A history that cannot be written (a read-only disk) is reported and never fails a route change.
 
-The default store is a **plain text file** in the local application data folder of the user (`routeables-history.txt`): the routes, the query and what the pages saved with `RouteableState` are readable by anyone who can read that folder. Do not save a secret or personal data in a page state that is kept, or register a store that encrypts (`IRouteableHistoryStore.Save` receives the text, `Load` gives it back). The file is written aside under a unique name and moved over the old one, so two instances do not share a temporary file; the last one to save wins.
+The default store is a **plain text file** in the user's local application data folder (`routeables-history.txt`): the routes, the query and what the pages saved with `RouteableState` are readable by anyone who can read that folder. Do not save a secret or personal data in a page state that is kept, or register a store that encrypts (`IRouteableHistoryStore.Save` receives the text, `Load` gives it back). The file is written aside under a unique name and moved over the old one, so two instances do not share a temporary file; the last one to save wins.
 
 The history holds the addresses and what the pages saved with `[Persist]` (a draft of a form, an identifier). It is plain text unless you give a protector; if a page keeps anything private, encrypt it with a key from the secure storage of the platform (`SecureStorage` on MAUI, the keychain, the keystore), never from the source code:
 
@@ -203,7 +203,7 @@ Every sample (Avalonia, MAUI, MAUI Hybrid, Uno, WPF, Blazor Server, Blazor WebAs
 | Address from outside | *Open xanimals://dogs/Eurohound* follows it through `RouteableDeepLinks`; on Android, iOS and the WPF and Uno desktop heads the platform code gives the same kind of address to `RouteableLinkInbox` |
 | Saved values (phone and tablet only) | the note is kept by `IRouteableState` and comes back with the page after the process was killed (Android) |
 | Measures | the last route changes, read with a `MeterListener` (`RouteMetrics`) |
-| Back of the system | the Back button of Android, the mouse button and Alt+Left on a desktop, the browser Back in Blazor |
+| System Back | the Android Back button, the mouse button and Alt+Left on a desktop, the browser Back in Blazor |
 | Transitions | the frame of the *History* page fades its pages in (`PageTransition` on Avalonia, `TransitionDuration` on MAUI, Uno and WPF) |
 
 ## Tabs with their own history, and transitions
@@ -239,7 +239,7 @@ notification.Message = "A polar bear was added to the adoption list.";
 await notification.ShowAsync();
 ```
 
-`NotificationCompleted` is raised on the context of the interface that was current when the notifications were turned on (`Configure`, that is `WithAppNotifications`): a handler can go to a page or show a dialog. Where there is no such context (a console, a call to `Configure` from a thread of the pool) the handler runs on the thread the platform called from, which on Linux is never the one that reads the D-Bus replies. An `Expiration` runs from the last display of the notification: showing it again (an update) starts it again. Each notification has an identifier that is not reused by the next launch, so a tap on a notification of an earlier run is ignored.
+`NotificationCompleted` is raised on the UI context that was current when the notifications were turned on (`Configure`, that is `WithAppNotifications`): a handler can go to a page or show a dialog. Where there is no such context (a console, a call to `Configure` from a thread of the pool) the handler runs on the thread the platform called from, which on Linux is never the one that reads the D-Bus replies. An `Expiration` runs from the last display of the notification: showing it again (an update) starts it again. Each notification has an identifier that is not reused by the next launch, so a tap on a notification of an earlier run is ignored.
 
 In the browser, each page that shows a notification is its **owner**: the worker is shared by every tab of the site, so the id of a notification carries the owner (a random id of the page), and a page ignores the clicks, replies and closes of the notifications another tab showed, and `CloseAll` closes only its own. The ids you give are therefore per page, not per site.
 

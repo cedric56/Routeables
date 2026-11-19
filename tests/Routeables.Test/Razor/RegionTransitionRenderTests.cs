@@ -16,7 +16,6 @@ public class RegionTransitionRenderTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    // ------------------------------------------------------------------------------------------------ hosts: one region with one configuration each
 
     private abstract class RegionHost : ComponentBase
     {
@@ -92,7 +91,6 @@ public class RegionTransitionRenderTests
         }
     }
 
-    // ------------------------------------------------------------------------------------------------ helpers
 
     private static void Register(IServiceCollection services)
     {
@@ -127,7 +125,6 @@ public class RegionTransitionRenderTests
         }
     }
 
-    // ------------------------------------------------------------------------------------------------ nothing to play
 
     [Fact]
     public async Task An_empty_region_is_a_plain_element()
@@ -196,7 +193,6 @@ public class RegionTransitionRenderTests
         await HtmlWhenAsync(harness, h => h == "<div></div>");
     }
 
-    // ------------------------------------------------------------------------------------------------ what is played
 
     [Fact]
     public async Task A_page_that_comes_in_forward_carries_the_classes_and_the_default_duration_of_the_transition_of_the_region()
@@ -372,7 +368,6 @@ public class RegionTransitionRenderTests
         return data;
     }
 
-    // ------------------------------------------------------------------------------------------------ regions
 
     [Fact]
     public async Task A_region_with_a_name_follows_its_own_router_only()

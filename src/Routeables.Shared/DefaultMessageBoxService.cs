@@ -1,4 +1,4 @@
-﻿// WinUI 3 and Uno are what is left when neither WPF nor Avalonia is named.
+﻿// WinUI 3 and Uno are what is left when neither WPF nor Avalonia is defined.
 #if !WPF && !AVALONIA
 #define ROUTEABLE_WINUI
 #endif
@@ -29,10 +29,10 @@ using Orientation = Microsoft.UI.Xaml.Controls.Orientation;
 using ProgressBar = Microsoft.UI.Xaml.Controls.ProgressBar;
 #endif
 
-// One file for Routeables.Wpf and Routeables.Avalonia, which link it (and define WPF or AVALONIA), and for Routeables.Uno and Routeables.WinUI3. What each
-// button returns is decided by the sessions of Routeables.Services; here are only the controls, which differ by a few types (the Element and the Owner of a
-// dialog: a Window, a TopLevel or a XamlRoot), the space between the parts (a Margin in WPF, a Spacing elsewhere), the thread of the interface, the names of
-// the methods of IMessageBoxService and, in WinUI, the buttons of the ContentDialog and the native dialogs of Routeables.Native.
+// Shared source for Routeables.Wpf and Routeables.Avalonia (which define WPF or AVALONIA) and for Routeables.Uno and Routeables.WinUI3.
+// The sessions of Routeables.Services decide what each button returns; here are only the controls, which differ by a few types (the Element and
+// Owner of a dialog: a Window, a TopLevel or a XamlRoot), the spacing between parts (a Margin in WPF, a Spacing elsewhere), the UI thread, the
+// method names of IMessageBoxService and, in WinUI, the ContentDialog buttons and the native dialogs of Routeables.Native.
 #if AVALONIA
 namespace Routeables.Avalonia.Services;
 #elif WPF
@@ -71,8 +71,8 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var texts = RouteableButtons.Split(buttons);
         var labels = RouteableButtons.Labels(buttons);
 
-        // Three buttons are those of the dialog of the platform (Routeables.Native) where it has one: the ContentDialog of the Windows App SDK,
-        // an alert on Android and iOS. Escape or a click outside gives the third button (the one that closes). Elsewhere, and for fewer buttons, the card below.
+        // Three buttons use the platform's own dialog (Routeables.Native) where there is one: the Windows App SDK ContentDialog, an alert on Android
+        // and iOS. Escape or a click outside gives the third button (the one that closes). Elsewhere, and for fewer buttons, use the card below.
         if (texts.Count == 3 && NativeDialogs.IsSupported)
         {
             var native = await NativeDialogs.DisplayThreeButtonsAsync<string?>(
@@ -81,7 +81,7 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
                 return native.Value;
         }
 
-        // More than three buttons are the sheet of the platform (Routeables.Native): a ContentDialog with a column of buttons on Windows. Elsewhere, the sheet drawn below.
+        // More than three buttons use the platform's sheet (Routeables.Native): a ContentDialog with a column of buttons on Windows. Elsewhere, the sheet drawn below.
         if (texts.Count > 3 && NativeDialogs.IsSupported)
         {
             var sheet = await NativeDialogs.DisplaySheetAsync(title, message, [.. labels.Take(labels.Count - 1)], labels[labels.Count - 1], window, dark: null);
@@ -114,7 +114,6 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var labels = RouteableButtons.Split(buttons ?? string.Empty).ToList();
         if (labels.Count == 0)
             labels.Add("Ok");
-        // The words are what the box answers; the buttons say what RouteableTexts.ButtonTranslator makes of them.
 
         string? result = null;
         var handle = new RouteableDialogHandle { TryDismiss = () => true };
@@ -190,7 +189,7 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
             card.MinWidth = 640;
         }
 #elif ROUTEABLE_WINUI
-        // The size is the business of the ContentDialog: the presenter gets FullSizeDesired.
+        // The ContentDialog decides its own size: the presenter gets FullSizeDesired.
 #else
         if (@params.FullSizeDesired && card is FrameworkElement element)
         {

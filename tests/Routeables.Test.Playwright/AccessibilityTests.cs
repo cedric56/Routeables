@@ -49,14 +49,14 @@ public sealed class AccessibilityTests(BlazorApp app) : BlazorTest(app)
         {
             foreach (var name in names)
             {
-                // Each page is reached from a fresh start: a page can keep the user from leaving it (a guard, a lock), so a walk from one
-                // entry to the next would stop at the first one that does.
+                // Each page starts from a fresh state: a page can stop the user from leaving (a guard, a lock), so walking from one entry to the next
+                // would stop at the first such page.
                 await Page.GotoAsync(BaseUrl);
                 await Menu.First.WaitForAsync();
 
-                // Signed in: Members turns a signed-out visitor back to Features, and the page to audit would be another one.
+                // Signed in: Members sends a signed-out visitor back to Features, so the audited page would be another one.
                 await OpenAsync("Features");
-                // The sample keeps one visitor for the whole server: after the first entry the visitor is still signed in.
+                // The sample has one visitor for the whole server: after the first entry the visitor stays signed in.
                 if (!signedIn)
                 {
                     await Button("Sign in").ClickAsync();
@@ -67,7 +67,7 @@ public sealed class AccessibilityTests(BlazorApp app) : BlazorTest(app)
                 await OpenAsync(name);
                 await ExpectCurrentAsync(name);
 
-                // A navigation that reloads the page drops the script: it is added again when it is gone.
+                // A navigation that reloads the page drops the script, so add it again when it is gone.
                 if (!await Page.EvaluateAsync<bool>("typeof axe !== 'undefined'"))
                     await Page.AddScriptTagAsync(new PageAddScriptTagOptions { Url = AxeUrl });
 
@@ -89,7 +89,7 @@ public sealed class AccessibilityTests(BlazorApp app) : BlazorTest(app)
         }
         finally
         {
-            // The sample keeps one visitor for the whole server: leaving it signed in would change what the next test finds.
+            // The sample has one visitor for the whole server: staying signed in would change what the next test finds.
             if (signedIn)
             {
                 await Page.GotoAsync(BaseUrl);

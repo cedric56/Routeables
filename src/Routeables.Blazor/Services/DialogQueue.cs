@@ -41,7 +41,7 @@ internal abstract class DialogQueue<TRequest, TResult> : IDisposable
 
         lock (gate)
         {
-            // Asked after the circuit ended: no host is left to show it, so it is answered now and not left to wait for ever.
+            // Asked after the circuit ended: no host is left to show it, so answer now rather than leave it waiting forever.
             if (disposed)
             {
                 request.Completion.TrySetResult(ResultWhenDisposed(request));
@@ -87,7 +87,7 @@ internal abstract class DialogQueue<TRequest, TResult> : IDisposable
         finally
         {
             request.Completion.TrySetResult(result);
-            if (!wasWaiting) Changed?.Invoke();    // the host shows Current: a request that never was on screen changes nothing
+            if (!wasWaiting) Changed?.Invoke(); // the host shows Current: a request that was never on screen changes nothing
         }
     }
 

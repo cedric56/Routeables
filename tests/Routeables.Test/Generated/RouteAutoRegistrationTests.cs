@@ -104,7 +104,6 @@ public class RouteAutoRegistrationTests
         Assert.Contains("RouteableAutoRegistration.Mark(services, typeof(RouteRegistration).Assembly)", Generate(OutputKind.DynamicallyLinkedLibrary));
     }
 
-    // ---- what the host does with them
 
     private static Action<IServiceCollection> Generated(params Action<IServiceCollection>[] pages) => services =>
     {
@@ -185,7 +184,6 @@ public class RouteAutoRegistrationTests
         Assert.Empty(services);
     }
 
-    // ---- a plain view found by its name
 
     private static string GenerateFrom(string source)
     {
@@ -264,7 +262,6 @@ public class RouteAutoRegistrationTests
         Assert.Contains("ROUT202", LastDiagnostics);
     }
 
-    // ---- a library's AddGeneratedRoutes() must not hide the routes of the application
 
     private static Action<IServiceCollection> GeneratedBy(System.Reflection.Assembly owner, params Action<IServiceCollection>[] pages) => services =>
     {

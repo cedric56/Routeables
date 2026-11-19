@@ -27,7 +27,7 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
         "Routeables",
         DiagnosticSeverity.Info,
         isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout501",
-        customTags: new[] { WellKnownDiagnosticTags.CompilationEnd });     // reported by the compilation end action, once every literal is known
+        customTags: new[] { WellKnownDiagnosticTags.CompilationEnd }); // reported by the compilation end action, once every literal is known
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Unknown);
 
@@ -64,7 +64,7 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
                         && !owner.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(i, router)))
                         return;
                     if (Argument(invocation, "template") is not null)
-                        return;                                          // the route to go to is given by the template
+                        return; // the route to go to is given by the template
                     if (Argument(invocation, "url") is { } url && url.Value.ConstantValue is { HasValue: true, Value: string text })
                         calls.Add((text, invocation.Syntax.GetLocation()));
                     return;
@@ -77,7 +77,7 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
                     if (argument.Value.ConstantValue is { HasValue: true, Value: string route })
                         templates.Add(route);
                     else if (method.Name == "RegisterRoute" && !argument.IsImplicit)
-                        unreadable = true;                               // registered from a string only known at run time
+                        unreadable = true; // registered from a string only known at run time
                 }
             }, OperationKind.Invocation);
 
@@ -97,7 +97,6 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
                     templates.Add(route);
             }, OperationKind.SimpleAssignment);
 
-            // public string Route => "/about";   public string Route { get; } = "/about";
             start.RegisterSyntaxNodeAction(ctx =>
             {
                 var property = (PropertyDeclarationSyntax)ctx.Node;
@@ -166,7 +165,7 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
         if (hash >= 0)
             route = route.Substring(0, hash);
 
-        // The query starts at a '?' that is not the end of an optional placeholder: "{tab?}" and "{tab::?}" keep theirs.
+        // The query starts at a '?' that does not end an optional placeholder: "{tab?}" and "{tab::?}" keep theirs.
         for (var i = 0; i < route.Length; i++)
         {
             if (route[i] == '?' && (i + 1 >= route.Length || route[i + 1] != '}'))

@@ -6,12 +6,12 @@
 /// </summary>
 internal class ScopedViewCache : IDisposable, IAsyncDisposable
 {
-    // One entry per key: the factory (code of the application: a constructor) runs under the lock of its own entry, never under the one of the
-    // cache, so that a constructor that waits for another thread which asks this cache for something else does not block it for ever.
+    // One entry per key. The factory (application code: a constructor) runs under the lock of its own entry, never under the cache's lock,
+    // so a constructor that waits for another thread, which asks this cache for something else, does not block it forever.
     private sealed class Entry { public readonly object Gate = new(); public object? Value; public Thread? Builder; }
 
-    // The entry each thread waits for, under _gate: with the builder of every entry it tells that two threads wait for each other
-    // (X builds and needs Y, while Y builds and needs X), which would block both for ever instead of failing like a circular dependency does.
+    // The entry each thread waits for, under _gate. Together with each entry's builder it detects two threads waiting for each other (X is
+    // being built and needs Y, while Y is being built and needs X), which would block both forever instead of failing like a circular dependency.
     private readonly Dictionary<Thread, Entry> _waiting = [];
 
     private readonly Dictionary<object, Entry> _cache = new();
@@ -21,7 +21,6 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
     public object GetOrCreate(object key, Func<object> factory)
     {
         Entry entry;
-        // A plain Dictionary is not safe for concurrent reads and writes: every access takes the lock.
         lock (_gate)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
@@ -32,7 +31,7 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
                 return existing;
         }
 
-        // The lock is re-entrant: a constructor that asks for its own key (a circular dependency) would build again, for ever, until the stack ends.
+        // The lock is reentrant: a constructor that asks for its own key (a circular dependency) would build again, forever, until the stack overflows.
         if (Monitor.IsEntered(entry.Gate))
             throw new InvalidOperationException($"A circular dependency: the construction of \"{key}\" asked for itself.");
 
@@ -48,7 +47,7 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
         {
             lock (_gate) _waiting.Remove(current);
             if (entry.Value is { } built)
-                return built;       // another caller built it while this one waited for the entry
+                return built; // another caller built it while this one waited for the entry
 
             // A failure keeps the entry: a caller that waited on it builds the page under the same lock, and what it builds stays in the cache
             // (removing the entry would leave that caller with a page the cache no longer owns).
@@ -66,14 +65,14 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
                 }
             }
 
-            // The cache was disposed while the page was being built: nobody will dispose it but this.
+            // The cache was disposed while the page was being built: nobody will dispose it but us.
             if (created is IDisposable disposable) disposable.Dispose();
             else if (created is IAsyncDisposable asyncDisposable) AsyncDisposal.Start<ScopedViewCache>(asyncDisposable);
             throw new ObjectDisposedException(GetType().Name);
         }
     }
 
-    // Whether the thread that builds `wanted` waits, directly or not, for an entry that `current` builds. Called under _gate.
+    // Whether the thread that builds `wanted` waits, directly or indirectly, for an entry that `current` builds. Call under _gate.
     private bool WaitsForEachOther(Entry wanted, Thread current)
     {
         var builder = wanted.Builder;
@@ -116,7 +115,7 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
         if (failures is null)
             return;
         if (failures.Count == 1)
-            System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failures[0]).Throw();     // with its own stack, not the one of this method
+            System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failures[0]).Throw(); // keeps its own stack, not this method's
         throw new AggregateException(failures);
     }
 

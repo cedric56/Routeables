@@ -60,7 +60,7 @@ internal sealed class RouterHistory : IRouterHistory
 
     IHistoryEntry? IRouterHistory.Current => Current;
     IHistoryEntry? IRouterHistory.Root => Root;
-    IReadOnlyList<IHistoryEntry> IRouterHistory.Entries => _entries.ToArray();   // snapshot
+    IReadOnlyList<IHistoryEntry> IRouterHistory.Entries => _entries.ToArray(); // a snapshot
 
     /// <summary>
     /// Pushes a new entry onto the history stack, discarding any forward history and, beyond <see cref="MaxSize"/>, the oldest entry.
@@ -110,7 +110,7 @@ internal sealed class RouterHistory : IRouterHistory
     /// <returns>A list of entries that were removed.</returns>
     public IReadOnlyList<RouterEntry> MoveToRoot()
     {
-        // Nothing after the first entry, and the cursor is on it already.
+        // Nothing after the first entry, and the cursor is already on it.
         if (_entries.Count <= 1)
             return [];
         var removed = _entries.GetRange(1, _entries.Count - 1);
@@ -191,8 +191,8 @@ internal sealed class RouterHistory : IRouterHistory
     /// <summary>
     /// Invokes the <see cref="Changed"/> event.
     /// </summary>
-    // The observers are code of the application (a menu, a tab control, the history keeper): one that throws must not make a route change fail
-    // after the history has already changed, nor hide the observers that come after it. It is reported (RouteableErrors), as for Routing and Routed.
+    // Observers are application code (a menu, a tab control, the history keeper). One that throws must neither make a navigation fail after
+    // the history has changed nor hide the observers after it. The error is reported (RouteableErrors), as for Routing and Routed.
     private void OnChanged()
     {
         if (Changed is not { } handlers) return;

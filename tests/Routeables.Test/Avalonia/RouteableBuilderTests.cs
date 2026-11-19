@@ -8,7 +8,7 @@ using AvaloniaApplication = global::Avalonia.Application;
 
 namespace Routeables.Tests.Avalonia;
 
-// ServiceLocator.Services is one static for the process: the classes that read or set it must not run at the same time.
+// ServiceLocator.Services is a process-wide static: classes that read or set it must not run at the same time.
 [Collection("Avalonia ServiceLocator")]
 public class RouteableBuilderTests
 {

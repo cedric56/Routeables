@@ -102,7 +102,7 @@ public static partial class NativeDialogs
                 alert.AddAction(UIKit.UIAlertAction.Create(closeButtonText, UIKit.UIAlertActionStyle.Default, _ => taskCompletionSource.TrySetResult(closeResult)));
             var rootViewController = KeyWindowController()
                 ?? throw new InvalidOperationException("No window to present the alert; the caller would wait for ever.");
-            // An alert with no button cannot be dismissed: the caller would wait for ever. It gets one that gives the close result.
+            // An alert with no button cannot be dismissed, and the caller would wait forever. Give it one button that returns the close result.
             if (alert.Actions.Length == 0)
                 alert.AddAction(UIKit.UIAlertAction.Create("OK", UIKit.UIAlertActionStyle.Default, _ => taskCompletionSource.TrySetResult(closeResult)));
             rootViewController.PresentViewController(alert, true, null);
@@ -162,7 +162,7 @@ public static partial class NativeDialogs
             while (top?.PresentedViewController is { } presented)
                 top = presented;
 
-            // The sheet was built but never presented, so the caller waited for ever.
+            // The sheet was built but never presented, so the caller waited forever.
             if (top is null)
                 return new(true, closeResult);
 

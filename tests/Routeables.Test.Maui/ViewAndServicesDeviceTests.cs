@@ -28,7 +28,6 @@ public class ViewAndServicesDeviceTests
         protected override void OnUnsubscribe() => Unsubscribed++;
     }
 
-    // ------------------------------------------------------------------------------------------------ RouteableFor
 
     /// <summary>The context is the binding context and the view is not locked by default.</summary>
     [UIFact]
@@ -97,7 +96,6 @@ public class ViewAndServicesDeviceTests
         Assert.Equal(0, view.Subscribed);
     }
 
-    // ------------------------------------------------------------------------------------------------ the converter
 
     /// <summary>RouteableNullConverter is true for null and blank text.</summary>
     [Theory]
@@ -119,7 +117,6 @@ public class ViewAndServicesDeviceTests
     public void RouteableNullConverter_does_not_convert_back()
         => Assert.Same(Binding.DoNothing, new RouteableNullConverter().ConvertBack(true, typeof(string), null, CultureInfo.InvariantCulture));
 
-    // ------------------------------------------------------------------------------------------------ the theme
 
     /// <summary>The theme service sets the theme of the application.</summary>
     [UIFact]
@@ -145,7 +142,6 @@ public class ViewAndServicesDeviceTests
         }
     }
 
-    // ------------------------------------------------------------------------------------------------ the dispatcher
 
     /// <summary>The dispatcher recognizes the UI thread.</summary>
     [UIFact]
@@ -194,7 +190,6 @@ public class ViewAndServicesDeviceTests
         await Assert.ThrowsAsync<InvalidOperationException>(() => Task.Run(() => dispatcher.InvokeAsync(() => throw new InvalidOperationException("boom"))));
     }
 
-    // ------------------------------------------------------------------------------------------------ the services of the application
 
     /// <summary>The application registered the core Routeables services.</summary>
     [UIFact]
@@ -250,7 +245,6 @@ public class ViewAndServicesDeviceTests
         Assert.Contains("nowhere", ex.Message);
     }
 
-    // ------------------------------------------------------------------------------------------------ routing on the platform
 
     /// <summary>Navigating to a route creates the view and assigns its view model.</summary>
     [UIFact]

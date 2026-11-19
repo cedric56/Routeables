@@ -7,7 +7,7 @@ using Avalonia.Threading;
 using Microsoft.UI.Xaml;
 #endif
 
-// One file for every host: the controls of Routeables put what the router tells them on their own thread.
+// Shared source for every host: the Routeables controls apply what the router tells them on their own thread.
 #if WPF
 namespace Routeables.Wpf;
 #elif AVALONIA
@@ -22,8 +22,8 @@ namespace Routeables.Uno;
 
 internal static class RouteableThread
 {
-    // What is queued on the thread of the control has no caller to receive its exception: left alone it ends the application (Avalonia, MAUI, WinUI)
-    // or is lost (WPF). It goes to the error channel of Routeables instead. What runs at once still throws to its caller, which can undo what it started.
+    // Work queued on the control's thread has no caller to receive its exception: left alone, it ends the application (Avalonia, MAUI, WinUI) or is
+    // lost (WPF). It goes to the Routeables error channel instead. Work that runs immediately still throws to its caller, which can undo what it started.
     private static void Deferred(Action action)
     {
         try

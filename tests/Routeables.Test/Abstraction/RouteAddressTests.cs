@@ -94,8 +94,8 @@ public class RouteAddressTests
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
 
-        Assert.False(RouteAddress.SameFor(router, "/ra-items/aB", "/ra-items/Ab"));     // two identifiers
-        Assert.True(RouteAddress.SameFor(router, "/RA-items/ab", "/ra-items/ab"));      // a word that changed its case
+        Assert.False(RouteAddress.SameFor(router, "/ra-items/aB", "/ra-items/Ab")); // two identifiers
+        Assert.True(RouteAddress.SameFor(router, "/RA-items/ab", "/ra-items/ab")); // a word that changed case
         Assert.True(RouteAddress.SameFor(Substitute.For<IRouter>(), "/ra-items/aB", "/ra-items/Ab"));
     }
 
@@ -125,7 +125,7 @@ public class RouteAddressTests
     [Fact]
     public void An_escaped_slash_and_an_escaped_percent_sign_are_two_different_values()
     {
-        // "a%2Fb" is the value a/b, "a%252Fb" the value a%2Fb: the parser reads two values, so they are two addresses.
+        // "a%2Fb" is the value a/b and "a%252Fb" is the value a%2Fb: the parser reads two different values, so these are two addresses.
         Assert.False(RouteAddress.Same("/files/a%2Fb", "/files/a%252Fb"));
         Assert.True(RouteAddress.Same("/files/a%2Fb", "/files/a%2fb"));
         Assert.False(RouteAddress.Same("/files/a%2Fb", "/files/a/b"));
@@ -144,7 +144,7 @@ public class RouteAddressTests
     [Fact]
     public void Empty_segments_do_not_make_another_page()
     {
-        // The parser skips them: "/a//b" is "/a/b".
+        // The parser skips empty segments: "/a//b" is "/a/b".
         Assert.True(RouteAddress.Same("/a//b", "/a/b"));
         Assert.True(RouteAddress.Same("/a/b/", "//a/b"));
         Assert.False(RouteAddress.Same("/a//b", "/a/c"));
@@ -222,7 +222,7 @@ public class RouteAddressTests
     [Fact]
     public void Two_queries_are_the_same_when_their_names_are_escaped_differently()
     {
-        Assert.True(RouteAddress.Same("/a?%7A=1&b=2", "/a?z=1&b=2"));            // z is %7A: the pairs are put in order by what they say
+        Assert.True(RouteAddress.Same("/a?%7A=1&b=2", "/a?z=1&b=2")); // z is %7A: the pairs are ordered by their decoded text
         Assert.True(RouteAddress.Same("/a?b=2&z=1", "/a?%7a=1&b=2"));
         Assert.False(RouteAddress.Same("/a?%7A=1&b=2", "/a?z=2&b=2"));
     }

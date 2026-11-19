@@ -205,7 +205,7 @@ public class RegionDeviceTests
         await Device.Services.GoToAsync("/a");
 
         await Device.UntilAsync(() => first.View.Content is PageAView || second.View.Content is PageAView);
-        // MAUI views can have only one parent, so exactly one region should own this view.
+        // A MAUI view has one parent, so exactly one region may own it.
         Assert.Equal(1, new[] { first.View.Content, second.View.Content }.OfType<PageAView>().Count());
     }
 
@@ -230,7 +230,6 @@ public class RegionDeviceTests
         Assert.DoesNotContain(page, grid.Children);
     }
 
-    // ------------------------------------------------------------------------------------------------ transitions
 
     /// <summary>
     /// Returns the names of all built-in transitions for the parameterized transition tests.

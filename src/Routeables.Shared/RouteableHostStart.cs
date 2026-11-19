@@ -17,8 +17,8 @@ using Routeables.WinUI3.Services;
 using Routeables.Uno.Services;
 #endif
 
-// One file for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui link it (and define WPF, AVALONIA or MAUI),
-// Routeables.Uno and Routeables.WinUI3 link it too. What the extensions of the hosts do the same way when the application starts and when it ends.
+// Shared source for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui (which define WPF, AVALONIA or MAUI), Routeables.Uno and
+// Routeables.WinUI3. It holds what the hosts' extensions do the same way when the application starts and ends.
 #if WPF
 namespace Routeables.Wpf;
 #elif AVALONIA
@@ -55,7 +55,7 @@ internal static class RouteableHostStart
         services.AddSingleton<IRouteableViewBinder, RouteableViewBinder>();
 
         configure?.Invoke(services);
-        // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
+        // Add the routes the generator found, unless the application registered them (or called AddGeneratedRoutes()).
         global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
         var provider = services.BuildRouteableProvider();
         ServiceLocator.Services = provider;
@@ -80,7 +80,7 @@ internal static class RouteableHostStart
         ArgumentNullException.ThrowIfNull(services);
 
 #if !WPF && !AVALONIA
-        // The dialogs of the platform follow the activity in front (Android, Uno): started before the first one.
+        // The platform dialogs follow the activity in front (Android, Uno): start this before the first one.
         Routeables.Native.NativeDialogs.Initialize();
 #endif
 

@@ -28,8 +28,8 @@ public interface IRouteableLockBroker
 
 internal class RouteableLockBroker : IRouteableLockBroker
 {
-    // Copy-on-write: a publication reads an immutable snapshot and calls the subscribers outside the lock,
-    // so a subscriber can subscribe, dispose or publish again without deadlocking.
+    // Copy on write: a publication reads an immutable snapshot and calls the subscribers outside the lock, so a subscriber can subscribe,
+    // dispose or publish again without deadlocking.
     private readonly object _gate = new();
     private readonly Dictionary<string, Subscription[]> _subscriptions = [];
 
@@ -47,7 +47,7 @@ internal class RouteableLockBroker : IRouteableLockBroker
         List<Exception>? errors = null;
         foreach (var subscription in snapshot)
         {
-            // One disposed while this message was on its way is not called.
+            // A subscriber disposed while this message was on its way is not called.
             if (subscription.IsDisposed)
                 continue;
 

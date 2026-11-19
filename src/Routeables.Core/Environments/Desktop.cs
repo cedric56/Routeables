@@ -72,14 +72,14 @@ internal class DesktopImplementation : IDesktop
     /// <returns><see langword="true"/> if running under WSL; otherwise, <see langword="false"/>.</returns>
     private static bool IsWsl()
     {
-        // Fast check: Environment variable automatically injected by WSL
+        // Fast check: an environment variable that WSL injects.
         if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WSL_DISTRO_NAME")) ||
             !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WSL_INTEROP")))
         {
             return true;
         }
 
-        // Fallback check: Read Linux kernel OS release info
+        // Fallback check: the Linux kernel's OS release information.
         try
         {
             if (File.Exists("/proc/sys/kernel/osrelease"))
@@ -94,7 +94,7 @@ internal class DesktopImplementation : IDesktop
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            // The file cannot be read: it is not WSL (anything else is a bug and goes up).
+            // The file cannot be read: this is not WSL (anything else is a bug and propagates).
         }
 
         return false;

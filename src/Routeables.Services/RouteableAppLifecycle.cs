@@ -49,7 +49,7 @@ public sealed class RouteableAppLifecycle(IServiceProvider provider)
 
         foreach (var router in routers)
         {
-            // The page and its view model both may care; a page that throws must not stop the others being told.
+            // Both the page and its view model may care; a page that throws must not stop the others being told.
             foreach (var shown in new[] { router.CurrentViewModel, router.CurrentView })
             {
                 if (shown is not IRouteableAppLifecycle target) continue;

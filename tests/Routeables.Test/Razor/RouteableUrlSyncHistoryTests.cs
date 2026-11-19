@@ -186,14 +186,14 @@ public class RouteableUrlSyncHistoryTests
         using var f = new Fixture();
         await f.Sync.StartAsync();
         await f.GoAsync("/home", "/home");
-        await f.GoAsync("/detail/1", "/detail/{id:int}");     // a push: a new browser entry
+        await f.GoAsync("/detail/1", "/detail/{id:int}");
         f.Navigation.Calls.Clear();
 
         await f.Router.GoBackAsync(TestContext.Current.CancellationToken);
         await Fixture.Until(() => f.Scripts.Moves.Count == 1);
 
         Assert.Equal(-1, f.Scripts.Moves[0]);
-        Assert.Empty(f.Navigation.Calls);                       // the address is not replaced: the browser moved itself
+        Assert.Empty(f.Navigation.Calls);
     }
 
     [Fact]
@@ -275,7 +275,7 @@ public class RouteableUrlSyncHistoryTests
 
         Assert.True(await f.Navigation.ClickAsync("/home"));        // the browser pushed an entry for the link
 
-        Assert.Equal(before + 1, f.Router.History.Count);            // the router pushed too: it did not go back
+        Assert.Equal(before + 1, f.Router.History.Count);
         Assert.Equal(before, f.Router.History.CurrentIndex);
         Assert.IsType<HomeVm>(f.Router.CurrentViewModel);
 
@@ -300,7 +300,7 @@ public class RouteableUrlSyncHistoryTests
         await f.GoAsync("/detail/1", "/detail/{id:int}");                  // the application routes elsewhere: the router replaces the first
         await slow;
 
-        Assert.Empty(f.Errors.Reported);                                    // the cancellation of the replaced one is not reported as a fault
+        Assert.Empty(f.Errors.Reported);
         Assert.IsType<DetailVm>(f.Router.CurrentViewModel);
     }
 
@@ -360,7 +360,7 @@ public class RouteableUrlSyncHistoryTests
         await Fixture.Until(() => f.Router.CurrentViewModel is NamedVm);
 
         Assert.Equal("Afghan Hound", ((NamedVm)f.Router.CurrentViewModel!).Name);
-        Assert.Equal(entries, f.Router.History.Entries.Count);  // moved forward: no new entry was pushed
+        Assert.Equal(entries, f.Router.History.Entries.Count);
     }
 
     [Fact]

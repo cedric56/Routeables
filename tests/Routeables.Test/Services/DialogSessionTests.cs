@@ -14,7 +14,6 @@ public class DialogSessionTests
         public void Execute(object? parameter) => log.Add("command:" + parameter);
     }
 
-    // ----- content dialog
 
     [Fact]
     public void Content_buttons_follow_the_order_primary_secondary_close_and_skip_the_ones_without_text()
@@ -187,7 +186,6 @@ public class DialogSessionTests
         Assert.Equal(["opening"], log);
     }
 
-    // ----- task dialog
 
     [Fact]
     public void A_task_dialog_without_results_offers_Close_and_skips_None()

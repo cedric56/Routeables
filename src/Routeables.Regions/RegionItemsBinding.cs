@@ -39,7 +39,7 @@ public sealed class RegionItemsBinding : IDisposable
         }
         catch
         {
-            Dispose();      // the constructor fails: nobody has the binding to dispose
+            Dispose(); // the constructor failed: nobody has the binding to dispose
             throw;
         }
     }
@@ -65,7 +65,7 @@ public sealed class RegionItemsBinding : IDisposable
         }
         catch
         {
-            // Views that could not be shown are not shown: the next Refresh, even for the same views, tries again.
+            // Views that could not be shown are not recorded as shown: the next Refresh, even for the same views, tries again.
             lock (_lock)
             {
                 if (ReferenceEquals(_shown, views))

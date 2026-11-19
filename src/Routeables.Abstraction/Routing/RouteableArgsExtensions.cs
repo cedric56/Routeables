@@ -25,10 +25,9 @@ public static class RouteableArgsExtensions
         };
     }
 
-    // The value named name, or null when there is none.
     private static object? Named(IRouteableArgs args, string name)
     {
-        // The name as written first; else without the case (a query is read without it: "?Ref=mail" is the value "ref").
+        // The name as written first, else ignoring case (a query is read ignoring case: "?Ref=mail" is the value "ref").
         var matches = args.Values.Where(e => e.name == name).ToList();
         if (matches.Count == 0)
             matches = args.Values.Where(e => string.Equals(e.name, name, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -77,7 +76,6 @@ public static class RouteableArgsExtensions
         };
     }
 
-    // ------------------------------------------------------------------ typed keys
 
     /// <summary>Adds a neutral value under a typed key: the type of the value is checked when it is written.</summary>
     public static IRouteableArgs WithValue<T>(this IRouteableArgs args, RouteableKey<T> key, T value)

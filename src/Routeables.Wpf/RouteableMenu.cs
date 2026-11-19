@@ -32,7 +32,7 @@ public class RouteableMenu : ListBox
         texts.AppendChild(name);
         texts.AppendChild(description);
 
-        // Icon is a default member of the interface, which WPF does not see on the class: a converter reads it from the entry.
+        // Icon is a default interface member, which WPF does not see on the class, so a converter reads it from the entry.
         var icon = new FrameworkElementFactory(typeof(ContentControl));
         icon.SetBinding(ContentControl.ContentProperty, new Binding { Converter = new IconConverter() });
         icon.SetValue(FontSizeProperty, 20.0);
@@ -46,16 +46,16 @@ public class RouteableMenu : ListBox
 
         ItemTemplate = new DataTemplate { VisualTree = row };
 
-        // The Fluent theme (Application.ThemeMode) styles the controls by their exact type: a class derived from ListBox does not get
-        // its style, and the menu stayed white (the colours of the classic theme) whatever the theme. The style of ListBox and of
-        // ListBoxItem is taken from the resources, so that it follows the theme when it changes. Without a theme style, the default stays.
+        // The Fluent theme (Application.ThemeMode) styles controls by their exact type: a class derived from ListBox does not get its style, and the
+        // menu stayed white (the classic theme's colours) whatever the theme. Take the ListBox and ListBoxItem styles from the resources, so the menu
+        // follows the theme when it changes. Without a theme style, the default stays.
         SetResourceReference(StyleProperty, typeof(ListBox));
 
         // The entries are disabled while a page locks the menu.
         var item = new Style(typeof(ListBoxItem)) { BasedOn = Application.Current?.TryFindResource(typeof(ListBoxItem)) as Style };
         item.Setters.Add(new Setter(PaddingProperty, new Thickness(10)));
-        // The Fluent style reads these two from the list through a binding that finds no list while the item is being created
-        // (a Data Error 4 in the output): they are given here.
+        // The Fluent style reads these two from the list through a binding that finds no list while the item is being created (a Data Error 4 in
+        // the output), so they are given here.
         item.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
         item.Setters.Add(new Setter(VerticalContentAlignmentProperty, VerticalAlignment.Center));
         item.Setters.Add(new Setter(IsEnabledProperty, new Binding(nameof(IRouteableMenuEntry.IsLock)) { Converter = new NotConverter() }));
@@ -71,7 +71,7 @@ internal sealed class NotConverter : IValueConverter
     public object ConvertBack(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture) => value is not true;
 }
 
-// HasDescription is a default member of the interface, which WPF does not see on the class: the text itself decides.
+// HasDescription is a default interface member, which WPF does not see on the class, so the text itself decides.
 internal sealed class TextToVisibilityConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)

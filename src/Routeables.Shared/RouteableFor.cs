@@ -1,4 +1,4 @@
-// Uno is what is left when no other host is named: the Routeables.Uno project links this file without defining a symbol.
+// Uno is what is left when no other host is defined: Routeables.Uno links this file without defining a symbol.
 #if !WPF && !AVALONIA && !MAUI && !WINUI3
 #define ROUTEABLE_UNO
 #endif
@@ -19,8 +19,7 @@ using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Routing;
 using Routeables.Services;
 
-// One file for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui link it (and define WPF, AVALONIA or MAUI),
-// Routeables.Uno and Routeables.WinUI3 link it too.
+// Shared source for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui (which define WPF, AVALONIA or MAUI), Routeables.Uno and Routeables.WinUI3.
 #if WPF
 namespace Routeables.Wpf;
 #elif AVALONIA
@@ -129,7 +128,7 @@ public partial class RouteableFor : UserControl, IRouteableFor, IRouteable, IDis
     /// <summary>The view model: the <c>DataContext</c> of the view.</summary>
 #endif
 #if ANDROID && ROUTEABLE_UNO
-    // A native Android view already has a Context (the Android one): this one is the view model.
+    // A native Android view already has a Context (the Android one), so this one is the view model.
     public new object? Context
 #else
     public object? Context
@@ -189,7 +188,7 @@ public partial class RouteableFor : UserControl, IRouteableFor, IRouteable, IDis
     public virtual Task InitializeAsync(IRouteableArgs args, CancellationToken ct = default)
     {
         Subscribe();
-        // Initialize runs again when a cached view is shown again: one subscription, not one more each time.
+        // Initialize runs again when a cached view is shown again: keep one subscription, not one more each time.
 #if AVALONIA
         Lock.Follow(Context);
 #else
@@ -213,7 +212,7 @@ public partial class RouteableFor : UserControl, IRouteableFor, IRouteable, IDis
         Unsubscribe();
         _lock?.Dispose();
 #if !ANDROID && !IOS
-        // Not on a native platform: disposing a native control by hand can crash (Uno0002); its owner releases it.
+        // Not on a native platform: disposing a native control by hand can crash (Uno0002), and its owner releases it.
         base.Dispose();
 #endif
     }

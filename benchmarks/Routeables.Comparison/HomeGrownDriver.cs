@@ -32,7 +32,7 @@ public sealed class HomeGrownDriver : INavigationDriver
         {
             var name = $"P{n:00}";
             if (n is >= 30 and <= 34)
-                _routes[name] = _ => { var clock = _provider.GetRequiredService<IClock>(); return new Page(name) { Clock = clock }; };   // a page with a dependency
+                _routes[name] = _ => { var clock = _provider.GetRequiredService<IClock>(); return new Page(name) { Clock = clock }; }; // a page with a dependency
             else
                 _routes[name] = _ => new Page(name);
         }

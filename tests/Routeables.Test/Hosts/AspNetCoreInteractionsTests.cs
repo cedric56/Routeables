@@ -13,7 +13,6 @@ public class AspNetCoreInteractionsTests
         return condition();
     }
 
-    // ---------------------------------------------------------------- RouteableInteractions: dialogs
 
     [Fact]
     public async Task A_dialog_waits_until_it_is_answered_and_then_leaves_the_page()
@@ -72,7 +71,6 @@ public class AspNetCoreInteractionsTests
         Assert.Null(interactions.Pending);
     }
 
-    // ---------------------------------------------------------------- RouteableInteractions: running an action
 
     [Fact]
     public async Task An_action_that_asks_a_dialog_returns_when_it_asks_and_goes_on_with_the_answer()
@@ -233,7 +231,6 @@ public class AspNetCoreInteractionsTests
         Assert.Equal("after the answer", failure.Message);
     }
 
-    // ---------------------------------------------------------------- RouteableInteractions: notifications
 
     [Fact]
     public void A_notification_stays_until_it_is_closed_and_tells_what_was_done_with_it()
@@ -296,7 +293,6 @@ public class AspNetCoreInteractionsTests
         Assert.Equal(1, closed);
     }
 
-    // ---------------------------------------------------------------- the services
 
     private static (RouteableDialogService Service, RouteableInteractions Interactions) Dialogs()
     {

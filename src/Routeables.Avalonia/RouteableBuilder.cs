@@ -62,7 +62,7 @@ public static class RouteableBuilder
             services.RegisterMenuViewModel<TMenu>();
             services.UseRouteablesServices();
             configure?.Invoke(services);
-            // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
+            // Add the routes the generator found, unless the application registered them (or called AddGeneratedRoutes()).
             global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
         }, afterBuild);
         return Attach(builder, provider, onDispose, view);
@@ -161,12 +161,12 @@ public static class RouteableBuilder
                     + ": a desktop needs a Window, a single-view platform needs a control.");
         }
 
-        // The Back request of the system goes back one page of the router.
+        // The system's Back request goes back one page of the router.
         BackRequests.Attach(view, provider);
     }
 
-    // The lifetime is set by the code that starts the application: when it is already there the view is shown now, which is
-    // before OnFrameworkInitializationCompleted; when it is not, the view is shown as soon as the application runs.
+    // The code that starts the application sets the lifetime. When it is already there, the view is shown now, before
+    // OnFrameworkInitializationCompleted; when it is not, the view is shown as soon as the application runs.
     private static void OpenWhenKnown(Application app, Func<IApplicationLifetime?, Control> view)
     {
         void Open() => app.OpenMainView(view(app.ApplicationLifetime));
@@ -207,7 +207,7 @@ public static class RouteableBuilder
                         {
                             topLevel?.Closed -= OnClosed;
 
-                            // The application leaving: the pages are told, and the history is saved with what they wrote.
+                            // The application is leaving: tell the pages, and save the history with what they wrote.
                             provider.GetService<RouteableAppLifecycle>()?.SleepNow();
 
                             RouteableHostLifecycle.RunOnDispose(provider, onDispose, typeof(RouteableBuilder));

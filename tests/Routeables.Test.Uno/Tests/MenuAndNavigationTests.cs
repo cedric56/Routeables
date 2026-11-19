@@ -108,7 +108,6 @@ public class MenuAndNavigationTests
     /// <summary>Finds the single <see cref="TextBlock"/> whose text equals <paramref name="text"/>.</summary>
     private static TextBlock TextOf(DependencyObject root, string text) => Descendants(root).OfType<TextBlock>().Single(t => t.Text == text);
 
-    // ------------------------------------------------------------------------------------------------ RouteableMenuItem
 
     /// <summary>An item shows the name and the description of its entry.</summary>
     [TestMethod]
@@ -200,7 +199,6 @@ public class MenuAndNavigationTests
         finally { await TestHost.UnloadAsync(item); }
     }
 
-    // ------------------------------------------------------------------------------------------------ RouteableListView
 
     /// <summary>The list shows one item for each entry of the menu it is given.</summary>
     [TestMethod]
@@ -254,7 +252,6 @@ public class MenuAndNavigationTests
         finally { await TestHost.UnloadAsync(list); }
     }
 
-    // ------------------------------------------------------------------------------------------------ RouteableNavigation
 
     /// <summary>Builds a <see cref="NavigationView"/> with a header and two routed items (A and B).</summary>
     private static NavigationView Navigation()

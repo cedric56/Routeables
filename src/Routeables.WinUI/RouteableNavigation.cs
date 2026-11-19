@@ -45,10 +45,10 @@ public static class RouteableNavigation
         var shared = new RouteableRegion { Region = region, Services = provider };
         view.Content = shared;
 
-        // An item with a region of its own shows a host of that region, which keeps its pile of pages while another item is selected.
+        // An item with a region of its own shows a host of that region, which keeps its stack of pages while another item is selected.
         var hosts = new Dictionary<string, RouteableRegion>(StringComparer.Ordinal);
 
-        // The item is shown: its host in the content, and its route, the first time for an item with a region of its own.
+        // The item is shown: its host in the content, and its route (the first time only, for an item with a region of its own).
         void Open(NavigationViewItem item)
         {
             if (RouteableItem.GetRoute(item) is not { } route)
@@ -72,7 +72,7 @@ public static class RouteableNavigation
             }
             catch (InvalidOperationException ex)
             {
-                RouteableErrors.Report(provider, ex, typeof(RouteableNavigation), own);   // a region that is not registered: AddRegion
+                RouteableErrors.Report(provider, ex, typeof(RouteableNavigation), own); // a region that is not registered: AddRegion
             }
         }
 
@@ -82,10 +82,10 @@ public static class RouteableNavigation
                 Open(item);
         }
 
-        // The router holds its gate while it signals: the item is selected after, and does not route again (the route is the current one).
+        // The router holds its gate while it signals, so the item is selected afterwards and does not route again (the route is already the current one).
         void OnChanged(object? sender, EventArgs e) => view.DispatcherQueue.TryEnqueue(() =>
         {
-            // The router of the view follows the items that share it; an item with a region of its own is selected by the user only.
+            // The view's router follows the items that share it; an item with a region of its own is selected by the user only.
             var item = items.FirstOrDefault(item => RouteableItem.GetRegion(item) is not { Length: > 0 } && RouteTarget.IsCurrent(router, RouteableItem.GetRoute(item)));
             if (item is not null && !ReferenceEquals(item, view.SelectedItem))
                 view.SelectedItem = item;
@@ -94,7 +94,7 @@ public static class RouteableNavigation
         view.SelectionChanged += OnSelectionChanged;
         router.History.Changed += OnChanged;
 
-        // The item that is selected now shows its route; without one, the first.
+        // The item selected now shows its route; without one, the first item.
         view.DispatcherQueue.TryEnqueue(() =>
         {
             if (view.SelectedItem is null && items.Count > 0)

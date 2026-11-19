@@ -97,7 +97,6 @@ public class DialogContentsDeviceTests
     /// <summary>Presses the button by hand: the click is sent to the control, no finger is needed.</summary>
     private static void Tap(Button button) => ((IButton)button).Clicked();
 
-    // ------------------------------------------------------------------------------------------------ content dialogs
 
     /// <summary>A content dialog shows the title it was given, and its text as a body.</summary>
     [UIFact]
@@ -182,7 +181,7 @@ public class DialogContentsDeviceTests
         Assert.True(ButtonOf(content, "Cancel").IsEnabled);
     }
 
-    // A button is drawn once: it is enabled when its command can execute at the moment the dialog opens.
+    // A button is drawn once: it is enabled if its command can execute when the dialog opens.
     /// <summary>A button whose command can execute as the dialog opens is enabled.</summary>
     [UIFact]
     public void A_button_is_enabled_when_its_command_can_execute_as_the_dialog_opens()
@@ -229,7 +228,6 @@ public class DialogContentsDeviceTests
         Assert.Throws<ArgumentNullException>(() => RouteableDialogContents.ForTaskDialog(new RouteableTaskDialog(), null!));
     }
 
-    // ------------------------------------------------------------------------------------------------ task dialogs
 
     /// <summary>The content of the task dialog of the test, with its session given back to the caller.</summary>
     private static Border TaskContent(RouteableTaskDialog parameters, out RouteableTaskDialogSession session, params RouteableTaskDialogResult[] results)
@@ -343,7 +341,6 @@ public class DialogContentsDeviceTests
         Assert.DoesNotContain("The details", Texts(content));
     }
 
-    // ------------------------------------------------------------------------------------------------ modals
 
     /// <summary>A modal shows its title, its view, and its first three commands as buttons; the rest is ignored.</summary>
     [UIFact]
@@ -376,7 +373,6 @@ public class DialogContentsDeviceTests
         Assert.Empty(Buttons(RouteableDialogContents.ForModal(none, new Label())));
     }
 
-    // ------------------------------------------------------------------------------------------------ the look
 
     /// <summary>The radius of the corners is the one of the platform: rounder on Android, softer on Apple, square on the desktop.</summary>
     [UIFact]

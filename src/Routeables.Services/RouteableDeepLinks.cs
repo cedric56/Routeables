@@ -48,17 +48,16 @@ public static class RouteableDeepLinks
         if (uri is null || !uri.IsAbsoluteUri)
             return false;
 
-        // An address comes from outside the application (a message, a web page, another app): a huge one is refused before its path is read.
+        // An address comes from outside the application (a message, a web page, another app): refuse a huge one before reading its path.
         if (uri.OriginalString.Length > MaxLength)
             return false;
 
-        // An address with a user name or a password is not a link to a page: it would be copied into the route, and from there into the logs
-        // and the messages of the errors.
+        // An address with a user name or password is not a link to a page: it would be copied into the route, and from there into logs and error messages.
         if (!string.IsNullOrEmpty(uri.UserInfo))
             return false;
 
-        // The schemes are the ones the application owns, and are given: with none, any scheme would do (file:, content:, the protocol of
-        // another application), and the address would be followed as if the application had asked for it. Only the web is left, below.
+        // The schemes are the ones the application owns, and must be given: with none, any scheme would do (file:, content:, another application's
+        // protocol) and the address would be followed as if the application had asked for it. Only the web is left, below.
         var isWeb = uri.Scheme is "http" or "https";
         if (schemes is { Count: > 0 })
         {
@@ -70,8 +69,8 @@ public static class RouteableDeepLinks
             return false;
         }
 
-        // The host of a web address is not part of the route: without the hosts that are the application's own, any web page or message
-        // could send the address of another site and open a page of the application.
+        // The host of a web address is not part of the route. Without the application's own hosts, any web page or message could send the address of
+        // another site and open a page of the application.
         if (isWeb && (hosts is not { Count: > 0 } || !hosts.Contains(uri.Host, StringComparer.OrdinalIgnoreCase)))
             return false;
 
@@ -88,8 +87,8 @@ public static class RouteableDeepLinks
         return true;
     }
 
-    // "myapp://Orders/42": what follows "//" as it was written. The Uri calls the first segment a host and changes it (lower case, the port
-    // and the user name taken out), which would change a value such as the SKU12 of myapp://SKU12/details.
+    // "myapp://Orders/42": take what follows "//" as written. Uri calls the first segment a host and changes it (lower case, port and user name
+    // removed), which would alter a value such as the SKU12 in myapp://SKU12/details.
     private static string AfterTheScheme(Uri uri)
     {
         var text = uri.OriginalString;
@@ -128,7 +127,7 @@ public static class RouteableDeepLinks
         var router = provider.GetRequiredService<IRouter>();
         var result = await router.GoToAsync(route, null, null, cancellationToken);
 
-        // The menu shows what the router shows: it is told, as it is when its own selection changes the page.
+        // The menu shows what the router shows, so tell it, as when its own selection changes the page.
         if (result.Success)
             RouteableMenu.Moved(provider, router);
 

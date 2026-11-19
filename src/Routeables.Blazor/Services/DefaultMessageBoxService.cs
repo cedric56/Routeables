@@ -33,7 +33,7 @@ public sealed class DefaultMessageBoxService : IMessageBoxService
         for (var i = 0; i < words.Count; i++)
             drawn[words.Count - 1 - i] = new DialogButton(Label(words[i]), i, IsPrimary: i == 0);
 
-        // Escape or a click on the backdrop answers with the last button: Cancel, Abort or No, and the only button of an information.
+        // Escape or a click on the backdrop answers with the last button: Cancel, Abort or No, and the only button of an information message.
         return _messages.ShowAsync(title, message, words.Count - 1, drawn);
     }
 

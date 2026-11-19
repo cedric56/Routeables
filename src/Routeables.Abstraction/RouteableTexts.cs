@@ -41,7 +41,7 @@ public static class RouteableTexts
         try { translated = _buttonTranslator?.Invoke(word); }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            // A translator that fails must not take the dialog down: the word is shown.
+            // A translator that fails must not take the dialog down: show the word as it is.
             System.Diagnostics.Trace.TraceWarning($"Routeables: RouteableTexts.ButtonTranslator({word}): {ex.Message}");
         }
 

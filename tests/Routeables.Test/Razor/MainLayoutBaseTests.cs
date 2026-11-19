@@ -177,7 +177,6 @@ public class MainLayoutBaseTests
         return entry;
     }
 
-    // ------------------------------------------------------------------------------------------------ the first render
 
     [Fact]
     public async Task The_first_render_starts_Routeables_for_the_circuit_once()
@@ -256,7 +255,6 @@ public class MainLayoutBaseTests
         Assert.Same(chosen, f.Menu.SelectedEntry);
     }
 
-    // ------------------------------------------------------------------------------------------------ title, menu, theme
 
     [Fact]
     public async Task The_title_is_Application_until_a_view_comes()

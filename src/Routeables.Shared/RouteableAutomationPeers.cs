@@ -15,8 +15,8 @@ using RegionItemsPeerBase = Microsoft.UI.Xaml.Automation.Peers.FrameworkElementA
 using ForPeerBase = Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer;
 #endif
 
-// One file for every host with automation peers: Routeables.Wpf and Routeables.Avalonia link it (and define WPF or AVALONIA), Routeables.Uno and
-// Routeables.WinUI3 link it too: the peers say the same, only their base class differs. The item of the menu is for the hosts that have one (Uno, WinUI 3).
+// Shared source for every host with automation peers: Routeables.Wpf and Routeables.Avalonia (which define WPF or AVALONIA), Routeables.Uno and
+// Routeables.WinUI3. The peers say the same thing; only the base class differs. The menu item peer is for hosts that have one (Uno, WinUI 3).
 #if AVALONIA
 namespace Routeables.Avalonia.Automation;
 #elif WPF
@@ -27,8 +27,8 @@ namespace Routeables.WinUI3.Automation;
 namespace Routeables.Uno.Automation;
 #endif
 
-// What a screen reader and a UI test see of the controls of Routeables: a group per region and per view, named after what they show, with a stable automation id
-// (the one the author gave wins). The content of each control is still its own: only the role, the name and the id are added.
+// What a screen reader or a UI test sees of the Routeables controls: a group per region and per view, named after what it shows, with a stable
+// automation id (the author's own id wins). Each control keeps its own content: only the role, the name and the id are added.
 internal static class PeerNames
 {
     /// <summary>The name of the view model a <c>RouteableFor&lt;TViewModel&gt;</c> is for, without the suffix: <c>HelloViewModel</c> gives <c>Hello</c>.</summary>

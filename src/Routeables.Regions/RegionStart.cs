@@ -57,7 +57,7 @@ public static class RegionStart
 
             Run(provider, router, name, chosen);
         }
-        catch (Exception ex)    // raised from an event: it must not end the application
+        catch (Exception ex) // raised from an event: it must not end the application
         {
             RouteableErrors.Report(provider, ex, typeof(RegionStart));
         }

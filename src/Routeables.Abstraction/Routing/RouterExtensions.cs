@@ -28,7 +28,7 @@ public static class RouterExtensions
         if (string.IsNullOrWhiteSpace(region))
             return provider.GetRequiredService<IRouter>();
 
-        // The container's own message does not say which key is missing: name the region and how to register it.
+        // The container's own message does not say which key is missing: name the region and say how to register it.
         return provider.GetKeyedService<IRouter>(region)
             ?? throw new InvalidOperationException(
                 $"No region named '{region}' is registered. Register it with services.AddRegion(\"{region}\"), or use a region name that is registered.");

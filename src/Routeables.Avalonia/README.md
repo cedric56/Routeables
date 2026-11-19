@@ -65,7 +65,7 @@ AppBuilder.Configure<App>()
     .UsePlatformDetect();
 ```
 
-`UseRouteablesServices(icon: ...)` is only for a dialog icon other than the one of the main window.
+`UseRouteablesServices(icon: ...)` is only for a dialog icon other than the main window's.
 
 - Dialogs, content dialogs, task dialogs and notifications, through `IMessageBoxService` (`DefaultMessageBoxService`): modal windows on desktop, an overlay on single-view platforms (Android, iOS, browser).
 - `DialogView<TViewModel, TResult>`: the base of a modal view backed by a closeable view model.

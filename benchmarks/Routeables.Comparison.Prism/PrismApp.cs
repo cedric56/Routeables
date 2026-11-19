@@ -79,7 +79,7 @@ public sealed class PrismBenchApp : PrismApplication
     public override void Initialize()
     {
         Styles.Add(new FluentTheme());
-        base.Initialize();   // starts Prism: required
+        base.Initialize();
     }
 
     protected override void RegisterTypes(IContainerRegistry containerRegistry)

@@ -10,8 +10,8 @@ public sealed class PersistBag
 {
     private readonly IDictionary<string, string>? _write;
     private readonly IReadOnlyDictionary<string, string>? _read;
-    // Set for one Save or one Load, which go from the most derived class to its bases: the names of the classes done are taken, and a property of a base class
-    // that one of them hides (same name, "new") neither writes over its value nor reads it. Within one class a name can be asked as often as it is.
+    // Set for one Save or one Load, which go from the most derived class to its bases. The names of the classes already done are taken, so a
+    // base-class property hidden by one of them (same name, "new") neither overwrites its value nor reads it. Within one class a name can be asked for repeatedly.
     private readonly HashSet<string>? _taken;
     private readonly HashSet<string>? _current;
 
@@ -72,10 +72,10 @@ public sealed class PersistBag
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            // best effort: the value is left out
+            // Best effort: leave the value out.
         }
 
-        // Nothing is written: what an earlier save left under this name is not the value of the property any more, and must not come back.
+        // Write nothing: what an earlier save left under this name is no longer the property's value and must not come back.
         try { _write.Remove(RouteablePersistence.KeyPrefix + name); }
         catch (Exception ex) when (ex is not OutOfMemoryException) { }
         return false;
@@ -96,7 +96,7 @@ public sealed class PersistBag
         try
         {
             if (stored[0] == 'n')
-                return default(T) is null;   // null is a value only for a type that can hold it
+                return default(T) is null; // null is a value only for a type that can hold it
 
             if (stored[0] == 'v' && PersistCodec.TryRead<T>(stored.AsSpan(1).ToString(), converter, out var read))
             {
@@ -106,7 +106,7 @@ public sealed class PersistBag
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            // best effort: the property keeps its value
+            // Best effort: the property keeps its value.
         }
 
         return false;
@@ -148,8 +148,8 @@ internal static class PersistCodec
             return own is not null;
         }
 
-        // The type the property declares decides, as for the read (a converter of Dog on a property of Animal is not found by the read, so it is not used to write);
-        // a converter of DateTime? and one of DateTime are both the one of a DateTime? property.
+        // The declared property type decides, as for reading (a converter of Dog on a property of Animal is not found when reading, so it is not
+        // used when writing). A converter of DateTime? and one of DateTime both serve a DateTime? property.
         if (!Converters.IsEmpty && (Converters.TryGetValue(typeof(T), out var adapter) || (Nullable.GetUnderlyingType(typeof(T)) is { } inner && Converters.TryGetValue(inner, out adapter))))
         {
             var written = adapter.Write(value!);
@@ -157,7 +157,7 @@ internal static class PersistCodec
             return written is not null;
         }
 
-        // The read gives back the type the property declares: a value of another type (an int in a property of type object) would be written and never read.
+        // Reading gives back the declared property type: a value of another type (an int in a property of type object) would be written and never read.
         if (value!.GetType() != (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)))
         {
             text = "";
@@ -176,7 +176,7 @@ internal static class PersistCodec
             case DateOnly d: text = d.ToString("O", inv); return true;
             case TimeOnly t: text = t.ToString("O", inv); return true;
             case Enum e:
-                // A number that names no member comes back as nothing (see the read): it is not written.
+                // A number that names no member reads back as nothing (see the read side), so it is not written.
                 if (!IsKnown(e.GetType(), e)) { text = ""; return false; }
                 text = e.ToString();
                 return true;
@@ -189,7 +189,7 @@ internal static class PersistCodec
         return false;
     }
 
-    // A named member, or (for [Flags]) a combination of named members; a bare number that names nothing is refused.
+    // A named member or, for [Flags], a combination of named members; a bare number that names nothing is rejected.
     private static bool IsKnown(Type type, object value)
     {
         if (Enum.IsDefined(type, value))

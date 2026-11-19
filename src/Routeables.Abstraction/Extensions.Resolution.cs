@@ -9,8 +9,8 @@ namespace Routeables.Abstraction;
 /// <summary>Resolution of views, view models and modals from the container.</summary>
 public static partial class Extensions
 {
-    // Weak tracking is for what nobody owns (transient pages). A singleton or scoped page belongs to its cache, which
-    // disposes it: tracking it too would dispose it twice.
+    // Weak tracking is for objects nobody owns (transient pages). A singleton or scoped page belongs to its cache, which disposes it, so
+    // tracking it as well would dispose it twice.
     private static void TrackUnlessCached(this IServiceProvider provider, object? instance)
     {
         if (instance is null) return;
@@ -40,8 +40,8 @@ public static partial class Extensions
         return null;
     }
 
-    // The factory of a view or view model: the one of the container, or else the one of a module loaded while running, which is built
-    // with the services of the module on top of the application's.
+    // The factory of a view or view model: the container's, or else that of a module loaded at run time, which is built with the module's
+    // services on top of the application's.
     private static Func<IServiceProvider, IRouteableArgs, object>? FindFactory(this IServiceProvider provider, object key, out IServiceProvider factoryProvider)
     {
         var factory = provider.GetKeyedService<Func<IServiceProvider, IRouteableArgs, object>>(key);
@@ -85,7 +85,6 @@ public static partial class Extensions
             var instance = factory(factoryProvider, args ?? provider.GetRequiredService<IRouteableArgsFactory>().New())
             ?? throw new InvalidOperationException($"Unable to create view for {key}. Ensure that it is registered with the service provider.");
 
-            // Track with weak reference
             provider.TrackUnlessCached(instance);
 
             return instance;
@@ -136,7 +135,7 @@ public static partial class Extensions
     {
         var view = provider.GetView(route ?? RouteableKeys.GetKeys(typeof(TViewModel)).viewKey, args);
 
-        // The closed interface is the whole check: a view whose result type is another one is not this modal.
+        // The closed interface is the whole check: a view whose result type differs is not this modal.
         return view as IRouteableModalFor<TViewModel, TResult>
             ?? throw new InvalidOperationException(
                 $"The view associated with the view model {typeof(TViewModel).Name} ({view?.GetType().Name ?? "none"}) is not a " +

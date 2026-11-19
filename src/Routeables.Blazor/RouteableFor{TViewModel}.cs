@@ -89,7 +89,7 @@ public partial class RouteableFor<[DynamicallyAccessedMembers(DynamicallyAccesse
     {
         var vm = (TViewModel?)Context;
         if (ReferenceEquals(vm, _subscribed))
-            return;   // same VM: nothing to do
+            return; // same view model: nothing to do
 
         Unsubscribe();
         _subscribed = vm;
@@ -107,8 +107,8 @@ public partial class RouteableFor<[DynamicallyAccessedMembers(DynamicallyAccesse
     /// </summary>
     private async void OnLockChanged(object? sender, EventArgs e)
     {
-        // An event handler (async void): an exception here would reach the circuit. The component may have been removed
-        // between the event and the render, which is not an error.
+        // An event handler (async void): an exception here would reach the circuit. The component may have been removed between the event and the
+        // render, which is not an error.
         try { await InvokeAsync(StateHasChanged); }
         catch (ObjectDisposedException) { }
         catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(RouteableFor<TView, TViewModel>)); }
@@ -148,7 +148,7 @@ public partial class RouteableFor<[DynamicallyAccessedMembers(DynamicallyAccesse
     /// </summary>
     public void Dispose()
     {
-        ComponentActivator?.Withdraw(this);   // a view that never reached the screen must not wait for a component that will not come
+        ComponentActivator?.Withdraw(this); // a view that never reached the screen must not wait for a component that will not come
         Unsubscribe();
     }
 

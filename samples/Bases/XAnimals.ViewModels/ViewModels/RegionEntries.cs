@@ -13,16 +13,16 @@ namespace XAnimals.ViewModels;
 public static class RegionEntries
 {
     /// <summary>The key of the name of a page in the arguments of its entry.</summary>
-    public const string NameKey = PageArguments.NameKey; // "page";
+    public const string NameKey = PageArguments.NameKey;
 
     /// <summary>The key of the icon of a page in the arguments of its entry.</summary>
-    public const string IconKey = PageArguments.IconKey; // "icon";
+    public const string IconKey = PageArguments.IconKey;
 
     /// <summary>The key of the region a page was sent to, in the arguments of its entry: a page that finds it is shown by a region.</summary>
-    public const string RegionKey = PageArguments.RegionKey; // "region";
+    public const string RegionKey = PageArguments.RegionKey;
 
     /// <summary>The key of the description of a page in the arguments of its entry.</summary>
-    public const string DescriptionKey = PageArguments.DescriptionKey; // "description";
+    public const string DescriptionKey = PageArguments.DescriptionKey;
 
     // The pages a region shows: the animal lists of the menu. Not the History or Regions pages (they would show themselves),
     // nor the pages that act on the application (Features) or open dialogs (Dialogs).

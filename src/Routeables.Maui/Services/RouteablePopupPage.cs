@@ -53,7 +53,7 @@ internal abstract class RouteablePopupPage<TResult> : ContentPage
         ArgumentNullException.ThrowIfNull(host);
 
         _dispatcher = host.Dispatcher;
-        // Set before the page is pushed: a page that is refused at once loses its handler, and must free the caller then.
+        // Set before the page is pushed: a page that is refused at once loses its handler, and must then free the caller.
         _showing = true;
         try { await _dispatcher.DispatchAsync(() => host.Navigation.PushModalAsync(this, animated: false)); }
         catch { _showing = false; throw; }
@@ -66,7 +66,7 @@ internal abstract class RouteablePopupPage<TResult> : ContentPage
         if (_closed)
             return;
         _closed = true;
-        _result = result;       // kept first: removing the page disconnects its handler (see OnHandlerChanging)
+        _result = result; // kept first: removing the page disconnects its handler (see OnHandlerChanging)
 
         try
         {
@@ -79,8 +79,8 @@ internal abstract class RouteablePopupPage<TResult> : ContentPage
                     while (Navigation.ModalStack.Contains(this) && !ReferenceEquals(Navigation.ModalStack.LastOrDefault(), this))
                         await Task.Delay(50);
 
-                    // The stack drops a modal as soon as its dismissal starts, while the platform is still dismissing it: the one below
-                    // must not start its own then (UIKit does not dismiss two view controllers at once). One dismissal at a time.
+                    // The stack drops a modal as soon as its dismissal starts, while the platform is still dismissing it, so the one below must not start its own
+                    // dismissal then (UIKit does not dismiss two view controllers at once). One dismissal at a time.
                     await PopupDismissals.Gate.WaitAsync();
                     try
                     {
@@ -112,8 +112,8 @@ internal abstract class RouteablePopupPage<TResult> : ContentPage
     {
         base.OnHandlerChanging(args);
 
-        // The page was removed without CloseAsync (its window was closed, the platform dismissed it): release the caller
-        // awaiting ShowAsync instead of leaving it waiting for ever. After CloseAsync, this is the result it was given.
+        // The page was removed without CloseAsync (its window was closed, or the platform dismissed it): release the caller awaiting ShowAsync
+        // instead of leaving it waiting forever. After CloseAsync, this is the result it was given.
         if (args.NewHandler is null && _showing)
             _completion.TrySetResult(_result);
     }
@@ -122,7 +122,7 @@ internal abstract class RouteablePopupPage<TResult> : ContentPage
     {
         base.OnAppearing();
 
-        // A page appears again each time a dialog opened over it closes: the dialog is opened only once.
+        // A page appears again each time a dialog opened over it closes: open the dialog only once.
         if (_appeared)
             return;
         _appeared = true;

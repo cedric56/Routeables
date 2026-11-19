@@ -42,7 +42,6 @@ public class RouteCoordinatorTests
         return services.BuildServiceProvider();
     }
 
-    // ---------------------------------------------------------------- parsing
 
     [Fact]
     public void Parse_reads_each_segment_with_its_own_parameters()
@@ -110,7 +109,6 @@ public class RouteCoordinatorTests
         Assert.Throws<ArgumentException>(() => RouteCoordination.Create().Segment(" "));
     }
 
-    // -------------------------------------------------------------- routing
 
     [Fact]
     public async Task Segments_are_pushed_in_order_and_each_receives_only_its_own_parameters()
@@ -392,7 +390,6 @@ public class RouteCoordinatorTests
         Assert.Throws<ArgumentException>(() => RouteCoordination.Create().Segment(" ", _ => { }));
     }
 
-    // ------------------------------------------------------------ registration
 
     [Fact]
     public void RegisterSegment_rejects_a_duplicate_name_case_insensitively()

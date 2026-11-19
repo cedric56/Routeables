@@ -29,7 +29,7 @@ public class RegionBindingShowFailedTests
         Assert.Same(page.View, Assert.Single(shown, v => v is not null));
 
         binding.Refresh();
-        Assert.Equal(1, shown.Count(v => v is not null));      // shown: nothing to do
+        Assert.Equal(1, shown.Count(v => v is not null));
 
         binding.ShowFailed(page.View);
         binding.Refresh();
@@ -50,7 +50,7 @@ public class RegionBindingShowFailedTests
         await router.GoAsync(second.View, second.ViewModel, null, Ct);
         var count = shown.Count;
 
-        binding.ShowFailed(first.View);     // a late failure of the first view: the second is on screen
+        binding.ShowFailed(first.View); // a late failure of the first view: the second is on screen
         binding.Refresh();
 
         Assert.Equal(count, shown.Count);

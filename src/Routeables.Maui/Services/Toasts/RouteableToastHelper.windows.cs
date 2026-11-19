@@ -52,8 +52,8 @@ public static class RouteableToastHelper
         var released = false;
         Microsoft.UI.Dispatching.DispatcherQueueTimer? timer = null;
 
-        // What ties the card to the application: the theme subscription and the timer. Let go of both when the toast is
-        // dismissed or when the card is unloaded (a window closed before the toast was dismissed).
+        // What ties the card to the application: the theme subscription and the timer. Release both when the toast is dismissed or when the card is
+        // unloaded (a window closed before the toast was dismissed).
         void Release()
         {
             if (released) return;
@@ -113,8 +113,8 @@ public static class RouteableToastHelper
         return card;
     }
 
-    // Accent colors stay the same hue across themes (slightly brighter in dark mode, so
-    // they read clearly against a dark card), matching Avalonia's severity palette.
+    // Accent colors keep the same hue across themes (slightly brighter in dark mode, so they read clearly against a dark card), matching
+    // Avalonia's severity palette.
     static (Microsoft.UI.Xaml.Media.Brush Accent, string Glyph) GetStyle(RouteableNotificationType type, AppTheme theme)
     {
         var dark = theme == AppTheme.Dark;
@@ -164,7 +164,7 @@ public static class RouteableToastHelper
         {
             Glyph = glyph,
             FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe Fluent Icons"),
-            Foreground = accent, // accent color itself doesn't change with theme (see GetStyle)
+            Foreground = accent, // the accent color itself does not change with the theme (see GetStyle)
             FontSize = 18,
             VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Top,
             Margin = new Microsoft.UI.Xaml.Thickness(0, 2, 12, 0),
@@ -263,7 +263,7 @@ public static class RouteableToastHelper
         layered.Children.Add(card);
         layered.Children.Add(accentBar);
 
-        // Outer shell: carries the shadow, margin between stacked cards, and right alignment.
+        // Outer shell: carries the shadow, the margin between stacked cards, and right alignment.
         var shell = new Microsoft.UI.Xaml.Controls.Border
         {
             Child = layered,
@@ -271,14 +271,13 @@ public static class RouteableToastHelper
             HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Right,
             CornerRadius = new Microsoft.UI.Xaml.CornerRadius(8),
             Shadow = new Microsoft.UI.Xaml.Media.ThemeShadow(),
-            Translation = new System.Numerics.Vector3(0, 0, 32), // lift above content for the shadow to render
+            Translation = new System.Numerics.Vector3(0, 0, 32), // lift above the content so that the shadow renders
             RenderTransform = new Microsoft.UI.Xaml.Media.TranslateTransform(),
         };
 
         void ApplyTheme(AppTheme theme)
         {
-            // AppTheme.Unspecified means "follow the system", so resolve it to an
-            // actual light/dark value using the current system setting.
+            // AppTheme.Unspecified means "follow the system", so resolve it to an actual light or dark value from the current system setting.
             var resolved = theme == AppTheme.Unspecified
                 ? Application.Current?.PlatformAppTheme ?? AppTheme.Light
                 : theme;

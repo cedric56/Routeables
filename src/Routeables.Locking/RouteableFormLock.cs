@@ -18,7 +18,7 @@ internal sealed class RouteableFormLock(IRouteableLockBroker broker) : IRouteabl
 
     public IDisposable Lock()
     {
-        // Published inside the gate: a lock and an unlock reach the subscribers in the order they happened.
+        // Published inside the gate, so a lock and an unlock reach the subscribers in the order they happened.
         lock (_gate)
         {
             if (++_holders == 1)
@@ -29,7 +29,7 @@ internal sealed class RouteableFormLock(IRouteableLockBroker broker) : IRouteabl
                 }
                 catch
                 {
-                    // A subscriber that throws leaves no token to give back: the lock is taken back, or the form would stay locked for ever.
+                    // A subscriber that throws leaves no token to give back: take the lock back, or the form would stay locked forever.
                     _holders = 0;
                     try { broker.Publish(new RouteableLockMessage(IsLocked: false, IsAllLocked: false)); }
                     catch { /* the subscribers that were told are told again; the first failure is the one raised */ }

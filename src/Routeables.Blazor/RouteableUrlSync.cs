@@ -36,14 +36,14 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     private const string UnloadModule = "./_content/Routeables.Blazor/routeables-unload.js";
 
     private bool _started;
-    private volatile bool _ended;      // Dispose ran: no script is imported from now on, and one that arrives late is let go of by DisposeAsync
-    private int _back;             // the entries of the browser history behind the current one that this application pushed
-    private int _forward;          // the ones ahead of it, left by a Back
+    private volatile bool _ended; // Dispose ran: no script is imported from now on, and one that arrives late is released by DisposeAsync
+    private int _back; // browser history entries behind the current one that this application pushed
+    private int _forward; // the entries ahead of it, left by a Back
     private Task<IJSObjectReference>? _history;
     private Task<IJSObjectReference>? _unload;
-    private IRouteableUnsavedChanges? _watched;   // the page whose unsaved changes the browser is told about
+    private IRouteableUnsavedChanges? _watched; // the page whose unsaved changes the browser is told about
     private IDisposable? _changing;
-    private string? _pending;      // the address being routed to by the location changing handler
+    private string? _pending; // the address being routed to by the location-changing handler
 
     private enum Outcome { Unmatched, Done, Refused }
 
@@ -63,7 +63,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             try { _changing = navigation.RegisterLocationChangingHandler(OnLocationChanging); }
             catch (Exception ex) when (ex is NotSupportedException or InvalidOperationException)
             {
-                // No support for it (a test double, prerendering): the address is followed once it has changed.
+                // No support for it (a test double, prerendering): follow the address once it has changed.
             }
         }
         return await ApplyAsync(Relative(navigation.Uri)) != Outcome.Unmatched;
@@ -108,15 +108,15 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         var address = AddressOf(e.To);
         if (SameAddress(_pending, address))
         {
-            Track(e.Kind);      // the browser made this move itself (a link, its Back or Forward button)
+            Track(e.Kind); // the browser made this move itself (a link, its Back or Forward button)
             return;
         }
 
         if (SameAddress(Relative(navigation.Uri), address))
             return;
 
-        // The router goes back or forward by itself (a Pop goes back too: the page it leaves is only forgotten by the router): the browser
-        // does the same move when it holds that entry.
+        // The router goes back or forward by itself (a Pop goes back too: the router only forgets the page it leaves). The browser makes the same
+        // move when it holds that entry.
         if ((e.Kind is RouteableKind.Back or RouteableKind.Pop && _back > 0 || e.Kind == RouteableKind.Forward && _forward > 0)
             && provider.GetService<IJSRuntime>() is { } js)
         {
@@ -130,7 +130,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         if (push)
             Track(RouteableKind.Push);
         else if (e.Kind is RouteableKind.Pop or RouteableKind.Root or RouteableKind.MoveTo)
-            _back = _forward = 0;     // the router history no longer follows the one of the browser: replace until it does again
+            _back = _forward = 0; // the router history no longer follows the browser's: replace until it does again
 
         Show(address!, replace: !push);
     }
@@ -158,7 +158,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         if (_ended)
             return;
         if (!warn && _unload is null)
-            return;                     // nothing was ever asked: no script to load for "no warning"
+            return; // nothing was ever asked: no script to load for "no warning"
         if (provider.GetService<IJSRuntime>() is not { } js)
             return;
         try
@@ -166,12 +166,12 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             _unload ??= js.InvokeAsync<IJSObjectReference>("import", UnloadModule).AsTask();
             var module = await _unload;
             if (_ended)
-                return;                 // the circuit ended while the script was loading: DisposeAsync lets go of it
+                return; // the circuit ended while the script was loading: DisposeAsync lets go of it
             await module.InvokeVoidAsync("setWarn", warn);
         }
         catch (Exception ex) when (ex is InvalidOperationException or JSException or JSDisconnectedException or TaskCanceledException)
         {
-            _unload = null;             // prerendering or no script: there is no tab to warn about
+            _unload = null; // prerendering or no script: there is no tab to warn about
         }
     }
 
@@ -190,7 +190,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
                 if (_forward > 0) { _forward--; _back++; }
                 break;
             case RouteableKind.Pop:
-                // The router forgets the page it leaves: the browser keeps it ahead, and reaches it again as a new page if asked.
+                // The router forgets the page it leaves, while the browser keeps it ahead and reaches it again as a new page if asked.
                 if (_back > 0) _back--;
                 _forward = 0;
                 break;
@@ -200,7 +200,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         }
     }
 
-    // history.go(delta); when the browser cannot be reached (prerendering, no script), the address is replaced instead.
+    // history.go(delta); when the browser cannot be reached (prerendering, no script), replace the address instead.
     private async Task GoInBrowserAsync(IJSRuntime js, int delta, string address, bool replace)
     {
         try
@@ -217,15 +217,15 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         }
     }
 
-    // Runs before the address changes, for a link, a typed address and the Back and Forward buttons of the browser:
-    // a route the router refuses cancels the navigation, and Blazor puts the browser back where it was.
+    // Runs before the address changes, for a link, a typed address and the browser's Back and Forward buttons: a route the router refuses cancels
+    // the navigation, and Blazor puts the browser back where it was.
     private async ValueTask OnLocationChanging(LocationChangingContext context)
     {
         if (!IsInsideBase(context.TargetLocation))
-            return;     // another site
+            return; // another site
 
         var path = Relative(context.TargetLocation);
-        // The address of the page that is shown: the router moved first (it is what the router itself writes, and must not start a route change).
+        // The address of the page shown: the router moved first (it is what the router itself writes, and it must not start a navigation).
         // A link the user clicked is different: from a page that has no route, "/" is the home, not the page that is shown.
         if (SameAddress(context.IsNavigationIntercepted ? OwnAddressOf(router.History.Current) : AddressOf(router.History.Current), path))
             return;
@@ -238,7 +238,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         }
         catch (OperationCanceledException)
         {
-            // Blazor dropped this navigation for a newer one, or the router replaced it (CancelCurrent): nothing to report, and nothing to prevent.
+            // Blazor dropped this navigation for a newer one, or the router replaced it (CancelCurrent): nothing to report and nothing to prevent.
         }
         catch (Exception ex)
         {
@@ -247,7 +247,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         }
         finally
         {
-            // Another navigation may have replaced the address in the meantime: only the one that set it clears it.
+            // Another navigation may have replaced the address meanwhile: only the one that set it clears it.
             if (ReferenceEquals(_pending, path))
                 _pending = null;
         }
@@ -258,7 +258,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         try { await ApplyAsync(Relative(e.Location)); }
         catch (OperationCanceledException)
         {
-            // A newer route change replaced this one (RouterConcurrency.CancelCurrent): it decides what the address shows.
+            // A newer navigation replaced this one (RouterConcurrency.CancelCurrent): it decides what the address shows.
         }
         catch (Exception ex)
         {
@@ -270,7 +270,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     }
 
     // fromLink: a link the user clicked. The browser pushed a new entry for it, even when it leads to the page before or after the current one,
-    // so the router pushes too: going back would leave the router and the browser with different histories.
+    // so the router pushes too: going back would otherwise leave the router and the browser with different histories.
     private async Task<Outcome> ApplyAsync(string path, bool restore = true, CancellationToken cancellationToken = default, bool fromLink = false)
     {
         var history = router.History;
@@ -292,8 +292,8 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         else if (provider.GetService<IRouteableMenuViewModel>() is { } menuViewModel
                  && menuViewModel.Entries.FirstOrDefault(r => SameAddress(r.Route, path)) is { } item)
         {
-            // Keeps the layout's selection (menu highlight) in step; it navigates the router. The guards answer before the address is accepted
-            // (a menu written by hand answers true: see IRouteableMenuViewModel.SelectEntryAsync).
+            // Keeps the layout's selection (menu highlight) in step; it navigates the router. The guards answer before the address is accepted (a menu
+            // written by hand answers true: see IRouteableMenuViewModel.SelectEntryAsync).
             if (await menuViewModel.SelectEntryAsync(item, cancellationToken))
                 return Outcome.Done;
             if (restore && AddressOf(history.Current) is { } shownNow)
@@ -303,18 +303,18 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         else if ((template = RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], path).Template) is not null
                  || provider.GetService<RouteableNotFound>() is not null)
         {
-            // No template for the address and a page for such addresses (UseNotFoundRoute): the router shows it, as it does for GoToAsync.
+            // No template for the address, and a page for such addresses (UseNotFoundRoute): the router shows it, as it does for GoToAsync.
             try
             {
                 result = await router.GoToAsync(path, RouteableArgs.Create(), template, cancellationToken);
             }
             catch (OperationCanceledException)
             {
-                // The browser asked for another address meanwhile, or (RouterConcurrency.CancelCurrent) a newer route change replaced this
-                // one, and that cancels it with a token of the router, not the one of the browser: this address is no longer wanted either way.
+                // The browser asked for another address meanwhile, or a newer navigation replaced this one (RouterConcurrency.CancelCurrent), which cancels
+                // it with a router token and not the browser's: either way this address is no longer wanted.
                 return Outcome.Refused;
             }
-            catch (Exception ex)    // a typed or refreshed address the page cannot be built for must not take the app down
+            catch (Exception ex) // a typed or refreshed address the page cannot be built for must not take the app down
             {
                 RouteableErrors.Report<RouteableUrlSync>(provider, ex, path);
                 result = RouteableResult.Fail(ex);
@@ -337,7 +337,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         return Outcome.Refused;
     }
 
-    // The browser's Back and Forward moved the router, not the menu: it shows the page that is now current and selects its entry.
+    // The browser's Back and Forward moved the router, not the menu: show the page that is now current and select its entry.
     private void Moved(RouteableResult result)
     {
         if (result.Success && provider.GetService<IRouteableMenuViewModel>() is { } main)
@@ -347,14 +347,14 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     private void Show(string route, bool replace)
     {
         try { navigation.NavigateTo(route, replace: replace); }
-        catch (Exception ex)    // for example while the page is only being prerendered
+        catch (Exception ex) // for example while the page is only being prerendered
         {
             RouteableErrors.Report<RouteableUrlSync>(provider, ex, route);
         }
     }
 
-    // The base address ends with a slash ("https://site/app/"); the address of the application without it ("https://site/app") is the same page,
-    // and Blazor reads it so (ToBaseRelativePath gives "").
+    // The base address ends with a slash ("https://site/app/"); the application's address without it ("https://site/app") is the same page, and
+    // Blazor reads it so (ToBaseRelativePath gives "").
     private bool IsInsideBase(string location)
     {
         var baseUri = navigation.BaseUri;
@@ -369,25 +369,25 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         return hash < 0 ? path : path[..hash];
     }
 
-    // The address of an entry: its route when the route is registered, "/" for a page that has no route of its own.
+    // An entry's address: its route when the route is registered, "/" for a page that has no route of its own.
     private string? AddressOf(IHistoryEntry? entry)
         => entry is null ? null
            : entry.Args.Route is { } route && IsKnown(route) ? Url(route) : "/";
 
-    // The address a page has of its own: none for a page that has no route. Such a page is shown under "/" (the browser needs one), which is also
-    // the address of a home registered on "/": a link to "/" from that page must still go there, not be taken for the page that is shown.
+    // The address a page has of its own: none for a page without a route. Such a page is shown under "/" (the browser needs one), which is also
+    // the address of a home registered on "/": a link to "/" from that page must still go there, not be taken for the page shown.
     private string? OwnAddressOf(IHistoryEntry? entry)
         => entry?.Args.Route is { } route && IsKnown(route) ? Url(route) : null;
 
     // "about" and "/about" are the same address.
-    // Exactly one leading slash: "//host" is a protocol-relative link (the browser leaves the application for host), and browsers
-    // read "/\host" the same way. A route can carry user input (a returnUrl, a search), so the address stays inside the application.
+    // Exactly one leading slash: "//host" is a protocol-relative link (the browser leaves the application for host), and browsers read "/\host"
+    // the same way. A route can carry user input (a returnUrl, a search), so the address must stay inside the application.
     private static string Url(string route) => RouteAddress.Rooted(route);
 
     private bool IsKnown(string route)
         => provider.GetService<RouteableTable>()?.Entries.Any(e => RouteParser.TryMatch(e.Template, route)) == true;
 
-    // The rules of "the same address" (the case, the closing slash, the escapes, the order of the query) are the ones of every other part of the library: see RouteAddress.
+    // The rules of "the same address" (case, closing slash, escapes, query order) are the same as everywhere else in the library: see RouteAddress.
     internal static bool Same(string? a, string? b, IEnumerable<(string Template, Type? ViewModelType)>? routes = null)
         => RouteAddress.Same(a, b, routes is null ? null : path => RouteParser.BestMatch(routes, path).Template);
 
@@ -418,12 +418,12 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             {
                 try
                 {
-                    // A script still loading is waited for: it would otherwise install its listener with nobody left to remove it.
+                    // Wait for a script that is still loading: it would otherwise install its listener with nobody left to remove it.
                     var loaded = await module;
-                    if (ReferenceEquals(module, _unload)) await loaded.InvokeVoidAsync("dispose");   // the listener of the tab must not outlive the circuit
+                    if (ReferenceEquals(module, _unload)) await loaded.InvokeVoidAsync("dispose"); // the tab's listener must not outlive the circuit
                     await loaded.DisposeAsync();
                 }
-                catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or JSException or TaskCanceledException) { }   // the circuit is already gone
+                catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or JSException or TaskCanceledException) { } // the circuit is already gone
             }
         }
         _history = null;

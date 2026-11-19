@@ -4,24 +4,24 @@ using Routeables.Native.Desktop;
 
 namespace Routeables.Native;
 
-// Linux, from the plain net10.0 target: org.freedesktop.Notifications on the D-Bus session bus, which every desktop environment serves (GNOME, KDE, XFCE,
-// dunst...), spoken by the small client of Desktop/DBusConnection.cs (no package). A tap on the notification (the "default" action) is a tap; the user
-// closing it, or the server expiring it, is a dismissal.
+// Linux, from the plain net10.0 target: org.freedesktop.Notifications on the D-Bus session bus, which every desktop environment serves (GNOME,
+// KDE, XFCE, dunst...), spoken by the small client in Desktop/DBusConnection.cs (no package). A tap on the notification (the "default" action)
+// is a tap; the user closing it, or the server expiring it, is a dismissal.
 public sealed partial class SystemNotificationCenter
 {
     private const string LinuxService = "org.freedesktop.Notifications";
     private const string LinuxPath = "/org/freedesktop/Notifications";
 
     private readonly object _linuxGate = new();
-    private readonly Dictionary<uint, uint> _linuxServerIds = [];     // our id -> the id the server gave
-    private readonly Dictionary<uint, uint> _linuxIds = [];           // the id the server gave -> ours
+    private readonly Dictionary<uint, uint> _linuxServerIds = []; // our id to the id the server gave
+    private readonly Dictionary<uint, uint> _linuxIds = []; // the id the server gave to ours
     private DBusConnection? _linuxConnection;
-    private Task<DBusConnection?>? _linuxConnecting;                  // null: not tried yet, or the bus was closed
+    private Task<DBusConnection?>? _linuxConnecting; // null: not tried yet, or the bus was closed
 
     private static readonly TimeSpan LinuxCallTimeout = TimeSpan.FromSeconds(3);
     private static readonly TimeSpan LinuxRetryAfter = TimeSpan.FromSeconds(5);
-    private DateTime _linuxFailedAt;                                  // when the last connection failed (a bus that is not there yet is tried again later)
-    private DateTime _linuxAvailableAt;                               // when the server last answered who it is
+    private DateTime _linuxFailedAt; // when the last connection failed (a bus that is not there yet is tried again later)
+    private DateTime _linuxAvailableAt; // when the server last answered who it is
 
     /// <summary>Whether there is a session bus <i>and</i> a notification server on it: a session bus alone is not enough (WSL, a container or a bare window manager have one and
     /// no server, and the call to Notify fails with ServiceUnknown). The answer "yes" is kept for a few seconds.</summary>
@@ -46,9 +46,9 @@ public sealed partial class SystemNotificationCenter
         catch (Exception ex) when (ex is IOException or InvalidOperationException or TimeoutException or InvalidDataException) { return false; }
     }
 
-    // The connection is made once, on the thread pool, and the callers wait for it outside the lock: the lock only guards the fields, so a
-    // signal or a close is never held up by a connection that is slow to come (a bus that does not answer). A connection that failed is tried
-    // again, but not at each call: after LinuxRetryAfter (the session bus is not always there yet when the application starts).
+    // The connection is made once, on the thread pool, and callers wait for it outside the lock. The lock only guards the fields, so a signal or a
+    // close is never held up by a slow connection (a bus that does not answer). A failed connection is retried, but not at each call: only after
+    // LinuxRetryAfter (the session bus is not always there yet when the application starts).
     private async Task<DBusConnection?> LinuxConnectionAsync()
     {
         Task<DBusConnection?> connecting;
@@ -61,7 +61,7 @@ public sealed partial class SystemNotificationCenter
 
         DBusConnection? connection;
         try { connection = await connecting.WaitAsync(TimeSpan.FromSeconds(5)); }
-        catch (TimeoutException) { return null; }     // too slow for this call; the connection goes on in the background and the next call may find it
+        catch (TimeoutException) { return null; } // too slow for this call; the connection goes on in the background and the next call may find it
 
         if (connection is null)
         {
@@ -82,7 +82,7 @@ public sealed partial class SystemNotificationCenter
     {
         DBusConnection? connection;
         try { connection = await DBusConnection.TryConnectAsync().ConfigureAwait(false); }
-        catch (Exception) { return null; }       // whatever stops the connection means there is no bus: Present reports it
+        catch (Exception) { return null; } // whatever stops the connection means there is no bus: Present reports it
 
         if (connection is null)
             return null;
@@ -97,10 +97,10 @@ public sealed partial class SystemNotificationCenter
         lock (_linuxGate)
             _linuxConnection = connection;
 
-        // Only what the notification server sends (its signals have its name as sender), and the changes of who has that name: the sender of a
-        // message is written by the bus, so a process cannot sign as the server. Any other process of the session could otherwise send
-        // ActionInvoked with an identifier that is easy to guess, and have an action run as if the user had clicked.
-        // None of them is waited for, and none waits for ever: a bus that does not answer would keep an entry of each call until the connection closes.
+        // Only what the notification server sends (its signals have its name as sender) and changes of who has that name: the bus writes a message's
+        // sender, so a process cannot sign as the server. Otherwise any other process of the session could send ActionInvoked with an easily guessed
+        // identifier and have an action run as if the user had clicked.
+        // None of them is awaited, and none waits forever: a bus that does not answer would keep an entry for each call until the connection closes.
         Forget(connection.CallAsync(BusService, BusPath, BusService, "AddMatch", "s",
             w => w.String($"type='signal',sender='{LinuxService}',interface='{LinuxService}'"), LinuxCallTimeout));
         Forget(connection.CallAsync(BusService, BusPath, BusService, "AddMatch", "s",
@@ -118,7 +118,7 @@ public sealed partial class SystemNotificationCenter
             _linuxServerIds.TryGetValue(notification.Id, out replaces);
         var appName = Options?.ChannelName ?? AppDomain.CurrentDomain.FriendlyName;
 
-        // Notify(app_name, replaces_id, app_icon, summary, body, actions, hints, expire_timeout) -> id
+        // Notify(app_name, replaces_id, app_icon, summary, body, actions, hints, expire_timeout) returns an id.
         var reply = connection.CallAsync(LinuxService, LinuxPath, LinuxService, "Notify", "susssasa{sv}i", w =>
         {
             w.String(appName);
@@ -179,7 +179,7 @@ public sealed partial class SystemNotificationCenter
 
         DBusConnection? connection;
         lock (_linuxGate) connection = _linuxConnection;
-        // With a delay, like the other calls: a bus that does not answer must not keep the entry of this one, and its failure is read.
+        // With a delay, like the other calls: a bus that does not answer must not keep this call's entry, and its failure is read.
         if (connection is not null)
             Forget(connection.CallAsync(LinuxService, LinuxPath, LinuxService, "CloseNotification", "u", w => w.UInt32(serverId), LinuxCallTimeout));
     }
@@ -187,14 +187,14 @@ public sealed partial class SystemNotificationCenter
     private const string BusService = "org.freedesktop.DBus";
     private const string BusPath = "/org/freedesktop/DBus";
 
-    // The unique name of the process that owns the notification service now, or null when there is none (yet). Read when the connection is made, and
-    // changed by NameOwnerChanged: it cannot be asked inside a signal, which the thread that reads the replies is running.
+    // The unique name of the process that owns the notification service now, or null when there is none (yet). Read when the connection is made,
+    // and changed by NameOwnerChanged: it cannot be asked inside a signal, which the thread that reads the replies is running.
     private string? _linuxOwner;
 
     // A call whose answer is not wanted: a failure (the bus is gone, it did not answer in time) is not left unobserved.
     private static void Forget(Task task) => _ = task.ContinueWith(failed => _ = failed.Exception, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
 
-    // The notifications of a server that is gone: their identifiers are forgotten and each one that was waiting is ended as dismissed.
+    // The notifications of a server that is gone: forget their identifiers and end each one that was waiting as dismissed.
     private void EndServerNotifications()
     {
         uint[] ours;
@@ -215,11 +215,11 @@ public sealed partial class SystemNotificationCenter
         {
             var reply = await connection.CallAsync(BusService, BusPath, BusService, "GetNameOwner", "s", w => w.String(LinuxService), LinuxCallTimeout).ConfigureAwait(false);
             lock (_linuxGate)
-                _linuxOwner ??= reply.Reader().String();     // a NameOwnerChanged that came first is more recent
+                _linuxOwner ??= reply.Reader().String(); // a NameOwnerChanged that came first is more recent
         }
         catch (Exception ex) when (ex is IOException or InvalidOperationException or InvalidDataException or TimeoutException)
         {
-            // Nobody owns the service yet: the notification that is shown starts it, and NameOwnerChanged tells who it is.
+            // Nobody owns the service yet: the notification shown starts it, and NameOwnerChanged tells who it is.
         }
     }
 
@@ -235,8 +235,8 @@ public sealed partial class SystemNotificationCenter
                 var owner = change.String();
                 lock (_linuxGate)
                     _linuxOwner = owner.Length == 0 ? null : owner;
-                // The server that gave the identifiers is gone (or was replaced): they mean nothing to the next one, which could even
-                // replace the bubble of another application with one of them.
+                // The server that gave the identifiers is gone (or was replaced): they mean nothing to the next one, which could even replace another
+                // application's bubble with one of them.
                 if (previous.Length > 0)
                     EndServerNotifications();
             }
@@ -247,7 +247,7 @@ public sealed partial class SystemNotificationCenter
         if (message.Interface != LinuxService)
             return;
 
-        // From the server and from nobody else, and of the shape that the specification gives it: ActionInvoked(u id, s action), NotificationClosed(u id, u reason).
+        // From the server and from nobody else, and of the shape the specification gives: ActionInvoked(u id, s action), NotificationClosed(u id, u reason).
         lock (_linuxGate)
         {
             if (_linuxOwner is null || message.Sender != _linuxOwner)

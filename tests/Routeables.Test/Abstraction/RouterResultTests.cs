@@ -78,9 +78,9 @@ public class RouterResultTests
         await router.GoToAsync("/child", cancellationToken: Ct);
         Assert.False(waiting.IsCompleted);
 
-        await router.PopAsync(Ct);      // back to the picker: still not left
+        await router.PopAsync(Ct); // back to the picker: not left yet
         Assert.False(waiting.IsCompleted);
-        await router.PopAsync(Ct);      // the picker is left
+        await router.PopAsync(Ct); // the picker is left
         Assert.Equal("red", (await waiting).Value);
     }
 
@@ -110,7 +110,7 @@ public class RouterResultTests
 
         Assert.True(result.Cancelled);
         Assert.False(result.Returned);
-        Assert.NotNull(router.GetCurrentViewModel<PickerVm>());     // the page itself stays
+        Assert.NotNull(router.GetCurrentViewModel<PickerVm>()); // the page itself stays
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class RouterResultTests
         var follow = Task.Run(async () =>
         {
             var result = await router.GoToForResultAsync<string>("/picker", cancellationToken: Ct);
-            await router.GoToAsync("/child", cancellationToken: Ct);   // would deadlock if it ran under the gate
+            await router.GoToAsync("/child", cancellationToken: Ct); // would deadlock if it ran under the gate
             return result;
         }, Ct);
         while (router.GetCurrentViewModel<PickerVm>() is null) await Task.Delay(5, Ct);

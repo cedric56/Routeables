@@ -24,9 +24,9 @@ public class ComponentBaseTests
         var view = new TestView();
         var viewModel = new TestViewModel();
 
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+#pragma warning disable BL0005
         view.Context = viewModel;
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+#pragma warning restore BL0005
 
         Assert.Same(viewModel, view.ViewModel);
     }

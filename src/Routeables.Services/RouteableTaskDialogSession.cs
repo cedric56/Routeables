@@ -13,7 +13,7 @@ public sealed class RouteableTaskDialogSession
 {
     private readonly RouteableTaskDialog _dialog;
     private readonly Action _complete;
-    private bool _completed;   // a button decided the result: a second click while the dialog closes must neither ask Closing again nor change it
+    private bool _completed; // a button decided the result: a second click while the dialog closes must neither ask Closing again nor change it
 
     /// <summary>Starts the session of <paramref name="dialog"/>.</summary>
     /// <param name="dialog">The dialog to show.</param>

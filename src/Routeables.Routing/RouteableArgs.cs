@@ -50,7 +50,7 @@ public class RouteableArgs : IRouteableArgs, IRouteableArgsFactory
     /// <returns>A new <see cref="IRouteableArgs"/> instance.</returns>
     public static IRouteableArgs Create() => new RouteableArgs();
 
-    // The factory interface is internal: Create() is the public way to get an empty instance.
+    // The factory interface is internal; Create() is the public way to get an empty instance.
     IRouteableArgs IRouteableArgsFactory.New() => new RouteableArgs();
 
     /// <summary>
@@ -106,7 +106,6 @@ public class RouteableArgs : IRouteableArgs, IRouteableArgsFactory
     /// <inheritdoc cref="IRouteableArgs.WithValue(string, object?, bool)"/>
     public IRouteableArgs WithValue(string name, object? value, bool attribute = false) => ForValues(new RouteableArgument(value, name, attribute));
 
-    // A RouteableArgument among the values is kept as it is.
     private static RouteableArgument[] ToEntries(object?[] values) =>
         values.Select(v => v as RouteableArgument ?? new RouteableArgument(v)).ToArray();
 

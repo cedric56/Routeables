@@ -31,7 +31,6 @@ internal static partial class InjectionsExtensions
     internal static TView Inject<[DynamicallyAccessedMembers(InjectableMembers.Properties)] TView>(this TView view, IServiceProvider sp, IDictionary<string, object?>? parameters = null)
     where TView : notnull
     {
-        // Normalise keys so lookups are case-insensitive.
         parameters = parameters is null ? null : ToLastWins(parameters.Select(p => (p.Key.ToLowerInvariant(), p.Value)));
 
         // No injection configuration registered (or no attributes configured): nothing to do.
@@ -39,18 +38,18 @@ internal static partial class InjectionsExtensions
         if (injection is null || injection.AttributeTypes.Count == 0)
             return view;
 
-        // The type as the generator described it, else as reflection reads it (its static type is annotated to keep what that needs). Its type-level attributes (query attributes)
-        // make properties injectable even without a property-level attribute.
+        // The type as the generator described it, else as reflection reads it (its static type is annotated to keep what that needs). Type-level
+        // attributes (query attributes) make properties injectable even without a property-level attribute.
         var injectable = InjectionTable.Resolve(sp, view);
         var queryPropertyNames = injectable.NamesGivenBy(injection);
 
         foreach (var property in injectable.Properties)
         {
-            // "Context" is reserved (it holds the view's data context); a write-only property cannot be checked or read.
+            // "Context" is reserved (it holds the view's data context); a write-only property can be neither checked nor read.
             if (property.Name == "Context" || property.Get is null)
                 continue;
 
-            // A RouteableParameters property receives the entire parameter bag.
+            // A RouteableParameters property receives the whole parameter bag.
             if (parameters != null && property.PropertyType == typeof(RouteableParameters))
             {
                 var bag = new RouteableParameters();
@@ -60,19 +59,19 @@ internal static partial class InjectionsExtensions
                 continue;
             }
 
-            // Only a property decorated with a registered attribute ([Parameter], [Inject]) or named by a type-level one is touched.
+            // Only a property with a registered attribute ([Parameter], [Inject]), or named by a type-level one, is touched.
             if (!injection.AttributeTypes.Any(entry => property.Has(entry.Type)) && !queryPropertyNames.Contains(property.Name))
                 continue;
 
-            // 1) An explicit value wins over anything else (Blazor semantics: null is a valid explicit value).
+            // 1) An explicit value wins over anything else (as in Blazor, null is a valid explicit value).
             if (parameters != null && parameters.TryGetValue(property.Name.ToLowerInvariant(), out var value))
             {
                 TrySet(sp, property, view, value, "set parameter");
                 continue;
             }
 
-            // 2) Otherwise a property that is still null comes from the container, but only for an attribute that asks for it
-            //    ([Inject]): a [Parameter] or a query property without a value stays unset.
+            // 2) Otherwise a property that is still null comes from the container, but only for an attribute that asks for it ([Inject]).
+            // A [Parameter] or query property without a value stays unset.
             if (injection.AttributeTypes.Any(entry => entry.FromContainer && property.Has(entry.Type)) && property.Get(view) is null)
                 TrySet(sp, property, view, () => sp.GetRequiredService(property.PropertyType), "inject");
         }
@@ -113,13 +112,13 @@ internal static partial class InjectionsExtensions
             var names = view.InjectablePropertyNames(sp, injection);
             foreach (var entry in args.ViewModelParameters)
                 if (entry.attribute && entry.name is not null && names.Contains(entry.name) && !parameters.Keys.Any(k => string.Equals(k, entry.name, StringComparison.OrdinalIgnoreCase)))
-                    parameters[entry.name] = entry.value;     // a value the view was given under any casing of the name is not overwritten
+                    parameters[entry.name] = entry.value; // a value the view was given, under any casing of the name, is not overwritten
         }
 
         return view.Inject(sp, parameters);
     }
 
-    // The properties a view declares as injectable, ignoring the ones that hold the whole bag or the data context.
+    // The properties a view declares as injectable, ignoring those that hold the whole bag or the data context.
     private static HashSet<string> InjectablePropertyNames<[DynamicallyAccessedMembers(InjectableMembers.Properties)] TView>(this TView view, IServiceProvider sp, IRouteableInjection injection)
         where TView : notnull
     {
@@ -143,7 +142,7 @@ internal static partial class InjectionsExtensions
     internal static Dictionary<string, object?> ResolveAttributesParameters(this IList<RouteableArgument> parameters)
         => ToLastWins(parameters.Where(p => p.attribute == true).Select(p => (p.name!, p.value)));
 
-    // A name given twice (a value passed by hand and the one of the address, "Tab" and "tab") is not an error: the last one is used.
+    // A name given twice (a value passed by hand and one from the address, "Tab" and "tab") is not an error: the last one wins.
     private static Dictionary<string, object?> ToLastWins(IEnumerable<(string name, object? value)> pairs)
     {
         var result = new Dictionary<string, object?>();
@@ -166,7 +165,7 @@ internal static partial class InjectionsExtensions
     /// <exception cref="InvalidCastException">The value is null or not a <typeparamref name="T"/>.</exception>
     internal static T Resolve<T>(this IList<RouteableArgument> args, int index)
     {
-        // The positions are those of the constructor arguments, as ResolveViewParameters counts them: an entry of a property (attribute) or without a value is not one.
+        // Positions are those of the constructor arguments, as ResolveViewParameters counts them: a property entry (attribute) or an entry without a value is not one.
         var positional = args.Where(p => p.attribute == false && p.value is not null).ToList();
         if (index < 0 || index >= positional.Count)
             throw new ArgumentException($"Invalid index: {index}, but there are {positional.Count} argument(s).");

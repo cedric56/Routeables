@@ -6,9 +6,10 @@ using System.Text.Json;
 
 namespace Routeables.Native;
 
-// The browser, from the plain net10.0 target (a WebAssembly application that is not Blazor: Avalonia, Uno): the notification center of the browser, through the same
-// JavaScript module as Routeables.Blazor (wwwroot/notifications.js, embedded here and imported from a data address, so nothing has to be served). With the service
-// worker a notification has action buttons and a reply field; without it the page notifies by itself and only the click and the close are reported.
+// The browser, from the plain net10.0 target (a WebAssembly application that is not Blazor: Avalonia, Uno): the browser's notification center,
+// through the same JavaScript module as Routeables.Blazor (wwwroot/notifications.js, embedded here and imported from a data address, so
+// nothing has to be served). With the service worker a notification has action buttons and a reply field; without it the page notifies by
+// itself and only the click and the close are reported.
 public sealed partial class SystemNotificationCenter
 {
     private const string BrowserModule = "routeables-notifications";
@@ -40,7 +41,7 @@ public sealed partial class SystemNotificationCenter
             var options = Options ?? new AppNotificationOptions();
             await BrowserReadyAsync();
 
-            // The actions as flat triplets (caption, tag, icon): nothing but strings crosses the interop.
+            // The actions as flat triplets (caption, tag, icon): only strings cross the interop.
             var actions = notification.Actions?.SelectMany(a => new[] { a.caption, a.tag, a.Icon ?? string.Empty }).ToArray() ?? [];
             await BrowserShow((int)notification.Id, notification.Title, notification.Message, notification.Icon ?? options.DefaultIcon, notification.Tag,
                 notification.Expiration?.TotalMilliseconds ?? 0, actions, notification.ReplyActionTag);
@@ -61,7 +62,7 @@ public sealed partial class SystemNotificationCenter
     private static async Task BrowserSafe(Task task)
     {
         try { await task; }
-        catch (JSException) { }   // the browser refused (no permission, no support): the notification is simply not shown
+        catch (JSException) { } // the browser refused (no permission, no support): the notification is simply not shown
     }
 
     [SupportedOSPlatform("browser")]
@@ -80,7 +81,7 @@ public sealed partial class SystemNotificationCenter
         await BrowserRegister((Options ?? new AppNotificationOptions()).ServiceWorkerUrl);
     }
 
-    // What the service worker (or the page) tells: {"type":"HandleNotificationClick","id":3,"tag":"...","action":"open"}.
+    // What the service worker (or the page) sends: {"type":"HandleNotificationClick","id":3,"tag":"...","action":"open"}.
     private void BrowserTold(string json, bool activated, string? reply)
     {
         using var document = JsonDocument.Parse(json);

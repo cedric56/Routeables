@@ -60,7 +60,7 @@ internal class ReshapeNotificationService(ISnackbar SnackbarService, RouteableSy
             Action<Snackbar>? closeHandler = null;
             closeHandler = (snackbar) =>
             {
-                snack.OnClose -= closeHandler;   // detach immediately, fire-once
+                snack.OnClose -= closeHandler; // detach at once: fires only once
                 RouteableErrors.Guard(null, RouteableCallbackSources.ToastOnClose, onClose);
             };
             snack.OnClose += closeHandler;

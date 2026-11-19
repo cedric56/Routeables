@@ -23,7 +23,7 @@ internal partial class Router
         var redirection = new Redirection();
         var result = await GoCoreAsync(view, viewModel, args, redirection, cancellationToken);
 
-        // The gate is free: a guard that sent the user elsewhere has its route change now.
+        // The gate is free: a guard that redirected the user gets its navigation now.
         return redirection.Route is { } route ? await RedirectAsync(route, cancellationToken) : result;
     }
 
@@ -32,7 +32,7 @@ internal partial class Router
         return await RunGatedAsync(cancellationToken, async token =>
         {
             IRouteableFor? viewFor = view as IRouteableFor ?? provider.GetService<IRouteableViewBinder>()?.Adapt(view);
-            var previousContext = viewFor?.Context;    // inside the gated body: a throwing getter must not leave the gate held
+            var previousContext = viewFor?.Context; // read inside the gated body, so that a throwing getter cannot leave the gate held
             args ??= RouteableArgs.Create();
 
             var previous = history.Current;
@@ -46,20 +46,20 @@ internal partial class Router
                     if (previous is not null && !await lifecycle.CanLeaveAsync(previous, token))
                         return RouteableResult.Cancel();
 
-                    // 2. Bind view <-> view-model
+                    // 2. Bind view and view model.
                     if (viewFor is not null)
                         viewFor.Context = viewModel;
 
-                    // 3. Initialize the target (VM first, then view). Nothing has been torn down yet.
+                    // 3. Initialize the target (view model first, then view). Nothing has been torn down yet.
                     await lifecycle.InitializeAsync(entering, token);
 
-                    // 4. Leave current + enter target (or just enter on first route change)
+                    // 4. Leave the current page and enter the target (or just enter, on the first navigation).
                     if (previous is not null)
                         await lifecycle.TransitionAsync(previous, entering, token);
                     else
                         await lifecycle.EnterAsync(entering, token);
 
-                    // 5. Commit, then destroy what the push cut off (forward entries, evicted oldest)
+                    // 5. Commit, then destroy what the push cut off (forward entries, the oldest evicted entry).
                     var removed = history.Push(entering);
                     await lifecycle.NotifyEnteredAsync(previous, entering, token);
                     if (removed.Count > 0) await lifecycle.DestroyAsync(removed, history.Snapshot());
@@ -68,7 +68,7 @@ internal partial class Router
                 catch
                 {
                     if (viewFor is not null)
-                        viewFor.Context = previousContext;    // restored before Navigated(Failed) is raised
+                        viewFor.Context = previousContext; // restored before Navigated(Failed) is raised
                     throw;
                 }
             });
@@ -90,20 +90,20 @@ internal partial class Router
         Type? viewModelType = null,
         params string[] viewKeys)
     {
-        // One route change, one arguments instance. The caller's (RouteableMenuEntry.Arguments is reused on every click) is only a
-        // model: TryMatch appends the route values to its bags and Route is written, so two history entries sharing it
-        // would see each other's values (doubled constructor arguments, a duplicate key, the wrong address on Back).
+        // One navigation, one arguments instance. The caller's instance (RouteableMenuEntry.Arguments is reused on every click) is only a template:
+        // TryMatch appends the route values to its bags and Route is written, so two history entries sharing it would see each other's values
+        // (doubled constructor arguments, a duplicate key, the wrong address on Back).
         args = Snapshot(args);
-        // The view model this route change builds receives this router if it asks for an IRouter (a region is not the default router).
+        // The view model built by this navigation receives this router if it asks for an IRouter (a region is not the default router).
         args.Router = this;
         var mismatch = RouteParser.Mismatch(template, route, args, viewKeys);
         if (mismatch is null)
         {
-            // A route registered without a view model has the same key for both: the factory would run twice, and the history
-            // would keep two pages per entry. The page is its own view model then, as a cached (scoped or singleton) one already is.
-            // What this call builds (not what the caller handed over, which it keeps): if the route change does not show it
-            // (a guard or CanLeave refused, a redirect, an exception), nobody else would ever dispose it.
-            // A page that is going to be built is first asked of the guards that need only its type (a visitor who is turned away costs no constructor).
+            // A route registered without a view model has the same key for both: the factory would run twice, and the history would keep two pages
+            // per entry. The page is then its own view model, as a cached (scoped or singleton) one already is.
+            // This covers what this call builds, not what the caller handed over. If the navigation does not show it (a guard or CanLeave refused, a
+            // redirect, an exception), nobody else would ever dispose it.
+            // A page about to be built is first offered to the guards that need only its type, so a refused visitor costs no constructor call.
             if (viewModel is null && await AskTypeGuardsAsync(template, route, viewModelType, cancellationToken) is { } refused)
                 return refused;
 
@@ -118,8 +118,8 @@ internal partial class Router
 
                 if (viewModel is null)
                 {
-                    // A view declared without a view model (a Razor component, for instance) is shown with an empty object as its context:
-                    // it is wanted, not a failure.
+                    // A view declared without a view model (a Razor component, for instance) is shown with an empty object as its context. This is intended,
+                    // not a failure.
                     viewModel = provider.GetViewModel(viewmodelkey, args) ?? new object();
                     built.Add(viewModel);
                 }
@@ -127,7 +127,7 @@ internal partial class Router
             }
             catch
             {
-                // The view model was built and the view could not be: nothing will show it, so nobody else would dispose it.
+                // The view model was built but the view could not be: nothing will show it, so nobody else would dispose it.
                 await DiscardAsync(built);
                 throw;
             }
@@ -137,8 +137,8 @@ internal partial class Router
                 return RouteableResult.Fail(new InvalidOperationException($"No view is registered under the key \"{viewkey}\" (route \"{route}\", template \"{template}\"). Register the page with the same template, or pass the template it was registered with."));
             }
 
-            // What was asked for ("/customers/42", "about"): RouteableUrlSync shows it as the address of the entry.
-            // Not viewkey: that is the registration key, i.e. the template ("/customers/{id:int}"), not the address.
+            // What was asked for ("/customers/42", "about"): RouteableUrlSync shows it as the entry's address.
+            // Not the view key, which is the registration key, i.e. the template ("/customers/{id:int}"), not the address.
             args.Route = route;
             try
             {
@@ -146,7 +146,7 @@ internal partial class Router
             }
             finally
             {
-                // The usual end: the page this call built is the one shown, so there is nothing to look at.
+                // The usual outcome: the page this call built is the one shown, so there is nothing to clean up.
                 if (!IsShown(built))
                     await DiscardAsync(built);
             }
@@ -165,8 +165,8 @@ internal partial class Router
         return false;
     }
 
-    // Disposes what a route change built and did not put in the history. Pages that stay (in the history, or in the cache
-    // of a scoped or singleton registration) are kept: DestroyAsync skips them.
+    // Dispose what a navigation built and did not put in the history. Pages that stay (in the history, or in the cache of a scoped or
+    // singleton registration) are kept: DestroyAsync skips them.
     private async Task DiscardAsync(List<object> built)
     {
         if (built.Count == 0) return;
@@ -214,7 +214,7 @@ internal partial class Router
         return GoToTypedRouteAsync(request.ViewModelType, request.Route, request.Args, request.Template, cancellationToken, viewKeys);
     }
 
-    // A request with a view model type and no route: the template registered for the view model, filled with the values.
+    // A request with a view model type and no route: use the template registered for the view model, filled with the values.
     private Task<RouteableResult> GoToRegisteredAsync(Type viewModelType, RouteableRouteRequest request, string[] viewKeys, CancellationToken cancellationToken)
     {
         var entries = provider.GetService<RouteableTable>()?.Entries ?? [];
@@ -223,7 +223,7 @@ internal partial class Router
             return Task.FromResult(RouteableResult.Fail(new InvalidOperationException(
                 $"No route is registered for {viewModelType.Name}. Give it one: [Routeable(\"/path/{{id:int}}\")] on the view model, or RegisterRoute<TView, {viewModelType.Name}>(route: \"/path\").")));
 
-        // Several routes for one view model: the first one the values can fill; the error of the last one when none can.
+        // Several routes for one view model: use the first one the values can fill, or report the error of the last one when none can.
         Exception? failure = null;
         foreach (var template in templates)
         {
@@ -238,7 +238,7 @@ internal partial class Router
         return Task.FromResult(RouteableResult.Fail(failure!));
     }
 
-    // Goes to the entry, then gives it back the page the router shows so that the next visit finds it.
+    // Go to the entry, then hand it the page the router shows, so that its next visit finds it.
     private async Task<RouteableResult> GoToViewAsync(
         IRouteableMenuEntry routeableView, string viewKey, string viewModelKey, CancellationToken cancellationToken, string[] viewKeys, IRouteableArgs? supplied = null, Type? viewModelType = null, string? address = null)
     {
@@ -254,7 +254,7 @@ internal partial class Router
             cancellationToken,
             viewModelType,
             viewKeys: viewKeys);
-        // Only the page this entry asked for: a guard may have sent the user elsewhere (a sign-in), and the entry must not remember that page.
+        // Only the page this entry asked for: a guard may have redirected the user elsewhere (to a sign-in), and the entry must not remember that page.
         if (result.Success && WentTo(route))
         {
             routeableView.View = CurrentView;
@@ -263,11 +263,11 @@ internal partial class Router
         return result;
     }
 
-    // Whether the page shown is the one of the entry (its route), and not the one a guard redirected to.
+    // Whether the page shown is the entry's page (its route), and not one a guard redirected to.
     private bool WentTo(string route)
         => RouteAddress.SameFor(this, history.Current?.Args.Route, route);
 
-    // A menu entry remembers the page it showed last. Not one the router has disposed since: a new one is created instead.
+    // A menu entry remembers the page it showed last, unless the router has disposed it since: then a new one is created.
     private object? Reusable(object? remembered) => lifecycle.WasDestroyed(remembered) ? null : remembered;
 
     private Task<RouteableResult> GoToTypedRouteAsync(
@@ -279,7 +279,7 @@ internal partial class Router
         // Routes are registered under their template (see RegisterRoute), so the keys come from the template.
         var keys = RouteableKeys.GetKeys(viewModelType, template);
 
-        // RouteParser.TryMatch fills the instance it is given; without one the parsed route values would be lost.
+        // RouteParser.TryMatch fills the instance it is given; without one, the parsed route values would be lost.
         return GoToRouteAsync(
             route, template, keys.viewKey, keys.viewModelKey,
             args ?? RouteableArgs.Create(), null, null, cancellationToken, viewModelType, viewKeys: viewKeys);

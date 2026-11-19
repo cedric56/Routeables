@@ -18,7 +18,7 @@ internal partial class Router
     private Task<RouteableResult> GoToEntryAsync(IRouteableMenuEntry routeableView, CancellationToken cancellationToken, string[] viewKeys, IRouteableArgs? supplied = null, string? address = null)
     {
         Respell(routeableView);
-        // A typed entry (RouteableMenuEntry<TViewModel>) names the keys of its view model; any other is bound by its template alone.
+        // A typed entry (RouteableMenuEntry<TViewModel>) names the keys of its view model; any other entry is bound by its template alone.
         var type = GetRouteableEntryType(routeableView);
         if (type is null)
             return GoToViewAsync(routeableView, routeableView.Template, routeableView.Template, cancellationToken, viewKeys, supplied, null, address);
@@ -29,7 +29,7 @@ internal partial class Router
         return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys, supplied, type, address);
     }
 
-    // The view model a typed menu entry (RouteableMenuEntry<T>) is for; an entry of another kind is bound by its template alone.
+    // The view model a typed menu entry (RouteableMenuEntry<T>) is for; any other entry is bound by its template alone.
     static Type? GetRouteableEntryType(IRouteableMenuEntry view) => (view as RouteableMenuEntry)?.ViewModelType;
 
     private Task<RouteableResult> GoToEntryAsync(IRouteableMenuEntry routeableView, Type viewModelType, CancellationToken cancellationToken, string[] viewKeys)
@@ -40,8 +40,8 @@ internal partial class Router
         return GoToViewAsync(routeableView, keys.viewKey, keys.viewModelKey, cancellationToken, viewKeys, null, viewModelType);
     }
 
-    // "about" and "/about" are one template, and a page is registered under the spelling it was registered with: the entry that writes it the other way
-    // is given that spelling, or its keys would name a view that does not exist.
+    // "about" and "/about" are one template, and a page is registered under the spelling it was registered with. An entry that spells it the
+    // other way gets that spelling, or its keys would name a view that does not exist.
     private void Respell(IRouteableMenuEntry entry)
     {
         if (entry is not RouteableMenuEntry typed || string.IsNullOrEmpty(typed.Template))
@@ -55,9 +55,9 @@ internal partial class Router
             typed.Template = registered;
     }
 
-    // A typed entry (RouteableMenuEntry<T>) made with no template, or with no route, holds the internal key of its type for what it was not given.
-    // The registered route of the view model is read here (the entry has no access to the table): the template of the address it was given, or the
-    // route of the view model itself. The keys of the page are those of its template, as everywhere else.
+    // A typed entry (RouteableMenuEntry<T>) created without a template or route holds the internal key of its type for whatever it lacks.
+    // The view model's registered route is read here, because the entry cannot access the table: the template of the address it was given,
+    // or else the view model's own route. The page's keys come from its template, as everywhere else.
     private void ResolveTypedEntry(IRouteableMenuEntry entry, Type type)
     {
         if (entry is not RouteableMenuEntry typed)

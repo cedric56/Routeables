@@ -34,8 +34,8 @@ public sealed class AnimalImageConverter : IValueConverter
 
         try
         {
-            // This runs on a thread of the pool (IsAsync), where nothing is waiting for it. The handler answers through its async
-            // path only, so the call is the async one: waiting for it here blocks no UI thread.
+            // This runs on a pool thread (IsAsync) where nothing waits for it. The handler answers only through its async path, so the call is the async
+            // one: waiting for it here blocks no UI thread.
             var bytes = Http.GetByteArrayAsync(uri).GetAwaiter().GetResult();
             using var stream = new MemoryStream(bytes);
 

@@ -61,8 +61,8 @@ public class DispatcherTests
         var circuit = new Circuit();
         var dispatcher = InContext(circuit, () => new RouteableDispatcher());
 
-        Assert.False(dispatcher.CheckAccess());                                     // outside the circuit
-        Assert.True(InContext(circuit, dispatcher.CheckAccess));                    // inside it
+        Assert.False(dispatcher.CheckAccess());
+        Assert.True(InContext(circuit, dispatcher.CheckAccess));
     }
 
     [Fact]

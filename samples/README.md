@@ -2,7 +2,7 @@
 
 One application, **XAnimals** (cats, dogs, monkeys, a menu, history, regions, tabs, dialogs, notifications, a guard and a module loaded on demand), written once and shown on every host. The view models, the data and the routes are the same everywhere (`Bases/XAnimals.ViewModels`); each host only has its own views.
 
-Every command is run from the root of the repository. The SDK is the one of `global.json` (.NET 10).
+Every command is run from the root of the repository. The SDK is the one in `global.json` (.NET 10).
 
 ## Where to start
 

@@ -47,10 +47,8 @@ public sealed class MenuViewModelLifetimeAnalyzer : DiagnosticAnalyzer
         if (method.Name != "AddTransient" && method.Name != "TryAddTransient")
             return;
 
-        // AddTransient<IRouteableMenuViewModel, MainViewModel>() / AddTransient<IRouteableMenuViewModel>(factory)
         var generic = method.TypeArguments.Length > 0 && SymbolEqualityComparer.Default.Equals(method.TypeArguments[0], main);
 
-        // AddTransient(typeof(IRouteableMenuViewModel), typeof(MainViewModel))
         var typeOf = false;
         foreach (var argument in invocation.Arguments)
         {

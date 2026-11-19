@@ -15,7 +15,7 @@ public static class RouterStackExtensions
     {
         ArgumentNullException.ThrowIfNull(router);
         ArgumentNullException.ThrowIfNull(routes);
-        var result = RouteableResult.Cancel();   // an empty list changes nothing
+        var result = RouteableResult.Cancel(); // an empty list changes nothing
         foreach (var route in routes)
         {
             result = await router.GoToAsync(route, cancellationToken: cancellationToken);

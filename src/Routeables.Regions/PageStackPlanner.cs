@@ -47,11 +47,10 @@ public static class PageStackPlanner
 
         if (actual.Count == 0)
         {
-            // Nothing shown yet.
         }
         else if (common == 0)
         {
-            // The root is not the same page: the control keeps one page at least, which is replaced.
+            // The root is not the same page: the control keeps at least one page, which is replaced.
             if (actual.Count > 1)
                 steps.Add(new PageStackStep(PageStackStepKind.PopTo, 1));
             if (wanted.Count > 0)

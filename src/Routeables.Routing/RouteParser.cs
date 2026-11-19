@@ -18,28 +18,28 @@ public static partial class RouteParser
 {
 
     // {Id:int}  {Tab?}  {Tab::?}  {animate::bool}  {person:Person}  {**path}
-    // "::" sets the 'attribute' group, "?" sets 'opt', "**" sets 'rest': the placeholder takes what is left of the path, slashes included
-    // Generated at build time: no regular expression is built (or interpreted) at run time, which is what a trimmed or AOT application wants.
+    // "::" sets the 'attribute' group, "?" sets 'opt', "**" sets 'rest' (the placeholder takes the rest of the path, slashes included).
+    // Generated at build time, so no regular expression is built or interpreted at run time, which suits trimmed and AOT applications.
     [GeneratedRegex(@"^\{(?<rest>\*\*)?(?<name>\w+)(?::(?<attribute>:)?(?<type>[^}?]*))?(?<opt>\?)?\}$")]
     private static partial Regex ParamPattern();
 
     private static readonly Regex Param = ParamPattern();
 
-    // What is read from a route template, once: the registered templates are few and each one is matched on every navigation, so splitting it
-    // and matching each segment against Param again for every route change would be the same work repeated.
+    // What is read from a template, once. Few templates are registered and each is matched on every navigation; splitting it and matching
+    // each segment against Param every time would repeat the same work.
     private sealed class ParsedTemplate
     {
         public required string[] Segments { get; init; }
-        public required Match[] SegmentMatches { get; init; }      // one per segment, Success false for a literal
-        public required int RestAt { get; init; }                  // index of the catch-all, or -1
+        public required Match[] SegmentMatches { get; init; } // one per segment; Success is false for a literal
+        public required int RestAt { get; init; } // index of the catch-all, or -1
         public required string? OptionalNotLast { get; init; }
-        public required string? DuplicateName { get; init; }       // a name given by the path and by the query (or twice), or null
+        public required string? DuplicateName { get; init; } // a name given by both the path and the query (or twice), or null
         public required string[] QueryParts { get; init; }
         public required Match[] QueryMatches { get; init; }
         public required int[] Rank { get; init; }
     }
 
-    private const int MaxParsedTemplates = 2048;                   // the templates are registered by the application: a bound only against a template made of user input
+    private const int MaxParsedTemplates = 2048; // templates come from the application, so this only bounds a template built from user input
     private static readonly ConcurrentDictionary<string, ParsedTemplate> Parsed = new(StringComparer.Ordinal);
 
     private static ParsedTemplate ParseTemplate(string template)
@@ -68,8 +68,8 @@ public static partial class RouteParser
         return parsed;
     }
 
-    // A Match builds its groups the first time they are read, which is not safe from several threads at once: they are all read here, before the
-    // match is shared, so the navigations that read it afterwards only read.
+    // A Match builds its groups the first time they are read, which is not thread-safe. Read them all here, before the match is shared,
+    // so that later navigations only read.
     private static Match Realized(Match m)
     {
         if (m.Success)
@@ -80,12 +80,12 @@ public static partial class RouteParser
 
     private static int Rank(Match m)
     {
-        if (!m.Success) return 5;                                   // literal
-        if (m.Groups["rest"].Success) return 0;                     // catch-all
+        if (!m.Success) return 5; // literal
+        if (m.Groups["rest"].Success) return 0; // catch-all
         var type = m.Groups["type"].Value;
-        var untyped = type is "" or "?" || type.Equals("string", StringComparison.OrdinalIgnoreCase);   // {id:String} reads like {id}
-        if (m.Groups["opt"].Success) return untyped ? 1 : 2;        // optional: {id:int?} before {tab?}
-        return untyped ? 3 : 4;                                     // untyped, typed
+        var untyped = type is "" or "?" || type.Equals("string", StringComparison.OrdinalIgnoreCase); // {id:String} reads like {id}
+        if (m.Groups["opt"].Success) return untyped ? 1 : 2; // optional: {id:int?} comes before {tab?}
+        return untyped ? 3 : 4; // untyped, then typed
     }
 
     /// <summary>
@@ -112,8 +112,8 @@ public static partial class RouteParser
         params string[] viewKeys)
         => Check(template, uri, args ?? RouteableArgs.Create(), viewKeys, reasons: true);
 
-    // A mismatch without a reason (reasons false, the answer is only yes or no) is this text: no message is built and, without arguments to
-    // fill (args null), no set of bound names either. BestMatch asks this question of every candidate and keeps only the one it picks.
+    // A mismatch without a reason (reasons is false: the answer is only yes or no) is this text, so no message is built and, without
+    // args, no set of bound names either. BestMatch asks this of every candidate and keeps only the one it picks.
     private const string NoReason = "";
 
     private static string? Check(
@@ -121,8 +121,8 @@ public static partial class RouteParser
         IRouteableArgs? args, string[] viewKeys, bool reasons)
     {
         HashSet<string>? viewKeySet = null, bound = null;
-        // Sets are built when there is something to put in them: no view key is the usual case, and the names bound by the path are
-        // only read against the query, which an address often does not have.
+        // Sets are built only when there is something to put in them: usually no view key is given, and the names bound by the path are
+        // only read against the query, which many addresses do not have.
         if (args is not null && viewKeys.Any(k => !string.IsNullOrWhiteSpace(k)))
             viewKeySet = new HashSet<string>(
                 viewKeys.Where(k => !string.IsNullOrWhiteSpace(k)),
@@ -166,13 +166,13 @@ public static partial class RouteParser
 
             var raw = i < uSegs.Length ? Uri.UnescapeDataString(uSegs[i]) : null;
 
-            // "." and ".." are not values: a browser resolves them (/users/../edit is /edit, even written %2E%2E), so the address shown would not be the one routed.
+            // "." and ".." are not values: a browser resolves them (/users/../edit is /edit, even written %2E%2E), so the address shown would differ from the one routed.
             if (m.Success && HasDotSegment(raw))
                 return reasons ? $"\"{raw}\" is a \".\" or \"..\" segment, which a browser resolves to another address" : NoReason;
 
             if (!m.Success) // literal segment
             {
-                // The literal of the template is compared as the address is: unescaped ("/my%20page" is the segment "my page", and Build writes it as it was).
+                // The template literal is compared as the address is, unescaped ("/my%20page" is the segment "my page", and Build writes it unchanged).
                 var literal = tSegs[i].Contains('%') ? Uri.UnescapeDataString(tSegs[i]) : tSegs[i];
                 if (!string.Equals(literal, raw, StringComparison.OrdinalIgnoreCase))
                     return !reasons ? NoReason
@@ -185,17 +185,17 @@ public static partial class RouteParser
         }
 
         // --- query ---
-        var query = uQuery.Length == 0 ? NoQuery : ParseQuery(uQuery);   // read only below
+        var query = uQuery.Length == 0 ? NoQuery : ParseQuery(uQuery); // only read below
         for (var q = 0; q < parsed.QueryParts.Length; q++)
         {
             var part = parsed.QueryParts[q];
             var m = parsed.QueryMatches[q];
             if (!m.Success)
             {
-                // A fixed entry of the template ("mode=grid") must be in the address as written; "flag" alone only names a parameter.
+                // A fixed entry of the template ("mode=grid") must be in the address as written; a bare "flag" only names a parameter.
                 if (part.IndexOf('=') is var eq and > 0)
                 {
-                    // Read as the address is (a plus is a space, an escape is its character), so that what Build writes is read back.
+                    // Read as the address is (a plus is a space, an escape is its character), so that what Build writes reads back.
                     var (fixedName, fixedValue) = (DecodeQuery(part[..eq]), DecodeQuery(part[(eq + 1)..]));
                     query.TryGetValue(fixedName, out var got);
                     if (!string.Equals(got, fixedValue, StringComparison.OrdinalIgnoreCase))
@@ -207,9 +207,9 @@ public static partial class RouteParser
             if (Bind(m, raw, args, viewKeySet, bound, reasons) is { } failure) return failure;
         }
 
-        // Query values the template does not declare are neutral values (IRouteableArgs.Values, read by the lifecycle hooks): they
-        // are not given to the constructor or injected into a property. The address is user input; letting it name what the page is
-        // built with would break every link that carries a tracking parameter and let anyone fill a constructor parameter.
+        // Query values that the template does not declare are neutral values (IRouteableArgs.Values, read by the lifecycle hooks). They are not
+        // passed to the constructor or injected into a property: the address is user input, and letting it choose what the page is built with
+        // would break every link that carries a tracking parameter and let anyone fill a constructor parameter.
         if (args is not null)
             foreach (var (name, value) in query)
                 if (bound is null || !bound.Contains(name))
@@ -227,22 +227,22 @@ public static partial class RouteParser
         var name = m.Groups["name"].Value;
         var type = m.Groups["type"].Value;
         var attribute = m.Groups["attribute"].Success;
-        var optional = m.Groups["opt"].Success || m.Groups["rest"].Success;   // a catch-all may be empty
+        var optional = m.Groups["opt"].Success || m.Groups["rest"].Success; // a catch-all may be empty
 
         if (!IsBuiltIn(type) && AmbiguousNames.ContainsKey(type))
             return reasons ? $"the constraint \"{type}\" of {{{name}}} stands for several registered types: write the full name of the type" : NoReason;
 
-        // A constraint that is neither built in nor registered is a mistake in the template: it never matches, and says so (instead of throwing
+        // A constraint that is neither built in nor registered is a mistake in the template: it never matches, and says why (instead of throwing
         // while the router looks for a route).
         if (!IsKnownConstraint(type))
             return reasons ? $"the constraint \"{type}\" of {{{name}}} is unknown (built in: {string.Join(", ", BuiltInConstraints)}; or register a serializer with RouteParser.RegisterSerializer)" : NoReason;
 
         if (string.IsNullOrEmpty(raw))
         {
-            // A declared parameter that is sent empty ("?q=") is still the declared one: it is not an undeclared neutral value.
+            // A declared parameter sent empty ("?q=") is still the declared one, not an undeclared neutral value.
             if (args is not null)
                 bound?.Add(name);
-            // a missing optional value is skipped, a missing required one is a mismatch
+            // A missing optional value is skipped; a missing required one is a mismatch.
             return optional ? null : reasons ? $"the required parameter {{{name}}} is missing" : NoReason;
         }
 
@@ -263,11 +263,11 @@ public static partial class RouteParser
     private static void Add(IRouteableArgs args, HashSet<string>? viewKeySet,
                     string name, object? value, bool? attribute)
     {
-        // A value of the address replaces the one of the same name that the caller gave (the address is the route that is shown), so that the
-        // constructor, which takes the first value of a name, and the property, which takes the last, read the same one.
+        // A value in the address replaces the caller's value of the same name (the address is the route being shown), so that the constructor,
+        // which takes the first value of a name, and the property, which takes the last, read the same one.
         if (viewKeySet?.Contains(name) == true)
         {
-            // A key of the view is for a property of the view (the documentation of viewKeys), never a constructor argument.
+            // A view key is for a property of the view (see viewKeys), never for a constructor argument.
             args.ViewParameters.RemoveAll(e => string.Equals(e.name, name, StringComparison.OrdinalIgnoreCase));
             args.ForView(new RouteableArgument(value, name, true));
         }
@@ -278,9 +278,9 @@ public static partial class RouteParser
         }
     }
 
-    // The first optional path placeholder (not a catch-all) that is followed by a segment that is not optional itself: such a template cannot
-    // be written back (tabs/{tab?}/end without a tab is tabs/end, which does not match), so it never matches. Optionals one after the other
-    // at the end (cat/{age:int?}/{nick?}) are fine, and so is a catch-all after them.
+    // The first optional path placeholder (not a catch-all) followed by a segment that is not optional: such a template cannot be written back
+    // (tabs/{tab?}/end without a tab is tabs/end, which does not match), so it never matches. Optionals at the end (cat/{age:int?}/{nick?})
+    // are fine, and so is a catch-all after them.
     private static string? OptionalNotLast(string[] segments)
     {
         for (var i = 0; i < segments.Length - 1; i++)
@@ -304,7 +304,7 @@ public static partial class RouteParser
         return null;
     }
 
-    // A named value is there once: the one that is added replaces the one that has its name (without the case), as Get<T> refuses two.
+    // A named value appears once: adding one replaces the one with the same name (ignoring case), because Get<T> rejects duplicates.
     internal static void SetValue(List<RouteableArgument> values, RouteableArgument entry)
     {
         if (!string.IsNullOrEmpty(entry.name))
@@ -323,7 +323,7 @@ public static partial class RouteParser
             if (a[i] != b[i])
                 return a[i].CompareTo(b[i]);
 
-        // The same start: the shorter template is the more exact one (/products before /products/{tab?}, /files before /files/{**path}).
+        // Same start: the shorter template is the better match (/products before /products/{tab?}, /files before /files/{**path}).
         return b.Length.CompareTo(a.Length);
     }
 
@@ -332,7 +332,7 @@ public static partial class RouteParser
     /// </summary>
     private static (string path, string query) Split(string s, bool template = true)
     {
-        // The braces are those of a template's placeholders; an address is user input and may hold a lone "{" or "}" ("/notes/a}b?tab=2").
+        // The braces are those of the template's placeholders; an address is user input and may contain a lone "{" or "}" ("/notes/a}b?tab=2").
         if (!template)
         {
             var at = s.IndexOf('?');

@@ -57,7 +57,7 @@ public sealed class RegionBinding : IDisposable
         }
         catch
         {
-            // The constructor fails: nobody has the binding to dispose, so the router must not keep calling it.
+            // The constructor failed: nobody has the binding to dispose, so the router must stop calling it.
             Dispose();
             throw;
         }
@@ -93,7 +93,7 @@ public sealed class RegionBinding : IDisposable
         }
         catch
         {
-            // A view that could not be shown is not shown: the next Refresh, even for the same view, tries again.
+            // A view that could not be shown is not recorded as shown: the next Refresh, even for the same view, tries again.
             ShowFailed(view);
             throw;
         }
@@ -118,7 +118,7 @@ public sealed class RegionBinding : IDisposable
 
     private void OnChanged(object? sender, EventArgs e) => Refresh();
 
-    // A route change raises Routing, then changes the history (Changed), then raises Routed: what Routing says is what Changed shows.
+    // A navigation raises Routing, then changes the history (Changed), then raises Routed: what Routing says is what Changed shows.
     private void OnRouting(object? sender, RouteableRoutingEventArgs e)
     {
         var change = new RegionChange(DirectionOf(e), e.To.Args.Transition);

@@ -34,7 +34,7 @@ public class ContentDialogServiceTests
         var shown = service.ShowAsync(new RouteableContentDialog { Title = "First", CloseButtonText = "Close" });
         var queued = service.ShowAsync(new RouteableContentDialog { Title = "Second", CloseButtonText = "Close" });
 
-        service.Dispose();      // the circuit is over
+        service.Dispose();
 
         Assert.Equal(RouteableContentDialogResult.None, await shown.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));
         Assert.Equal(RouteableContentDialogResult.None, await queued.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));

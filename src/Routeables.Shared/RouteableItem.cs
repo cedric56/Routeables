@@ -10,8 +10,7 @@ using Microsoft.UI.Xaml;
 using ItemTarget = Microsoft.UI.Xaml.DependencyObject;
 #endif
 
-// One file for every host that has tabs: Routeables.Wpf and Routeables.Avalonia link it (and define WPF or AVALONIA), Routeables.Uno and
-// Routeables.WinUI3 link it too.
+// Shared source for every host that has tabs: Routeables.Wpf and Routeables.Avalonia (which define WPF or AVALONIA), Routeables.Uno and Routeables.WinUI3.
 #if WPF
 namespace Routeables.Wpf;
 #elif AVALONIA

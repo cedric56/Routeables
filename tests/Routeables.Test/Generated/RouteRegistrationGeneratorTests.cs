@@ -630,7 +630,6 @@ public class RouteRegistrationGeneratorTests
         Assert.Equal(2, generated.Split("RegisterRoute<global::CatsView, global::CatsViewModel>(").Length - 1);
     }
 
-    // ---------------------------------------------------------------- ROUT204: [RouteableView] in a .razor file
 
     private const string CallsAddGeneratedRoutes = """
         using Microsoft.Extensions.DependencyInjection;

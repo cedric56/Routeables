@@ -57,7 +57,7 @@ public static class SegmentExtensions
         return services;
     }
 
-    // One registry per collection, found through its instance registration so the order of calls does not matter.
+    // One registry per collection, found through its instance registration so that the order of calls does not matter.
     private static SegmentRegistry GetSegmentRegistry(IServiceCollection services)
     {
         var registry = services.Select(d => d.ImplementationInstance).OfType<SegmentRegistry>().FirstOrDefault();

@@ -19,7 +19,7 @@ public sealed class RouteableLinkInbox
 {
     private static readonly TimeSpan FirstPageTimeout = TimeSpan.FromSeconds(30);
 
-    // How long one wait for the first page lasts; a page that comes later still starts the pump again. Changed by the tests only.
+    // How long one wait for the first page lasts. A page that comes later still restarts the pump. Changed by tests only.
     internal TimeSpan FirstPageWait { get; init; } = FirstPageTimeout;
 
     /// <summary>The most addresses kept while the application is not ready; beyond it the oldest are dropped (the last address is the one the user wants).</summary>
@@ -78,8 +78,8 @@ public sealed class RouteableLinkInbox
     /// <summary>An address received by the host. Safe to call from any thread, before or after <see cref="Attach"/>.</summary>
     public void Push(Uri? uri)
     {
-        // An address that would be refused when it is followed (see RouteableDeepLinks.MaxLength) is not worth keeping, and what comes
-        // from outside must not be able to fill the memory while the first page is not shown.
+        // An address that would be refused when followed (see RouteableDeepLinks.MaxLength) is not worth keeping, and input from outside must not be
+        // able to fill the memory while the first page is not shown.
         if (uri is null || uri.OriginalString.Length > RouteableDeepLinks.MaxLength)
             return;
 
@@ -118,8 +118,8 @@ public sealed class RouteableLinkInbox
             pumping = true;
         }
 
-        // Without the execution context of the caller: Kick may run inside a route change (a Routed handler), and the pump would carry the token
-        // of the navigation lock that is still held, so that its own navigation would be taken for a reentrant one and the link would be lost.
+        // Run without the caller's execution context: Kick may run inside a navigation (a Routed handler), and the pump would carry the token of the
+        // navigation lock that is still held, so its own navigation would be taken for a reentrant one and the link would be lost.
         using (ExecutionContext.SuppressFlow())
             RouteableHelper.FireAndForget(() => Task.Run(PumpAsync), provider, "RouteableLinkInbox.PumpAsync");
     }
@@ -133,20 +133,20 @@ public sealed class RouteableLinkInbox
             var services = provider!;
             if (services.GetService<IRouter>() is not { } router)
             {
-                // No router is registered (a mistake of configuration): starting again would spin for ever, as for a page that never comes.
+                // No router is registered (a configuration mistake): starting again would spin forever, as for a page that never comes.
                 noFirstPage = true;
                 return;
             }
             if (!await WaitForFirstPageAsync(router, timeout: FirstPageWait))
             {
-                // No page after the wait: the links stay. Starting again here would poll for ever in an application that never shows a page; the
-                // first page that is shown (a sign-in window can take longer than the wait) starts the pump again, and so does the next link.
+                // No page after the wait: the links stay. Starting again here would poll forever in an application that never shows a page. The first page
+                // that is shown (a sign-in window can take longer than the wait) restarts the pump, and so does the next link.
                 noFirstPage = true;
                 waitingFor = router;
                 return;
             }
 
-            // The history of the last run, when there is one, is put back first: it starts by erasing the history, and would remove the page of a link.
+            // Restore the last run's history first, when there is one: it starts by erasing the history, and would remove a link's page.
             await RouteableStartup.WhenRestoredAsync(router);
 
             while (true)
@@ -164,7 +164,7 @@ public sealed class RouteableLinkInbox
                 if (restoring is null && uri is null)
                     return;
 
-                // A link tells the menu itself (RouteableDeepLinks); the pages that are put back do it here.
+                // A link tells the menu itself (RouteableDeepLinks); restored pages do it here.
                 await OnInterfaceAsync(restoring is not null
                     ? async () =>
                     {
@@ -197,7 +197,7 @@ public sealed class RouteableLinkInbox
 
     private bool watching;
 
-    // Starts the pump when the first page is shown, however late: the link that opened the application is followed then, not dropped.
+    // Start the pump when the first page is shown, however late: the link that opened the application is then followed, not dropped.
     private void KickAtFirstPage(IRouter router)
     {
         lock (gate)
@@ -223,7 +223,7 @@ public sealed class RouteableLinkInbox
             OnRouted(router, null!);
     }
 
-    // The menu selects its first entry when the window opens: before that the history is empty.
+    // The menu selects its first entry when the window opens; before that the history is empty.
     internal static async Task<bool> WaitForFirstPageAsync(IRouter router, CancellationToken cancellationToken = default, TimeSpan? timeout = null)
     {
         // A monotonic clock: a change of the system time must not shorten or lengthen the wait.

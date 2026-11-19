@@ -43,7 +43,7 @@ public class AspNetCoreHostTests
         var current = new ServiceCollection();
         current.UseRouteables();
         var old = new ServiceCollection();
-#pragma warning disable CS0618 // the point of the test
+#pragma warning disable CS0618
         old.AddRouteablesAspNetCore();
         var oldWithMenu = new ServiceCollection();
         oldWithMenu.AddRouteablesAspNetCore<Routeables.Core.DefaultRouteableMenuViewModel>();

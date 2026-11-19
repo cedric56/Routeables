@@ -41,7 +41,7 @@ public partial class RouteableMenuItem : ContentControl
         stack.Children.Add(texts);
         Content = stack;
 
-        // The entry holds this control through its event: it is followed while the control is in the tree only.
+        // The entry holds this control through its event, so it is followed only while the control is in the tree.
         Loaded += (_, _) =>
         {
             _loaded = true;
@@ -86,7 +86,7 @@ public partial class RouteableMenuItem : ContentControl
 
     private void OnItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        // An entry can change on the thread of a route change.
+        // An entry can change on the thread of a navigation.
         if (DispatcherQueue is { } queue && !queue.HasThreadAccess)
             queue.TryEnqueue(() => Refresh(Item));
         else
@@ -101,7 +101,7 @@ public partial class RouteableMenuItem : ContentControl
         _icon.Content = item?.Icon;
         _icon.Visibility = item?.Icon is null ? Visibility.Collapsed : Visibility.Visible;
 
-        // A locked entry cannot be chosen: the container of the list is disabled with its content.
+        // A locked entry cannot be chosen: the list container is disabled together with its content.
         var enabled = item is null || !item.IsLock;
         IsEnabled = enabled;
         if (FindContainer() is { } container)

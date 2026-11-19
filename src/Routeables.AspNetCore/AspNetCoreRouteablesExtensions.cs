@@ -46,8 +46,8 @@ public static class AspNetCoreRouteablesExtensions
         services.AddRouteCoordinator(ServiceLifetime.Scoped);
         services.AddScoped<RouteableInteractions>();
         services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());
-        // A template parameter written {name::} goes to a property marked [RouteableParameter] (a Razor view is built by MVC and has none of its own,
-        // so it is the property of the view model that receives it).
+        // A template parameter written {name::} goes to a property marked [RouteableParameter]. MVC builds a Razor view and it has none of its own,
+        // so the property of the view model that receives it is the one used.
         services.AddSingleton<IRouteableInjection>(
             new RouteablePropertyInjection(new RouteablePropertyEntry(typeof(RouteableParameterAttribute), FromContainer: false)));
         services.AddScoped<IRouteableDialogService, RouteableDialogService>();
@@ -60,7 +60,7 @@ public static class AspNetCoreRouteablesExtensions
         services.AddScoped<RouteablePageState>();
         services.AddScoped<RouteableTransitions>();
         configure?.Invoke(services);
-        // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
+        // Add the routes the generator found, unless the application registered them (or called AddGeneratedRoutes()).
         global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
 
         return services;

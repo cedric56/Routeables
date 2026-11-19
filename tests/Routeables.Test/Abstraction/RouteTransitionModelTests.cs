@@ -10,7 +10,6 @@ namespace Routeables.Tests.Abstraction;
 /// </summary>
 public class RouteTransitionModelTests
 {
-    // ------------------------------------------------------------------------------------------------ names
 
     [Theory]
     [InlineData("Fade", "Fade")]
@@ -71,7 +70,6 @@ public class RouteTransitionModelTests
         Assert.Same(RouteTransition.None, transition);
     }
 
-    // ------------------------------------------------------------------------------------------------ duration
 
     [Fact]
     public void The_default_duration_is_a_quarter_of_a_second()
@@ -114,7 +112,6 @@ public class RouteTransitionModelTests
     public void None_with_a_duration_is_still_none()
         => Assert.True(RouteTransition.None.WithDuration(TimeSpan.FromSeconds(1)).IsNone);
 
-    // ------------------------------------------------------------------------------------------------ equality
 
     [Fact]
     public void Two_transitions_are_equal_when_their_names_match_whatever_the_case_and_their_durations_match()
@@ -161,7 +158,6 @@ public class RouteTransitionModelTests
         Assert.Equal("Grow", RouteTransition.Named("Grow").ToString());
     }
 
-    // ------------------------------------------------------------------------------------------------ the built-in set
 
     [Fact]
     public void The_built_in_list_starts_with_none_and_has_no_null()
@@ -183,7 +179,6 @@ public class RouteTransitionModelTests
         Assert.All(properties, p => Assert.Contains(p, RouteTransition.BuiltIn));
     }
 
-    // ------------------------------------------------------------------------------------------------ the start state
 
     [Theory]
     [InlineData(RouteableDirection.Forward)]
@@ -318,7 +313,6 @@ public class RouteTransitionModelTests
             }
     }
 
-    // ------------------------------------------------------------------------------------------------ RouteTransitionStart
 
     [Fact]
     public void The_rest_state_is_fully_opaque_and_does_not_move()
@@ -373,7 +367,6 @@ public class RouteTransitionModelTests
         Assert.NotEqual(new RouteTransitionStart { Scale = 0.5 }, new RouteTransitionStart { Scale = 0.6 });
     }
 
-    // ------------------------------------------------------------------------------------------------ RegionChange.Resolve
 
     [Fact]
     public void An_unknown_change_has_no_direction_and_no_transition()

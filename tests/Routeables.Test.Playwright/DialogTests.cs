@@ -73,7 +73,7 @@ public sealed class DialogTests(BlazorApp app) : BlazorTest(app)
     [InlineData("Error", "error", "Download failed")]
     public async Task A_notification_appears_with_its_type(string button, string type, string title)
     {
-        // "Error" is also the name of a message button (above): the notification ones are in the last group of the page.
+        // "Error" is also the name of a message button (above): the notification buttons are in the last group of the page.
         await Page.Locator("section.about-group").Last.GetByRole(AriaRole.Button, new LocatorGetByRoleOptions { Name = button, Exact = true }).ClickAsync();
 
         var toast = Page.Locator($".rt-toast.rt-{type}");

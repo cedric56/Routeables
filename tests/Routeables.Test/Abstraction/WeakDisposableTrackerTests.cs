@@ -42,7 +42,7 @@ public class WeakDisposableTrackerTests
 
         for (var round = 0; round < 20; round++)
         {
-            TrackShortLived(tracker, 100);      // pages shown and gone, as in an application that stays open for days
+            TrackShortLived(tracker, 100); // pages shown and gone, as in an application that stays open for days
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
@@ -61,7 +61,7 @@ public class WeakDisposableTrackerTests
         Assert.Equal(0, tracker.Count);
     }
 
-    // Not inlined, so that nothing keeps the instances alive once the method has returned.
+    // Not inlined, so nothing keeps the instances alive once the method returns.
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
     private static void TrackShortLived(WeakDisposableTracker tracker, int count)
     {

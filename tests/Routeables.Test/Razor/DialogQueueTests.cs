@@ -23,7 +23,6 @@ public class DialogQueueTests
     private static Task<int> Show(RouteableMessageQueue queue, string title, int dismiss = -1)
         => queue.ShowAsync(title, "message", dismiss, new DialogButton("Yes", 1, IsPrimary: true), new DialogButton("No", 0));
 
-    // ------------------------------------------------------------------------------------------------ message boxes
 
     [Fact]
     public async Task A_dialog_without_a_host_is_refused_with_a_message_that_names_the_host()
@@ -226,7 +225,6 @@ public class DialogQueueTests
         Assert.All(started, t => Assert.Equal(1, t.Result));
     }
 
-    // ------------------------------------------------------------------------------------------------ content dialogs
 
     private static RouteableContentDialogQueue HostedContent()
     {
@@ -328,7 +326,6 @@ public class DialogQueueTests
     public void Dismissing_with_no_content_dialog_does_nothing()
         => HostedContent().Dismiss();
 
-    // ------------------------------------------------------------------------------------------------ task dialogs
 
     private static RouteableTaskDialogQueue HostedTask()
     {
@@ -413,10 +410,10 @@ public class DialogQueueTests
         waiting.Close!();
 
         Assert.Equal(RouteableContentDialogResult.None, await second.WaitAsync(TimeSpan.FromSeconds(5), Ct));
-        Assert.Same(shown, queue.Current!.Parameters);       // the one on screen is untouched
+        Assert.Same(shown, queue.Current!.Parameters);
 
         queue.Current!.Session.Buttons[0].Press();
         Assert.Equal(RouteableContentDialogResult.Primary, await first.WaitAsync(TimeSpan.FromSeconds(5), Ct));
-        Assert.Null(queue.Current);                           // the closed one did not come back
+        Assert.Null(queue.Current);
     }
 }

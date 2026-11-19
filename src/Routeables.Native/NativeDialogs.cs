@@ -34,8 +34,8 @@ public static partial class NativeDialogs
     }
 
 #if WINDOWS
-    // WinUI shows one ContentDialog at a time per window and a second ShowAsync throws. The gate is one for the application, not one for each window:
-    // with several windows a dialog waits for the one of another window, which is slower but never fails.
+    // WinUI shows one ContentDialog at a time per window, and a second ShowAsync throws. The gate is one for the whole application, not one per
+    // window: with several windows a dialog waits for another window's, which is slower but never fails.
     private static readonly SemaphoreSlim WindowsDialogGate = new(1, 1);
 #endif
 

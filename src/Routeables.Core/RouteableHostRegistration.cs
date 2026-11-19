@@ -43,15 +43,15 @@ internal static class RouteableHostRegistration
         if (own is not null)
             return own(services).StartRouteableHistory();
 
-        // A debug build of the library validates always; the package (a release build) validates while a debugger is attached, which is
-        // when the application is being developed: the "#if DEBUG" alone would never run for a user of the package.
+        // A debug build of the library always validates. The package (a release build) validates while a debugger is attached, which is when the
+        // application is being developed: "#if DEBUG" alone would never run for a package user.
 #if DEBUG
         var validate = true;
 #else
         var validate = System.Diagnostics.Debugger.IsAttached;
 #endif
         var provider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = validate });
-        // The history of the previous run is put back, when the application asked for it (AddRouteableHistory).
+        // Restore the previous run's history, when the application asked for it (AddRouteableHistory).
         return provider.StartRouteableHistory();
     }
 }

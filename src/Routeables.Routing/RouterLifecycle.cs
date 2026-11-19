@@ -19,7 +19,7 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
     public async Task<bool> CanLeaveAsync(RouterEntry entry, CancellationToken ct = default)
     {
         if (entry.ViewModel is IRouteable vm && !await vm.CanLeaveAsync(ct)) return false;
-        // A page that is its own view model (a route registered without one) is asked once.
+        // A page that is its own view model (a route registered without one) is asked only once.
         if (entry.View is IRouteable v && !ReferenceEquals(v, entry.ViewModel) && !await v.CanLeaveAsync(ct)) return false;
         return true;
     }
@@ -41,8 +41,8 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
         }
         catch
         {
-            // The view model was told OnLeaving (it stopped a timer, unsubscribed) and the view then failed: `leaving` stays the current page,
-            // so it is entered again to be what the router says it is. When the view model itself failed, nothing was left.
+            // The view model was told OnLeaving (it stopped a timer, unsubscribed) and then the view failed. `leaving` stays the current page, so
+            // it is entered again to be what the router says it is. When the view model itself failed, nothing was left.
             if (viewModelLeft)
             {
                 try
@@ -66,9 +66,8 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
         }
         catch
         {
-            // `entering` failed partway through OnEntering. `leaving` has already torn down, but the
-            // router does not advance history on a failed transition, so history still points at
-            // `leaving`. Re-run its OnEntering so its lifecycle matches "still current" again.
+            // `entering` failed partway through OnEntering. `leaving` was already torn down, but the router does not advance the history on a failed
+            // transition, so the history still points at `leaving`. Run its OnEntering again so that its lifecycle matches "still current".
             try
             {
                 await EnterAsync(leaving, CancellationToken.None);

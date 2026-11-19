@@ -85,7 +85,7 @@ public class FeaturesViewModel : ViewModelBase, IRouteableState, IDisposable
         set { _draft = value ?? string.Empty; OnPropertyChanged(); }
     }
 
-    // ---- Lock: the page publishes a RouteableLockMessage; the coordinator of the menu view model disables the menu entries.
+    // Lock: the page publishes a RouteableLockMessage and the menu view model's coordinator disables the menu entries.
 
     /// <summary>How long "Lock for a few seconds" keeps the menu locked.</summary>
     public const int LockSeconds = 5;

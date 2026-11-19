@@ -21,7 +21,7 @@ internal static class RouteAddress
     /// <param name="route">The route.</param>
     internal static string Absolute(string? route)
     {
-        // Only the slashes of the path: the last character of a value of the query ("?dir=/") belongs to the value.
+        // Only the slashes of the path: the last character of a query value ("?dir=/") belongs to the value.
         var text = route ?? string.Empty;
         var at = QueryStart(text);
         return "/" + (at < 0 ? text : text[..at]).Trim('/') + (at < 0 ? string.Empty : text[at..]);
@@ -37,13 +37,13 @@ internal static class RouteAddress
         return text.Trim('/');
     }
 
-    // The query starts at the first question mark that is not the one of an optional parameter ("products/{tab?}"); -1 for none.
+    // The query starts at the first question mark that is not an optional parameter's ("products/{tab?}"); -1 for none.
     private static int QueryStart(string text)
     {
         var depth = 0;
         for (var i = 0; i < text.Length; i++)
         {
-            // A brace that nothing closes is a character of an address typed by hand, not the start of a placeholder.
+            // A brace that nothing closes is a character of a hand-typed address, not the start of a placeholder.
             if (text[i] == '{' && text.IndexOf('}', i) >= 0) depth++;
             else if (text[i] == '}' && depth > 0) depth--;
             else if (text[i] == '?' && depth == 0) return i;
@@ -97,7 +97,7 @@ internal static class RouteAddress
             return true;
         if (!string.Equals(a, b, StringComparison.OrdinalIgnoreCase))
             return false;
-        // The path is unescaped here: a question mark or a number sign that was escaped is escaped again, or the parser would end the path at it.
+        // The path is unescaped here: a question mark or number sign that was escaped is escaped again, or the parser would end the path at it.
         if (templateOf?.Invoke(a.Replace("?", "%3F").Replace("#", "%23")) is not { } template)
             return true;
 
@@ -109,7 +109,7 @@ internal static class RouteAddress
             if (string.Equals(segmentsA[i], segmentsB[i], StringComparison.Ordinal))
                 continue;
             if (i >= templateSegments.Length || templateSegments[i].Contains('{'))
-                return false;   // the case of a value changed: not the same page
+                return false; // only the case of a value differs: not the same page
         }
 
         return true;
@@ -130,7 +130,7 @@ internal static class RouteAddress
 
     private static bool SameQuery(string? a, string? b)
     {
-        // "?x=1&y=2" is "?y=2&x=1": the pairs are put in order of name (the sort is stable, so the values of a repeated name keep their order).
+        // "?x=1&y=2" is "?y=2&x=1": sort the pairs by name (the sort is stable, so the values of a repeated name keep their order).
         var pairsA = (a ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries).OrderBy(p => UnescapeQuery(SplitPair(p).Name), StringComparer.OrdinalIgnoreCase).ToArray();
         var pairsB = (b ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries).OrderBy(p => UnescapeQuery(SplitPair(p).Name), StringComparer.OrdinalIgnoreCase).ToArray();
         if (pairsA.Length != pairsB.Length)
@@ -162,9 +162,9 @@ internal static class RouteAddress
 
     private static string Unescape(string text)
     {
-        // An escaped slash is not a separator: "/files/a%2Fb" is one segment and "/files/a/b" is two, so the first must stay apart from a "/".
-        // Each piece between the escaped slashes is unescaped, its percent signs are escaped again, and the pieces are joined by "%2F": no text
-        // gives the same result as another ("a%2Fb" is "a%2Fb", "a%252Fb" the text "a%2Fb" is "a%252Fb", and no character stands for a slash).
+        // An escaped slash is not a separator: "/files/a%2Fb" is one segment and "/files/a/b" is two, so the first must stay different from a "/".
+        // Unescape each piece between escaped slashes, escape its percent signs again, and join the pieces with "%2F". No two different texts
+        // give the same result ("a%2Fb" stays "a%2Fb", "a%252Fb" (the text "a%2Fb") becomes "a%252Fb", and no character stands for a slash).
         try
         {
             var pieces = text.Replace("%2f", "%2F").Split("%2F");

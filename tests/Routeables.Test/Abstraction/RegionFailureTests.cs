@@ -28,11 +28,11 @@ public class RegionFailureTests
 
         // The history observer that calls Refresh is isolated by the history: the route change itself succeeds.
         var page = await GoToAsync(router, "A", log);
-        Assert.Equal(2, calls);                                      // the empty region at start, then the view that failed
+        Assert.Equal(2, calls); // the empty region at start, then the view that failed
         Assert.DoesNotContain(page.View, shown);
 
         fail = false;
-        binding.Refresh();                                           // same view: shown now
+        binding.Refresh(); // same view: shown now
 
         Assert.Equal(3, calls);
         Assert.Same(page.View, shown[^1]);
@@ -55,7 +55,7 @@ public class RegionFailureTests
 
         await GoToAsync(router, "B", log);
 
-        Assert.Equal(1, calls);                                      // the router no longer calls the binding that never existed
+        Assert.Equal(1, calls); // the router no longer calls the binding that never existed
     }
 
     [Fact]
@@ -90,9 +90,9 @@ public class RegionFailureTests
         });
 
         fail = true;
-        await GoToAsync(router, "A", log);                           // the show fails (reported, the route change succeeds)
+        await GoToAsync(router, "A", log); // the show fails (reported), the route change succeeds
         fail = false;
-        binding.Refresh();                                           // the same views: shown now
+        binding.Refresh(); // same view: shown now
 
         Assert.Equal(1, shown[^1]);
     }

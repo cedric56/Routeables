@@ -10,8 +10,8 @@ namespace Routeables.Abstraction.Registrations;
 /// </summary>
 internal sealed class RouteableTable
 {
-    // Copy on write: a route change reads the table several times, and the routes are added at start, so a read is the collection itself (no copy, and nothing
-    // that a caller could cast back to an array and change: the table is the one of the whole application) and an add builds a new one.
+    // Copy on write. A navigation reads the table several times and routes are added at startup, so a read returns the collection itself (no
+    // copy, and nothing a caller could cast back to an array and change: the table is shared by the whole application), and an add builds a new one.
     private volatile ReadOnlyCollection<(string Template, Type? ViewModelType)> _entries = new([]);
     private readonly object _gate = new();
 
@@ -50,8 +50,8 @@ internal sealed class RouteableTable
 
             if (at >= 0)
             {
-                // The container keeps the last view registered under a route (a module replaces the view of a page): the table follows it, so that the
-                // view model read here is the one of that view. A registration without a view model, or on a route that has none, changes nothing.
+                // The container keeps the last view registered under a route (a module replaces a page's view), and the table follows it, so that the view
+                // model read here is that view's. A registration without a view model, or on a route that has none, changes nothing.
                 if (viewModelType is not null && _entries[at].ViewModelType is { } known && known != viewModelType)
                 {
                     var replaced = _entries.ToArray();

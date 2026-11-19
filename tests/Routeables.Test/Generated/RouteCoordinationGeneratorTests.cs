@@ -26,7 +26,6 @@ public class RouteCoordinationGeneratorTests
         public sealed class PageView : IRouteableFor { public object? Context { get; set; } }
         """;
 
-    // ---- generated shape ----------------------------------------------------------------
 
     [Fact]
     public void Generates_an_extension_method_on_the_declared_caller()
@@ -247,7 +246,6 @@ public class RouteCoordinationGeneratorTests
         Assert.DoesNotContain("other", output.Generated);
     }
 
-    // ---- end to end: the generated code compiles and routes through a real router --------
 
     [Fact]
     public async Task Generated_methods_route_through_a_real_router_with_the_constructor_arguments()
@@ -711,7 +709,6 @@ public class RouteCoordinationGeneratorTests
         Assert.Equal("monkey", summary);
     }
 
-    // ---- diagnostics --------------------------------------------------------------------
 
     [Fact]
     public void ROUT101_a_caller_is_required()
@@ -989,7 +986,6 @@ public class RouteCoordinationGeneratorTests
         Assert.Equal(Generate(source).Generated, Generate(source).Generated);
     }
 
-    // ---- helpers ------------------------------------------------------------------------
 
     private sealed record Output(GeneratorDriverRunResult Run, Compilation Compilation)
     {

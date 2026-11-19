@@ -1,4 +1,4 @@
-﻿// WinUI 3 and Uno are what is left when neither WPF nor Avalonia is named.
+﻿// WinUI 3 and Uno are what is left when neither WPF nor Avalonia is defined.
 #if !WPF && !AVALONIA
 #define ROUTEABLE_WINUI
 #endif
@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction.Bases;
 using Routeables.Services;
 
-// One file for Routeables.Wpf and Routeables.Avalonia, which link it (and define WPF or AVALONIA), and for Routeables.Uno and Routeables.WinUI3.
+// Shared source for Routeables.Wpf and Routeables.Avalonia (which define WPF or AVALONIA), and for Routeables.Uno and Routeables.WinUI3.
 #if AVALONIA
 namespace Routeables.Avalonia.Services;
 #elif WPF
@@ -50,7 +50,7 @@ public partial class RouteableModalFor<TViewModel, TResult> : UserControl,
 {
     /// <summary>Gets or sets the dialog's data context, exposed as an untyped <see cref="object"/> for <see cref="IRouteableModalFor{TViewModel, TResult}"/>.</summary>
 #if ANDROID && ROUTEABLE_WINUI
-    // A native Android view already has a Context (the Android one): this one is the view model.
+    // A native Android view already has a Context (the Android one), so this one is the view model.
     public new object? Context { get => DataContext; set => DataContext = value; }
 #else
     public object? Context { get => DataContext; set => DataContext = value; }

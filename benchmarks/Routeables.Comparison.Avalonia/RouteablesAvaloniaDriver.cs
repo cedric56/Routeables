@@ -10,8 +10,8 @@ namespace Routeables.Comparison.Avalonia;
 public sealed class RouteablesAvaloniaDriver : INavigationDriver
 {
     private readonly IRouter _router;
-    // One window and one region for the whole run: the router of Routeables is the application's, and a region closed with the window of the
-    // previous driver is not one a new window can take over.
+    // One window and one region for the whole run: Routeables' router is the application's, and a region closed with the previous driver's window
+    // cannot be taken over by a new window.
     private static Window? s_window;
 
     private bool _started;
@@ -68,7 +68,7 @@ public sealed class RouteablesAvaloniaDriver : INavigationDriver
 
     public async Task<bool> ClearHistoryAsync()
     {
-        // What the memory measure has just weighed: the entries that the history still keeps (each one has its view model, its view and its arguments).
+        // What the memory measure has just weighed: the entries the history still keeps (each has its view model, its view and its arguments).
         ViewCount.Note($"{Name}: the history keeps {_router.History.Count} entries before it is cleared.");
         ViewCount.NoteAlive("before the history is cleared");
         await _router.EraseHistoryAsync();

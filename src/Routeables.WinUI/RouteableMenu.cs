@@ -31,9 +31,9 @@ public partial class RouteableMenu : Microsoft.UI.Xaml.Controls.ListView
     {
         SelectionMode = ListViewSelectionMode.Single;
 #if WINUI3
-        // WinUI 3: XamlReader cannot find a control of a library (it has no XAML metadata for it), and the containers are not
-        // reliably given a content in code. So the list holds the controls themselves (one RouteableMenuItem per entry), which a
-        // ListView shows as they are, and the binding to the menu view model is done here.
+        // WinUI 3: XamlReader cannot find a control from a library (it has no XAML metadata for it), and containers are not reliably given content in
+        // code. So the list holds the controls themselves (one RouteableMenuItem per entry), which a ListView shows as they are, and the binding to
+        // the menu view model is done here.
         DataContextChanged += (_, _) => Attach(DataContext as IRouteableMenuViewModel);
         SelectionChanged += OnSelectionChanged;
         Unloaded += (_, _) => Attach(null);
@@ -149,8 +149,8 @@ public partial class RouteableMenu : Microsoft.UI.Xaml.Controls.ListView
         }
     }
 #else
-    // Built from text: a template cannot be assembled from code. {Binding} gives the entry itself to the item.
-    // The namespace is the one of the host this file is compiled into, never written by hand.
+    // Built from text, because a template cannot be assembled from code. {Binding} gives the entry itself to the item.
+    // The namespace is that of the host this file is compiled into, never written by hand.
     private static readonly string MenuItemTemplate =
         $$"""
         <DataTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

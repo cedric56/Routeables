@@ -22,7 +22,7 @@ namespace Routeables.Blazor;
 public sealed class RouteableAuthorizationGuard(IServiceProvider provider, RouteableAuthorizationOptions options) : IRouteGuard, IRouteTypeGuard
 {
     /// <inheritdoc />
-    public int Order => -100;     // before the guards of the application: they need not repeat the rule
+    public int Order => -100; // before the application's guards, which then need not repeat the rule
 
     /// <inheritdoc />
     public async Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
@@ -66,7 +66,7 @@ public sealed class RouteableAuthorizationGuard(IServiceProvider provider, Route
         return route is null || IsAddress(address, route) ? RouteGuardDecision.Cancel : RouteGuardDecision.Redirect(route);
     }
 
-    // The sign-in page that forgot [AllowAnonymous] would send the visitor to itself: cancel instead.
+    // A sign-in page that forgot [AllowAnonymous] would send the visitor to itself, so cancel instead.
     private static bool IsAddress(string? address, string route)
         => RouteAddress.SamePath(address, route);
 }

@@ -80,7 +80,7 @@ public abstract class RegionLayout : IDisposable
         await ClearAsync(cancellationToken);
         Following = true;
 
-        // Created here, where the layout is started (the UI thread): that is where the regions follow.
+        // Created here, where the layout starts (the UI thread), because that is where the regions follow.
         _follower = new RegionFollower(PrimaryRouter, OnMovedAsync);
         _follower.Failed += (_, ex) => Failed?.Invoke(this, ex);
         await OnStartAsync(cancellationToken);
@@ -144,8 +144,8 @@ public abstract class RegionLayout : IDisposable
         ArgumentNullException.ThrowIfNull(view);
         if (_shown.TryGetValue(region, out var shown) && Equals(shown, key)) return;
 
-        // Remembered only once the region shows it: a view that could not be built, or a route that was refused, is tried again at the
-        // next move instead of leaving the region on something else for good.
+        // Remembered only once the region shows it. A view that could not be built, or a route that was refused, is tried again at the next move
+        // instead of leaving the region on something else for good.
         _shown.Remove(region);
         var result = await GoToAsync(region, view());
         if (result.Success)

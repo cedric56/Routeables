@@ -196,7 +196,6 @@ public class RouterNotFoundAndGuardRefreshTests
         Assert.True((await provider.GetRequiredService<IRouter>().RefreshGuardsAsync(Ct)).Success);
     }
 
-    // ---- RefreshGuardsAsync and the token of the caller
 
     /// <summary>The sign-in page: its arrival lasts until the token it is given is cancelled.</summary>
     public sealed class SlowLoginVm : IRouteable

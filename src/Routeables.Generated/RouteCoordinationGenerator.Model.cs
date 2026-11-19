@@ -11,7 +11,6 @@ namespace Routeables.Generated
     // The records and enums the other parts share.
     public sealed partial class RouteCoordinationGenerator
     {
-        // ------------------------------------------------------------------ models
 
         private sealed class AnalysisContext
         {

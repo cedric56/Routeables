@@ -1,4 +1,4 @@
-﻿// WinUI 3 and Uno are what is left when neither WPF nor Avalonia is named.
+﻿// WinUI 3 and Uno are what is left when neither WPF nor Avalonia is defined.
 #if !WPF && !AVALONIA
 #define ROUTEABLE_WINUI
 #endif
@@ -37,10 +37,11 @@ using Element = Microsoft.UI.Xaml.UIElement;
 using Picture = Microsoft.UI.Xaml.Media.ImageSource;
 #endif
 
-// One file for Routeables.Wpf, Routeables.Avalonia, Routeables.Uno and Routeables.WinUI3, which link it (and define WPF or AVALONIA): the pieces of a dialog, drawn with plain controls.
-// A control is an UIElement in WPF and WinUI and a Control in Avalonia, an image an ImageSource or an IImage (the aliases Element and Picture); the space between
-// the parts is a margin to add in WPF and a Spacing of the panel in Avalonia and WinUI. WPF and Avalonia build the buttons of the card themselves; in WinUI the
-// buttons are the ones of the ContentDialog (see DialogPresenter), so the card hands over DialogAction records instead.
+// Shared source for Routeables.Wpf, Routeables.Avalonia, Routeables.Uno and Routeables.WinUI3 (WPF and Avalonia define WPF or AVALONIA): the parts of a
+// dialog, drawn with plain controls. A control is a UIElement in WPF and WinUI and a Control in Avalonia, and an image is an ImageSource or an IImage
+// (the aliases Element and Picture). The spacing between parts is a margin to add in WPF and a Spacing of the panel in Avalonia and WinUI. WPF and
+// Avalonia build the card's buttons themselves; in WinUI the buttons belong to the ContentDialog (see DialogPresenter), so the card hands over
+// DialogAction records instead.
 #if AVALONIA
 namespace Routeables.Avalonia.Services;
 #elif WPF
@@ -141,7 +142,7 @@ internal static class DialogCard
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
                 IsEnabled = action.IsEnabled,
-                // The way out is apart from the choices.
+                // The way out is separate from the choices.
                 Margin = i == list.Count - 1 && list.Count > 1 ? new Thickness(0, 8, 0, 0) : default
             };
             if (action.IsDefault

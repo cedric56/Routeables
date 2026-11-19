@@ -11,7 +11,7 @@ namespace Routeables.Abstraction.Injections;
 /// the attributes they carry and a way to read and write them. The source generator writes it for the types it registers, which then
 /// are filled without any reflection; a type registered with its own generic type is read from the members the trimmer keeps.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]    // for the code the source generator writes
+[EditorBrowsable(EditorBrowsableState.Never)] // for the code the source generator writes
 public sealed class InjectableType
 {
     private static readonly ConditionalWeakTable<Type, InjectableType> Reflected = new();
@@ -85,7 +85,7 @@ internal static class InjectableMembers
 }
 
 /// <summary>A property of an <see cref="InjectableType"/>.</summary>
-[EditorBrowsable(EditorBrowsableState.Never)]    // for the code the source generator writes
+[EditorBrowsable(EditorBrowsableState.Never)] // for the code the source generator writes
 public sealed class InjectableProperty
 {
     private readonly Func<Type, bool> hasAttribute;

@@ -17,9 +17,9 @@ public sealed class RouteableInteractions : IDisposable
     private readonly List<RouteableDialog> _dialogs = [];
     private readonly List<RouteableToast> _toasts = [];
 
-    // The action that is running in the flow of the caller: the dialogs it asks belong to it, so that answering one waits for
-    // that action, not for another one the visitor started in the meantime.
-    // The signal "the action asked something" is its own: another request of the visitor must not be woken by it, nor wake this one.
+    // The action running in the caller's flow. The dialogs it asks belong to it, so that answering one waits for that action and not for
+    // another action the visitor started meanwhile.
+    // The signal "the action asked something" is its own: another request from the visitor must neither be woken by it nor wake this one.
     private sealed class Run
     {
         public Task? Task;
@@ -37,7 +37,6 @@ public sealed class RouteableInteractions : IDisposable
     /// <summary>The toasts currently shown on the page (a copy: it does not change while the page reads it).</summary>
     public IReadOnlyList<RouteableToast> Toasts { get { lock (_gate) return _toasts.ToArray(); } }
 
-    // ---------------------------------------------------------------- dialogs
 
     /// <summary>Shows <paramref name="dialog"/> and completes with the button that was chosen (its index).</summary>
     public Task<int> AskAsync(RouteableDialog dialog)
@@ -69,7 +68,7 @@ public sealed class RouteableInteractions : IDisposable
         var outer = _current.Value;
         _current.Value = run;
         try { run.Task = action(); }
-        finally { _current.Value = outer; }   // StartAsync is not async: what it sets would stay in the flow of the caller
+        finally { _current.Value = outer; } // StartAsync is not async: what it sets would stay in the caller's flow
         return SettleAsync(run);
     }
 
@@ -101,12 +100,12 @@ public sealed class RouteableInteractions : IDisposable
 
     private Task AnswerAsync(RouteableDialog? dialog, int index)
     {
-        // The index comes from the form of the page: anyone can post another number. A button that does not exist is not an answer; the
-        // dialog stays, and the action that waits for it must not be told to go on (nor the signal be replaced: the request would wait for ever).
+        // The index comes from the page's form, so anyone can post another number. A button that does not exist is not an answer: the dialog
+        // stays, and the action waiting for it must not be told to go on (nor the signal replaced: the request would wait forever).
         if (dialog is not null && (index < 0 || index >= dialog.Buttons.Count))
             return Task.CompletedTask;
         if (dialog is not null && !dialog.TryClaim())
-            return Task.CompletedTask;     // answered by a request that is still being served
+            return Task.CompletedTask; // answered by a request that is still being served
 
         return ContinueAsync(() => dialog?.Answer.TrySetResult(index), dialog?.Owner as Run);
     }
@@ -115,7 +114,7 @@ public sealed class RouteableInteractions : IDisposable
     public Task ContinueAsync(Action answer, long dialogId)
         => Pending is { } dialog && dialog.Id == dialogId && dialog.TryClaim() ? ContinueAsync(answer, dialog.Owner as Run) : Task.CompletedTask;
 
-    // Waits for the action to end or to ask something; its failure reaches the request that waits for it.
+    // Wait for the action to end or to ask something; its failure reaches the request that waits for it.
     private async Task SettleAsync(Run? run)
     {
         if (run?.Task is not { } task)
@@ -128,7 +127,6 @@ public sealed class RouteableInteractions : IDisposable
         await task;
     }
 
-    // ---------------------------------------------------------------- notifications
 
     /// <summary>Adds a toast notification that the page will show.</summary>
     public void Notify(string title, string message, RouteableNotificationType type, TimeSpan? expiration, Action? onClick, Action? onClose)
@@ -137,7 +135,6 @@ public sealed class RouteableInteractions : IDisposable
             _toasts.Add(new RouteableToast(++_nextToast, title, message, type, expiration, onClick, onClose));
     }
 
-    // ---------------------------------------------------------------- system notifications (the browser's)
 
     /// <summary>The system notifications that were shown and not closed, by id.</summary>
     public IReadOnlyDictionary<uint, IRouteableSystemNotification> ActiveSystemNotifications
@@ -232,7 +229,7 @@ public sealed class RouteableInteractions : IDisposable
         return System.Text.Json.JsonSerializer.Serialize(commands, CommandsJson);
     }
 
-    // One instance for the process: a new options object per call builds its own metadata cache again.
+    // One instance for the process: a new options object per call would rebuild its own metadata cache.
     private static readonly System.Text.Json.JsonSerializerOptions CommandsJson = new(System.Text.Json.JsonSerializerDefaults.Web)
     {
         DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
@@ -256,7 +253,7 @@ public sealed class RouteableInteractions : IDisposable
         {
             toast = _toasts.FirstOrDefault(t => t.Id == id);
             if (toast is null || !_toasts.Remove(toast))
-                return;   // another request took it first: its handlers run once
+                return; // another request took it first: its handlers run once
         }
 
         if (click)

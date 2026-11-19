@@ -10,7 +10,6 @@ namespace Routeables.Test.Abstraction;
 /// <summary>The defaults of the routing attributes, the typed initializer, the cache of singletons and the load context of modules.</summary>
 public class AttributesAndLoadingTests
 {
-    // ------------------------------------------------------------------------------------------------ attributes
 
     [Fact]
     public void A_routeable_is_transient_and_has_no_region_unless_told()
@@ -81,7 +80,6 @@ public class AttributesAndLoadingTests
         Assert.Equal(allowMultiple, usage.AllowMultiple);
     }
 
-    // ------------------------------------------------------------------------------------------------ typed initializer
 
     private sealed class Receiver : IInitializeAsync<int>
     {
@@ -124,7 +122,6 @@ public class AttributesAndLoadingTests
         await Assert.ThrowsAsync<InvalidCastException>(() => new RouteableTypedInitializer<int>(1).InitializeAsync(new object(), CancellationToken.None));
     }
 
-    // ------------------------------------------------------------------------------------------------ singleton cache
 
     [Fact]
     public void The_singleton_cache_is_a_cache_of_its_own_that_disposes_what_it_created()
@@ -154,7 +151,6 @@ public class AttributesAndLoadingTests
         public void Dispose() => Disposed++;
     }
 
-    // ------------------------------------------------------------------------------------------------ module load context
 
     [Fact]
     public void The_load_context_is_named_after_the_module_file()

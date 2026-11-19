@@ -51,7 +51,6 @@ public class ReviewFixesTests
         return services.BuildServiceProvider();
     }
 
-    // ---- H1: restoring the history ----------------------------------------------------------------------------------------------
 
     [Fact]
     public async Task A_restoration_whose_first_route_does_not_exist_leaves_the_page_that_was_shown()
@@ -94,7 +93,6 @@ public class ReviewFixesTests
         Assert.IsType<HomeVm>(router.CurrentViewModel);
     }
 
-    // ---- H2: an absolute coordination ---------------------------------------------------------------------------------------------
 
     [Fact]
     public async Task An_absolute_coordination_does_not_erase_a_page_that_refuses_to_be_left()
@@ -142,7 +140,6 @@ public class ReviewFixesTests
         Assert.Equal(1, router.History.Count);
     }
 
-    // ---- M1 and Finding 4: the interactions of the web host ---------------------------------------------------------------------
 
     [Fact]
     public async Task A_button_that_does_not_exist_is_not_an_answer()
@@ -196,7 +193,6 @@ public class ReviewFixesTests
         Assert.Equal(64 * 200, interactions.Toasts.Count);
     }
 
-    // ---- M3: the case of a value in an address ----------------------------------------------------------------------------------
 
     private static readonly (string Template, Type? ViewModelType)[] Items = [("/items/{id}", null), ("/orders", null)];
 
@@ -210,7 +206,6 @@ public class ReviewFixesTests
         Assert.True(RouteableUrlSync.Same("/Whatever", "/whatever"));              // no route is known: nothing to protect
     }
 
-    // ---- M6 and L4: the registrations -------------------------------------------------------------------------------------------
 
     [Fact]
     public void Routes_added_after_a_region_still_register_the_default_router()
@@ -236,7 +231,6 @@ public class ReviewFixesTests
         Assert.Equal(Routeables.Routing.Extensions.DefaultScopedHistoryLimit, scope.ServiceProvider.GetRequiredKeyedService<RouterHistory>("side").MaxSize);
     }
 
-    // ---- L5: a fragment is not part of a route ------------------------------------------------------------------------------------
 
     [Fact]
     public void A_fragment_is_left_out_of_the_route()
@@ -246,7 +240,6 @@ public class ReviewFixesTests
         Assert.False(RouteParser.TryMatch("/orders/{id:int}", "/orders/4x2#top"));
     }
 
-    // ---- M7: a page is disposed once ------------------------------------------------------------------------------------------------
 
     public sealed class CountedView : IRouteableFor { public object? Context { get; set; } }
     public sealed class CountedVm : IDisposable
@@ -305,7 +298,6 @@ public class ReviewFixesTests
         Assert.True(left < OrderedVm.Log.IndexOf("unsubscribe"), string.Join(",", OrderedVm.Log));
     }
 
-    // ---- Finding 5: the addresses that wait for the application -------------------------------------------------------------------
 
     [Fact]
     public void Addresses_that_wait_for_the_first_page_are_limited()
@@ -319,7 +311,6 @@ public class ReviewFixesTests
         Assert.Equal(RouteableLinkInbox.MaxPending, inbox.PendingCount);
     }
 
-    // ---- Finding 6: the order of the saves of the history ---------------------------------------------------------------------------
 
     public sealed class SlowView : IRouteableFor { public object? Context { get; set; } }
     public sealed class SlowVm : IRouteableState

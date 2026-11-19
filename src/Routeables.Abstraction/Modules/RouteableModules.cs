@@ -15,7 +15,7 @@ namespace Routeables.Abstraction;
 /// </summary>
 internal sealed class RouteableModules(IServiceProvider root) : IRouteableModules, IDisposable
 {
-    // What AddGeneratedRoutes()/RegisterRoute put in a collection for their own use: the application's copy is the one that counts.
+    // What AddGeneratedRoutes() and RegisterRoute put in a collection for their own use: the application's copy is the one that counts.
     private static readonly HashSet<Type> Infrastructure =
     [
         typeof(ScopedViewCache), typeof(WeakDisposableTracker), typeof(SingletonViewCache), typeof(RouteableTable), typeof(RouteableMenuEntries),
@@ -52,16 +52,16 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
             var known = _loaded.FirstOrDefault(l => string.Equals(l.Info.Name, name, StringComparison.OrdinalIgnoreCase));
             if (known is not null)
             {
-                // Loading a name again does nothing: a button clicked twice is not an error. Another way to add the same name is probably one:
-                // the second module is not loaded, and the one that was is returned.
+                // Loading a name again does nothing: a button clicked twice is not an error. Adding the same name another way is probably a mistake:
+                // the second module is not loaded, and the one already loaded is returned.
                 if (assembly is null && !add.Equals(known.Add))
                     RouteableErrors.Report<RouteableModules>(root, new InvalidOperationException(
                         $"The module '{name}' is already loaded, with another method: this one was not run."));
                 return known.Info;
             }
 
-            // Everything that can fail runs before anything is changed: a module that throws, or whose entries cannot be built, is not
-            // half loaded (it is not marked as loaded, and none of its routes or entries is there).
+            // Everything that can fail runs before anything changes: a module that throws, or whose entries cannot be built, is not half loaded
+            // (it is not marked as loaded, and none of its routes or entries is added).
             var collection = new ServiceCollection();
             add(collection);
 
@@ -78,7 +78,7 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
             if (table is not null && root.GetService<RouteableTable>() is { } applicationTable)
                 applicationTable.AddRange(table);
 
-            // The factories that build the views and the view models. The ones of the application come first.
+            // The factories that build views and view models, the application's first.
             foreach (var d in collection.Where(IsRouteFactory))
                 _factories.TryAdd(d.ServiceKey!, ((Func<IServiceProvider, IRouteableArgs, object>)d.KeyedImplementationInstance!, services));
 
@@ -188,8 +188,8 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
 
     public void Dispose()
     {
-        // Taken under the lock and disposed outside it: a service that waits for something must not hold every other call to the modules.
-        // A module that fails to dispose does not keep the next ones alive.
+        // Taken under the lock and disposed outside it: a service that waits for something must not block every other call to the modules.
+        // A module that fails to dispose does not keep the following ones alive.
         RouteableModuleServices[] services;
         lock (_gate)
             services = [.. _loaded.Select(m => m.Services)];

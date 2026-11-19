@@ -64,8 +64,8 @@ public class SystemNotificationBookkeepingTests
         await notification.ShowAsync();   // an update: the 600 ms start again
         var updated = DateTime.UtcNow;
 
-        // A machine that stalls for 160 ms or more between the two displays lets the first 600 ms run out before the update: there is
-        // nothing to learn from that run (it failed once, on a runner that was running the tests of two platforms at once).
+        // A machine that stalls for 160 ms or more between the two displays lets the first 600 ms run out before the update, so that run proves
+        // nothing (it failed once on a runner that was running the tests of two platforms at once).
         if (updating - start >= TimeSpan.FromMilliseconds(560))
             return;
 

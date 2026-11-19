@@ -125,7 +125,7 @@ public class DialogSessionRandomizedTests
                             var before = vetoes;
                             var closes = !done && !veto;
                             Assert.Equal(closes, session.Buttons[i].Press());
-                            Assert.Equal(done ? 0 : 1, vetoes - before);      // a decided dialog is not asked again
+                            Assert.Equal(done ? 0 : 1, vetoes - before);
                             if (closes) { done = true; expected = wanted[i]; }
                             break;
                         }

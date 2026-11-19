@@ -25,7 +25,7 @@ public class RouteIndexTests
     [Fact]
     public void The_index_finds_the_route_the_linear_search_finds_for_every_address()
     {
-        var linear = Entries();                                                 // an array is never indexed
+        var linear = Entries();
         var indexed = new ReadOnlyCollection<(string Template, Type? ViewModelType)>(Entries());
 
         foreach (var address in Addresses)

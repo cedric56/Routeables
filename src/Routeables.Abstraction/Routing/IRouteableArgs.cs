@@ -83,7 +83,6 @@ public interface IRouteableArgs
     /// <returns>These arguments, to chain.</returns>
     IRouteableArgs WithRoute(string? route = null);
 
-    // Shorthands: no RouteableArgument to build.
 
     /// <summary>Adds positional values for the view model (matched to constructor parameters by type): <c>ForViewModel(order, back)</c>.</summary>
     IRouteableArgs ForViewModel(params object?[] values) => ForViewModel(ToEntries(values));
@@ -103,7 +102,6 @@ public interface IRouteableArgs
     /// <summary>Adds a named neutral value: <c>WithValue("animal", animal)</c>.</summary>
     IRouteableArgs WithValue(string name, object? value, bool attribute = false) => ForValues(new RouteableArgument(value, name, attribute));
 
-    // A RouteableArgument among the values is kept as it is.
     private static RouteableArgument[] ToEntries(object?[] values) =>
         values.Select(v => v as RouteableArgument ?? new RouteableArgument(v)).ToArray();
 

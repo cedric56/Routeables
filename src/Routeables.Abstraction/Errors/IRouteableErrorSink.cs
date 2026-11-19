@@ -51,7 +51,7 @@ public static class RouteableErrors
         }
         catch
         {
-            // A sink that fails is not reported again.
+            // A sink that itself fails is not reported again.
         }
     }
 

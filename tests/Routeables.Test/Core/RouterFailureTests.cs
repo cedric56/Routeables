@@ -122,7 +122,6 @@ public class RouterFailureTests
         Assert.True(result.Success);
     }
 
-    // ---- a view that cannot be built
 
     public sealed class DisposableVm : IDisposable
     {
@@ -160,7 +159,6 @@ public class RouterFailureTests
         Assert.Equal(1, DisposableVm.Disposed);
     }
 
-    // ---- a go back then to a route that does not open
 
     public sealed class StartView : IRouteableFor { public object? Context { get; set; } }
     public sealed class ThrowingVm { public ThrowingVm() => throw new InvalidOperationException("no"); }

@@ -108,7 +108,6 @@ public class LinkAndItemsDeviceTests
         Assert.Equal("side", RouteableLink.GetRegion(button));
     }
 
-    // ------------------------------------------------------------------------------------------------ RouteableRegionItems
 
     /// <summary>The views the control holds, one per entry of the history of its region; empty if its layout is not the expected one.</summary>
     private static IReadOnlyList<ContentView> Holders(RouteableRegionItems items)

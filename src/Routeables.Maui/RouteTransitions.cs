@@ -30,11 +30,11 @@ public static class RouteTransitions
 
     internal static async Task PlayAsync(View region, RegionTransition transition)
     {
-        // Nothing asked for, nothing to touch: the region keeps the opacity and the translation it was given.
+        // Nothing asked for, nothing to touch: the region keeps the opacity and translation it was given.
         if (transition.IsNone && !transition.Declared)
             return;
 
-        // A new route change replaces the animation that is still running, and the region starts from rest.
+        // A new navigation replaces the animation still running, and the region starts from rest.
         region.CancelAnimations();
         Rest(region);
         var turn = new object();
@@ -62,7 +62,7 @@ public static class RouteTransitions
             var ms = (uint)transition.Duration.TotalMilliseconds;
             var easing = from.Overshoot ? Easing.SpringOut : Easing.CubicOut;
 
-            // The view is put at the state the transition describes, then animated to rest.
+            // Put the view in the state the transition describes, then animate it to rest.
             region.AnchorX = from.OriginX;
             region.AnchorY = from.OriginY;
             region.Opacity = from.Opacity;
@@ -79,8 +79,8 @@ public static class RouteTransitions
                 region.RotateToAsync(0, ms, easing),
                 region.TranslateToAsync(0, 0, ms, easing));
 
-            // The animation ends on rest, but an interpolation does not always land on the exact value (0.94 + (1 - 0.94) is not always 1):
-            // a region that is "almost" at rest is not at rest. Unless a newer route change took over, the end state is set exactly.
+            // The animation ends at rest, but an interpolation does not always land on the exact value (0.94 + (1 - 0.94) is not always 1), so a region
+            // that is "almost" at rest is not at rest. Unless a newer navigation took over, set the end state exactly.
             if (Turns.TryGetValue(region, out var current) && ReferenceEquals(current, turn))
                 Rest(region);
         }
@@ -94,7 +94,7 @@ public static class RouteTransitions
     // The last transition started on each region: only that one may put the region at rest when it ends.
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<View, object> Turns = new();
 
-    // The region as it is when it is shown: whatever a transition did to it is undone.
+    // The region as it is when shown: whatever a transition did to it is undone.
     private static void Rest(View region)
     {
         region.Opacity = 1;

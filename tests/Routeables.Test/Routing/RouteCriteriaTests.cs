@@ -234,7 +234,7 @@ public class RouteCriteriaTests
         var router = provider.GetRequiredService<IRouter>();
         var ct = TestContext.Current.CancellationToken;
         await router.GoAsync(new FormView(), new FormVm(), Routeables.Routing.RouteableArgs.Create().WithRoute("/form"), ct);
-        await router.GoAsync(new FormView(), new FormVm(), null, ct);   // no route: not saved
+        await router.GoAsync(new FormView(), new FormVm(), null, ct);
 
         var routes = RouteableState.Capture(router);
 

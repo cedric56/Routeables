@@ -38,7 +38,7 @@ public static class Runner
         Console.WriteLine($".NET {Environment.Version}, {System.Runtime.InteropServices.RuntimeInformation.OSDescription}, " +
                           $"{Environment.ProcessorCount} cores, {(GCSettings.IsServerGC ? "server" : "workstation")} GC, {script.Count} steps, " +
                           $"{Runs} runs after {Warmups} warm-ups");
-        // Which machine measured, and when: the programs of one job run one after the other on the same runner, which is what lets their figures be read together.
+        // Which machine measured, and when: the programs of one job run one after the other on the same runner, so their figures can be read together.
         Console.WriteLine($"Runner: {Environment.GetEnvironmentVariable("RUNNER_NAME") ?? "not a CI runner"}, process {Environment.ProcessId}, started {DateTime.UtcNow:HH:mm:ss} UTC");
         Console.WriteLine();
 
@@ -94,16 +94,16 @@ public static class Runner
         return 0;
     }
 
-    // The libraries are measured in turns, in the same process and one after the other in each run (the order turns from one run to the
-    // next), not one library after the other: the noise of the machine, which moves the time of a library by a factor of two from one job
-    // to another, then falls on all of them alike, and the ratio of two libraries is the median of the ratios of the same run.
+    // The libraries are measured in turns, in the same process, and the order changes from one run to the next. They are not measured one library
+    // after the other: machine noise, which can move a library's time by a factor of two from one job to another, then affects all of them alike,
+    // and the ratio of two libraries is the median of the ratios within the same run.
     private static async Task MeasureAsync(IReadOnlyList<Func<INavigationDriver>> drivers, IReadOnlyList<Step> script)
     {
         var count = drivers.Count;
         var times = new double[count][];
         var bytes = new long[count][];
         var names = new string[count];
-        var positions = new int[count][];                       // in which place of its run each library was measured
+        var positions = new int[count][]; // where each library came in its run
         for (var d = 0; d < count; d++)
         {
             times[d] = new double[Runs];
@@ -161,17 +161,17 @@ public static class Runner
                 for (var run = 0; run < Runs; run++)
                     ratios[run] = times[0][run] / times[d][run];
                 Array.Sort(ratios);
-                // A library can go faster or slower for the place it has in the run (what the one before left behind, the state of the caches of
-                // the framework). The ratio is therefore also given for the runs where the first library came before the other one and for those where it
-                // came after, and the geometric mean of the two cancels an effect that multiplies the time of whoever comes second.
+                // A library can be faster or slower depending on its place in the run (what the previous one left behind, the state of the framework's caches).
+                // So the ratio is also given for the runs where the first library came before the other and for those where it came after. The geometric mean of
+                // the two cancels an effect that multiplies the time of whoever comes second.
                 var before = new List<double>();
                 var after = new List<double>();
                 for (var run = 0; run < Runs; run++)
                     (positions[0][run] < positions[d][run] ? before : after).Add(times[0][run] / times[d][run]);
                 var medianOf0 = Median(times[0]);
                 var medianOfD = Median(times[d]);
-                // The two ways of comparing are given: they agree when the runs are alike, and when they do not, the order of the measures or the
-                // noise of the machine weighs on the ratio, and neither figure is to be quoted alone.
+                // Both ways of comparing are given. They agree when the runs are alike. When they differ, the order of measures or machine noise weighs on the
+                // ratio, and neither figure should be quoted alone.
                 Console.WriteLine($"- against {names[d]}: {ratios[Runs / 2]:F2} (from {ratios[Runs / 4]:F2} to {ratios[3 * Runs / 4]:F2}); ratio of the two median times: {medianOf0 / medianOfD:F2}");
                 if (before.Count > 0 && after.Count > 0)
                 {

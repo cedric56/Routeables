@@ -26,7 +26,7 @@ public class RouterBoundaryTests
         router.History.Changed += (_, _) => throw new InvalidOperationException("observer failed");
         router.History.Changed += (_, _) => later++;      // the observers after the one that failed are still called
 
-        var second = await GoToAsync(router, "B", log);    // asserts Success
+        var second = await GoToAsync(router, "B", log);
 
         Assert.Same(second.ViewModel, router.CurrentViewModel);
         Assert.Equal(2, router.History.Count);
@@ -46,7 +46,7 @@ public class RouterBoundaryTests
         Assert.True((await router.PopAsync(Ct)).Success);
         Assert.Same(pages[0].ViewModel, router.CurrentViewModel);
 
-        await router.EraseHistoryAsync(Ct);                // must not throw
+        await router.EraseHistoryAsync(Ct);
         Assert.Equal(0, router.History.Count);
     }
 

@@ -68,8 +68,8 @@ public static class RouteableShellItems
         return new Subscription(() => shell.Navigated -= OnNavigated);
     }
 
-    // Shell keeps the pages it has shown, and the regions of those pages are all bound to the same router: the last one built would take
-    // every view. The region exists only while its page is displayed.
+    // Shell keeps the pages it has shown, and those pages' regions are all bound to the same router, so the last one built would take every
+    // view. The region exists only while its page is displayed.
     private static ContentPage NewPage(IServiceProvider provider, string? region)
     {
         var page = new ContentPage();
@@ -78,14 +78,14 @@ public static class RouteableShellItems
         return page;
     }
 
-    // A route that the XAML wrote, not the one Shell invents for an item that has none ("IMPL_" followed by its title).
-    // A route nobody wrote is one Shell made up: "IMPL_" for an item it wrapped, "D_FAULT_" for the one it gives to what has none.
+    // A route that the XAML wrote, not one that Shell invents for an item without one ("IMPL_" followed by its title). A route nobody wrote is
+    // one Shell made up: "IMPL_" for an item it wrapped, "D_FAULT_" for the one it gives to what has none.
     private static bool IsDeclared(string? route)
         => !string.IsNullOrWhiteSpace(route)
            && !route.StartsWith("IMPL_", StringComparison.Ordinal)
            && !route.StartsWith("D_FAULT_", StringComparison.Ordinal);
 
-    // The name of a tab is the name of a region when one is registered under it; the default router otherwise.
+    // A tab's name is the name of a region when one is registered under it; otherwise the default router is used.
     private static string? RegionOf(IServiceProvider provider, string? route)
         => IsDeclared(route) && provider.GetKeyedService<IRouter>(route) is not null ? route : null;
 
@@ -97,8 +97,8 @@ public static class RouteableShellItems
             if (RouteAddress.SameFor(router, router.History.Current?.Args.Route ?? string.Empty, route))
                 return;
 
-            // A tab with a region of its own goes to its route the first time only: coming back to it shows the pile of pages it left,
-            // not its route pushed again on top of them.
+            // A tab with a region of its own goes to its route only the first time: coming back to it shows the stack of pages it left, not its route
+            // pushed again on top of them.
             if (region is not null && router.History.Count > 0)
                 return;
 

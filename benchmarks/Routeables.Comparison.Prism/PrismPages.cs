@@ -1,9 +1,9 @@
 namespace Routeables.Comparison.Prism;
 
-// One view class for each page, as in the other programs. As far as the source of Prism says (not checked here), the navigation looks for the
-// view of a page among the views of the region by the TYPE that the name was registered with: with one class for every name, a request for
-// P01 could find the view that P00 had built and show it again, which would make the numbers those of a single view shown over and over.
-// The job counts the views that each library builds and the driver checks the type of the view shown after each navigation.
+// One view class per page, as in the other programs. According to Prism's source (not checked here), navigation looks for a page's view among
+// the region's views by the TYPE the name was registered with. With one class for every name, a request for P01 could find the view P00 built
+// and show it again, so the numbers would be those of a single view shown over and over. The job counts the views each library builds, and the
+// driver checks the type of the view shown after each navigation.
 public sealed class P00Page(PrismPageViewModel viewModel) : PrismPage(viewModel, "P00") { }
 public sealed class P01Page(PrismPageViewModel viewModel) : PrismPage(viewModel, "P01") { }
 public sealed class P02Page(PrismPageViewModel viewModel) : PrismPage(viewModel, "P02") { }

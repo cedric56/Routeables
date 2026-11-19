@@ -43,7 +43,7 @@ public class RouteSecurityTests
         var router = provider.GetRequiredService<IRouter>();
 
         try { await router.GoToAsync("/secure/5?tenant=attacker", cancellationToken: Ct); }
-        catch (InvalidOperationException) { }      // nothing supplies the tenant: the page cannot be built
+        catch (InvalidOperationException) { } // nothing supplies the tenant: the page cannot be built
 
         Assert.Null(router.GetCurrentViewModel<TenantVm>());
     }

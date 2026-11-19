@@ -1,22 +1,22 @@
 <Project>
   <!--
-    The version of every NuGet package of the repository, in one place (central package management). A project says which packages it uses, never which
-    version: <PackageReference Include="Avalonia" />. A project that needs another version than the one here writes VersionOverride="..." on its reference,
+    The version of every NuGet package in the repository, in one place (central package management). A project says which packages it uses, never
+    which version: <PackageReference Include="Avalonia" />. A project that needs a different version writes VersionOverride="..." on its reference
     and says why next to it.
 
     Left out on purpose:
-      - the two projects that use the Uno SDK (samples/XAnimals.Uno, tests/Routeables.Test.Uno): the SDK chooses the versions of its own packages, so they keep
-        theirs in their project (ManagePackageVersionsCentrally is false there);
-      - templates/: what a user receives has to build alone, outside this repository (see templates/Directory.Packages.props);
+      - the two projects that use the Uno SDK (samples/XAnimals.Uno, tests/Routeables.Test.Uno): the SDK picks the versions of its own packages,
+        so they keep them in their project (ManagePackageVersionsCentrally is false there);
+      - templates/: what a user receives must build on its own, outside this repository (see templates/Directory.Packages.props);
       - the packages that Routeables.Core/build/Routeables.targets adds to a user's project: it already skips them under central package management.
 
-    No version floats: each is the exact one a restore resolved (dotnet list package). Raise them on purpose; Dependabot reads this file.
+    No version floats: each is the exact version a restore resolved (dotnet list package). Raise them on purpose; Dependabot reads this file.
   -->
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
-  <!-- The libraries of the repository: Microsoft.Extensions and ASP.NET Core. The packages the Routeables.nuspec lists are checked by .github/scripts/check-nuspec.sh. -->
+  <!-- The libraries' packages: Microsoft.Extensions and ASP.NET Core. .github/scripts/check-nuspec.sh checks the packages that Routeables.nuspec lists. -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.Components" Version="10.0.13" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.13" />
@@ -44,7 +44,7 @@
     <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.1.1" />
   </ItemGroup>
 
-  <!-- Avalonia. The libraries ask for the oldest version they work with (VersionOverride in Routeables.Avalonia); the samples use the one below. -->
+  <!-- Avalonia. The libraries ask for the oldest version they work with (VersionOverride in Routeables.Avalonia); the samples use the version below. -->
   <ItemGroup>
     <PackageVersion Include="AsyncImageLoader.Avalonia" Version="4.0.0" />
     <PackageVersion Include="Avalonia" Version="12.1.4" />
@@ -59,7 +59,7 @@
     <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.17" />
   </ItemGroup>
 
-  <!-- Packages the flavours, the reshapes and the samples build on. -->
+  <!-- Packages the host libraries, the reshapes and the samples build on. -->
   <ItemGroup>
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="MudBlazor" Version="9.11.0" />
@@ -71,19 +71,19 @@
   <!-- Tests and benchmarks. -->
   <ItemGroup>
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
-    <!-- Code coverage of `dotnet test` with Microsoft.Testing.Platform (xunit.v3): the coverage option. coverlet.collector is a VSTest collector and does not run there. -->
+    <!-- Code coverage for `dotnet test` with Microsoft.Testing.Platform (xunit.v3). coverlet.collector is a VSTest collector and does not run there. -->
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.55.0" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
-    <!-- The three of xunit v3 are of one version: the assertions and the extensibility of the MAUI test project must be the ones that xunit.v3 brings. -->
+    <!-- The three xunit v3 packages share one version: the MAUI test project's assertions and extensibility must be the ones xunit.v3 brings. -->
     <PackageVersion Include="xunit.v3" Version="4.0.2" />
     <PackageVersion Include="xunit.v3.assert" Version="4.0.2" />
     <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.2" />
   </ItemGroup>
 
-  <!-- Device runners of the MAUI tests: previews, pinned to the version a restore resolved (dotnet list package, November 2026). Raise it on purpose. -->
+  <!-- Device runners for the MAUI tests: previews, pinned to the version a restore resolved (dotnet list package, November 2026). Raise it on purpose. -->
   <ItemGroup>
     <PackageVersion Include="DeviceRunners.Testing.Targets" Version="0.1.0-preview.12" />
     <PackageVersion Include="DeviceRunners.UITesting.Maui" Version="0.1.0-preview.12" />

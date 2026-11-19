@@ -92,7 +92,6 @@ public static class RouteableNativeDialogLook
         };
     }
 
-    // ------------------------------------------------------------------ Windows (Fluent)
 
     private static Border BuildWindows(string? title, View body, IReadOnlyList<DialogButton> buttons)
     {
@@ -145,7 +144,6 @@ public static class RouteableNativeDialogLook
         return button;
     }
 
-    // ------------------------------------------------------------------ Android (Material 3)
 
     private static Border BuildAndroid(string? title, View body, IReadOnlyList<DialogButton> buttons)
     {
@@ -176,7 +174,6 @@ public static class RouteableNativeDialogLook
         return Frame(root, 28, Color.FromArgb("#ECE6F0"), Color.FromArgb("#2B2930"), minWidth: 280, maxWidth: 560);
     }
 
-    // ------------------------------------------------------------------ iOS (alert)
 
     private static Border BuildIos(string? title, View body, IReadOnlyList<DialogButton> buttons)
     {
@@ -227,7 +224,6 @@ public static class RouteableNativeDialogLook
         return button;
     }
 
-    // ------------------------------------------------------------------ shared
 
     private static void Wire(Button button, DialogButton b)
     {
@@ -236,16 +232,16 @@ public static class RouteableNativeDialogLook
             // The button follows the command's CanExecute (a Save that waits for input, say).
             button.Command = b.Command;
 
-            // The command (a view model's, long-lived) listens to CanExecuteChanged for the button: let go of it
-            // when the dialog leaves the screen, so a closed dialog is not kept alive by it.
+            // The command (a view model's, long-lived) listens to CanExecuteChanged for the button: let go of it when the dialog leaves the screen, so a
+            // closed dialog is not kept alive by it.
             button.Unloaded += (_, _) => button.Command = null;
             return;
         }
 
         button.IsEnabled = b.IsEnabled;
 
-        // A second tap while the first is still closing the dialog would run the action twice; and the handler is async void:
-        // an exception would end the application.
+        // A second tap while the first is still closing the dialog would run the action twice, and the handler is async void: an exception would end
+        // the application.
         var busy = false;
         button.Clicked += async (_, _) =>
         {

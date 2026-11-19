@@ -40,12 +40,12 @@ public class RouteableDialogService(
         if (messageBoxService != null)
             return await messageBoxService.ShowMessageAsync(title, message, buttonText);
 
-        // Fails like the dialog of the platform when there is no page to show it over.
+        // Fails like the platform's dialog when there is no page to show it over.
         _ = windowContext.CurrentPage ?? throw new InvalidOperationException(
             "No active Page to host the content dialog popup.");
 
-        // Every message box is the dialog of the platform with up to three buttons (not DisplayAlert): the answer is the index of the button, and the
-        // dialog dismissed without a button (Back, Escape) is the last one, the cancel of an alert.
+        // Every message box is the platform's dialog with up to three buttons (not DisplayAlert). The answer is the button's index, and a dialog
+        // dismissed without a button (Back, Escape) answers with the last one, the cancel of an alert.
         // The buttons say what RouteableTexts.ButtonTranslator makes of the words; the answer is the index, so the language does not change it.
         var words = RouteableButtons.Labels(buttonText);
         switch (words.Count)
@@ -59,7 +59,7 @@ public class RouteableDialogService(
             case 3:
                 return await DisplayThreeButtonsAsync(title, message, words[0], words[1], words[2], 0, 1, 2);
             default:
-                // More than three buttons do not fit a dialog of the platform: they are a sheet (an action sheet), the last one being the way out.
+                // More than three buttons do not fit a platform dialog: they become a sheet (an action sheet), the last button being the way out.
                 return await DisplaySheetAsync(title, message, words);
         }
     }
@@ -113,8 +113,8 @@ public class RouteableDialogService(
          string? primaryButtonText, string? secondaryButtonText, string? closeButtonText,
          T primaryResult, T secondaryResult, T closeResult)
     {
-        // The native platforms show the view as a platform view. The plain net10.0 target has no platform view: the view is
-        // given as it is to a popup (see the end of the method), which is the caller's, so it is not disconnected below.
+        // The native platforms show the view as a platform view. The plain net10.0 target has no platform view: the view is given as it is to a popup
+        // (see the end of the method), which belongs to the caller, so it is not disconnected below.
         Element? hosted = null;
 #if ANDROID || WINDOWS || IOS || MACCATALYST
         hosted = content as Element;
@@ -126,7 +126,7 @@ public class RouteableDialogService(
 
         try
         {
-            // The platform dialog is that of Routeables.Native, shared with WinUI 3 and Uno.
+            // The platform dialog is the one from Routeables.Native, shared with WinUI 3 and Uno.
             object? owner = null;
             bool? dark = null;
 #if WINDOWS
@@ -139,9 +139,9 @@ public class RouteableDialogService(
             if (native.Shown)
                 return native.Value;
 
-            // No native dialog for this content: the plain net10.0 target (what a platform without a MAUI backend of its own runs),
-            // or, on Apple platforms, a content that is neither text nor a UIView (a MAUI view, say). The three buttons are those
-            // of a content dialog, drawn by the content dialog service with MAUI views.
+            // No native dialog for this content: the plain net10.0 target (what a platform without a MAUI backend of its own runs), or, on Apple
+            // platforms, content that is neither text nor a UIView (a MAUI view, say). The three buttons are those of a content dialog, drawn by the
+            // content dialog service with MAUI views.
             var dialog = new RouteableContentDialog
             {
                 Title = title,
@@ -161,8 +161,7 @@ public class RouteableDialogService(
         }
         finally
         {
-            // The platform view was created for this dialog only: its handler holds it (and the element) until it is
-            // disconnected.
+            // The platform view was created for this dialog only: its handler holds it (and the element) until it is disconnected.
             hosted?.Handler?.DisconnectHandler();
         }
     }
@@ -267,7 +266,7 @@ public class RouteableDialogService(
             _viewModel = viewModel;
             _viewModel.CloseRequested += OnCloseRequested;
 
-            // Dressed like the platform's own dialog; the first command is the primary button.
+            // Styled like the platform's own dialog; the first command is the primary button.
             Dialog = RouteableDialogContents.ForModal(viewModel, view);
         }
 
@@ -275,7 +274,7 @@ public class RouteableDialogService(
         {
             _viewModel.CloseRequested -= OnCloseRequested;
             try { await CloseAsync(result); }
-            catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(RouteableDialogService)); }   // async void: an exception would end the application
+            catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(RouteableDialogService)); } // async void: an exception would end the application
         }
 
         // The page went away by other means than the view model closing it: stop listening to the view model.

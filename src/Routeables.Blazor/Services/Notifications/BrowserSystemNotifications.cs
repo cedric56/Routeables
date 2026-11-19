@@ -58,7 +58,7 @@ internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationO
         if (_module is { IsCompletedSuccessfully: true })
         {
             try { await _module.Result.DisposeAsync(); }
-            catch (Exception ex) when (ex is JSDisconnectedException or JSException or InvalidOperationException or TaskCanceledException) { }   // the circuit is gone: nothing to dispose on the browser side
+            catch (Exception ex) when (ex is JSDisconnectedException or JSException or InvalidOperationException or TaskCanceledException) { } // the circuit is gone: nothing to dispose on the browser side
         }
         _callback?.Dispose();
     }
@@ -79,7 +79,7 @@ internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationO
         }
     }
 
-    // The module and its start are not kept after a failure: the next call starts again, and the reference that was loaded is given back.
+    // The module and its start are not kept after a failure: the next call starts again, and the reference that was loaded is released.
     private void Forget()
     {
         var module = _module;
@@ -92,10 +92,10 @@ internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationO
     private static async Task DisposeQuietlyAsync(IJSObjectReference module)
     {
         try { await module.DisposeAsync(); }
-        catch (Exception ex) when (ex is JSDisconnectedException or JSException or InvalidOperationException or TaskCanceledException) { }   // the circuit is gone
+        catch (Exception ex) when (ex is JSDisconnectedException or JSException or InvalidOperationException or TaskCanceledException) { } // the circuit is gone
     }
 
-    // The module, once the messages of the service worker are listened to and the service worker is registered (or found missing).
+    // The module, once the service worker's messages are listened to and the service worker is registered (or found missing).
     private async Task<IJSObjectReference> ReadyAsync()
     {
         var loading = _module ??= js.InvokeAsync<IJSObjectReference>("import", Module).AsTask();
@@ -108,7 +108,7 @@ internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationO
         }
         catch
         {
-            // A failed import or start stays in the cache otherwise, and every later call fails with it.
+            // A failed import or start would otherwise stay in the cache, and every later call would fail with it.
             if (ReferenceEquals(_module, loading))
                 Forget();
             throw;
@@ -127,7 +127,7 @@ internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationO
         var module = await ReadyAsync();
         lock (_gate) _active[notification.Id] = notification;
 
-        // The actions as flat triplets (caption, tag, icon): nothing but strings crosses the interop.
+        // The actions as flat triplets (caption, tag, icon): only strings cross the interop.
         var actions = notification.Actions?.SelectMany(a => new[] { a.caption, a.tag, a.Icon ?? string.Empty }).ToArray() ?? [];
         try
         {
@@ -147,7 +147,7 @@ internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationO
         if (_module is not null)
             await (await _module).InvokeVoidAsync("close", id);
 
-        // Closed from here, the browser says nothing: the notification is told as cancelled.
+        // Closed from here, the browser says nothing, so the notification is reported as cancelled.
         Completed(id, false, null, null);
     }
 
@@ -168,7 +168,7 @@ internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationO
         });
     }
 
-    // What the service worker (or the page) tells: {"type":"HandleNotificationClick","id":3,"tag":"...","action":"open"}.
+    // What the service worker (or the page) sends: {"type":"HandleNotificationClick","id":3,"tag":"...","action":"open"}.
     private void Completed(string json, bool activated, string? reply)
     {
         using var document = JsonDocument.Parse(json);
@@ -180,7 +180,7 @@ internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationO
         Completed(number, activated, action, reply);
     }
 
-    // The part of the object the browser calls back.
+    // The part of the object that the browser calls back.
     private sealed class Callback(BrowserSystemNotifications owner)
     {
         [JSInvokable]

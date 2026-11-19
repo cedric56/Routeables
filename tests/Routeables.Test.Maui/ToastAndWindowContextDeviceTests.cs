@@ -10,7 +10,6 @@ namespace Routeables.Test.Maui;
 /// </summary>
 public class ToastAndWindowContextDeviceTests
 {
-    // ------------------------------------------------------------------------------------------------ helpers for walking the visual tree
 
     /// <summary>Builds a bare <see cref="ContentPage"/> with the given content (or none), so each test starts from a known tree.</summary>
     private static ContentPage PageWith(View? content = null) => new() { Content = content };
@@ -64,7 +63,6 @@ public class ToastAndWindowContextDeviceTests
         ((EventHandler<TappedEventArgs>?)field.GetValue(recognizer))?.Invoke(recognizer, new TappedEventArgs(null));
     }
 
-    // ------------------------------------------------------------------------------------------------ the toast
 
     /// <summary>
     /// The overlay must wrap the existing content (not replace it) in a Grid marked as the toast host,
@@ -247,7 +245,6 @@ public class ToastAndWindowContextDeviceTests
             RouteableToastOverlay.Show(empty, "t", "m", RouteableNotificationType.Information, TimeSpan.FromMinutes(1), null, null));
     }
 
-    // ------------------------------------------------------------------------------------------------ the window context
 
     /// <summary>
     /// The window context must report the page of the app's first window as the current page,
@@ -272,7 +269,6 @@ public class ToastAndWindowContextDeviceTests
         Assert.NotNull(Device.Services.GetService(typeof(IRouteableDialogWindowContext)));
     }
 
-    // ------------------------------------------------------------------------------------------------ the base of a notification service
 
     /// <summary>
     /// Minimal concrete subclass that records <c>Show</c> calls; used to verify the base's default behavior
@@ -303,7 +299,7 @@ public class ToastAndWindowContextDeviceTests
         service.CloseAll();
         await service.InitializeAsync();
 
-        // Subscribe/unsubscribe must not throw, proving the event surface is usable without system notifications.
+        // Subscribing and unsubscribing must not throw: the event surface works without system notifications.
         EventHandler<RouteableSystemNotificationEventArgs> handler = (_, _) => { };
         service.NotificationCompleted += handler;
         service.NotificationCompleted -= handler;

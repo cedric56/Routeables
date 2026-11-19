@@ -13,7 +13,7 @@ namespace Routeables.Benchmarks;
 /// </summary>
 internal static class PerfCheck
 {
-    // A change is a regression above these: allocations +10 % and 256 bytes, time 4 times (best of the runs, against the best of the baseline).
+    // A change is a regression above these: allocations +10 % and 256 bytes, time 4 times (best of the runs against the best of the baseline).
     private const double AllocationFactor = 1.10;
     private const long AllocationSlack = 256;
     private const double TimeFactor = 4.0;
@@ -77,7 +77,7 @@ internal static class PerfCheck
         async Task Scenario(string name, Func<Task> operation)
         {
             await router.EraseHistoryAsync();
-            for (var i = 0; i < 200; i++) await operation();          // warm up: JIT, caches
+            for (var i = 0; i < 200; i++) await operation(); // warm up: JIT, caches
 
             double bestTime = double.MaxValue, bytes = 0;
             for (var run = 0; run < Runs; run++)

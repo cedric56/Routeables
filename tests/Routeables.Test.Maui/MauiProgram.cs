@@ -22,11 +22,11 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseVisualTestRunner(conf => conf
-                .AddCliConfiguration()                      // `dotnet test -f net10.0-...` talks to the application through it
+                .AddCliConfiguration() // `dotnet test -f net10.0-...` talks to the application through it
                 .AddConsoleResultChannel()
                 .AddTestAssembly(typeof(MauiProgram).Assembly)
                 .AddXunit3())
-            .ConfigureUITesting()                           // [UIFact] and [UITheory] run on the thread of the interface
+            .ConfigureUITesting() // [UIFact] and [UITheory] run on the UI thread
             .UseRouteables<TestMain>(services =>
             {
                 services.RegisterRoute<PageAView, PageAViewModel>(route: "/a");

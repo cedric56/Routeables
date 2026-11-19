@@ -71,7 +71,7 @@ public class RouteableHistoryRandomizedTests
                     switch (op)
                     {
                         case 0: case 1: case 2: await router.GoToAsync(Routes[random.Next(Routes.Length)], cancellationToken: TestContext.Current.CancellationToken); break;
-                        case 3: await router.GoToAsync("/unknown-" + step, cancellationToken: TestContext.Current.CancellationToken); break;           // refused: nothing changes
+                        case 3: await router.GoToAsync("/unknown-" + step, cancellationToken: TestContext.Current.CancellationToken); break; // refused: nothing changes
                         case 4: await router.GoBackAsync(cancellationToken: TestContext.Current.CancellationToken); break;
                         case 5: await router.ForwardAsync(cancellationToken: TestContext.Current.CancellationToken); break;
                         case 6: await router.PopAsync(cancellationToken: TestContext.Current.CancellationToken); break;
@@ -136,7 +136,7 @@ public class RouteableHistoryRandomizedTests
             await firstRouter.GoToAsync("/r0", cancellationToken: ct);
             await firstRouter.GoToAsync("/r2", cancellationToken: ct);
             await firstRouter.GoToAsync("/r3", cancellationToken: ct);
-            first.Dispose();                                    // the application is closed
+            first.Dispose(); // the application is closed
 
             Assert.True(File.Exists(path));
 

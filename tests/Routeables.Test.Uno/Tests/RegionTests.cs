@@ -185,7 +185,7 @@ public class RegionTests
         other.Content = page;
         try
         {
-            // The router is asked to display a view that a host which is not a region holds: the region cannot show it too, and says so.
+            // The router is asked to show a view that a non-region host holds: the region cannot show it too, and says so.
             string? message = null;
             try
             {
@@ -208,7 +208,6 @@ public class RegionTests
         }
     }
 
-    // ------------------------------------------------------------------------------------------------ transitions
 
     /// <summary>Every built-in region transition shows pages correctly going forward and back.</summary>
     [TestMethod]

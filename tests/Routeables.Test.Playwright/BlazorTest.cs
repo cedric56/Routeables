@@ -39,11 +39,11 @@ public abstract class BlazorTest(BlazorApp app) : IAsyncLifetime
         await Page.GotoAsync(app.BaseUrl);
         try
         {
-            await Menu.First.WaitForAsync();   // the circuit is connected: nothing is drawn before
+            await Menu.First.WaitForAsync(); // the circuit is connected: nothing is drawn before
         }
         catch (TimeoutException timeout)
         {
-            // Say what the page shows and what the sample wrote, so that a failure on a machine nobody sits at can be understood.
+            // Say what the page shows and what the sample logged, so a failure on an unattended machine can be understood.
             var body = await Page.InnerTextAsync("body");
             var navs = await Page.Locator("nav").CountAsync();
             var buttons = await Page.Locator("button.rt-nav-link").CountAsync();

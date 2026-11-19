@@ -57,8 +57,8 @@ public static class RouteTransitions
         if (from.TranslateY != 0)
             return new TransitionCollection { new EntranceThemeTransition { FromVerticalOffset = from.TranslateY * Math.Max(40, height) } };
 
-        // A size or an angle: Uno does not implement PopupThemeTransition (Uno0001), so the view rises a little. A blur is not drawn,
-        // so a view that only settles fades in.
+        // A size or an angle: Uno does not implement PopupThemeTransition (Uno0001), so the view rises a little. A blur is not drawn, so a view
+        // that only settles fades in.
         return name.Equals("Blur", StringComparison.OrdinalIgnoreCase) || name.Equals("Spotlight", StringComparison.OrdinalIgnoreCase) || !from.Moves
             ? new TransitionCollection { new ContentThemeTransition() }
             : new TransitionCollection { new EntranceThemeTransition { FromVerticalOffset = 24 } };

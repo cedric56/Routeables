@@ -38,7 +38,7 @@ public class RouteableModulesTests
         var services = new ServiceCollection();
         services.RegisterMenuViewModel<FakeMenuViewModel>(main);
         services.AddSingleton<AppClock>();
-        services.RegisterRoute("/home", (_, _) => new object());                    // the application has a route of its own
+        services.RegisterRoute("/home", (_, _) => new object()); // the application has a route of its own
         more?.Invoke(services);
         return services.BuildServiceProvider();
     }
@@ -55,15 +55,15 @@ public class RouteableModulesTests
     {
         using var provider = Application();
         var args = new RouteableArgs();
-        Assert.Null(provider.GetViewModel("/orders", args));                         // not there yet
+        Assert.Null(provider.GetViewModel("/orders", args)); // not there yet
 
         provider.GetRequiredService<IRouteableModules>().Load("Orders", AddOrders);
 
         var page = Assert.IsType<OrdersPage>(provider.GetViewModel("/orders", args));
         var repository = Assert.IsType<OrderRepository>(page.Repository);
-        Assert.Same(provider.GetRequiredService<AppClock>(), repository.Clock);      // the module sees the services of the application
-        Assert.Null(provider.GetService<IOrderRepository>());                        // the application does not see the ones of the module
-        Assert.NotNull(provider.GetViewModel("/home", args));                        // and its own routes still work
+        Assert.Same(provider.GetRequiredService<AppClock>(), repository.Clock); // the module sees the application's services
+        Assert.Null(provider.GetService<IOrderRepository>()); // the application does not see the module's
+        Assert.NotNull(provider.GetViewModel("/home", args)); // and its own routes still work
     }
 
     [Fact]
@@ -97,8 +97,8 @@ public class RouteableModulesTests
         var a = (Session)first.ServiceProvider.GetViewModel("/session", new RouteableArgs())!;
         var b = (Session)second.ServiceProvider.GetViewModel("/session", new RouteableArgs())!;
 
-        Assert.Same(a, b);                                                                          // one singleton
-        Assert.NotSame(first.ServiceProvider.GetRequiredService<Visitor>(), a.Visitor);            // not holding what belongs to the first visitor
+        Assert.Same(a, b);
+        Assert.NotSame(first.ServiceProvider.GetRequiredService<Visitor>(), a.Visitor); // not holding what belongs to the first visitor
         Assert.NotSame(second.ServiceProvider.GetRequiredService<Visitor>(), a.Visitor);
     }
 
@@ -125,12 +125,12 @@ public class RouteableModulesTests
 
         provider.GetRequiredService<IRouteableModules>().Load("Orders", AddOrders);
 
-        Assert.Equal(["orders"], earlyMain.Entries.Select(e => e.DisplayName));        // added to the menu that was alive
+        Assert.Equal(["orders"], earlyMain.Entries.Select(e => e.DisplayName)); // added to the menu that was alive
 
         using var late = provider.CreateScope();
         var lateMain = late.ServiceProvider.GetRequiredService<IRouteableMenuViewModel>();
-        Assert.Equal(["orders"], lateMain.Entries.Select(e => e.DisplayName));         // and to the one built after
-        Assert.NotSame(earlyMain.Entries[0], lateMain.Entries[0]);                 // each menu has entries of its own
+        Assert.Equal(["orders"], lateMain.Entries.Select(e => e.DisplayName)); // and to the one built after
+        Assert.NotSame(earlyMain.Entries[0], lateMain.Entries[0]); // each menu has its own entries
     }
 
     [Fact]
@@ -185,7 +185,7 @@ public class RouteableModulesTests
         var loaded = modules.Load(typeof(ReflectedModule).Assembly);
 
         Assert.Contains(loaded, m => m.Name == "Reflected" && m.Assembly == "Routeables.Test");
-        Assert.Contains(loaded, m => m.Name == nameof(ReflectedModule.AddWithAName));       // the method name when the attribute has none
+        Assert.Contains(loaded, m => m.Name == nameof(ReflectedModule.AddWithAName)); // the method name when the attribute has none
         Assert.IsType<ReflectedPage>(provider.GetViewModel("/reflected", new RouteableArgs()));
         Assert.Contains(provider.GetRequiredService<IRouteableMenuViewModel>().Entries, e => e.DisplayName == "Reflected");
     }
@@ -235,7 +235,7 @@ public class RouteableModulesTests
         Assert.Empty(modules.Loaded);
         Assert.Null(provider.GetViewModel("/broken", new RouteableArgs()));
         Assert.DoesNotContain(main.Entries, e => e.DisplayName == "broken");
-        modules.Load("Broken", s => s.RegisterRoute("/broken", (_, _) => new object()));      // and it can be loaded again
+        modules.Load("Broken", s => s.RegisterRoute("/broken", (_, _) => new object())); // and it can be loaded again
         Assert.True(modules.IsLoaded("Broken"));
     }
 
@@ -266,7 +266,7 @@ public class RouteableModulesTests
         var ran = false;
 
         var first = modules.Load("Orders", AddOrders);
-        modules.Load("Orders", AddOrders);                                          // the same method: nothing to say
+        modules.Load("Orders", AddOrders); // the same method: nothing to report
         Assert.Empty(sink.Reports);
 
         var second = modules.Load("Orders", services => { ran = true; AddOrders(services); });
@@ -277,7 +277,6 @@ public class RouteableModulesTests
         Assert.Contains("Orders", sink.Reports[0]);
     }
 
-    // ---- ModuleServiceProvider: the keyed services
 
     private sealed class Tag(string name) { public string Name { get; } = name; }
 
@@ -311,7 +310,7 @@ public class RouteableModulesTests
     [Fact]
     public void A_keyed_service_of_a_module_is_not_registered()
     {
-        // Documented: the keyed services of a module are left out (see IRouteableModules); the unkeyed ones are served.
+        // Documented: a module's keyed services are left out (see IRouteableModules); the unkeyed ones are served.
         var provider = ProviderOf(_ => { }, module =>
         {
             module.AddKeyedSingleton("m", new Tag("module"));
@@ -330,7 +329,6 @@ public class RouteableModulesTests
         Assert.Equal("module", ((Tag)provider.GetService(typeof(Tag))!).Name);
     }
 
-    // ---- the provider a module service asks for, and the disposal of a module that fails
 
     public sealed class Wanted;
     public sealed class AsksForProvider(IServiceProvider provider) { public IServiceProvider Provider { get; } = provider; }
@@ -359,7 +357,7 @@ public class RouteableModulesTests
 
         var asks = (AsksForProvider)provider.GetViewModel("/asks", new RouteableArgs())!;
 
-        Assert.NotNull(asks.Provider.GetService<Wanted>());       // a service only the module registered
+        Assert.NotNull(asks.Provider.GetService<Wanted>()); // a service only the module registered
     }
 
     [Fact]
@@ -382,7 +380,7 @@ public class RouteableModulesTests
 
         Assert.ThrowsAny<Exception>(() => provider.Dispose());
 
-        Assert.Contains("first", log);        // the module that comes after the one that failed was still disposed
+        Assert.Contains("first", log); // the module after the one that failed was still disposed
         Assert.Contains("second", log);
     }
 }

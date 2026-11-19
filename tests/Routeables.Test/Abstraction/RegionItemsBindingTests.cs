@@ -32,7 +32,7 @@ public class RegionItemsBindingTests
         Assert.IsType<RegionView<RegionDogsViewModel>>(last[1]);
         Assert.Same(router.CurrentView, last[^1]);
 
-        // Back keeps the entry for Forward, but it is not on the list: the last view is always the current one.
+        // Back keeps the entry for Forward, but it is not in the list: the last view is always the current one.
         await router.GoBackAsync(ct);
         Assert.Single(lists[^1]);
         Assert.Same(router.CurrentView, lists[^1][^1]);

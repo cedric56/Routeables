@@ -86,7 +86,7 @@ public class RouteableHistoryKeeperTests
             using var provider = Build(store);
             provider.StartRouteableHistory();
             var router = provider.GetRequiredService<IRouter>();
-            await Task.Delay(500, TestContext.Current.CancellationToken);      // several waits end with no page
+            await Task.Delay(500, TestContext.Current.CancellationToken);
 
             await router.GoToAsync("/kept-first", cancellationToken: TestContext.Current.CancellationToken);
 
@@ -122,7 +122,7 @@ public class RouteableHistoryKeeperTests
         var text = protector.Protect("secret");
 
         Assert.Equal("secret", protector.Unprotect(text));
-        Assert.NotEqual(text, protector.Protect("secret"));   // a new nonce each time
+        Assert.NotEqual(text, protector.Protect("secret"));
         Assert.Null(protector.Unprotect(text[..^4] + "AAAA"));
         Assert.Null(protector.Unprotect("secret"));
         Assert.Null(new AesRouteableHistoryProtector(Key(4)).Unprotect(text));

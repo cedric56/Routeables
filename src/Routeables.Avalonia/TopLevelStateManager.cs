@@ -52,8 +52,7 @@ public static class TopLevelStateManager
     {
         SetDefault(new TopLevelStateManagerImplementation());
 
-        // The class handlers are static and cannot be removed: add them once, however many times the application is
-        // created (they read Default when they run).
+        // Class handlers are static and cannot be removed: add them once, however many times the application is created (they read Default when they run).
         if (classHandlersAdded)
             return;
         classHandlersAdded = true;
@@ -127,8 +126,7 @@ class TopLevelStateManagerImplementation : ITopLevelStateManager
         _active = null;
 
         // Notify listeners that "active" changed (to null).
-        // If the interface contract requires a non-null TopLevel here,
-        // consider raising with the newly-resolved active instead.
+        // If the interface contract requires a non-null TopLevel here, consider raising with the newly resolved active one instead.
         ActiveChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -136,7 +134,7 @@ class TopLevelStateManagerImplementation : ITopLevelStateManager
     {
         var lifetime = Application.Current?.ApplicationLifetime;
 
-        // Prefer the live _active only if it's still valid.
+        // Prefer the live _active only if it is still valid.
         if (_active is { } a)
             return a;
 

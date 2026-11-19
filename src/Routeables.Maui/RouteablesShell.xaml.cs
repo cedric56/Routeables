@@ -31,11 +31,11 @@ public partial class RouteablesShell : Shell
         foreach (var routeable in menuViewModel.Entries)
             AddItem(routeable, hosts.Count);
 
-        // The content of the first item is resolved from the start: its route change begins now, not when the shell appears.
+        // The content of the first item is resolved from the start: its navigation begins now, not when the shell appears.
         menuViewModel.SelectFirst();
     }
 
-    // An item for an entry, at its place in the collection: the view produced by the router is shown inside its host.
+    // An item for an entry, at its place in the collection: the view the router produced is shown inside its host.
     private void AddItem(IRouteableMenuEntry routeable, int index)
     {
         var host = new ContentView();
@@ -56,8 +56,8 @@ public partial class RouteablesShell : Shell
             shown++;
     }
 
-    // An entry added while the application runs (a module loaded on demand, IRouteableModules.Load) gets its item at its place in the
-    // collection (AddMenuEntries chooses it). Other changes of the collection are not followed.
+    // An entry added while the application runs (a module loaded on demand, IRouteableModules.Load) gets its item at its place in the collection
+    // (AddMenuEntries chooses it). Other changes to the collection are not followed.
     private void OnRouteablesChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) => OnUiThread(() =>
     {
         if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add || e.NewItems is null) return;
@@ -66,8 +66,8 @@ public partial class RouteablesShell : Shell
             AddItem(routeable, index++);
     });
 
-    // A locked entry (see ILockCoordinator) is greyed in the flyout and the tabs. Which of the item, its section or its content a
-    // platform reads depends on how it draws them (a ShellContent put in Items is wrapped in an item and a section), so all three are set.
+    // A locked entry (see ILockCoordinator) is greyed out in the flyout and the tabs. Which of the item, its section or its content a platform
+    // reads depends on how it draws them (a ShellContent put in Items is wrapped in an item and a section), so all three are set.
     private void OnLockChanged(object? sender, EventArgs e) => OnUiThread(() =>
     {
         for (var i = 0; i < Items.Count && i < menuViewModel.Entries.Count; i++)
@@ -83,11 +83,11 @@ public partial class RouteablesShell : Shell
         }
     });
 
-    // Routeables -> Shell: the current view is displayed in the active item.
+    // Routeables to Shell: the current view is displayed in the active item.
     private void OnCurrentViewChanged(object? sender, object? view) => OnUiThread(() =>
     {
-        // A page opened from the code that has no entry (the detail a list opens) is shown by its owner, inside the page of the entry: the
-        // menu follows it, but the shell must not take its view out of there (a view has one parent, and the page would stay empty).
+        // A page opened from code that has no entry (the detail a list opens) is shown by its owner, inside the entry's page: the menu follows it, but
+        // the shell must not take its view out of there (a view has one parent, and the page would stay empty).
         if (IsPageOfAnotherEntry())
             return;
 
@@ -102,7 +102,7 @@ public partial class RouteablesShell : Shell
            && router.History.Current is { } current
            && !RouteAddress.SameFor(router, current.Args.Route, entry.Arguments.Route ?? entry.Route);
 
-    // The entry the view model shows; before Shell has a current item (it has none until it appears) the shell cannot tell it.
+    // The entry the view model shows; before Shell has a current item (it has none until it appears) the shell cannot tell.
     private int ShownIndex()
     {
         var index = menuViewModel.SelectedEntry is { } routeable ? menuViewModel.Entries.IndexOf(routeable) : -1;
@@ -117,7 +117,7 @@ public partial class RouteablesShell : Shell
             hosts[index].Content = view;
     });
 
-    // A view model may raise its events from any thread; the controls only accept the one of the dispatcher.
+    // A view model may raise its events from any thread, but the controls only accept the dispatcher's thread.
     private void OnUiThread(Action action)
     {
         if (Dispatcher.IsDispatchRequired)
@@ -133,8 +133,8 @@ public partial class RouteablesShell : Shell
     {
         base.OnHandlerChanging(args);
 
-        // Subscribe once per handler, and let go when the handler goes away, so a recreated shell does not leave
-        // a dead one listening (and updating its controls) for the rest of the application's life.
+        // Subscribe once per handler, and unsubscribe when the handler goes away, so a recreated shell does not leave a dead one listening (and
+        // updating its controls) for the rest of the application's life.
         if (args.NewHandler is null && following)
         {
             menuViewModel.LockChanged -= OnLockChanged;
@@ -148,13 +148,13 @@ public partial class RouteablesShell : Shell
             menuViewModel.CurrentViewChanged += OnCurrentViewChanged;
             menuViewModel.Entries.CollectionChanged += OnRouteablesChanged;
             following = true;
-            SyncItems();                              // the entries added before the shell had a handler
-            OnLockChanged(this, EventArgs.Empty);     // the locks set before the shell had a handler
-            ShowCurrent();                            // the view of the first entry, if its navigation ended before
+            SyncItems(); // the entries added before the shell had a handler
+            OnLockChanged(this, EventArgs.Empty); // the locks set before the shell had a handler
+            ShowCurrent(); // the view of the first entry, if its navigation ended before
         }
     }
 
-    // The Back button or gesture of the system: the shell first (it closes its flyout), then one page back in the router.
+    // The system's Back button or gesture: the shell first (it closes its flyout), then one page back in the router.
     // At the first page nothing is handled, and Android leaves the application.
     /// <inheritdoc />
     protected override bool OnBackButtonPressed() => base.OnBackButtonPressed() || RouteableBack.TryGoBack(services);
@@ -164,14 +164,14 @@ public partial class RouteablesShell : Shell
     {
         base.OnAppearing();
 
-        // Shell does not report the initially selected item as a route change, so activate it once.
+        // Shell does not report the initially selected item as a navigation, so activate it once.
         if (started) return;
         started = true;
         Activate();
         ShowCurrent();
     }
 
-    // Shell -> Routeables: selecting another item tells the view model.
+    // Shell to Routeables: selecting another item tells the view model.
     /// <inheritdoc />
     protected override void OnNavigated(ShellNavigatedEventArgs args)
     {
@@ -195,7 +195,7 @@ public partial class RouteablesShell : Shell
 
     private int CurrentIndex() => CurrentItem is null ? -1 : Items.IndexOf(CurrentItem);
 
-    // The index of the entry that is shown; -1 before the first one.
+    // The index of the entry shown; -1 before the first one.
     private int shown = -1;
 
     private void Activate()
@@ -215,7 +215,7 @@ public partial class RouteablesShell : Shell
         shown = index;
         if (ReferenceEquals(menuViewModel.SelectedEntry, routeable)) return;
 
-        // The SelectedEntry setter of the view model starts the route change (see MainViewModel in the sample).
+        // The view model's SelectedEntry setter starts the navigation (see MainViewModel in the sample).
         menuViewModel.SelectedEntry = routeable;
     }
 }

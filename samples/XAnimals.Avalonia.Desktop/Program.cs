@@ -7,14 +7,13 @@ namespace XAnimals.Avalonia.Desktop;
 
 class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
+    // Initialization code. Do not use Avalonia or third-party APIs, or code that relies on a SynchronizationContext, before AppMain is called:
+    // nothing is initialized yet.
     [STAThread]
     public static void Main(string[] args) => BuildAvaloniaApp()
         .StartWithClassicDesktopLifetime(args);
 
-    // Avalonia configuration, don't remove; also used by visual designer.
+    // Avalonia configuration, do not remove (the visual designer uses it too).
     public static AppBuilder BuildAvaloniaApp()
         => App.CreateApp()
             //(new Reshapes.Avalonia.Fluent.ReshapeMessageBoxService())

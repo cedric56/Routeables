@@ -5,8 +5,8 @@ namespace Routeables.Tests.Abstraction;
 
 public class AutoRegistrationFallbackTests
 {
-    // The host runs the module constructors of the assemblies that reference Routeables before it applies the routes (a runtime that does not run
-    // module initializers, as .NET MAUI for Android was seen not to, would leave the routes unregistered): it must not fail, and may be called again.
+    // The host runs the module constructors of the assemblies that reference Routeables before it applies the routes. A runtime that skips module
+    // initializers (.NET MAUI for Android did) would otherwise leave the routes unregistered. It must not fail, and may be called again.
     [Fact]
     public void Apply_can_run_the_module_constructors_and_be_called_again()
     {

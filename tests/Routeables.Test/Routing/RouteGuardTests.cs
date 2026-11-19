@@ -212,7 +212,7 @@ public class RouteGuardTests
         var failure = await Assert.ThrowsAsync<InvalidOperationException>(() => router.GoToAsync("/guard-admin", cancellationToken: ct));
 
         Assert.Contains("returned null", failure.Message);
-        Assert.False(router.CurrentViewModel is GuardAdminVm);   // the page was not entered
+        Assert.False(router.CurrentViewModel is GuardAdminVm);
     }
 
     [Fact]
@@ -256,7 +256,6 @@ public class RouteGuardTests
         Assert.Null(RouteGuardDecision.Cancel.RedirectTo);
     }
 
-    // ---- diagnostics ----
 
     public sealed class MeterHomeView : IRouteableFor { public object? Context { get; set; } }
 
@@ -377,7 +376,7 @@ public class RouteGuardTests
             lock (activities) second = activities.Last(a => a.GetTagItem("routeables.view_model")?.ToString() == nameof(MeterItemVm));
             var address = Assert.IsType<string>(second.GetTagItem("routeables.address"));
             Assert.Contains("77", address);
-            Assert.DoesNotContain("secret", address);   // never the query
+            Assert.DoesNotContain("secret", address);
         }
         finally { RouteableDiagnostics.IncludeAddress = false; }
     }

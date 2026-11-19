@@ -36,17 +36,17 @@ internal static class DialogPresenter
 
     private static async Task ShowInWindowAsync(Window owner, string? icon, string? title, Control card, RouteableDialogHandle handle)
     {
-        // The window icon is built from the bitmap; the bitmap and its stream are released when the dialog is closed, or
-        // each dialog would keep a native image for the life of the application.
+        // The window icon is built from the bitmap. The bitmap and its stream are released when the dialog closes, or each dialog would keep a
+        // native image for the life of the application.
         using var stream = string.IsNullOrEmpty(icon) ? null : AssetLoader.Open(new Uri(icon));
         using var bitmap = stream is null ? null : new Bitmap(stream);
 
-        // A window that already has a modal child cannot be the owner of another modal: a dialog opened while
-        // others are open is owned by the topmost one, so it appears over it and the ones below stay blocked.
+        // A window that already has a modal child cannot own another modal: a dialog opened while others are open is owned by the topmost one,
+        // so it appears over it and the ones below stay blocked.
         var parent = OpenWindows.LastOrDefault(open => IsOwnedBy(open, owner)) ?? owner;
         var dialog = new Window
         {
-            Icon = bitmap is null ? owner.Icon : new WindowIcon(bitmap),   // no icon given: the one of the window that opens the dialog
+            Icon = bitmap is null ? owner.Icon : new WindowIcon(bitmap), // no icon given: use the one of the window that opens the dialog
             Title = title ?? string.Empty,
             Content = card,
             SizeToContent = SizeToContent.WidthAndHeight,
@@ -56,9 +56,9 @@ internal static class DialogPresenter
             WindowStartupLocation = WindowStartupLocation.CenterOwner
         };
 
-        // SizeToContent is applied after the window is shown, so the window would first appear off the centre and then jump to it.
-        // It is shown transparent, and made opaque once it is centred: nobody sees the jump. (It used to open at -32000, -32000, where
-        // some systems bring a window back to the screen: Wayland, macOS.)
+        // SizeToContent is applied after the window is shown, so the window would first appear off-centre and then jump. Show it transparent and
+        // make it opaque once it is centred, so nobody sees the jump. (It used to open at -32000, -32000, where some systems bring a window back
+        // onto the screen: Wayland, macOS.)
         var hidden = parent.Bounds.Width > 0 && parent.Bounds.Height > 0;
         if (hidden)
             dialog.Opacity = 0;
@@ -97,8 +97,8 @@ internal static class DialogPresenter
         }
     }
 
-    // The window sizes itself to its content, but only after it is shown, and an estimate of the size is wrong for a content that is not
-    // in the tree yet (a view with a template). So it is centred on its owner once its real size is known, and only then made visible.
+    // The window sizes itself to its content, but only after it is shown, and an estimate of the size is wrong for content that is not in the tree
+    // yet (a view with a template). So centre it on its owner once its real size is known, and only then make it visible.
     private static void CenterOnOwner(Window dialog, Window parent)
     {
         try { Place(dialog, parent); }
@@ -208,15 +208,15 @@ internal static class DialogPresenter
         layer.Children.Add(backdrop);
         OpenBackdrops.Add(backdrop);
 
-        // The owner can go away with the dialog still open (its window is closed): nobody calls CloseSurface then, and the
-        // static list would keep the backdrop (and through it the whole window) for the life of the application.
+        // The owner can go away with the dialog still open (its window is closed). Nobody calls CloseSurface then, and the static list would keep
+        // the backdrop (and through it the whole window) for the life of the application.
         backdrop.DetachedFromVisualTree += (_, _) =>
         {
             layer.PropertyChanged -= OnLayerChanged;
             OpenBackdrops.Remove(backdrop);
 
-            // Nobody will close the dialog any more: let the caller's await finish (with the default result) instead of
-            // leaving it, and everything it holds, waiting for a click that cannot happen.
+            // Nobody will close the dialog any more: let the caller's await finish (with the default result) instead of leaving it, and everything
+            // it holds, waiting for a click that cannot happen.
             closed.TrySetResult();
         };
 
@@ -229,7 +229,7 @@ internal static class DialogPresenter
         return closed.Task;
     }
 
-    // A window has a title bar; the overlay does not, so the title goes inside the card.
+    // A window has a title bar and the overlay does not, so the title goes inside the card.
     private static Control WithTitle(string? title, Control card, bool dark)
     {
         if (string.IsNullOrWhiteSpace(title))

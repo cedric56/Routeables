@@ -124,7 +124,7 @@ public class RouteableLockBrokerTests
         {
             if (i % 2 == 0)
             {
-                // Subscribers that come and go while others publish.
+                // Subscribers come and go while others publish.
                 using var token = broker.Subscribe("ping", _ => { });
                 broker.Publish(new Ping());
             }

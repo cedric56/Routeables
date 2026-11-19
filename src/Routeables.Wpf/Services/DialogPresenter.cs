@@ -19,8 +19,8 @@ internal static class DialogPresenter
         ArgumentNullException.ThrowIfNull(card);
         ArgumentNullException.ThrowIfNull(handle);
 
-        // A window that already has a modal child cannot own another modal: a dialog opened while others are open is
-        // owned by the topmost one, so it appears over it and the ones below stay blocked.
+        // A window that already has a modal child cannot own another modal: a dialog opened while others are open is owned by the topmost one,
+        // so it appears over it and the ones below stay blocked.
         var parent = OpenWindows.LastOrDefault(open => IsOwnedBy(open, owner)) ?? owner;
         var dialog = new Window
         {
@@ -31,7 +31,7 @@ internal static class DialogPresenter
             ShowInTaskbar = false,
             MinWidth = 320,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            Icon = LoadIcon(icon) ?? owner.Icon   // no icon given: the one of the window that opens the dialog
+            Icon = LoadIcon(icon) ?? owner.Icon // no icon given: use the one of the window that opens the dialog
         };
 
         // An owner that was never shown cannot own a window.
@@ -81,8 +81,8 @@ internal static class DialogPresenter
 
         OpenWindows.Add(dialog);
 
-        // ShowDialog runs a nested message loop and returns when the dialog is closed: it is started from a dispatcher
-        // callback, so the caller's await is not suspended inside that loop.
+        // ShowDialog runs a nested message loop and returns when the dialog is closed. Start it from a dispatcher callback, so that the caller's
+        // await is not suspended inside that loop.
         dialog.Dispatcher.InvokeAsync(() =>
         {
             try
@@ -122,7 +122,7 @@ internal static class DialogPresenter
         var image = new BitmapImage();
         image.BeginInit();
         image.UriSource = new Uri(icon, UriKind.RelativeOrAbsolute);
-        image.CacheOption = BitmapCacheOption.OnLoad;   // the file or resource stream is not kept open
+        image.CacheOption = BitmapCacheOption.OnLoad; // the file or resource stream is not kept open
         image.EndInit();
         image.Freeze();
         return image;

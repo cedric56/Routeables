@@ -74,7 +74,7 @@ public sealed class RouteableTransitions(IServiceProvider provider) : IDisposabl
 
         public Follow(IRouter router)
         {
-            _binding = new RegionBinding(router, Show);   // calls Show at once with the view the router shows now
+            _binding = new RegionBinding(router, Show); // calls Show at once with the view the router shows now
             lock (_lock)
                 _started = true;
         }
@@ -82,7 +82,7 @@ public sealed class RouteableTransitions(IServiceProvider provider) : IDisposabl
         private void Show(object? view, RegionChange change)
         {
             lock (_lock)
-                _unread = _started && view is not null ? change : null;     // the view that was already there comes in without one
+                _unread = _started && view is not null ? change : null; // the view that was already there comes in without a transition
         }
 
         public RegionChange? Take()

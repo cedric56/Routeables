@@ -149,7 +149,7 @@ the followers show something else (a credits page), back to `true` to follow aga
 
 ### A pile of pages for each tab
 
-A `TabControl` with `AttachRouteables(provider)` (WPF, Avalonia) shows one region: choosing another tab goes to the route of that tab in the same region, so the pages of the tab you left are no longer on the pile. Give each tab its own region and it keeps its pile:
+A `TabControl` with `AttachRouteables(provider)` (WPF, Avalonia) shows one region: choosing another tab goes to the route of that tab in the same region, so the pages of the tab you left are no longer on the stack. Give each tab its own region and it keeps its pile:
 
 ```xml
 <TabControl x:Name="Tabs">

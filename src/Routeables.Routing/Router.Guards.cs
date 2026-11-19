@@ -15,24 +15,24 @@ namespace Routeables.Routing;
 // Route guards, type guards and the redirections they ask for.
 internal partial class Router
 {
-    // The route a guard sent the user to instead; read once the gate is released.
+    // The route a guard redirected to; read once the gate is released.
     private sealed class Redirection
     {
         public string? Route { get; set; }
     }
 
-    // How many redirects follow one another in the flow of one call: a guard that sends the user back to a page it refuses would loop for ever.
+    // How many redirects follow one another within one call. A guard that sends the user back to a page it refuses would loop forever.
     private const int MaxRedirects = 8;
     private static readonly AsyncLocal<int> Redirects = new();
 
-    // The guards are resolved once, when the first route change needs them, and kept sorted by IRouteGuard.Order (a stable sort: guards
-    // of the same order stay in the order of registration).
+    // Guards are resolved once, on the first navigation that needs them, and sorted by IRouteGuard.Order (a stable sort: guards with the
+    // same order keep their registration order).
     private IRouteGuard[]? _guards;
 
     private IRouteGuard[] Guards => _guards ??= [.. provider.GetServices<IRouteGuard>().Select((guard, index) => (guard, index))
         .OrderBy(x => x.guard.Order).ThenBy(x => x.index).Select(x => x.guard)];
 
-    // Every registered guard, in the order of IRouteGuard.Order, until one refuses.
+    // Ask every registered guard, in IRouteGuard.Order, until one refuses.
     private async Task<RouteGuardDecision> AskGuardsAsync(RouteableKind kind, RouterEntry? from, RouterEntry to, CancellationToken ct)
     {
         var guards = Guards;
@@ -44,7 +44,8 @@ internal partial class Router
         foreach (var guard in guards)
         {
             var started = measure ? Stopwatch.GetTimestamp() : 0;
-            // A guard that answers nothing is a bug of the guard: it is not taken for a yes (a guard that fails opens the door), the route change fails and says which one.
+            // A guard that returns nothing is a bug in the guard. It is not treated as a yes (a failing guard must not open the door): the navigation
+            // fails and names the guard.
             var decision = await guard.CanEnterAsync(change, ct)
                 ?? throw new InvalidOperationException($"The route guard {guard.GetType().FullName} returned null: it must return RouteGuardDecision.Allow, Cancel or Redirect.");
             if (measure)
@@ -61,9 +62,9 @@ internal partial class Router
     /// <inheritdoc />
     public async Task<RouteableResult> RefreshGuardsAsync(CancellationToken cancellationToken = default)
     {
-        // Like every route change, one at a time: the page asked about is the one that is shown when the guards answer, and a refresh
-        // that comes in the middle of a route change waits for it.
-        // The token of the caller goes on to the redirection: the one the gate gives is linked to a source that is released when the gate is.
+        // Like any navigation, one at a time: the page being asked about is the page shown when the guards answer, and a refresh that arrives
+        // during a navigation waits for it.
+        // The caller's token is passed on to the redirection: the gate's own token is linked to a source that is released with the gate.
         var (asked, decision) = await RunGatedAsync(cancellationToken, async token =>
         {
             var current = history.Current;
@@ -76,14 +77,14 @@ internal partial class Router
 
         if (decision.IsAllowed)
             return RouteableResult.Ok();
-        // Nowhere to send the user: the page stays, as for any guard that cancels. A page that is no longer the one shown (a route change came
-        // between the answer and now) is not redirected: the answer was about another page.
+        // Nowhere to send the user: the page stays, as when any guard cancels. A page that is no longer the one shown (a navigation happened
+        // between the answer and now) is not redirected, because the answer was about another page.
         if (decision.RedirectTo is not { } route || !ReferenceEquals(history.Current, asked))
             return RouteableResult.Cancel();
         return await RedirectAsync(route, cancellationToken);
     }
 
-    // Goes where a guard sent the user, once the route change that was refused has ended and released the gate.
+    // Go where a guard redirected to, once the refused navigation has ended and released the gate.
     private async Task<RouteableResult> RedirectAsync(string route, CancellationToken ct)
     {
         if (Redirects.Value >= MaxRedirects)
@@ -109,15 +110,15 @@ internal partial class Router
     private IRouteTypeGuard[] TypeGuards => _typeGuards ??= [.. provider.GetServices<IRouteTypeGuard>().Select((guard, index) => (guard, index))
         .OrderBy(pair => pair.guard.Order).ThenBy(pair => pair.index).Select(pair => pair.guard)];
 
-    // The result of a route change that the type guards refuse (null when they allow it): cancelled, or the route change of the redirection.
+    // The result of a navigation that the type guards refuse (null when they allow it): cancelled, or the result of the redirection.
     private async Task<RouteableResult?> AskTypeGuardsAsync(string template, string route, Type? requestedType, CancellationToken cancellationToken)
     {
         var guards = TypeGuards;
         if (guards.Length == 0)
             return null;
 
-        // The type of the route table; a page registered with no route (opened from a menu) is not in it, and is the type the request names.
-        // The template itself first (query included), then the one with the same path.
+        // The route table type. A page registered without a route (opened from a menu) is not in the table; it is the type the request names.
+        // Try the template itself first (query included), then one with the same path.
         var table = provider.GetService<RouteableTable>()?.Entries ?? [];
         var known = table.Where(entry => RouteAddress.Same(entry.Template, template)).Concat(table.Where(entry => RouteAddress.SamePath(entry.Template, template))).FirstOrDefault();
         var type = known.ViewModelType ?? requestedType;

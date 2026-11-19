@@ -44,6 +44,6 @@ internal sealed class RouteableTaskDialogQueue : DialogQueue<TaskDialogRequest, 
             Close(request);
     }
 
-    // A button decided the result, or the dialog was dismissed: it is closed and Closed is told.
+    // A button decided the result, or the dialog was dismissed: close it and tell Closed.
     private void Close(TaskDialogRequest request) => Finish(request, request.Session.Result, request.Session.Release);
 }

@@ -52,7 +52,7 @@ public static class WpfRouteablesExtensions
             services.RegisterMenuViewModel<TMenu>();
             services.UseRouteablesServices();
             configure?.Invoke(services);
-            // The routes the generator found are added unless the application registered them (or called AddGeneratedRoutes()).
+            // Add the routes the generator found, unless the application registered them (or called AddGeneratedRoutes()).
             global::Routeables.Abstraction.Registrations.RouteableAutoRegistration.Apply(services);
         }, afterBuild);
     }
@@ -201,7 +201,7 @@ public static class WpfRouteablesExtensions
             window.Closed -= OnClosed;
             RouteableWindows.Remove(window);
 
-            // The last window closing is the application leaving: the pages are told, and the history is saved with what they wrote.
+            // The last window closing means the application is leaving: tell the pages, and save the history with what they wrote.
             if (RouteableWindows.Active is null)
                 provider.GetService<RouteableAppLifecycle>()?.SleepNow();
 
@@ -212,8 +212,8 @@ public static class WpfRouteablesExtensions
                 RouteableHostStart.Release(provider);
         }
 
-        // The Back request of the window: Alt+Left, the back key of a keyboard and the back button of a mouse (the NavigationCommands.BrowseBack
-        // command) go back one page of the router when it has one.
+        // The window's Back request: Alt+Left, the keyboard's back key and the mouse's back button (the NavigationCommands.BrowseBack command) go
+        // back one page of the router when it has one.
         var back = new CommandBinding(
             NavigationCommands.BrowseBack,
             (_, e) => e.Handled = RouteableBack.TryGoBack(provider),

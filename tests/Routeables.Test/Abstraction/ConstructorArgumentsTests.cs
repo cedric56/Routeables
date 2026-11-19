@@ -128,7 +128,7 @@ public class ConstructorArgumentsTests
         var args = RouteableArgs.Create().WithViewModel("id", "42");
         var arguments = ConstructorArguments.ForViewModel(new ServiceCollection().BuildServiceProvider(), args, "ProductVm", ["category", "id"], takesRouter: false);
 
-        // What the generated constructor call asks for, in the order of the parameters.
+        // What the generated constructor call asks for, in parameter order.
         Assert.Equal("all", arguments.Next("category", "all"));
         Assert.Equal("42", arguments.Next("id", ""));
     }

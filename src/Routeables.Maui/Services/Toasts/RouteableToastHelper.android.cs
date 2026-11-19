@@ -50,16 +50,16 @@ static class RouteableToastHelper
         var handler = new Handler(Looper.MainLooper!);
         Java.Lang.Runnable? pendingDismiss = null;
 
-        // What ties the card to the application: the theme subscription and the delayed dismissal. Let go of both when the
-        // toast is dismissed or when its view is torn down (an activity destroyed before the toast was dismissed), or the
-        // application would keep the card, and the activity it belongs to, alive.
+        // What ties the card to the application: the theme subscription and the delayed dismissal. Release both when the toast is dismissed or when
+        // its view is torn down (an activity destroyed before the toast was dismissed), or the application would keep the card, and the activity
+        // it belongs to, alive.
         void Release()
         {
             if (released) return;
             released = true;
 
             if (pendingDismiss is not null)
-                handler.RemoveCallbacks(pendingDismiss);   // the same Runnable that was posted, or nothing is removed
+                handler.RemoveCallbacks(pendingDismiss); // the same Runnable that was posted, or nothing is removed
             pendingDismiss = null;
 
             if (Application.Current is not null)
@@ -110,8 +110,8 @@ static class RouteableToastHelper
         ? Application.Current?.PlatformAppTheme ?? AppTheme.Light
         : theme;
 
-    // Accent colors stay the same hue across themes, slightly brighter in dark mode so
-    // they read clearly against a dark card — mirrors the Windows ToastHelper palette.
+    // Accent colors keep the same hue across themes, slightly brighter in dark mode so they read clearly against a dark card. This mirrors the
+    // Windows ToastHelper palette.
     static Color GetAccent(RouteableNotificationType type, AppTheme theme)
     {
         var dark = theme == AppTheme.Dark;
@@ -128,8 +128,8 @@ static class RouteableToastHelper
     {
         RouteableNotificationType.Success => "\u2713", // ✓
         RouteableNotificationType.Warning => "\u26A0", // ⚠
-        RouteableNotificationType.Error => "\u2715",   // ✕
-        _ => "\u2139",                        // ℹ
+        RouteableNotificationType.Error => "\u2715", // ✕
+        _ => "\u2139", // ℹ
     };
 
     readonly record struct CardPalette(Color Background, Color Border, Color Title, Color Message, Color CloseGlyph);
@@ -169,7 +169,7 @@ static class RouteableToastHelper
         var icon = new TextView(context)
         {
             Text = glyph,
-            TextSize = 18, // sp — TextView.TextSize already expects sp, do not run through Sp()
+            TextSize = 18, // sp: TextView.TextSize already expects sp, so do not run it through Sp()
         };
         icon.SetTextColor(accent);
         icon.SetTypeface(Android.Graphics.Typeface.DefaultBold, TypefaceStyle.Bold);
@@ -210,8 +210,8 @@ static class RouteableToastHelper
             Gravity = GravityFlags.Top | GravityFlags.End,
         };
 
-        // Holds icon + text + close button, inset away from the card's edges and from the
-        // accent bar. The card's rounded background shows through around this content.
+        // Holds icon, text and close button, inset from the card's edges and from the accent bar. The card's rounded background shows through around
+        // this content.
         var content = new LinearLayout(context) { Orientation = Orientation.Horizontal };
         content.SetPadding(Dp(context, 16), Dp(context, 12), Dp(context, 12), Dp(context, 12));
         content.AddView(icon);
@@ -219,12 +219,10 @@ static class RouteableToastHelper
         content.AddView(closeButton);
         content.LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, 1f);
 
-        // The accent bar is a SIBLING of `content` inside a horizontal LinearLayout, not an
-        // overlay inside a FrameLayout. A horizontal LinearLayout explicitly re-measures a
-        // MatchParent-height child against its own final (sibling-derived) height, which is
-        // exactly "as tall as the card" here. A FrameLayout has no such mechanism — a
-        // MatchParent child there measures against the nearest *constrained* ancestor, which
-        // was the whole screen, producing the full-height line seen in testing.
+        // The accent bar is a SIBLING of `content` inside a horizontal LinearLayout, not an overlay inside a FrameLayout. A horizontal LinearLayout
+        // re-measures a MatchParent-height child against its own final (sibling-derived) height, which is exactly "as tall as the card" here. A
+        // FrameLayout has no such mechanism: a MatchParent child there measures against the nearest *constrained* ancestor, which was the whole
+        // screen, producing the full-height line seen in testing.
         var accentBar = new View(context)
         {
             LayoutParameters = new LinearLayout.LayoutParams(Dp(context, 4), ViewGroup.LayoutParams.MatchParent),
@@ -311,9 +309,8 @@ static class RouteableToastHelper
         if (existing is not null)
             return _host = existing;
 
-        // Vertical LinearLayout, not FrameLayout: cards must stack top-to-bottom and
-        // shift to fill the gap when one is removed, the same way the Windows
-        // StackPanel-based host behaves. A FrameLayout would overlap them instead.
+        // A vertical LinearLayout, not a FrameLayout: cards must stack top to bottom and shift to fill the gap when one is removed, as the Windows
+        // StackPanel-based host does. A FrameLayout would overlap them instead.
         var host = new LinearLayout(activity) { Tag = HostTag, Orientation = Orientation.Vertical };
 
         var layoutParams = new FrameLayout.LayoutParams(

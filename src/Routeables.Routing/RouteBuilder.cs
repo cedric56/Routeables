@@ -69,8 +69,8 @@ public sealed class RouteBuilder
         return this;
     }
 
-    // The route of a tab declared without one: the [Routeable] of the view model, else its name ("/home" for a HomeViewModel). Never the
-    // internal key of the view, which is not an address.
+    // A tab declared without a route gets the [Routeable] route of its view model, else its name ("/home" for HomeViewModel).
+    // Never the internal key of the view, which is not an address.
     internal static string DefaultRoute(Type viewModelType)
     {
         if (viewModelType.GetCustomAttributes(typeof(RouteableAttribute), false).FirstOrDefault() is RouteableAttribute { Path: { } path } && !string.IsNullOrWhiteSpace(path))

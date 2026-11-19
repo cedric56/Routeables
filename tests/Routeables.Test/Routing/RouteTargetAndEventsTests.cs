@@ -26,7 +26,6 @@ public class RouteTargetAndEventsTests
     private static ServiceProvider ProviderWith(Sink sink)
         => new ServiceCollection().AddSingleton<IRouteableErrorSink>(sink).BuildServiceProvider();
 
-    // ------------------------------------------------------------------------------------------------ RouteTarget
 
     [Theory]
     [InlineData("/orders", "orders", true)]
@@ -83,7 +82,6 @@ public class RouteTargetAndEventsTests
         Assert.Contains(nameof(RouteTargetAndEventsTests), reported.Source);
     }
 
-    // ------------------------------------------------------------------------------------------------ RouteableEvents
 
     [Fact]
     public void Without_observers_nothing_happens()

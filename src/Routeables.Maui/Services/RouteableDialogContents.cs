@@ -25,7 +25,7 @@ public static class RouteableDialogContents
         return RouteableNativeDialogLook.Build(p.Title, body, session.Buttons.Select(ToButton).ToList());
     }
 
-    // A button of the session, drawn once: it is enabled when its command can execute when the dialog opens.
+    // A session button, drawn once: it is enabled when its command can execute at the time the dialog opens.
     private static DialogButton ToButton(RouteableDialogButton button) => new(
         button.Text,
         button.IsDefault,
@@ -49,8 +49,8 @@ public static class RouteableDialogContents
 
         var body = new VerticalStackLayout { Spacing = 12 };
 
-        // ----- Header: icon + header text -----
-        // Without a title the header is the dialog's title instead.
+        // Header: icon and header text.
+        // Without a title, the header is the dialog's title instead.
         var title = string.IsNullOrWhiteSpace(p.Title) ? p.Header : p.Title;
         var showHeader = !string.IsNullOrWhiteSpace(p.Title) && p.Header is not null;
         if (showHeader || p.IconSource is not null)
@@ -67,11 +67,11 @@ public static class RouteableDialogContents
             body.Add(headerHost);
         }
 
-        // ----- Subheader -----
+        // Subheader.
         if (!string.IsNullOrWhiteSpace(p.SubHeader))
             body.Add(RouteableNativeDialogLook.Text(p.SubHeader));
 
-        // ----- Content + progress + footer -----
+        // Content, progress and footer.
         if (p.Content is View contentView)
             body.Add(contentView);
         else if (p.Content is not null)
@@ -131,7 +131,7 @@ public static class RouteableDialogContents
             MaximumHeightRequest = 420
         };
 
-        // ----- Buttons (up to 3): the first result is the primary one -----
+        // Buttons (up to 3): the first result is the primary one.
         return RouteableNativeDialogLook.Build(title, scroll, session.Buttons.Select(ToButton).ToList());
     }
 
@@ -150,18 +150,18 @@ public static class RouteableDialogContents
             if (named is null || string.IsNullOrWhiteSpace(named.Name))
                 continue;
 
-            buttons.Add(new DialogButton(named.Name, buttons.Count == 0, true, Command: named.Command));   // the first button kept is the default one, whatever its index
+            buttons.Add(new DialogButton(named.Name, buttons.Count == 0, true, Command: named.Command)); // the first button kept is the default one, whatever its index
         }
 
-        // Keep MAUI view hierarchy (no ToPlatform)
+        // Keep the MAUI view hierarchy (no ToPlatform).
         return RouteableNativeDialogLook.Build(
             viewModel.Title,
             new ScrollView { Content = view, HorizontalScrollBarVisibility = ScrollBarVisibility.Never, MaximumHeightRequest = 420 },
             buttons);
     }
 
-    // A MAUI ProgressBar has no indeterminate mode and would stay empty: fill and empty it
-    // while the dialog is on screen, the way an indeterminate bar reads.
+    // A MAUI ProgressBar has no indeterminate mode and would stay empty, so fill and empty it while the dialog is on screen, the way an
+    // indeterminate bar reads.
     private static ProgressBar CreateIndeterminateBar()
     {
         const string name = "RouteablesIndeterminate";

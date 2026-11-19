@@ -54,7 +54,7 @@ public class UseRouteablesTests
     public void UseRouteablesServer_refuses_a_main_registered_as_singleton_before_it()
     {
         var services = new ServiceCollection();
-        services.RegisterMenuViewModel<Tests.Core.FakeMenuViewModel>();     // no host yet: Singleton
+        services.RegisterMenuViewModel<Tests.Core.FakeMenuViewModel>();
 
         Assert.Throws<InvalidOperationException>(() => services.UseRouteablesServer<FakeMenuViewModel>());
     }

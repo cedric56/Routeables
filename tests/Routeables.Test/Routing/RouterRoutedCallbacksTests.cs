@@ -157,7 +157,7 @@ public class RouterRoutedCallbacksTests
 
         Assert.True(result.Success);
         Assert.Equal([RouteableOutcome.Success], raised);
-        Assert.Contains("PageVm:routedTo", string.Join(",", Log));      // the throwing callback did run
+        Assert.Contains("PageVm:routedTo", string.Join(",", Log));
         Assert.Contains("PageView:routedTo", string.Join(",", Log));   // and the later one still ran
         Assert.IsType<PageVm>(router.CurrentViewModel);
     }

@@ -27,7 +27,7 @@ namespace Routeables.Generated
             SymbolDisplayMiscellaneousOptions.UseSpecialTypes |
             SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
 
-        // What the generator keeps of a property: values only, so that the pipeline sees an unchanged model after an edit that changes none of them.
+        // What the generator keeps of a property: values only, so the pipeline sees an unchanged model after an edit that changes none of them.
         private sealed record PersistProperty(
             string ContainerType, string Name, string PropertyType, string? Converter, string? Problem,
             string FilePath, TextSpan TextSpan, LinePositionSpan LineSpan);

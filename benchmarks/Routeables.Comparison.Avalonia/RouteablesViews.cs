@@ -1,4 +1,4 @@
-// The pages of Routeables.Comparison with a real Avalonia view each: a control with a text, so that the view is built, attached and laid out.
+// The pages of Routeables.Comparison, each with a real Avalonia view: a control with a text, so the view is built, attached and laid out.
 using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction.Registrations;

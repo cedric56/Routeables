@@ -14,8 +14,8 @@ public sealed class ConstructorArguments
 {
     private readonly IServiceProvider provider;
     private readonly string typeName;
-    // Each value with the name it was given under (null: none), and the names of the parameters of the constructor: a value that has the
-    // name of a parameter is for that parameter only, the others go to the first parameter of their type.
+    // Each value with the name it was given under (null: none), and the constructor's parameter names. A value with a parameter's name
+    // is for that parameter only; the others go to the first parameter of their type.
     private readonly List<(string? Name, object Value)> values;
     private readonly HashSet<string> parameterNames;
     private readonly bool[] used;
@@ -84,7 +84,7 @@ public sealed class ConstructorArguments
 
     private bool TakeGiven<T>(string parameterName, out T value)
     {
-        // The value given under the name of the parameter first: "/products/{id}" gives id, never category, whatever the types.
+        // The value given under a parameter's name goes first: "/products/{id}" gives id, never category, whatever the types.
         for (var i = 0; i < values.Count; i++)
         {
             if (!used[i] && values[i].Name is { } name && string.Equals(name, parameterName, StringComparison.OrdinalIgnoreCase) && values[i].Value is T named)
@@ -95,7 +95,7 @@ public sealed class ConstructorArguments
             }
         }
 
-        // Then the first of the type that is for no parameter by its name: a value without a name, or one that no parameter has the name of.
+        // Then the first value of the type that is not for another parameter by name: a value without a name, or one whose name no parameter has.
         for (var i = 0; i < values.Count; i++)
         {
             if (!used[i] && (values[i].Name is not { } name || !parameterNames.Contains(name)) && values[i].Value is T match)

@@ -7,15 +7,15 @@ using Routeables.Native.Desktop;
 
 namespace Routeables.Native;
 
-// macOS, from the plain net10.0 target (the desktop of Avalonia, with no net10.0-macos target): UNUserNotificationCenter, spoken to through the Objective-C runtime
-// (Desktop/ObjC.cs), the way Avalonia.Labs does it. The system only serves an application that is in a bundle (.app) with an identifier: a console or a
-// `dotnet run` has none, and there nothing is created (CreateNotificationAsync returns null) rather than let the system abort the process.
-// A tap is a tap; a swipe away is a dismissal (the category asks the system to report it).
+// macOS, from the plain net10.0 target (the Avalonia desktop, with no net10.0-macos target): UNUserNotificationCenter, spoken to through the
+// Objective-C runtime (Desktop/ObjC.cs), as Avalonia.Labs does. The system only serves an application in a bundle (.app) with an identifier:
+// a console or `dotnet run` has none, and there nothing is created (CreateNotificationAsync returns null) rather than let the system abort
+// the process. A tap is a tap; a swipe away is a dismissal (the category asks the system to report it).
 public sealed partial class SystemNotificationCenter
 {
     private const string MacCategory = "routeables.notification";
     private const string MacDefaultAction = "com.apple.UNNotificationDefaultActionIdentifier";
-    private static SystemNotificationCenter? s_macOwner;   // the callbacks of the system are static: they reach the center through it
+    private static SystemNotificationCenter? s_macOwner; // the system's callbacks are static: they reach the center through this field
 
     private IntPtr _macCenter;
 
@@ -53,7 +53,7 @@ public sealed partial class SystemNotificationCenter
                     (IntPtr)(delegate* unmanaged[Cdecl]<IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, void>)&MacWillPresent, "v@:@@@?"),
                 ("userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:",
                     (IntPtr)(delegate* unmanaged[Cdecl]<IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, void>)&MacDidReceive, "v@:@@@?"));
-            var instance = ObjC.Send(ObjC.Send(delegateClass, ObjC.Sel("alloc")), ObjC.Sel("init"));   // kept for ever: the center only keeps a weak reference
+            var instance = ObjC.Send(ObjC.Send(delegateClass, ObjC.Sel("alloc")), ObjC.Sel("init")); // kept forever: the center only keeps a weak reference
             ObjC.Send(center, ObjC.Sel("setDelegate:"), instance);
 
             // UNNotificationCategoryOptionCustomDismissAction (1): the delegate is told when the user dismisses the notification.

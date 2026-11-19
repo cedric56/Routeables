@@ -11,7 +11,6 @@ namespace Routeables.Generated
     // Reading the attribute and the constructor of the destination: which callers, which route, which parameters.
     public sealed partial class RouteCoordinationGenerator
     {
-        // ------------------------------------------------------------------ analysis
 
         private static AnalysisResult Analyze(GeneratorAttributeSyntaxContext ctx, System.Threading.CancellationToken ct)
         {
@@ -52,25 +51,21 @@ namespace Routeables.Generated
         {
             var compilation = context.Compilation;
 
-            // ---- destination
             if (!ValidateDestination(compilation, destination, out var destinationError))
             {
                 report("ROUT102", destinationError!);
                 return;
             }
 
-            // ---- callers
             var callers = ReadCallers(compilation, destination, attribute, report);
             if (callers is null)
                 return;
 
-            // ---- route template
             if (!TryReadRoute(destination, routeableAttribute, attribute, report, out var template, out var explicitRoute, out var explicitMethodName))
                 return;
 
-            // ---- template
-            // The route string the method builds comes from Route when it is set; Template is only what is
-            // passed to the router to match it. Without Route, both are the same text.
+            // The route string the method builds comes from Route when it is set; Template is only what is passed to the router to match it.
+            // Without Route, both are the same text.
             var buildFrom = string.IsNullOrWhiteSpace(explicitRoute) ? template : explicitRoute!;
             if (!TryParseTemplate(buildFrom, out var parts, out var templateError))
             {
@@ -78,7 +73,6 @@ namespace Routeables.Generated
                 return;
             }
 
-            // ---- constructor
             if (!TrySelectConstructor(context, destination, out var constructor, out var constructorError))
             {
                 report("ROUT102", constructorError!);
@@ -91,7 +85,6 @@ namespace Routeables.Generated
 
             WarnAboutAmbiguousMatching(context, destination, parameters, report);
 
-            // ---- model
             var (navParameters, entries) = SplitParameters(parameters);
             var routeOps = BuildRouteOps(parts, parameters);
             var methodName = explicitMethodName ?? DefaultMethodName(destination);
@@ -120,8 +113,7 @@ namespace Routeables.Generated
             }
         }
 
-        // The caller types of [RouteableViewModel], or null when there is none to build for (the problem is reported, unless the
-        // compiler reports it already).
+        // The caller types of [RouteableViewModel], or null when there is none to build for (the problem is reported, unless the compiler reports it already).
         private static List<INamedTypeSymbol>? ReadCallers(
             Compilation compilation, INamedTypeSymbol destination, AttributeData attribute, Action<string, string> report)
         {
@@ -160,7 +152,7 @@ namespace Routeables.Generated
             return callersValid ? callers : null;
         }
 
-        // The template the router matches, the Route the method builds from (when it is set) and the method name (when it is set).
+        // The template the router matches, the Route the method builds from (when set) and the method name (when set).
         // False when the route cannot be known; the problem is reported.
         private static bool TryReadRoute(
             INamedTypeSymbol destination,
@@ -221,7 +213,7 @@ namespace Routeables.Generated
             return false;
         }
 
-        // What the generated method takes, and what it hands to the route change entry.
+        // What the generated method takes, and what it hands to the navigation entry point.
         private static (List<NavParam> Parameters, List<EntryOp> Entries) SplitParameters(IEnumerable<ParamInfo> parameters)
         {
             var navParameters = new List<NavParam>();
@@ -264,7 +256,6 @@ namespace Routeables.Generated
             }
         }
 
-        // ---- destination / caller validation
 
         private static bool ValidateDestination(Compilation compilation, INamedTypeSymbol destination, out string? error)
         {

@@ -56,7 +56,7 @@ public static class RouteTransitions
             ? (IEasingFunction)new BackEase { EasingMode = EasingMode.EaseOut, Amplitude = 0.5 }
             : new CubicEase { EasingMode = EasingMode.EaseOut };
 
-        // The region has a transform of its own: it is left alone, the view fades in.
+        // The region has a transform of its own: leave it alone, and fade the view in.
         var own = region.RenderTransform;
         var ours = Owned.TryGetValue(region, out var group) && ReferenceEquals(own, group);
         if (!from.Moves || (!ours && own is not null && own != Transform.Identity))
@@ -88,6 +88,6 @@ public static class RouteTransitions
         region.BeginAnimation(UIElement.OpacityProperty, fade, HandoffBehavior.SnapshotAndReplace);
     }
 
-    // The transform group a region got from a transition: the one that is the RenderTransform of the region is ours, any other is the region's own.
+    // The transform group a region got from a transition: the one that is the region's RenderTransform is ours, any other is the region's own.
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<FrameworkElement, TransformGroup> Owned = new();
 }

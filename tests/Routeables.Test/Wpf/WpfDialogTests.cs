@@ -48,7 +48,6 @@ public class WpfDialogTests
         }
     }
 
-    // ---- message box ----
 
     [Theory]
     [InlineData("Yes", 0)]
@@ -175,7 +174,6 @@ public class WpfDialogTests
         Assert.Equal("Ok", await pending);
     }, visible: false);
 
-    // ---- content dialog ----
 
     private static RouteableContentDialog Content(List<string> log, Func<bool>? keepOpen = null, string title = "Content") => new()
     {
@@ -319,7 +317,6 @@ public class WpfDialogTests
         Assert.Equal(RouteableContentDialogResult.Primary, await pending);
     });
 
-    // ---- task dialog ----
 
     [Fact]
     public Task A_task_dialog_shows_its_texts_and_gives_the_result_that_was_pressed() => WithOwnerAsync(async owner =>
@@ -415,7 +412,6 @@ public class WpfDialogTests
         }
     });
 
-    // ---- modal of a view ----
 
     private sealed class ModalViewModel : ICloseableViewModel<string?>
     {

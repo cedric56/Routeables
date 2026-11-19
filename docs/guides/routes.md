@@ -128,7 +128,7 @@ A `Scoped` or `Singleton` instance is cached by its route and built once, with t
 
 ## Going to a route from XAML
 
-A button can go to a route with no code in the view model. `RouteableLink.Route` is an attached property of the button on Avalonia, WPF, Uno and MAUI (the host namespace is the one of `RouteableRegion`):
+A button can go to a route with no code in the view model. `RouteableLink.Route` is an attached property of the button on Avalonia, WPF, Uno and MAUI (the host namespace is that of `RouteableRegion`):
 
 ```xml
 <Button Content="Hello" routeables:RouteableLink.Route="/hello/World" />
@@ -143,5 +143,5 @@ An address comes from the user, a link or another application: treat each value 
 
 - A segment is decoded before it reaches the parser: `%2F` is `/`, and `{**path}` joins decoded segments, so a value can contain `../`. Never use it as a file name or a path without checking it.
 - A value is converted to its declared type (`{id:int}`) and a value that does not convert does not match. A string, a `{**path}` and a registered JSON type are not otherwise limited: check their size and content in the view model.
-- A registered JSON type is read from the address with no limit on its size or its depth other than the one of the address; keep such types small, and do not put a secret in an address.
+- A registered JSON type is read from the address with no limit on its size or its depth other than that of the address itself; keep such types small, and do not put a secret in an address.
 - The history that is restored (persisted state, a deep link, a saved list) is read the same way: only routes the application registered are followed, and each one goes through the guards.

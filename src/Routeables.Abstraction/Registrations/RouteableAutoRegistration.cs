@@ -77,10 +77,10 @@ public static class RouteableAutoRegistration
 
     private static bool s_initializersRun;
 
-    // A module initializer runs when the runtime loads the module: that is what hands the routes to Add. A runtime that does not run it (seen on
-    // .NET MAUI for Android) leaves the list empty and every route unregistered. Running the constructor of the module of each assembly of the
-    // application is what the runtime would have done (it runs once: a second call does nothing), so the default registration works
-    // there too. The Debug line says when it was needed.
+    // A module initializer runs when the runtime loads the module, and that is what hands the routes to Add. A runtime that does not run it
+    // (seen on .NET MAUI for Android) leaves the list empty and every route unregistered. Running the module constructor of each application
+    // assembly does what the runtime would have done (it runs only once, so a second call does nothing), so default registration works there
+    // too. The Debug line says when it was needed.
     private static void RunModuleInitializers()
     {
         lock (Gate)
@@ -101,8 +101,8 @@ public static class RouteableAutoRegistration
                 continue;
             try
             {
-                // No look at the types (reflection over types is not trim-safe): the constructor of the module of every assembly of the application,
-                // the ones of the framework left out. An assembly without a module initializer has nothing to run.
+                // No inspection of types (reflection over types is not trim-safe): run the module constructor of every application assembly, leaving out
+                // framework assemblies. An assembly without a module initializer has nothing to run.
                 var name = assembly.GetName().Name ?? "?";
                 if (name.StartsWith("System", StringComparison.Ordinal) || name.StartsWith("Microsoft", StringComparison.Ordinal)
                     || name is "mscorlib" or "netstandard" || name.StartsWith("Mono.", StringComparison.Ordinal) || name.StartsWith("Java.", StringComparison.Ordinal))
@@ -142,8 +142,8 @@ public static class RouteableAutoRegistration
         return true;
     }
 
-    // Takes from the generated collection what the application did not register: a keyed service is the same one when its type and
-    // its key are the same (a route, a region), and any other service when its type is.
+    // Take from the generated collection what the application did not register: a keyed service is the same when its type and key are the
+    // same (a route, a region), and any other service when its type is.
     private static void Merge(IServiceCollection from, IServiceCollection into)
     {
         foreach (var descriptor in from)

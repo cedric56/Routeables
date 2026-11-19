@@ -64,15 +64,14 @@ public static class RouteableBack
         return true;
     }
 
-    // An error of the route change (a page that refuses to be left is a cancel, not an error) goes to the sink of the application.
+    // A navigation error (a page that refuses to be left is a cancellation, not an error) goes to the application's error sink.
     private static async Task GoBackAsync(IServiceProvider provider, IRouter router)
     {
         try
         {
             var result = await router.GoBackAsync();
 
-            // The menu shows what the default router shows: it is told, as it is when its own view model goes back. A tab (a region)
-            // is shown by its own region.
+            // The menu shows what the default router shows, so tell it, as when its own view model goes back. A tab (a region) is shown by its own region.
             if (result.Success)
                 RouteableMenu.Moved(provider, router);
         }

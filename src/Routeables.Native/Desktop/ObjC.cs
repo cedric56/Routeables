@@ -102,7 +102,7 @@ internal static unsafe class ObjC
         return cls;
     }
 
-    // A block is {isa, flags, reserved, invoke, descriptor}; the state is put after it (it is a global block: nothing is copied or released, it stays).
+    // A block is {isa, flags, reserved, invoke, descriptor}; the state follows it. It is a global block: nothing is copied or released, and it stays.
     private const int BlockIsGlobal = 1 << 28;
     private const int StateOffset = 32;
 

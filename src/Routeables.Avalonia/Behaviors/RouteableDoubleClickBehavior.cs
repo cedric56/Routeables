@@ -37,22 +37,19 @@ public class RouteableDoubleClickBehavior : AvaloniaObject
     {
         if (args.NewValue is ICommand commandValue)
         {
-            // Add non-null value; a second command replaces the first, the handler must not be added twice
-            // (the command would run twice per double tap).
+            // Add the non-null value. A second command replaces the first, and the handler must not be added twice (the command would run twice per double tap).
             interactElem.RemoveHandler(InputElement.DoubleTappedEvent, Handler);
             interactElem.AddHandler(InputElement.DoubleTappedEvent, Handler);
         }
         else
         {
-            // remove prev value
             interactElem.RemoveHandler(InputElement.DoubleTappedEvent, Handler);
         }
-        // local handler fcn
         static void Handler(object? s, RoutedEventArgs e)
         {
             if (s is Interactive interactElem)
             {
-                // This is how we get the parameter off of the gui element.
+                // This is how the parameter is read from the GUI element.
                 object? commandParameter = interactElem.GetValue(CommandParameterProperty);
                 ICommand? commandValue = interactElem.GetValue(CommandProperty);
                 if (commandValue?.CanExecute(commandParameter) == true)

@@ -74,7 +74,7 @@ public class RouteableStateRestoreTests
         Assert.True(await RouteableState.RestoreSnapshotsAsync(router, [new RouteableSnapshot("-/orders", none), new RouteableSnapshot("-", none)], Ct));
         Assert.True(await RouteableState.RestoreAsync(router, ["-/orders"], Ct));
 
-        Assert.Equal(1, router.History.Count);                      // nothing was erased: there was nothing to restore
+        Assert.Equal(1, router.History.Count);
         Assert.IsType<HomeVm>(router.CurrentViewModel);
     }
 

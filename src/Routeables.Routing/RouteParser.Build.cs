@@ -27,7 +27,7 @@ public static partial class RouteParser
         var parsedTemplate = ParseTemplate(template);
         if (parsedTemplate.DuplicateName is { } twice)
             throw new ArgumentException($"The name {twice} is used twice in \"{template}\": a value cannot be written in the path and in the query.", nameof(template));
-        // What is written must be readable: the router refuses a template whose catch-all is not the last segment.
+        // What is written must be readable: the router rejects a template whose catch-all is not the last segment.
         if (parsedTemplate.RestAt >= 0 && parsedTemplate.RestAt != parsedTemplate.Segments.Length - 1)
             throw new ArgumentException($"The catch-all placeholder {parsedTemplate.Segments[parsedTemplate.RestAt]} of \"{template}\" must be the last segment of the template.", nameof(template));
         if (OptionalNotLast(Split(template).path.Split('/', StringSplitOptions.RemoveEmptyEntries)) is { } notLast)
@@ -46,7 +46,7 @@ public static partial class RouteParser
             }
 
             var text = Format(value, type);
-            // A value whose text is empty (a StringBuilder with nothing in it) is no value, as an empty string is none.
+            // A value whose text is empty (a StringBuilder with nothing in it) counts as no value, like an empty string.
             if (text.Length == 0)
             {
                 if (m.Groups["opt"].Success) return null;
@@ -55,7 +55,7 @@ public static partial class RouteParser
 
             if (where == "path" && HasDotSegment(text))
                 throw new ArgumentException($"The value \"{text}\" cannot be a segment of \"{template}\" for {{{name}}}: a browser resolves \".\" and \"..\" to another address.", nameof(values));
-            // What is written must be read back: the router would refuse a route that its own template does not accept.
+            // What is written must be readable: the router would reject an address that its own template does not match.
             if (!TryConvert(text, type, out _))
                 throw new ArgumentException(
                     $"The value \"{text}\" is not a valid {(type.Length == 0 ? "value" : type)} for {{{name}}} in \"{template}\".", nameof(values));
@@ -71,11 +71,11 @@ public static partial class RouteParser
             if (!m.Success) { segments.Add(segment); continue; }
             if (m.Groups["rest"].Success)
             {
-                // {**path}: the slashes of the value stay, each segment is escaped.
+                // {**path}: keep the slashes of the value and escape each segment.
                 if (bag.TryGetValue(m.Groups["name"].Value, out var restValue) && restValue is not null
                     && Format(restValue, m.Groups["type"].Value) is { Length: > 0 } restText)
                 {
-                    // What is written must be read back, as for the other placeholders: the whole value is checked against the constraint.
+                    // As for the other placeholders, the whole value must satisfy the constraint, so that it reads back.
                     var restType = m.Groups["type"].Value;
                     if (!IsKnownConstraint(restType))
                         throw new ArgumentException($"The constraint \"{restType}\" of {{**{m.Groups["name"].Value}}} in \"{template}\" is unknown.", nameof(template));
@@ -86,7 +86,7 @@ public static partial class RouteParser
                     if (!TryConvert(restText, restType, out _))
                         throw new ArgumentException(
                             $"The value \"{restText}\" is not a valid {(restType.Length == 0 ? "value" : restType)} for {{**{m.Groups["name"].Value}}} in \"{template}\".", nameof(values));
-                    // cat/{age?}/{**rest} with a rest and no age: the rest would be read as the age.
+                    // cat/{age?}/{**rest} with a rest but no age: the rest would be read as the age.
                     if (skippedOptional is { } skippedBefore)
                         throw new ArgumentException($"The route \"{template}\" cannot leave out {skippedBefore} and give a later value: give both, or neither.", nameof(values));
                     segments.AddRange(restText.Split('/', StringSplitOptions.RemoveEmptyEntries).Select(Uri.EscapeDataString));
@@ -95,7 +95,7 @@ public static partial class RouteParser
             }
             if (Fill(m, "path") is { } text)
             {
-                // cat/{age?}/{nick?} with a nick and no age would be read as the age of the cat.
+                // cat/{age?}/{nick?} with a nick but no age: the nick would be read as the age.
                 if (skippedOptional is { } skipped)
                     throw new ArgumentException($"The route \"{template}\" cannot leave out {skipped} and give a later value: give both, or neither.", nameof(values));
                 segments.Add(text);
@@ -114,7 +114,7 @@ public static partial class RouteParser
             if (Fill(m, "query") is { } text) pairs.Add($"{Uri.EscapeDataString(m.Groups["name"].Value)}={text}");
         }
 
-        // A template that is only optional values, with none given ("{tab?}"), is the root.
+        // A template made only of optional values, none given ("{tab?}"), is the root.
         var route = (path.StartsWith('/') || segments.Count == 0 ? "/" : string.Empty) + string.Join('/', segments);
         return pairs.Count == 0 ? route : route + "?" + string.Join('&', pairs);
     }
@@ -134,7 +134,7 @@ public static partial class RouteParser
                 foreach (var (key, value) in map) bag[key] = value;
                 break;
             case System.Collections.IDictionary map when map.GetType().IsGenericType && map.GetType().GetGenericArguments() is [var key, _] && key == typeof(string):
-                // Dictionary<string, int>, Dictionary<string, string>...: the generic interfaces are not covariant, so none of the cases above takes them.
+                // Dictionary<string, int>, Dictionary<string, string> and so on: the generic interfaces are not covariant, so none of the cases above matches them.
                 foreach (System.Collections.DictionaryEntry entry in map) bag[(string)entry.Key] = entry.Value;
                 break;
             default:
@@ -147,7 +147,7 @@ public static partial class RouteParser
         return bag;
     }
 
-    // A decimal keeps the zeros it was written with (1.5m, 1.50m and 1.0m are one number): the text is the one without them, so a number has one address.
+    // A decimal keeps the trailing zeros it was written with (1.5m, 1.50m and 1.0m are the same number). Write it without them, so that a number has one address.
     private static decimal Plain(decimal value) => value / 1.0000000000000000000000000000m;
 
     private static string Format(object value, string type)
@@ -158,7 +158,7 @@ public static partial class RouteParser
         {
             string text => text,
             bool flag => flag ? "true" : "false",
-            double zero when zero == 0 => "0",     // -0 is the number 0: one text
+            double zero when zero == 0 => "0", // -0 is the number 0: write one text
             float zeroF when zeroF == 0 => "0",
             decimal money => Plain(money).ToString(CultureInfo.InvariantCulture),
             IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
@@ -183,7 +183,7 @@ public static partial class RouteParser
         {
             var p = pair.Split('=', 2);
             result[DecodeQuery(p[0])] =
-                p.Length > 1 ? DecodeQuery(p[1]) : "";   // last value wins on duplicates
+                p.Length > 1 ? DecodeQuery(p[1]) : ""; // the last value wins on duplicates
         }
         return result;
     }

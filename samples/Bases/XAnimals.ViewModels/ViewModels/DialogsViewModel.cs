@@ -79,7 +79,6 @@ public class DialogsViewModel : ViewModelBase
     public ICommand NotificationErrorCommand { get; }
     public ICommand SystemNotificationCommand { get; }
 
-    // ---------------------------------------------------------------- IRouteableDialogService
 
     public async Task ShowOkAsync()
     {
@@ -126,7 +125,6 @@ public class DialogsViewModel : ViewModelBase
 
     private static string Name(int answer, string third) => answer switch { 0 => "Yes", 1 => "No", 2 => third, _ => "none" };
 
-    // ---------------------------------------------------------------- IRouteableDialogService.ShowContentDialogAsync
 
     public async Task ShowContentDialogAsync()
     {
@@ -148,7 +146,6 @@ public class DialogsViewModel : ViewModelBase
         };
     }
 
-    // ---------------------------------------------------------------- IRouteableDialogService.ShowTaskDialogAsync
 
     public async Task ShowTaskDialogAsync()
     {
@@ -182,7 +179,6 @@ public class DialogsViewModel : ViewModelBase
         Result = result == RouteableTaskDialogResult.Cancel ? "Download cancelled." : $"Answer: {result}.";
     }
 
-    // ---------------------------------------------------------------- modal
 
     // A view model with its own view, shown modally by each platform; it returns what the user typed.
     public async Task ShowModalAsync()
@@ -191,7 +187,6 @@ public class DialogsViewModel : ViewModelBase
         Result = note is null ? "Note cancelled." : $"Note saved: {note}";
     }
 
-    // ---------------------------------------------------------------- IRouteableNotificationService
 
     private Task NotifyAsync(RouteableNotificationType type)
     {

@@ -36,7 +36,7 @@ internal sealed class RouteableContentDialogQueue : DialogQueue<ContentDialogReq
 
         var request = new ContentDialogRequest(@params, Close);
 
-        // The queue is thread safe: the caller may close the dialog from any thread.
+        // The queue is thread-safe: the caller may close the dialog from any thread.
         request.Session.AllowCloseFromCode(close => close());
         return EnqueueAsync(request, "RouteableContentDialogHost", "content dialogs");
     }
@@ -51,6 +51,6 @@ internal sealed class RouteableContentDialogQueue : DialogQueue<ContentDialogReq
             Close(request);
     }
 
-    // A button decided the result, or the dialog was dismissed: it is closed and Closed is told.
+    // A button decided the result, or the dialog was dismissed: close it and tell Closed.
     private void Close(ContentDialogRequest request) => Finish(request, request.Session.Result, request.Session.Release);
 }

@@ -72,7 +72,7 @@ public class DefaultRouteableMenuViewModelTests
         var main = provider.GetRequiredService<IRouteableMenuViewModel>();
 
         Assert.True(main.Start());
-        Assert.False(main.Start());     // two regions, or the region attached again, before the first page is there
+        Assert.False(main.Start()); // two regions, or the region attached again, before the first page is there
 
         await UntilAsync(() => provider.GetRequiredService<IRouter>().CurrentViewModel is HomeVm);
         Assert.False(main.Start());
@@ -129,7 +129,7 @@ public class DefaultRouteableMenuViewModelTests
 
         RegionStart.Begin(provider, null, "/home", wait: true);
         await Task.Delay(50, TestContext.Current.CancellationToken);
-        Assert.Null(router.CurrentView);        // an address may choose the first page
+        Assert.Null(router.CurrentView); // an address may choose the first page
 
         RegionStart.StartDefault(provider);
         await UntilAsync(() => router.CurrentViewModel is HomeVm);

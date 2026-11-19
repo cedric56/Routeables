@@ -73,7 +73,7 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
         Service.RequestedThemeChanged += ThemeChanged;
     }
 
-    // An entry added while the application runs (a module loaded on demand, IRouteableModules.Load): the menu is drawn again.
+    // An entry was added while the application runs (a module loaded on demand, IRouteableModules.Load): draw the menu again.
     private async void RouteablesChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         => await RefreshAsync("MainLayout.RouteablesChanged");
 
@@ -81,18 +81,17 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
 
     private async void CurrentViewChanged(object? sender, object? view)
     {
-        // The title first: the render the refresh asks for must show the title of this view, not the one of the previous view.
+        // Title first: the render that the refresh asks for must show this view's title, not the previous view's.
         try { Title = MainViewModel.CurrentTitle ?? RouteableTexts.ApplicationTitle; }
-        catch (Exception ex) { RouteableErrors.Report(Provider, "MainLayout.CurrentViewChanged", ex); }   // async void: it must not reach the circuit
+        catch (Exception ex) { RouteableErrors.Report(Provider, "MainLayout.CurrentViewChanged", ex); } // async void: it must not reach the circuit
         await RefreshAsync("MainLayout.CurrentViewChanged");
     }
 
-    // These are event handlers (async void): an exception would reach the circuit. A layout removed between the event
-    // and the render is not an error.
+    // These are event handlers (async void): an exception would reach the circuit. A layout removed between the event and the render is not an error.
     private async Task RefreshAsync(string source)
     {
         try { await InvokeAsync(StateHasChanged); }
-        catch (ObjectDisposedException) { }   // the layout was removed between the event and the render
+        catch (ObjectDisposedException) { } // the layout was removed between the event and the render
         catch (Exception ex) { RouteableErrors.Report(Provider, source, ex); }
     }
 
@@ -119,12 +118,12 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
         persistence?.Register();
         if (!IsPrerendering)
         {
-            // The circuit that takes over: what the prerender (or the paused circuit) saved is taken now, and brought back after the first render.
+            // The circuit that takes over: take what the prerender (or the paused circuit) saved now, and bring it back after the first render.
             _restorable = persistence?.Take() == true;
             return;
         }
 
-        // Prerendering: OnAfterRenderAsync never runs, so the page is chosen here and the HTML sent to the browser holds it.
+        // Prerendering: OnAfterRenderAsync never runs, so the page is chosen here and the HTML sent to the browser contains it.
         // The circuit that takes over starts again from its own first render.
         var addressChosen = await UrlSync.PrerenderAsync();
         await Initialize(Provider);
@@ -135,8 +134,8 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
         var navigation = Provider.GetService<NavigationManager>();
         if (options?.UnknownAddressIsNotFound == true && navigation is not null && !IsRoot(navigation))
         {
-            try { navigation.NotFound(); }      // the status of the response becomes 404 (static server rendering)
-            catch (InvalidOperationException) { }   // no response to give a status to (interactive rendering): the not-found page is shown as it is
+            try { navigation.NotFound(); } // the response status becomes 404 (static server rendering)
+            catch (InvalidOperationException) { } // no response to give a status to (interactive rendering): the not-found page is shown as it is
             return;
         }
 
@@ -153,8 +152,8 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
         => navigation.ToBaseRelativePath(navigation.Uri).Split('?', '#')[0].Trim('/').Length == 0;
 
     // True while the server renders the page for the first response (before any circuit), and only when the application asked for it:
-    // registering RouteablePrerenderOptions switches it on. Every static renderer calls itself "Static" (a test renderer too), so the
-    // renderer alone does not tell that a page is prerendered for a browser.
+    // registering RouteablePrerenderOptions switches it on. Every static renderer calls itself "Static" (a test renderer too), so the renderer
+    // alone does not tell that a page is prerendered for a browser.
     private bool IsPrerendering
     {
         get
@@ -195,20 +194,20 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
         await ReadThemeAsync();
         await ApplyThemeAsync();
         // The default page only when the address did not already choose one (a link to /elephants/Mammoth).
-        // Through SelectedEntry: it is what selects the entry in the menu, and it shows the page.
+        // Go through SelectedEntry: it selects the entry in the menu, and it shows the page.
         // An application without a menu opens its home route here and not from the region: the address decides, and it is applied above.
         if (!addressChosen && !MainViewModel.SelectFirst())
             RegionStart.StartDefault(Provider);
     }
 
-    // The page starts in the theme the application defined (data-wui-theme on <html>), else the one of the system: not always the dark one.
+    // The page starts in the theme the application defined (data-wui-theme on <html>), else in the system theme: not always the dark one.
     private async Task ReadThemeAsync()
     {
         try
         {
             await using var module = await JS.InvokeAsync<IJSObjectReference?>("import", "./_content/Routeables.Blazor/routeables-theme.js");
             if (module is null)
-                return;   // a runtime that cannot import a module (a test double): the default stays
+                return; // a runtime that cannot import a module (a test double): the default stays
             var dark = await module.InvokeAsync<string>("current") == "dark";
             if (dark == Service.IsDarkMode)
                 return;
@@ -216,7 +215,7 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
             await RefreshAsync("MainLayout.ReadTheme");
         }
         catch (JSDisconnectedException) { }
-        catch (JSException) { }   // no module (a page without the static files): the default stays
+        catch (JSException) { } // no module (a page without the static files): the default stays
     }
 
     private async void ThemeChanged(object? sender, RouteableRequestedTheme theme)
@@ -239,7 +238,7 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
                 "data-wui-theme",
                 Service.IsDarkMode ? "dark" : "light");
         }
-        catch (JSDisconnectedException) { }   // the circuit is gone: the attribute is not needed any more
+        catch (JSDisconnectedException) { } // the circuit is gone: the attribute is no longer needed
     }
 
     /// <summary>

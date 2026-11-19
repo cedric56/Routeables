@@ -16,7 +16,7 @@ public partial class App : Application
     {
         InitializeComponent();
 
-        // The container is built now, the window is opened as the application runs: the page is the runner above a zone the tests fill.
+        // The container is built now and the window opens while the application runs: the page is the runner above an area the tests fill.
         Services = this.UseRouteables<TestMain>(
             services =>
             {

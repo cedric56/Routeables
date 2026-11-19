@@ -123,7 +123,6 @@ public class DBusWireFormatTests
         Assert.Equal(77u, reader.UInt32());
     }
 
-    // --- what a peer sends is not trusted ---
 
     [Fact]
     public void Reading_past_the_end_is_refused_not_an_ArgumentOutOfRange()

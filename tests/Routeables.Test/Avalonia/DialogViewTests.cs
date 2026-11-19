@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace Routeables.Tests.Avalonia;
 
-// ServiceLocator.Services is one static for the process: the classes that read or set it must not run at the same time.
+// ServiceLocator.Services is a process-wide static: classes that read or set it must not run at the same time.
 [Collection("Avalonia ServiceLocator")]
 public class DialogViewTests
 {
@@ -49,7 +49,6 @@ public class DialogViewTests
         Assert.Equal("viewModel", exception.ParamName);
     }
 
-    // ---- ShowModalAsync with a fake message box service ------------------------------------------------------
 
     private sealed class RecordingCommand(Func<bool> canExecute, Action? execute = null) : ICommand
     {
@@ -182,7 +181,7 @@ public class DialogViewTests
 
         var result = await WithServiceAsync(new FakeMessageBox(async dialog =>
         {
-            // What the real service does: it hands the dialog a way to be closed from code.
+            // What the real service does: it gives the dialog a way to be closed from code.
             dialog.Close = () => closes++;
             await viewModel.CloseAsync(7);
             return RouteableContentDialogResult.Primary;

@@ -57,8 +57,8 @@ public sealed class RouteableComponentActivator : IComponentActivator
         return Build(componentType);
     }
 
-    // The way Blazor builds a component: a public constructor without parameters. The exception of a constructor reaches the caller as it
-    // was thrown, not wrapped in a TargetInvocationException; a type that cannot be built says which one it is.
+    // The way Blazor builds a component: a public constructor without parameters. A constructor's exception reaches the caller as thrown,
+    // not wrapped in a TargetInvocationException, and a type that cannot be built says which one it is.
     private static IComponent Build([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type componentType)
     {
         if (!typeof(IComponent).IsAssignableFrom(componentType))
@@ -75,7 +75,7 @@ public sealed class RouteableComponentActivator : IComponentActivator
         catch (TargetInvocationException ex) when (ex.InnerException is { } inner)
         {
             ExceptionDispatchInfo.Capture(inner).Throw();
-            throw;   // not reached
+            throw; // unreachable
         }
     }
 }

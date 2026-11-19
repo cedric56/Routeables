@@ -69,7 +69,6 @@ public class ValidationEntryDeviceTests
     /// <summary>Returns the marker border that shows the error icon.</summary>
     private static Border Marker(RouteableMauiEntry entry) => (Border)((Grid)entry.Content).Children[1];
 
-    // ------------------------------------------------------------------------------------------------ errors
 
     /// <summary>An entry without errors shows no error indicator.</summary>
     [UIFact]
@@ -190,7 +189,6 @@ public class ValidationEntryDeviceTests
         Assert.False(hosted.View.HasError);
     }
 
-    // ------------------------------------------------------------------------------------------------ following the view model
 
     /// <summary>The entry listens to its view model only while it is on screen.</summary>
     [UIFact]
@@ -255,7 +253,6 @@ public class ValidationEntryDeviceTests
         Assert.False(hosted.View.HasError);
     }
 
-    // ------------------------------------------------------------------------------------------------ text
 
     /// <summary>The text goes to the entry inside and the text typed comes back.</summary>
     [UIFact]

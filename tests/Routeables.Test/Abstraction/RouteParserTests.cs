@@ -40,7 +40,7 @@ public class RouteParserTests
         var tab = Assert.Single(args.ViewParameters);
         Assert.Equal("tab", tab.name);
         Assert.Equal("items", tab.value);
-        Assert.True(tab.attribute);   // a key of the view is for a property of the view
+        Assert.True(tab.attribute); // a key of the view is for a property of the view
 
         Assert.Equal(true, args.ViewModelParameters.Single(x => x.name == "enabled").value);
 
@@ -132,8 +132,8 @@ public class RouteParserTests
 
         Assert.True(RouteParser.TryMatch("files/{name}?{tag}", "files/a+b?tag=x+y%2Bz", args));
 
-        Assert.Equal("a+b", args.ViewModelParameters.Single(x => x.name == "name").value);   // a path segment is not a query
-        Assert.Equal("x y+z", args.ViewModelParameters.Single(x => x.name == "tag").value);  // + is a space, %2B is a plus
+        Assert.Equal("a+b", args.ViewModelParameters.Single(x => x.name == "name").value); // a path segment is not a query
+        Assert.Equal("x y+z", args.ViewModelParameters.Single(x => x.name == "tag").value); // + is a space, %2B is a plus
     }
 
     [Theory]
@@ -172,7 +172,7 @@ public class RouteParserTests
 
         Assert.True(RouteParser.TryMatch("files/{name}", "files/a%2Fb", args));
         Assert.Equal("a/b", args.ViewModelParameters.Single(x => x.name == "name").value);
-        Assert.False(RouteParser.TryMatch("files/{name}", "files/a/b"));   // a real slash is another segment
+        Assert.False(RouteParser.TryMatch("files/{name}", "files/a/b")); // a real slash is another segment
     }
 
     [Fact]
@@ -184,7 +184,7 @@ public class RouteParserTests
         Assert.Equal("Évry", args.ViewModelParameters.Single(x => x.name == "name").value);
 
         args = RouteableArgs.Create();
-        Assert.True(RouteParser.TryMatch("cities/{name}", "cities/100%zz", args));   // not an escape: kept as it is
+        Assert.True(RouteParser.TryMatch("cities/{name}", "cities/100%zz", args)); // not an escape: kept as it is
         Assert.Equal("100%zz", args.ViewModelParameters.Single(x => x.name == "name").value);
     }
 
@@ -192,7 +192,7 @@ public class RouteParserTests
     [InlineData("tabs/{tab?}", "tabs", true)]
     [InlineData("tabs/{tab?}", "tabs/info", true)]
     [InlineData("tabs/{tab?}", "tabs/info/more", false)]
-    [InlineData("tabs/{tab?}/end", "tabs/end", false)]   // an optional placeholder is for the last segment
+    [InlineData("tabs/{tab?}/end", "tabs/end", false)] // an optional placeholder must be the last segment
     [InlineData("items/{id:int}", "items/abc", false)]
     [InlineData("items/{id:int}", "items", false)]
     public void Optional_and_required_placeholders(string template, string route, bool matches)
@@ -215,9 +215,9 @@ public class RouteParserTests
     ];
 
     [Theory]
-    [InlineData("bears/new", "bears/new")]             // a literal beats the parameters, whatever the order of registration
-    [InlineData("bears/12", "bears/{id:int}")]         // a typed parameter beats an untyped one
-    [InlineData("bears/polar", "bears/{id}")]          // an untyped one beats an optional one
+    [InlineData("bears/new", "bears/new")] // a literal beats parameters, whatever the registration order
+    [InlineData("bears/12", "bears/{id:int}")] // a typed parameter beats an untyped one
+    [InlineData("bears/polar", "bears/{id}")] // an untyped one beats an optional one
     [InlineData("bears", "bears/{tab?}")]
     public void The_most_specific_template_wins(string route, string expected)
         => Assert.Equal(expected, RouteParser.BestMatch(Bears, route).Template);
@@ -286,7 +286,7 @@ public class RouteParserTests
         Assert.Contains("last segment", RouteParser.Mismatch("tabs/{tab?}/end", "tabs/x/end"));
         Assert.Contains("last segment", RouteParser.Mismatch("tabs/{tab?}/end", "tabs/end"));
         Assert.Throws<ArgumentException>(() => RouteParser.Build("tabs/{tab?}/end", new Dictionary<string, object?>()));
-        // A value whose text is empty is no value: a required one is refused, an optional one is left out.
+        // An empty value is no value: a required parameter is refused, an optional one is left out.
         var empty = new System.Text.StringBuilder();
         Assert.Throws<ArgumentException>(() => RouteParser.Build("a/{x}/b", new { x = empty }));
         Assert.Throws<ArgumentException>(() => RouteParser.Build("s?{x}", new { x = empty }));
@@ -307,7 +307,7 @@ public class RouteParserTests
         RouteParser.UnregisterSerializer<ScratchPayload>();
 
         Assert.False(RouteParser.TryMatch("p/{x:ScratchPayload}", address));
-        Assert.True(RouteParser.TryMatch("p/{x:int}", "p/1"));       // the built-in constraints are untouched
+        Assert.True(RouteParser.TryMatch("p/{x:int}", "p/1")); // the built-in constraints are untouched
     }
 
     [Fact]
@@ -347,7 +347,7 @@ public class RouteParserTests
             RouteParser.RegisterSerializer<global::HomonymSales.Patron>(options.GetTypeInfo(typeof(global::HomonymSales.Patron)));
 
             var plain = RouteableArgs.Create();
-            Assert.True(RouteParser.TryMatch("p/{who:Patron}", json, plain));       // its only name: it was lost to the homonym
+            Assert.True(RouteParser.TryMatch("p/{who:Patron}", json, plain)); // its only name: it was lost to the homonym
             Assert.IsType<global::Patron>(plain.ViewModelParameters.Single().value);
 
             var sales = RouteableArgs.Create();
@@ -425,7 +425,7 @@ public class RouteParserTests
         try
         {
             RouteParser.RegisterSerializer<global::HomonymShadow.Guid>(options.GetTypeInfo(typeof(global::HomonymShadow.Guid)));
-            RouteParser.RegisterSerializer<global::HomonymShadow2.Guid>(options.GetTypeInfo(typeof(global::HomonymShadow2.Guid)));     // "Guid" now stands for two types
+            RouteParser.RegisterSerializer<global::HomonymShadow2.Guid>(options.GetTypeInfo(typeof(global::HomonymShadow2.Guid))); // "Guid" now stands for two types
 
             var guid = RouteableArgs.Create();
             Assert.True(RouteParser.TryMatch("g/{x:guid}", "g/" + id, guid));
@@ -470,7 +470,7 @@ public class RouteParserTests
     [Fact]
     public void A_number_has_one_text_in_an_address()
     {
-        // "42", "+42" and " 42" were three addresses for one page.
+        // "42", "+42" and " 42" used to be three addresses for one page.
         foreach (var (template, accepted) in new[]
         {
             ("x/{n:int}", new[] { "42", "-42", "0" }), ("x/{n:long}", new[] { "42", "-4200000000000" }),
@@ -533,7 +533,7 @@ public class RouteParserTests
     [Fact]
     public void A_name_given_by_the_path_and_by_the_query_is_refused()
     {
-        // "/dup/{id}?{id}": the value of the query was lost without a word.
+        // "/dup/{id}?{id}": the query value used to be lost silently.
         Assert.Throws<ArgumentException>(() => RouteParser.Build("/dup/{id}?{id}", new { id = 1 }));
         Assert.Throws<ArgumentException>(() => RouteParser.Build("/dup/{id}?{ID?}", new { id = 1 }));
         Assert.False(RouteParser.TryMatch("/dup/{id}?{id}", "/dup/1?id=2", RouteableArgs.Create()));
@@ -598,7 +598,7 @@ public class RouteParserTests
     [Fact]
     public void An_escaped_literal_is_found_in_a_large_table_too()
     {
-        // From eight templates the first segment is looked up in an index: it holds the literal as the address is read (unescaped).
+        // From eight templates on, the first segment is looked up in an index: it holds the literal as the address is read (unescaped).
         var entries = Enumerable.Range(0, 10).Select(i => ($"/page{i}/{{id:int}}", (Type?)typeof(string))).ToList();
         entries.Add(("/my%20page/{id:int}", typeof(int)));
 
@@ -628,7 +628,6 @@ public class RouteParserTests
         Assert.Equal("/files/a/b", RouteParser.Build("/files/{**path}", new Dictionary<string, object?> { ["path"] = "a/b" }));
     }
 
-    // ---- Build: a rest after an optional, and the constraint of a catch-all
 
     [Fact]
     public void A_rest_after_a_left_out_optional_is_refused_like_any_later_value()

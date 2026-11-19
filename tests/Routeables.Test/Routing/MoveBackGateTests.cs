@@ -54,12 +54,12 @@ public class MoveBackGateTests
 
         var slow = router.GoToAsync("/mb-c", cancellationToken: ct);          // A, B, then C once the guard lets it
         await guard.Asked.Task.WaitAsync(TimeSpan.FromSeconds(10), ct);
-        var back = router.GoBackAsync(2, ct);                                 // asked while C is not entered yet: C, B, A  -> A... counted from C: A
+        var back = router.GoBackAsync(2, ct); // asked while C is not entered yet: counted from C, so A
         guard.Release.SetResult();
         await slow;
         await back;
 
-        // Two pages back from C is A. Worked out when asked (from B) it would have been "before A" (cancelled), or, with one page, wrong.
+        // Two pages back from C is A. Worked out when asked (from B), it would be "before A" (cancelled), or wrong with one page.
         Assert.IsType<MbAVm>(router.CurrentViewModel);
     }
 

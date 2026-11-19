@@ -20,13 +20,13 @@ namespace Routeables.Uno.Services;
 /// </summary>
 internal class RouteableNotificationService(IMessageBoxService service) : IRouteableNotificationService
 {
-    // One popup per window: the notifications of a window stack up in it.
+    // One popup per window: a window's notifications stack up in it.
     private readonly ConditionalWeakTable<XamlRoot, NotificationHost> _hosts = new();
 
     public RouteableNotificationPosition Position => RouteableNotificationPosition.TopCenter;
 
 #if WINUI3
-    // The system notifications (the notification center of Windows, AppNotificationManager of the Windows App SDK): on with WithAppNotifications.
+    // The system notifications (the Windows notification center, AppNotificationManager of the Windows App SDK): on with WithAppNotifications.
     public IReadOnlyDictionary<uint, IRouteableSystemNotification> ActiveNotifications() => SystemNotificationCenter.Current.ActiveNotifications();
 
     public Task<IRouteableSystemNotification?> CreateNotificationAsync(string? category) => SystemNotificationCenter.Current.CreateNotificationAsync(category);
@@ -102,7 +102,7 @@ internal class RouteableNotificationService(IMessageBoxService service) : IRoute
             };
 
             // A tap is the answer to the notification: it runs onClick, if any, and dismisses it.
-            // The close button of the bar is inside it: a tap on it only closes the notification, it is not the answer.
+            // The bar's close button is inside it: a tap on that button only closes the notification and is not the answer.
             bar.Tapped += (_, e) =>
             {
                 if (IsInsideAButton(e.OriginalSource as DependencyObject, bar))

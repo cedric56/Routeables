@@ -43,7 +43,6 @@ public class RegionBindingDirectionTests
     private static Page NewPage(string name, CallLog log)
         => new(new RecordingViewModel($"vm{name}", log), new RecordingView($"view{name}", log));
 
-    // ------------------------------------------------------------------------------------------------ directions
 
     [Fact]
     public void A_region_that_starts_on_an_empty_router_shows_nothing_with_an_unknown_change()
@@ -182,7 +181,6 @@ public class RegionBindingDirectionTests
         Assert.Equal(RouteableDirection.Forward, shown.Last.Change.Direction);
     }
 
-    // ------------------------------------------------------------------------------------------------ the transition of the navigation
 
     [Fact]
     public async Task The_transition_of_the_navigation_reaches_the_region()
@@ -232,7 +230,7 @@ public class RegionBindingDirectionTests
     [Fact]
     public async Task Going_back_plays_the_transition_the_entry_it_returns_to_was_pushed_with_and_going_forward_the_one_of_the_entry_it_returns_to()
     {
-        // The change of a history move takes the arguments of the entry that becomes current. This pins that behaviour down.
+        // The change caused by a history move takes the arguments of the entry that becomes current. This test pins that down.
         var (router, binding, shown, log) = Start();
         using var _ = binding;
         await GoToAsync(router, "A", log);
@@ -247,7 +245,6 @@ public class RegionBindingDirectionTests
         Assert.Equal(RouteableDirection.Forward, shown.Last.Change.Direction);
     }
 
-    // ------------------------------------------------------------------------------------------------ refused, failed, cancelled
 
     [Fact]
     public async Task A_page_that_refuses_to_be_left_shows_nothing_new()
@@ -357,7 +354,6 @@ public class RegionBindingDirectionTests
         Assert.Null(shown.Last.Change.Transition);
     }
 
-    // ------------------------------------------------------------------------------------------------ several hosts, several routers
 
     [Fact]
     public async Task Two_hosts_of_one_router_are_told_the_same_thing()
@@ -423,7 +419,6 @@ public class RegionBindingDirectionTests
         Assert.Equal(before, shown.Calls.Count);
     }
 
-    // ------------------------------------------------------------------------------------------------ refresh and order
 
     [Fact]
     public async Task Refresh_shows_nothing_when_the_view_has_not_changed()

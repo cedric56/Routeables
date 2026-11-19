@@ -8,7 +8,6 @@ namespace Routeables.Tests.Core;
 /// </summary>
 public class EnvironmentsTests
 {
-    // ------------------------------------------------------------------------------------------------ the identifiers
 
     private static readonly string[] DesktopList =
         ["Gnome", "Unknown", "KDE", "Xfce", "Mate", "Cinnamon", "WSL", "Macos", "Windows", "iOS", "Android", "Unity", "LXDE", "TvOS", "WatchOS"];
@@ -149,7 +148,6 @@ public class EnvironmentsTests
         Assert.Throws<ArgumentException>(() => Runtime.Create(string.Empty));
     }
 
-    // ------------------------------------------------------------------------------------------------ what the machine is
 
     [Fact]
     public void The_desktop_is_detected_once_and_fits_the_operating_system()
@@ -197,7 +195,6 @@ public class EnvironmentsTests
             Assert.Equal(Distribution.Fedora, current);
     }
 
-    // ------------------------------------------------------------------------------------------------ the Linux detection, whatever the machine
 
     public static TheoryData<string, string> OsReleases => new()
     {
@@ -305,7 +302,6 @@ public class EnvironmentsTests
     public void A_linux_session_that_names_no_desktop_is_WSL_or_unknown(bool wsl, string expected)
         => Assert.Equal(Desktops(expected), DesktopImplementation.FromLinuxSession("", "", () => wsl));
 
-    // ------------------------------------------------------------------------------------------------ registration
 
     [Fact]
     public void The_environments_are_registered_as_singletons()

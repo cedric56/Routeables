@@ -49,7 +49,7 @@ public sealed class RegionTests(BlazorApp app) : BlazorTest(app)
         await Expect(LeftItems.Nth(1)).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("current"));
         Assert.NotEqual(first, await CurrentLeftItem.InnerTextAsync());
         await Expect(content).Not.ToHaveTextAsync(before);
-        await ExpectAddressAsync("/regions");   // the regions navigate inside the page: the address of the main router stays
+        await ExpectAddressAsync("/regions"); // the regions navigate inside the page: the main router's address stays
     }
 
     /// <summary>Back and Forward of the left panel walk the history of the content.</summary>

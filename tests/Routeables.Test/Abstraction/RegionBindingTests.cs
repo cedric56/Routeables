@@ -84,7 +84,7 @@ public class RegionBindingTests
 
         var before = shown.Count;
         binding.Refresh();
-        Assert.Equal(before, shown.Count);               // nothing changed: nothing shown
+        Assert.Equal(before, shown.Count);
 
         await router.EraseHistoryAsync(TestContext.Current.CancellationToken);
         Assert.Null(shown[^1]);

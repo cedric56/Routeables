@@ -6,7 +6,7 @@ internal sealed class WeakDisposableTracker : IDisposable, IAsyncDisposable
 {
     private readonly List<WeakReference> _refs = new();
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<object, object> _known = new();
-    // What the router disposed already when the page left the history: the end of the scope must not dispose it a second time.
+    // What the router already disposed when the page left the history: the end of the scope must not dispose it a second time.
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<object, object> _gone = new();
     private bool _disposed;
     private int _pruneAt = 64;
@@ -33,12 +33,12 @@ internal sealed class WeakDisposableTracker : IDisposable, IAsyncDisposable
                 if (_disposed)
                     return;
 
-                // The same page is resolved again on every route change: tracked once, disposed once.
+                // The same page is resolved again on every navigation: track it once, dispose it once.
                 if (!_known.TryAdd(instance, instance))
                     return;
 
-                // The scope of a desktop or mobile application lasts as long as the application: without this, every
-                // transient page ever shown would leave a WeakReference (and its handle) in the list for ever.
+                // The scope of a desktop or mobile application lasts as long as the application. Without this, every transient page ever shown would
+                // leave a WeakReference (and its handle) in the list forever.
                 if (_refs.Count >= _pruneAt)
                 {
                     _refs.RemoveAll(weak => weak.Target is null);
@@ -76,7 +76,7 @@ internal sealed class WeakDisposableTracker : IDisposable, IAsyncDisposable
         }
     }
 
-    // Takes the live objects out under the lock and disposes them outside it: user code never runs while it is held.
+    // Take the live objects out under the lock and dispose them outside it, so that user code never runs while the lock is held.
     private List<object> Drain()
     {
         lock (_refs)

@@ -41,7 +41,7 @@ public class InjectPropertiesTests
         var target = new Target().Inject(Provider());
 
         Assert.NotNull(target.Injected);
-        Assert.Null(target.Unset);   // no service of that type: left alone, without an exception
+        Assert.Null(target.Unset); // no service of that type: left alone, no exception
     }
 
     private sealed class TabTarget { [Param] public string? Tab { get; set; } }
@@ -81,9 +81,9 @@ public class InjectPropertiesTests
 
         var target = new ValueTarget().Inject(provider, new Dictionary<string, object?> { ["given"] = given });
 
-        Assert.Null(target.Missing);            // a value that the routing did not give stays missing
-        Assert.Same(given, target.Given);       // an explicit value is still set
-        Assert.NotNull(target.Injected);        // the container attribute keeps resolving from the container
+        Assert.Null(target.Missing);
+        Assert.Same(given, target.Given);
+        Assert.NotNull(target.Injected);
     }
 
     [Fact]

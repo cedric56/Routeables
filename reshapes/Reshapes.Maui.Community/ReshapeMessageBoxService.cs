@@ -149,7 +149,7 @@ internal class ReshapeMessageBoxService(IRouteableDialogWindowContext context) :
        TResult? result)
         {
             try { await CloseOnceAsync(result); }
-            catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(ReshapeMessageBoxService)); }   // async void
+            catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(ReshapeMessageBoxService)); } // async void
         }
 
         /// <summary>Stops listening to the view model.</summary>

@@ -6,8 +6,8 @@ using Routeables.Services;
 
 namespace Routeables.Avalonia;
 
-// The Back request of the system, answered by the router: the button or gesture of Android (TopLevel.BackRequested), the mouse back
-// button and Alt+Left of a desktop. A browser has its own back button for its own history.
+// The system's Back request, answered by the router: the Android button or gesture (TopLevel.BackRequested), and the mouse back button and
+// Alt+Left on a desktop. A browser has its own back button for its own history.
 internal static class BackRequests
 {
     public static void Attach(Control view, IServiceProvider provider)
@@ -18,7 +18,7 @@ internal static class BackRequests
             return;
         }
 
-        // A view of a single-view platform is attached later, when the platform shows it.
+        // A view on a single-view platform is attached later, when the platform shows it.
         void OnAttached(object? sender, VisualTreeAttachmentEventArgs e)
         {
             view.AttachedToVisualTree -= OnAttached;

@@ -58,8 +58,8 @@ internal static class DialogPresenter
                 DefaultButton = ContentDialogButton.None,
             };
 
-            // Every dialog has the buttons of the ContentDialog, so that they all look alike (and like the three-button dialog of Routeables.Native).
-            // Pressing one does not close it: the code decides when (handle.Complete), as before.
+            // Every dialog has the ContentDialog's buttons, so they all look alike (and like the three-button dialog of Routeables.Native). Pressing one
+            // does not close the dialog: the code decides when (handle.Complete), as before.
             if (card.Actions.Count <= 3)
                 UseDialogButtons(dialog, card.Actions);
             else
@@ -82,7 +82,7 @@ internal static class DialogPresenter
 
             try
             {
-                // On Windows the dialogs of the platform (Routeables.Native) wait for this one, and this one for them: WinUI throws for a second ContentDialog.
+                // On Windows the platform dialogs (Routeables.Native) and this one wait for each other, because WinUI throws for a second ContentDialog.
                 await Routeables.Native.NativeDialogs.OneAtATimeAsync(async () =>
                 {
                     await dialog.ShowAsync();

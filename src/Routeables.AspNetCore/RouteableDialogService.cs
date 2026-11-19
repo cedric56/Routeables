@@ -20,7 +20,7 @@ public sealed class RouteableDialogService(RouteableInteractions interactions) :
     /// </summary>
     public override async Task<RouteableContentDialogResult> ShowContentDialogAsync(RouteableContentDialog @params)
     {
-        // The buttons that have a text, in the order of the other hosts: primary, secondary, close.
+        // The buttons that have a text, in the same order as the other hosts: primary, secondary, close.
         var choices = new List<(string Text, RouteableContentDialogResult Result, Action? Click)>();
         if (!string.IsNullOrEmpty(@params.PrimaryButtonText) && @params.IsPrimaryButtonEnabled)
             choices.Add((@params.PrimaryButtonText, RouteableContentDialogResult.Primary, @params.PrimaryButtonClick));

@@ -87,7 +87,7 @@ public class SingletonRegistrationTests
     [Fact]
     public void On_a_scoped_host_a_singleton_page_is_kept_per_scope_and_never_shown_to_another_user()
     {
-        // Blazor Server: the routers live in the scope of the circuit, and so does what the page captures from it.
+        // Blazor Server: the routers live in the circuit's scope, and so does what the page captures from them.
         var services = Services();
         services.AddSingleton(new Routeables.Abstraction.Lifecycle.RouteableHostLifetime(ServiceLifetime.Scoped));
         using var provider = services.BuildServiceProvider();

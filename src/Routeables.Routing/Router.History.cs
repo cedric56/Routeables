@@ -15,10 +15,9 @@ namespace Routeables.Routing;
 // Moves inside the history: back, forward, pop, move to an entry, erase.
 internal partial class Router
 {
-    // ------------------------------------------------------------- history moves
 
-    // The gate is entered inline in each public method (not through an async helper): its AsyncLocal flag
-    // has to be set in the method's own flow so that the callbacks awaited below can see it.
+    // The gate is entered inline in each public method, not through an async helper: its AsyncLocal flag must be set in the method's own flow,
+    // so that the callbacks awaited below can see it.
     // Call only while the gate is held.
     private async Task<RouteableResult> MoveAsync(
         RouteableKind kind,
@@ -28,24 +27,24 @@ internal partial class Router
     {
         var leaving = history.Current;
         if (leaving is null || target is null || ReferenceEquals(leaving, target))
-            return RouteableResult.Cancel();                // nothing to do: no events
+            return RouteableResult.Cancel(); // nothing to do: no events
 
         return await ObserveAsync(kind, leaving, target, ct, async () =>
         {
             if (!await lifecycle.CanLeaveAsync(leaving, ct)) return RouteableResult.Cancel();
 
-            await lifecycle.TransitionAsync(leaving, target, ct);  // throws -> history untouched
+            await lifecycle.TransitionAsync(leaving, target, ct); // if this throws, the history is untouched
 
-            var removed = commit();                                // only after the lifecycle succeeded
-            await lifecycle.NotifyEnteredAsync(leaving, target, ct);   // before the removed entries are disposed
-            // Nothing removed, nothing to destroy: the copy of the whole history is only for what a removal needs.
+            var removed = commit(); // only after the lifecycle succeeded
+            await lifecycle.NotifyEnteredAsync(leaving, target, ct); // before the removed entries are disposed
+            // Nothing removed, nothing to destroy: copying the whole history is only needed when entries are removed.
             if (removed.Count > 0) await lifecycle.DestroyAsync(removed, history.Snapshot());
             return RouteableResult.Ok();
         });
     }
 
-    // The shape that every route change has: wait for the gate, run, leave the gate. EnterAsync is not async on purpose (its AsyncLocal must be set in the
-    // flow that awaits the body, so that a nested route change is seen), and this helper is that flow: the body is awaited inside it.
+    // The shape of every navigation: wait for the gate, run, release the gate. EnterAsync is deliberately not async (its AsyncLocal must be
+    // set in the flow that awaits the body, so that a nested navigation is detected), and this helper is that flow: the body is awaited inside it.
     private async Task<T> RunGatedAsync<T>(CancellationToken cancellationToken, Func<CancellationToken, Task<T>> body)
     {
         var enter = gate.EnterAsync(cancellationToken);
@@ -75,8 +74,8 @@ internal partial class Router
     {
         return await RunGatedAsync(cancellationToken, async token =>
         {
-            // Already on the root with entries after it (it went back to it): nothing moves, but the entries after it are discarded all the same, as
-            // when the cursor comes from further away. They would otherwise be kept (and their pages) for a forward that was asked to be forgotten.
+            // Already on the root with entries after it (it went back to it): nothing moves, but the entries after it are still discarded, as when the
+            // cursor comes from further away. Otherwise they, and their pages, would be kept for a forward that was meant to be forgotten.
             if (history.Current is { } current && ReferenceEquals(current, history.Root) && history.Count > 1)
             {
                 var removed = history.MoveToRoot();
@@ -123,7 +122,7 @@ internal partial class Router
         return MoveBackCoreAsync(_ => history.CurrentIndex - steps, cancellationToken);
     }
 
-    // The target is chosen with the gate held: after the route changes that were running, from the history as it is then.
+    // The target is chosen while holding the gate: after the navigations already running, from the history as it is then.
     private async Task<RouteableResult> MoveBackCoreAsync(Func<IReadOnlyList<IHistoryEntry>, int> find, CancellationToken cancellationToken)
     {
         return await RunGatedAsync(cancellationToken, token =>
@@ -142,16 +141,16 @@ internal partial class Router
     {
         await RunGatedAsync<object?>(cancellationToken, async _ =>
         {
-            // The page shown stops being current: it is told, as for any other route change, so that what it took in OnEntering is given back
-            // (a page that is kept, in a cache, is not disposed below and would otherwise be entered twice in a row).
+            // The page shown stops being current. Tell it, as for any other navigation, so that whatever it took in OnEntering is given back
+            // (a page kept in a cache is not disposed below, and would otherwise be entered twice in a row).
             var shown = history.Current;
             if (shown is not null)
                 await lifecycle.NotifyLeavingAsync(shown);
             var removed = history.Clear();
-            // Told before it is destroyed, as for any other route change: a page that is disposed no longer has what OnLeftAsync gives back.
+            // Tell the page it was left before destroying it, as in any other navigation: a disposed page no longer has what OnLeftAsync gives back.
             if (shown is not null)
                 await lifecycle.NotifyLeftAsync(shown);
-            await lifecycle.DestroyAsync(removed, history.Snapshot());   // snapshot is empty now
+            await lifecycle.DestroyAsync(removed, history.Snapshot()); // the snapshot is empty now
             return null;
         });
     }

@@ -17,8 +17,8 @@ namespace Routeables.Generated
 
         private static readonly SymbolDisplayFormat FqName = SymbolDisplayFormat.FullyQualifiedFormat;
 
-        // A Scoped or Singleton instance is cached by route and built once, with the arguments of the first route change:
-        // a route that takes parameters would show the first value for ever.
+        // A Scoped or Singleton instance is cached by route and built once, with the arguments of the first navigation, so a route that takes
+        // parameters would show the first value forever.
         private static readonly DiagnosticDescriptor CachedRouteWithParameters = new DiagnosticDescriptor(
             "ROUT201",
             "Cached route with parameters",
@@ -27,8 +27,8 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout201");
 
-        // A [Routeable] view model with no [RouteableView] is paired with the view the name says (OrderViewModel => OrderView), but
-        // two views of that name leave the choice to the author.
+        // A [Routeable] view model without a [RouteableView] is paired with the view its name says (OrderViewModel => OrderView), but when two
+        // views have that name the choice is left to the author.
         private static readonly DiagnosticDescriptor AmbiguousConventionView = new DiagnosticDescriptor(
             "ROUT202",
             "Several views match the naming convention",
@@ -37,8 +37,8 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout202");
 
-        // Two views registered for the same view model, route and region replace one another: the last registered is the one the
-        // router builds. It happens when an assembly brings the views of several hosts, or when a view is left behind after a copy.
+        // Two views registered for the same view model, route and region replace one another: the last one registered is the one the router builds.
+        // This happens when an assembly brings the views of several hosts, or when a view is left behind after a copy.
         private static readonly DiagnosticDescriptor SeveralViewsForOneRoute = new DiagnosticDescriptor(
             "ROUT203",
             "Several views for the same view model and route",
@@ -47,8 +47,8 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout203");
 
-        // Two view models that declare the same route (and region): the table of routes keeps the first one it is given, the second is
-        // never reached, and the message at run time names the second as a route that is not registered.
+        // Two view models that declare the same route (and region): the route table keeps the first one it is given, so the second is never reached,
+        // and the run-time message names the second as a route that is not registered.
         private static readonly DiagnosticDescriptor SeveralViewModelsForOneRoute = new DiagnosticDescriptor(
             "ROUT206",
             "Several view models for the same route",
@@ -57,7 +57,7 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout206");
 
-        // A [Routeable] class the generated code cannot name (open generic, 'file' type): left out, with this warning, instead of code that does not compile.
+        // A [Routeable] class the generated code cannot name (open generic, 'file' type) is left out with this warning, instead of generating code that does not compile.
         private static readonly DiagnosticDescriptor UnusableViewModel = new DiagnosticDescriptor(
             "ROUT207",
             "[Routeable] on a type that cannot be registered",
@@ -66,9 +66,9 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout207");
 
-        // A .razor file of the project that declares [RouteableView] with @attribute: the Razor compiler is another generator, and a
-        // generator does not see the output of another one, so nothing is registered. Only reported when this project calls its own
-        // AddGeneratedRoutes(): a component library whose views are registered by the application that references it is fine.
+        // A .razor file in the project that declares [RouteableView] with @attribute: the Razor compiler is another generator, and a generator does
+        // not see the output of another one, so nothing is registered. Reported only when this project calls its own AddGeneratedRoutes(): a
+        // component library whose views are registered by the referencing application is fine.
         private static readonly DiagnosticDescriptor RazorViewAttributeIgnored = new DiagnosticDescriptor(
             "ROUT204",
             "[RouteableView] in a .razor file is ignored here",
@@ -77,8 +77,8 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout204");
 
-        // A [Routeable] view model of a project that has views of its own, and none called after it: most often a name that does not
-        // follow the convention. Information only: a view model with no view is a legitimate route (a redirect, a headless one).
+        // A [Routeable] view model in a project that has views of its own, none named after it: most often a name that does not follow the
+        // convention. Information only: a view model without a view is a legitimate route (a redirect, a headless one).
         // Switch it off with .editorconfig (dotnet_diagnostic.ROUT205.severity = none) or #pragma warning disable ROUT205.
         private static readonly DiagnosticDescriptor ConventionViewNotFound = new DiagnosticDescriptor(
             "ROUT205",
@@ -150,7 +150,7 @@ namespace Routeables.Generated
         {
             InitializeRazorCheck(context);
 
-            // 1) Current compilation (syntax). AllowMultiple => iterate ALL attributes.
+            // 1) The current compilation (syntax). AllowMultiple means iterating over ALL attributes.
             var localViews = context.SyntaxProvider
                 .ForAttributeWithMetadataName(
                     RouteableViewAttrMetadataName,
@@ -165,7 +165,7 @@ namespace Routeables.Generated
                     transform: static (ctx, _) => GetRoutes(ctx))
                 .SelectMany(static (x, _) => x);
 
-            // 2) Whole compilation + referenced assemblies
+            // 2) The whole compilation and the referenced assemblies.
             var fromCompilation = context.CompilationProvider.Select(static (compilation, ct) =>
             {
                 var routeableAttr = compilation.GetTypeByMetadataName(RouteableAttrMetadataName);
@@ -179,9 +179,9 @@ namespace Routeables.Generated
                 if (routeableAttr is null && routeableViewAttr is null)
                     return CompiledModel.Empty;
 
-                // A type carries [Routeable] or [RouteableView] only in an assembly that references the one the attributes are in: the other
-                // referenced assemblies (the libraries of controls, of mapping, of logging...) are only searched, below, for the views the
-                // view models ask for by name, and cheaply: by the names of their types, without creating a symbol for each one of them.
+                // A type carries [Routeable] or [RouteableView] only in an assembly that references the one the attributes are in. The other referenced
+                // assemblies (control libraries, mapping, logging...) are only searched, below, for the views that view models ask for by name, and
+                // cheaply: by type name, without creating a symbol for each type.
                 var attributeAssemblies = new HashSet<string>(StringComparer.Ordinal);
                 if (routeableAttr is not null) attributeAssemblies.Add(routeableAttr.ContainingAssembly.Name);
                 if (routeableViewAttr is not null) attributeAssemblies.Add(routeableViewAttr.ContainingAssembly.Name);
@@ -191,9 +191,9 @@ namespace Routeables.Generated
                 {
                     ct.ThrowIfCancellationRequested();
 
-                    // A view the naming convention may pair with a [Routeable] view model: a concrete class called ...View. It does not have
-                    // to implement anything (a UserControl, a Page, a component): its name is what pairs it. It is only described below, for
-                    // the ones whose name a view model asks for.
+                    // A view the naming convention may pair with a [Routeable] view model: a concrete class called ...View. It does not have to implement
+                    // anything (a UserControl, a Page, a component): its name is what pairs it. It is only described below for the views whose name a view
+                    // model asks for.
                     if (routeableAttr is not null && IsConventionView(type) && compilation.IsSymbolAccessibleWithin(type, compilation.Assembly))
                         conventionViews.Add(type);
 
@@ -240,18 +240,18 @@ namespace Routeables.Generated
                         Build: wanted.Contains(type.Name) ? RouteBuilds.Analyze(compilation, type) : null));
                 }
 
-                // Values that compare equal when their content is equal: the pipeline then sees an unchanged model after an edit that
-                // changes none of the views and routes, and does not generate the file again.
+                // Values that compare equal when their content is equal, so the pipeline sees an unchanged model after an edit that changes none of the
+                // views and routes, and does not generate the file again.
                 return new CompiledModel(
                     new EquatableArray<ViewReg>(views.ToArray()),
                     new EquatableArray<Route>(routes.ToArray()),
                     new EquatableArray<ViewCandidate>(candidates.ToArray()));
             }).WithTrackingName("RouteablesCompiled");
 
-            // An executable hands its routes to the host through a module initializer, so that the application does not call
-            // AddGeneratedRoutes() itself. RouteablesAutoRegister=false switches it off, and =true switches it on for a project the compiler
-            // does not see as an executable (an app of a mobile platform, for example). A library has no such initializer: its module
-            // would only be initialized when one of its types is first used, which is too late and unpredictable.
+            // An executable hands its routes to the host through a module initializer, so the application does not need to call AddGeneratedRoutes()
+            // itself. RouteablesAutoRegister=false switches this off, and =true switches it on for a project the compiler does not see as an executable
+            // (a mobile app, for example). A library has no such initializer: its module would only be initialized when one of its types is first used,
+            // which is too late and unpredictable.
             var autoInputs = context.CompilationProvider
                 .Select(static (compilation, _) => compilation.Options.OutputKind)
                 .Combine(context.AnalyzerConfigOptionsProvider.Select(static (options, _) =>
@@ -283,11 +283,11 @@ namespace Routeables.Generated
                 var viewsByKey = new Dictionary<string, ViewReg>(StringComparer.Ordinal);
                 var routesByKey = new Dictionary<string, Route>(StringComparer.Ordinal);
 
-                // Same view/viewmodel pair may appear with different routes/regions
+                // The same view and view model pair may appear with different routes and regions.
                 void AddView(ViewReg v) =>
                     viewsByKey[v.ViewFullName + "|" + v.ViewModelFullName + "|" + v.Route + "|" + v.Region] = v;
 
-                // Multiple [Routeable] per type are allowed
+                // Several [Routeable] attributes per type are allowed.
                 void AddRoute(Route r) =>
                     routesByKey[r.TypeName + "|" + r.Path + "|" + r.Region] = r;
 
@@ -304,7 +304,6 @@ namespace Routeables.Generated
             });
         }
 
-        // ------------------------------------------------------------------ symbol helpers
 
         private static bool IsConventionView(INamedTypeSymbol type) =>
             type.TypeKind == TypeKind.Class
@@ -313,14 +312,14 @@ namespace Routeables.Generated
             && type.Name.Length > ViewSuffix.Length
             && type.Name.EndsWith(ViewSuffix, StringComparison.Ordinal);
 
-        // The assemblies of the frameworks and big libraries: none of their types is a view of the application. A name is matched whole or
-        // followed by a dot: "AvaloniaShop.Features", "PresentationLayer" or "SystemMonitor.Pages" are the application's own libraries.
+        // The assemblies of frameworks and big libraries: none of their types is a view of the application. A name is matched whole or followed by
+        // a dot: "AvaloniaShop.Features", "PresentationLayer" and "SystemMonitor.Pages" are the application's own libraries.
         private static readonly string[] FrameworkAssemblies =
         [
             "System", "Microsoft", "Avalonia", "WindowsBase", "Uno", "WinRT", "MudBlazor",
             // WPF: PresentationFramework has a ListView, a TreeView, a GridView...
             "PresentationFramework", "PresentationCore", "PresentationUI",
-            // The bindings of Android and iOS and the graphics libraries: tens of thousands of types, none of them a view of the application.
+            // The Android and iOS bindings and the graphics libraries: tens of thousands of types, none of them a view of the application.
             "Mono.Android", "Xamarin", "Java.Interop", "SkiaSharp", "HarfBuzzSharp",
             "mscorlib", "netstandard",
         ];
@@ -334,12 +333,12 @@ namespace Routeables.Generated
             return false;
         }
 
-        // The types of the assembly being compiled and of the referenced assemblies that can hold a [Routeable] type (they reference the assembly of
-        // the attributes). The others, but the frameworks, are put in plainReferences.
+        // The types of the assembly being compiled and of the referenced assemblies that can hold a [Routeable] type (those that reference the
+        // attributes' assembly). The others, except the frameworks, go in plainReferences.
         private static IEnumerable<INamedTypeSymbol> GetAllTypes(Compilation compilation, HashSet<string> attributeAssemblies, List<IAssemblySymbol> plainReferences)
         {
-            // The assembly being compiled only: compilation.GlobalNamespace is the merge of this assembly and of every reference
-            // (the framework included), which the loop below would then walk a second time.
+            // The assembly being compiled only: compilation.GlobalNamespace merges this assembly with every reference (the framework included), which
+            // the loop below would then walk a second time.
             foreach (var t in GetTypesInNamespace(compilation.Assembly.GlobalNamespace))
                 yield return t;
 
@@ -348,7 +347,7 @@ namespace Routeables.Generated
                 if (compilation.GetAssemblyOrModuleSymbol(reference) is not IAssemblySymbol asm)
                     continue;
 
-                // Skip obvious framework / NuGet assemblies to limit cost
+                // Skip obvious framework and NuGet assemblies to limit the cost.
                 if (IsFrameworkAssembly(asm.Name))
                     continue;
 
@@ -387,7 +386,6 @@ namespace Routeables.Generated
             }
         }
 
-        // ------------------------------------------------------------------ attribute → models
 
         private static ImmutableArray<ViewReg> GetViewRegistrations(GeneratorAttributeSyntaxContext ctx)
         {
@@ -421,7 +419,6 @@ namespace Routeables.Generated
 
         private static ViewReg? FromViewAttribute(Compilation compilation, INamedTypeSymbol viewSymbol, AttributeData attr)
         {
-            // [RouteableView(typeof(HomeViewModel), "route", "region", ServiceLifetime.Transient)]
             if (attr.ConstructorArguments.Length == 0)
                 return null;
 
@@ -442,8 +439,8 @@ namespace Routeables.Generated
                 attr.ConstructorArguments[3].Value is int lifeCtor)
                 lifetime = (ServiceLifetime)lifeCtor;
 
-            // Region and Route are get-only on the attribute: only the lifetimes can be named arguments.
-            // ViewModelLifetime and ViewLifetime, when given, win over Lifetime whatever the order they are written in.
+            // Region and Route are get-only on the attribute, so only the lifetimes can be named arguments.
+            // ViewModelLifetime and ViewLifetime, when given, win over Lifetime whatever order they are written in.
             ServiceLifetime? viewModelLifetime = null;
             ServiceLifetime? viewLifetime = null;
             foreach (var named in attr.NamedArguments)
@@ -482,7 +479,6 @@ namespace Routeables.Generated
             // [Routeable("path", region, serviceLifetime)]
             string? path = null;
             string? region = null;
-            //string? contract = null;
             var lifetime = ServiceLifetime.Transient;
 
             if (attr.ConstructorArguments.Length > 0)
@@ -491,8 +487,8 @@ namespace Routeables.Generated
             if (attr.ConstructorArguments.Length > 1)
                 region = attr.ConstructorArguments[1].Value as string;
 
-            // The lifetime is the third constructor argument (it was the fourth when the attribute still had a contract,
-            // which made a lifetime given to the constructor be ignored).
+            // The lifetime is the third constructor argument (it was the fourth when the attribute still had a contract, which made a lifetime given to
+            // the constructor be ignored).
             if (attr.ConstructorArguments.Length > 2 &&
                 attr.ConstructorArguments[2].Value is int lifeCtor)
                 lifetime = (ServiceLifetime)lifeCtor;
@@ -504,9 +500,6 @@ namespace Routeables.Generated
                     case "Region" when named.Value.Value is string r:
                         region = r;
                         break;
-                    //case "Contract" when named.Value.Value is string c:
-                    //    contract = c;
-                    //    break;
                     case "Lifetime" when named.Value.Value is int lifeNamed:
                         lifetime = (ServiceLifetime)lifeNamed;
                         break;
@@ -518,15 +511,14 @@ namespace Routeables.Generated
                 Name: symbol.Name,
                 Path: path,
                 Region: region,
-                //Contract: contract,
                 Lifetime: lifetime,
                 Build: RouteBuilds.Analyze(compilation, symbol),
                 IsLocal: SymbolEqualityComparer.Default.Equals(symbol.ContainingAssembly, compilation.Assembly),
                 Problem: ProblemOf(compilation, symbol));
         }
 
-        // A view model the generated code cannot name: an open generic type (OrderViewModel<T>), a type local to its file or one it cannot reach. Registering it would
-        // write code that does not compile, so it is reported and left out.
+        // A view model the generated code cannot name: an open generic type (OrderViewModel<T>), a type local to its file, or one it cannot reach.
+        // Registering it would write code that does not compile, so it is reported and left out.
         private static string? ProblemOf(Compilation compilation, INamedTypeSymbol symbol)
         {
             if (!compilation.IsSymbolAccessibleWithin(symbol, compilation.Assembly))
@@ -541,7 +533,6 @@ namespace Routeables.Generated
             return null;
         }
 
-        // ------------------------------------------------------------------ emit
 
         private static void Generate(
             SourceProductionContext spc,
@@ -555,7 +546,7 @@ namespace Routeables.Generated
             ReportSeveralViews(spc, viewList);
             ReportSeveralViewModels(spc, routesIn.ToList());
 
-            // Deterministic output
+            // Deterministic output.
             var views = viewList
                 .OrderBy(v => v.ViewFullName, StringComparer.Ordinal)
                 .ThenBy(v => v.ViewModelFullName, StringComparer.Ordinal)
@@ -582,7 +573,7 @@ namespace Routeables.Generated
 
         private static void ReportSeveralViewModels(SourceProductionContext spc, List<Route> routes)
         {
-            // The same address as the table of routes reads it: the case and a trailing slash do not tell two routes apart.
+            // The same address as the route table reads it: the case and a trailing slash do not tell two routes apart.
             var groups = routes
                 .Where(r => !string.IsNullOrEmpty(r.Path))
                 .GroupBy(r => (Path: r.Path!.Trim().TrimEnd('/').ToLowerInvariant(), Region: r.Region ?? string.Empty))
@@ -622,9 +613,9 @@ namespace Routeables.Generated
             }
         }
 
-        // A [Routeable] view model that no [RouteableView] names gets the view its name says: OrderViewModel => OrderView, a routed class
-        // (it implements IRouteable) found in the project, or failing that in the assemblies it references. The route, region and
-        // lifetime are the ones of the [Routeable] attribute. Two views of that name are not guessed between.
+        // A [Routeable] view model that no [RouteableView] names gets the view its name says: OrderViewModel => OrderView, a routed class (one that
+        // implements IRouteable) found in the project or, failing that, in the assemblies it references. The route, region and lifetime come from the
+        // [Routeable] attribute. Two views with that name are not guessed between.
         private static void AddConventionViews(
             SourceProductionContext spc,
             List<ViewReg> views,
@@ -634,8 +625,8 @@ namespace Routeables.Generated
             if (candidates.Count == 0)
                 return;
 
-            // Only a project that has views of its own can have forgotten one: a library of view models, whose views are in the
-            // projects of each host, has nothing to report.
+            // Only a project that has views of its own can have forgotten one: a library of view models, whose views are in each host's projects, has
+            // nothing to report.
             var hasLocalViews = candidates.Any(c => c.IsLocal);
             var named = new HashSet<string>(views.Select(v => v.ViewModelFullName), StringComparer.Ordinal);
             foreach (var group in routes.GroupBy(r => r.TypeName, StringComparer.Ordinal).OrderBy(g => g.Key, StringComparer.Ordinal))
@@ -711,8 +702,8 @@ namespace Routeables.Generated
             {
                 _sb.AppendLine("// <auto-generated />");
                 _sb.AppendLine("#nullable enable");
-                // The injectors set [Parameter] properties of Blazor components, which is how the framework-free injection has always
-                // worked (the reflection path does the same); the Blazor analyzer would refuse it in generated code.
+                // The injectors set [Parameter] properties of Blazor components, which is how framework-free injection has always worked (the reflection
+                // path does the same); the Blazor analyzer would reject it in generated code.
                 _sb.AppendLine("#pragma warning disable BL0005");
                 _sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");
                 _sb.AppendLine("using Routeables.Abstraction;");
@@ -728,7 +719,7 @@ namespace Routeables.Generated
                 _sb.AppendLine("{");
                 if (autoRegister)
                 {
-                    // The host applies these routes after the services of the application, unless AddGeneratedRoutes() was called.
+                    // The host applies these routes after the application's services, unless AddGeneratedRoutes() was called.
                     _sb.AppendLine("#pragma warning disable CA2255");
                     _sb.AppendLine("    [global::System.Runtime.CompilerServices.ModuleInitializer]");
                     _sb.AppendLine("#pragma warning restore CA2255");
@@ -739,11 +730,11 @@ namespace Routeables.Generated
                 _sb.AppendLine("    {");
                 _sb.AppendLine("        RouteableAutoRegistration.Mark(services, typeof(RouteRegistration).Assembly);");
 
-                // A) View + ViewModel pairs ([RouteableView]); route/region from the view and/or [Routeable] on the ViewModel
+                // A) View and view model pairs ([RouteableView]); route and region come from the view and/or [Routeable] on the view model.
                 foreach (var view in views)
                     WritePair(view, routesByType[view.ViewModelFullName].ToList());
 
-                // B) [Routeable] types with no [RouteableView] => no view, register the type alone
+                // B) [Routeable] types without a [RouteableView]: no view, register the type alone.
                 var viewModelsWithView = new HashSet<string>(views.Select(v => v.ViewModelFullName), StringComparer.Ordinal);
                 foreach (var route in routes.Where(r => !viewModelsWithView.Contains(r.TypeName)))
                     WriteRouteOnly(route);
@@ -771,7 +762,7 @@ namespace Routeables.Generated
             {
                 var hasViewRoute = !string.IsNullOrEmpty(view.Route);
 
-                // Region declared on the view is always registered, even without a route
+                // A region declared on the view is always registered, even without a route.
                 WriteRegion(view.Region);
 
                 if (hasViewRoute)
@@ -779,7 +770,7 @@ namespace Routeables.Generated
 
                 foreach (var route in viewModelRoutes)
                 {
-                    // Same path already registered from the view attribute
+                    // The same path is already registered from the view attribute.
                     if (hasViewRoute && string.Equals(route.Path, view.Route, StringComparison.Ordinal))
                         continue;
 
@@ -916,7 +907,6 @@ namespace Routeables.Generated
             string Name,
             string? Path,
             string? Region,
-            //string? Contract,
             ServiceLifetime Lifetime,
             RouteBuilds.BuildInfo? Build = null,
             bool IsLocal = false,

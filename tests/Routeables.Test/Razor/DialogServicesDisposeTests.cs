@@ -12,7 +12,7 @@ public class DialogServicesDisposeTests
     public async Task Disposing_the_message_queue_completes_the_waiting_dialogs()
     {
         var service = new RouteableMessageQueue();
-        service.Changed += () => { };      // a host is displayed
+        service.Changed += () => { }; // a host is displayed
         var dialogs = new RouteableDialogService(new DefaultMessageBoxService(service, new RouteableContentDialogQueue(), new RouteableTaskDialogQueue()));
         var shown = dialogs.ShowErrorAsync(new InvalidOperationException("first"));
         var queued = dialogs.ShowErrorAsync(new InvalidOperationException("second"));

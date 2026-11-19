@@ -19,7 +19,7 @@ public class MenuViewModelTests
         Assert.Equal("a", main.SelectedEntry!.DisplayName);
 
         main.SelectedEntry = main.Entries[1];
-        Assert.True(!main.SelectFirst());                    // something is selected: left alone
+        Assert.True(!main.SelectFirst());
         Assert.Equal("b", main.SelectedEntry.DisplayName);
     }
 
@@ -47,9 +47,9 @@ public class MenuViewModelTests
     public void Without_a_lifetime_the_main_follows_the_host()
     {
         var singleton = new ServiceCollection();
-        singleton.RegisterMenuViewModel<FakeMenuViewModel>();                       // no host: Singleton
+        singleton.RegisterMenuViewModel<FakeMenuViewModel>(); // no host: Singleton
         var scoped = new ServiceCollection();
-        scoped.AddSingleton(new RouteableHostLifetime(ServiceLifetime.Scoped));     // what the Blazor host registers
+        scoped.AddSingleton(new RouteableHostLifetime(ServiceLifetime.Scoped)); // what the Blazor host registers
         scoped.RegisterMenuViewModel<FakeMenuViewModel>();
 
         Assert.Equal(ServiceLifetime.Singleton, singleton.Last(d => d.ServiceType == typeof(IRouteableMenuViewModel)).Lifetime);
@@ -72,7 +72,6 @@ public class MenuViewModelTests
         Assert.Throws<ArgumentException>(() => new ServiceCollection().RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Transient));
     }
 
-    // ---------------------------------------------------------------- the entries of a module
 
     [Fact]
     public void A_module_adds_its_entries_to_the_menu_in_the_order_it_was_added()
@@ -95,7 +94,7 @@ public class MenuViewModelTests
         services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Singleton);
         services.AddMenuEntries(() => [View("first"), View("second")], index: 0);
         services.AddMenuEntries(() => [View("middle")], index: 1);
-        services.AddMenuEntries(() => [View("far")], index: 99);          // past the end: last
+        services.AddMenuEntries(() => [View("far")], index: 99); // past the end: last
         services.AddMenuEntries(() => [View("last")]);
         using var provider = services.BuildServiceProvider();
 
@@ -132,7 +131,7 @@ public class MenuViewModelTests
 
         Assert.Same(first, second);
         Assert.Single(first.Entries);
-        Assert.Same(scope.ServiceProvider.GetRequiredService<FakeMenuViewModel>(), first);   // the main itself is the same instance
+        Assert.Same(scope.ServiceProvider.GetRequiredService<FakeMenuViewModel>(), first);
     }
 
     [Fact]
@@ -143,7 +142,7 @@ public class MenuViewModelTests
         services.AddMenuEntries(() => [View("orders")]);
         using var provider = services.BuildServiceProvider();
 
-        var main = provider.GetRequiredService<FakeMenuViewModel>();       // the class first, not the interface
+        var main = provider.GetRequiredService<FakeMenuViewModel>(); // the class first, not the interface
 
         Assert.Single(main.Entries);
         Assert.Same(main, provider.GetRequiredService<IRouteableMenuViewModel>());
@@ -167,7 +166,7 @@ public class MenuViewModelTests
     [Fact]
     public void A_module_that_needs_another_one_calls_it_and_the_other_is_added_once()
     {
-        // Orders needs Customers (a dependency is a call, as in any code); the application adds both.
+        // Orders needs Customers (a dependency is a call, as in any code), so the application adds both.
         static IEnumerable<IRouteableMenuEntry> CustomersEntries() => [View("customers")];
         static IEnumerable<IRouteableMenuEntry> OrdersEntries() => [View("orders")];
         static IServiceCollection AddCustomersModule(IServiceCollection services) => services.AddMenuEntries(CustomersEntries);
@@ -217,10 +216,10 @@ public class MenuViewModelTests
         var entryOfOne = one.ServiceProvider.GetRequiredService<IRouteableMenuViewModel>().Entries.Single();
         var entryOfOther = other.ServiceProvider.GetRequiredService<IRouteableMenuViewModel>().Entries.Single();
 
-        entryOfOne.IsLock = true;                       // a lock in one circuit...
+        entryOfOne.IsLock = true; // a lock in one circuit...
 
         Assert.NotSame(entryOfOne, entryOfOther);
-        Assert.True(!entryOfOther.IsLock);              // ...does not reach the other
+        Assert.True(!entryOfOther.IsLock); // ...does not reach the other
     }
 
     [Fact]

@@ -15,7 +15,7 @@ namespace Routeables.Tests.Abstraction;
 /// like every other swallowed error. The errors that used to vanish (a region that cannot follow, a failed recovery, a failed
 /// selection) are reported too.
 /// </summary>
-// RouteableErrors.Default is process-wide: the classes that replace it, or read what goes to it, run one after the other.
+// RouteableErrors.Default is process-wide: classes that replace it, or read what goes to it, run one after the other.
 [Collection("RouteableErrors.Default")]
 public class RouteableErrorsGuardTests
 {
@@ -106,7 +106,7 @@ public class RouteableErrorsGuardTests
         Assert.True(RouteableErrors.Guard(provider, "test", (Func<bool>?)null, fallback: true));
         Assert.Empty(sink.Reported);
 
-        // A question that cannot be answered is answered with the fallback: Closing => false lets the dialog close.
+        // A question with no answer gets the fallback: Closing => false lets the dialog close.
         Assert.False(RouteableErrors.Guard(provider, "Dialog.Closing", () => throw new InvalidOperationException("no")));
         Assert.True(RouteableErrors.Guard(provider, "Dialog.Closing", (string _) => throw new InvalidOperationException("no"), "x", fallback: true));
         Assert.Equal(2, sink.Reported.Count);
@@ -171,7 +171,7 @@ public class RouteableErrorsGuardTests
         Assert.True(capture.Saw("selection-failed-3"));
     }
 
-    // RouteableErrors.Default is process-wide: these tests restore it, and look only at errors with a source of their own.
+    // RouteableErrors.Default is process-wide: these tests restore it and look only at errors with a source of their own.
     [Fact]
     public void Default_receives_what_is_reported_without_a_container_and_guarded_callbacks()
     {

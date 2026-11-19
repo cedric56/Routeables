@@ -45,7 +45,7 @@ public class RouteableRegionItems : ComponentBase, IDisposable
 
         _binding?.Dispose();
         _boundTo = Region;
-        // The first call, made by the constructor, is in the middle of a render: it only stores the views.
+        // The first call, made by the constructor, happens in the middle of a render: it only stores the views.
         _binding = new RegionItemsBinding(Services.GetRouter(Region), Show);
     }
 

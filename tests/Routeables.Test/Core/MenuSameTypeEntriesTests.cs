@@ -44,8 +44,8 @@ public class MenuSameTypeEntriesTests
         var router = provider.GetRequiredService<IRouter>();
         var menu = new Menu(router);
 
-        Assert.True(await menu.SelectEntryAsync(menu.Entries[1], ct));      // Hats
-        Assert.True(await menu.SelectEntryAsync(menu.Entries[2], ct));      // Other
+        Assert.True(await menu.SelectEntryAsync(menu.Entries[1], ct));
+        Assert.True(await menu.SelectEntryAsync(menu.Entries[2], ct));
         await router.GoBackAsync(ct);                                       // the router goes back, not the menu: the menu follows it
 
         Assert.Equal("Hats", menu.SelectedEntry?.DisplayName);

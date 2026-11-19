@@ -72,10 +72,10 @@ public class RouteableRegion : ComponentBase, IDisposable
 
         _binding?.Dispose();
         _boundTo = Region;
-        // The first call, made by the constructor, is in the middle of a render: it only stores the view.
+        // The first call, made by the constructor, happens in the middle of a render: it only stores the view.
         _binding = new RegionBinding(Services.GetRouter(Region), Show);
 
-        // The default region only says its route here, before any layout has finished rendering: the layout starts it once the address is applied.
+        // The default region only states its route here, before any layout has finished rendering: the layout starts it once the address is applied.
         if (string.IsNullOrEmpty(Region))
             RegionStart.Begin(Services, Region, Route, wait: true);
     }
@@ -123,7 +123,7 @@ public class RouteableRegion : ComponentBase, IDisposable
         builder.CloseElement();
     }
 
-    // The name of a transition as a CSS class: letters, digits, dash and underscore, in lower case.
+    // A transition name as a CSS class: letters, digits, dash and underscore, in lower case.
     private static string CssName(string name)
         => new(name.ToLowerInvariant().Select(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_' ? c : '-').ToArray());
 

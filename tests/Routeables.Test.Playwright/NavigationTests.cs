@@ -54,7 +54,7 @@ public sealed class NavigationTests(BlazorApp app) : BlazorTest(app)
         await OpenAsync("Dogs");
         await ExpectCurrentAsync("Dogs");
 
-        // A second visitor starts where nobody has been: the first one's page is not shared.
+        // A second visitor starts clean: the first visitor's page is not shared.
         var other = await Page.Context.Browser!.NewContextAsync();
         try
         {

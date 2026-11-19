@@ -106,7 +106,6 @@ public sealed class HeadlessDialogTests(HeadlessApp app)
         }
     }
 
-    // ------------------------------------------------------------------------------------------------ message boxes
 
     /// <summary>A message box shows its title, message, and one button per word of the buttons string, and returns the clicked button text.</summary>
     [Fact]
@@ -239,7 +238,6 @@ public sealed class HeadlessDialogTests(HeadlessApp app)
         await UntilAsync(() => owner.OwnedWindows.Count == 0);
     });
 
-    // ------------------------------------------------------------------------------------------------ content dialogs
 
     /// <summary>A content dialog shows its title, content text, and configured buttons, and returns the primary result when Save is clicked.</summary>
     [Fact]
@@ -405,7 +403,6 @@ public sealed class HeadlessDialogTests(HeadlessApp app)
     public async Task A_content_dialog_refuses_no_parameters()
         => await Assert.ThrowsAsync<ArgumentNullException>(() => new DefaultMessageBoxService().ShowContentDialogAsync(null!));
 
-    // ------------------------------------------------------------------------------------------------ task dialogs
 
     /// <summary>A task dialog shows its title, header, sub-header and one button per supplied result, with the first marked default.</summary>
     [Fact]

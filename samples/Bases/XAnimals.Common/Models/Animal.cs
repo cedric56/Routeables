@@ -1,6 +1,5 @@
 ﻿namespace XAnimals.Models;
 
-//[System.ComponentModel.Bindable(true)]
 public class Animal
 {
     public required string Name { get; set; }

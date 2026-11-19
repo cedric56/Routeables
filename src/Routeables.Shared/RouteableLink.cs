@@ -26,9 +26,9 @@ using Routeables.Abstraction;
 using Routeables.Abstraction.Routing;
 using Routeables.Services;
 
-// One file for every host that has a button: Routeables.Wpf, Routeables.Maui and Routeables.Avalonia link it (and define WPF, MAUI or AVALONIA),
-// Routeables.Uno and Routeables.WinUI3 link it too. What differs from a host to another is only how an attached property is
-// declared and the name of the click event; the rest, the accessors and what a click does, is written once.
+// Shared source for every host that has a button: Routeables.Wpf, Routeables.Maui and Routeables.Avalonia (which define WPF, MAUI or AVALONIA),
+// Routeables.Uno and Routeables.WinUI3. Only the way an attached property is declared and the name of the click event differ from host to host;
+// the accessors and what a click does are written once.
 #if WPF
 namespace Routeables.Wpf;
 #elif MAUI
@@ -97,11 +97,11 @@ public static class RouteableLink
     private static void Retarget(LinkButton button, object? route)
     {
 #if MAUI
-        button.Clicked -= OnClick;                     // once, whatever the number of changes
+        button.Clicked -= OnClick; // once, whatever the number of changes
         if (route is string { Length: > 0 })
             button.Clicked += OnClick;
 #else
-        button.Click -= OnClick;                       // once, whatever the number of changes
+        button.Click -= OnClick; // once, whatever the number of changes
         if (route is string { Length: > 0 })
             button.Click += OnClick;
 #endif

@@ -13,7 +13,7 @@ namespace Routeables.Maui.Services;
 /// </summary>
 static class RouteableToastHelper
 {
-    const nint HostTag = 0x52544F41;    // "RTOA"
+    const nint HostTag = 0x52544F41; // "RTOA"
     const double CardWidth = 420;
 
     public static void Show(
@@ -24,7 +24,7 @@ static class RouteableToastHelper
         Action? onClick,
         Action? onClose)
     {
-        // UIKit is the main thread's: whichever thread asks, the card is built there.
+        // UIKit belongs to the main thread: whichever thread asks, the card is built there.
         UIApplication.SharedApplication.BeginInvokeOnMainThread(() =>
             Present(new RouteableNotificationSession(title, message, type, expiration, onClick, onClose)));
     }
@@ -67,7 +67,7 @@ static class RouteableToastHelper
         }));
 
         card.Alpha = 0;
-        host.InsertArrangedSubview(card, 0);   // newest on top
+        host.InsertArrangedSubview(card, 0); // newest on top
         UIView.Animate(0.2, () => card.Alpha = 1);
 
         if (session.AutoCloseAfter is { } delay)
@@ -94,7 +94,7 @@ static class RouteableToastHelper
 
         var safe = window.SafeAreaLayoutGuide;
         var width = host.WidthAnchor.ConstraintEqualTo((nfloat)CardWidth);
-        width.Priority = 750;   // a narrow window wins: the margins below keep the card on screen
+        width.Priority = 750; // a narrow window wins: the margins below keep the card on screen
 
         NSLayoutConstraint.ActivateConstraints(
         [

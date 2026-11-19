@@ -24,7 +24,7 @@ internal class DistributionImplementation : IDistribution
     /// </summary>
     public Distribution Current => _current.Value;
 
-    // The newest release first: the first one the system is at least as recent as is its release.
+    // Newest release first: the first one the system is at least as recent as is its release.
     private static readonly (int Api, Distribution Release)[] AndroidReleases =
     [
         (36, Distribution.Android16), (35, Distribution.Android15), (34, Distribution.Android14), (33, Distribution.Android13),
@@ -40,7 +40,7 @@ internal class DistributionImplementation : IDistribution
         (5, 1, 0, Distribution.WindowsXP),
     ];
 
-    // The family of a Linux system, by the names its os-release gives as ID, then as ID_LIKE.
+    // The family of a Linux system, from the names its os-release gives as ID, then as ID_LIKE.
     private static readonly (Distribution Release, string[] Ids)[] LinuxFamilies =
     [
         (Distribution.Ubuntu, ["ubuntu"]), (Distribution.Fedora, ["fedora"]), (Distribution.ArchLinux, ["arch"]),
@@ -85,12 +85,12 @@ internal class DistributionImplementation : IDistribution
         var id = Get(osRelease, "ID");
         var idLike = Get(osRelease, "ID_LIKE");
 
-        // The ID first: Linux Mint and Pop!_OS name Ubuntu in ID_LIKE, Manjaro names Arch, and they are not those.
+        // ID comes first: Linux Mint and Pop!_OS name Ubuntu in ID_LIKE, and Manjaro names Arch, but they are not those.
         foreach (var (release, ids) in LinuxFamilies)
             if (Matches(id, string.Empty, ids))
                 return release;
 
-        // ID_LIKE lists the closest relative first: the first name that is a family is the answer, not the first family of the table.
+        // ID_LIKE lists the closest relative first: the answer is the first name that is a family, not the first family in the table.
         foreach (var like in idLike.Split(' ', StringSplitOptions.RemoveEmptyEntries))
             foreach (var (release, ids) in LinuxFamilies)
                 if (ids.Contains(like, StringComparer.OrdinalIgnoreCase))
@@ -105,8 +105,8 @@ internal class DistributionImplementation : IDistribution
     /// <returns>The lines, or none when the file is not there.</returns>
     private static IEnumerable<string> ReadOsReleaseLines()
     {
-        // The file of the system, else the one of the specification's second place; a file that cannot be read (a right, a race) is no file: the
-        // detection is made once for the process, and an exception would be kept for every later call.
+        // Use the system's file, else the one in the specification's second location. A file that cannot be read (permissions, a race) counts as
+        // missing: detection runs once per process, and an exception would be kept for every later call.
         foreach (var path in new[] { "/etc/os-release", "/usr/lib/os-release" })
         {
             try
@@ -129,7 +129,7 @@ internal class DistributionImplementation : IDistribution
     /// <returns>A dictionary containing OS release properties.</returns>
     internal static Dictionary<string, string> ParseOsRelease(IEnumerable<string> lines)
     {
-        // The last assignment of a key wins, as for the shell that reads the file; a comment is not an assignment.
+        // The last assignment of a key wins, as in the shell that reads the file; a comment is not an assignment.
         var values = new Dictionary<string, string>();
         foreach (var line in lines)
         {
@@ -160,12 +160,12 @@ internal class DistributionImplementation : IDistribution
         if (value.Length >= 2 && value[0] == '"' && value[^1] == '"')
             value = UnescapeDoubleQuoted(value[1..^1]);
         else if (value.Length >= 2 && value[0] == '\'' && value[^1] == '\'')
-            value = value[1..^1];       // single quotes: the text as it is
+            value = value[1..^1]; // single quotes: the text as it is
 
         return new(key, value);
     }
 
-    // The specification of os-release: in double quotes a backslash escapes only a dollar sign, a quote, a backslash and a backquote (as in the shell).
+    // Per the os-release specification, a backslash in double quotes escapes only a dollar sign, a quote, a backslash and a backquote (as in the shell).
     private static string UnescapeDoubleQuoted(string text)
     {
         if (!text.Contains('\\'))

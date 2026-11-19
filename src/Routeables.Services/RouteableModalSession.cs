@@ -30,7 +30,7 @@ internal sealed class RouteableModalSession<TResult> : IDisposable
         ArgumentNullException.ThrowIfNull(viewModel);
         _viewModel = viewModel;
 
-        // Subscribed before the dialog is shown: a view model that closes right away must not be missed.
+        // Subscribe before the dialog is shown: a view model that closes right away must not be missed.
         _viewModel.CloseRequested += OnCloseRequested;
         Dialog = CreateDialog(viewModel, content);
     }
