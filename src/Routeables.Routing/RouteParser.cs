@@ -723,7 +723,8 @@ public static partial class RouteParser
             if (Fill(m, "query") is { } text) pairs.Add($"{Uri.EscapeDataString(m.Groups["name"].Value)}={text}");
         }
 
-        var route = (path.StartsWith('/') ? "/" : string.Empty) + string.Join('/', segments);
+        // A template that is only optional values, with none given ("{tab?}"), is the root.
+        var route = (path.StartsWith('/') || segments.Count == 0 ? "/" : string.Empty) + string.Join('/', segments);
         return pairs.Count == 0 ? route : route + "?" + string.Join('&', pairs);
     }
 

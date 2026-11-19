@@ -79,6 +79,30 @@ public class RouteableHistoryKeeperTests
     }
 
     [Fact]
+    public async Task A_history_is_put_back_when_the_first_page_comes_after_the_wait_that_was_planned()
+    {
+        var previous = RouteableHistoryKeeper.FirstPageSlice;
+        RouteableHistoryKeeper.FirstPageSlice = TimeSpan.FromMilliseconds(100);
+        try
+        {
+            var store = new MemoryStore(RouteableState.Serialize(["/kept-first", "/kept-second"]));
+            using var provider = Build(store);
+            provider.StartRouteableHistory();
+            var router = provider.GetRequiredService<IRouter>();
+            await Task.Delay(500, TestContext.Current.CancellationToken);      // several waits end with no page
+
+            await router.GoToAsync("/kept-first", cancellationToken: TestContext.Current.CancellationToken);
+
+            await UntilAsync(() => router.CurrentViewModel is KeptSecondVm);
+            Assert.Equal(2, router.History.Count);
+        }
+        finally
+        {
+            RouteableHistoryKeeper.FirstPageSlice = previous;
+        }
+    }
+
+    [Fact]
     public async Task A_history_that_cannot_be_unprotected_is_left_out_and_replaced()
     {
         var kept = new AesRouteableHistoryProtector(Key(1)).Protect(RouteableState.Serialize(["/kept-first", "/kept-second"]));

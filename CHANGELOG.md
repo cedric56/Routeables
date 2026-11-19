@@ -6,6 +6,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The saved history is put back when the first page comes late**: the keeper gave up after 30 seconds without a page, turned itself on and wrote the next route change over the file with one page. It now waits for the first page as long as it lives, and nothing is written before the pages are back.
+- **`RouteParser.Build` gives `/` for a template of optional values with none given** (`{tab?}`), not an empty route that `GoToAsync` by view model refused.
 - **A value that cannot be saved no longer leaves the old one behind**: `PersistBag.Set` wrote nothing for a text over `MaxValueLength`, a type that is not supported or a converter that gives `null`, and the key of an earlier save stayed in the dictionary, so the old value came back at the load. The key is removed.
 - **`[Persist]` does not write what it cannot read back**: a value whose type is not the declared one (an `int` in a property of type `object`) and an enum number that names no member were written (the save said it worked) and came back as nothing or as `0`; they are not written now.
 - **"No route matches" names a template written with a misplaced placeholder**: `/users/{id?:int}` (for `{id:int?}`) and `?q={q}` (for `{q}`) are read as fixed text, and the message told to register a route that was registered. It now names the template and the piece, and how a placeholder is written.

@@ -577,4 +577,11 @@ public class RouteParserTests
         Assert.True(RouteParser.TryMatch("/x?mode=a+b", "/x?mode=a%20b", RouteableArgs.Create()));
         Assert.False(RouteParser.TryMatch("/x?mode=a+b", "/x?mode=ab", RouteableArgs.Create()));
     }
+
+    [Fact]
+    public void A_template_of_optional_values_only_builds_the_root_when_none_is_given()
+    {
+        Assert.Equal("/", RouteParser.Build("{tab?}", new Dictionary<string, object?>()));
+        Assert.Equal("tab1", RouteParser.Build("{tab?}", new Dictionary<string, object?> { ["tab"] = "tab1" }));
+    }
 }

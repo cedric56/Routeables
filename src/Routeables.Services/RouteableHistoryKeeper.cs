@@ -212,6 +212,9 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         RouteableHelper.FireAndForget(() => Task.Run(() => RestoreAsync(router, kept)), provider, "RouteableHistoryKeeper.Restore");
     }
 
+    // How long one wait for the first page lasts; the wait starts again until the keeper is disposed. Changed by the tests only.
+    internal static TimeSpan FirstPageSlice = TimeSpan.FromSeconds(30);
+
     private async Task RestoreAsync(IRouter router, IReadOnlyList<RouteableSnapshot> kept)
     {
         // The keeper may be disposed before this runs: its source is disposed with it, and a disposed source gives no token.
@@ -226,7 +229,15 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
 
         try
         {
-            if (!await RouteableLinkInbox.WaitForFirstPageAsync(router, stop) || _disposed)
+            // The saved history is put back once the first page is shown, however late that is (a sign-in window, a splash screen outside the router):
+            // giving up after a delay would let the next route change write over it with a single page.
+            while (!await RouteableLinkInbox.WaitForFirstPageAsync(router, stop, FirstPageSlice))
+            {
+                if (_disposed || stop.IsCancellationRequested)
+                    return;
+            }
+
+            if (_disposed)
                 return;
 
             async Task Restore()
