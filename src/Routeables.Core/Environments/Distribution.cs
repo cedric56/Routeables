@@ -105,9 +105,21 @@ internal class DistributionImplementation : IDistribution
     /// <returns>The lines, or none when the file is not there.</returns>
     private static IEnumerable<string> ReadOsReleaseLines()
     {
-        const string path = "/etc/os-release";
+        // The file of the system, else the one of the specification's second place; a file that cannot be read (a right, a race) is no file: the
+        // detection is made once for the process, and an exception would be kept for every later call.
+        foreach (var path in new[] { "/etc/os-release", "/usr/lib/os-release" })
+        {
+            try
+            {
+                if (File.Exists(path))
+                    return File.ReadAllLines(path);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+            }
+        }
 
-        return File.Exists(path) ? File.ReadAllLines(path) : [];
+        return [];
     }
 
     /// <summary>

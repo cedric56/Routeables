@@ -450,4 +450,22 @@ public class RouteableDeepLinksTests
         Assert.IsType<LinkFirstVm>(router.CurrentViewModel);
         Assert.Single(RouteableState.Capture(router));
     }
+
+    [Fact]
+    public async Task The_inbox_follows_a_link_when_the_first_page_comes_after_the_wait()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        var inbox = new RouteableLinkInbox(["myapp"]) { FirstPageWait = TimeSpan.FromMilliseconds(100) };
+        inbox.Push(new Uri("myapp://link-second"));
+        inbox.Attach(provider);
+        await Task.Delay(500, TestContext.Current.CancellationToken);       // the wait ended with no page
+        Assert.Null(router.CurrentViewModel);
+
+        await router.GoToAsync("/link-first", cancellationToken: TestContext.Current.CancellationToken);
+
+        for (var i = 0; i < 200 && router.CurrentViewModel is not LinkSecondVm; i++)
+            await Task.Delay(10, TestContext.Current.CancellationToken);
+        Assert.IsType<LinkSecondVm>(router.CurrentViewModel);
+    }
 }

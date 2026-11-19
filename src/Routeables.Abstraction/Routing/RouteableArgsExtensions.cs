@@ -28,7 +28,10 @@ public static class RouteableArgsExtensions
     // The value named name, or null when there is none.
     private static object? Named(IRouteableArgs args, string name)
     {
+        // The name as written first; else without the case (a query is read without it: "?Ref=mail" is the value "ref").
         var matches = args.Values.Where(e => e.name == name).ToList();
+        if (matches.Count == 0)
+            matches = args.Values.Where(e => string.Equals(e.name, name, StringComparison.OrdinalIgnoreCase)).ToList();
         if (matches.Count > 1)
             throw new InvalidOperationException($"{matches.Count} values are named \"{name}\"; a name must be used once.");
 

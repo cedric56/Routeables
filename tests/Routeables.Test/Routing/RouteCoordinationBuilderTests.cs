@@ -95,4 +95,14 @@ public class RouteCoordinationBuilderTests
     {
         await Assert.ThrowsAsync<ArgumentNullException>(async () => await RouteCoordinatorExtensions.CoordinateAsync(null!, "Orders", TestContext.Current.CancellationToken));
     }
+
+    [Fact]
+    public void A_plus_in_the_query_of_an_address_written_by_hand_is_a_space_and_an_escaped_plus_stays_a_plus()
+    {
+        var parsed = Routeables.Segments.RouteCoordination.Parse("orders?q=a+b&p=1%2B1");
+
+        var parameters = Assert.Single(parsed.Segments).Parameters!;
+        Assert.Equal("a b", parameters.Single(p => p.Key == "q").Value);
+        Assert.Equal("1+1", parameters.Single(p => p.Key == "p").Value);
+    }
 }

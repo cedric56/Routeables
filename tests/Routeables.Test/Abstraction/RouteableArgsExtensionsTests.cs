@@ -170,4 +170,23 @@ public class RouteableArgsExtensionsTests
         Assert.False(view.attribute);
         Assert.Empty(args.Values);
     }
+
+    [Fact]
+    public void A_value_is_found_without_the_case_of_its_name_when_the_exact_name_is_not_there()
+    {
+        var args = RouteableArgs.Create().WithValue("Ref", "mail");
+
+        Assert.Equal("mail", args.Get<string>("ref"));
+        Assert.True(args.TryGet<string>("REF", out var value));
+        Assert.Equal("mail", value);
+    }
+
+    [Fact]
+    public void The_exact_name_wins_over_the_same_name_in_another_case()
+    {
+        var args = RouteableArgs.Create().WithValue("ref", "a").WithValue("Ref", "b");
+
+        Assert.Equal("a", args.Get<string>("ref"));
+        Assert.Equal("b", args.Get<string>("Ref"));
+    }
 }

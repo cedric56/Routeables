@@ -6,6 +6,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The link that opened the application is followed when the first page comes late**: the inbox gave up after 30 seconds without a page and kept the link until another one came; the first page that is shown now starts it again.
+- **A value of the arguments is found without the case of its name** when the exact name is not there (`?Ref=mail` is read by `args.Get<string>("ref")`), as a query is read everywhere else; the exact name still wins.
+- **The detection of the Linux distribution survives a file it cannot read**: an error on `/etc/os-release` was kept for the whole process, and `/usr/lib/os-release` (the second place of the specification) was never tried.
+- **A plus in the query of a coordination written by hand is a space**, as for a route (`%2B` is a plus, which is what `ToString()` writes).
 - **The saved history is put back when the first page comes late**: the keeper gave up after 30 seconds without a page, turned itself on and wrote the next route change over the file with one page. It now waits for the first page as long as it lives, and nothing is written before the pages are back.
 - **`RouteParser.Build` gives `/` for a template of optional values with none given** (`{tab?}`), not an empty route that `GoToAsync` by view model refused.
 - **A value that cannot be saved no longer leaves the old one behind**: `PersistBag.Set` wrote nothing for a text over `MaxValueLength`, a type that is not supported or a converter that gives `null`, and the key of an earlier save stayed in the dictionary, so the old value came back at the load. The key is removed.

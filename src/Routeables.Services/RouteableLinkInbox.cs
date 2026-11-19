@@ -19,6 +19,9 @@ public sealed class RouteableLinkInbox
 {
     private static readonly TimeSpan FirstPageTimeout = TimeSpan.FromSeconds(30);
 
+    // How long one wait for the first page lasts; a page that comes later still starts the pump again. Changed by the tests only.
+    internal TimeSpan FirstPageWait { get; init; } = FirstPageTimeout;
+
     /// <summary>The most addresses kept while the application is not ready; beyond it the oldest are dropped (the last address is the one the user wants).</summary>
     internal const int MaxPending = 32;
 
@@ -121,6 +124,7 @@ public sealed class RouteableLinkInbox
     private async Task PumpAsync()
     {
         var noFirstPage = false;
+        IRouter? waitingFor = null;
         try
         {
             var services = provider!;
@@ -130,11 +134,12 @@ public sealed class RouteableLinkInbox
                 noFirstPage = true;
                 return;
             }
-            if (!await WaitForFirstPageAsync(router))
+            if (!await WaitForFirstPageAsync(router, timeout: FirstPageWait))
             {
-                // No page after the wait: the links stay, and the next one that arrives (or the next Attach) tries again. Starting again here
-                // would poll for ever in an application that never shows a page.
+                // No page after the wait: the links stay. Starting again here would poll for ever in an application that never shows a page; the
+                // first page that is shown (a sign-in window can take longer than the wait) starts the pump again, and so does the next link.
                 noFirstPage = true;
+                waitingFor = router;
                 return;
             }
 
@@ -182,7 +187,37 @@ public sealed class RouteableLinkInbox
 
             if (again && !noFirstPage)
                 Kick();
+            else if (again && waitingFor is not null)
+                KickAtFirstPage(waitingFor);
         }
+    }
+
+    private bool watching;
+
+    // Starts the pump when the first page is shown, however late: the link that opened the application is followed then, not dropped.
+    private void KickAtFirstPage(IRouter router)
+    {
+        lock (gate)
+        {
+            if (watching)
+                return;
+            watching = true;
+        }
+
+        void OnRouted(object? sender, RouteableRoutedEventArgs e)
+        {
+            if (router.History.Count == 0)
+                return;
+            router.Routed -= OnRouted;
+            lock (gate)
+                watching = false;
+            Kick();
+        }
+
+        router.Routed += OnRouted;
+        // The page may have been shown between the end of the wait and the subscription.
+        if (router.History.Count > 0)
+            OnRouted(router, null!);
     }
 
     // The menu selects its first entry when the window opens: before that the history is empty.

@@ -107,9 +107,10 @@ public sealed record RouteCoordination(IReadOnlyList<RouteSegment> Segments, boo
         foreach (var part in query.Split('&', StringSplitOptions.RemoveEmptyEntries))
         {
             var eq = part.IndexOf('=');
-            var key = Uri.UnescapeDataString(eq < 0 ? part : part[..eq]);
+            // A plus is a space in a query, as the router reads it ("%2B" is a plus, which is what ToString writes).
+            var key = Uri.UnescapeDataString((eq < 0 ? part : part[..eq]).Replace('+', ' '));
             if (key.Length == 0) continue;
-            object? value = eq < 0 ? null : Uri.UnescapeDataString(part[(eq + 1)..]);
+            object? value = eq < 0 ? null : Uri.UnescapeDataString(part[(eq + 1)..].Replace('+', ' '));
             result.Add(new(key, value));
         }
         return result;
