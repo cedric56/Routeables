@@ -106,4 +106,11 @@ public class RouteLiteralAnalyzerTests
                 MetadataReference.CreateFromFile(typeof(IRouter).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(Microsoft.Extensions.DependencyInjection.IServiceCollection).Assembly.Location)])
             .DistinctBy(r => r.Display);
+
+    [Fact]
+    public async Task A_route_with_a_fragment_an_escaped_literal_or_an_empty_catch_all_is_not_reported()
+    {
+        foreach (var route in new[] { "/monkeys#top", "/mon%6Beys", "/files", "/cat", "/cat/3", "/cat/3/a/b" })
+            Assert.Empty(await Analyze($$"""await router.GoToAsync("{{route}}");""", "[Routeable(\"/cat/{age?}/{**rest}\")] public class CatViewModel { }"));
+    }
 }

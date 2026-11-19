@@ -644,8 +644,12 @@ public static partial class RouteParser
     {
         ArgumentNullException.ThrowIfNull(template);
         var bag = ValuesOf(values);
-        if (ParseTemplate(template).DuplicateName is { } twice)
+        var parsedTemplate = ParseTemplate(template);
+        if (parsedTemplate.DuplicateName is { } twice)
             throw new ArgumentException($"The name {twice} is used twice in \"{template}\": a value cannot be written in the path and in the query.", nameof(template));
+        // What is written must be readable: the router refuses a template whose catch-all is not the last segment.
+        if (parsedTemplate.RestAt >= 0 && parsedTemplate.RestAt != parsedTemplate.Segments.Length - 1)
+            throw new ArgumentException($"The catch-all placeholder {parsedTemplate.Segments[parsedTemplate.RestAt]} of \"{template}\" must be the last segment of the template.", nameof(template));
         if (OptionalNotLast(Split(template).path.Split('/', StringSplitOptions.RemoveEmptyEntries)) is { } notLast)
             throw new ArgumentException($"The optional placeholder {notLast} of \"{template}\" must be the last segment of the template.", nameof(template));
 

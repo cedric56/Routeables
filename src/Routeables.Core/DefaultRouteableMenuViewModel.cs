@@ -46,11 +46,16 @@ internal sealed class DefaultRouteableMenuViewModel(IRouter router) : RouteableM
             if (result.Success)
                 OnRouterMoved(_router.CurrentViewModel);
             else
+            {
+                // The next time the region appears it starts again: a failure of the first try is not a decision.
+                Interlocked.Exchange(ref _started, 0);
                 OnSelectionFailed(result.Exception ?? new InvalidOperationException(
                     $"The route '{HomeRoute}' could not be opened. Give the region the page to show: <RouteableRegion Route=\"/your/page\" />."));
+            }
         }
         catch (Exception exception)
         {
+            Interlocked.Exchange(ref _started, 0);
             OnSelectionFailed(exception);
         }
     }

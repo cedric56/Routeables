@@ -154,6 +154,11 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
 
     private static string Normal(string route)
     {
+        // The fragment is for the browser, never for the route.
+        var hash = route.IndexOf('#');
+        if (hash >= 0)
+            route = route.Substring(0, hash);
+
         // The query starts at a '?' that is not the end of an optional placeholder: "{tab?}" and "{tab::?}" keep theirs.
         for (var i = 0; i < route.Length; i++)
         {
@@ -164,6 +169,13 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
             }
         }
         return route.Trim('/');
+    }
+
+    // "my%20page" is the segment "my page", as the parser reads it.
+    private static string Unescaped(string segment)
+    {
+        try { return Uri.UnescapeDataString(segment); }
+        catch (UriFormatException) { return segment; }
     }
 
     /// <summary>Whether <paramref name="address"/> (already normalised) fits <paramref name="template"/>: literals compared without case, a placeholder takes one segment, <c>{**x}</c> the rest, <c>{x?}</c> may be missing.</summary>
@@ -179,8 +191,9 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
             if (placeholder && segment.StartsWith("{**", StringComparison.Ordinal))
                 return true;
             if (i >= a.Length)
-                return placeholder && segment.EndsWith("?}", StringComparison.Ordinal) && t.Skip(s).All(x => x.EndsWith("?}", StringComparison.Ordinal));
-            if (!placeholder && !string.Equals(segment, a[i], StringComparison.OrdinalIgnoreCase))
+                return placeholder && (segment.EndsWith("?}", StringComparison.Ordinal) || segment.StartsWith("{**", StringComparison.Ordinal))
+                       && t.Skip(s).All(x => x.EndsWith("?}", StringComparison.Ordinal) || x.StartsWith("{**", StringComparison.Ordinal));
+            if (!placeholder && !string.Equals(Unescaped(segment), Unescaped(a[i]), StringComparison.OrdinalIgnoreCase))
                 return false;
             i++;
         }

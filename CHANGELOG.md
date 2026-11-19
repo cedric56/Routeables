@@ -6,6 +6,11 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **`RouteParser.Build` refuses a template whose catch-all is not the last segment** (`/files/{**path}/edit`): it wrote an address that the router refuses to read.
+- **ROUT501 no longer reports valid routes**: an address with a fragment (`#top`), with an escaped literal (`/mon%6Beys`) or that leaves out an optional value followed by a catch-all (`/cat` for `/cat/{age?}/{**rest}`).
+- **The default menu starts again after a failed first try**: `Start` kept its flag when the home route could not be opened, so it never tried again.
+- **The address of the D-Bus session bus is unescaped** (`%hh`), as the specification says.
+- **The guide says which optional placeholders are accepted**: none followed by a required segment; the generated `GoTo…Async` methods are stricter (the optional one must be the last).
 - **The link that opened the application is followed when the first page comes late**: the inbox gave up after 30 seconds without a page and kept the link until another one came; the first page that is shown now starts it again.
 - **A value of the arguments is found without the case of its name** when the exact name is not there (`?Ref=mail` is read by `args.Get<string>("ref")`), as a query is read everywhere else; the exact name still wins.
 - **The detection of the Linux distribution survives a file it cannot read**: an error on `/etc/os-release` was kept for the whole process, and `/usr/lib/os-release` (the second place of the specification) was never tried.

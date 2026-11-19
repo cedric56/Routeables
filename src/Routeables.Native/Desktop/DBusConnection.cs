@@ -240,6 +240,9 @@ internal sealed class DBusConnection : IDisposable
         return null;
     }
 
+    // The values of a D-Bus address escape what is not an optionally-escaped character as %hh.
+    private static string Unescaped(string value) => Uri.UnescapeDataString(value);
+
     private static IEnumerable<EndPoint> Endpoints()
     {
         var found = false;
@@ -253,12 +256,12 @@ internal sealed class DBusConnection : IDisposable
                 if (pair.StartsWith("path=", StringComparison.Ordinal))
                 {
                     found = true;
-                    yield return new UnixDomainSocketEndPoint(pair[5..]);
+                    yield return new UnixDomainSocketEndPoint(Unescaped(pair[5..]));
                 }
                 else if (pair.StartsWith("abstract=", StringComparison.Ordinal))
                 {
                     found = true;
-                    yield return new UnixDomainSocketEndPoint("\0" + pair[9..]);
+                    yield return new UnixDomainSocketEndPoint("\0" + Unescaped(pair[9..]));
                 }
             }
         }

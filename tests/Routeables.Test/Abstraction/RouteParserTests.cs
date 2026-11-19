@@ -584,4 +584,11 @@ public class RouteParserTests
         Assert.Equal("/", RouteParser.Build("{tab?}", new Dictionary<string, object?>()));
         Assert.Equal("tab1", RouteParser.Build("{tab?}", new Dictionary<string, object?> { ["tab"] = "tab1" }));
     }
+
+    [Fact]
+    public void A_template_whose_catch_all_is_not_last_cannot_be_built()
+    {
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("/files/{**path}/edit", new Dictionary<string, object?> { ["path"] = "a/b" }));
+        Assert.Equal("/files/a/b", RouteParser.Build("/files/{**path}", new Dictionary<string, object?> { ["path"] = "a/b" }));
+    }
 }
