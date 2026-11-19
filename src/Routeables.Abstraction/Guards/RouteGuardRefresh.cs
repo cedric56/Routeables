@@ -36,6 +36,7 @@ public static class RouteGuardRefreshExtensions
     {
         ArgumentNullException.ThrowIfNull(router);
         ArgumentNullException.ThrowIfNull(source);
+        properties ??= [];      // an explicit null for the params list is no name: every property
         async void OnChanged(object? sender, PropertyChangedEventArgs e)
         {
             // A null or empty name means "everything changed" (the INotifyPropertyChanged convention): it concerns every property.

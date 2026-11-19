@@ -275,6 +275,36 @@ public class ReviewFixesTests
         Assert.Equal(1, CountedVm.Disposed);
     }
 
+    public sealed class OrderedView : IRouteableFor { public object? Context { get; set; } }
+
+    public sealed class OrderedVm : IRouteable, IDisposable
+    {
+        public static List<string> Log { get; } = [];
+        public void OnUnsubscribe() => Log.Add("unsubscribe");
+        public Task OnLeftAsync(IRouteableArgs context, CancellationToken ct = default) { Log.Add("left"); return Task.CompletedTask; }
+        public void Dispose() => Log.Add("dispose");
+    }
+
+    [Fact]
+    public async Task EraseHistory_tells_the_page_it_is_left_before_it_is_disposed()
+    {
+        OrderedVm.Log.Clear();
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<OrderedView, OrderedVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ordered");
+        services.AddTransient<OrderedVm>();
+        await using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/ordered", cancellationToken: Ct);
+
+        await router.EraseHistoryAsync(Ct);
+
+        var left = OrderedVm.Log.IndexOf("left");
+        Assert.True(left >= 0, "OnLeftAsync was not called");
+        Assert.True(left < OrderedVm.Log.IndexOf("dispose"), string.Join(",", OrderedVm.Log));
+        Assert.True(left < OrderedVm.Log.IndexOf("unsubscribe"), string.Join(",", OrderedVm.Log));
+    }
+
     // ---- Finding 5: the addresses that wait for the application -------------------------------------------------------------------
 
     [Fact]

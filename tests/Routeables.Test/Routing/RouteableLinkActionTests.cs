@@ -9,6 +9,8 @@ using Routeables.Tests.Pages;
 namespace Routeables.Tests.Routing;
 
 /// <summary>What every host's RouteableLink does when its button is clicked.</summary>
+// RouteableErrors.Default is process-wide: the classes that replace it, or read what goes to it, run one after the other.
+[Collection("RouteableErrors.Default")]
 public class RouteableLinkActionTests
 {
 
@@ -62,6 +64,7 @@ public class RouteableLinkActionTests
         }
         finally { RouteableErrors.Default = previous; }
 
-        Assert.Contains("UseRouteables", Assert.Single(sink.Reports).Error.Message);
+        // Other tests in the process may report to the same default meanwhile: only the report of the link counts.
+        Assert.Contains("UseRouteables", Assert.Single(sink.Reports, r => r.Source == "RouteableLink").Error.Message);
     }
 }

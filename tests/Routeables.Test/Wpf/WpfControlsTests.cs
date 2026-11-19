@@ -4,6 +4,7 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Tests.Core;
+using Routeables.Tests.Pages;
 using Routeables.Wpf;
 using System.Globalization;
 using System.Windows.Controls;

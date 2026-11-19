@@ -31,6 +31,27 @@ public class AsyncDisposalTests
         }
     }
 
+    // Its disposal waits until the test lets it go: what the tests of the end of a disposal need is "after Dispose has returned", and a wait that
+    // depends on the thread pool to resume (Task.Yield) fails when the pool is busy with the other tests of a run.
+    private sealed class GatedAsyncOnly(bool fail = false) : IAsyncDisposable
+    {
+        private readonly TaskCompletionSource _go = new();      // resumed on the thread that lets it go: no thread of the pool is needed
+        private readonly TaskCompletionSource _done = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public bool Disposed { get; private set; }
+        public Task Done => _done.Task;
+        public void Go() => _go.TrySetResult();
+
+        public async ValueTask DisposeAsync()
+        {
+            await _go.Task.ConfigureAwait(false);
+            Disposed = true;
+            _done.TrySetResult();
+            if (fail)
+                throw new InvalidOperationException("dispose failed");
+        }
+    }
+
     // Runs on its own thread, with the blocked context, and says whether it came back.
     private static bool ComesBack(Action action)
     {
@@ -40,15 +61,6 @@ public class AsyncDisposalTests
             action();
         }, TaskCreationOptions.LongRunning);
         return task.Wait(TimeSpan.FromSeconds(10));
-    }
-
-    // Polls without blocking the thread: on a host whose test thread owns a synchronization context (a device test runner), the continuation of
-    // DisposeAsync would be posted to the very thread that waits.
-    private static async Task WaitUntilAsync(Func<bool> condition)
-    {
-        var deadline = DateTime.UtcNow.AddSeconds(10);
-        while (!condition() && DateTime.UtcNow < deadline)
-            await Task.Delay(10);
     }
 
     [Fact]
@@ -74,36 +86,28 @@ public class AsyncDisposalTests
     [Fact]
     public async Task The_disposal_started_by_a_synchronous_Dispose_finishes_afterwards()
     {
-        // Off the context of the test thread, so the disposal can continue whatever the host is.
-        var (cache, item) = await Task.Run(() =>
-        {
-            var cache = new ScopedViewCache();
-            var item = (AsyncOnly)cache.GetOrCreate("k", () => new AsyncOnly());
-            cache.Dispose();
-            return (cache, item);
-        });
+        var cache = new ScopedViewCache();
+        var item = (GatedAsyncOnly)cache.GetOrCreate("k", () => new GatedAsyncOnly());
 
-        await WaitUntilAsync(() => item.Disposed);
+        cache.Dispose();                    // returns while the disposal waits: it does not block on it
+        Assert.False(item.Disposed);
+
+        item.Go();
+        await item.Done.WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
         Assert.True(item.Disposed);
-        GC.KeepAlive(cache);
     }
 
     [Fact]
     public async Task A_failing_async_disposal_is_reported_not_thrown_by_Dispose()
     {
-        var (thrown, item) = await Task.Run(() =>
-        {
-            var cache = new ScopedViewCache();
-            var item = (AsyncOnly)cache.GetOrCreate("k", () => new AsyncOnly(fail: true));
+        var cache = new ScopedViewCache();
+        var item = (GatedAsyncOnly)cache.GetOrCreate("k", () => new GatedAsyncOnly(fail: true));
 
-            Exception? thrown = null;
-            try { cache.Dispose(); }
-            catch (Exception ex) { thrown = ex; }
-            return (thrown, item);
-        });
+        var thrown = Record.Exception(cache.Dispose);
 
         Assert.Null(thrown);
-        await WaitUntilAsync(() => item.Disposed);
+        item.Go();
+        await item.Done.WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
         Assert.True(item.Disposed);
     }
 }

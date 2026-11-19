@@ -174,6 +174,22 @@ public class RouterNotFoundAndGuardRefreshTests
     }
 
     [Fact]
+    public async Task RefreshGuardsOn_with_a_null_list_of_properties_follows_every_property()
+    {
+        var session = new Session();
+        await using var provider = Build(notFound: false, session);
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct);
+
+        using var subscription = router.RefreshGuardsOn(session, null, null!);
+        session.IsSignedIn = false;                                            // no NullReferenceException in the handler: the guards run again
+
+        for (var i = 0; i < 200 && router.CurrentViewModel is not LoginVm; i++)
+            await Task.Delay(10, Ct);
+        Assert.IsType<LoginVm>(router.CurrentViewModel);
+    }
+
+    [Fact]
     public async Task RefreshGuardsAsync_with_no_page_does_nothing()
     {
         await using var provider = Build(notFound: false, new Session());

@@ -1,5 +1,6 @@
 ﻿using Routeables.Abstraction.Registrations;
 using Routeables.Tests.Core;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Test.Abstraction;
 

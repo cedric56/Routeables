@@ -15,6 +15,8 @@ namespace Routeables.Tests.Abstraction;
 /// like every other swallowed error. The errors that used to vanish (a region that cannot follow, a failed recovery, a failed
 /// selection) are reported too.
 /// </summary>
+// RouteableErrors.Default is process-wide: the classes that replace it, or read what goes to it, run one after the other.
+[Collection("RouteableErrors.Default")]
 public class RouteableErrorsGuardTests
 {
     private sealed class Sink : IRouteableErrorSink

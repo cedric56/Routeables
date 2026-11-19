@@ -3,6 +3,15 @@ using Routeables.Abstraction.Routing;
 namespace Routeables.Tests.Pages;
 
 /// <summary>The view models of the tests that hold nothing but what their constructor is given. A test with a behaviour of its own (a hook, a counter) keeps its view model.</summary>
+/// /// <summary>
+/// A trivial view-model used as a routing/DI target in tests.
+/// </summary>
+public class FakeViewModel;
+
+/// <summary>
+/// A second distinct view-model type for tests that need two different VM types.
+/// </summary>
+public class OtherFakeViewModel;
 
 public sealed class BackFirstVm;
 public sealed class BackSecondVm;

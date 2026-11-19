@@ -358,9 +358,10 @@ internal class Router(
             if (shown is not null)
                 await lifecycle.NotifyLeavingAsync(shown);
             var removed = history.Clear();
-            await lifecycle.DestroyAsync(removed, history.Snapshot());   // snapshot is empty now
+            // Told before it is destroyed, as for any other route change: a page that is disposed no longer has what OnLeftAsync gives back.
             if (shown is not null)
                 await lifecycle.NotifyLeftAsync(shown);
+            await lifecycle.DestroyAsync(removed, history.Snapshot());   // snapshot is empty now
             return null;
         });
     }

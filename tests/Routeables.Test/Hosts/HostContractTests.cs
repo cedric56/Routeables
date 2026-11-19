@@ -6,6 +6,7 @@ using Routeables.Blazor;
 using Routeables.Tests.Core;
 using AvaloniaApplication = global::Avalonia.Application;
 using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Hosts;
 
 /// <summary>
