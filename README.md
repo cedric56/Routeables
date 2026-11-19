@@ -20,8 +20,6 @@
   <a href="https://www.nuget.org/packages/Reshapes.Maui.Community"><img src="https://img.shields.io/nuget/v/Reshapes.Maui.Community?label=Reshapes.Maui.Community" alt="NuGet"></a>
 </p>
 
-# Routeables
-
 **View-model-first routing for .NET 10: Avalonia, WPF, .NET MAUI, Uno Platform, WinUI 3, Blazor and ASP.NET Core.**
 
 A view model asks an `IRouter` to go somewhere. It never touches a page, a frame or a navigation API of the framework, so the same code runs on every host.
