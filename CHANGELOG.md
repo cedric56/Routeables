@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The generated `GoToXxxAsync` refuse what `RouteParser.Build` refuses**: `.` and `..` as a path value, NaN and infinity for a `double` (an `ArgumentException`, as for an empty piece of a catch-all).
 - **`RouteParser.Build` treats a value whose text is empty as missing** (an empty `StringBuilder`): it wrote `/a//b`, which does not read back.
 - **ROUT501 only checks the `GoToAsync` of the router**, not the one of another library.
 - **`RouteableAddress.Of` keeps the escapes of a route** (`/tags/c%23`, `?q=a%26b`): the implicit string to `PathString` conversion decoded them.

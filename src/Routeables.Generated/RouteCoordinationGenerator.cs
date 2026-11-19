@@ -697,7 +697,8 @@ namespace Routeables.Generated
                     continue;
                 }
 
-                target.BecomeRoute(part.Optional, part.IsRest ? ClrKind.Rest : expected);
+                // A catch-all may be empty for the router ("/files" matches "/files/{**path}"): with a default value its parameter is optional.
+                target.BecomeRoute(part.Optional || (part.IsRest && target.HasDefault), part.IsRest ? ClrKind.Rest : expected);
             }
 
             if (failed)
@@ -819,8 +820,8 @@ namespace Routeables.Generated
                     part.IsQuery ? part.Name : string.Empty,
                     info!.Id,
                     info.RouteKind,
-                    Optional: part.Optional,
-                    Conditional: part.Optional && info.CanBeNull,
+                    Optional: info.RouteOptional,
+                    Conditional: info.RouteOptional && info.CanBeNull,
                     NullableValue: info.KeepsNullableValue));
             }
 
@@ -995,7 +996,7 @@ namespace Routeables.Generated
                     case RouteOpKind.PathParam:
                         pending.Append(op.Prefix);
                         Flush();
-                        expressions.Add(Format(op.Clr, ValueOf(op)));
+                        expressions.Add(Format(op.Clr, ValueOf(op), path: true));
                         break;
                     default:
                         queryOps.Add(op);
@@ -1008,7 +1009,7 @@ namespace Routeables.Generated
 
             foreach (var op in deferred)
             {
-                var statement = "__route += " + Literal(op.Prefix) + " + " + Format(op.Clr, ValueOf(op)) + ";";
+                var statement = "__route += " + Literal(op.Prefix) + " + " + Format(op.Clr, ValueOf(op), path: true) + ";";
                 sb.AppendLine(indent + (op.Conditional ? "if (" + op.ParamId + " is not null) " : string.Empty) + statement);
             }
 
@@ -1032,7 +1033,7 @@ namespace Routeables.Generated
 
         private static string ValueOf(RouteOp op) => op.NullableValue ? op.ParamId + ".Value" : op.ParamId;
 
-        private static string Format(ClrKind kind, string value)
+        private static string Format(ClrKind kind, string value, bool path = false)
         {
             switch (kind)
             {
@@ -1044,17 +1045,22 @@ namespace Routeables.Generated
                     return "global::System.Uri.EscapeDataString((" + value + " / 1.0000000000000000000000000000m).ToString(global::System.Globalization.CultureInfo.InvariantCulture))";
                 case ClrKind.Double:
                     // -0.0 is the text 0.
-                    return "global::System.Uri.EscapeDataString((" + value + " == 0d ? 0d : " + value + ").ToString(global::System.Globalization.CultureInfo.InvariantCulture))";
+                    // NaN and infinity are not numbers a route can read back (RouteParser.Build refuses them).
+                    return "global::System.Uri.EscapeDataString((!global::System.Double.IsFinite(" + value + ") ? throw new global::System.ArgumentException(\"A route value cannot be NaN or infinity.\") : " + value + " == 0d ? 0d : " + value + ").ToString(global::System.Globalization.CultureInfo.InvariantCulture))";
                 case ClrKind.Bool:
                     return "(" + value + " ? \"true\" : \"false\")";
                 case ClrKind.Guid:
                     return "global::System.Uri.EscapeDataString(" + value + ".ToString())";
                 case ClrKind.Rest:
-                    // The rest of the path keeps its slashes; each piece is escaped (RouteParser.Build does the same).
-                    return "global::System.String.Join(\"/\", global::System.Linq.Enumerable.Select(" + value
-                        + ".Split(new[] { '/' }, global::System.StringSplitOptions.RemoveEmptyEntries), new global::System.Func<string, string>(global::System.Uri.EscapeDataString)))";
+                    // The rest of the path keeps its slashes; each piece is escaped (RouteParser.Build does the same), and an empty piece, "." or ".." is refused, as Build does.
+                    return "(" + value + ".Length == 0 ? \"\" : global::System.String.Join(\"/\", global::System.Linq.Enumerable.Select(" + value
+                        + ".Split('/'), new global::System.Func<string, string>(__piece => __piece.Length == 0 || __piece == \".\" || __piece == \"..\""
+                        + " ? throw new global::System.ArgumentException(\"A catch-all value has no empty, \\\".\\\" or \\\"..\\\" segment.\") : global::System.Uri.EscapeDataString(__piece)))))";
                 default:
-                    return "global::System.Uri.EscapeDataString(" + value + ")";
+                    // "." and ".." are not a segment of a path: a browser resolves them to another address (RouteParser.Build refuses them).
+                    return path
+                        ? "(" + value + " is \".\" or \"..\" ? throw new global::System.ArgumentException(\"A path value cannot be \\\".\\\" or \\\"..\\\".\") : global::System.Uri.EscapeDataString(" + value + "))"
+                        : "global::System.Uri.EscapeDataString(" + value + ")";
             }
         }
 
