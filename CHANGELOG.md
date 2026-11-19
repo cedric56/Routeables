@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **The coverage summary leaves out the lines that hold only a brace, a blank or a comment** from "Not covered" and "Lines not run" (the coverage tool counts them, and marks the closing brace of a method that throws as not run), and lists twelve ranges instead of eight: what is left is code a test can reach.
 - **The tests are sorted by what they test**: the 25 tests of three classes named after audits (`RouterAuditFixesTests`, `ExternalAuditTests`, `AuditFollowUpTests`) now sit with the tests of their feature (route parser, route address, constructor arguments, modules, form lock, view cache, `RouteableReturn`, Blazor address comparison, router failures and guard refresh), or in new classes: `RouterValueBindingTests`, `RouterTypedMenuEntryTests`, `RouteableStateRestoreTests`.
 - **The README is shorter**: what the library is, one install, one first page on Avalonia, the demos, the packages and links. The table of areas moved to [What Routeables offers](docs/features.md), and the table of hosts and the families of UI to [Hosts and packages](docs/packages.md).
 - **New in the docs**: [recipes](docs/guides/recipes.md) for five tasks (a sign-in guard, master and detail with a region, passing an object, asking before leaving, tabs with their own history) and a [glossary](docs/guides/glossary.md) of the words of the project.

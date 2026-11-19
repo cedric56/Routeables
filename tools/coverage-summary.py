@@ -8,6 +8,10 @@ With --min the exit code is 1 when the line coverage of the whole is below it (t
 when the line coverage of the assembly NAME is below it. With --files N a second table lists the N files with the most lines that no test
 runs (the place to write the next tests); --files-of keeps the assemblies whose name contains TEXT. A file shared between hosts
 (Routeables.Shared is compiled into each of them) is listed once for each assembly that holds a copy.
+
+The coverage tool counts the lines that hold only a brace as lines of code, and marks the closing brace of a method that always throws as
+not run. In the second table such a line (only a brace, a blank or a comment) is left out of "Not covered" and of "Lines not run", when
+the source file is found from the directory where the script runs (the root of the repository): what is listed is code to write a test for.
 """
 import re
 import sys
@@ -21,6 +25,24 @@ def repo_path(path):
     path = path.replace("\\", "/")
     found = _ROOT.match(path)
     return found.group(1) if found else path
+
+
+_SOURCES = {}
+
+
+def is_trivial(file, number):
+    """True when the line of the source file holds only a brace, a blank or a comment. False when the file is not there."""
+    if file not in _SOURCES:
+        try:
+            with open(file, encoding="utf-8-sig") as handle:
+                _SOURCES[file] = handle.read().split("\n")
+        except OSError:
+            _SOURCES[file] = None
+    text = _SOURCES[file]
+    if text is None or not 0 < number <= len(text):
+        return False
+    stripped = text[number - 1].strip()
+    return stripped in ("", "{", "}", "};", "});", ");", "]", "];") or stripped.startswith("//")
 
 
 def ranges(numbers, limit=8):
@@ -113,11 +135,11 @@ def main(argv):
             for (file, number), hit in lines[name].items():
                 total, covered = by_file.get(file, (0, 0))
                 by_file[file] = (total + 1, covered + (1 if hit else 0))
-                if not hit:
+                if not hit and not is_trivial(file, int(number)):
                     missed.setdefault(file, []).append(int(number))
             for file, (total, covered) in by_file.items():
-                if total > covered:
-                    rows.append((total - covered, total, covered, name, file, ranges(missed[file])))
+                if file in missed:
+                    rows.append((len(missed[file]), total, covered, name, file, ranges(missed[file], 12)))
         rows.sort(key=lambda r: (-r[0], r[3], r[4]))
         print(f"\n| Not covered | Lines | Line coverage | Assembly | File | Lines not run |")
         print("|---:|---:|---:|---|---|---|")
