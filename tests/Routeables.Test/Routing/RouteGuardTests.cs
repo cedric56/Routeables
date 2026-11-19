@@ -399,7 +399,10 @@ public class RouteGuardTests
         {
             var t = tags.ToArray();
             Assert.True(value >= 0);
-            lock (measures) measures.Add((t.Single(x => x.Key == "routeables.guard").Value!.ToString()!, t.Single(x => x.Key == "routeables.decision").Value!.ToString()!));
+            var guard = t.Single(x => x.Key == "routeables.guard").Value!.ToString()!;
+            // The meter is process-wide: guards of tests running at the same time report here too.
+            if (guard != nameof(Guard)) return;
+            lock (measures) measures.Add((guard, t.Single(x => x.Key == "routeables.decision").Value!.ToString()!));
         });
         meterListener.Start();
         using var provider = Build(new Guard(c => IsAdmin(c) ? RouteGuardDecision.Cancel : RouteGuardDecision.Allow));
