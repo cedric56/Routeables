@@ -368,4 +368,28 @@ public class PersistTests
         Assert.Equal("42", back.Value);
         Assert.Equal(1, ((ShadowBase)back).Value);     // not 42: it keeps its own value, which was not saved under this name
     }
+
+    [Fact]
+    public void A_value_that_cannot_be_written_removes_what_an_earlier_save_left()
+    {
+        var into = new Dictionary<string, string>();
+        var bag = new PersistBag((IDictionary<string, string>)into);
+        Assert.True(bag.Set("Draft", "draft v1"));
+
+        Assert.False(bag.Set("Draft", new string('x', RouteablePersistence.MaxValueLength + 1)));
+
+        Assert.False(new PersistBag((IReadOnlyDictionary<string, string>)into).TryGet<string>("Draft", out _));
+    }
+
+    [Fact]
+    public void A_value_that_the_read_would_not_give_back_is_not_written()
+    {
+        var into = new Dictionary<string, string>();
+        var bag = new PersistBag((IDictionary<string, string>)into);
+
+        Assert.False(bag.Set<object>("Boxed", 42));                     // read as the type object: nothing
+        Assert.False(bag.Set("Day", (DayOfWeek)9));                     // a number that names no member
+        Assert.True(bag.Set("Known", DayOfWeek.Friday));
+        Assert.Equal(["persist:Known"], into.Keys.ToArray());
+    }
 }

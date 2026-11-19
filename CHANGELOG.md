@@ -6,6 +6,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A value that cannot be saved no longer leaves the old one behind**: `PersistBag.Set` wrote nothing for a text over `MaxValueLength`, a type that is not supported or a converter that gives `null`, and the key of an earlier save stayed in the dictionary, so the old value came back at the load. The key is removed.
+- **`[Persist]` does not write what it cannot read back**: a value whose type is not the declared one (an `int` in a property of type `object`) and an enum number that names no member were written (the save said it worked) and came back as nothing or as `0`; they are not written now.
+- **"No route matches" names a template written with a misplaced placeholder**: `/users/{id?:int}` (for `{id:int?}`) and `?q={q}` (for `{q}`) are read as fixed text, and the message told to register a route that was registered. It now names the template and the piece, and how a placeholder is written.
 - **`GetModalFor<TViewModel, TResult>()` finds the view without a `route`**: it looked for the view under the name of the view model type, a key nothing is registered under, so the call always failed; it now uses the key the view is registered under, as `ShowModalAsync` does.
 - **Uno and WinUI 3: `RouteTransitionDuration` alone plays the theme transition**: an unset `RouteTransition` was read as the transition "None", so the fall back on the duration never happened; the other hosts already ignored a blank name.
 - **`RouteableLinkInbox` does not spin when no router is registered**: it started its pump again and again; it now stops, as it does when no page ever comes.

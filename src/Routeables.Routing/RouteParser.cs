@@ -616,6 +616,24 @@ public static partial class RouteParser
     }
 
     /// <summary>
+    /// A piece of a template that looks like a placeholder and is not one (<c>{id?:int}</c> for <c>{id:int?}</c>, <c>q={q}</c> for <c>{q}</c> in a query), which the
+    /// parser reads as fixed text: <see langword="null"/> when there is none. Used to say why a registered route does not match.
+    /// </summary>
+    internal static string? LooksLikeAPlaceholder(string template)
+    {
+        var (path, query) = Split(template);
+        foreach (var segment in path.Split('/', StringSplitOptions.RemoveEmptyEntries))
+            if (segment.Contains('{') && segment.Contains('}') && !Param.IsMatch(segment))
+                return segment;
+
+        foreach (var part in query.Split('&', StringSplitOptions.RemoveEmptyEntries))
+            if (!Param.IsMatch(part) && part.IndexOf('=') is var eq and > 0 && part[(eq + 1)..] is var value && value.StartsWith('{') && value.EndsWith('}'))
+                return part;
+
+        return null;
+    }
+
+    /// <summary>
     /// Writes the route a template stands for: the placeholders are filled from <paramref name="values"/> (an object's properties or a
     /// dictionary of name to value; names are not case-sensitive). Numbers and dates are written with the invariant culture, a
     /// registered type (<c>{person:Person}</c>) as JSON, and each value is escaped. A missing optional value leaves its segment (or its

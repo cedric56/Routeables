@@ -75,6 +75,9 @@ public sealed class PersistBag
             // best effort: the value is left out
         }
 
+        // Nothing is written: what an earlier save left under this name is not the value of the property any more, and must not come back.
+        try { _write.Remove(RouteablePersistence.KeyPrefix + name); }
+        catch (Exception ex) when (ex is not OutOfMemoryException) { }
         return false;
     }
 
@@ -154,6 +157,13 @@ internal static class PersistCodec
             return written is not null;
         }
 
+        // The read gives back the type the property declares: a value of another type (an int in a property of type object) would be written and never read.
+        if (value!.GetType() != (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)))
+        {
+            text = "";
+            return false;
+        }
+
         switch (value)
         {
             case string s: text = s; return true;
@@ -165,7 +175,11 @@ internal static class PersistCodec
             case TimeSpan t: text = t.ToString("c", inv); return true;
             case DateOnly d: text = d.ToString("O", inv); return true;
             case TimeOnly t: text = t.ToString("O", inv); return true;
-            case Enum e: text = e.ToString(); return true;
+            case Enum e:
+                // A number that names no member comes back as nothing (see the read): it is not written.
+                if (!IsKnown(e.GetType(), e)) { text = ""; return false; }
+                text = e.ToString();
+                return true;
             case IFormattable f when value.GetType().IsPrimitive || value is decimal || value is Int128 || value is UInt128:
                 text = f.ToString(value is double or float ? "R" : null, inv);
                 return true;

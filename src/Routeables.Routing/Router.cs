@@ -665,6 +665,10 @@ internal class Router(
             return await GoToAsync(notFound.Route, shown, null, cancellationToken);
         }
 
+        // A template written with a placeholder that the parser reads as fixed text is the likely reason a registered route does not match.
+        if (entries.Select(e => (e.Template, Piece: RouteParser.LooksLikeAPlaceholder(e.Template))).FirstOrDefault(e => e.Piece is not null) is { Piece: { } piece } suspect)
+            hint += $" The registered template '{suspect.Template}' has '{piece}', which is read as fixed text: a placeholder is written {{name}}, {{name:type}} or {{name:type?}} (optional), and in a query {{name}} on its own, not name={{name}}.";
+
         return RouteableResult.Fail(new InvalidOperationException($"No route matches '{url}'. Register it with an explicit route, for instance RegisterRoute<TView, TViewModel>(route: \"/orders/{{id:int}}\")." + hint));
     }
 

@@ -45,4 +45,21 @@ public class QueryOnlyRoutesTests
         Assert.True((await router.GoToAsync("/qo-search", cancellationToken: ct)).Success);
         Assert.IsType<QoListVm>(router.CurrentViewModel);
     }
+
+    [Theory]
+    [InlineData("/qo-bad/{id?:int}", "/qo-bad/5")]
+    [InlineData("/qo-bad?q={q}", "/qo-bad?q=shoes")]
+    public async Task A_template_with_a_misplaced_placeholder_is_named_when_no_route_matches(string template, string address)
+    {
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<QoListView, QoListVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, template);
+        using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+
+        var result = await router.GoToAsync(address, cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.False(result.Success);
+        Assert.Contains("read as fixed text", result.Exception?.Message);
+    }
 }
