@@ -17,6 +17,11 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The dialog window of Avalonia no longer shows in a corner before it is centred**: it opened at (-32000, -32000) and was moved once its size was known, which a system may undo (Wayland, macOS) and which was seen on screen. It now opens transparent on its owner and is made visible once it is centred.
+- **Two threads that build views which need each other no longer block for ever** (`ScopedViewCache`): X is being built and asks for Y while Y asks for X. The circular dependency was only seen on one thread; across two, each waited for the lock of the other. One of the two now fails with the same `InvalidOperationException`, the other finishes.
+- **Blazor notifications: a failed start is not kept**: when the import of the module or the registration of the service worker failed, the failed task stayed in the cache and every later call failed with it, and the reference to the module that was loaded was never given back. The next call now starts again.
+- **`RouteCoordination.Parse` refuses what the builder refuses**: a segment named `.`, or `..` written escaped (`%2E%2E`, which was read as the way back). Only a plain `..` is the way back.
+- **`os-release`: the escapes of a double-quoted value are decoded** (`\"`, `\\`, `\$`, `` \` ``), as the specification says.
 - **`AddRegion` refuses `ServiceLifetime.Transient`**, as `RegisterRouting` does: each resolve of a transient region got a history of its own, so the pages shown were lost without a word. It throws an `ArgumentOutOfRangeException` at registration.
 - **Two test classes no longer disturb each other through `RouteableErrors.Default`**: `RouteableLinkActionTests` replaces that process-wide default while `RouteableErrorsGuardTests` listens to what goes to it, so under parallel runs one saw the reports of the other (a missing trace, three reports instead of one). Both are in one xUnit collection, and the link test counts only its own report.
 - **`EraseHistoryAsync` told the page it was left after disposing it**: `OnLeftAsync` ran after `OnUnsubscribe` and `Dispose`, so a transient page that gave back a resource there got an `ObjectDisposedException` (reported, the clean-up half done). `OnLeftAsync` now runs first, as in every other route change.

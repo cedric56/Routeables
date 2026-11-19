@@ -17,6 +17,24 @@ public class RouteCoordinationBuilderTests
     }
 
     [Theory]
+    [InlineData(".")]
+    [InlineData("Orders/./Detail")]
+    [InlineData("%2E%2E")]
+    [InlineData("Orders/%2e%2e")]
+    public void The_parser_refuses_the_names_that_the_builder_refuses(string uri)
+    {
+        Assert.False(RouteCoordination.TryParse(uri, out _, out var error));
+        Assert.IsType<FormatException>(error);
+    }
+
+    [Fact]
+    public void A_plain_way_back_is_still_read_as_a_way_back()
+    {
+        Assert.True(RouteCoordination.TryParse("Orders/../Detail?id=5", out var coordination, out _));
+        Assert.Equal(RouteSegmentKind.Back, coordination.Segments[1].Kind);
+    }
+
+    [Theory]
     [InlineData("..")]
     [InlineData(".")]
     public void A_segment_cannot_be_named_like_the_way_back(string name)

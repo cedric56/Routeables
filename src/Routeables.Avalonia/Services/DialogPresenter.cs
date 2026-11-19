@@ -56,10 +56,12 @@ internal static class DialogPresenter
             WindowStartupLocation = WindowStartupLocation.CenterOwner
         };
 
-        // SizeToContent is applied after the window is shown, so the window would first appear in a corner and then jump to the centre.
-        var offscreen = parent.Bounds.Width > 0 && parent.Bounds.Height > 0;
-        if (offscreen)
-            PlaceOffscreen(dialog);
+        // SizeToContent is applied after the window is shown, so the window would first appear off the centre and then jump to it.
+        // It is shown transparent, and made opaque once it is centred: nobody sees the jump. (It used to open at -32000, -32000, where
+        // some systems bring a window back to the screen: Wayland, macOS.)
+        var hidden = parent.Bounds.Width > 0 && parent.Bounds.Height > 0;
+        if (hidden)
+            dialog.Opacity = 0;
 
         handle.CloseSurface = dialog.Close;
 
@@ -80,7 +82,7 @@ internal static class DialogPresenter
         dialog.Opened += (_, _) =>
         {
             handle.NotifyOpened();
-            if (offscreen)
+            if (hidden)
                 Dispatcher.UIThread.Post(() => CenterOnOwner(dialog, parent), DispatcherPriority.Loaded);
         };
 
@@ -95,16 +97,15 @@ internal static class DialogPresenter
         }
     }
 
-    // The window sizes itself to its content (as it always did), but only after it is shown, and an estimate of the size is wrong for
-    // a content that is not in the tree yet (a view with a template). So the window opens far outside the screen, where nobody sees
-    // it, and is centred on its owner once its real size is known.
-    private static void PlaceOffscreen(Window dialog)
+    // The window sizes itself to its content, but only after it is shown, and an estimate of the size is wrong for a content that is not
+    // in the tree yet (a view with a template). So it is centred on its owner once its real size is known, and only then made visible.
+    private static void CenterOnOwner(Window dialog, Window parent)
     {
-        dialog.WindowStartupLocation = WindowStartupLocation.Manual;
-        dialog.Position = new PixelPoint(-32000, -32000);
+        try { Place(dialog, parent); }
+        finally { dialog.Opacity = 1; }
     }
 
-    private static void CenterOnOwner(Window dialog, Window parent)
+    private static void Place(Window dialog, Window parent)
     {
         var scale = dialog.RenderScaling;
         var width = (int)Math.Round(dialog.Bounds.Width * scale);

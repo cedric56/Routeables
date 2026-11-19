@@ -8,7 +8,11 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
 {
     // One entry per key: the factory (code of the application: a constructor) runs under the lock of its own entry, never under the one of the
     // cache, so that a constructor that waits for another thread which asks this cache for something else does not block it for ever.
-    private sealed class Entry { public readonly object Gate = new(); public object? Value; }
+    private sealed class Entry { public readonly object Gate = new(); public object? Value; public Thread? Builder; }
+
+    // The entry each thread waits for, under _gate: with the builder of every entry it tells that two threads wait for each other
+    // (X builds and needs Y, while Y builds and needs X), which would block both for ever instead of failing like a circular dependency does.
+    private readonly Dictionary<Thread, Entry> _waiting = [];
 
     private readonly Dictionary<object, Entry> _cache = new();
     private readonly object _gate = new();
@@ -32,14 +36,26 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
         if (Monitor.IsEntered(entry.Gate))
             throw new InvalidOperationException($"A circular dependency: the construction of \"{key}\" asked for itself.");
 
+        var current = Thread.CurrentThread;
+        lock (_gate)
+        {
+            if (WaitsForEachOther(entry, current))
+                throw new InvalidOperationException($"A circular dependency: the construction of \"{key}\" waits for a view that is being built by a thread that waits for this one.");
+            _waiting[current] = entry;
+        }
+
         lock (entry.Gate)
         {
+            lock (_gate) _waiting.Remove(current);
             if (entry.Value is { } built)
                 return built;       // another caller built it while this one waited for the entry
 
             // A failure keeps the entry: a caller that waited on it builds the page under the same lock, and what it builds stays in the cache
             // (removing the entry would leave that caller with a page the cache no longer owns).
-            var created = factory();
+            entry.Builder = current;
+            object created;
+            try { created = factory(); }
+            finally { entry.Builder = null; }
 
             lock (_gate)
             {
@@ -55,6 +71,21 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
             else if (created is IAsyncDisposable asyncDisposable) AsyncDisposal.Start<ScopedViewCache>(asyncDisposable);
             throw new ObjectDisposedException(GetType().Name);
         }
+    }
+
+    // Whether the thread that builds `wanted` waits, directly or not, for an entry that `current` builds. Called under _gate.
+    private bool WaitsForEachOther(Entry wanted, Thread current)
+    {
+        var builder = wanted.Builder;
+        for (var steps = 0; builder is not null && steps <= _waiting.Count; steps++)
+        {
+            if (ReferenceEquals(builder, current))
+                return true;
+            if (!_waiting.TryGetValue(builder, out var next))
+                return false;
+            builder = next.Builder;
+        }
+        return false;
     }
 
     /// <summary>Whether this cache created <paramref name="instance"/>, and so will dispose it and may hand it out again.</summary>

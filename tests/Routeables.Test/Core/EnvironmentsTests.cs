@@ -246,6 +246,19 @@ public class EnvironmentsTests
     };
 
     [Fact]
+    public void An_os_release_decodes_the_escapes_of_a_double_quoted_value_and_leaves_a_single_quoted_one_alone()
+    {
+        var values = DistributionImplementation.ParseOsRelease(
+        [
+            "A=\"say \\\"hi\\\" \\$HOME \\\\ \\`x\\` \\n\"",
+            "B='keep \\$ as it is'",
+        ]);
+
+        Assert.Equal("say \"hi\" $HOME \\ `x` \\n", values["A"]);       // "\n" is not an escape of the specification: it stays
+        Assert.Equal("keep \\$ as it is", values["B"]);
+    }
+
+    [Fact]
     public void An_os_release_gives_its_last_assignment_and_skips_comments_and_lines_that_are_not_assignments()
     {
         var values = DistributionImplementation.ParseOsRelease(

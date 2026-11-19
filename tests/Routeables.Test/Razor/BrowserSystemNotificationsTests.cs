@@ -46,6 +46,39 @@ public class BrowserSystemNotificationsTests
     private static BrowserSystemNotifications Create(FakeModule module, AppNotificationOptions? options = null)
         => new(new FakeJs(module), options ?? new AppNotificationOptions());
 
+    // The service worker cannot be registered the first time (a network error): the module is given back and the next call starts again.
+    private sealed class FlakyModule : IJSObjectReference
+    {
+        public int Registrations { get; private set; }
+        public int Disposals { get; private set; }
+
+        public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args)
+        {
+            if (identifier == "register" && Registrations++ == 0)
+                throw new JSException("service worker failed");
+            object? result = identifier switch { "permission" => "granted", "register" => true, _ => null };
+            return new((TValue)result!);
+        }
+
+        public ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args)
+            => InvokeAsync<TValue>(identifier, args);
+
+        public ValueTask DisposeAsync() { Disposals++; return ValueTask.CompletedTask; }
+    }
+
+    [Fact]
+    public async Task A_start_that_failed_is_not_kept_and_the_module_that_was_loaded_is_given_back()
+    {
+        var module = new FlakyModule();
+        var system = new BrowserSystemNotifications(new FakeJs(module), new AppNotificationOptions());
+
+        Assert.Null(await system.CreateNotificationAsync(null));     // "unsupported": the start failed
+        Assert.Equal(1, module.Disposals);
+
+        Assert.NotNull(await system.CreateNotificationAsync(null));  // the next call starts again and works
+        Assert.Equal(2, module.Registrations);
+    }
+
     [Fact]
     public async Task A_granted_permission_creates_notifications_with_increasing_ids()
     {

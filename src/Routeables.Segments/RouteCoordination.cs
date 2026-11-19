@@ -87,6 +87,14 @@ public sealed record RouteCoordination(IReadOnlyList<RouteSegment> Segments, boo
                 return false;
             }
 
+            // The builder refuses a segment named "." or "..": the parser reads the same. ".." written plainly is the way back; "." or an escaped
+            // "%2E%2E" is no page, and read as one it would not give back the address it came from.
+            if (name == "." || (name == RouteSegment.BackName && head != RouteSegment.BackName))
+            {
+                error = new FormatException($"Segment '{piece}' cannot be named \".\" or \"..\" (only a plain \"..\" is the way back).");
+                return false;
+            }
+
             var parameters = ParseQuery(query);
             if (name == RouteSegment.BackName)
             {

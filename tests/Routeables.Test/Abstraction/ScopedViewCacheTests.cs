@@ -186,4 +186,34 @@ public class ScopedViewCacheTests
 
         Assert.Equal(3, log.Count);
     }
+
+    [Fact]
+    public async Task Two_threads_that_build_views_which_need_each_other_do_not_wait_for_ever()
+    {
+        using var cache = new ScopedViewCache();
+        using var both = new Barrier(2);
+
+        // X is being built and asks for Y, while Y is being built and asks for X: one of the two fails like a circular dependency, the other finishes.
+        object Build(string mine, string other)
+            => cache.GetOrCreate(mine, () =>
+            {
+                both.SignalAndWait(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+                cache.GetOrCreate(other, () => new Item());
+                return new Item();
+            });
+
+        var x = Task.Run(() => Build("X", "Y"), TestContext.Current.CancellationToken);
+        var y = Task.Run(() => Build("Y", "X"), TestContext.Current.CancellationToken);
+
+        var finished = await Task.WhenAny(Task.WhenAll(Settle(x), Settle(y)), Task.Delay(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken));
+        Assert.True(x.IsCompleted && y.IsCompleted, "the two threads wait for each other");
+        Assert.Contains(new[] { x, y }, task => task.IsFaulted && task.Exception!.GetBaseException() is InvalidOperationException);
+        GC.KeepAlive(finished);
+    }
+
+    private static async Task Settle(Task task)
+    {
+        try { await task; }
+        catch (Exception) { /* the failure is looked at by the test */ }
+    }
 }

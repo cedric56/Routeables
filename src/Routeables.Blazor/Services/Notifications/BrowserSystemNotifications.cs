@@ -74,20 +74,45 @@ internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationO
         }
         catch (Exception ex) when (ex is InvalidOperationException or JSException or JSDisconnectedException)
         {
-            _module = null;
-            _ready = null;
+            Forget();
             return "unsupported";
         }
+    }
+
+    // The module and its start are not kept after a failure: the next call starts again, and the reference that was loaded is given back.
+    private void Forget()
+    {
+        var module = _module;
+        _module = null;
+        _ready = null;
+        if (module is { IsCompletedSuccessfully: true })
+            _ = DisposeQuietlyAsync(module.Result);
+    }
+
+    private static async Task DisposeQuietlyAsync(IJSObjectReference module)
+    {
+        try { await module.DisposeAsync(); }
+        catch (Exception ex) when (ex is JSDisconnectedException or JSException or InvalidOperationException or TaskCanceledException) { }   // the circuit is gone
     }
 
     // The module, once the messages of the service worker are listened to and the service worker is registered (or found missing).
     private async Task<IJSObjectReference> ReadyAsync()
     {
-        _module ??= js.InvokeAsync<IJSObjectReference>("import", Module).AsTask();
-        var module = await _module;
-        _ready ??= StartAsync(module);
-        await _ready;
-        return module;
+        var loading = _module ??= js.InvokeAsync<IJSObjectReference>("import", Module).AsTask();
+        try
+        {
+            var module = await loading;
+            var ready = _ready ??= StartAsync(module);
+            await ready;
+            return module;
+        }
+        catch
+        {
+            // A failed import or start stays in the cache otherwise, and every later call fails with it.
+            if (ReferenceEquals(_module, loading))
+                Forget();
+            throw;
+        }
     }
 
     private async Task StartAsync(IJSObjectReference module)

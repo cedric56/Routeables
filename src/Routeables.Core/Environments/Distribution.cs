@@ -157,14 +157,29 @@ internal class DistributionImplementation : IDistribution
         var key = line[..separator];
         var value = line[(separator + 1)..].Trim();
 
-        if (value.Length >= 2 &&
-            ((value[0] == '"' && value[^1] == '"') ||
-             (value[0] == '\'' && value[^1] == '\'')))
-        {
-            value = value[1..^1];
-        }
+        if (value.Length >= 2 && value[0] == '"' && value[^1] == '"')
+            value = UnescapeDoubleQuoted(value[1..^1]);
+        else if (value.Length >= 2 && value[0] == '\'' && value[^1] == '\'')
+            value = value[1..^1];       // single quotes: the text as it is
 
         return new(key, value);
+    }
+
+    // The specification of os-release: in double quotes a backslash escapes only a dollar sign, a quote, a backslash and a backquote (as in the shell).
+    private static string UnescapeDoubleQuoted(string text)
+    {
+        if (!text.Contains('\\'))
+            return text;
+
+        var result = new System.Text.StringBuilder(text.Length);
+        for (var i = 0; i < text.Length; i++)
+        {
+            if (text[i] == '\\' && i + 1 < text.Length && text[i + 1] is '$' or '"' or '\\' or '`')
+                i++;
+            result.Append(text[i]);
+        }
+
+        return result.ToString();
     }
 
     /// <summary>
