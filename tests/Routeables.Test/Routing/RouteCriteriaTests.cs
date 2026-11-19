@@ -176,6 +176,21 @@ public class RouteCriteriaTests
         Assert.Equal("house", entry.Path);
     }
 
+    [Fact]
+    public async Task A_tab_without_a_route_is_the_name_of_its_view_model_and_never_an_internal_key()
+    {
+        var services = new ServiceCollection();
+        services.RegisterMenuViewModel<MenuMain>(ServiceLifetime.Singleton);
+        services.AddRoutes(n => n.Tab<HomeView, HomeVm>("Home"));
+        using var provider = services.BuildServiceProvider();
+
+        var entry = Assert.Single(provider.GetRequiredService<IRouteableMenuViewModel>().Entries);
+        Assert.Equal("/home", entry.Template);
+        Assert.Equal("/home", entry.Route);
+        Assert.Equal("/home", RouteBuilder.DefaultRoute(typeof(HomeVm)));
+        Assert.True((await provider.GetRequiredService<IRouter>().GoToAsync("/home", cancellationToken: TestContext.Current.CancellationToken)).Success);
+    }
+
     public sealed class FormView : IRouteableFor { public object? Context { get; set; } }
     public sealed class FormVm { }
 

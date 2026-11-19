@@ -63,10 +63,28 @@ public sealed class RouteBuilder
         where TView : class where TViewModel : class
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
-        var template = route ?? RouteableKeys.GetTemplate(typeof(TViewModel));
+        var template = !string.IsNullOrWhiteSpace(route) ? route : DefaultRoute(typeof(TViewModel));
         _services.RegisterRoute<TView, TViewModel>(route: template);
-        _services.AddMenuEntries(() => [new RouteableMenuEntry<TViewModel>(displayName, icon, route, template, description)], index);
+        _services.AddMenuEntries(() => [new RouteableMenuEntry<TViewModel>(displayName, icon, template, template, description)], index);
         return this;
+    }
+
+    // The route of a tab declared without one: the [Routeable] of the view model, else its name ("/home" for a HomeViewModel). Never the
+    // internal key of the view, which is not an address.
+    internal static string DefaultRoute(Type viewModelType)
+    {
+        if (viewModelType.GetCustomAttributes(typeof(RouteableAttribute), false).FirstOrDefault() is RouteableAttribute { Path: { } path } && !string.IsNullOrWhiteSpace(path))
+            return path;
+
+        var name = viewModelType.Name;
+        foreach (var suffix in new[] { "ViewModel", "Vm" })
+            if (name.Length > suffix.Length && name.EndsWith(suffix, StringComparison.Ordinal))
+            {
+                name = name[..^suffix.Length];
+                break;
+            }
+
+        return "/" + name.ToLowerInvariant();
     }
 
     /// <summary>

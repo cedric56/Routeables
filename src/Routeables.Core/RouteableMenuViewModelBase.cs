@@ -154,6 +154,10 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     private readonly SemaphoreSlim _selectionGate = new(1, 1);
     private int _selectionVersion;
 
+    // The versions of the selections that are running or waiting for the gate. When the newest one is cancelled, the version that is current
+    // again is the newest of these, not simply the one before it (that one may have been cancelled too).
+    private readonly SortedSet<int> _liveSelections = [];
+
     /// <summary>
     /// The selected entry. Setting it selects that entry without waiting (use <see cref="SelectAsync(IRouteableMenuEntry?, IRouteableMenuEntry?)"/> to wait for the result).
     /// </summary>
@@ -293,6 +297,8 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     public async Task SelectAsync(IRouteableMenuEntry? value, IRouteableMenuEntry? old, CancellationToken cancellationToken)
     {
         var version = Interlocked.Increment(ref _selectionVersion);
+        lock (_liveSelections)
+            _liveSelections.Add(version);
 
         // No ConfigureAwait(false): the notifications go to the UI, so the continuation must stay on the UI context.
         try
@@ -304,7 +310,14 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
             // Cancelled while it waited for another selection: it never ran. If it is still the newest, the menu goes back to the entry
             // it was on, and the selection that holds the gate is the newest again (it would otherwise think that it was replaced and leave
             // the menu on the wrong entry). A newer selection owns the state: nothing to do then.
-            if (Interlocked.CompareExchange(ref _selectionVersion, version - 1, version) == version)
+            int newest;
+            lock (_liveSelections)
+            {
+                _liveSelections.Remove(version);
+                newest = _liveSelections.Count > 0 ? _liveSelections.Max : version - 1;
+            }
+
+            if (Interlocked.CompareExchange(ref _selectionVersion, newest, version) == version)
             {
                 _routeable = old;
                 NotifyPropertyChanged(nameof(SelectedEntry));
@@ -328,6 +341,8 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         finally
         {
             _selectionToken = default;
+            lock (_liveSelections)
+                _liveSelections.Remove(version);
             _selectionGate.Release();
         }
     }

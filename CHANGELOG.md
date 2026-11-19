@@ -6,6 +6,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **`RouteBuilder.Tab` without a route is `/home` for a `HomeViewModel`**, as documented (or the `[Routeable]` path of the view model): it registered the internal key of the view as an address.
+- **A selection of the menu that is cancelled while it waits gives the current version back to the newest selection that is still alive**: with A running and B, C waiting, cancelling B then C made A think it had been replaced.
 - **The generated `GoToXxxAsync` refuse a path value with a `.` or `..` piece** (`a/..`), not only the value `..`.
 - **A generated method of a route with optional values only goes to `/`** when none is given (the router refuses an empty address).
 - **`GoToAsync<TViewModel>(values)` returns a failed result** when a registered serializer cannot write a value, instead of throwing.
