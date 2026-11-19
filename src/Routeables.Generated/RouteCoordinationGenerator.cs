@@ -1014,7 +1014,11 @@ namespace Routeables.Generated
             }
 
             if (queryOps.Count == 0)
+            {
+                // Only optional values, none given: the home address, as RouteParser.Build writes it (the router refuses an empty one).
+                sb.AppendLine(indent + "if (__route.Length == 0) __route = \"/\";");
                 return;
+            }
 
             sb.AppendLine(indent + "var __separator = '?';");
             foreach (var op in queryOps)
@@ -1059,7 +1063,7 @@ namespace Routeables.Generated
                 default:
                     // "." and ".." are not a segment of a path: a browser resolves them to another address (RouteParser.Build refuses them).
                     return path
-                        ? "(" + value + " is \".\" or \"..\" ? throw new global::System.ArgumentException(\"A path value cannot be \\\".\\\" or \\\"..\\\".\") : global::System.Uri.EscapeDataString(" + value + "))"
+                        ? "(global::System.Array.Exists(" + value + ".Split('/'), __part => __part is \".\" or \"..\") ? throw new global::System.ArgumentException(\"A path value cannot be \\\".\\\" or \\\"..\\\".\") : global::System.Uri.EscapeDataString(" + value + "))"
                         : "global::System.Uri.EscapeDataString(" + value + ")";
             }
         }

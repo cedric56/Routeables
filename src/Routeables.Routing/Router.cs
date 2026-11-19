@@ -717,7 +717,7 @@ internal class Router(
                 var route = RouteParser.Build(template, request.Values);
                 return GoToTypedRouteAsync(viewModelType, route, request.Args, template, cancellationToken, viewKeys);
             }
-            catch (ArgumentException ex) { failure = ex; }
+            catch (Exception ex) when (ex is ArgumentException or NotSupportedException or System.Text.Json.JsonException) { failure = ex; }
         }
 
         return Task.FromResult(RouteableResult.Fail(failure!));

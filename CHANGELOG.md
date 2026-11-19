@@ -6,6 +6,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The generated `GoToXxxAsync` refuse a path value with a `.` or `..` piece** (`a/..`), not only the value `..`.
+- **A generated method of a route with optional values only goes to `/`** when none is given (the router refuses an empty address).
+- **`GoToAsync<TViewModel>(values)` returns a failed result** when a registered serializer cannot write a value, instead of throwing.
 - **The generated `GoToXxxAsync` refuse what `RouteParser.Build` refuses**: `.` and `..` as a path value, NaN and infinity for a `double` (an `ArgumentException`, as for an empty piece of a catch-all).
 - **`RouteParser.Build` treats a value whose text is empty as missing** (an empty `StringBuilder`): it wrote `/a//b`, which does not read back.
 - **ROUT501 only checks the `GoToAsync` of the router** (and its `IServiceProvider` extension), not the one of another library.

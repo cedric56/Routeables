@@ -367,7 +367,7 @@ public class RouteCoordinationGeneratorTests
                     await Check(home.GoToOptAsync(router), vm => ((OptViewModel)vm!).Value);
                     // What RouteParser.Build refuses is refused here: "." and ".." in a path, NaN and infinity.
                     foreach (var bad in new System.Func<Task<RouteableResult>>[]
-                             { () => home.GoToStrAsync(router, ".."), () => home.GoToStrAsync(router, "."), () => home.GoToDblAsync(router, double.NaN), () => home.GoToDblAsync(router, double.PositiveInfinity) })
+                             { () => home.GoToStrAsync(router, "a/.."), () => home.GoToStrAsync(router, ".."), () => home.GoToStrAsync(router, "."), () => home.GoToDblAsync(router, double.NaN), () => home.GoToDblAsync(router, double.PositiveInfinity) })
                     {
                         try { await bad(); seen.Add("no error"); }
                         catch (ArgumentException) { seen.Add("refused"); }
@@ -378,7 +378,7 @@ public class RouteCoordinationGeneratorTests
             """);
 
         Assert.Equal(
-            "42|9999999999|True|6f9619ff-8b86-d011-b42d-00c04fc964ff|1234.56|0.25|19.9|0|a b/c&d%e?f#g+h|x y&z=1/7|5|null|refused|refused|refused|refused",
+            "42|9999999999|True|6f9619ff-8b86-d011-b42d-00c04fc964ff|1234.56|0.25|19.9|0|a b/c&d%e?f#g+h|x y&z=1/7|5|null|refused|refused|refused|refused|refused",
             summary);
     }
 
@@ -491,7 +491,7 @@ public class RouteCoordinationGeneratorTests
 
                     var left = await home.GoToTreeAsync(router);
                     seen.Add(left.Success ? ((TreeViewModel)router.CurrentViewModel!).Value + " @ " + router.History.Current!.Args.Route : "FAIL " + left.Exception?.Message);
-                    foreach (var bad in new[] { "a//b", "a/../b", "a/./b", "/a" })
+                    foreach (var bad in new[] { "a//b", "a/../b", "a/./b", "/a", "a/.." })
                     {
                         try { await home.GoToTreeAsync(router, bad); seen.Add("no error"); }
                         catch (ArgumentException) { seen.Add("refused"); }
@@ -501,7 +501,7 @@ public class RouteCoordinationGeneratorTests
             }
             """);
 
-        Assert.Equal("null @ /tree|refused|refused|refused|refused", summary);
+        Assert.Equal("null @ /tree|refused|refused|refused|refused|refused", summary);
     }
 
     [Fact]
@@ -524,6 +524,32 @@ public class RouteCoordinationGeneratorTests
             [RouteableViewModel(typeof(HomeViewModel))]
             public sealed class AViewModel(int path) { }
             """);
+    }
+
+    [Fact]
+    public async Task A_route_of_optional_values_only_goes_to_the_home_address_when_none_is_given()
+    {
+        var summary = await RunScenarioAsync(Prelude + """
+
+            [Routeable("{tab?}")] [RouteableViewModel(typeof(HomeViewModel))]
+            public sealed class TabViewModel(string? tab = null) { public string Value { get; } = tab ?? "null"; }
+
+            public static class Scenario
+            {
+                public static async Task<string> RunAsync()
+                {
+                    var services = new ServiceCollection();
+                    services.RegisterRouting();
+                    services.RegisterRoute<PageView, TabViewModel>(route: "{tab?}");
+                    using var provider = services.BuildServiceProvider();
+                    var router = provider.GetRequiredService<IRouter>();
+                    var result = await new HomeViewModel().GoToTabAsync(router);
+                    return result.Success ? ((TabViewModel)router.CurrentViewModel!).Value : "FAIL " + result.Exception?.Message;
+                }
+            }
+            """);
+
+        Assert.Equal("null", summary);
     }
 
     [Fact]
