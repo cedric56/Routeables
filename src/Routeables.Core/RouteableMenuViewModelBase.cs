@@ -338,11 +338,11 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         {
             return GetEntries();
         }
-        catch (NullReferenceException exception)
+        catch (Exception exception) when (exception is NullReferenceException or ArgumentNullException)
         {
             // The usual cause: GetEntries() read a field or a constructor parameter of the derived class while the base class was being constructed.
             throw new InvalidOperationException(
-                $"{GetType().Name}.GetEntries() threw a NullReferenceException. It runs while the base class is being constructed, before the fields and the constructor "
+                $"{GetType().Name}.GetEntries() threw a {exception.GetType().Name}. It runs while the base class is being constructed, before the fields and the constructor "
                 + "parameters of the derived class are set: build the entries from the code alone, or pass initialize: false to the base constructor "
                 + "(the entries are then built on their first read, after the construction).", exception);
         }

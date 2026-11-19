@@ -1,4 +1,4 @@
-using Routeables.Abstraction;
+﻿using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
@@ -91,10 +91,11 @@ public class SharedAddressRulesTests
         var table = new RouteableTable();
         table.Add("/Orders", typeof(SaProductVm));
         table.Add("orders/", typeof(SaProductVm));
-        table.Add("/orders?x=1", typeof(SaProductVm));
+        table.Add("/orders?x=1", typeof(SaProductVm));      // another query is another route
+        table.Add("/ORDERS/?x=1", typeof(SaProductVm));     // the same route as the one above
         table.Add("/other", typeof(SaProductVm));
 
-        Assert.Equal(["/Orders", "/other"], table.Entries.Select(e => e.Template).ToArray());
+        Assert.Equal(["/Orders", "/orders?x=1", "/other"], table.Entries.Select(e => e.Template).ToArray());
     }
 
     [Fact]

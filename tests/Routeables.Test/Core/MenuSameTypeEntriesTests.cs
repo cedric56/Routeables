@@ -1,4 +1,4 @@
-using Routeables.Abstraction;
+﻿using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Guards;
 using Routeables.Abstraction.Registrations;
@@ -217,7 +217,7 @@ public class MenuSameTypeEntriesTests
         var failure = Assert.Throws<InvalidOperationException>(() => new MenuOfAField(router, ["Other"], initialize: true));
 
         Assert.Contains("initialize: false", failure.Message);
-        Assert.IsType<NullReferenceException>(failure.InnerException);
+        Assert.IsType<ArgumentNullException>(failure.InnerException);      // the null field handed to Select
     }
 
     [Fact]
