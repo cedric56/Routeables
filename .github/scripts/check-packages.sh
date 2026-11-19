@@ -23,7 +23,7 @@ done
 
 # Every package carries the symbols of its libraries.
 for nupkg in "$dir"/*.nupkg; do
-  unzip -l "$nupkg" | grep -q '\.pdb$' || {
+  unzip -l "$nupkg" | grep '\.pdb$' >/dev/null || {
     echo "::error::$(basename "$nupkg") has no .pdb"
     status=1
   }
@@ -31,7 +31,7 @@ done
 
 # Routeables.Abstraction is a package of its own, and the Routeables package depends on exactly its version.
 abstraction=$(ls "$dir"/Routeables.Abstraction.[0-9]*.nupkg | grep -v 'symbols' | head -1)
-unzip -l "$abstraction" | grep -q ' lib/net10.0/Routeables.Abstraction.dll$' || {
+unzip -l "$abstraction" | grep ' lib/net10.0/Routeables.Abstraction.dll$' >/dev/null || {
   echo "::error::$(basename "$abstraction") does not contain lib/net10.0/Routeables.Abstraction.dll"
   status=1
 }
@@ -51,20 +51,20 @@ for entry in \
   buildTransitive/Community/RouteableViewModel.cs \
   buildTransitive/Reactive/RouteableViewModel.cs; do
 
-  unzip -l "$core" | grep -q " $entry\$" || {
+  unzip -l "$core" | grep " $entry\$" >/dev/null || {
     echo "::error::$(basename "$core") does not contain $entry"
     status=1
   }
 done
 
 # The assembly is in one package only, and the dependency is on exactly the version that was packed.
-if unzip -l "$core" | grep -q ' lib/net10.0/Routeables.Abstraction.dll$'; then
+if unzip -l "$core" | grep ' lib/net10.0/Routeables.Abstraction.dll$' >/dev/null; then
   echo "::error::$(basename "$core") contains Routeables.Abstraction.dll, which is a package of its own"
   status=1
 fi
 
 version=$(basename "$abstraction" .nupkg | sed 's/^Routeables\.Abstraction\.//')
-unzip -p "$core" '*.nuspec' | grep -q "dependency id=\"Routeables.Abstraction\" version=\"\[$version\]\"" || {
+unzip -p "$core" '*.nuspec' | grep "dependency id=\"Routeables.Abstraction\" version=\"\[$version\]\"" >/dev/null || {
   echo "::error::$(basename "$core") does not depend on Routeables.Abstraction [$version]"
   status=1
 }

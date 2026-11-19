@@ -321,6 +321,9 @@ public static partial class RouteParser
 
         if (string.IsNullOrEmpty(raw))
         {
+            // A declared parameter that is sent empty ("?q=") is still the declared one: it is not an undeclared neutral value.
+            if (args is not null)
+                bound?.Add(name);
             // a missing optional value is skipped, a missing required one is a mismatch
             return optional ? null : reasons ? $"the required parameter {{{name}}} is missing" : NoReason;
         }

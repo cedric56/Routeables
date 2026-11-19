@@ -96,6 +96,16 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void A_declared_query_parameter_that_is_sent_empty_is_not_a_neutral_value()
+    {
+        var args = RouteableArgs.Create();
+
+        Assert.True(RouteParser.TryMatch("search?{q?}", "search?q=", args));
+
+        Assert.DoesNotContain(args.Values, e => e.name == "q");
+    }
+
+    [Fact]
     public void A_value_of_the_address_replaces_the_one_the_caller_gave_for_the_constructor()
     {
         var args = RouteableArgs.Create().WithViewModel("id", 5);

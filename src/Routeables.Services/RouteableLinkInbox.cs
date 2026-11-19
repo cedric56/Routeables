@@ -226,10 +226,12 @@ public sealed class RouteableLinkInbox
     // The menu selects its first entry when the window opens: before that the history is empty.
     internal static async Task<bool> WaitForFirstPageAsync(IRouter router, CancellationToken cancellationToken = default, TimeSpan? timeout = null)
     {
-        var until = DateTime.UtcNow + (timeout ?? FirstPageTimeout);
+        // A monotonic clock: a change of the system time must not shorten or lengthen the wait.
+        var waited = System.Diagnostics.Stopwatch.StartNew();
+        var limit = timeout ?? FirstPageTimeout;
         while (router.History.Count == 0)
         {
-            if (DateTime.UtcNow > until || cancellationToken.IsCancellationRequested)
+            if (waited.Elapsed > limit || cancellationToken.IsCancellationRequested)
                 return false;
             try { await Task.Delay(50, cancellationToken); }
             catch (OperationCanceledException) { return false; }

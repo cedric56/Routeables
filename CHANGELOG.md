@@ -6,6 +6,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A declared query parameter that is sent empty** (`/search?q=` for `search?{q?}`) is no longer given to the hooks as an undeclared value.
+- **`check-packages.sh` no longer fails, or passes, by chance**: `grep -q` stopped `unzip` with SIGPIPE under `pipefail`.
+- **The wait for the first page uses a monotonic clock**, not the system time.
 - **The re-evaluation of the guards (`RefreshGuardsOn`) no longer cancels the route change in progress** under `RouterConcurrency.CancelCurrent`: it waits for it, and a refresh that is replaced is not reported as an error.
 - **A parameter of the caller replaces the one of the menu entry that has its name**, for the constructor and the view as it already did for the values (the constructor and the property read the same one).
 - **A segment of a coordination cannot be named `..` or `.`**: written `..`, it was read back as the way back. The documentation of `RouteCoordination` says that a `/` in a value of a hand-written address is `%2F`.
