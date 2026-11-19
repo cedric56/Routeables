@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
@@ -150,5 +150,27 @@ public class RouteAddressTests
         Assert.True(RouteAddress.Same("/a//b", "/a/b"));
         Assert.True(RouteAddress.Same("/a/b/", "//a/b"));
         Assert.False(RouteAddress.Same("/a//b", "/a/c"));
+    }
+
+    private static string? TemplateOfXab(string path)
+    {
+        var found = RouteParser.BestMatch(new (string Template, Type? ViewModelType)[] { ("/x/{a}/{b}", null) }, path);
+        return found.Template;
+    }
+
+    [Fact]
+    public void The_case_of_a_value_that_holds_an_escaped_question_mark_still_counts()
+    {
+        Assert.False(RouteAddress.Same("/x/q/B", "/x/q/b", TemplateOfXab));
+        Assert.False(RouteAddress.Same("/x/q%3F/B", "/x/q%3F/b", TemplateOfXab));
+        Assert.False(RouteAddress.Same("/x/q%23/B", "/x/q%23/b", TemplateOfXab));
+    }
+
+    [Fact]
+    public void A_slash_and_an_escaped_slash_are_the_same_in_a_query_but_not_in_a_path()
+    {
+        Assert.True(RouteAddress.Same("/s?dir=a/b", "/s?dir=a%2Fb"));
+        Assert.True(RouteAddress.Same("/s?dir=a%2fb", "/s?dir=a/b"));
+        Assert.False(RouteAddress.Same("/files/a/b", "/files/a%2Fb"));
     }
 }

@@ -1,4 +1,4 @@
-namespace Routeables.Abstraction.Routing;
+﻿namespace Routeables.Abstraction.Routing;
 
 /// <summary>
 /// The one place that says whether two routes or addresses are the same. The router, the menus, the type guards, the controls of navigation and the
@@ -76,7 +76,8 @@ internal static class RouteAddress
             return true;
         if (!string.Equals(a, b, StringComparison.OrdinalIgnoreCase))
             return false;
-        if (templateOf?.Invoke(a) is not { } template)
+        // The path is unescaped here: a question mark or a number sign that was escaped is escaped again, or the parser would end the path at it.
+        if (templateOf?.Invoke(a.Replace("?", "%3F").Replace("#", "%23")) is not { } template)
             return true;
 
         var templateSegments = template.Split('?')[0].Split('/', StringSplitOptions.RemoveEmptyEntries);
@@ -131,7 +132,12 @@ internal static class RouteAddress
     }
 
     // In a query a plus is a space, as the parser reads it: "?q=a+b" and "?q=a%20b" are one address ("%2B" stays a plus).
-    private static string UnescapeQuery(string text) => Unescape(text.Replace('+', ' '));
+    // A slash is not a separator in a query: "?dir=a/b" and "?dir=a%2Fb" are one address, as the parser reads them (RouteParser.DecodeQuery).
+    private static string UnescapeQuery(string text)
+    {
+        try { return Uri.UnescapeDataString(text.Replace('+', ' ')); }
+        catch (UriFormatException) { return text; }
+    }
 
     private static string Unescape(string text)
     {

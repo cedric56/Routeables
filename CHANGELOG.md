@@ -6,6 +6,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The case of a value that holds an escaped `?` or `#` counts**: `RouteAddress.Same` looked the template up with the unescaped path, which the parser cut at the question mark, so `/x/q%3F/B` and `/x/q%3F/b` were taken for one page. The two characters are escaped again for the lookup.
+- **In a query, `/` and `%2F` are the same**: `?dir=a/b` and `?dir=a%2Fb` (what `RouteParser.Build` writes) are one address, as the parser reads them; in a path an escaped slash stays a character.
+- **A history keeper disposed before its restore starts no longer holds the deep links**: `EndRestore` is called on that path too, so `RouteableLinkInbox` does not wait for ever.
 - **Two routes that differ only by their query are both registered**: the table of routes dropped a route whose path was already there, so `/search?mode=grid` registered after `/search` (or `/search` after it) was lost without a word. The table now compares the whole template, and the type guards and the template lookup of an address take the template that is the route itself before the one that has the same path.
 - **A Blazor address without the closing slash of the base** (`https://site/app` for the base `https://site/app/`) is the application, not another site: the guards can refuse it before the navigation happens.
 - **The example of `RefreshGuardsOn` compiles**: it passed the property name where the `provider` goes.

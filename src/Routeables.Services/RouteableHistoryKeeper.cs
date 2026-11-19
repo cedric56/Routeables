@@ -217,7 +217,12 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         // The keeper may be disposed before this runs: its source is disposed with it, and a disposed source gives no token.
         CancellationToken stop;
         try { stop = _stopped.Token; }
-        catch (ObjectDisposedException) { return; }
+        catch (ObjectDisposedException)
+        {
+            // The restore was announced (BeginRestore): the addresses that wait for it must not wait for ever.
+            RouteableStartup.EndRestore(router);
+            return;
+        }
 
         try
         {
