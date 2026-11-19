@@ -23,6 +23,24 @@ def repo_path(path):
     return found.group(1) if found else path
 
 
+def ranges(numbers, limit=8):
+    """[3, 4, 5, 9, 12, 13] -> "3-5, 9, 12-13" (the first `limit` ranges, then "...")."""
+    numbers = sorted(set(numbers))
+    out = []
+    start = previous = None
+    for number in numbers:
+        if start is None:
+            start = previous = number
+        elif number == previous + 1:
+            previous = number
+        else:
+            out.append(str(start) if start == previous else f"{start}-{previous}")
+            start = previous = number
+    if start is not None:
+        out.append(str(start) if start == previous else f"{start}-{previous}")
+    return ", ".join(out[:limit]) + (", ..." if len(out) > limit else "")
+
+
 def main(argv):
     minimum = None
     per_assembly = {}
@@ -91,17 +109,20 @@ def main(argv):
             if only not in name:
                 continue
             by_file = {}
-            for (file, _), hit in lines[name].items():
+            missed = {}
+            for (file, number), hit in lines[name].items():
                 total, covered = by_file.get(file, (0, 0))
                 by_file[file] = (total + 1, covered + (1 if hit else 0))
+                if not hit:
+                    missed.setdefault(file, []).append(int(number))
             for file, (total, covered) in by_file.items():
                 if total > covered:
-                    rows.append((total - covered, total, covered, name, file))
+                    rows.append((total - covered, total, covered, name, file, ranges(missed[file])))
         rows.sort(key=lambda r: (-r[0], r[3], r[4]))
-        print(f"\n| Not covered | Lines | Line coverage | Assembly | File |")
-        print("|---:|---:|---:|---|---|")
-        for missing, total, covered, name, file in rows[:top]:
-            print(f"| {missing} | {total} | {pct(covered, total)} | {name} | {file} |")
+        print(f"\n| Not covered | Lines | Line coverage | Assembly | File | Lines not run |")
+        print("|---:|---:|---:|---|---|---|")
+        for missing, total, covered, name, file, where in rows[:top]:
+            print(f"| {missing} | {total} | {pct(covered, total)} | {name} | {file} | {where} |")
 
     status = 0
     if minimum is not None and all_lines and 100.0 * all_covered / all_lines < minimum:
