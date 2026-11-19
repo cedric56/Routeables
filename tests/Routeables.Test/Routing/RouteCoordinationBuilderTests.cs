@@ -16,6 +16,16 @@ public class RouteCoordinationBuilderTests
         Assert.Throws<FormatException>(() => RouteCoordination.Parse("side:"));
     }
 
+    [Theory]
+    [InlineData("..")]
+    [InlineData(".")]
+    public void A_segment_cannot_be_named_like_the_way_back(string name)
+    {
+        Assert.Throws<ArgumentException>(() => RouteCoordination.Create().Segment(name));
+        Assert.Throws<ArgumentException>(() => RouteCoordination.Create().Segment(name, _ => { }));
+        Assert.Throws<ArgumentException>(() => new Microsoft.Extensions.DependencyInjection.ServiceCollection().RegisterSegment<OrdersViewModel>(name));
+    }
+
     [Fact]
     public void A_null_uri_does_not_parse()
     {

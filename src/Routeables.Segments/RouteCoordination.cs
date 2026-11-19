@@ -10,7 +10,7 @@ namespace Routeables.Segments;
 /// <c>Orders?status=open/Detail?id=5</c>. Each segment is handled in turn by its router and receives only
 /// its own query parameters.
 /// <list type="bullet">
-/// <item><c>Name?k=v&amp;k=w</c> pushes the segment registered under <c>Name</c>.</item>
+/// <item><c>Name?k=v&amp;k=w</c> pushes the segment registered under <c>Name</c>. An address is cut at each <c>/</c> before its queries are read: a <c>/</c> in a value is written <c>%2F</c> (<c>ToString()</c> does it).</item>
 /// <item><c>region:Name</c> hands the segment to the router of that region.</item>
 /// <item><c>..</c> goes back one entry (<c>../Edit?id=5</c>: back, then push).</item>
 /// <item>A leading <c>/</c> makes the coordination absolute: the history of every router involved is cleared first.</item>
@@ -160,6 +160,13 @@ public sealed class RouteCoordinationBuilder
         return this;
     }
 
+    // ".." is the back segment in an address: a segment of that name would be written "..", and read back as a way back.
+    internal static void ThrowIfBack(string name)
+    {
+        if (name.Trim() is ".." or ".")
+            throw new ArgumentException($"A segment cannot be named \"{name}\": in an address it is the way back, not a page.", nameof(name));
+    }
+
     /// <summary>Adds the segment registered under <paramref name="name"/>.</summary>
     /// <param name="name">The registered segment name.</param>
     /// <param name="region">The region whose router handles it; <see langword="null"/> for the default router.</param>
@@ -167,6 +174,7 @@ public sealed class RouteCoordinationBuilder
     public RouteCoordinationBuilder Segment(string name, string? region = null, params (string Key, object? Value)[] parameters)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ThrowIfBack(name);
         _segments.Add(new RouteSegment(
             name, region, RouteSegmentKind.Push,
             parameters.Select(p => new KeyValuePair<string, object?>(p.Key, p.Value)).ToList()));
@@ -183,6 +191,7 @@ public sealed class RouteCoordinationBuilder
     public RouteCoordinationBuilder Segment(string name, Action<IRouteableArgs> configure, string? region = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ThrowIfBack(name);
         ArgumentNullException.ThrowIfNull(configure);
         _segments.Add(new RouteSegment(name, region, RouteSegmentKind.Push, null, configure));
         return this;
