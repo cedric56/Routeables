@@ -40,7 +40,7 @@ public class RouteParserTests
         var tab = Assert.Single(args.ViewParameters);
         Assert.Equal("tab", tab.name);
         Assert.Equal("items", tab.value);
-        Assert.False(tab.attribute);
+        Assert.True(tab.attribute);   // a key of the view is for a property of the view
 
         Assert.Equal(true, args.ViewModelParameters.Single(x => x.name == "enabled").value);
 
@@ -93,6 +93,16 @@ public class RouteParserTests
         Assert.True(matched);
         Assert.Equal("a b", args.ViewModelParameters.Single(x => x.name == "name").value);
         Assert.Equal("last value", args.ViewModelParameters.Single(x => x.name == "tag").value);
+    }
+
+    [Fact]
+    public void A_value_of_the_address_replaces_the_one_the_caller_gave_for_the_constructor()
+    {
+        var args = RouteableArgs.Create().WithViewModel("id", 5);
+
+        Assert.True(RouteParser.TryMatch("orders/{id:int}", "orders/7", args));
+
+        Assert.Equal(7, Assert.Single(args.ViewModelParameters, e => e.name == "id").value);
     }
 
     [Fact]

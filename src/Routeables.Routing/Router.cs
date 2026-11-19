@@ -662,7 +662,8 @@ internal class Router(
         if (provider.GetService<RouteableNotFound>() is { } notFound && !RouteAddress.SamePath(notFound.Route, url))
         {
             // A copy: the caller's args must not collect a notFoundUrl per missing address.
-            var shown = Snapshot(args).WithValue(RouteableNotFound.UrlValue, url);
+            var shown = Snapshot(args);
+            RouteParser.SetValue(shown.Values, new RouteableArgument(url, RouteableNotFound.UrlValue));
             return await GoToAsync(notFound.Route, shown, null, cancellationToken);
         }
 

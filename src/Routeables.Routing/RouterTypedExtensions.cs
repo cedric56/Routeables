@@ -39,7 +39,7 @@ public static class RouterTypedExtensions
     /// <param name="data">The data handed to <see cref="IInitializeAsync{TData}.InitializeAsync"/>.</param>
     /// <param name="template">The route template; found from the route when omitted.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
-    /// <returns>The route change result.</returns>
+    /// <returns>The route change result. A failure when the page shown is not a <typeparamref name="TViewModel"/>, a guard that sends the user elsewhere (a sign-in) included: the data was not given to it.</returns>
     public static async Task<RouteableResult> GoToRouteAsync<TViewModel, TData>(
         this IRouter router,
         string route,

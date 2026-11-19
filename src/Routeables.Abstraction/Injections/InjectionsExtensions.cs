@@ -166,9 +166,11 @@ internal static partial class InjectionsExtensions
     /// <exception cref="InvalidCastException">The value is null or not a <typeparamref name="T"/>.</exception>
     internal static T Resolve<T>(this IList<RouteableArgument> args, int index)
     {
-        if (index < 0 || index >= args.Count)
-            throw new ArgumentException($"Invalid index: {index}, but there are {args.Count} argument(s).");
-        var value = args[index].value;
+        // The positions are those of the constructor arguments, as ResolveViewParameters counts them: an entry of a property (attribute) or without a value is not one.
+        var positional = args.Where(p => p.attribute == false && p.value is not null).ToList();
+        if (index < 0 || index >= positional.Count)
+            throw new ArgumentException($"Invalid index: {index}, but there are {positional.Count} argument(s).");
+        var value = positional[index].value;
         return value is T t ? t :
             throw new InvalidCastException($"Expected an argument of type {typeof(T)}, but it is {value?.GetType().ToString() ?? "null"}.");
     }

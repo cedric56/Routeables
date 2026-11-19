@@ -342,10 +342,19 @@ public static partial class RouteParser
     private static void Add(IRouteableArgs args, HashSet<string>? viewKeySet,
                     string name, object? value, bool? attribute)
     {
+        // A value of the address replaces the one of the same name that the caller gave (the address is the route that is shown), so that the
+        // constructor, which takes the first value of a name, and the property, which takes the last, read the same one.
         if (viewKeySet?.Contains(name) == true)
-            args.ForView(new RouteableArgument(value, name, attribute ?? true));
+        {
+            // A key of the view is for a property of the view (the documentation of viewKeys), never a constructor argument.
+            args.ViewParameters.RemoveAll(e => string.Equals(e.name, name, StringComparison.OrdinalIgnoreCase));
+            args.ForView(new RouteableArgument(value, name, true));
+        }
         else
+        {
+            args.ViewModelParameters.RemoveAll(e => string.Equals(e.name, name, StringComparison.OrdinalIgnoreCase));
             args.ForViewModel(new RouteableArgument(value, name, attribute ?? false));
+        }
     }
 
     // The first optional path placeholder (not a catch-all) that is followed by a segment that is not optional itself: such a template cannot

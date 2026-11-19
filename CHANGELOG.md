@@ -6,6 +6,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A value named in `viewKeys` reaches the property of the view**, as documented: it was marked as a constructor argument and, without a matching constructor, lost.
+- **The positional `RegisterRoute<TView, TViewModel, TArg1, …>` read the arguments of the constructor by their place among the constructor arguments**, not among all the entries (a property entry before them gave the wrong value).
+- **The address and the caller no longer both give a value of the same name to the constructor**: the value of the address replaces the one of the caller, as it does for the property.
+- **The not-found page receives `notFoundUrl` once**, even when the caller's args already held one.
 - **A route registered again for another view model follows the last registration**, as the container does for the view: the table kept the first view model, so the view of one page was shown with the view model of the other.
 - **`GoToRouteAsync<TViewModel, TData>` fails when the route does not reach a `TViewModel`**: the data was dropped and the result was a success.
 - **`<routeable-menu>` marks an entry whose route is written escaped** (`/caf%C3%A9`) when the page is `/café`.
