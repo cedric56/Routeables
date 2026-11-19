@@ -21,6 +21,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- CI warnings: the test projects (`Routeables.Test*`) no longer generate XML documentation, so their test methods stop raising CS1591; the workflows use the Node 24 versions of `setup-dotnet` (v5), `upload-artifact` (v7) and `download-artifact` (v8).
 - **The dialog window of Avalonia no longer shows in a corner before it is centred**: it opened at (-32000, -32000) and was moved once its size was known, which a system may undo (Wayland, macOS) and which was seen on screen. It now opens transparent on its owner and is made visible once it is centred.
 - **Two threads that build views which need each other no longer block for ever** (`ScopedViewCache`): X is being built and asks for Y while Y asks for X. The circular dependency was only seen on one thread; across two, each waited for the lock of the other. One of the two now fails with the same `InvalidOperationException`, the other finishes.
 - **Blazor notifications: a failed start is not kept**: when the import of the module or the registration of the service worker failed, the failed task stayed in the cache and every later call failed with it, and the reference to the module that was loaded was never given back. The next call now starts again.

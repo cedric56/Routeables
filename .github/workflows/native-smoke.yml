@@ -24,7 +24,7 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
       - uses: actions/setup-node@v7
@@ -41,7 +41,7 @@ jobs:
       - name: Smoke
         shell: pwsh
         run: ./agent-desktop/run-all.ps1 -Only Desktop -Build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: native-smoke-windows
@@ -60,7 +60,7 @@ jobs:
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
       - uses: actions/setup-node@v7
@@ -75,7 +75,7 @@ jobs:
       - name: Smoke
         run: |
           xvfb-run -a bash -c 'ROUTEABLES_X=xvfb bash agent-desktop/lib/wsl-run.sh "$PWD" Avalonia 0 1'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: native-smoke-linux
@@ -92,7 +92,7 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
       - uses: actions/setup-node@v7
@@ -118,7 +118,7 @@ jobs:
         # From a .app bundle (the system serves notifications only to one), through the notifications of the Dialogs page up to the one of the
         # system. The first time, macOS asks for the permission: the smoke presses Allow (best effort; the evidence is in the artifact).
         run: ./agent-desktop/run-all.ps1 -Only Desktop -Build -Notifications -Bundle -RequireSystemNotification
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: native-smoke-macos
@@ -136,7 +136,7 @@ jobs:
     timeout-minutes: 75
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
       - name: Select Xcode 26.0
@@ -182,7 +182,7 @@ jobs:
       - name: Smoke
         shell: pwsh
         run: ./agent-desktop/run-ios.ps1 -Setup -Build -Udid $env:IOS_UDID -KeepSimulator
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: ios-smoke
@@ -208,7 +208,7 @@ jobs:
         with:
           distribution: microsoft
           java-version: 21
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
       - name: Workloads
@@ -232,7 +232,7 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -no-snapshot-save -no-boot-anim -gpu swiftshader_indirect -noaudio
           script: pwsh agent-desktop/run-android.ps1 -Serial emulator-5554 -AndroidSdk "$ANDROID_HOME" -Hosts Maui,Avalonia
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: android-smoke
@@ -250,7 +250,7 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
       - uses: actions/setup-node@v7
@@ -267,7 +267,7 @@ jobs:
       - name: Smoke
         shell: pwsh
         run: ./agent-desktop/run-web.ps1
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: web-smoke
