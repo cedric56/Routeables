@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """Summarises Cobertura reports as a Markdown table: line and branch coverage of each assembly, and of the whole.
 
-usage: coverage-summary.py [--min LINE_PERCENT] report.cobertura.xml [...]
+usage: coverage-summary.py [--min LINE_PERCENT] [--min-assembly NAME=LINE_PERCENT]... [--files N] [--files-of TEXT]
+                           report.cobertura.xml [...]
 
-With --min the exit code is 1 when the line coverage of the whole is below it (the CI uses 65).
+With --min the exit code is 1 when the line coverage of the whole is below it (the CI uses 65). With --min-assembly (repeatable) it is 1
+when the line coverage of the assembly NAME is below it. With --files N a second table lists the N files with the most lines that no test
+runs (the place to write the next tests); --files-of keeps the assemblies whose name contains TEXT. A file shared between hosts
+(Routeables.Shared is compiled into each of them) is listed once for each assembly that holds a copy.
 """
 import re
 import sys
@@ -21,11 +25,21 @@ def repo_path(path):
 
 def main(argv):
     minimum = None
+    per_assembly = {}
+    top = 0
+    only = ""
     files = []
     args = iter(argv)
     for arg in args:
         if arg == "--min":
             minimum = float(next(args))
+        elif arg == "--min-assembly":
+            name, _, percent = next(args).partition("=")
+            per_assembly[name] = float(percent)
+        elif arg == "--files":
+            top = int(next(args))
+        elif arg == "--files-of":
+            only = next(args)
         else:
             files.append(arg)
     if not files:
@@ -71,10 +85,38 @@ def main(argv):
         print(f"| {name} | {total} | {covered} | {pct(covered, total)} | {pct(bc, bt)} |")
     print(f"| **All** | {all_lines} | {all_covered} | **{pct(all_covered, all_lines)}** | {pct(all_bc, all_bt)} |")
 
+    if top > 0:
+        rows = []
+        for name in lines:
+            if only not in name:
+                continue
+            by_file = {}
+            for (file, _), hit in lines[name].items():
+                total, covered = by_file.get(file, (0, 0))
+                by_file[file] = (total + 1, covered + (1 if hit else 0))
+            for file, (total, covered) in by_file.items():
+                if total > covered:
+                    rows.append((total - covered, total, covered, name, file))
+        rows.sort(key=lambda r: (-r[0], r[3], r[4]))
+        print(f"\n| Not covered | Lines | Line coverage | Assembly | File |")
+        print("|---:|---:|---:|---|---|")
+        for missing, total, covered, name, file in rows[:top]:
+            print(f"| {missing} | {total} | {pct(covered, total)} | {name} | {file} |")
+
+    status = 0
     if minimum is not None and all_lines and 100.0 * all_covered / all_lines < minimum:
         print(f"\nLine coverage is below {minimum}%.", file=sys.stderr)
-        return 1
-    return 0
+        status = 1
+    for name, floor in per_assembly.items():
+        total = len(lines.get(name, {}))
+        covered = sum(1 for hit in lines.get(name, {}).values() if hit)
+        if total == 0:
+            print(f"\nNo line of {name} in the reports.", file=sys.stderr)
+            status = 1
+        elif 100.0 * covered / total < floor:
+            print(f"\nLine coverage of {name} ({pct(covered, total)}) is below {floor}%.", file=sys.stderr)
+            status = 1
+    return status
 
 
 if __name__ == "__main__":

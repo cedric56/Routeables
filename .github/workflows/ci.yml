@@ -176,7 +176,7 @@ jobs:
         run: |
           reports=$(find coverage -name '*.cobertura.xml')
           if [ -z "$reports" ]; then echo "No coverage report was written." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
-          { echo "### Code coverage (Routeables.Test)"; python tools/coverage-summary.py --min 65 $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "### Code coverage (Routeables.Test)"; python tools/coverage-summary.py --min 65 --files 25 $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -186,7 +186,8 @@ jobs:
           if-no-files-found: warn
 
   # The coverage of the libraries by every kind of test together: the reports of the jobs above, each line counted once (covered when any
-  # run covered it). Not gating: the floor of 65% is that of the job "Code coverage".
+  # run covered it). Not gating: the floor of 65% is that of the job "Code coverage". It also holds a floor for Routeables.Avalonia (40%, the
+  # figure is a guess until the first report: raise it by hand when the figure rises, and take the "continue-on-error" off this job once it is green).
   coverage-all:
     name: Code coverage, all the tests
     needs: [coverage, ui-avalonia, ui-uno, device-windows]
@@ -207,7 +208,7 @@ jobs:
         run: |
           reports=$(find reports -name '*.cobertura.xml')
           if [ -z "$reports" ]; then echo "No coverage report was found." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
-          { echo "### Code coverage (all the tests together)"; python3 tools/coverage-summary.py $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "### Code coverage (all the tests together)"; python3 tools/coverage-summary.py --files 40 --min-assembly Routeables.Avalonia=40 $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
 
   # Phase 1 of docs/benchmark-comparison.md: the same 200-step navigation scenario on Routeables, ReactiveUI routing and a navigation
   # service of your own, on the console. The check (every step ends on the page the model expects) fails the job; the times and the
@@ -698,7 +699,7 @@ jobs:
             --results-directory coverage-avalonia
           reports=$(find coverage-avalonia -name '*.cobertura.xml')
           if [ -z "$reports" ]; then echo "No coverage report was written." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
-          { echo "### Code coverage (Routeables.Test.Avalonia)"; python3 tools/coverage-summary.py $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "### Code coverage (Routeables.Test.Avalonia)"; python3 tools/coverage-summary.py --files 25 --files-of Avalonia $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Upload the coverage reports
         if: always()

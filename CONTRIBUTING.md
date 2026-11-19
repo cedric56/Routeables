@@ -20,6 +20,8 @@ libraries build only the targets the runner has the workloads for.
 
 For the coverage of the libraries: `dotnet test --project tests/Routeables.Test/Routeables.Test.csproj --coverage --coverage-output-format cobertura --coverage-settings tests/CodeCoverage.settings.xml`, then `python3 tools/coverage-summary.py` on the `*.cobertura.xml` it writes under `TestResults`.
 
+Where to write the next tests: the summary of each coverage job lists the files with the most lines that no test runs (`--files N`, and `--files-of Avalonia` for one host). `Routeables.Shared` is not a library: its files are compiled into each host, so a file is listed once for each host that holds a copy, and the headless tests of Avalonia cover the Avalonia copy only. A line that only a device or an operating system can run may carry `[ExcludeFromCodeCoverage(Justification = "...")]`; a line that a test could run may not.
+
 Performance and memory checks run outside the test suite, in `Release`:
 
 ```bash
