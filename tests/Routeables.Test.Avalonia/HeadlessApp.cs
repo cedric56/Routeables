@@ -106,7 +106,12 @@ public sealed class HeadlessApp : IDisposable
         };
 
         // Depending on the overload, the result is the 0 or the task that returns it.
-        object? result = await _session.Dispatch(job, CancellationToken.None);
+        // The wait for the end is bounded from outside the UI thread: a test that never ends then fails by itself, instead of holding the run.
+        var dispatched = _session.Dispatch(job, CancellationToken.None);
+        if (await Task.WhenAny(dispatched, Task.Delay(TimeSpan.FromSeconds(40))) != dispatched)
+            throw new TimeoutException("The body of the test did not end within 40 seconds.");
+
+        object? result = await dispatched;
         if (result is Task<int> pending)
             await pending;
 
