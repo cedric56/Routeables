@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- Avalonia headless tests of the system Back request (Android button, mouse back button, Alt+Left), of `RouteableRegionItems`, and of `RouteableTabs`. `Routeables.Avalonia` lets the test assembly see its internals. The dialogs drawn in the overlay layer (a view with no window) cannot be tested headless: `EmbeddableControlRoot` is not supported by Avalonia.Headless.
 - CI: the coverage of Routeables.Avalonia is measured with dotnet-coverage (as for Uno and MAUI) instead of the coverage extension of `dotnet test`, which reported 0% for code that the dialog tests run.
 - Tests: headless tests for `RouteableMenu` (entries, selection, a refused selection, a locked entry, the automation peer).
 - CI: the summary of a run has one coverage table (all the tests together); the partial reports stay in the step logs and as artifacts. The job "Code coverage" now fails under a floor for each core library (Segments, Routing, Regions, Locking 95%; AspNetCore 94%; Services 92%; Generated 90%; Abstraction 88%; Core 85%), as well as under 65% for the whole.
@@ -23,6 +24,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- Flaky test `A_route_change_is_reported_as_an_activity_and_a_duration_to_whoever_listens`: the activity listener is process-wide, and the test asked for exactly one activity of its page. It now checks every activity of its page.
 - Avalonia headless tests: the end of the run no longer waits for ever on the session (closing the main window and disposing the session now have a time limit), so a CI job cannot hang after its tests.
 - The Avalonia benchmark (`Routeables.Comparison.Avalonia`) timed out in CI after `Avalonia.Headless` went to 12.1.4 for the tests: it keeps 12.0.1, the version it was measured with.
 - Avalonia headless tests: `HeadlessApp.RunAsync` gave Dispatch an async lambda, taken for an `Action`: the dispatch returned at the first `await` of the test, and nothing ran the UI thread (jobs, timers) afterwards, so a test that really waited never resumed. It now gives a delegate that returns a task, which the session waits for while it runs the UI thread.

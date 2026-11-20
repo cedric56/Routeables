@@ -1,12 +1,13 @@
-﻿using Routeables.Abstraction.Bases;
+﻿using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Errors;
 using Routeables.Abstraction.Guards;
-using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
-using Routeables.Tests.Pages;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using Routeables.Abstraction.Registrations;
+using Routeables.Tests.Pages;
 namespace Routeables.Tests.Routing;
 
 /// <summary>A <see cref="IRouteGuard"/> is asked before every route change of a router; it lets it go on, cancels it, or sends the user elsewhere.</summary>
@@ -255,6 +256,7 @@ public class RouteGuardTests
         Assert.Null(RouteGuardDecision.Cancel.RedirectTo);
     }
 
+
     [Fact]
     public async Task A_route_change_is_reported_as_an_activity_and_a_duration_to_whoever_listens()
     {
@@ -292,14 +294,19 @@ public class RouteGuardTests
 
         await provider.GetRequiredService<IRouter>().GoToAsync("/meter-home", cancellationToken: TestContext.Current.CancellationToken);
 
-        // Other tests route too: only this page counts.
-        Activity mine;
-        lock (activities) mine = Assert.Single(activities, a => a.GetTagItem("routeables.view_model")?.ToString() == nameof(FakeViewModel));
-        Assert.Equal("Routeables.Route", mine.OperationName);
-        Assert.Equal("Push", mine.GetTagItem("routeables.kind"));
-        Assert.Equal("/meter-home", mine.GetTagItem("routeables.route"));
-        Assert.Equal("Success", mine.GetTagItem("routeables.outcome"));
-        Assert.Equal(ActivityStatusCode.Ok, mine.Status);
+        // The listener is process-wide, so what other tests route in parallel reaches it too: only the activities of this page count, and each
+        // of them must say what a route change is.
+        List<Activity> mine;
+        lock (activities) mine = [.. activities.Where(a => a.GetTagItem("routeables.view_model")?.ToString() == nameof(FakeViewModel))];
+        Assert.NotEmpty(mine);
+        Assert.All(mine, activity =>
+        {
+            Assert.Equal("Routeables.Route", activity.OperationName);
+            Assert.Equal("Push", activity.GetTagItem("routeables.kind"));
+            Assert.Equal("/meter-home", activity.GetTagItem("routeables.route"));
+            Assert.Equal("Success", activity.GetTagItem("routeables.outcome"));
+            Assert.Equal(ActivityStatusCode.Ok, activity.Status);
+        });
         lock (durations)
         {
             Assert.Contains(durations, d => d.Kind == "Push" && d.Outcome == "Success" && d.Value >= 0);

@@ -45,6 +45,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Routeables.Test" />
+    <InternalsVisibleTo Include="Routeables.Test.Avalonia" />
   </ItemGroup>
 
   <ItemGroup>
