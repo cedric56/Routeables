@@ -7,9 +7,7 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
 using Routeables.Avalonia;
 using Routeables.Routing;
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Runtime.ExceptionServices;
 using Xunit;
 
 namespace Routeables.Test.Avalonia;
@@ -70,6 +68,9 @@ public sealed class HeadlessApp : IDisposable
     // The first window the application shows is its main window: closing it ends the application, and Routeables then disposes the container.
     // A test closes the windows it opens, so this one is opened first and stays open until the end.
     private Window? _main;
+
+    // Temporary: the last step a test reached, shown when it does not end.
+    public static string Step = "";
     private ITopLevelStateManager? _activatedOn;
 
     /// <summary>Starts the session and opens the main window of the application.</summary>
@@ -86,11 +87,10 @@ public sealed class HeadlessApp : IDisposable
     /// <summary>Runs <paramref name="test"/> on the UI thread of the application.</summary>
     public async Task RunAsync(Func<Task> test)
     {
-        // Dispatch returns before the body of an async job ends (the dialog tests then passed with their assertions never run), and nothing pumps
-        // the UI thread once it has returned: a test that really waits (Task.Delay) never resumed. So the job is not async: it starts the test,
-        // then runs the jobs of the UI thread itself until the test is over.
-        Exception? failure = null;
-        await _session.Dispatch(() =>
+        // Dispatch can return while the body of the test is still running (the dialog tests then passed with their assertions never run, and the
+        // coverage report showed no line of DialogPresenter). So the test reports its own end, and this waits for it.
+        var done = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        await _session.Dispatch(async () =>
         {
             try
             {
@@ -104,54 +104,21 @@ public sealed class HeadlessApp : IDisposable
                     manager.OnActivated(_main!);
                 }
 
-                // What the test awaits comes back through this context, which the loop below runs: the context of the session is not run by it.
-                var pump = new PumpContext();
-                var previous = SynchronizationContext.Current;
-                SynchronizationContext.SetSynchronizationContext(pump);
-                try
-                {
-                    var running = test();
-                    var deadline = DateTime.UtcNow.AddSeconds(30);
-                    while (!running.IsCompleted)
-                    {
-                        if (DateTime.UtcNow > deadline)
-                            throw new TimeoutException("The body of the test did not end within 30 seconds.");
-                        pump.RunQueued();
-                        Dispatcher.UIThread.RunJobs();
-                        Thread.Sleep(1);
-                    }
-
-                    pump.RunQueued();
-                    running.GetAwaiter().GetResult();
-                }
-                finally
-                {
-                    SynchronizationContext.SetSynchronizationContext(previous);
-                }
+                await test();
+                done.SetResult();
             }
             catch (Exception ex)
             {
-                failure = ex;
+                done.SetException(ex);
             }
         }, CancellationToken.None);
-
-        if (failure is not null)
-            ExceptionDispatchInfo.Capture(failure).Throw();
-    }
-
-    /// <summary>A context that queues what the awaits of a test post, for the loop of <see cref="RunAsync"/> to run on the UI thread.</summary>
-    private sealed class PumpContext : SynchronizationContext
-    {
-        private readonly ConcurrentQueue<(SendOrPostCallback Callback, object? State)> _queue = new();
-
-        public override void Post(SendOrPostCallback d, object? state) => _queue.Enqueue((d, state));
-
-        public override void Send(SendOrPostCallback d, object? state) => d(state);
-
-        public void RunQueued()
+        try
         {
-            while (_queue.TryDequeue(out var item))
-                item.Callback(item.State);
+            await done.Task.WaitAsync(TimeSpan.FromSeconds(60));
+        }
+        catch (TimeoutException)
+        {
+            throw new TimeoutException("The body of the test did not end within 60 seconds. Last step: " + Step);
         }
     }
 
