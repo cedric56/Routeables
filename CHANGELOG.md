@@ -6,6 +6,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- CI: the coverage of Routeables.Avalonia is measured with dotnet-coverage (as for Uno and MAUI) instead of the coverage extension of `dotnet test`, which reported 0% for code that the dialog tests run.
+- Tests: headless tests for `RouteableMenu` (entries, selection, a refused selection, a locked entry, the automation peer).
 - CI: the summary of a run has one coverage table (all the tests together); the partial reports stay in the step logs and as artifacts. The job "Code coverage" now fails under a floor for each core library (Segments, Routing, Regions, Locking 95%; AspNetCore 94%; Services 92%; Generated 90%; Abstraction 88%; Core 85%), as well as under 65% for the whole.
 - `docs/benchmark-comparison.md` starts with the current state of the comparison and marks the first results (2 times the time, 6 times the allocations of ReactiveUI) as superseded.
 - Comments in `src/`, `tests/`, `samples/`, `benchmarks/`, `reshapes/`, the build props and the JavaScript files rewritten in plain, shorter English: comments that only repeated the code or divided a file are gone; the ones that say why (invariants, concurrency traps) stay. No code change.

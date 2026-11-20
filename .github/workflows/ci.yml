@@ -691,17 +691,19 @@ jobs:
         run: dotnet test --project tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj --no-build -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
 
       # What these tests cover of Routeables.Avalonia: the job "Code coverage" runs only Routeables.Test, which does not reach the controls.
-      # The tests run a second time with the coverage extension, in a step that cannot fail the job until one run is green.
+      # The coverage extension of `dotnet test` reported 0% for code that the dialog tests run (DialogPresenter, DefaultMessageBoxService), while
+      # dotnet-coverage gave the figures the tests deserve for Routeables.Uno and Routeables.Maui. So the tests run a second time under
+      # dotnet-coverage, which starts the test program (a xunit v3 project is an executable) and follows its processes. This step cannot fail the
+      # job until one run is green.
       - name: Coverage of Routeables.Avalonia
         continue-on-error: true
         shell: bash
         run: |
-          dotnet test --project tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }} \
-            --coverage --coverage-output-format cobertura --coverage-settings tests/CodeCoverage.avalonia.settings.xml \
-            --results-directory coverage-avalonia
-          reports=$(find coverage-avalonia -name '*.cobertura.xml')
-          if [ -z "$reports" ]; then echo "No coverage report was written." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
-          python3 tools/coverage-summary.py --files 25 --files-of Avalonia $reports
+          dotnet tool install --global dotnet-coverage --version 18.12.0
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet-coverage collect --settings tests/CodeCoverage.avalonia.settings.xml -f cobertura -o coverage-avalonia/avalonia.cobertura.xml \
+            "dotnet tests/Routeables.Test.Avalonia/bin/${{ env.CONFIGURATION }}/net10.0/Routeables.Test.Avalonia.dll"
+          python3 tools/coverage-summary.py --files 25 --files-of Avalonia coverage-avalonia/avalonia.cobertura.xml
 
       - name: Upload the coverage reports
         if: always()
