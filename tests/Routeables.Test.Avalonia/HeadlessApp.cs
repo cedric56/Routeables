@@ -67,7 +67,19 @@ public sealed class HeadlessApp : IDisposable
     public IServiceProvider Provider => TestApp.Provider;
 
     /// <summary>Runs <paramref name="test"/> on the UI thread of the application.</summary>
-    public Task RunAsync(Func<Task> test) => _session.Dispatch(test, CancellationToken.None);
+    public async Task RunAsync(Func<Task> test)
+    {
+        // The coverage report shows no line of DialogPresenter run, though the dialog tests pass: they may be passing before their body has ended.
+        // This fails a test whose body is still running when the dispatch returns, instead of letting it pass without being checked.
+        var finished = false;
+        await _session.Dispatch(async () =>
+        {
+            await test();
+            finished = true;
+        }, CancellationToken.None);
+        if (!finished)
+            throw new InvalidOperationException("The body of the test was still running when the dispatch returned: its assertions are not checked.");
+    }
 
     /// <summary>Disposes the headless session.</summary>
     public void Dispose() => _session.Dispose();
