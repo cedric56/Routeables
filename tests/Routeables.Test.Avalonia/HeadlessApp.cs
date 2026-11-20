@@ -8,6 +8,7 @@ using Routeables.Abstraction.Registrations;
 using Routeables.Avalonia;
 using Routeables.Routing;
 using System.Collections.ObjectModel;
+using System.Runtime.ExceptionServices;
 using Xunit;
 
 namespace Routeables.Test.Avalonia;
@@ -68,21 +69,14 @@ public sealed class HeadlessApp : IDisposable
     // The first window the application shows is its main window: closing it ends the application, and Routeables then disposes the container.
     // A test closes the windows it opens, so this one is opened first and stays open until the end.
     private Window? _main;
-
-    // Temporary: what happened to the active window at start, shown when a test fails because the container was disposed.
-    private static readonly System.Collections.Concurrent.ConcurrentQueue<string> Trace = new();
+    private ITopLevelStateManager? _activatedOn;
 
     /// <summary>Starts the session and opens the main window of the application.</summary>
     public HeadlessApp() => _session.Dispatch(() =>
     {
         _main = new Window { Width = 800, Height = 600 };
-        Trace.Enqueue($"main={_main.GetHashCode()} manager={TopLevelStateManager.Default.GetHashCode()} activeBefore={TopLevelStateManager.Default.GetActive()?.GetHashCode()}");
-        TopLevelStateManager.Default.ActiveChanged += (sender, _) => Trace.Enqueue($"ActiveChanged sender={sender?.GetType().Name}:{sender?.GetHashCode()}");
         _main.Show();
         Dispatcher.UIThread.RunJobs();
-        // The window becomes the active one when it is loaded, which a render later may do after the first test has opened its own window.
-        TopLevelStateManager.Default.OnActivated(_main);
-        Trace.Enqueue($"activeAfter={TopLevelStateManager.Default.GetActive()?.GetHashCode()}");
     }, CancellationToken.None).GetAwaiter().GetResult();
 
     /// <summary>The service provider of the running test application.</summary>
@@ -91,33 +85,44 @@ public sealed class HeadlessApp : IDisposable
     /// <summary>Runs <paramref name="test"/> on the UI thread of the application.</summary>
     public async Task RunAsync(Func<Task> test)
     {
-        // Dispatch can return while the body of the test is still running (the dialog tests then passed with their assertions never run, and the
-        // coverage report showed no line of DialogPresenter). So the test reports its own end, and this waits for it.
-        var done = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        await _session.Dispatch(async () =>
+        // Dispatch returns before the body of an async job ends (the dialog tests then passed with their assertions never run), and nothing pumps
+        // the UI thread once it has returned: a test that really waits (Task.Delay) never resumed. So the job is not async: it starts the test,
+        // then runs the jobs of the UI thread itself until the test is over.
+        Exception? failure = null;
+        await _session.Dispatch(() =>
         {
             try
             {
-                await test();
-                done.SetResult();
+                // Routeables takes the first window that is active after its setup for the main one, and its setup replaces the state manager
+                // after the session started (more than once, as far as the tests can tell). So before each test, the main window is made the active
+                // one on the manager there is, unless it already was: no window of a test is the first one.
+                var manager = TopLevelStateManager.Default;
+                if (!ReferenceEquals(manager, _activatedOn))
+                {
+                    _activatedOn = manager;
+                    manager.OnActivated(_main!);
+                }
+
+                var running = test();
+                var deadline = DateTime.UtcNow.AddSeconds(60);
+                while (!running.IsCompleted)
+                {
+                    if (DateTime.UtcNow > deadline)
+                        throw new TimeoutException("The body of the test did not end within 60 seconds.");
+                    Dispatcher.UIThread.RunJobs();
+                    Thread.Sleep(1);
+                }
+
+                running.GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
-                done.SetException(ex);
+                failure = ex;
             }
         }, CancellationToken.None);
-        try
-        {
-            await done.Task.WaitAsync(TimeSpan.FromSeconds(60));
-        }
-        catch (ObjectDisposedException ex)
-        {
-            throw new InvalidOperationException("Container disposed. Trace: " + string.Join(" | ", Trace) + $" | managerNow={TopLevelStateManager.Default.GetHashCode()} activeNow={TopLevelStateManager.Default.GetActive()?.GetHashCode()} styles={Application.Current?.Styles.Count}", ex);
-        }
-        catch (TimeoutException)
-        {
-            throw new TimeoutException("The body of the test did not end within 60 seconds.");
-        }
+
+        if (failure is not null)
+            ExceptionDispatchInfo.Capture(failure).Throw();
     }
 
     /// <summary>Disposes the headless session.</summary>
