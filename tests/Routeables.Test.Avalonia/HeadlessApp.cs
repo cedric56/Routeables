@@ -112,7 +112,7 @@ public sealed class HeadlessApp : IDisposable
         }
         catch (ObjectDisposedException ex)
         {
-            throw new InvalidOperationException("Container disposed. Trace: " + string.Join(" | ", Trace), ex);
+            throw new InvalidOperationException("Container disposed. Trace: " + string.Join(" | ", Trace) + $" | managerNow={TopLevelStateManager.Default.GetHashCode()} activeNow={TopLevelStateManager.Default.GetActive()?.GetHashCode()} styles={Application.Current?.Styles.Count}", ex);
         }
         catch (TimeoutException)
         {
