@@ -69,14 +69,20 @@ public sealed class HeadlessApp : IDisposable
     // A test closes the windows it opens, so this one is opened first and stays open until the end.
     private Window? _main;
 
+    // Temporary: what happened to the active window at start, shown when a test fails because the container was disposed.
+    private static readonly System.Collections.Concurrent.ConcurrentQueue<string> Trace = new();
+
     /// <summary>Starts the session and opens the main window of the application.</summary>
     public HeadlessApp() => _session.Dispatch(() =>
     {
         _main = new Window { Width = 800, Height = 600 };
+        Trace.Enqueue($"main={_main.GetHashCode()} manager={TopLevelStateManager.Default.GetHashCode()} activeBefore={TopLevelStateManager.Default.GetActive()?.GetHashCode()}");
+        TopLevelStateManager.Default.ActiveChanged += (sender, _) => Trace.Enqueue($"ActiveChanged sender={sender?.GetType().Name}:{sender?.GetHashCode()}");
         _main.Show();
         Dispatcher.UIThread.RunJobs();
         // The window becomes the active one when it is loaded, which a render later may do after the first test has opened its own window.
         TopLevelStateManager.Default.OnActivated(_main);
+        Trace.Enqueue($"activeAfter={TopLevelStateManager.Default.GetActive()?.GetHashCode()}");
     }, CancellationToken.None).GetAwaiter().GetResult();
 
     /// <summary>The service provider of the running test application.</summary>
@@ -103,6 +109,10 @@ public sealed class HeadlessApp : IDisposable
         try
         {
             await done.Task.WaitAsync(TimeSpan.FromSeconds(60));
+        }
+        catch (ObjectDisposedException ex)
+        {
+            throw new InvalidOperationException("Container disposed. Trace: " + string.Join(" | ", Trace), ex);
         }
         catch (TimeoutException)
         {
