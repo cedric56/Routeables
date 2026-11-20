@@ -177,8 +177,10 @@ jobs:
         run: |
           reports=$(find coverage -name '*.cobertura.xml')
           if [ -z "$reports" ]; then echo "No coverage report was written." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
+          # The floors count the code the compiler writes (async methods, lambdas) since the settings no longer leave it out: they were lowered from
+          # 85-95 to what to expect, and are to be raised to the figures of the first run.
           # Gate only: the table of the summary is the one of the job "Code coverage, all the tests".
-          python tools/coverage-summary.py --min 65 --min-assembly Routeables.Segments=95 --min-assembly Routeables.Routing=95 --min-assembly Routeables.Regions=95 --min-assembly Routeables.Locking=95 --min-assembly Routeables.Services=92 --min-assembly Routeables.Generated=90 --min-assembly Routeables.Abstraction=88 --min-assembly Routeables.Core=85 --min-assembly Routeables.AspNetCore=94 --files 25 $reports
+          python tools/coverage-summary.py --min 65 --min-assembly Routeables.Segments=90 --min-assembly Routeables.Routing=85 --min-assembly Routeables.Regions=85 --min-assembly Routeables.Locking=90 --min-assembly Routeables.Services=80 --min-assembly Routeables.Generated=88 --min-assembly Routeables.Abstraction=75 --min-assembly Routeables.Core=70 --min-assembly Routeables.AspNetCore=88 --files 25 $reports
 
       - uses: actions/upload-artifact@v7
         if: always()
@@ -704,7 +706,7 @@ jobs:
         run: |
           dotnet tool install --global dotnet-coverage --version 18.12.0
           export PATH="$PATH:$HOME/.dotnet/tools"
-          dotnet-coverage collect --settings tests/CodeCoverage.avalonia.settings.xml -f cobertura -o coverage-avalonia/avalonia.cobertura.xml \
+          dotnet-coverage collect --settings tests/CodeCoverage.settings.xml -f cobertura -o coverage-avalonia/avalonia.cobertura.xml \
             "dotnet tests/Routeables.Test.Avalonia/bin/${{ env.CONFIGURATION }}/net10.0/Routeables.Test.Avalonia.dll"
           python3 tools/coverage-summary.py --files 25 --files-of Avalonia coverage-avalonia/avalonia.cobertura.xml
 

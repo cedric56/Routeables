@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- What the coverage option of `dotnet test` measures (Microsoft.Testing.Extensions.CodeCoverage): the libraries of Routeables, not the tests, the
-     packages they use, or the code the generators and the compiler write. Passed with the coverage-settings option. -->
+<!-- What the coverage option of `dotnet test` (Microsoft.Testing.Extensions.CodeCoverage) and dotnet-coverage measure: the libraries of Routeables, not the
+     tests, the packages they use, or the code a generator writes. The code the compiler writes is NOT left out: an async method or a lambda is a class
+     the compiler writes, marked CompilerGenerated, and excluding that attribute removed the body of every async method from the report (Router.Guards.cs
+     had 5 lines in the report of Routeables.Test and 62 in the others), so the figures of one report could not be compared with another's. -->
 <Configuration>
   <CodeCoverage>
     <ModulePaths>
@@ -16,7 +18,6 @@
       <Exclude>
         <Attribute>^System\.Diagnostics\.CodeAnalysis\.ExcludeFromCodeCoverageAttribute$</Attribute>
         <Attribute>^System\.CodeDom\.Compiler\.GeneratedCodeAttribute$</Attribute>
-        <Attribute>^System\.Runtime\.CompilerServices\.CompilerGeneratedAttribute$</Attribute>
       </Exclude>
     </Attributes>
     <Sources>
