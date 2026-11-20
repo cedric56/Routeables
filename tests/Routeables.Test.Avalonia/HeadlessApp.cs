@@ -68,9 +68,6 @@ public sealed class HeadlessApp : IDisposable
     // The first window the application shows is its main window: closing it ends the application, and Routeables then disposes the container.
     // A test closes the windows it opens, so this one is opened first and stays open until the end.
     private Window? _main;
-
-    // Temporary: the last step a test reached, shown when it does not end.
-    public static string Step = "";
     private ITopLevelStateManager? _activatedOn;
 
     /// <summary>Starts the session and opens the main window of the application.</summary>
@@ -84,42 +81,37 @@ public sealed class HeadlessApp : IDisposable
     /// <summary>The service provider of the running test application.</summary>
     public IServiceProvider Provider => TestApp.Provider;
 
-    /// <summary>Runs <paramref name="test"/> on the UI thread of the application.</summary>
+    /// <summary>Runs <paramref name="test"/> on the UI thread of the application, which runs its jobs and timers until the test ends.</summary>
     public async Task RunAsync(Func<Task> test)
     {
-        // Dispatch can return while the body of the test is still running (the dialog tests then passed with their assertions never run, and the
-        // coverage report showed no line of DialogPresenter). So the test reports its own end, and this waits for it.
-        var done = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        await _session.Dispatch(async () =>
+        // An async lambda given to Dispatch is taken for an Action when the session has no overload for a Func<Task>: the dispatch then returns at the
+        // first await of the test, which went on without anyone running the UI thread (the tests passed with their assertions never run, and a test
+        // that really waited never resumed). A delegate that returns a Task<int> is for the overload that waits for it.
+        var finished = false;
+        Func<Task<int>> job = async () =>
         {
-            try
+            // Routeables takes the first window that is active after its setup for the main one, and its setup replaces the state manager
+            // after the session started (more than once, as far as the tests can tell). So before each test, the main window is made the active
+            // one on the manager there is, unless it already was: no window of a test is the first one.
+            var manager = TopLevelStateManager.Default;
+            if (!ReferenceEquals(manager, _activatedOn))
             {
-                // Routeables takes the first window that is active after its setup for the main one, and its setup replaces the state manager
-                // after the session started (more than once, as far as the tests can tell). So before each test, the main window is made the active
-                // one on the manager there is, unless it already was: no window of a test is the first one.
-                var manager = TopLevelStateManager.Default;
-                if (!ReferenceEquals(manager, _activatedOn))
-                {
-                    _activatedOn = manager;
-                    manager.OnActivated(_main!);
-                }
+                _activatedOn = manager;
+                manager.OnActivated(_main!);
+            }
 
-                await test();
-                done.SetResult();
-            }
-            catch (Exception ex)
-            {
-                done.SetException(ex);
-            }
-        }, CancellationToken.None);
-        try
-        {
-            await done.Task.WaitAsync(TimeSpan.FromSeconds(60));
-        }
-        catch (TimeoutException)
-        {
-            throw new TimeoutException("The body of the test did not end within 60 seconds. Last step: " + Step);
-        }
+            await test();
+            finished = true;
+            return 0;
+        };
+
+        // Depending on the overload, the result is the 0 or the task that returns it.
+        object? result = await _session.Dispatch(job, CancellationToken.None);
+        if (result is Task<int> pending)
+            await pending;
+
+        if (!finished)
+            throw new InvalidOperationException("The body of the test was still running when the dispatch returned: its assertions are not checked.");
     }
 
     /// <summary>Disposes the headless session.</summary>

@@ -117,26 +117,18 @@ public sealed class HeadlessMenuTests(HeadlessApp app)
     public Task A_menu_without_a_view_model_stops_following_the_old_one() => app.RunAsync(async () =>
     {
         var (window, menu, vm, first, second) = Build();
-        HeadlessApp.Step = "build";
         await UntilAsync(() => menu.ItemCount == 2);
-        HeadlessApp.Step = "listed";
         vm.SelectedEntry = first;
         await UntilAsync(() => ReferenceEquals(menu.SelectedItem, first));
-        HeadlessApp.Step = "selected";
 
         menu.DataContext = null;
-        HeadlessApp.Step = "nulled";
         Dispatcher.UIThread.RunJobs();
         vm.SelectedEntry = second;
-        HeadlessApp.Step = "changed";
         Dispatcher.UIThread.RunJobs();
-        HeadlessApp.Step = "ran2";
         await Task.Delay(50);
-        HeadlessApp.Step = "delayed";
         Dispatcher.UIThread.RunJobs();
 
         Assert.NotSame(second, menu.SelectedItem);
-        HeadlessApp.Step = "asserted";
 
         window.Close();
     });
