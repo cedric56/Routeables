@@ -210,6 +210,9 @@ jobs:
         run: |
           reports=$(find reports -name '*.cobertura.xml')
           if [ -z "$reports" ]; then echo "No coverage report was found." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
+          # What each report brings, to tell a report that is missing or badly read from a report that covers little: its path, and the line
+          # coverage of the three assemblies the test project of the core is expected to cover.
+          { echo "### Reports merged"; echo; for r in $reports; do echo "- \`$r\`: $(python3 tools/coverage-summary.py $r | grep -E '^\| (Routeables\.Routing|Routeables\.Core|\*\*All\*\*) ' | tr '\n' ' ')"; done; echo; } | tee -a "$GITHUB_STEP_SUMMARY"
           { echo "### Code coverage (all the tests together)"; python3 tools/coverage-summary.py --files 40 --min-assembly Routeables.Avalonia=40 $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
 
   # Phase 1 of docs/benchmark-comparison.md: the same 200-step navigation scenario on Routeables, ReactiveUI routing and a navigation
