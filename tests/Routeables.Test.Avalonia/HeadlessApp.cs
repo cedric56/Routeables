@@ -75,6 +75,8 @@ public sealed class HeadlessApp : IDisposable
         _main = new Window { Width = 800, Height = 600 };
         _main.Show();
         Dispatcher.UIThread.RunJobs();
+        // The window becomes the active one when it is loaded, which a render later may do after the first test has opened its own window.
+        TopLevelStateManager.Default.OnActivated(_main);
     }, CancellationToken.None).GetAwaiter().GetResult();
 
     /// <summary>The service provider of the running test application.</summary>

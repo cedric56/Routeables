@@ -23,7 +23,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
-- Avalonia headless tests: the first test closed the first window shown, which is the main window of the application, so Routeables disposed the container and the next tests failed with `ObjectDisposedException`. The session now opens a main window of its own, kept open until the end.
+- Avalonia headless tests: the first test closed the first window shown, which is the main window of the application, so Routeables disposed the container and the next tests failed with `ObjectDisposedException`. The session now opens a main window of its own, makes it the active one at once (the first test could otherwise load its own window before it), and keeps it open until the end.
 - The Avalonia headless tests failed with a `TypeLoadException` (`SetFrameThemeVariant`): `Avalonia.Headless` was 12.0.1 while the application loaded Avalonia 12.1.4. Headless and Fluent now use the same version as the rest (12.1.4).
 - **The Avalonia headless tests passed without running their body.** `HeadlessApp.RunAsync` returned when the dispatch did, while the test was still running, so the dialog tests passed with their assertions never checked (which is why `DialogPresenter` showed 0% coverage). It now waits for the end of the body and reports its failure; the tests that fail once checked are fixed next.
 - Flaky test `Of_several_route_changes_waiting_only_the_last_one_runs`: the ten route changes now wait for a release, so none can finish before the others have asked (on a loaded machine the first ones could finish before the last ones started, and were then not replaced).
