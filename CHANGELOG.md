@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- Tests: the shared fake view models of the tests are generic (`FakeViewModel`, `SecondViewModel` … `SixthViewModel`, `FakeDetailViewModel`, and their views); a test whose subject is the name of a type (a route taken from it, a segment) declares its own. Tests of the Blazor `RouteableRegionItems` component, of the type guards (a guard that returns nothing, their order, an address with a query) and of `RefreshGuardsAsync` (a guard that cancels).
 - Avalonia headless tests of the system Back request (Android button, mouse back button, Alt+Left), of `RouteableRegionItems`, and of `RouteableTabs`. `Routeables.Avalonia` lets the test assembly see its internals. The dialogs drawn in the overlay layer (a view with no window) cannot be tested headless: `EmbeddableControlRoot` is not supported by Avalonia.Headless.
 - CI: the coverage of Routeables.Avalonia is measured with dotnet-coverage (as for Uno and MAUI) instead of the coverage extension of `dotnet test`, which reported 0% for code that the dialog tests run.
 - Tests: headless tests for `RouteableMenu` (entries, selection, a refused selection, a locked entry, the automation peer).

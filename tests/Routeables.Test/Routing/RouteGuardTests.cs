@@ -221,6 +221,32 @@ public class RouteGuardTests
     }
 
     [Fact]
+    public async Task RefreshGuardsAsync_asks_again_about_the_page_shown_and_a_guard_that_cancels_leaves_it()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var allowed = true;
+        var asked = new List<(RouteableKind Kind, bool Same)>();
+        using var provider = Build(new Guard(c =>
+        {
+            asked.Add((c.Kind, ReferenceEquals(c.From, c.To)));
+            return allowed ? RouteGuardDecision.Allow : RouteGuardDecision.Cancel;
+        }));
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/guard-home", cancellationToken: ct);
+        asked.Clear();
+
+        Assert.True((await router.RefreshGuardsAsync(ct)).Success);
+        Assert.Equal([(RouteableKind.MoveTo, true)], asked);
+
+        allowed = false;
+        var result = await router.RefreshGuardsAsync(ct);
+
+        Assert.True(result.Cancelled);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
+        Assert.Single(router.History.Entries);
+    }
+
+    [Fact]
     public async Task A_guard_that_throws_fails_the_route_change_and_releases_the_router()
     {
         var ct = TestContext.Current.CancellationToken;
