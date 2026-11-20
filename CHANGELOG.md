@@ -23,6 +23,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- The Avalonia benchmark (`Routeables.Comparison.Avalonia`) timed out in CI after `Avalonia.Headless` went to 12.1.4 for the tests: it keeps 12.0.1, the version it was measured with.
 - Avalonia headless tests: `HeadlessApp.RunAsync` gave Dispatch an async lambda, taken for an `Action`: the dispatch returned at the first `await` of the test, and nothing ran the UI thread (jobs, timers) afterwards, so a test that really waited never resumed. It now gives a delegate that returns a task, which the session waits for while it runs the UI thread.
 - Avalonia headless tests: a test that really waits (`Task.Delay`) never resumed, because nothing ran the jobs of the UI thread once the dispatch had returned. `HeadlessApp.RunAsync` now starts the test and runs those jobs itself until it ends.
 - Avalonia headless tests: the first test closed the first window shown, which is the main window of the application, so Routeables disposed the container and the next tests failed with `ObjectDisposedException`. The session now opens a main window of its own, makes it the active one before the first test (Routeables is started after the session does, and takes the window that is active then for the main one), and keeps it open until the end.
