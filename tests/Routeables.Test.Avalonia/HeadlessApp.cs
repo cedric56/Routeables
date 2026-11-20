@@ -122,8 +122,17 @@ public sealed class HeadlessApp : IDisposable
     /// <summary>Disposes the headless session.</summary>
     public void Dispose()
     {
-        _session.Dispatch(() => _main?.Close(), CancellationToken.None).GetAwaiter().GetResult();
-        _session.Dispose();
+        // Neither step may hold the end of the run: the thread of the session keeps the process alive, so a dispose that never returns hangs the job.
+        try
+        {
+            _session.Dispatch(() => _main?.Close(), CancellationToken.None).Wait(TimeSpan.FromSeconds(10));
+        }
+        catch (Exception)
+        {
+            // The window is closed with the session anyway.
+        }
+
+        Task.Run(_session.Dispose).Wait(TimeSpan.FromSeconds(10));
     }
 }
 
