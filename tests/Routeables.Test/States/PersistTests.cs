@@ -76,7 +76,7 @@ public class PersistTests
     {
         RegisterForm();
         var services = new ServiceCollection();
-        services.AddRoutes(n => n.Page<FormView, FormVm>("/form"));
+        services.AddRoutes(n => n.Page<FakeViewFor, FormVm>("/form"));
         return services.BuildServiceProvider();
     }
 

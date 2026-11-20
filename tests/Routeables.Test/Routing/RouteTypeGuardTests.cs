@@ -23,9 +23,9 @@ public class RouteTypeGuardTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<TgHomeView, TgHomeVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/tg-home");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/tg-home");
         services.RegisterRoute<TgSecretView, TgSecretVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/tg-secret");
-        services.AddTransient<TgHomeVm>();
+        services.AddTransient<FakeViewModel>();
         services.AddTransient<TgSecretVm>();
         services.AddSingleton(guard);
         return services.BuildServiceProvider();
@@ -45,7 +45,7 @@ public class RouteTypeGuardTests
 
         Assert.Equal(0, TgSecretVm.Built);
         Assert.Contains("TgSecretVm /tg-secret", asked);
-        Assert.IsType<TgHomeVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
         Assert.NotNull(result);
     }
 
@@ -61,7 +61,7 @@ public class RouteTypeGuardTests
         await router.GoToAsync("/tg-secret", cancellationToken: ct);
 
         Assert.Equal(0, TgSecretVm.Built);
-        Assert.IsType<TgHomeVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
     }
 
     [Fact]

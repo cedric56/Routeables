@@ -46,11 +46,11 @@ public class RouteCatchAllTests
         var router = Build(s =>
         {
             s.RegisterRoute<DocsView, DocsVm>(route: "/docs/{**path}");
-            s.RegisterRoute<IntroView, IntroVm>(route: "/docs/intro");
+            s.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(route: "/docs/intro");
         });
 
         await router.GoToAsync("/docs/intro", cancellationToken: TestContext.Current.CancellationToken);
-        Assert.IsType<IntroVm>(router.CurrentViewModel);
+        Assert.IsType<OtherFakeViewModel>(router.CurrentViewModel);
 
         await router.GoToAsync("/docs/other/page", cancellationToken: TestContext.Current.CancellationToken);
         Assert.IsType<DocsVm>(router.CurrentViewModel);

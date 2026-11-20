@@ -79,7 +79,7 @@ public class RouteableUnloadWarningTests
         var scripts = new Scripts();
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<FormView, FormVm>(route: "/form");
+        services.RegisterRoute<FakeViewFor, FormVm>(route: "/form");
         services.RegisterRoute<PlainView, PlainVm>(route: "/plain");
         services.AddSingleton<NavigationManager>(new FakeNavigation());
         services.AddSingleton<IJSRuntime>(scripts);

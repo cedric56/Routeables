@@ -12,16 +12,12 @@ public class FakeViewModel;
 public class OtherFakeViewModel;
 public sealed class BlockedVm;
 public sealed class ConfirmVm;
-public sealed class CtHomeVm;
 public sealed class DocsVm(string? path = null) { public string? Path { get; } = path; }
-public sealed class FormVm;
+//public sealed class FormVm;
 public sealed class GuardAdminVm;
 public sealed class GuardHomeVm;
 public sealed class GuardLoginVm;
-//public sealed class HelloVm;
 public sealed class HomeVm;
-public sealed class IntroVm;
-public sealed class IsoVm;
 public sealed class ListVm;
 public sealed class LoginVm;
 public sealed class LostVm;
@@ -29,7 +25,7 @@ public sealed class MbAVm;
 public sealed class MbBVm;
 public sealed class MbCVm;
 public sealed class MenuVm;
-public sealed class MeterHomeVm;
+//public sealed class MeterHomeVm;
 public sealed class MeterItemVm(int id) { public int Id { get; } = id; }
 public sealed class MissingVm;
 public sealed class MsLoginVm;
@@ -51,7 +47,5 @@ public sealed class SegVm;
 public sealed class SlugVm(string slug) { public string Slug { get; } = slug; }
 public sealed class SoHomeVm;
 public sealed class SoLinkVm;
-//public sealed class StartVm;
 public sealed class StubVm;
 public sealed class TabVm;
-public sealed class TgHomeVm;

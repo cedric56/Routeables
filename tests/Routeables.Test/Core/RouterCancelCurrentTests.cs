@@ -32,6 +32,21 @@ public class RouterCancelCurrentTests
         }
     }
 
+    /// <summary>A page whose arrival lasts until the task it is given completes, or until it is cancelled.</summary>
+    private sealed class WaitingTarget(Task release) : IRouteable
+    {
+        public bool Completed { get; private set; }
+
+        public Task<bool> CanLeaveAsync(CancellationToken ct = default) => Task.FromResult(true);
+        public Task OnLeavingAsync(IRouteableArgs context, CancellationToken ct = default) => Task.CompletedTask;
+
+        public async Task OnEnteringAsync(IRouteableArgs context, CancellationToken ct = default)
+        {
+            await release.WaitAsync(ct);
+            Completed = true;
+        }
+    }
+
     [Fact]
     public async Task A_new_route_change_cancels_the_one_in_progress_and_takes_its_place()
     {
@@ -76,14 +91,17 @@ public class RouterCancelCurrentTests
         var slowChange = router.GoAsync(new TestView(), slow, cancellationToken: Ct);
         await slow.Started.Task.WaitAsync(TimeSpan.FromSeconds(5), Ct);
 
-        // Each one starts while the previous one has not finished: they all try to replace the slow one.
-        var viewModels = Enumerable.Range(0, 10).Select(_ => new TestViewModel()).ToArray();
-        var changes = viewModels.Select(vm => router.GoAsync(new TestView(), vm, cancellationToken: Ct)).ToArray();
+        // Each one waits for the release below, so none can finish before the ten have asked: they all try to replace the one before them.
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var targets = Enumerable.Range(0, 10).Select(_ => new WaitingTarget(release.Task)).ToArray();
+        var changes = targets.Select(target => router.GoAsync(new TestView(), target, cancellationToken: Ct)).ToArray();
+        release.SetResult();
 
         var last = await changes[^1].WaitAsync(TimeSpan.FromSeconds(5), Ct);
         Assert.True(last.Success);
-        Assert.Same(viewModels[^1], router.CurrentViewModel);
+        Assert.Same(targets[^1], router.CurrentViewModel);
         Assert.Equal(1, router.History.Count);
+        Assert.Equal(1, targets.Count(target => target.Completed));
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => slowChange);
     }
 

@@ -14,8 +14,8 @@ public class RouteableArgsIsolationTests
         var ct = TestContext.Current.CancellationToken;
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<IsoView, IsoVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/iso");
-        services.AddTransient<IsoVm>();
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/iso");
+        services.AddTransient<FakeViewModel>();
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
         var args = RouteableArgs.Create();

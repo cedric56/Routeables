@@ -34,18 +34,15 @@ public class FakeModalFor<TViewModel, TResult> : IRouteableModalFor<TViewModel, 
 public sealed class BlockedView : IRouteableFor { public object? Context { get; set; } }
 public sealed class BoomView : IRouteableFor { public object? Context { get; set; } }
 public sealed class CtBoomView : IRouteableFor { public object? Context { get; set; } }
-public sealed class CtHomeView : IRouteableFor { public object? Context { get; set; } }
 public sealed class CustomerView : IRouteableFor { public object? Context { get; set; } }
 public sealed class DetailView : IRouteableFor { public object? Context { get; set; } }
 public sealed class DirtyView : IRouteableFor { public object? Context { get; set; } }
 public sealed class DocsView : IRouteableFor { public object? Context { get; set; } }
-public sealed class FormView : IRouteableFor { public object? Context { get; set; } }
+//public sealed class FormView : IRouteableFor { public object? Context { get; set; } }
 public sealed class GuardAdminView : IRouteableFor { public object? Context { get; set; } }
 public sealed class GuardHomeView : IRouteableFor { public object? Context { get; set; } }
 public sealed class GuardLoginView : IRouteableFor { public object? Context { get; set; } }
 public sealed class HomeView : IRouteableFor { public object? Context { get; set; } }
-public sealed class IntroView : IRouteableFor { public object? Context { get; set; } }
-public sealed class IsoView : IRouteableFor { public object? Context { get; set; } }
 public sealed class ListView : IRouteableFor { public object? Context { get; set; } }
 public sealed class LoginView : IRouteableFor { public object? Context { get; set; } }
 public sealed class MbAView : IRouteableFor { public object? Context { get; set; } }
@@ -78,7 +75,6 @@ public sealed class SoloView : IRouteableFor { public object? Context { get; set
 public sealed class StayView : IRouteableFor { public object? Context { get; set; } }
 public sealed class StubView : IRouteableFor { public object? Context { get; set; } }
 public sealed class TabView : IRouteableFor { public object? Context { get; set; } }
-public sealed class TgHomeView : IRouteableFor { public object? Context { get; set; } }
 public sealed class TgSecretView : IRouteableFor { public object? Context { get; set; } }
 public sealed class ThingView : IRouteableFor { public object? Context { get; set; } }
 public sealed class ThrowingView : IRouteableFor { public object? Context { get; set; } }

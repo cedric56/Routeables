@@ -19,7 +19,7 @@ public class CoordinatorThrowingPageTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.AddRouteCoordinator();
-        services.RegisterRoute<CtHomeView, CtHomeVm>(route: "/ct-home");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/ct-home");
         services.RegisterRoute<CtBoomView, CtBoomVm>();
         services.RegisterSegment<CtBoomVm>("Boom");
         return services.BuildServiceProvider();
@@ -41,6 +41,6 @@ public class CoordinatorThrowingPageTests
 
         Assert.True(thrown is not null || result is { Success: false });
         Assert.Equal(1, router.History.Count);
-        Assert.IsType<CtHomeVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
     }
 }

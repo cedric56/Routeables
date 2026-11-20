@@ -255,9 +255,6 @@ public class RouteGuardTests
         Assert.Null(RouteGuardDecision.Cancel.RedirectTo);
     }
 
-
-    public sealed class MeterHomeView : IRouteableFor { public object? Context { get; set; } }
-
     [Fact]
     public async Task A_route_change_is_reported_as_an_activity_and_a_duration_to_whoever_listens()
     {
@@ -289,15 +286,15 @@ public class RouteGuardTests
 
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<MeterHomeView, MeterHomeVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/meter-home");
-        services.AddTransient<MeterHomeVm>();
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/meter-home");
+        services.AddTransient<FakeViewModel>();
         using var provider = services.BuildServiceProvider();
 
         await provider.GetRequiredService<IRouter>().GoToAsync("/meter-home", cancellationToken: TestContext.Current.CancellationToken);
 
         // Other tests route too: only this page counts.
         Activity mine;
-        lock (activities) mine = Assert.Single(activities, a => a.GetTagItem("routeables.view_model")?.ToString() == nameof(MeterHomeVm));
+        lock (activities) mine = Assert.Single(activities, a => a.GetTagItem("routeables.view_model")?.ToString() == nameof(FakeViewModel));
         Assert.Equal("Routeables.Route", mine.OperationName);
         Assert.Equal("Push", mine.GetTagItem("routeables.kind"));
         Assert.Equal("/meter-home", mine.GetTagItem("routeables.route"));

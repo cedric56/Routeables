@@ -163,7 +163,7 @@ public class RouteCriteriaTests
     {
         var services = new ServiceCollection();
         services.RegisterMenuViewModel<MenuMain>(ServiceLifetime.Singleton);
-        services.AddRoutes(n => n.Tab<HomeView, HomeVm>("Home", route: "/home", icon: "house"));
+        services.AddRoutes(n => n.Tab<FakeViewFor, FakeViewModel>("Home", route: "/home", icon: "house"));
         using var provider = services.BuildServiceProvider();
 
         var entry = Assert.Single(provider.GetRequiredService<IRouteableMenuViewModel>().Entries);
@@ -178,7 +178,7 @@ public class RouteCriteriaTests
     {
         var services = new ServiceCollection();
         services.RegisterMenuViewModel<MenuMain>(ServiceLifetime.Singleton);
-        services.AddRoutes(n => n.Tab<HomeView, HomeVm>("Home"));
+        services.AddRoutes(n => n.Tab<FakeViewFor, HomeVm>("Home"));
         using var provider = services.BuildServiceProvider();
 
         var entry = Assert.Single(provider.GetRequiredService<IRouteableMenuViewModel>().Entries);
@@ -191,7 +191,7 @@ public class RouteCriteriaTests
     [Fact]
     public async Task The_values_a_page_was_reached_with_come_back_with_the_page()
     {
-        using var provider = Build(n => n.Page<FormView, FormVm>("/form"));
+        using var provider = Build(n => n.Page<FakeViewFor, FakeViewModel>("/form"));
         var router = provider.GetRequiredService<IRouter>();
         var ct = TestContext.Current.CancellationToken;
         var id = Guid.NewGuid();
@@ -230,11 +230,11 @@ public class RouteCriteriaTests
     [Fact]
     public async Task A_page_shown_with_its_own_view_is_saved_when_it_is_given_a_route()
     {
-        using var provider = Build(n => n.Page<FormView, FormVm>("/form"));
+        using var provider = Build(n => n.Page<FakeViewFor, FakeViewModel>("/form"));
         var router = provider.GetRequiredService<IRouter>();
         var ct = TestContext.Current.CancellationToken;
-        await router.GoAsync(new FormView(), new FormVm(), Routeables.Routing.RouteableArgs.Create().WithRoute("/form"), ct);
-        await router.GoAsync(new FormView(), new FormVm(), null, ct);
+        await router.GoAsync(new FakeViewFor(), new FakeViewModel(), Routeables.Routing.RouteableArgs.Create().WithRoute("/form"), ct);
+        await router.GoAsync(new FakeViewFor(), new FakeViewModel(), null, ct);
 
         var routes = RouteableState.Capture(router);
 

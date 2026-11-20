@@ -1,6 +1,8 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Themes.Fluent;
+using Avalonia.Threading;
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
 using Routeables.Avalonia;
@@ -63,26 +65,55 @@ public sealed class HeadlessApp : IDisposable
 
     private readonly HeadlessUnitTestSession _session = HeadlessUnitTestSession.StartNew(typeof(TestApp));
 
+    // The first window the application shows is its main window: closing it ends the application, and Routeables then disposes the container.
+    // A test closes the windows it opens, so this one is opened first and stays open until the end.
+    private Window? _main;
+
+    /// <summary>Starts the session and opens the main window of the application.</summary>
+    public HeadlessApp() => _session.Dispatch(() =>
+    {
+        _main = new Window { Width = 800, Height = 600 };
+        _main.Show();
+        Dispatcher.UIThread.RunJobs();
+    }, CancellationToken.None).GetAwaiter().GetResult();
+
     /// <summary>The service provider of the running test application.</summary>
     public IServiceProvider Provider => TestApp.Provider;
 
     /// <summary>Runs <paramref name="test"/> on the UI thread of the application.</summary>
     public async Task RunAsync(Func<Task> test)
     {
-        // The coverage report shows no line of DialogPresenter run, though the dialog tests pass: they may be passing before their body has ended.
-        // This fails a test whose body is still running when the dispatch returns, instead of letting it pass without being checked.
-        var finished = false;
+        // Dispatch can return while the body of the test is still running (the dialog tests then passed with their assertions never run, and the
+        // coverage report showed no line of DialogPresenter). So the test reports its own end, and this waits for it.
+        var done = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         await _session.Dispatch(async () =>
         {
-            await test();
-            finished = true;
+            try
+            {
+                await test();
+                done.SetResult();
+            }
+            catch (Exception ex)
+            {
+                done.SetException(ex);
+            }
         }, CancellationToken.None);
-        if (!finished)
-            throw new InvalidOperationException("The body of the test was still running when the dispatch returned: its assertions are not checked.");
+        try
+        {
+            await done.Task.WaitAsync(TimeSpan.FromSeconds(60));
+        }
+        catch (TimeoutException)
+        {
+            throw new TimeoutException("The body of the test did not end within 60 seconds.");
+        }
     }
 
     /// <summary>Disposes the headless session.</summary>
-    public void Dispose() => _session.Dispose();
+    public void Dispose()
+    {
+        _session.Dispatch(() => _main?.Close(), CancellationToken.None).GetAwaiter().GetResult();
+        _session.Dispose();
+    }
 }
 
 /// <summary>xUnit collection that shares a single <see cref="HeadlessApp"/> instance across tests.</summary>
