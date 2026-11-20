@@ -92,8 +92,13 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
                      ? new[] { entry.ViewModel }
                      : new[] { entry.ViewModel, entry.View })
         {
-            if (target is IRouteable routeable && _subscribed.TryAdd(target, target))
+            // Recorded once OnSubscribe has returned: an instance that failed to subscribe (the route change failed) is not subscribed, so
+            // the next time it is entered (a page kept in a cache) it subscribes again, and it is not unsubscribed when it goes.
+            if (target is IRouteable routeable && !_subscribed.TryGetValue(target, out _))
+            {
                 routeable.OnSubscribe();
+                _subscribed.TryAdd(target, target);
+            }
         }
     }
 

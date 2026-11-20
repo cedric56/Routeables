@@ -165,6 +165,17 @@ public class RouteParserTests
     public void An_unknown_constraint_is_reported_even_when_the_optional_value_is_missing()
         => Assert.Contains("unknown", RouteParser.Mismatch("items/{id:unsupported?}", "items"));
 
+    [Theory]
+    [InlineData("files/{**path:nonsense}")]
+    [InlineData("files/{id:nonsense}")]
+    [InlineData("files/{id:nonsense?}")]
+    public void Build_refuses_an_unknown_constraint_whether_or_not_there_is_a_value(string template)
+    {
+        // The same answer for an empty catch-all (or an optional value that is left out) as for one that has a value.
+        Assert.Throws<ArgumentException>(() => RouteParser.Build(template, new Dictionary<string, object?>()));
+        Assert.Throws<ArgumentException>(() => RouteParser.Build(template, new Dictionary<string, object?> { ["path"] = "a/b", ["id"] = "x" }));
+    }
+
     [Fact]
     public void An_encoded_slash_stays_inside_its_segment()
     {

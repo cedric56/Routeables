@@ -25,6 +25,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- `RouteParser.Build` refused an unknown constraint on a catch-all only when the catch-all had a value (`files/{**path:nonsense}` built `files` for no value and was refused for one); it now refuses it in both cases, as for the other placeholders.
+- `OnSubscribe` was recorded before it ran: an instance whose `OnSubscribe` threw (a page kept in a cache, entered again by the next try) never subscribed again, and was unsubscribed without having subscribed. It is recorded once `OnSubscribe` has returned.
 - Flaky test `A_route_change_is_reported_as_an_activity_and_a_duration_to_whoever_listens`: the activity listener is process-wide, and the test asked for exactly one activity of its page. It now checks every activity of its page.
 - Avalonia headless tests: the end of the run no longer waits for ever on the session (closing the main window and disposing the session now have a time limit), so a CI job cannot hang after its tests.
 - The Avalonia benchmark (`Routeables.Comparison.Avalonia`) timed out in CI after `Avalonia.Headless` went to 12.1.4 for the tests: it keeps 12.0.1, the version it was measured with.

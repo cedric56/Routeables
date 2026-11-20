@@ -360,6 +360,29 @@ public class RouteCoordinatorTests
     }
 
     [Fact]
+    public async Task A_Configure_that_throws_fails_the_call_before_anything_starts()
+    {
+        using var provider = Build();
+        var coordinator = provider.GetRequiredService<IRouteCoordinator>();
+        var router = provider.GetRequiredService<IRouter>();
+        var raised = new List<string>();
+        coordinator.Coordinating += (_, _) => raised.Add("coordinating");
+        coordinator.Coordinated += (_, _) => raised.Add("coordinated");
+        var routing = RouteCoordination.Create()
+            .Segment("Orders", _ => { })
+            .Segment("Detail", _ => throw new InvalidOperationException("configure failed"))
+            .Build();
+
+        var failure = await Assert.ThrowsAsync<InvalidOperationException>(() => coordinator.CoordinateAsync(routing, TestContext.Current.CancellationToken));
+
+        // The arguments are built with the rest of the resolution, before the first segment: nothing was applied, and the observers heard
+        // of no coordination that began and never ended.
+        Assert.Equal("configure failed", failure.Message);
+        Assert.Empty(raised);
+        Assert.Null(router.CurrentViewModel);
+    }
+
+    [Fact]
     public async Task Configure_completes_the_named_parameters()
     {
         using var provider = Build();

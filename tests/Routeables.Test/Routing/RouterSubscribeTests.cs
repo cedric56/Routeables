@@ -9,7 +9,14 @@ public class RouterSubscribeTests
 {
     private sealed class Probe(string name, List<string> calls, bool failOnUnsubscribe = false) : IRouteable, IDisposable
     {
-        public void OnSubscribe() => calls.Add($"{name}:subscribe");
+        public bool FailOnSubscribe { get; set; }
+
+        public void OnSubscribe()
+        {
+            calls.Add($"{name}:subscribe");
+            if (FailOnSubscribe)
+                throw new InvalidOperationException("subscribe failed");
+        }
 
         public void OnUnsubscribe()
         {
@@ -96,5 +103,43 @@ public class RouterSubscribeTests
 
         Assert.Contains("vm:dispose", calls);
         Assert.Contains("view:dispose", calls);
+    }
+
+    [Fact]
+    public async Task An_instance_whose_OnSubscribe_failed_subscribes_again_the_next_time_it_is_entered()
+    {
+        var calls = new List<string>();
+        var lifecycle = new RouterLifecycle();
+        var vm = new Probe("vm", calls) { FailOnSubscribe = true };
+        var page = Entry(vm, new Probe("view", calls));
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => lifecycle.EnterAsync(page, TestContext.Current.CancellationToken));
+        Assert.Equal(["vm:subscribe"], calls);          // the failure stopped the entering: no OnEntering, nothing for the view
+
+        // A page kept in a cache is entered again by the next try: it has not subscribed, so it does.
+        vm.FailOnSubscribe = false;
+        calls.Clear();
+        await lifecycle.EnterAsync(page, TestContext.Current.CancellationToken);
+        Assert.Equal(["vm:subscribe", "view:subscribe", "vm:to", "view:to"], calls);
+
+        // And once subscribed, it does not subscribe again.
+        calls.Clear();
+        await lifecycle.EnterAsync(page, TestContext.Current.CancellationToken);
+        Assert.Equal(["vm:to", "view:to"], calls);
+    }
+
+    [Fact]
+    public async Task An_instance_whose_OnSubscribe_failed_is_not_unsubscribed_when_it_goes()
+    {
+        var calls = new List<string>();
+        var lifecycle = new RouterLifecycle();
+        var page = Entry(new Probe("vm", calls) { FailOnSubscribe = true }, new Probe("view", calls));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => lifecycle.EnterAsync(page, TestContext.Current.CancellationToken));
+        calls.Clear();
+
+        await lifecycle.DestroyAsync([page], []);
+
+        Assert.DoesNotContain("vm:unsubscribe", calls);
+        Assert.Contains("vm:dispose", calls);
     }
 }

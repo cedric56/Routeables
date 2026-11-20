@@ -66,13 +66,15 @@ public static partial class RouteParser
             if (m.Groups["rest"].Success)
             {
                 // {**path}: keep the slashes of the value and escape each segment.
+                // As for the other placeholders, a constraint that does not exist is refused whether or not there is a value (a template that
+                // cannot be matched must not build an address for one value and be refused for another).
+                var restType = m.Groups["type"].Value;
+                if (!IsKnownConstraint(restType))
+                    throw new ArgumentException($"The constraint \"{restType}\" of {{**{m.Groups["name"].Value}}} in \"{template}\" is unknown.", nameof(template));
                 if (bag.TryGetValue(m.Groups["name"].Value, out var restValue) && restValue is not null
-                    && Format(restValue, m.Groups["type"].Value) is { Length: > 0 } restText)
+                    && Format(restValue, restType) is { Length: > 0 } restText)
                 {
-                    // As for the other placeholders, the whole value must satisfy the constraint, so that it reads back.
-                    var restType = m.Groups["type"].Value;
-                    if (!IsKnownConstraint(restType))
-                        throw new ArgumentException($"The constraint \"{restType}\" of {{**{m.Groups["name"].Value}}} in \"{template}\" is unknown.", nameof(template));
+                    // The whole value must satisfy the constraint, so that it reads back.
                     if (restText.Split('/').Any(part => part.Length == 0))
                         throw new ArgumentException($"The value \"{restText}\" cannot be the rest of \"{template}\": an empty segment (a leading, trailing or doubled slash) is dropped from an address, so the value would not be read back.", nameof(values));
                     if (HasDotSegment(restText))
