@@ -7,6 +7,7 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
 using Routeables.Avalonia;
 using Routeables.Routing;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Runtime.ExceptionServices;
 using Xunit;
@@ -103,17 +104,30 @@ public sealed class HeadlessApp : IDisposable
                     manager.OnActivated(_main!);
                 }
 
-                var running = test();
-                var deadline = DateTime.UtcNow.AddSeconds(60);
-                while (!running.IsCompleted)
+                // What the test awaits comes back through this context, which the loop below runs: the context of the session is not run by it.
+                var pump = new PumpContext();
+                var previous = SynchronizationContext.Current;
+                SynchronizationContext.SetSynchronizationContext(pump);
+                try
                 {
-                    if (DateTime.UtcNow > deadline)
-                        throw new TimeoutException("The body of the test did not end within 60 seconds.");
-                    Dispatcher.UIThread.RunJobs();
-                    Thread.Sleep(1);
-                }
+                    var running = test();
+                    var deadline = DateTime.UtcNow.AddSeconds(30);
+                    while (!running.IsCompleted)
+                    {
+                        if (DateTime.UtcNow > deadline)
+                            throw new TimeoutException("The body of the test did not end within 30 seconds.");
+                        pump.RunQueued();
+                        Dispatcher.UIThread.RunJobs();
+                        Thread.Sleep(1);
+                    }
 
-                running.GetAwaiter().GetResult();
+                    pump.RunQueued();
+                    running.GetAwaiter().GetResult();
+                }
+                finally
+                {
+                    SynchronizationContext.SetSynchronizationContext(previous);
+                }
             }
             catch (Exception ex)
             {
@@ -123,6 +137,22 @@ public sealed class HeadlessApp : IDisposable
 
         if (failure is not null)
             ExceptionDispatchInfo.Capture(failure).Throw();
+    }
+
+    /// <summary>A context that queues what the awaits of a test post, for the loop of <see cref="RunAsync"/> to run on the UI thread.</summary>
+    private sealed class PumpContext : SynchronizationContext
+    {
+        private readonly ConcurrentQueue<(SendOrPostCallback Callback, object? State)> _queue = new();
+
+        public override void Post(SendOrPostCallback d, object? state) => _queue.Enqueue((d, state));
+
+        public override void Send(SendOrPostCallback d, object? state) => d(state);
+
+        public void RunQueued()
+        {
+            while (_queue.TryDequeue(out var item))
+                item.Callback(item.State);
+        }
     }
 
     /// <summary>Disposes the headless session.</summary>
