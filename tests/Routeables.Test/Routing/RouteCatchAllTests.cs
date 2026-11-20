@@ -8,6 +8,7 @@ namespace Routeables.Tests.Routing;
 /// <summary>The catch-all placeholder <c>{**path}</c>: it takes what is left of the path, slashes included.</summary>
 public class RouteCatchAllTests
 {
+    public sealed class DocsVm(string? path = null) { public string? Path { get; } = path; }
 
     private static IRouter Build(Action<IServiceCollection> configure)
     {
@@ -21,7 +22,7 @@ public class RouteCatchAllTests
     [Fact]
     public async Task The_catch_all_takes_the_rest_of_the_path_with_its_slashes()
     {
-        var router = Build(s => s.RegisterRoute<DocsView, DocsVm>(route: "/docs/{**path}"));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DocsVm>(route: "/docs/{**path}"));
 
         var result = await router.GoToAsync("/docs/guides/a%20b/c", cancellationToken: TestContext.Current.CancellationToken);
 
@@ -32,7 +33,7 @@ public class RouteCatchAllTests
     [Fact]
     public async Task The_catch_all_may_be_empty()
     {
-        var router = Build(s => s.RegisterRoute<DocsView, DocsVm>(route: "/docs/{**path}"));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DocsVm>(route: "/docs/{**path}"));
 
         var result = await router.GoToAsync("/docs", cancellationToken: TestContext.Current.CancellationToken);
 
@@ -45,12 +46,12 @@ public class RouteCatchAllTests
     {
         var router = Build(s =>
         {
-            s.RegisterRoute<DocsView, DocsVm>(route: "/docs/{**path}");
-            s.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(route: "/docs/intro");
+            s.RegisterRoute<FakeViewFor, DocsVm>(route: "/docs/{**path}");
+            s.RegisterRoute<SecondViewFor, SecondViewModel>(route: "/docs/intro");
         });
 
         await router.GoToAsync("/docs/intro", cancellationToken: TestContext.Current.CancellationToken);
-        Assert.IsType<OtherFakeViewModel>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
 
         await router.GoToAsync("/docs/other/page", cancellationToken: TestContext.Current.CancellationToken);
         Assert.IsType<DocsVm>(router.CurrentViewModel);
@@ -59,7 +60,7 @@ public class RouteCatchAllTests
     [Fact]
     public async Task The_catch_all_is_filled_when_the_route_is_built()
     {
-        var router = Build(s => s.RegisterRoute<DocsView, DocsVm>(route: "/docs/{**path}"));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DocsVm>(route: "/docs/{**path}"));
 
         var result = await router.GoToAsync<DocsVm>(
             new Dictionary<string, object?> { ["path"] = "guides/a b/c" }, cancellationToken: TestContext.Current.CancellationToken);
@@ -71,7 +72,7 @@ public class RouteCatchAllTests
     [Fact]
     public async Task A_catch_all_that_is_not_the_last_segment_never_matches()
     {
-        var router = Build(s => s.RegisterRoute<DocsView, DocsVm>(route: "/docs/{**path}/edit"));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DocsVm>(route: "/docs/{**path}/edit"));
 
         var result = await router.GoToAsync("/docs/a/edit", cancellationToken: TestContext.Current.CancellationToken);
 

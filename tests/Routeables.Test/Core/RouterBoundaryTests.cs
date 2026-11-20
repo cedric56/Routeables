@@ -78,9 +78,9 @@ public class RouterBoundaryTests
         var guard = new SlowGuard();
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-        services.RegisterRoute<OtherView, OtherVm>(route: "/other");
-        services.RegisterRoute<LoginView, LoginVm>(route: "/login");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(route: "/other");
+        services.RegisterRoute<ThirdViewFor, ThirdViewModel>(route: "/login");
         services.AddSingleton<IRouteGuard>(guard);
         return (services.BuildServiceProvider(), guard);
     }
@@ -105,7 +105,7 @@ public class RouterBoundaryTests
         await change;
         await refresh;
 
-        Assert.IsType<OtherVm>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
         lock (guard.Asked) Assert.Equal(["other", "other"], guard.Asked.Select(a => a.Trim('/')).ToArray());   // the route change, then the refresh: about the page shown then
     }
 
@@ -127,6 +127,6 @@ public class RouterBoundaryTests
         await Task.WhenAll(first, second);
 
         Assert.Equal(1, guard.MaxRunning);
-        Assert.IsType<LoginVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
     }
 }

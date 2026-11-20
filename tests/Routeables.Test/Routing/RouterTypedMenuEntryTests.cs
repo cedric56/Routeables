@@ -10,6 +10,8 @@ namespace Routeables.Tests.Routing;
 /// <summary>A typed menu entry (<c>GoToRouteAsync&lt;T&gt;(entry)</c>) finds the view of its view model whatever it is given: an address that is not its template, only a route, nothing.</summary>
 public class RouterTypedMenuEntryTests
 {
+    public sealed class OrdersVm;
+
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
     public sealed class OrderView : IRouteableFor { public object? Context { get; set; } }
@@ -26,8 +28,8 @@ public class RouterTypedMenuEntryTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-        services.RegisterRoute<OrdersView, OrdersVm>(route: "/orders");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+        services.RegisterRoute<SecondViewFor, OrdersVm>(route: "/orders");
         services.RegisterRoute<OrderView, OrderVm>(route: "/orders/{id:int}");
         configure?.Invoke(services);
         return services.BuildServiceProvider();
@@ -66,7 +68,7 @@ public class RouterTypedMenuEntryTests
     {
         await using var provider = Build(services =>
         {
-            services.RegisterRoute<UnroutedView, UnroutedVm>();
+            services.RegisterRoute<ThirdViewFor, UnroutedVm>();
             services.AddSingleton<IRouteTypeGuard, RefuseAll>();
         });
         var router = provider.GetRequiredService<IRouter>();

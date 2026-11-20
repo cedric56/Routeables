@@ -13,6 +13,8 @@ namespace Routeables.Tests.Razor;
 /// <summary>A Back or a Forward the router makes itself (<c>GoBackAsync</c> from a view model) is the same move in the history of the browser.</summary>
 public class RouteableUrlSyncHistoryTests
 {
+    public sealed class NamedVm(string name) { public string Name { get; } = name; }
+
     // A browser: the entries of its history, the one shown, and what history.go does.
     private sealed class FakeNavigation : NavigationManager
     {
@@ -143,13 +145,13 @@ public class RouteableUrlSyncHistoryTests
             Scripts = new FakeScripts(Navigation);
             var services = new ServiceCollection();
             services.RegisterRouting();
-            services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-            services.RegisterRoute<DetailView, DetailVm>(route: "/detail/{id:int}");
-            services.RegisterRoute<NamedView, NamedVm>(route: "/named/{name}");
-            services.RegisterRoute<RootView, RootVm>(route: "/");
+            services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+            services.RegisterRoute<SecondViewFor, DetailVm>(route: "/detail/{id:int}");
+            services.RegisterRoute<ThirdViewFor, NamedVm>(route: "/named/{name}");
+            services.RegisterRoute<FourthViewFor, FourthViewModel>(route: "/");
             if (notFound)
             {
-                services.RegisterRoute<NotFoundView, NotFoundVm>(route: "/not-found");
+                services.RegisterRoute<FifthViewFor, SecondViewModel>(route: "/not-found");
                 services.UseNotFoundRoute();
             }
             services.RegisterRoute<SlowView, SlowVm>(route: "/slow");
@@ -224,7 +226,7 @@ public class RouteableUrlSyncHistoryTests
 
         Assert.True(await f.Navigation.ClickAsync("/nope"));
 
-        Assert.IsType<NotFoundVm>(f.Router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(f.Router.CurrentViewModel);
     }
 
     [Fact]
@@ -236,7 +238,7 @@ public class RouteableUrlSyncHistoryTests
 
         Assert.True(await f.Navigation.ClickAsync("/nope"));
 
-        Assert.IsType<HomeVm>(f.Router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(f.Router.CurrentViewModel);
     }
 
     [Fact]
@@ -255,12 +257,12 @@ public class RouteableUrlSyncHistoryTests
         using var f = new Fixture();
         await f.Sync.StartAsync();
         await f.GoAsync("/home", "/home");
-        Assert.True((await f.Router.GoAsync(new OrphanView(), new OrphanVm(), cancellationToken: TestContext.Current.CancellationToken)).Success);   // shown under "/", like the home
-        Assert.IsType<OrphanVm>(f.Router.CurrentViewModel);
+        Assert.True((await f.Router.GoAsync(new SixthViewFor(), new ThirdViewModel(), cancellationToken: TestContext.Current.CancellationToken)).Success);   // shown under "/", like the home
+        Assert.IsType<ThirdViewModel>(f.Router.CurrentViewModel);
 
         Assert.True(await f.Navigation.ClickAsync("/"));
 
-        Assert.IsType<RootVm>(f.Router.CurrentViewModel);       // the link was taken for the page that is shown, and nothing moved
+        Assert.IsType<FourthViewModel>(f.Router.CurrentViewModel);       // the link was taken for the page that is shown, and nothing moved
     }
 
     [Fact]
@@ -276,7 +278,7 @@ public class RouteableUrlSyncHistoryTests
 
         Assert.Equal(before + 1, f.Router.History.Count);
         Assert.Equal(before, f.Router.History.CurrentIndex);
-        Assert.IsType<HomeVm>(f.Router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(f.Router.CurrentViewModel);
 
         // The two histories agree: a Back of the router is a Back of the browser, not a move of the router alone.
         f.Navigation.Calls.Clear();
@@ -316,7 +318,7 @@ public class RouteableUrlSyncHistoryTests
 
         Assert.Equal(before, f.Router.History.Count);
         Assert.Equal(before - 2, f.Router.History.CurrentIndex);
-        Assert.IsType<HomeVm>(f.Router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(f.Router.CurrentViewModel);
     }
 
     [Fact]
@@ -376,7 +378,7 @@ public class RouteableUrlSyncHistoryTests
 
         Assert.Equal(-1, f.Scripts.Moves[0]);
         Assert.Empty(f.Navigation.Calls);                       // not replaced: the browser went back, it does not stay on a copy of the list
-        Assert.IsType<HomeVm>(f.Router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(f.Router.CurrentViewModel);
         var entries = f.Router.History.Entries.Count;
 
         f.Navigation.Go(1);                                     // the Forward button: the page the router forgot is opened again

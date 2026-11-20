@@ -12,6 +12,8 @@ namespace Routeables.Tests.Routing;
 /// <summary>Segment routing: parsing of <see cref="RouteCoordination"/> and its dispatch to routers by <see cref="IRouteCoordinator"/>.</summary>
 public class RouteCoordinatorTests
 {
+    public sealed class OrphanVm;
+
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class ParamAttribute : Attribute;
 
@@ -31,9 +33,9 @@ public class RouteCoordinatorTests
         services.RegisterRouting();
         services.AddRouteCoordinator();
         services.AddRegion("side", ServiceLifetime.Singleton);
-        services.RegisterRoute<OrdersView, OrdersVm>();
-        services.RegisterRoute<DetailView, DetailVm>();
-        services.RegisterRoute<SideView, SideVm>();
+        services.RegisterRoute<SecondViewFor, OrdersVm>();
+        services.RegisterRoute<FakeViewFor, DetailVm>();
+        services.RegisterRoute<ThirdViewFor, SideVm>();
         services.RegisterSegment<OrdersVm>("Orders");
         services.RegisterSegment<DetailVm>("Detail");
         services.RegisterSegment<SideVm>("Help");
@@ -406,7 +408,7 @@ public class RouteCoordinatorTests
         services.RegisterSegment<OrdersVm>("Orders");
         services.RegisterRouting();
         services.AddRouteCoordinator();
-        services.RegisterRoute<OrdersView, OrdersVm>();
+        services.RegisterRoute<SecondViewFor, OrdersVm>();
         using var provider = services.BuildServiceProvider();
 
         var result = await provider.GetRequiredService<IRouteCoordinator>().CoordinateAsync("Orders", TestContext.Current.CancellationToken);

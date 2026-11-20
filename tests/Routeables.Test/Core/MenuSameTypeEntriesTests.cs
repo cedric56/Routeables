@@ -16,9 +16,9 @@ public class MenuSameTypeEntriesTests
     {
         protected override ObservableCollection<IRouteableMenuEntry> GetEntries() =>
         [
-            new RouteableMenuEntry<MsProductVm>("Shoes", route: "/ms/shoes", template: "/ms/shoes"),
-            new RouteableMenuEntry<MsProductVm>("Hats", route: "/ms/hats", template: "/ms/hats"),
-            new RouteableMenuEntry<MsOtherVm>("Other", route: "/ms-other", template: "/ms-other"),
+            new RouteableMenuEntry<FakeViewModel>("Shoes", route: "/ms/shoes", template: "/ms/shoes"),
+            new RouteableMenuEntry<FakeViewModel>("Hats", route: "/ms/hats", template: "/ms/hats"),
+            new RouteableMenuEntry<SecondViewModel>("Other", route: "/ms-other", template: "/ms-other"),
         ];
 
         protected override void NotifyPropertyChanged(string? propertyName) { }
@@ -28,10 +28,10 @@ public class MenuSameTypeEntriesTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<MsProductView, MsProductVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms/shoes");
-        services.RegisterRoute<MsProductView, MsProductVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms/hats");
-        services.RegisterRoute<MsOtherView, MsOtherVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-other");
-        services.AddTransient<MsOtherVm>();
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms/shoes");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms/hats");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-other");
+        services.AddTransient<SecondViewModel>();
         return services.BuildServiceProvider();
     }
 
@@ -99,16 +99,16 @@ public class MenuSameTypeEntriesTests
     private sealed class SecretGuard : IRouteGuard
     {
         public Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
-            => Task.FromResult(change.To.ViewModel is MsSecretVm ? RouteGuardDecision.Redirect("/ms-login") : RouteGuardDecision.Allow);
+            => Task.FromResult(change.To.ViewModel is ThirdViewModel ? RouteGuardDecision.Redirect("/ms-login") : RouteGuardDecision.Allow);
     }
 
     private sealed class GuardedMenu(IRouter router) : RouteableMenuViewModelBase(router, initialize: false)
     {
         protected override ObservableCollection<IRouteableMenuEntry> GetEntries() =>
         [
-            new RouteableMenuEntry<MsOtherVm>("Home", route: "/ms-other", template: "/ms-other"),
-            new RouteableMenuEntry<MsSecretVm>("Secret", route: "/ms-secret", template: "/ms-secret"),
-            new RouteableMenuEntry<MsLoginVm>("Sign in", route: "/ms-login", template: "/ms-login"),
+            new RouteableMenuEntry<SecondViewModel>("Home", route: "/ms-other", template: "/ms-other"),
+            new RouteableMenuEntry<ThirdViewModel>("Secret", route: "/ms-secret", template: "/ms-secret"),
+            new RouteableMenuEntry<FourthViewModel>("Sign in", route: "/ms-login", template: "/ms-login"),
         ];
 
         protected override void NotifyPropertyChanged(string? propertyName) { }
@@ -120,12 +120,12 @@ public class MenuSameTypeEntriesTests
         var ct = TestContext.Current.CancellationToken;
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<MsOtherView, MsOtherVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-other");
-        services.RegisterRoute<MsSecretView, MsSecretVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-secret");
-        services.RegisterRoute<MsLoginView, MsLoginVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-login");
-        services.AddTransient<MsOtherVm>();
-        services.AddTransient<MsSecretVm>();
-        services.AddTransient<MsLoginVm>();
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-other");
+        services.RegisterRoute<ThirdViewFor, ThirdViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-secret");
+        services.RegisterRoute<FourthViewFor, FourthViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-login");
+        services.AddTransient<SecondViewModel>();
+        services.AddTransient<ThirdViewModel>();
+        services.AddTransient<FourthViewModel>();
         services.AddSingleton<IRouteGuard>(new SecretGuard());
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
@@ -134,7 +134,7 @@ public class MenuSameTypeEntriesTests
 
         await menu.SelectEntryAsync(menu.Entries[1], ct);      // "Secret": the guard sends the user to the sign-in page
 
-        Assert.IsType<MsLoginVm>(router.CurrentViewModel);
+        Assert.IsType<FourthViewModel>(router.CurrentViewModel);
         Assert.Equal("Sign in", menu.SelectedEntry?.DisplayName);
     }
 
@@ -145,7 +145,7 @@ public class MenuSameTypeEntriesTests
 
         public async Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
         {
-            if (change.To.ViewModel is not MsSecretVm)
+            if (change.To.ViewModel is not ThirdViewModel)
                 return RouteGuardDecision.Allow;
             Asked.TrySetResult();
             await Answer.Task.WaitAsync(cancellationToken);
@@ -160,12 +160,12 @@ public class MenuSameTypeEntriesTests
         var guard = new BlockingGuard();
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<MsOtherView, MsOtherVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-other");
-        services.RegisterRoute<MsSecretView, MsSecretVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-secret");
-        services.RegisterRoute<MsLoginView, MsLoginVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-login");
-        services.AddTransient<MsOtherVm>();
-        services.AddTransient<MsSecretVm>();
-        services.AddTransient<MsLoginVm>();
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-other");
+        services.RegisterRoute<ThirdViewFor, ThirdViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-secret");
+        services.RegisterRoute<FourthViewFor, FourthViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ms-login");
+        services.AddTransient<SecondViewModel>();
+        services.AddTransient<ThirdViewModel>();
+        services.AddTransient<FourthViewModel>();
         services.AddSingleton<IRouteGuard>(guard);
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
@@ -183,7 +183,7 @@ public class MenuSameTypeEntriesTests
         Assert.Equal("Secret", menu.SelectedEntry?.DisplayName);
         guard.Answer.SetResult();
         Assert.True(await running);
-        Assert.IsType<MsSecretVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
         Assert.Equal("Secret", menu.SelectedEntry?.DisplayName);
     }
 
@@ -194,7 +194,7 @@ public class MenuSameTypeEntriesTests
         public MenuOfAField(IRouter router, string[] names, bool initialize) : base(router, initialize) => _names = names;
 
         protected override ObservableCollection<IRouteableMenuEntry> GetEntries()
-            => new(_names.Select(name => (IRouteableMenuEntry)new RouteableMenuEntry<MsOtherVm>(name, route: "/ms-other", template: "/ms-other")));
+            => new(_names.Select(name => (IRouteableMenuEntry)new RouteableMenuEntry<SecondViewModel>(name, route: "/ms-other", template: "/ms-other")));
 
         protected override void NotifyPropertyChanged(string? propertyName) { }
     }

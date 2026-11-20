@@ -5,7 +5,7 @@ using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Test.Abstraction;
 using Routeables.Tests.Pages;
-using ListView = Routeables.Tests.Pages.ListView;
+using SecondViewFor = Routeables.Tests.Pages.SecondViewFor;
 
 namespace Routeables.Tests.Core;
 
@@ -136,7 +136,7 @@ public class RouterFailureTests
         DisposableVm.Created = DisposableVm.Disposed = 0;
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<UnbuildableView, DisposableVm>(
+        services.RegisterRoute<ThirdViewFor, DisposableVm>(
             (_, _) => throw new InvalidOperationException("the view cannot be built"), (_, _) => new DisposableVm(),
             ServiceLifetime.Transient, ServiceLifetime.Transient, "/broken");
         await using var provider = services.BuildServiceProvider();
@@ -168,8 +168,8 @@ public class RouterFailureTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
-        services.RegisterRoute<ListView, ListVm>(route: "/orders");
-        services.RegisterRoute<ThrowingView, ThrowingVm>(route: "/broken");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(route: "/orders");
+        services.RegisterRoute<FourthViewFor, ThrowingVm>(route: "/broken");
         await using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
         await router.GoToAsync("/home", cancellationToken: Ct);
@@ -180,6 +180,6 @@ public class RouterFailureTests
         catch (InvalidOperationException) { }
 
         Assert.True(result is null || !result.Success);
-        Assert.IsType<ListVm>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
     }
 }

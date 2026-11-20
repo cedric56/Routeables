@@ -14,6 +14,8 @@ namespace Routeables.Tests.Razor;
 /// <summary>The history handed from a prerendered page (or a paused circuit) to the one that takes over: <see cref="RouteableHistoryPersistence"/>.</summary>
 public class RouteableHistoryPersistenceTests
 {
+    public sealed class PageVm(int id) { public int Id { get; } = id; }
+
     // The store between the two sides: what the first one persisted, the second one restores.
     private sealed class MemoryStore : IPersistentComponentStateStore
     {
@@ -45,7 +47,7 @@ public class RouteableHistoryPersistenceTests
         services.AddLogging();
         services.RegisterRouting();
         services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());
-        services.RegisterRoute<PageView, PageVm>(route: "/pages/{id:int}");
+        services.RegisterRoute<FakeViewFor, PageVm>(route: "/pages/{id:int}");
         return services.BuildServiceProvider();
     }
 

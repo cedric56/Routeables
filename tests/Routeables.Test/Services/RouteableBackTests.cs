@@ -17,9 +17,9 @@ public class RouteableBackTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/back-first");
-        services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/back-second");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/back-second");
         services.AddTransient<FakeViewModel>();
-        services.AddTransient<OtherFakeViewModel>();
+        services.AddTransient<SecondViewModel>();
         configure?.Invoke(services);
         return services.BuildServiceProvider();
     }
@@ -83,7 +83,7 @@ public class RouteableBackTests
         Assert.True(RouteableBack.TryGoBack(provider));
 
         Assert.Equal(RouteableOutcome.Cancelled, await routed.Task.WaitAsync(TimeSpan.FromSeconds(5), ct));
-        Assert.IsType<OtherFakeViewModel>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
     }
 
     private sealed class RefuseBack : IRouteGuard
@@ -130,7 +130,7 @@ public class RouteableBackTests
         await WaitAsync(() => !tab.CanGoBack, ct);
 
         Assert.True(main.CanGoBack);
-        Assert.IsType<OtherFakeViewModel>(main.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(main.CurrentViewModel);
         Assert.Same(main, RouteableBack.Target(provider));
     }
 

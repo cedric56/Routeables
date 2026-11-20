@@ -20,7 +20,7 @@ public class DefaultRouteableMenuViewModelTests
         services.RegisterRouting();
         services.AddRegion("detail");
         services.RegisterRoute<FakeViewFor, FakeViewModel>(route: homeRoute);
-        services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(route: "/empty");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(route: "/empty");
         services.RegisterMenuViewModel<DefaultRouteableMenuViewModel>(ServiceLifetime.Singleton);
         return services.BuildServiceProvider();
     }
@@ -117,7 +117,7 @@ public class DefaultRouteableMenuViewModelTests
         Assert.Null(detail.CurrentView);
 
         RegionStart.Begin(provider, "detail", "/empty");
-        await UntilAsync(() => detail.CurrentViewModel is OtherFakeViewModel);
+        await UntilAsync(() => detail.CurrentViewModel is SecondViewModel);
         Assert.Null(provider.GetRequiredService<IRouter>().CurrentView);
     }
 

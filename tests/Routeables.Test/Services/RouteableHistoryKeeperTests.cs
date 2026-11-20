@@ -29,9 +29,9 @@ public class RouteableHistoryKeeperTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/kept-first");
-        services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/kept-second");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/kept-second");
         services.AddTransient<FakeViewModel>();
-        services.AddTransient<OtherFakeViewModel>();
+        services.AddTransient<SecondViewModel>();
         services.AddSingleton(store);
         services.AddRouteableHistory(path: null, protector: protector);
         return services.BuildServiceProvider();
@@ -70,7 +70,7 @@ public class RouteableHistoryKeeperTests
         next.StartRouteableHistory();
         var again = next.GetRequiredService<IRouter>();
         await again.GoToAsync("/kept-first", cancellationToken: TestContext.Current.CancellationToken);
-        await UntilAsync(() => again.CurrentViewModel is OtherFakeViewModel);
+        await UntilAsync(() => again.CurrentViewModel is SecondViewModel);
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public class RouteableHistoryKeeperTests
 
             await router.GoToAsync("/kept-first", cancellationToken: TestContext.Current.CancellationToken);
 
-            await UntilAsync(() => router.CurrentViewModel is OtherFakeViewModel);
+            await UntilAsync(() => router.CurrentViewModel is SecondViewModel);
             Assert.Equal(2, router.History.Count);
         }
         finally
@@ -210,7 +210,7 @@ public class RouteableHistoryKeeperTests
 
         await router.GoToAsync("/kept-first", cancellationToken: TestContext.Current.CancellationToken);
 
-        await UntilAsync(() => router.CurrentViewModel is OtherFakeViewModel);
+        await UntilAsync(() => router.CurrentViewModel is SecondViewModel);
         Assert.Equal(2, router.History.Count);
     }
 
@@ -226,7 +226,7 @@ public class RouteableHistoryKeeperTests
         await router.GoToAsync("/kept-first", cancellationToken: TestContext.Current.CancellationToken);
 
         // Until the pages are back, nothing is written; once they are, the whole history is.
-        await UntilAsync(() => router.CurrentViewModel is OtherFakeViewModel);
+        await UntilAsync(() => router.CurrentViewModel is SecondViewModel);
         await UntilAsync(() => store.Kept == waiting && store.Saves <= 1);
         Assert.Equal(["/kept-first", "/kept-second"], RouteableState.Deserialize(store.Kept));
     }

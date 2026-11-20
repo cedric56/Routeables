@@ -15,11 +15,11 @@ public class QueryOnlyRoutesTests
         if (queryFirst)
         {
             services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search?mode=grid");
-            services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search");
+            services.RegisterRoute<SecondViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search");
         }
         else
         {
-            services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search");
+            services.RegisterRoute<SecondViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search");
             services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/qo-search?mode=grid");
         }
         return services.BuildServiceProvider();
@@ -38,7 +38,7 @@ public class QueryOnlyRoutesTests
         Assert.IsType<FakeViewModel>(router.CurrentViewModel);
 
         Assert.True((await router.GoToAsync("/qo-search", cancellationToken: ct)).Success);
-        Assert.IsType<OtherFakeViewModel>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
     }
 
     [Theory]
@@ -48,7 +48,7 @@ public class QueryOnlyRoutesTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, template);
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, template);
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
 

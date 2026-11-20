@@ -12,6 +12,8 @@ namespace Routeables.Tests.Routing;
 /// </summary>
 public class RouteCriteriaTests
 {
+    public sealed class HomeVm;
+
     public sealed class OrderView : IRouteableFor { public object? Context { get; set; } }
     public sealed class OrderVm(int id, string? note = null, bool rush = false)
     {
@@ -20,7 +22,7 @@ public class RouteCriteriaTests
         public bool Rush { get; } = rush;
     }
 
-    public sealed class ConfirmView : IRouteableModalFor<ConfirmVm, bool>
+    public sealed class ConfirmView : IRouteableModalFor<SecondViewModel, bool>
     {
         public object? Context { get; set; }
         public Task<bool> ShowModalAsync() => Task.FromResult(true);
@@ -125,9 +127,9 @@ public class RouteCriteriaTests
     public async Task Pages_tabs_and_modals_are_declared_in_one_place()
     {
         using var provider = Build(n => n
-            .Tab<HomeView, HomeVm>("Home", route: "/home", icon: "house")
+            .Tab<SecondViewFor, HomeVm>("Home", route: "/home", icon: "house")
             .Page<OrderView, OrderVm>("/orders/{id:int}")
-            .Modal<ConfirmView, ConfirmVm>());
+            .Modal<ConfirmView, SecondViewModel>());
         var router = provider.GetRequiredService<IRouter>();
         var ct = TestContext.Current.CancellationToken;
 
@@ -137,15 +139,15 @@ public class RouteCriteriaTests
         Assert.True((await router.GoToAsync<OrderVm>(new Dictionary<string, object?> { ["id"] = 1 }, cancellationToken: ct)).Success);
 
         // The modal answers with its result.
-        Assert.True(await provider.ShowModalAsync<ConfirmVm, bool>());
+        Assert.True(await provider.ShowModalAsync<SecondViewModel, bool>());
     }
 
     [Fact]
     public void A_modal_is_found_without_naming_its_route()
     {
-        using var provider = Build(n => n.Modal<ConfirmView, ConfirmVm>());
+        using var provider = Build(n => n.Modal<ConfirmView, SecondViewModel>());
 
-        var view = provider.GetModalFor<ConfirmVm, bool>();
+        var view = provider.GetModalFor<SecondViewModel, bool>();
 
         Assert.IsType<ConfirmView>(view);
     }

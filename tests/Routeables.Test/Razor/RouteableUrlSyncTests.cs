@@ -14,6 +14,8 @@ namespace Routeables.Tests.Razor;
 /// <summary>Address &lt;-&gt; router synchronisation: <see cref="RouteableUrlSync"/> and the <see cref="RouteableTable"/> it reads.</summary>
 public class RouteableUrlSyncTests
 {
+    public sealed class SlugVm(string slug) { public string Slug { get; } = slug; }
+
     private sealed class TestNavigationManager : NavigationManager
     {
         public List<(string Uri, bool Replace)> Calls { get; } = [];
@@ -60,8 +62,8 @@ public class RouteableUrlSyncTests
             CustomerVm.Allow = true;
             var services = new ServiceCollection();
             services.RegisterRouting();
-            services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-            services.RegisterRoute<CustomerView, CustomerVm>(route: "/customers/{id:int}");
+            services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+            services.RegisterRoute<SecondViewFor, CustomerVm>(route: "/customers/{id:int}");
             services.RegisterRoute<PlainView, PlainVm>();
             Routing = new TestNavigationManager(uri);
             services.AddSingleton<NavigationManager>(Routing);
@@ -131,7 +133,7 @@ public class RouteableUrlSyncTests
         var main = new FakeMenuViewModel();
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<CustomerView, CustomerVm>(route: "/customers/{id:int}");
+        services.RegisterRoute<SecondViewFor, CustomerVm>(route: "/customers/{id:int}");
         var routing = new TestNavigationManager("http://localhost/customers/7");
         services.AddSingleton<NavigationManager>(routing);
         services.AddSingleton<IRouteableMenuViewModel>(main);
@@ -142,7 +144,7 @@ public class RouteableUrlSyncTests
         var chosen = await sync.StartAsync();
 
         Assert.True(chosen);                                   // the layout then keeps this page instead of the default one
-        Assert.IsType<CustomerView>(router.CurrentView);
+        Assert.IsType<SecondViewFor>(router.CurrentView);
     }
 
     [Fact]
@@ -159,8 +161,8 @@ public class RouteableUrlSyncTests
     public void Registering_the_same_url_twice_keeps_one_entry()
     {
         var services = new ServiceCollection();
-        services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-        services.RegisterRoute<HomeView, HomeVm>(route: "/HOME");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/HOME");
 
         using var provider = services.BuildServiceProvider();
 
@@ -185,7 +187,7 @@ public class RouteableUrlSyncTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<HomeView, HomeVm>(route: "about");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "about");
         var routing = new TestNavigationManager();
         services.AddSingleton<NavigationManager>(routing);
         using var provider = services.BuildServiceProvider();
@@ -250,7 +252,7 @@ public class RouteableUrlSyncTests
         f.Routing.BrowserGoesTo("/home");
         await Fixture.Until(() => menu.Moved.Count == 1);
 
-        Assert.IsType<HomeVm>(menu.Moved[0]);
+        Assert.IsType<FakeViewModel>(menu.Moved[0]);
     }
 
     [Fact]
@@ -306,8 +308,8 @@ public class RouteableUrlSyncTests
         // reads that as a protocol-relative link and leaves the application.
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-        services.RegisterRoute<SlugView, SlugVm>(route: "{slug}");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+        services.RegisterRoute<FourthViewFor, SlugVm>(route: "{slug}");
         var routing = new TestNavigationManager("http://localhost/home");
         services.AddSingleton<NavigationManager>(routing);
         using var provider = services.BuildServiceProvider();
@@ -347,7 +349,7 @@ public class RouteableUrlSyncTests
             new RouteableMenuEntry<PlainVm>("plain"), TestContext.Current.CancellationToken);
 
         f.Routing.BrowserGoesTo("/home");
-        await Fixture.Until(() => f.Router.CurrentViewModel is HomeVm);
+        await Fixture.Until(() => f.Router.CurrentViewModel is FakeViewModel);
         f.Routing.BrowserGoesTo("/");
         await Fixture.Until(() => f.Router.CurrentViewModel is PlainVm);
 
@@ -401,7 +403,7 @@ public class RouteableUrlSyncTests
 
         f.Routing.BrowserGoesTo("/home");
 
-        await Fixture.Until(() => f.Router.CurrentViewModel is HomeVm);
+        await Fixture.Until(() => f.Router.CurrentViewModel is FakeViewModel);
         Assert.Equal(2, f.Router.History.Count);
         Assert.Equal(0, f.Router.History.CurrentIndex);
     }
@@ -441,8 +443,8 @@ public class RouteableUrlSyncTests
         var sink = new Sink();
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-        services.RegisterRoute<BoomView, BoomVm>(route: "/boom");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+        services.RegisterRoute<ThirdViewFor, BoomVm>(route: "/boom");
         services.AddSingleton<IRouteableErrorSink>(sink);
         var routing = new TestNavigationManager();
         services.AddSingleton<NavigationManager>(routing);
@@ -458,7 +460,7 @@ public class RouteableUrlSyncTests
         await Fixture.Until(() => routing.Calls.Count > 0);
         Assert.Equal([("/home", true)], routing.Calls);
         Assert.Contains(sink.Sources, s => s.StartsWith(nameof(RouteableUrlSync) + "."));
-        Assert.IsType<HomeVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -473,7 +475,7 @@ public class RouteableUrlSyncTests
         await Task.Delay(50, TestContext.Current.CancellationToken);
 
         Assert.Empty(f.Routing.Calls);
-        Assert.IsType<HomeVm>(f.Router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(f.Router.CurrentViewModel);
     }
 
     [Fact]

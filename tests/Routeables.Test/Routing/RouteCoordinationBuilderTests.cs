@@ -41,7 +41,7 @@ public class RouteCoordinationBuilderTests
     {
         Assert.Throws<ArgumentException>(() => RouteCoordination.Create().Segment(name));
         Assert.Throws<ArgumentException>(() => RouteCoordination.Create().Segment(name, _ => { }));
-        Assert.Throws<ArgumentException>(() => new Microsoft.Extensions.DependencyInjection.ServiceCollection().RegisterSegment<OrdersViewModel>(name));
+        Assert.Throws<ArgumentException>(() => new Microsoft.Extensions.DependencyInjection.ServiceCollection().RegisterSegment<FakeViewModel>(name));
     }
 
     [Fact]
@@ -75,10 +75,10 @@ public class RouteCoordinationBuilderTests
     [Fact]
     public void The_builder_names_a_typed_segment_after_its_type_and_keeps_the_region()
     {
-        var coordination = RouteCoordination.Create().Segment<OrdersViewModel>("side").Build();
+        var coordination = RouteCoordination.Create().Segment<FakeViewModel>("side").Build();
 
         var segment = Assert.Single(coordination.Segments);
-        Assert.Equal(nameof(OrdersViewModel), segment.Name);
+        Assert.Equal(nameof(FakeViewModel), segment.Name);
         Assert.Equal("side", segment.Region);
         Assert.Equal(RouteSegmentKind.Push, segment.Kind);
     }
@@ -88,10 +88,10 @@ public class RouteCoordinationBuilderTests
     {
         Action<IRouteableArgs> configure = args => args.WithValue("k", 1);
 
-        var coordination = RouteCoordination.Create().Segment<OrdersViewModel>(configure, "side").Segment("Detail", configure).Build();
+        var coordination = RouteCoordination.Create().Segment<FakeViewModel>(configure, "side").Segment("Detail", configure).Build();
 
         Assert.Equal(["side", null], coordination.Segments.Select(s => s.Region));
-        Assert.Equal([nameof(OrdersViewModel), "Detail"], coordination.Segments.Select(s => s.Name));
+        Assert.Equal([nameof(FakeViewModel), "Detail"], coordination.Segments.Select(s => s.Name));
     }
 
     [Fact]

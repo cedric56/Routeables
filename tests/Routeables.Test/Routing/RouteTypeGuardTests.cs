@@ -24,7 +24,7 @@ public class RouteTypeGuardTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/tg-home");
-        services.RegisterRoute<TgSecretView, TgSecretVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/tg-secret");
+        services.RegisterRoute<SecondViewFor, TgSecretVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/tg-secret");
         services.AddTransient<FakeViewModel>();
         services.AddTransient<TgSecretVm>();
         services.AddSingleton(guard);

@@ -20,9 +20,9 @@ public class RouterValueBindingTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<OrdersView, OrdersVm>(route: "/orders");
-        services.RegisterRoute<ProductView, ProductVm>(route: "/products/{id}");
-        services.RegisterRoute<TabView, TabVm>(route: "/tabs/{tab:int}");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/orders");
+        services.RegisterRoute<SecondViewFor, ProductVm>(route: "/products/{id}");
+        services.RegisterRoute<ThirdViewFor, SecondViewModel>(route: "/tabs/{tab:int}");
         return services.BuildServiceProvider();
     }
 
@@ -48,7 +48,7 @@ public class RouterValueBindingTests
         var result = await router.GoToAsync("/tabs/3", cancellationToken: Ct);
 
         Assert.True(result.Success, result.Exception?.Message);
-        Assert.IsType<TabVm>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -60,6 +60,6 @@ public class RouterValueBindingTests
         var result = await router.GoToAsync("/orders", template: "orders", cancellationToken: Ct);
 
         Assert.True(result.Success, result.Exception?.Message);
-        Assert.IsType<OrdersVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
     }
 }

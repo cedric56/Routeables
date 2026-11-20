@@ -24,7 +24,7 @@ public class AspNetCoreHostTests
     public async Task A_value_by_attribute_reaches_the_property_of_the_view_model()
     {
         var services = new ServiceCollection();
-        services.UseRouteables(r => r.RegisterRoute<ThingView, ThingViewModel>(route: "/things/{thing::}"));
+        services.UseRouteables(r => r.RegisterRoute<FakeViewFor, ThingViewModel>(route: "/things/{thing::}"));
         using var root = services.BuildServiceProvider();
         using var scope = root.CreateScope();
         var router = scope.ServiceProvider.GetRequiredService<IRouter>();

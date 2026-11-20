@@ -20,7 +20,7 @@ public class CoordinatorThrowingPageTests
         services.RegisterRouting();
         services.AddRouteCoordinator();
         services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/ct-home");
-        services.RegisterRoute<CtBoomView, CtBoomVm>();
+        services.RegisterRoute<SecondViewFor, CtBoomVm>();
         services.RegisterSegment<CtBoomVm>("Boom");
         return services.BuildServiceProvider();
     }

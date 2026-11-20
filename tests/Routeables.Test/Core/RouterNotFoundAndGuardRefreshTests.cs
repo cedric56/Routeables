@@ -55,9 +55,9 @@ public class RouterNotFoundAndGuardRefreshTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-        services.RegisterRoute<MissingView, MissingVm>(route: "/not-found");
-        services.RegisterRoute<LoginView, LoginVm>(route: "/login");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(route: "/not-found");
+        services.RegisterRoute<ThirdViewFor, ThirdViewModel>(route: "/login");
         if (notFound) services.UseNotFoundRoute();
         if (session is not null)
         {
@@ -89,7 +89,7 @@ public class RouterNotFoundAndGuardRefreshTests
         var result = await router.GoToAsync("/nope?x=1", cancellationToken: Ct);
 
         Assert.True(result.Success);
-        Assert.IsType<MissingVm>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
         var asked = router.History.Current!.Args.Values.Single(v => v.name == RouteableNotFound.UrlValue).value;
         Assert.Equal("/nope?x=1", asked);
     }
@@ -99,7 +99,7 @@ public class RouterNotFoundAndGuardRefreshTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<HomeView, HomeVm>(route: "/home");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
         services.UseNotFoundRoute("/gone");
         await using var provider = services.BuildServiceProvider();
 
@@ -116,16 +116,16 @@ public class RouterNotFoundAndGuardRefreshTests
         await using var provider = Build(notFound: false, session, log);
         var router = provider.GetRequiredService<IRouter>();
         await router.GoToAsync("/home", cancellationToken: Ct);
-        Assert.IsType<HomeVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
 
         Assert.True((await router.RefreshGuardsAsync(Ct)).Success);          // still signed in: nothing changes
-        Assert.IsType<HomeVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
 
         session.IsSignedIn = false;
         var result = await router.RefreshGuardsAsync(Ct);
 
         Assert.True(result.Success);
-        Assert.IsType<LoginVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -139,19 +139,19 @@ public class RouterNotFoundAndGuardRefreshTests
         var subscription = router.RefreshGuardsOn(session, null, nameof(Session.IsSignedIn));
         session.Other();                                                       // another property: ignored
         await Task.Delay(50, Ct);
-        Assert.IsType<HomeVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
 
         session.IsSignedIn = false;
-        for (var i = 0; i < 200 && router.CurrentViewModel is not LoginVm; i++)
+        for (var i = 0; i < 200 && router.CurrentViewModel is not ThirdViewModel; i++)
             await Task.Delay(10, Ct);
-        Assert.IsType<LoginVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
 
         subscription.Dispose();
         await router.GoToAsync("/login", cancellationToken: Ct);
         session.IsSignedIn = true;
         session.IsSignedIn = false;                                            // no longer followed: no extra route change
         await Task.Delay(50, Ct);
-        Assert.IsType<LoginVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -165,9 +165,9 @@ public class RouterNotFoundAndGuardRefreshTests
         using var subscription = router.RefreshGuardsOn(session, null, nameof(Session.IsSignedIn));
         session.EverythingChanged(signedIn: false);                            // "all the properties changed" includes IsSignedIn
 
-        for (var i = 0; i < 200 && router.CurrentViewModel is not LoginVm; i++)
+        for (var i = 0; i < 200 && router.CurrentViewModel is not ThirdViewModel; i++)
             await Task.Delay(10, Ct);
-        Assert.IsType<LoginVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -181,9 +181,9 @@ public class RouterNotFoundAndGuardRefreshTests
         using var subscription = router.RefreshGuardsOn(session, null, null!);
         session.IsSignedIn = false;                                            // no NullReferenceException in the handler: the guards run again
 
-        for (var i = 0; i < 200 && router.CurrentViewModel is not LoginVm; i++)
+        for (var i = 0; i < 200 && router.CurrentViewModel is not ThirdViewModel; i++)
             await Task.Delay(10, Ct);
-        Assert.IsType<LoginVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -211,7 +211,7 @@ public class RouterNotFoundAndGuardRefreshTests
         public bool Active { get; set; }
 
         public Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
-            => Task.FromResult(Active && change.To.ViewModel is HomeVm ? RouteGuardDecision.Redirect("/login") : RouteGuardDecision.Allow);
+            => Task.FromResult(Active && change.To.ViewModel is FakeViewModel ? RouteGuardDecision.Redirect("/login") : RouteGuardDecision.Allow);
     }
 
     [Fact]
@@ -228,8 +228,8 @@ public class RouterNotFoundAndGuardRefreshTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.SetConcurrency(concurrency);
-        services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-        services.RegisterRoute<LoginView, SlowLoginVm>(route: "/login");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+        services.RegisterRoute<ThirdViewFor, SlowLoginVm>(route: "/login");
         services.AddSingleton<IRouteGuard>(guard);
         await using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();

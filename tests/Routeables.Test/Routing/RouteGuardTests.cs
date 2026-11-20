@@ -13,6 +13,11 @@ namespace Routeables.Tests.Routing;
 /// <summary>A <see cref="IRouteGuard"/> is asked before every route change of a router; it lets it go on, cancels it, or sends the user elsewhere.</summary>
 public class RouteGuardTests
 {
+    // Only this test routes to it: the activity listener is process-wide, so a view model shared with other tests would mix their activities in.
+    public sealed class MeterHomeVm;
+
+    public sealed class MeterItemVm(int id) { public int Id { get; } = id; }
+
 
     private sealed class Guard(Func<RouteableRoutingEventArgs, RouteGuardDecision> decide, List<string>? asked = null) : IRouteGuard
     {
@@ -33,18 +38,18 @@ public class RouteGuardTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<GuardHomeView, GuardHomeVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/guard-home");
-        services.RegisterRoute<GuardAdminView, GuardAdminVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/guard-admin");
-        services.RegisterRoute<GuardLoginView, GuardLoginVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/guard-login");
-        services.AddTransient<GuardHomeVm>();
-        services.AddTransient<GuardAdminVm>();
-        services.AddTransient<GuardLoginVm>();
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/guard-home");
+        services.RegisterRoute<ThirdViewFor, ThirdViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/guard-admin");
+        services.RegisterRoute<FourthViewFor, FourthViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/guard-login");
+        services.AddTransient<SecondViewModel>();
+        services.AddTransient<ThirdViewModel>();
+        services.AddTransient<FourthViewModel>();
         foreach (var guard in guards)
             services.AddSingleton(guard);
         return services.BuildServiceProvider();
     }
 
-    private static bool IsAdmin(RouteableRoutingEventArgs change) => change.To.ViewModel is GuardAdminVm;
+    private static bool IsAdmin(RouteableRoutingEventArgs change) => change.To.ViewModel is ThirdViewModel;
 
     /// <summary>A guard that asks the user (a dialog): it holds the router while it waits for the answer.</summary>
     private sealed class DialogGuard : IRouteGuard
@@ -54,7 +59,7 @@ public class RouteGuardTests
 
         public async Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
         {
-            if (change.To.ViewModel is not GuardAdminVm)
+            if (change.To.ViewModel is not ThirdViewModel)
                 return RouteGuardDecision.Allow;
 
             Asked.TrySetResult();
@@ -77,7 +82,7 @@ public class RouteGuardTests
         guard.Answer.SetResult(RouteGuardDecision.Allow);
 
         Assert.True((await change.WaitAsync(TimeSpan.FromSeconds(10), ct)).Success);
-        Assert.IsType<GuardAdminVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
     }
 
     /// <summary>
@@ -117,7 +122,7 @@ public class RouteGuardTests
         var result = await router.GoToAsync("/guard-admin", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(result.Success);
-        Assert.IsType<GuardAdminVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -135,7 +140,7 @@ public class RouteGuardTests
 
         Assert.True(result.Cancelled);
         Assert.False(result.Success);
-        Assert.IsType<GuardHomeVm>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
         Assert.Equal(1, router.History.Count);
         Assert.Equal(["routing Push", "routed Cancelled"], events);
         Assert.True((await router.GoToAsync("/guard-login", cancellationToken: ct)).Success);
@@ -152,7 +157,7 @@ public class RouteGuardTests
         var result = await router.GoToAsync("/guard-admin", cancellationToken: ct);
 
         Assert.True(result.Success);
-        Assert.IsType<GuardLoginVm>(router.CurrentViewModel);
+        Assert.IsType<FourthViewModel>(router.CurrentViewModel);
         Assert.Equal(2, router.History.Count);
     }
 
@@ -183,7 +188,7 @@ public class RouteGuardTests
         var result = await router.GoBackAsync(ct);
 
         Assert.True(result.Cancelled);
-        Assert.IsType<GuardLoginVm>(router.CurrentViewModel);
+        Assert.IsType<FourthViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -212,7 +217,7 @@ public class RouteGuardTests
         var failure = await Assert.ThrowsAsync<InvalidOperationException>(() => router.GoToAsync("/guard-admin", cancellationToken: ct));
 
         Assert.Contains("returned null", failure.Message);
-        Assert.False(router.CurrentViewModel is GuardAdminVm);
+        Assert.False(router.CurrentViewModel is ThirdViewModel);
     }
 
     [Fact]
@@ -288,8 +293,8 @@ public class RouteGuardTests
 
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/meter-home");
-        services.AddTransient<FakeViewModel>();
+        services.RegisterRoute<FakeViewFor, MeterHomeVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/meter-home");
+        services.AddTransient<MeterHomeVm>();
         using var provider = services.BuildServiceProvider();
 
         await provider.GetRequiredService<IRouter>().GoToAsync("/meter-home", cancellationToken: TestContext.Current.CancellationToken);
@@ -297,7 +302,7 @@ public class RouteGuardTests
         // The listener is process-wide, so what other tests route in parallel reaches it too: only the activities of this page count, and each
         // of them must say what a route change is.
         List<Activity> mine;
-        lock (activities) mine = [.. activities.Where(a => a.GetTagItem("routeables.view_model")?.ToString() == nameof(FakeViewModel))];
+        lock (activities) mine = [.. activities.Where(a => a.GetTagItem("routeables.view_model")?.ToString() == nameof(MeterHomeVm))];
         Assert.NotEmpty(mine);
         Assert.All(mine, activity =>
         {
@@ -319,12 +324,12 @@ public class RouteGuardTests
         var ct = TestContext.Current.CancellationToken;
         using var provider = Build(new Guard(c => IsAdmin(c) ? RouteGuardDecision.Redirect("/guard-login") : RouteGuardDecision.Allow));
         var router = provider.GetRequiredService<IRouter>();
-        var entry = new RouteableMenuEntry<GuardAdminVm>("Admin", route: "/guard-admin", template: "/guard-admin");
+        var entry = new RouteableMenuEntry<ThirdViewModel>("Admin", route: "/guard-admin", template: "/guard-admin");
 
         var result = await router.GoToRouteAsync(entry, ct);
 
         Assert.True(result.Success);
-        Assert.IsType<GuardLoginVm>(router.CurrentViewModel);
+        Assert.IsType<FourthViewModel>(router.CurrentViewModel);
         Assert.Null(entry.View);
         Assert.Null(entry.ViewModel);
     }
@@ -335,7 +340,7 @@ public class RouteGuardTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<MeterItemView, MeterItemVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/meter-item/{id:int}");
+        services.RegisterRoute<FifthViewFor, MeterItemVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/meter-item/{id:int}");
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
         var tag = router.GetType().GetMethod("RouteTag", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
@@ -357,7 +362,7 @@ public class RouteGuardTests
         ActivitySource.AddActivityListener(activityListener);
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<MeterItemView, MeterItemVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/meter-item/{id:int}");
+        services.RegisterRoute<FifthViewFor, MeterItemVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/meter-item/{id:int}");
         services.AddTransient<MeterItemVm>();
         using var provider = services.BuildServiceProvider();
 

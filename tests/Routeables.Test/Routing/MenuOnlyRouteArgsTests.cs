@@ -16,7 +16,7 @@ public class MenuOnlyRouteArgsTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<SettingsView>("/settings");
+        services.RegisterRoute<FakeViewFor>("/settings");
         services.RegisterMenuViewModel<FakeMenuViewModel>(ServiceLifetime.Singleton);
         var provider = services.BuildServiceProvider();
         // A page the menu lists but the table of routes does not (a page added by a module or by the generator after the table was read):
@@ -36,7 +36,7 @@ public class MenuOnlyRouteArgsTests
         var result = await router.GoToAsync("/settings?tab=2", args, cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(result.Success, result.Exception?.ToString());
-        Assert.IsType<SettingsView>(router.CurrentView);
+        Assert.IsType<FakeViewFor>(router.CurrentView);
         var values = router.History.Current!.Args.Values.ToDictionary(v => v.name!, v => v.value);
         Assert.Equal("mail", values["source"]);
         Assert.Equal("2", values["tab"]?.ToString());
@@ -63,7 +63,7 @@ public class MenuOnlyRouteArgsTests
         var result = await router.GoToAsync("/settings", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(result.Success, result.Exception?.ToString());
-        Assert.IsType<SettingsView>(router.CurrentView);
+        Assert.IsType<FakeViewFor>(router.CurrentView);
     }
 
     [Fact]

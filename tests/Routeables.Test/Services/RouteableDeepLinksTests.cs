@@ -16,9 +16,9 @@ public class RouteableDeepLinksTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-first");
-        services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-second");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-second");
         services.AddTransient<FakeViewModel>();
-        services.AddTransient<OtherFakeViewModel>();
+        services.AddTransient<SecondViewModel>();
         return services.BuildServiceProvider();
     }
 
@@ -119,7 +119,7 @@ public class RouteableDeepLinksTests
         var result = await RouteableDeepLinks.GoToAsync(provider, new Uri("myapp://link-second"), ["myapp"], TestContext.Current.CancellationToken);
 
         Assert.True(result.Success);
-        Assert.IsType<OtherFakeViewModel>(provider.GetRequiredService<IRouter>().CurrentViewModel);
+        Assert.IsType<SecondViewModel>(provider.GetRequiredService<IRouter>().CurrentViewModel);
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public class RouteableDeepLinksTests
         var restored = await RouteableState.RestoreAsync(router, ["/link-first", "/link-second"], TestContext.Current.CancellationToken);
 
         Assert.True(restored);
-        Assert.IsType<OtherFakeViewModel>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
         Assert.Equal(2, router.History.Entries.Count);
     }
 
@@ -246,9 +246,9 @@ public class RouteableDeepLinksTests
         services.AddSingleton(returns);
         services.AddSingleton<IRouteGuard>(new SignInGuard(returns));
         services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-first");
-        services.RegisterRoute<OtherFakeViewFor, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-second");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/link-second");
         services.AddTransient<FakeViewModel>();
-        services.AddTransient<OtherFakeViewModel>();
+        services.AddTransient<SecondViewModel>();
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
 
@@ -277,9 +277,9 @@ public class RouteableDeepLinksTests
 
         await router.GoToAsync("/link-first", cancellationToken: TestContext.Current.CancellationToken);
 
-        for (var i = 0; i < 200 && router.CurrentViewModel is not OtherFakeViewModel; i++)
+        for (var i = 0; i < 200 && router.CurrentViewModel is not SecondViewModel; i++)
             await Task.Delay(10, TestContext.Current.CancellationToken);
-        Assert.IsType<OtherFakeViewModel>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
     }
 
 
@@ -325,7 +325,7 @@ public class RouteableDeepLinksTests
 
         inbox.Restore(RouteableState.Serialize(["/link-first", "/link-second"]));
 
-        await UntilAsync(() => router.CurrentViewModel is OtherFakeViewModel);
+        await UntilAsync(() => router.CurrentViewModel is SecondViewModel);
         Assert.Equal(2, router.History.Count);
     }
 
@@ -358,7 +358,7 @@ public class RouteableDeepLinksTests
         inbox.Attach(provider);
 
         await UntilAsync(() => router.History.Count == 2 && router.CurrentViewModel is FakeViewModel);
-        Assert.IsType<OtherFakeViewModel>(router.History.Entries[0].ViewModel);
+        Assert.IsType<SecondViewModel>(router.History.Entries[0].ViewModel);
     }
 
     [Fact]
@@ -386,7 +386,7 @@ public class RouteableDeepLinksTests
 
         inbox.Push(new Uri("myapp://link-second"));
 
-        await UntilAsync(() => router.CurrentViewModel is OtherFakeViewModel);
+        await UntilAsync(() => router.CurrentViewModel is SecondViewModel);
     }
 
     [Fact]
@@ -458,8 +458,8 @@ public class RouteableDeepLinksTests
 
         await router.GoToAsync("/link-first", cancellationToken: TestContext.Current.CancellationToken);
 
-        for (var i = 0; i < 200 && router.CurrentViewModel is not OtherFakeViewModel; i++)
+        for (var i = 0; i < 200 && router.CurrentViewModel is not SecondViewModel; i++)
             await Task.Delay(10, TestContext.Current.CancellationToken);
-        Assert.IsType<OtherFakeViewModel>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
     }
 }

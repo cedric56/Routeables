@@ -61,7 +61,7 @@ public class RouteableAuthorizationGuardTests
 
     [Fact]
     public async Task A_page_without_Authorize_is_open_to_everyone()
-        => Assert.True((await AskAsync(Anonymous(), new OpenVm(), "/open")).IsAllowed);
+        => Assert.True((await AskAsync(Anonymous(), new FakeViewModel(), "/open")).IsAllowed);
 
     [Fact]
     public async Task A_signed_out_visitor_is_sent_to_the_sign_in_route()
@@ -94,7 +94,7 @@ public class RouteableAuthorizationGuardTests
 
     [Fact]
     public async Task Authorize_on_the_view_counts_too()
-        => Assert.False((await AskAsync(Anonymous(), new OpenVm(), "/open", new PrivateView())).IsAllowed);
+        => Assert.False((await AskAsync(Anonymous(), new FakeViewModel(), "/open", new PrivateView())).IsAllowed);
 
     [Fact]
     public async Task A_sign_in_page_that_requires_sign_in_is_cancelled_not_redirected_to_itself()

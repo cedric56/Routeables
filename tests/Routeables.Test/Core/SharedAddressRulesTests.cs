@@ -19,8 +19,8 @@ public class SharedAddressRulesTests
     {
         protected override ObservableCollection<IRouteableMenuEntry> GetEntries() =>
         [
-            new RouteableMenuEntry<SaProductVm>("Shoes", route: "/sa/shoes", template: "/sa/shoes"),
-            new RouteableMenuEntry<SaProductVm>("Hats", route: "/sa/hats", template: "/sa/hats"),
+            new RouteableMenuEntry<FakeViewModel>("Shoes", route: "/sa/shoes", template: "/sa/shoes"),
+            new RouteableMenuEntry<FakeViewModel>("Hats", route: "/sa/hats", template: "/sa/hats"),
         ];
 
         protected override void NotifyPropertyChanged(string? propertyName) { }
@@ -30,8 +30,8 @@ public class SharedAddressRulesTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<SaProductView, SaProductVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/sa/shoes");
-        services.RegisterRoute<SaProductView, SaProductVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/sa/hats");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/sa/shoes");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/sa/hats");
         return services.BuildServiceProvider();
     }
 
@@ -78,7 +78,7 @@ public class SharedAddressRulesTests
         Assert.Contains("hats", router.History.Current?.Args.Route?.ToLowerInvariant());
 
         IRouteableMenuViewModel byHand = new FakeMenuViewModel();
-        var entry = new RouteableMenuEntry<SaProductVm>("Shoes", route: "/sa/shoes", template: "/sa/shoes");
+        var entry = new RouteableMenuEntry<FakeViewModel>("Shoes", route: "/sa/shoes", template: "/sa/shoes");
         Assert.True(await byHand.SelectEntryAsync(entry, ct));
         Assert.Same(entry, byHand.SelectedEntry);
     }
@@ -87,11 +87,11 @@ public class SharedAddressRulesTests
     public void Two_spellings_of_one_route_are_one_entry_of_the_table()
     {
         var table = new RouteableTable();
-        table.Add("/Orders", typeof(SaProductVm));
-        table.Add("orders/", typeof(SaProductVm));
-        table.Add("/orders?x=1", typeof(SaProductVm));      // another query is another route
-        table.Add("/ORDERS/?x=1", typeof(SaProductVm));     // the same route as the one above
-        table.Add("/other", typeof(SaProductVm));
+        table.Add("/Orders", typeof(FakeViewModel));
+        table.Add("orders/", typeof(FakeViewModel));
+        table.Add("/orders?x=1", typeof(FakeViewModel));      // another query is another route
+        table.Add("/ORDERS/?x=1", typeof(FakeViewModel));     // the same route as the one above
+        table.Add("/other", typeof(FakeViewModel));
 
         Assert.Equal(["/Orders", "/orders?x=1", "/other"], table.Entries.Select(e => e.Template).ToArray());
     }

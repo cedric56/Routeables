@@ -20,6 +20,9 @@ public class ReviewFixesTests
 
     // The pages a coordination goes to are found by their view model (a segment), not by an address.
     public sealed class SegView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class SegVm;
+    public sealed class SegBlockedVm;
+    public sealed class SegBlockedView : IRouteableFor { public object? Context { get; set; } }
     public sealed class DirtyVm : IRouteable
     {
         public static bool Dirty;
@@ -29,7 +32,7 @@ public class ReviewFixesTests
     public sealed class RefusesBlocked : IRouteGuard
     {
         public Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
-            => Task.FromResult(change.To.ViewModel is BlockedVm or SegBlockedVm ? RouteGuardDecision.Cancel : RouteGuardDecision.Allow);
+            => Task.FromResult(change.To.ViewModel is ThirdViewModel or SegBlockedVm ? RouteGuardDecision.Cancel : RouteGuardDecision.Allow);
     }
 
     private static ServiceProvider Build(Action<IServiceCollection>? configure = null)
@@ -37,10 +40,10 @@ public class ReviewFixesTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.AddRouteCoordinator();
-        services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-        services.RegisterRoute<OtherView, OtherVm>(route: "/other");
-        services.RegisterRoute<BlockedView, BlockedVm>(route: "/blocked");
-        services.RegisterRoute<DirtyView, DirtyVm>(route: "/dirty");
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(route: "/other");
+        services.RegisterRoute<ThirdViewFor, ThirdViewModel>(route: "/blocked");
+        services.RegisterRoute<FourthViewFor, DirtyVm>(route: "/dirty");
         services.RegisterRoute<SegView, SegVm>();
         services.RegisterRoute<SegBlockedView, SegBlockedVm>();
         services.RegisterSegment<SegBlockedVm>("Blocked");
@@ -62,7 +65,7 @@ public class ReviewFixesTests
 
         Assert.False(restored);
         Assert.Equal(1, router.History.Count);
-        Assert.IsType<HomeVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -76,7 +79,7 @@ public class ReviewFixesTests
 
         Assert.False(restored);
         Assert.Equal(1, router.History.Count);
-        Assert.IsType<HomeVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -89,7 +92,7 @@ public class ReviewFixesTests
         Assert.True(await RouteableState.RestoreAsync(router, ["/other", "/home"], Ct));
 
         Assert.Equal(2, router.History.Count);
-        Assert.IsType<HomeVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
     }
 
 
@@ -122,7 +125,7 @@ public class ReviewFixesTests
 
         Assert.False(result.Success);
         Assert.Equal(1, router.History.Count);
-        Assert.IsType<HomeVm>(router.CurrentViewModel);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -347,7 +350,7 @@ public class ReviewFixesTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.RegisterRoute<SlowView, SlowVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/slow");
-        services.RegisterRoute<OtherView, OtherVm>(route: "/other");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(route: "/other");
         services.AddTransient<SlowVm>();
         services.AddSingleton<IRouteableHistoryStore>(store);
         services.AddRouteableHistory();

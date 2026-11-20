@@ -16,7 +16,7 @@ public class MoveBackGateTests
 
         public async Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
         {
-            if (change.To.ViewModel is MbCVm)
+            if (change.To.ViewModel is FakeViewModel)
             {
                 Asked.TrySetResult();
                 await Release.Task.WaitAsync(cancellationToken);
@@ -30,12 +30,12 @@ public class MoveBackGateTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<MbAView, MbAVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/mb-a");
-        services.RegisterRoute<MbBView, MbBVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/mb-b");
-        services.RegisterRoute<MbCView, MbCVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/mb-c");
-        services.AddTransient<MbAVm>();
-        services.AddTransient<MbBVm>();
-        services.AddTransient<MbCVm>();
+        services.RegisterRoute<FakeViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/mb-a");
+        services.RegisterRoute<SecondViewFor, ThirdViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/mb-b");
+        services.RegisterRoute<ThirdViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/mb-c");
+        services.AddTransient<SecondViewModel>();
+        services.AddTransient<ThirdViewModel>();
+        services.AddTransient<FakeViewModel>();
         services.AddSingleton<IRouteGuard>(guard);
         return services.BuildServiceProvider();
     }
@@ -58,7 +58,7 @@ public class MoveBackGateTests
         await back;
 
         // Two pages back from C is A. Worked out when asked (from B), it would be "before A" (cancelled), or wrong with one page.
-        Assert.IsType<MbAVm>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -78,6 +78,6 @@ public class MoveBackGateTests
         var result = await back;
 
         Assert.True(result.Success);
-        Assert.IsType<MbAVm>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
     }
 }

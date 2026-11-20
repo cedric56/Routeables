@@ -64,8 +64,8 @@ public class RegisterRouteLifetimeTests
         var sp = services.BuildServiceProvider();
 
         var router1 = sp.GetRequiredService<IRouter>();
-        await router1.GoAsync(new StubView(), new StubVm(), cancellationToken: TestContext.Current.CancellationToken);
-        await router1.GoAsync(new StubView(), new StubVm(), cancellationToken: TestContext.Current.CancellationToken);
+        await router1.GoAsync(new FakeViewFor(), new FakeViewModel(), cancellationToken: TestContext.Current.CancellationToken);
+        await router1.GoAsync(new FakeViewFor(), new FakeViewModel(), cancellationToken: TestContext.Current.CancellationToken);
 
         var router2 = sp.GetRequiredService<IRouter>();
         Assert.Same(router1, router2);
@@ -84,8 +84,8 @@ public class RegisterRouteLifetimeTests
 
         var main = scope.ServiceProvider.GetRouter("main");
         var side = scope.ServiceProvider.GetRouter("side");
-        await main.GoAsync(new StubView(), new StubVm(), cancellationToken: TestContext.Current.CancellationToken);
-        await main.GoAsync(new StubView(), new StubVm(), cancellationToken: TestContext.Current.CancellationToken);
+        await main.GoAsync(new FakeViewFor(), new FakeViewModel(), cancellationToken: TestContext.Current.CancellationToken);
+        await main.GoAsync(new FakeViewFor(), new FakeViewModel(), cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotSame(main, side);
         Assert.Equal(2, main.History.Count);

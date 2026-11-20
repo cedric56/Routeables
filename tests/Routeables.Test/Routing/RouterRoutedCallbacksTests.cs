@@ -60,7 +60,7 @@ public class RouterRoutedCallbacksTests
         var services = new ServiceCollection();
         services.RegisterRouting();
         services.RegisterRoute<PageView, PageVm>();
-        services.RegisterRoute<OtherView, OtherVm>();
+        services.RegisterRoute<FakeViewFor, OtherVm>();
         return services.BuildServiceProvider().GetRequiredService<IRouter>();
     }
 

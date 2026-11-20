@@ -31,7 +31,7 @@ public class RouterGenericRouteTests
     {
         // title is declared in the template: a query value the template does not declare never reaches the constructor.
         const string template = "details/{id:int}?{title?}";
-        var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: template));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DetailVm>(route: template));
 
         var result = await router.GoToAsync(
             "details/42?title=hello", template: template, cancellationToken: TestContext.Current.CancellationToken);
@@ -45,7 +45,7 @@ public class RouterGenericRouteTests
     [Fact]
     public async Task GoToAsync_reports_a_route_that_does_not_match_its_template()
     {
-        var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DetailVm>(route: "details/{id:int}"));
 
         var result = await router.GoToAsync(
             "details/not-a-number", template: "details/{id:int}", cancellationToken: TestContext.Current.CancellationToken);
@@ -57,7 +57,7 @@ public class RouterGenericRouteTests
     [Fact]
     public async Task GoToAsync_rejects_a_null_route()
     {
-        var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DetailVm>(route: "details/{id:int}"));
 
         await Assert.ThrowsAsync<ArgumentNullException>(() =>
             router.GoToAsync(null!, cancellationToken: TestContext.Current.CancellationToken));
@@ -66,7 +66,7 @@ public class RouterGenericRouteTests
     [Fact]
     public async Task GoToAsync_finds_the_template_of_a_route_given_without_one()
     {
-        var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DetailVm>(route: "details/{id:int}"));
 
         var result = await router.GoToAsync("details/7?title=x", cancellationToken: TestContext.Current.CancellationToken);
 
@@ -77,19 +77,19 @@ public class RouterGenericRouteTests
     [Fact]
     public async Task GoToRouteAsync_goes_to_a_route_by_its_name_with_the_view_model_given()
     {
-        var router = Build(s => s.RegisterRoute<ProbeView, MenuVm>(route: "MenuView"));
+        var router = Build(s => s.RegisterRoute<SecondViewFor, FakeViewModel>(route: "MenuView"));
 
-        var result = await router.GoToRouteAsync<MenuVm>("MenuView", cancellationToken: TestContext.Current.CancellationToken);
+        var result = await router.GoToRouteAsync<FakeViewModel>("MenuView", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(result.Success, result.Exception?.Message);
-        Assert.IsType<MenuVm>(router.CurrentViewModel);
-        Assert.IsType<ProbeView>(router.CurrentView);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
+        Assert.IsType<SecondViewFor>(router.CurrentView);
     }
 
     [Fact]
     public async Task GoToRouteAsync_finds_the_template_of_a_route_given_without_one()
     {
-        var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DetailVm>(route: "details/{id:int}"));
 
         var result = await router.GoToRouteAsync<DetailVm>("details/7?title=x", cancellationToken: TestContext.Current.CancellationToken);
 
@@ -101,7 +101,7 @@ public class RouterGenericRouteTests
     public async Task GoToRouteAsync_takes_the_template_it_is_given()
     {
         const string template = "details/{id:int}?{title?}";
-        var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: template));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DetailVm>(route: template));
 
         var result = await router.GoToRouteAsync<DetailVm>("details/9?title=hi", template: template, cancellationToken: TestContext.Current.CancellationToken);
 
@@ -113,7 +113,7 @@ public class RouterGenericRouteTests
     [Fact]
     public async Task GoToRouteAsync_rejects_a_null_route()
     {
-        var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DetailVm>(route: "details/{id:int}"));
 
         await Assert.ThrowsAsync<ArgumentNullException>(() =>
             router.GoToRouteAsync<DetailVm>((string)null!, cancellationToken: TestContext.Current.CancellationToken));
@@ -135,7 +135,7 @@ public class RouterGenericRouteTests
     [Fact]
     public async Task A_request_with_neither_an_entry_nor_a_route_nor_a_view_model_type_is_refused()
     {
-        var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DetailVm>(route: "details/{id:int}"));
 
         await Assert.ThrowsAsync<ArgumentException>(() =>
             router.GoToRouteAsync(new RouteableRouteRequest(), TestContext.Current.CancellationToken));
@@ -144,7 +144,7 @@ public class RouterGenericRouteTests
     [Fact]
     public async Task A_request_with_only_a_view_model_type_uses_its_registered_route_and_needs_its_values()
     {
-        var router = Build(s => s.RegisterRoute<DetailView, DetailVm>(route: "details/{id:int}"));
+        var router = Build(s => s.RegisterRoute<FakeViewFor, DetailVm>(route: "details/{id:int}"));
 
         // The route is registered, but the request gives no value for {id}: a failed result, not an exception.
         var missing = await router.GoToRouteAsync(new RouteableRouteRequest { ViewModelType = typeof(DetailVm) }, TestContext.Current.CancellationToken);
@@ -161,12 +161,12 @@ public class RouterGenericRouteTests
     [Fact]
     public async Task A_view_without_a_registered_view_model_is_shown_with_an_empty_object()
     {
-        var router = Build(s => s.RegisterRoute<SoloView>(route: "Solo"));
+        var router = Build(s => s.RegisterRoute<ThirdViewFor>(route: "Solo"));
 
-        var result = await router.GoToRouteAsync<LostVm>("Solo", cancellationToken: TestContext.Current.CancellationToken);
+        var result = await router.GoToRouteAsync<SecondViewModel>("Solo", cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(result.Success, result.Exception?.Message);
-        Assert.IsType<SoloView>(router.CurrentView);
+        Assert.IsType<ThirdViewFor>(router.CurrentView);
         Assert.NotNull(router.CurrentViewModel);
     }
 }

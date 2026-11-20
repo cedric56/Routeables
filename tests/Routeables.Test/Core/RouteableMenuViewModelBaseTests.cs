@@ -7,7 +7,6 @@ using Routeables.Locking;
 using Routeables.Routing;
 using Routeables.Tests.Pages;
 using System.Collections.ObjectModel;
-using ListView = Routeables.Tests.Pages.ListView;
 namespace Routeables.Tests.Core;
 
 public class RouteableMenuViewModelBaseTests
@@ -76,7 +75,7 @@ public class RouteableMenuViewModelBaseTests
         protected override ObservableCollection<IRouteableMenuEntry> GetEntries() =>
         [
             new RouteableMenuEntry<StayVm>("Stay", route: "/stay", template: "/stay"),
-            new RouteableMenuEntry<OtherVm>("Other", route: "/other", template: "/other"),
+            new RouteableMenuEntry<FakeViewModel>("Other", route: "/other", template: "/other"),
         ];
 
         protected override void NotifyPropertyChanged(string? propertyName)
@@ -92,8 +91,8 @@ public class RouteableMenuViewModelBaseTests
         var ct = TestContext.Current.CancellationToken;
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<StayView, StayVm>(route: "/stay");
-        services.RegisterRoute<OtherView, OtherVm>(route: "/other");
+        services.RegisterRoute<SecondViewFor, StayVm>(route: "/stay");
+        services.RegisterRoute<ThirdViewFor, FakeViewModel>(route: "/other");
         using var provider = services.BuildServiceProvider();
         var sut = new GuardedMenu(provider.GetRequiredService<IRouter>());
         var stay = sut.Entries[0];
@@ -124,7 +123,7 @@ public class RouteableMenuViewModelBaseTests
     {
         protected override ObservableCollection<IRouteableMenuEntry> GetEntries() =>
         [
-            new RouteableMenuEntry<ListVm>("List", route: "/list", template: "/list"),
+            new RouteableMenuEntry<SecondViewModel>("List", route: "/list", template: "/list"),
         ];
 
         protected override void NotifyPropertyChanged(string? propertyName)
@@ -138,14 +137,14 @@ public class RouteableMenuViewModelBaseTests
         var ct = TestContext.Current.CancellationToken;
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<ListView, ListVm>(route: "/list");
-        services.RegisterRoute<DetailView, DetailVm>(route: "/detail");
+        services.RegisterRoute<FakeViewFor, SecondViewModel>(route: "/list");
+        services.RegisterRoute<FourthViewFor, DetailVm>(route: "/detail");
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
         var sut = new ListMenu(router);
         var list = sut.Entries[0];
         Assert.True(await sut.SelectEntryAsync(list, cancellationToken: ct));
-        Assert.IsType<ListVm>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
 
         // A page opens the detail itself: the menu has no entry for it, so it keeps showing the list as selected.
         Assert.True((await router.GoToAsync("/detail", cancellationToken: ct)).Success);
@@ -154,7 +153,7 @@ public class RouteableMenuViewModelBaseTests
 
         // The user clicks the entry that is selected: the list is not the page shown, so it opens.
         Assert.True(await sut.SelectEntryAsync(list, cancellationToken: ct));
-        Assert.IsType<ListVm>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
     }
 
     public sealed class OrderView : IRouteableFor { public object? Context { get; set; } }
@@ -164,7 +163,7 @@ public class RouteableMenuViewModelBaseTests
     {
         protected override ObservableCollection<IRouteableMenuEntry> GetEntries() =>
         [
-            new RouteableMenuEntry<OrdersVm>("Orders", route: "/orders", template: "/orders"),
+            new RouteableMenuEntry<ThirdViewModel>("Orders", route: "/orders", template: "/orders"),
         ];
 
         protected override void NotifyPropertyChanged(string? propertyName)
@@ -178,14 +177,14 @@ public class RouteableMenuViewModelBaseTests
         var ct = TestContext.Current.CancellationToken;
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<OrdersView, OrdersVm>(route: "/orders");
+        services.RegisterRoute<FifthViewFor, ThirdViewModel>(route: "/orders");
         services.RegisterRoute<OrderView, OrderVm>(route: "/orders/{id:int}");
         using var provider = services.BuildServiceProvider();
         var router = provider.GetRequiredService<IRouter>();
         var sut = new OrdersMenu(router);
         var list = sut.Entries[0];
         Assert.True(await sut.SelectEntryAsync(list, cancellationToken: ct));
-        Assert.IsType<OrdersVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
 
         // The list opens an order: its address starts with the one of the entry, but it is not the list.
         Assert.True((await router.GoToAsync("/orders/42", cancellationToken: ct)).Success);
@@ -194,6 +193,6 @@ public class RouteableMenuViewModelBaseTests
 
         // The user clicks the entry of the list again: the list opens.
         Assert.True(await sut.SelectEntryAsync(list, cancellationToken: ct));
-        Assert.IsType<OrdersVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
     }
 }

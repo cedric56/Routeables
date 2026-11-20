@@ -20,16 +20,16 @@ public class RouteableStateRestoreTests
     public sealed class SignInGuard : IRouteGuard
     {
         public Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
-            => Task.FromResult(change.To.ViewModel is OrdersVm or OrderVm ? RouteGuardDecision.Redirect("/login") : RouteGuardDecision.Allow);
+            => Task.FromResult(change.To.ViewModel is FakeViewModel or OrderVm ? RouteGuardDecision.Redirect("/login") : RouteGuardDecision.Allow);
     }
 
     private static ServiceProvider Build(Action<IServiceCollection>? configure = null)
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<HomeView, HomeVm>(route: "/home");
-        services.RegisterRoute<LoginView, LoginVm>(route: "/login");
-        services.RegisterRoute<OrdersView, OrdersVm>(route: "/orders");
+        services.RegisterRoute<FakeViewFor, SecondViewModel>(route: "/home");
+        services.RegisterRoute<SecondViewFor, ThirdViewModel>(route: "/login");
+        services.RegisterRoute<ThirdViewFor, FakeViewModel>(route: "/orders");
         services.RegisterRoute<OrderView, OrderVm>(route: "/orders/{id:int}");
         configure?.Invoke(services);
         return services.BuildServiceProvider();
@@ -46,7 +46,7 @@ public class RouteableStateRestoreTests
 
         Assert.True(restored);
         Assert.Equal(2, router.History.Count);                      // the home page, then the sign-in page once, not [home, login, login]
-        Assert.IsType<LoginVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class RouteableStateRestoreTests
 
         Assert.True(restored);
         Assert.Equal(2, router.History.Count);                      // the same answer as RestoreSnapshotsAsync
-        Assert.IsType<LoginVm>(router.CurrentViewModel);
+        Assert.IsType<ThirdViewModel>(router.CurrentViewModel);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class RouteableStateRestoreTests
         Assert.True(await RouteableState.RestoreAsync(router, ["-/orders"], Ct));
 
         Assert.Equal(1, router.History.Count);
-        Assert.IsType<HomeVm>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
     }
 
     [Fact]

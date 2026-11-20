@@ -56,9 +56,9 @@ public class RouteableRegionTests
         services.AddRegion("detail");
         services.AddSingleton<IRouter>(sp => new Router(new RouterHistory(), new RouterGate(), new RouterLifecycle(sp), sp));
         services.RegisterRoute<FirstView, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/first");
-        services.RegisterRoute<SecondView, OtherFakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/second");
+        services.RegisterRoute<SecondView, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/second");
         services.AddTransient<FakeViewModel>();
-        services.AddTransient<OtherFakeViewModel>();
+        services.AddTransient<SecondViewModel>();
         return services.BuildServiceProvider();
     }
 
@@ -75,9 +75,9 @@ public class RouteableRegionTests
         await WaitFor(renderer, "hello-FakeViewModel");
 
         renderer.Texts.Clear();
-        var second = new RouteableMenuEntry<OtherFakeViewModel>("Second", null, "/second", "/second") { Region = "detail" };
+        var second = new RouteableMenuEntry<SecondViewModel>("Second", null, "/second", "/second") { Region = "detail" };
         await renderer.Dispatcher.InvokeAsync(() => provider.GoToAsync(second, TestContext.Current.CancellationToken));
-        await WaitFor(renderer, "hello-OtherFakeViewModel");
+        await WaitFor(renderer, "hello-SecondViewModel");
 
         // A component that is gone is no longer rendered by the router.
         renderer.Dispose();

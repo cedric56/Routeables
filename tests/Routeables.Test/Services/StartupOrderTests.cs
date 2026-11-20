@@ -32,12 +32,12 @@ public class StartupOrderTests
             new RouteableSnapshot("/so-old", new Dictionary<string, string>())]);
         var services = new ServiceCollection();
         services.RegisterRouting();
-        services.RegisterRoute<SoHomeView, SoHomeVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/so-home");
-        services.RegisterRoute<SoOldView, SoOldVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/so-old");
-        services.RegisterRoute<SoLinkView, SoLinkVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/so-link");
-        services.AddTransient<SoHomeVm>();
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/so-home");
+        services.RegisterRoute<SecondViewFor, SoOldVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/so-old");
+        services.RegisterRoute<ThirdViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/so-link");
+        services.AddTransient<FakeViewModel>();
         services.AddTransient<SoOldVm>();
-        services.AddTransient<SoLinkVm>();
+        services.AddTransient<SecondViewModel>();
         services.AddSingleton<IRouteableHistoryStore>(new MemoryStore(kept));
         services.AddRouteableHistory();
         using var provider = services.BuildServiceProvider();
@@ -50,11 +50,11 @@ public class StartupOrderTests
         await router.GoToAsync("/so-home", cancellationToken: ct);
 
         var until = DateTime.UtcNow + TimeSpan.FromSeconds(15);
-        while (DateTime.UtcNow < until && !(router.CurrentViewModel is SoLinkVm && router.History.Count == 3))
+        while (DateTime.UtcNow < until && !(router.CurrentViewModel is SecondViewModel && router.History.Count == 3))
             await Task.Delay(50, ct);
 
         // The restored pages, then the page of the link on top of them.
-        Assert.IsType<SoLinkVm>(router.CurrentViewModel);
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
         Assert.Equal(3, router.History.Count);
     }
 }

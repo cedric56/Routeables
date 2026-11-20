@@ -70,7 +70,7 @@ public class CustomContainerTests
         var factory = new ForeignFactory();
         var services = new ServiceCollection();
         services.AddRouteableHost(Runtime.Avalonia);
-        services.RegisterRoute<PageView, PageViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/page/{name}");
+        services.RegisterRoute<FakeViewFor, PageViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/page/{name}");
         services.AddTransient<PageViewModel>();
         services.UseRouteablesContainer(factory);
 
