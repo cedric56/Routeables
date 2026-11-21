@@ -46,6 +46,7 @@
     <None Include="build\Routeables.Native.targets" Pack="true" PackagePath="build;buildTransitive" />
     <None Include="..\Routeables.Blazor\wwwroot\routeables-notifications-worker.js" Link="build\routeables-notifications-worker.js" Pack="true" PackagePath="build;buildTransitive" />
     <InternalsVisibleTo Include="Routeables.Test" />
+    <InternalsVisibleTo Include="Routeables.Test.Native" />
     <InternalsVisibleTo Include="Routeables.Test.Maui" />
   </ItemGroup>
 

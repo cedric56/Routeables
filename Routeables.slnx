@@ -96,6 +96,7 @@
     <Project Path="tests/Routeables.Test.Avalonia/Routeables.Test.Avalonia.csproj" />
     <Project Path="tests/Routeables.Test.Community/Routeables.Test.Community.csproj" />
     <Project Path="tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj" />
+    <Project Path="tests/Routeables.Test.Native/Routeables.Test.Native.csproj" />
     <Project Path="tests/Routeables.Test.Playwright/Routeables.Test.Playwright.csproj" />
     <Project Path="tests/Routeables.Test.Reactive/Routeables.Test.Reactive.csproj" />
     <Project Path="tests/Routeables.Test.Uno/Routeables.Test.Uno.csproj" />

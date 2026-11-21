@@ -189,12 +189,50 @@ jobs:
           path: coverage/**/*.cobertura.xml
           if-no-files-found: warn
 
+  # The tests of Routeables.Native that need Linux: the D-Bus client and the notifications against a bus that the test plays. Routeables.Test cannot run
+  # them (it references Routeables.Maui, which Linux has no workload for), and the Windows jobs skip them. The report goes to "Code coverage, all the tests".
+  native-linux:
+    name: Native tests (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      # Routeables.Native targets Android on Linux: restoring it needs this workload, even to use only its net10.0 target.
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android --skip-manifest-update
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-native-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
+          restore-keys: nuget-${{ runner.os }}-native-
+
+      - name: Test with coverage
+        run: >
+          dotnet test --project tests/Routeables.Test.Native/Routeables.Test.Native.csproj -c ${{ env.CONFIGURATION }} ${{ env.CI_PROPS }}
+          --coverage --coverage-output-format cobertura --coverage-settings tests/CodeCoverage.settings.xml
+          --results-directory coverage-native
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: coverage-native
+          path: coverage-native/**/*.cobertura.xml
+          if-no-files-found: warn
+
   # The coverage of the libraries by every kind of test together: the reports of the jobs above, each line counted once (covered when any
   # run covered it). It writes the only coverage table of the summary. Not gating: the floors of the core are those of the job "Code coverage". It also holds a floor for Routeables.Avalonia (40%, the
   # figure is a guess until the first report: raise it by hand when the figure rises, and take the "continue-on-error" off this job once it is green).
   coverage-all:
     name: Code coverage, all the tests
-    needs: [coverage, ui-avalonia, ui-uno, device-windows]
+    needs: [coverage, native-linux, ui-avalonia, ui-uno, device-windows]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -205,7 +243,7 @@ jobs:
 
       - uses: actions/download-artifact@v8
         with:
-          pattern: '{coverage,coverage-avalonia,coverage-maui-windows,uno-results}'
+          pattern: '{coverage,coverage-native,coverage-avalonia,coverage-maui-windows,uno-results}'
           path: reports
 
       - name: Merge
