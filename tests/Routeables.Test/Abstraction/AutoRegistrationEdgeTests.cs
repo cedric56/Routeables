@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Routeables.Abstraction.Injections;
 using Routeables.Abstraction.Registrations;
 using System.Reflection;
 
@@ -110,5 +111,39 @@ public class AutoRegistrationEdgeTests
         }));
 
         Assert.Equal(new object?[] { "a", "b" }, services.Where(d => d.IsKeyedService).Select(d => d.ServiceKey).ToArray());
+    }
+
+    [Fact]
+    public void The_injection_table_of_a_generated_registration_is_merged_into_the_one_of_the_services()
+    {
+        var services = new ServiceCollection();
+        var mine = new InjectableType([], []);
+        var theirs = new InjectableType([], []);
+        services.GetInjectionTable().Add(typeof(string), mine);
+
+        RouteableAutoRegistration.Apply(services, Registrations(null, generated =>
+        {
+            var table = generated.GetInjectionTable();
+            table.Add(typeof(string), theirs);
+            table.Add(typeof(int), theirs);
+        }));
+
+        var merged = services.GetInjectionTable();
+        Assert.Same(mine, merged.Find(typeof(string)));
+        Assert.Same(theirs, merged.Find(typeof(int)));
+        Assert.Single(services, d => d.ImplementationInstance is InjectionTable);
+    }
+
+    [Fact]
+    public void A_registration_given_with_its_owner_is_kept_once()
+    {
+        // Nothing happens when it runs: it only has to be taken in, and a second call with the same delegate adds nothing.
+        Action<IServiceCollection> none = _ => { };
+
+        RouteableAutoRegistration.Add(Application, none);
+        RouteableAutoRegistration.Add(Application, none);
+        RouteableAutoRegistration.Add(none);
+
+        Assert.Throws<ArgumentNullException>(() => RouteableAutoRegistration.Add(Application, null!));
     }
 }
