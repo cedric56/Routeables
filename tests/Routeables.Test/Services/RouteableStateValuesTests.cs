@@ -72,3 +72,26 @@ public class RouteableStateValuesTests
         Assert.DoesNotContain(again.State.Keys, key => key.EndsWith(":bad", StringComparison.Ordinal));
     }
 }
+
+/// <summary>The arguments of a page reached again keep what they are given, and give themselves back to chain.</summary>
+public class RestoredArgsTests
+{
+    [Fact]
+    public void The_entries_given_are_kept_by_destination_and_the_arguments_are_returned_to_chain()
+    {
+        var args = new RestoredArgs();
+        var one = new RouteableArgument(1, "one");
+        var two = new RouteableArgument(2, "two");
+        var three = new RouteableArgument(3, "three");
+
+        Assert.Same(args, args.ForViewModel(one));
+        Assert.Same(args, args.ForView(two));
+        Assert.Same(args, args.ForValues(three));
+        Assert.Same(args, args.WithRoute("/home"));
+
+        Assert.Equal(new[] { one }, args.ViewModelParameters);
+        Assert.Equal(new[] { two }, args.ViewParameters);
+        Assert.Equal(new[] { three }, args.Values);
+        Assert.Equal("/home", args.Route);
+    }
+}
