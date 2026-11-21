@@ -382,6 +382,50 @@ public class RouteCoordinatorTests
         Assert.Null(router.CurrentViewModel);
     }
 
+    // A page that, when asked whether it can be left, lets another navigation of the same router show a page that refuses to be left.
+    public sealed class AsksThenYields : IRouteable
+    {
+        public static Func<Task>? WhenAsked;
+
+        public async Task<bool> CanLeaveAsync(CancellationToken ct = default)
+        {
+            if (WhenAsked is { } action)
+            {
+                WhenAsked = null;
+                await action();
+            }
+
+            return true;
+        }
+    }
+
+    public sealed class Refuses : IRouteable
+    {
+        public Task<bool> CanLeaveAsync(CancellationToken ct = default) => Task.FromResult(false);
+    }
+
+    [Fact]
+    public async Task An_absolute_coordination_asks_again_when_the_page_shown_changed_while_it_was_asking()
+    {
+        using var provider = Build(services =>
+        {
+            services.RegisterRoute<FourthViewFor, AsksThenYields>(route: "/asks");
+            services.RegisterRoute<FifthViewFor, Refuses>(route: "/refuses");
+        });
+        var coordinator = provider.GetRequiredService<IRouteCoordinator>();
+        var router = provider.GetRequiredService<IRouter>();
+        var ct = TestContext.Current.CancellationToken;
+        await router.GoToAsync("/asks", cancellationToken: ct);
+        AsksThenYields.WhenAsked = () => router.GoToAsync("/refuses", cancellationToken: ct);
+
+        var result = await coordinator.CoordinateAsync("/Detail?id=1", ct);
+
+        // The page that agreed to leave is gone; the one shown now said no, and it was not erased unasked.
+        Assert.True(result.Cancelled);
+        Assert.IsType<Refuses>(router.CurrentViewModel);
+        Assert.Equal(2, router.History.Count);
+    }
+
     [Fact]
     public async Task Configure_completes_the_named_parameters()
     {

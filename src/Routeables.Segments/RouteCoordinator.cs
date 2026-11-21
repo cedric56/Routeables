@@ -42,14 +42,34 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
             if (coordination.Absolute)
             {
                 var routers = steps.Select(s => s.Router).Distinct().ToList();
-                foreach (var router in routers)
+
+                // Asking takes time, and a page can be shown meanwhile (another navigation of the same router): the page that agreed to leave is
+                // then not the one that would be erased. Ask again for each router whose page changed, until the pages are the ones that were
+                // asked; a router that keeps changing is refused rather than erased unasked. A navigation that starts after the last look is
+                // still not stopped: the check and the erasing are not one step (see the documentation of the coordinator).
+                var asked = new Dictionary<IRouter, object?>();
+                for (var attempt = 0; ; attempt++)
                 {
-                    if (!await CanLeaveAsync(router, cancellationToken))
+                    var changed = false;
+                    foreach (var router in routers)
                     {
-                        result = RouteableResult.Cancel();
-                        Raise(Coordinated, new RouteCoordinatedEventArgs(coordination, result, 0));
-                        return result;
+                        var shown = router.History.Current;
+                        if (asked.TryGetValue(router, out var before) && ReferenceEquals(before, shown))
+                            continue;
+
+                        if (attempt >= 3 || !await CanLeaveAsync(router, cancellationToken))
+                        {
+                            result = RouteableResult.Cancel();
+                            Raise(Coordinated, new RouteCoordinatedEventArgs(coordination, result, 0));
+                            return result;
+                        }
+
+                        asked[router] = shown;
+                        changed = true;
                     }
+
+                    if (!changed)
+                        break;
                 }
 
                 foreach (var router in routers)
