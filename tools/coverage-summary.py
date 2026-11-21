@@ -4,6 +4,7 @@
 usage: coverage-summary.py [--min LINE_PERCENT] [--min-assembly NAME=LINE_PERCENT]... [--files N] [--files-of TEXT]
                            [--files-skip NAME]... report.cobertura.xml [...]
        coverage-summary.py --per-report report.cobertura.xml [...]
+       coverage-summary.py --explain ASSEMBLY report.cobertura.xml [...]
 
 With --min the exit code is 1 when the line coverage of the whole is below it (the CI uses 65). With --min-assembly (repeatable) it is 1
 when the line coverage of the assembly NAME is below it. With --files N a second table lists the N files with the most lines that no test
@@ -12,6 +13,10 @@ assembly NAME out of that table and says in one line how many lines it has that 
 With --per-report one table gives, for each report, the coverage of the whole and of Routeables.Routing and Routeables.Core (to tell a
 report that is missing or badly read from one that covers little). A file shared between hosts
 (Routeables.Shared is compiled into each of them) is listed once for each assembly that holds a copy.
+
+With --explain one table gives, for the assembly ASSEMBLY, what each report holds of it: its lines, those it runs, and those that only
+this report lists. The merged table counts a line once, wherever it is listed, so a report whose tool lists lines that the others do not
+(braces, the continuations of async methods) lowers the merged percentage below the one of the report that covers the code best.
 
 The coverage tool counts the lines that hold only a brace as lines of code, and marks the closing brace of a method that always throws as
 not run. In the second table such a line (only a brace, a blank or a comment) is left out of "Not covered" and of "Lines not run", when
@@ -115,6 +120,33 @@ def per_report(paths):
         print(f"| {name} | {len(everything)} | {percent(sum(everything), len(everything))} | {of('Routeables.Routing')} | {of('Routeables.Core')} |")
 
 
+def explain(paths, assembly):
+    """What each report holds of one assembly, and the lines that only it lists."""
+    reports = []
+    for path in paths:
+        lines, _ = load([path])
+        reports.append((path, lines.get(assembly, {})))
+    print(f"| Report | Lines of {assembly} | Run | Line coverage | Listed only here | of which run |")
+    print("|---|---:|---:|---:|---:|---:|")
+    for index, (path, own) in enumerate(reports):
+        others = set()
+        for other_index, (_, lines) in enumerate(reports):
+            if other_index != index:
+                others.update(lines)
+        alone = [key for key in own if key not in others]
+        folder = path.replace("\\", "/").split("/")
+        name = folder[-2] if len(folder) > 1 else folder[-1]
+        stem = folder[-1].split(".")[0]
+        if len(stem) > 8 and "-" in stem:
+            name = f"{name} ({stem[:8]})"
+        run = sum(1 for hit in own.values() if hit)
+        print(f"| {name} | {len(own)} | {run} | {percent(run, len(own))} | {len(alone)} | {sum(1 for key in alone if own[key])} |")
+    merged, _ = load(paths)
+    everything = merged.get(assembly, {})
+    run = sum(1 for hit in everything.values() if hit)
+    print(f"| **merged** | {len(everything)} | {run} | **{percent(run, len(everything))}** | | |")
+
+
 def main(argv):
     minimum = None
     per_assembly = {}
@@ -122,6 +154,7 @@ def main(argv):
     only = ""
     skip = []
     by_report = False
+    explained = None
     files = []
     args = iter(argv)
     for arg in args:
@@ -138,6 +171,8 @@ def main(argv):
             skip.append(next(args))
         elif arg == "--per-report":
             by_report = True
+        elif arg == "--explain":
+            explained = next(args)
         else:
             files.append(arg)
     if not files:
@@ -146,6 +181,10 @@ def main(argv):
 
     if by_report:
         per_report(files)
+        return 0
+
+    if explained is not None:
+        explain(files, explained)
         return 0
 
     lines, branches = load(files)

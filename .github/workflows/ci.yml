@@ -252,7 +252,7 @@ jobs:
           if [ -z "$reports" ]; then echo "No coverage report was found." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
           # What each report brings, to tell a report that is missing or badly read from a report that covers little: the whole, and the two
           # assemblies the test project of the core is expected to cover.
-          { echo "### Reports merged"; echo; python3 tools/coverage-summary.py --per-report $reports; echo; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "### Reports merged"; echo; python3 tools/coverage-summary.py --per-report $reports; echo; python3 tools/coverage-summary.py --explain Routeables.Routing $reports; echo; } | tee -a "$GITHUB_STEP_SUMMARY"
           # The files to write tests for: the hosts (they need a platform to run) are counted in one line, not listed.
           { echo "### Code coverage (all the tests together)"; python3 tools/coverage-summary.py --files 15 --files-skip Routeables.Native --files-skip Routeables.Wpf --files-skip Routeables.Uno --files-skip Routeables.Maui --files-skip Routeables.Avalonia --min-assembly Routeables.Avalonia=40 --min-assembly Routeables.Native=55 $reports; } | tee -a "$GITHUB_STEP_SUMMARY"
           { echo; echo "Routeables.Native, the files with lines that no test runs (the platforms need their own system):"; echo; python3 tools/coverage-summary.py --files 20 --files-of Routeables.Native $reports | sed -n '/^| Not covered/,$p'; } | tee -a "$GITHUB_STEP_SUMMARY"

@@ -12,6 +12,11 @@ internal sealed class RouterHistory : IRouterHistory
 {
     private readonly List<RouterEntry> _entries = [];
 
+    // The router changes the history one route change at a time, on the thread of the application, but what the application does with it is not
+    // always on that thread: a keeper that saves it when the application goes to sleep, a menu that reads its entries. Every read and every change
+    // takes this lock, so a read sees the history as it was before or after a change, never halfway. Observers are called outside it.
+    private readonly object _lock = new();
+
     /// <summary>Creates a history; <paramref name="maxSize"/> is the most entries it keeps, or <see langword="null"/> for no limit.</summary>
     public RouterHistory(int? maxSize = null)
     {
@@ -31,36 +36,36 @@ internal sealed class RouterHistory : IRouterHistory
     /// <summary>
     /// Gets the total number of entries currently in the history stack.
     /// </summary>
-    public int Count => _entries.Count;
+    public int Count { get { lock (_lock) return _entries.Count; } }
 
     /// <summary>
     /// Gets the index of the currently active entry in the history stack.
     /// </summary>
-    public int CurrentIndex => _currentIndex;
+    public int CurrentIndex { get { lock (_lock) return _currentIndex; } }
 
     /// <summary>
     /// Gets a value indicating whether routing can move backward in history.
     /// </summary>
-    public bool CanGoBack => _currentIndex > 0;
+    public bool CanGoBack { get { lock (_lock) return _currentIndex > 0; } }
 
     /// <summary>
     /// Gets a value indicating whether routing can move forward in history.
     /// </summary>
-    public bool CanGoForward => _currentIndex >= 0 && _currentIndex < _entries.Count - 1;
+    public bool CanGoForward { get { lock (_lock) return _currentIndex >= 0 && _currentIndex < _entries.Count - 1; } }
 
     /// <summary>
     /// Gets the currently active history entry, or <see langword="null"/> if the history is empty.
     /// </summary>
-    public RouterEntry? Current => _currentIndex < 0 ? null : _entries[_currentIndex];
+    public RouterEntry? Current { get { lock (_lock) return _currentIndex < 0 ? null : _entries[_currentIndex]; } }
 
     /// <summary>
     /// Gets the root (first) entry in the history stack, or <see langword="null"/> if the history is empty.
     /// </summary>
-    public RouterEntry? Root => _entries.Count > 0 ? _entries[0] : null;
+    public RouterEntry? Root { get { lock (_lock) return _entries.Count > 0 ? _entries[0] : null; } }
 
     IHistoryEntry? IRouterHistory.Current => Current;
     IHistoryEntry? IRouterHistory.Root => Root;
-    IReadOnlyList<IHistoryEntry> IRouterHistory.Entries => _entries.ToArray(); // a snapshot
+    IReadOnlyList<IHistoryEntry> IRouterHistory.Entries => Snapshot(); // a snapshot
 
     /// <summary>
     /// Pushes a new entry onto the history stack, discarding any forward history and, beyond <see cref="MaxSize"/>, the oldest entry.
@@ -71,21 +76,24 @@ internal sealed class RouterHistory : IRouterHistory
     {
         var removed = new List<RouterEntry>();
 
-        if (_currentIndex >= 0 && _currentIndex < _entries.Count - 1)
+        lock (_lock)
         {
-            var count = _entries.Count - _currentIndex - 1;
-            removed.AddRange(_entries.GetRange(_currentIndex + 1, count));
-            _entries.RemoveRange(_currentIndex + 1, count);
-        }
+            if (_currentIndex >= 0 && _currentIndex < _entries.Count - 1)
+            {
+                var count = _entries.Count - _currentIndex - 1;
+                removed.AddRange(_entries.GetRange(_currentIndex + 1, count));
+                _entries.RemoveRange(_currentIndex + 1, count);
+            }
 
-        _entries.Add(entry);
-        if (MaxSize is { } max && _entries.Count > max)
-        {
-            removed.Add(_entries[0]);
-            _entries.RemoveAt(0);
-        }
+            _entries.Add(entry);
+            if (MaxSize is { } max && _entries.Count > max)
+            {
+                removed.Add(_entries[0]);
+                _entries.RemoveAt(0);
+            }
 
-        _currentIndex = _entries.Count - 1;
+            _currentIndex = _entries.Count - 1;
+        }
         OnChanged();
         return removed;
     }
@@ -96,10 +104,14 @@ internal sealed class RouterHistory : IRouterHistory
     /// <returns>A list of entries that were removed during the pop operation.</returns>
     public IReadOnlyList<RouterEntry> Pop()
     {
-        if (!CanGoBack) return [];
-        var removed = _entries.GetRange(_currentIndex, _entries.Count - _currentIndex);
-        _entries.RemoveRange(_currentIndex, removed.Count);
-        _currentIndex--;
+        List<RouterEntry> removed;
+        lock (_lock)
+        {
+            if (_currentIndex <= 0) return [];
+            removed = _entries.GetRange(_currentIndex, _entries.Count - _currentIndex);
+            _entries.RemoveRange(_currentIndex, removed.Count);
+            _currentIndex--;
+        }
         OnChanged();
         return removed;
     }
@@ -110,12 +122,16 @@ internal sealed class RouterHistory : IRouterHistory
     /// <returns>A list of entries that were removed.</returns>
     public IReadOnlyList<RouterEntry> MoveToRoot()
     {
-        // Nothing after the first entry, and the cursor is already on it.
-        if (_entries.Count <= 1)
-            return [];
-        var removed = _entries.GetRange(1, _entries.Count - 1);
-        _entries.RemoveRange(1, removed.Count);
-        _currentIndex = 0;
+        List<RouterEntry> removed;
+        lock (_lock)
+        {
+            // Nothing after the first entry, and the cursor is already on it.
+            if (_entries.Count <= 1)
+                return [];
+            removed = _entries.GetRange(1, _entries.Count - 1);
+            _entries.RemoveRange(1, removed.Count);
+            _currentIndex = 0;
+        }
         OnChanged();
         return removed;
     }
@@ -126,9 +142,13 @@ internal sealed class RouterHistory : IRouterHistory
     /// <returns>A list containing all entries that were removed.</returns>
     public IReadOnlyList<RouterEntry> Clear()
     {
-        var removed = _entries.ToList();
-        _entries.Clear();
-        _currentIndex = -1;
+        List<RouterEntry> removed;
+        lock (_lock)
+        {
+            removed = _entries.ToList();
+            _entries.Clear();
+            _currentIndex = -1;
+        }
         OnChanged();
         return removed;
     }
@@ -137,7 +157,7 @@ internal sealed class RouterHistory : IRouterHistory
     /// Creates an array snapshot of all current history entries.
     /// </summary>
     /// <returns>An array representing the current history state.</returns>
-    internal RouterEntry[] Snapshot() => _entries.ToArray();
+    internal RouterEntry[] Snapshot() { lock (_lock) return _entries.ToArray(); }
 
     /// <summary>
     /// Moves the active index one step backward in the history stack.
@@ -145,10 +165,15 @@ internal sealed class RouterHistory : IRouterHistory
     /// <returns>The new current router entry, or <see langword="null"/> if moving back is not possible.</returns>
     public RouterEntry? MoveBack()
     {
-        if (!CanGoBack) return null;
-        _currentIndex--;
+        RouterEntry entry;
+        lock (_lock)
+        {
+            if (_currentIndex <= 0) return null;
+            _currentIndex--;
+            entry = _entries[_currentIndex];
+        }
         OnChanged();
-        return _entries[_currentIndex];
+        return entry;
     }
 
     /// <summary>
@@ -157,10 +182,15 @@ internal sealed class RouterHistory : IRouterHistory
     /// <returns>The new current router entry, or <see langword="null"/> if moving forward is not possible.</returns>
     public RouterEntry? MoveForward()
     {
-        if (!CanGoForward) return null;
-        _currentIndex++;
+        RouterEntry entry;
+        lock (_lock)
+        {
+            if (_currentIndex < 0 || _currentIndex >= _entries.Count - 1) return null;
+            _currentIndex++;
+            entry = _entries[_currentIndex];
+        }
         OnChanged();
-        return _entries[_currentIndex];
+        return entry;
     }
 
     /// <summary>
@@ -169,24 +199,30 @@ internal sealed class RouterHistory : IRouterHistory
     /// <param name="entry">The new router entry.</param>
     public void ReplaceCurrent(RouterEntry entry)
     {
-        if (_currentIndex < 0)
+        bool replaced;
+        lock (_lock)
+        {
+            replaced = _currentIndex >= 0;
+            if (replaced)
+                _entries[_currentIndex] = entry;
+        }
+        if (!replaced)
         {
             Push(entry);
             return;
         }
-        _entries[_currentIndex] = entry;
         OnChanged();
     }
 
     /// <summary>
     /// Peeks at the previous entry without changing the current route change index.
     /// </summary>
-    internal RouterEntry? PeekBack() => CanGoBack ? _entries[_currentIndex - 1] : null;
+    internal RouterEntry? PeekBack() { lock (_lock) return _currentIndex > 0 ? _entries[_currentIndex - 1] : null; }
 
     /// <summary>
     /// Peeks at the next entry without changing the current route change index.
     /// </summary>
-    internal RouterEntry? PeekForward() => CanGoForward ? _entries[_currentIndex + 1] : null;
+    internal RouterEntry? PeekForward() { lock (_lock) return _currentIndex >= 0 && _currentIndex < _entries.Count - 1 ? _entries[_currentIndex + 1] : null; }
 
     /// <summary>
     /// Invokes the <see cref="Changed"/> event.
@@ -208,7 +244,9 @@ internal sealed class RouterHistory : IRouterHistory
     /// </summary>
     /// <param name="index">The zero-based index of the entry.</param>
     internal RouterEntry? At(int index)
-        => index >= 0 && index < _entries.Count ? _entries[index] : null;
+    {
+        lock (_lock) return index >= 0 && index < _entries.Count ? _entries[index] : null;
+    }
 
     /// <summary>
     /// Moves the current index directly to the specified target index.
@@ -216,8 +254,11 @@ internal sealed class RouterHistory : IRouterHistory
     /// <param name="index">The target index to go to within history.</param>
     public void MoveTo(int index)
     {
-        if (index < 0 || index >= _entries.Count || index == _currentIndex) return;
-        _currentIndex = index;
+        lock (_lock)
+        {
+            if (index < 0 || index >= _entries.Count || index == _currentIndex) return;
+            _currentIndex = index;
+        }
         OnChanged();
     }
 }
