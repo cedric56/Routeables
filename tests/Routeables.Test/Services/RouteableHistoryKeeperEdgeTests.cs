@@ -1,5 +1,7 @@
+using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
+using Routeables.Abstraction.States;
 using Routeables.Routing;
 using Routeables.Services;
 using Routeables.Tests.Pages;
@@ -23,6 +25,7 @@ public class RouteableHistoryKeeperEdgeTests
         services.RegisterRouting();
         services.RegisterRoute<FakeViewFor, FakeViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/edge-first");
         services.AddTransient<FakeViewModel>();
+        services.RegisterRoute<DraftView, DraftVm>(route: "/edge-draft");
         services.AddSingleton(store);
         services.AddRouteableHistory(path: null);
         return services.BuildServiceProvider();
@@ -106,19 +109,47 @@ public class RouteableHistoryKeeperEdgeTests
         Assert.Null(store.Load());
     }
 
+    public sealed class DraftView : IRouteableFor { public object? Context { get; set; } }
+
+    public sealed class DraftVm : IRouteableState
+    {
+        public string Draft { get; set; } = "";
+
+        public void SaveState(IDictionary<string, string> state) => state["draft"] = Draft;
+
+        public void LoadState(IReadOnlyDictionary<string, string> state) => Draft = state["draft"];
+    }
+
     [Fact]
-    public async Task Flush_writes_the_history_now()
+    public async Task Flush_writes_what_changed_since_the_last_route_change()
+    {
+        var store = new Store();
+        using var provider = Build(store);
+        provider.StartRouteableHistory();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/edge-draft", cancellationToken: TestContext.Current.CancellationToken);
+
+        // What the user typed is no route change: nothing wrote it, and the application is going to sleep.
+        ((DraftVm)router.CurrentViewModel!).Draft = "typed";
+        provider.GetRequiredService<RouteableHistoryKeeper>().Flush();
+
+        var kept = Assert.Single(RouteableState.DeserializeSnapshots(store.Kept));
+        Assert.Equal("typed", kept.State["draft"]);
+    }
+
+    [Fact]
+    public async Task Flush_writes_nothing_when_the_history_is_what_was_already_written()
     {
         var store = new Store();
         using var provider = Build(store);
         provider.StartRouteableHistory();
         var router = provider.GetRequiredService<IRouter>();
         await router.GoToAsync("/edge-first", cancellationToken: TestContext.Current.CancellationToken);
-        store.Kept = null;                              // what a crash would have left
+        store.Kept = null;                              // whatever happened to the store, the keeper knows what it wrote
 
         provider.GetRequiredService<RouteableHistoryKeeper>().Flush();
 
-        Assert.Equal(["/edge-first"], RouteableState.Deserialize(store.Kept));
+        Assert.Null(store.Kept);
     }
 
     [Fact]
