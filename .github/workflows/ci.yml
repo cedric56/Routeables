@@ -177,10 +177,10 @@ jobs:
         run: |
           reports=$(find coverage -name '*.cobertura.xml')
           if [ -z "$reports" ]; then echo "No coverage report was written." >> "$GITHUB_STEP_SUMMARY"; exit 1; fi
-          # The floors count the code the compiler writes (async methods, lambdas) since the settings no longer leave it out: they were lowered from
-          # 85-95 to what to expect, and are to be raised to the figures of the first run.
+          # The floors are about three points under the figures of the report of Routeables.Test (Segments 95.9, Routing 97.3, Regions 96.7, Locking 99.1,
+          # Services 95.0, Generated 92.6, Abstraction 93.8, Core 88.8, AspNetCore 97.4, Blazor 85.8): a drop that is real fails, noise does not.
           # Gate only: the table of the summary is the one of the job "Code coverage, all the tests".
-          python tools/coverage-summary.py --min 65 --min-assembly Routeables.Segments=90 --min-assembly Routeables.Routing=85 --min-assembly Routeables.Regions=85 --min-assembly Routeables.Locking=90 --min-assembly Routeables.Services=80 --min-assembly Routeables.Generated=88 --min-assembly Routeables.Abstraction=75 --min-assembly Routeables.Core=70 --min-assembly Routeables.AspNetCore=88 --files 25 $reports
+          python tools/coverage-summary.py --min 65 --min-assembly Routeables.Segments=92 --min-assembly Routeables.Routing=94 --min-assembly Routeables.Regions=93 --min-assembly Routeables.Locking=97 --min-assembly Routeables.Services=92 --min-assembly Routeables.Generated=90 --min-assembly Routeables.Abstraction=90 --min-assembly Routeables.Core=85 --min-assembly Routeables.AspNetCore=94 --min-assembly Routeables.Blazor=83 --files 25 $reports
 
       - uses: actions/upload-artifact@v7
         if: always()
