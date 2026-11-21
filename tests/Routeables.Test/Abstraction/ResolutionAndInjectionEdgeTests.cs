@@ -81,6 +81,7 @@ public class ResolutionAndInjectionEdgeTests
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
+        services.RegisterRouteableArgsFactory(() => RouteableArgs.Create()); // what the route builder adds when it is used
         register(services);
         return services.BuildServiceProvider();
     }
