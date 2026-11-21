@@ -335,4 +335,82 @@ public class EnvironmentsTests
 
         Assert.Equal(razor, provider.GetRequiredService<IRuntime>().IsRazorRuntime());
     }
+
+    // ---- what the system says, given to the detection so that it is tested on any operating system
+
+    private static string NoVariable(string name) => null!;
+
+    [Theory]
+    [InlineData("WSL_DISTRO_NAME")]
+    [InlineData("WSL_INTEROP")]
+    public void A_variable_that_WSL_sets_is_enough_and_no_file_is_read(string variable)
+    {
+        var wsl = DesktopImplementation.IsWsl(
+            name => name == variable ? "something" : null,
+            _ => throw new InvalidOperationException("no file is looked at"),
+            _ => throw new InvalidOperationException("no file is read"));
+
+        Assert.True(wsl);
+    }
+
+    [Theory]
+    [InlineData("5.15.90.1-microsoft-standard-WSL2", true)]
+    [InlineData("4.4.0-19041-Microsoft", true)]
+    [InlineData("5.10.16.3-wsl", true)]
+    [InlineData("6.8.0-generic", false)]
+    public void Without_the_variables_WSL_is_told_by_the_release_of_the_kernel(string release, bool expected)
+    {
+        var asked = new List<string>();
+
+        var wsl = DesktopImplementation.IsWsl(NoVariable, path => { asked.Add(path); return true; }, _ => release);
+
+        Assert.Equal(expected, wsl);
+        Assert.Equal(new[] { "/proc/sys/kernel/osrelease" }, asked);
+    }
+
+    [Fact]
+    public void A_system_with_no_release_file_and_no_variable_is_not_WSL()
+        => Assert.False(DesktopImplementation.IsWsl(NoVariable, _ => false, _ => throw new InvalidOperationException("nothing to read")));
+
+    [Fact]
+    public void A_release_file_that_cannot_be_read_means_it_is_not_WSL_and_another_failure_is_not_hidden()
+    {
+        Assert.False(DesktopImplementation.IsWsl(NoVariable, _ => true, _ => throw new IOException("locked")));
+        Assert.False(DesktopImplementation.IsWsl(NoVariable, _ => true, _ => throw new UnauthorizedAccessException()));
+        Assert.Throws<InvalidOperationException>(() => DesktopImplementation.IsWsl(NoVariable, _ => true, _ => throw new InvalidOperationException("a bug")));
+    }
+
+    [Fact]
+    public void The_os_release_of_the_system_is_read_first_and_the_second_place_is_not_looked_at()
+    {
+        var read = new List<string>();
+
+        var lines = DistributionImplementation.ReadOsReleaseLines(_ => true, path => { read.Add(path); return new[] { "ID=" + path }; });
+
+        Assert.Equal(new[] { "ID=/etc/os-release" }, lines);
+        Assert.Equal(new[] { "/etc/os-release" }, read);
+    }
+
+    [Fact]
+    public void When_the_first_os_release_is_missing_or_cannot_be_read_the_second_place_is_used()
+    {
+        var missing = DistributionImplementation.ReadOsReleaseLines(path => path == "/usr/lib/os-release", path => new[] { "ID=" + path });
+        var unreadable = DistributionImplementation.ReadOsReleaseLines(
+            _ => true,
+            path => path == "/etc/os-release" ? throw new IOException("busy") : new[] { "ID=" + path });
+        var denied = DistributionImplementation.ReadOsReleaseLines(
+            _ => true,
+            path => path == "/etc/os-release" ? throw new UnauthorizedAccessException() : new[] { "ID=" + path });
+
+        Assert.Equal(new[] { "ID=/usr/lib/os-release" }, missing);
+        Assert.Equal(new[] { "ID=/usr/lib/os-release" }, unreadable);
+        Assert.Equal(new[] { "ID=/usr/lib/os-release" }, denied);
+    }
+
+    [Fact]
+    public void Without_an_os_release_anywhere_there_are_no_lines()
+    {
+        Assert.Empty(DistributionImplementation.ReadOsReleaseLines(_ => false, _ => throw new InvalidOperationException("nothing to read")));
+        Assert.Empty(DistributionImplementation.ReadOsReleaseLines(_ => true, _ => throw new IOException("locked")));
+    }
 }

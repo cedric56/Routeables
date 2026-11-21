@@ -103,7 +103,10 @@ internal class DistributionImplementation : IDistribution
     /// Reads the lines of the <c>/etc/os-release</c> file on Linux systems.
     /// </summary>
     /// <returns>The lines, or none when the file is not there.</returns>
-    private static IEnumerable<string> ReadOsReleaseLines()
+    private static IEnumerable<string> ReadOsReleaseLines() => ReadOsReleaseLines(File.Exists, File.ReadAllLines);
+
+    /// <summary>The lines of the first <c>os-release</c> that can be read, the system being given (to test this on any operating system).</summary>
+    internal static IEnumerable<string> ReadOsReleaseLines(Func<string, bool> exists, Func<string, string[]> readAllLines)
     {
         // Use the system's file, else the one in the specification's second location. A file that cannot be read (permissions, a race) counts as
         // missing: detection runs once per process, and an exception would be kept for every later call.
@@ -111,8 +114,8 @@ internal class DistributionImplementation : IDistribution
         {
             try
             {
-                if (File.Exists(path))
-                    return File.ReadAllLines(path);
+                if (exists(path))
+                    return readAllLines(path);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {

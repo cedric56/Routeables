@@ -70,11 +70,17 @@ internal class DesktopImplementation : IDesktop
     /// Determines whether the current environment is running under Windows Subsystem for Linux (WSL).
     /// </summary>
     /// <returns><see langword="true"/> if running under WSL; otherwise, <see langword="false"/>.</returns>
-    private static bool IsWsl()
+    private static bool IsWsl() => IsWsl(Environment.GetEnvironmentVariable, File.Exists, File.ReadAllText);
+
+    /// <summary>WSL by what the system says: its variables, then the release of the kernel. The system is given, so that this is tested on any operating system.</summary>
+    /// <param name="getVariable">Reads an environment variable.</param>
+    /// <param name="exists">Whether a file exists.</param>
+    /// <param name="readAllText">The text of a file.</param>
+    internal static bool IsWsl(Func<string, string?> getVariable, Func<string, bool> exists, Func<string, string> readAllText)
     {
         // Fast check: an environment variable that WSL injects.
-        if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WSL_DISTRO_NAME")) ||
-            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WSL_INTEROP")))
+        if (!string.IsNullOrEmpty(getVariable("WSL_DISTRO_NAME")) ||
+            !string.IsNullOrEmpty(getVariable("WSL_INTEROP")))
         {
             return true;
         }
@@ -82,9 +88,9 @@ internal class DesktopImplementation : IDesktop
         // Fallback check: the Linux kernel's OS release information.
         try
         {
-            if (File.Exists("/proc/sys/kernel/osrelease"))
+            if (exists("/proc/sys/kernel/osrelease"))
             {
-                var versionText = File.ReadAllText("/proc/sys/kernel/osrelease");
+                var versionText = readAllText("/proc/sys/kernel/osrelease");
                 if (versionText.Contains("microsoft", StringComparison.OrdinalIgnoreCase) ||
                     versionText.Contains("wsl", StringComparison.OrdinalIgnoreCase))
                 {
