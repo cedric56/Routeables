@@ -1,4 +1,6 @@
-using Routeables.Abstraction.Bases;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
+using Routeables.Abstraction.History;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Abstraction.States;
@@ -186,5 +188,37 @@ public class RouteableStateRoundTripTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => RouteableState.RestoreAsync(router, null!, Ct));
         await Assert.ThrowsAsync<ArgumentNullException>(() => RouteableState.RestoreSnapshotsAsync(null!, [], Ct));
         await Assert.ThrowsAsync<ArgumentNullException>(() => RouteableState.RestoreSnapshotsAsync(router, null!, Ct));
+    }
+
+    [Fact]
+    public async Task A_route_that_throws_during_the_restoration_is_given_back_after_the_page_that_was_shown_is_tried_again()
+    {
+        var shown = Substitute.For<IHistoryEntry>();
+        shown.Args.Returns(RouteableArgs.Create().WithRoute("/was"));
+        var history = Substitute.For<IRouterHistory>();
+        history.Current.Returns(shown);
+        history.Count.Returns(0);                       // erased, and nothing is back
+        var router = Substitute.For<IRouter>();
+        router.History.Returns(history);
+        router.GoToAsync(Arg.Any<string>(), Arg.Any<IRouteableArgs?>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new InvalidOperationException("the page failed"));
+
+        var failure = await Assert.ThrowsAsync<InvalidOperationException>(() => RouteableState.RestoreAsync(router, ["/a"], Ct));
+
+        // The failure of the restoration is the one the caller gets, even though the page that was shown could not be shown again either.
+        Assert.Equal("the page failed", failure.Message);
+        await router.Received(1).GoToAsync("/was", null, null, CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task A_page_that_has_no_address_is_not_captured()
+    {
+        await using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct);
+        Assert.True((await router.GoAsync(new SixthViewFor(), new ThirdViewModel(), cancellationToken: Ct)).Success);
+
+        Assert.Equal(["/home"], RouteableState.Capture(router));
+        Assert.Equal(["/home"], RouteableState.CaptureSnapshots(router).Select(snapshot => snapshot.Route));
     }
 }

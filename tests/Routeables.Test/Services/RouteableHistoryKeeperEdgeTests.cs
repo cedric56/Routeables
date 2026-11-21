@@ -105,4 +105,69 @@ public class RouteableHistoryKeeperEdgeTests
 
         Assert.Null(store.Load());
     }
+
+    [Fact]
+    public async Task Flush_writes_the_history_now()
+    {
+        var store = new Store();
+        using var provider = Build(store);
+        provider.StartRouteableHistory();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/edge-first", cancellationToken: TestContext.Current.CancellationToken);
+        store.Kept = null;                              // what a crash would have left
+
+        provider.GetRequiredService<RouteableHistoryKeeper>().Flush();
+
+        Assert.Equal(["/edge-first"], RouteableState.Deserialize(store.Kept));
+    }
+
+    [Fact]
+    public void Flush_before_the_previous_history_is_back_writes_nothing()
+    {
+        var waiting = RouteableState.Serialize(["/edge-first", "/edge-second"]);
+        var store = new Store(waiting);
+        using var provider = Build(store);
+        provider.StartRouteableHistory();
+
+        provider.GetRequiredService<RouteableHistoryKeeper>().Flush();
+
+        Assert.Equal(waiting, store.Kept);
+    }
+
+    [Fact]
+    public async Task An_erased_history_is_kept_as_empty_so_that_the_pages_do_not_come_back_at_the_next_start()
+    {
+        var store = new Store();
+        using var provider = Build(store);
+        provider.StartRouteableHistory();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/edge-first", cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotEmpty(store.Kept!);
+
+        await router.EraseHistoryAsync(TestContext.Current.CancellationToken);
+
+        await UntilAsync(() => store.Kept == string.Empty);
+    }
+
+    [Fact]
+    public void A_file_that_another_process_holds_has_no_history_for_now()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "routeables-edge-" + Guid.NewGuid().ToString("N"));
+        var path = Path.Combine(folder, "history.txt");
+        try
+        {
+            var store = new FileRouteableHistoryStore(path);
+            store.Save("kept");
+
+            // Held with no sharing: reading it fails with an IOException (a lock on Windows, the lock .NET takes on Unix).
+            using (new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                Assert.Null(store.Load());
+
+            Assert.Equal("kept", store.Load());
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+    }
 }
