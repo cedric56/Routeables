@@ -376,7 +376,7 @@ public class DBusConnectTests
 
     private const string Variable = "DBUS_SESSION_BUS_ADDRESS";
 
-    private enum Mode { Accept, RefuseAuthentication, TooLongAnswer, HangUpAfterBegin }
+    private enum Mode { Accept, RefuseAuthentication, TooLongAnswer, HangUpAfterBegin, HangUpBeforeAnswering }
 
     private sealed class Bus : IDisposable
     {
@@ -384,13 +384,20 @@ public class DBusConnectTests
         private readonly string _directory = Path.Combine(Path.GetTempPath(), "routeables dbus " + Guid.NewGuid().ToString("N")[..8]);
         public string SocketPath { get; }
         public Task<string> Served { get; }
-        public string Escaped => "unix:path=" + Uri.EscapeDataString(SocketPath);
+        private readonly string? _abstractName;
+        public string Escaped => _abstractName is null ? "unix:path=" + Uri.EscapeDataString(SocketPath) : "unix:abstract=" + Uri.EscapeDataString(_abstractName);
 
-        public Bus(Mode mode)
+        public Bus(Mode mode, bool useAbstract = false)
         {
             Directory.CreateDirectory(_directory);
             SocketPath = Path.Combine(_directory, "bus");
-            _listener.Bind(new UnixDomainSocketEndPoint(SocketPath));
+            if (useAbstract)
+            {
+                _abstractName = "routeables-test-" + Guid.NewGuid().ToString("N");
+                _listener.Bind(new UnixDomainSocketEndPoint("\0" + _abstractName));
+            }
+            else
+                _listener.Bind(new UnixDomainSocketEndPoint(SocketPath));
             _listener.Listen(1);
             Served = Task.Run(() => Serve(mode));
         }
@@ -414,6 +421,8 @@ public class DBusConnectTests
             var auth = ReadUntil(client, "\r\n");
             switch (mode)
             {
+                case Mode.HangUpBeforeAnswering:
+                    return auth;
                 case Mode.RefuseAuthentication:
                     client.Send(Encoding.ASCII.GetBytes("REJECTED EXTERNAL\r\n"));
                     return auth;
@@ -525,6 +534,26 @@ public class DBusConnectTests
         var missing = "unix:path=" + Uri.EscapeDataString(Path.Combine(Path.GetTempPath(), "routeables-no-such-bus-" + Guid.NewGuid().ToString("N")));
 
         var connection = await WithAddress(missing, DBusConnection.TryConnectAsync);
+
+        Assert.Null(connection);
+    }
+
+    [Fact(Skip = "Needs Linux: the session bus is reached over a Unix socket and libc.", SkipUnless = nameof(OnLinux))]
+    public async Task A_bus_at_an_abstract_address_is_reached()
+    {
+        using var bus = new Bus(Mode.Accept, useAbstract: true);
+
+        using var connection = await WithAddress(bus.Escaped, DBusConnection.TryConnectAsync);
+
+        Assert.NotNull(connection);
+    }
+
+    [Fact(Skip = "Needs Linux: the session bus is reached over a Unix socket and libc.", SkipUnless = nameof(OnLinux))]
+    public async Task A_bus_that_hangs_up_during_the_authentication_gives_no_connection()
+    {
+        using var bus = new Bus(Mode.HangUpBeforeAnswering);
+
+        var connection = await WithAddress(bus.Escaped, DBusConnection.TryConnectAsync);
 
         Assert.Null(connection);
     }

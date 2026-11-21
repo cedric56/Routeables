@@ -247,5 +247,25 @@ public class LinuxNotificationCenterTests : IDisposable
         Assert.True((await CompletedAsync()).IsCancelled);
         Assert.Empty(_center.ActiveNotifications());
     }
+
+    [Fact(Skip = Skipped, SkipUnless = nameof(OnLinux))]
+    public async Task Without_a_session_bus_nothing_is_created_and_the_next_call_does_not_try_again_at_once()
+    {
+        Environment.SetEnvironmentVariable("DBUS_SESSION_BUS_ADDRESS", "unix:path=" + Uri.EscapeDataString(Path.Combine(Path.GetTempPath(), "routeables-no-bus-" + Guid.NewGuid().ToString("N"))));
+
+        Assert.Null(await _center.CreateNotificationAsync(null));
+        Assert.Null(await _center.CreateNotificationAsync(null));       // the failure is remembered for a few seconds
+    }
+
+    [Fact(Skip = Skipped, SkipUnless = nameof(OnLinux))]
+    public async Task Showing_a_notification_without_a_session_bus_fails_and_is_not_kept()
+    {
+        Environment.SetEnvironmentVariable("DBUS_SESSION_BUS_ADDRESS", "unix:path=" + Uri.EscapeDataString(Path.Combine(Path.GetTempPath(), "routeables-no-bus-" + Guid.NewGuid().ToString("N"))));
+        var notification = new SystemNotification(_center, _center.NextId(), null) { Title = "t" };
+
+        await Assert.ThrowsAsync<InvalidOperationException>(notification.ShowAsync);
+
+        Assert.Empty(_center.ActiveNotifications());
+    }
 }
 #endif
