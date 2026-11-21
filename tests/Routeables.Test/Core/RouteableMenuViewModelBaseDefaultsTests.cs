@@ -45,7 +45,7 @@ public class RouteableMenuViewModelBaseDefaultsTests
     {
         var sut = TestNavigableViewModel.Create(CreateRouter(), [], initialize: false);
 
-        var selected = await sut.SelectEntryAsync(new Entry("/not-registered"));
+        var selected = await sut.SelectEntryAsync(new Entry("/not-registered"), Ct);
 
         Assert.False(selected);
     }
