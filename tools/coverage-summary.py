@@ -2,11 +2,15 @@
 """Summarises Cobertura reports as a Markdown table: line and branch coverage of each assembly, and of the whole.
 
 usage: coverage-summary.py [--min LINE_PERCENT] [--min-assembly NAME=LINE_PERCENT]... [--files N] [--files-of TEXT]
-                           report.cobertura.xml [...]
+                           [--files-skip NAME]... report.cobertura.xml [...]
+       coverage-summary.py --per-report report.cobertura.xml [...]
 
 With --min the exit code is 1 when the line coverage of the whole is below it (the CI uses 65). With --min-assembly (repeatable) it is 1
 when the line coverage of the assembly NAME is below it. With --files N a second table lists the N files with the most lines that no test
-runs (the place to write the next tests); --files-of keeps the assemblies whose name contains TEXT. A file shared between hosts
+runs (the place to write the next tests); --files-of keeps the assemblies whose name contains TEXT; --files-skip (repeatable) leaves the
+assembly NAME out of that table and says in one line how many lines it has that no test runs (the hosts, which need a platform to run).
+With --per-report one table gives, for each report, the coverage of the whole and of Routeables.Routing and Routeables.Core (to tell a
+report that is missing or badly read from one that covers little). A file shared between hosts
 (Routeables.Shared is compiled into each of them) is listed once for each assembly that holds a copy.
 
 The coverage tool counts the lines that hold only a brace as lines of code, and marks the closing brace of a method that always throws as
@@ -63,33 +67,11 @@ def ranges(numbers, limit=8):
     return ", ".join(out[:limit]) + (", ..." if len(out) > limit else "")
 
 
-def main(argv):
-    minimum = None
-    per_assembly = {}
-    top = 0
-    only = ""
-    files = []
-    args = iter(argv)
-    for arg in args:
-        if arg == "--min":
-            minimum = float(next(args))
-        elif arg == "--min-assembly":
-            name, _, percent = next(args).partition("=")
-            per_assembly[name] = float(percent)
-        elif arg == "--files":
-            top = int(next(args))
-        elif arg == "--files-of":
-            only = next(args)
-        else:
-            files.append(arg)
-    if not files:
-        print(__doc__)
-        return 2
-
-    # Lines are counted once per file and number: the reports of several test projects can cover the same code.
+def load(paths):
+    """Lines are counted once per file and number: the reports of several test projects can cover the same code."""
     lines = {}      # assembly -> {(file, number): covered}
     branches = {}   # assembly -> {(file, number): (covered, total)}, the best of the reports
-    for path in files:
+    for path in paths:
         for package in ET.parse(path).getroot().iter("package"):
             name = package.get("name") or "?"
             seen = lines.setdefault(name, {})
@@ -106,9 +88,68 @@ def main(argv):
                             best = counts.get(key)
                             if best is None or int(covered) > best[0]:
                                 counts[key] = (int(covered), int(total))
+    return lines, branches
 
-    def pct(covered, total):
-        return "-" if total == 0 else f"{100.0 * covered / total:.1f}%"
+
+def percent(covered, total):
+    return "-" if total == 0 else f"{100.0 * covered / total:.1f}%"
+
+
+def per_report(paths):
+    """One row for each report: what it covers of the whole, of Routeables.Routing and of Routeables.Core."""
+    print("| Report | Lines | Line coverage | Routing | Core |")
+    print("|---|---:|---:|---:|---:|")
+    for path in paths:
+        lines, _ = load([path])
+        everything = [hit for assembly in lines.values() for hit in assembly.values()]
+
+        def of(name):
+            hits = list(lines.get(name, {}).values())
+            return percent(sum(hits), len(hits))
+
+        folder = path.replace("\\", "/").split("/")
+        name = folder[-2] if len(folder) > 1 else folder[-1]
+        stem = folder[-1].split(".")[0]
+        if len(stem) > 8 and "-" in stem:
+            name = f"{name} ({stem[:8]})"          # the coverage of the test project of the core is a file named by a Guid
+        print(f"| {name} | {len(everything)} | {percent(sum(everything), len(everything))} | {of('Routeables.Routing')} | {of('Routeables.Core')} |")
+
+
+def main(argv):
+    minimum = None
+    per_assembly = {}
+    top = 0
+    only = ""
+    skip = []
+    by_report = False
+    files = []
+    args = iter(argv)
+    for arg in args:
+        if arg == "--min":
+            minimum = float(next(args))
+        elif arg == "--min-assembly":
+            name, _, floor_text = next(args).partition("=")
+            per_assembly[name] = float(floor_text)
+        elif arg == "--files":
+            top = int(next(args))
+        elif arg == "--files-of":
+            only = next(args)
+        elif arg == "--files-skip":
+            skip.append(next(args))
+        elif arg == "--per-report":
+            by_report = True
+        else:
+            files.append(arg)
+    if not files:
+        print(__doc__)
+        return 2
+
+    if by_report:
+        per_report(files)
+        return 0
+
+    lines, branches = load(files)
+    pct = percent
 
     print("| Assembly | Lines | Covered | Line coverage | Branch coverage |")
     print("|---|---:|---:|---:|---:|")
@@ -127,6 +168,7 @@ def main(argv):
 
     if top > 0:
         rows = []
+        skipped = {}      # assembly -> [lines that no test runs, files]
         for name in lines:
             if only not in name:
                 continue
@@ -138,13 +180,20 @@ def main(argv):
                 if not hit and not is_trivial(file, int(number)):
                     missed.setdefault(file, []).append(int(number))
             for file, (total, covered) in by_file.items():
-                if file in missed:
+                if file in missed and name in skip:
+                    count = skipped.setdefault(name, [0, 0])
+                    count[0] += len(missed[file])
+                    count[1] += 1
+                elif file in missed:
                     rows.append((len(missed[file]), total, covered, name, file, ranges(missed[file], 12)))
         rows.sort(key=lambda r: (-r[0], r[3], r[4]))
         print(f"\n| Not covered | Lines | Line coverage | Assembly | File | Lines not run |")
         print("|---:|---:|---:|---|---|---|")
         for missing, total, covered, name, file, where in rows[:top]:
             print(f"| {missing} | {total} | {pct(covered, total)} | {name} | {file} | {where} |")
+        if skipped:
+            parts = [f"{name.removeprefix('Routeables.')} {lines_} in {count} file{'' if count == 1 else 's'}" for name, (lines_, count) in sorted(skipped.items(), key=lambda p: -p[1][0])]
+            print(f"\nNot listed, the hosts (they need a platform to run), lines that no test runs: {'; '.join(parts)}.")
 
     status = 0
     if minimum is not None and all_lines and 100.0 * all_covered / all_lines < minimum:

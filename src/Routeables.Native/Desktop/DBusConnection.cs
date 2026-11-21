@@ -199,6 +199,14 @@ internal sealed class DBusConnection : IDisposable
     /// <summary>A connection over a socket that is already connected, without the authentication or the reading thread (for the tests).</summary>
     internal static DBusConnection ForTests(Socket socket) => new(socket);
 
+    /// <summary>A connection over a socket that is already connected, with the reading thread but without the authentication or Hello (for the tests of what the bus sends back).</summary>
+    internal static DBusConnection ForTestsReading(Socket socket)
+    {
+        var connection = new DBusConnection(socket);
+        new Thread(connection.ReadLoop) { IsBackground = true, Name = "Routeables D-Bus (test)" }.Start();
+        return connection;
+    }
+
     /// <summary>The calls that wait for a reply (for the tests).</summary>
     internal int PendingCount => _pending.Count;
 
