@@ -271,8 +271,9 @@ public class DBusConnectionTests
 
         var call = connection.CallAsync("org.example", "/", "org.example.Iface", "Ask", null, null);
 
-        var error = await Assert.ThrowsAsync<IOException>(() => call.WaitAsync(Patience, ct));
-        Assert.Contains("not connected", error.Message);
+        // Either the send fails ("not connected") or the reading thread, which the disposal ended, has already failed the pending calls ("connection ended"):
+        // what matters is that the call fails with an IOException and is not left waiting.
+        await Assert.ThrowsAsync<IOException>(() => call.WaitAsync(Patience, ct));
         Assert.Equal(0, connection.PendingCount);
     }
 
