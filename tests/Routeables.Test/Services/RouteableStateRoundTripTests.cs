@@ -1,5 +1,6 @@
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.History;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
