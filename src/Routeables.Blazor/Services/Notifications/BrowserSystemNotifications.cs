@@ -173,7 +173,7 @@ internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationO
     {
         using var document = JsonDocument.Parse(json);
         var root = document.RootElement;
-        if (!root.TryGetProperty("id", out var id) || !id.TryGetUInt32(out var number))
+        if (!root.TryGetProperty("id", out var id) || id.ValueKind != JsonValueKind.Number || !id.TryGetUInt32(out var number))
             return;
 
         var action = root.TryGetProperty("action", out var tag) && tag.ValueKind == JsonValueKind.String ? tag.GetString() : null;
