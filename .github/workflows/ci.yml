@@ -244,14 +244,16 @@ jobs:
 
       - name: Check, measure and memory
         run: |
-          { echo "### Routeables and a service of your own"; dotnet run --project benchmarks/Routeables.Comparison/Routeables.Comparison.csproj -c Release --no-build; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "### Routeables and a service of your own"; dotnet run --project benchmarks/Routeables.Comparison/Routeables.Comparison.csproj -c Release --no-build; } | tee "$RUNNER_TEMP/benchmark.txt"
+          python3 tools/benchmark-condense.py "$RUNNER_TEMP/benchmark.txt" >> "$GITHUB_STEP_SUMMARY"
 
       # The ReactiveUI version was written without being able to restore ReactiveUI: it has a step of its own that cannot fail the job, until one run is green.
       - name: ReactiveUI, with the other two
         continue-on-error: true
         run: |
           dotnet build benchmarks/Routeables.Comparison.ReactiveUI/Routeables.Comparison.ReactiveUI.csproj -c Release
-          { echo "### With ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.ReactiveUI/Routeables.Comparison.ReactiveUI.csproj -c Release --no-build; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "### With ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.ReactiveUI/Routeables.Comparison.ReactiveUI.csproj -c Release --no-build; } | tee "$RUNNER_TEMP/benchmark.txt"
+          python3 tools/benchmark-condense.py "$RUNNER_TEMP/benchmark.txt" >> "$GITHUB_STEP_SUMMARY"
 
   # Phase 1b: the same scenario in an Avalonia application with no screen (Avalonia.Headless), every page a real view in a real window, for
   # Routeables, ReactiveUI routing and Prism. The home-made service has no view and is left out. Written without being able to restore
@@ -280,7 +282,8 @@ jobs:
         timeout-minutes: 10
         run: |
           dotnet build benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release ${{ env.CI_PROPS }}
-          { echo "### With views: Routeables and ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "### With views: Routeables and ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee "$RUNNER_TEMP/benchmark.txt"
+          python3 tools/benchmark-condense.py "$RUNNER_TEMP/benchmark.txt" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Routeables memory with a limited history
         continue-on-error: true
@@ -288,14 +291,16 @@ jobs:
         env:
           ROUTEABLES_BENCH_HISTORY_LIMIT: "50"
         run: |
-          { echo "### With views: memory of Routeables with the history limited to 50"; dotnet run --project benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release --no-build ${{ env.CI_PROPS }} -- --memory; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "### With views: memory of Routeables with the history limited to 50"; dotnet run --project benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release --no-build ${{ env.CI_PROPS }} -- --memory; } | tee "$RUNNER_TEMP/benchmark.txt"
+          python3 tools/benchmark-condense.py "$RUNNER_TEMP/benchmark.txt" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Prism
         continue-on-error: true
         timeout-minutes: 10
         run: |
           dotnet build benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release ${{ env.CI_PROPS }}
-          { echo "### With views: Prism, KeepAlive = false (views dropped by the region)"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "### With views: Prism, KeepAlive = false (views dropped by the region)"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee "$RUNNER_TEMP/benchmark.txt"
+          python3 tools/benchmark-condense.py "$RUNNER_TEMP/benchmark.txt" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Prism with the views kept (its default)
         continue-on-error: true
@@ -303,7 +308,8 @@ jobs:
         env:
           ROUTEABLES_BENCH_PRISM_KEEP_VIEWS: "1"
         run: |
-          { echo "### With views: Prism, views kept (the default of Prism)"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "### With views: Prism, views kept (the default of Prism)"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee "$RUNNER_TEMP/benchmark.txt"
+          python3 tools/benchmark-condense.py "$RUNNER_TEMP/benchmark.txt" >> "$GITHUB_STEP_SUMMARY"
 
   # The Uno projects are in a job of their own: they were written without being able to restore Uno Platform, so a failure here
   # must not hide the result of the jobs above. Once it is green, fold it into web-and-desktop.
