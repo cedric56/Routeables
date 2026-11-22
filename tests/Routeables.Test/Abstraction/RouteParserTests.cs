@@ -1,4 +1,6 @@
 ﻿using Routeables.Abstraction.Routing;
+using System.Collections.Frozen;
+using System.Collections.Immutable;
 using Routeables.Routing;
 
 namespace Routeables.Test.Abstraction;
@@ -809,5 +811,20 @@ public class RouteParserTests
         Assert.Equal(0, RouteParser.UsedBy("/orders/{status?}/{page?}", new { id = 5 }));
         Assert.Equal(1, RouteParser.UsedBy("/orders?{page?}&{sort?}", new { sort = "name" }));
         Assert.Equal(0, RouteParser.UsedBy("/orders/{id}", new { id = "" }));
+    }
+
+    [Fact]
+    public void Values_in_any_dictionary_are_read_as_values_and_not_as_properties_of_the_collection()
+    {
+        var frozen = new Dictionary<string, int> { ["count"] = 3 }.ToFrozenDictionary();
+        var immutable = new Dictionary<string, int> { ["count"] = 3 }.ToImmutableDictionary();
+        var table = new System.Collections.Hashtable { ["count"] = 3 };
+        var strings = new System.Collections.Specialized.StringDictionary { ["count"] = "3" };
+
+        Assert.Equal("a/3", RouteParser.Build("a/{count}", frozen));
+        Assert.Equal("a/3", RouteParser.Build("a/{count}", immutable));
+        Assert.Equal("a/3", RouteParser.Build("a/{count}", table));
+        Assert.Equal("a/3", RouteParser.Build("a/{count}", strings));
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("a/{count}", new Dictionary<int, string> { [1] = "x" }));
     }
 }

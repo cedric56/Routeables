@@ -1,4 +1,5 @@
-﻿using Routeables.Services;
+﻿using Routeables.Abstraction.Errors;
+using Routeables.Services;
 
 namespace Routeables.AspNetCore;
 
@@ -148,8 +149,9 @@ public sealed class RouteableInteractions : IDisposable
         // They close as if they had expired.
         if (evicted is not null)
         {
+            // The handlers belong to the application: one that throws is reported and must not stop the others (nor fail this unrelated call).
             foreach (var toast in evicted)
-                toast.OnClose?.Invoke();
+                RouteableErrors.Guard(null, "RouteableInteractions.Notify", toast.OnClose);
         }
     }
 
@@ -277,9 +279,10 @@ public sealed class RouteableInteractions : IDisposable
                 return; // another request took it first: its handlers run once
         }
 
+        // A click handler that throws is reported, and the toast still closes.
         if (click)
-            toast.OnClick?.Invoke();
-        toast.OnClose?.Invoke();
+            RouteableErrors.Guard(null, "RouteableInteractions.Dismiss", toast.OnClick);
+        RouteableErrors.Guard(null, "RouteableInteractions.Dismiss", toast.OnClose);
     }
 
     /// <summary>

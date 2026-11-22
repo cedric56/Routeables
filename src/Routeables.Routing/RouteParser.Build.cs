@@ -145,9 +145,14 @@ public static partial class RouteParser
             case IDictionary<string, object?> map:
                 foreach (var (key, value) in map) Put(bag, key, value);
                 break;
-            case System.Collections.IDictionary map when map.GetType().IsGenericType && map.GetType().GetGenericArguments() is [var key, _] && key == typeof(string):
-                // Dictionary<string, int>, Dictionary<string, string> and so on: the generic interfaces are not covariant, so none of the cases above matches.
-                foreach (System.Collections.DictionaryEntry entry in map) Put(bag, (string)entry.Key, entry.Value);
+            case System.Collections.IDictionary map:
+                // Dictionary<string, int>, Dictionary<string, string>, FrozenDictionary, ImmutableDictionary, Hashtable and so on: the generic interfaces
+                // are not covariant, so none of the cases above matches, and reading the properties of the collection would give Count and IsReadOnly.
+                foreach (System.Collections.DictionaryEntry entry in map)
+                    Put(bag, entry.Key as string ?? throw new ArgumentException("The keys of the values must be strings (the names of the placeholders).", nameof(values)), entry.Value);
+                break;
+            case System.Collections.Specialized.StringDictionary strings:
+                foreach (System.Collections.DictionaryEntry entry in strings) Put(bag, (string)entry.Key, entry.Value);
                 break;
             default:
                 foreach (var property in values.GetType().GetProperties())
