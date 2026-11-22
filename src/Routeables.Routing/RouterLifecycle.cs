@@ -82,6 +82,28 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
         }
     }
 
+    /// <summary>
+    /// Undoes a transition that ran to its end although its route change was replaced meanwhile (a hook that ignores its token): the entry that
+    /// was entered is left again and the one that was left is entered again, so the lifecycle matches the history, which did not move. A failure is
+    /// reported, not thrown: the caller is about to report the cancellation.
+    /// </summary>
+    /// <param name="previous">The entry that was left; <see langword="null"/> on the first route change.</param>
+    /// <param name="entering">The entry that was entered and is not committed.</param>
+    public async Task RevertAsync(RouterEntry? previous, RouterEntry entering)
+    {
+        try
+        {
+            if (previous is null)
+                await NotifyLeavingAsync(entering);
+            else
+                await TransitionAsync(entering, previous, CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            RouteableErrors.Report<RouterLifecycle>(provider, ex);
+        }
+    }
+
     // The instances OnSubscribe was called on. Weak: it must not keep the pages alive.
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<object, object> _subscribed = new();
 

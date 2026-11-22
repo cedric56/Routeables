@@ -20,6 +20,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A route change replaced while its page ignored the token no longer leaves the lifecycle half done**: the page had been told it was left and the new one that it was entered, but the history did not move, so the page that stayed was never entered again and the abandoned one never left. The two are now undone (the abandoned page is left, the one that stayed is entered again) before the cancellation is reported. Applies to a new route change, Back, Forward and the jumps in the history.
 - **A catch-all value (`{**path}`) with half a surrogate pair was written as U+FFFD**, and the address did not read back as the value given. It is refused, as for any other placeholder.
 - **`GoBackToRootAsync` says it goes to the first entry the history keeps**: with a limit (`LimitHistory`, or the 50 of a scoped router) the oldest entries are gone. The Blazor page says that going back past the oldest entry the router kept opens that address as a new page.
 - **Blazor: a jump of several entries in the browser (a long press on Back, `history.go(-2)`) added a page to the router** instead of going to the entry. The state of the browser entry names the router entry, so the router now moves to it (`MoveToAsync`). An entry that carries no state of this application is still looked up by its address.

@@ -84,6 +84,51 @@ public class RouterCancelCurrentTests
         Assert.Equal(1, router.History.Count);
     }
 
+    /// <summary>A page that counts how often it is entered and left, and whose arrival can ignore its token until it is released.</summary>
+    private sealed class CountingPage(Task? release = null) : IRouteable
+    {
+        public int Entered { get; private set; }
+        public int Left { get; private set; }
+        public TaskCompletionSource Started { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public Task<bool> CanLeaveAsync(CancellationToken ct = default) => Task.FromResult(true);
+        public Task OnLeavingAsync(IRouteableArgs context, CancellationToken ct = default) { Left++; return Task.CompletedTask; }
+
+        public async Task OnEnteringAsync(IRouteableArgs context, CancellationToken ct = default)
+        {
+            Entered++;
+            Started.TrySetResult();
+            if (release is not null && Entered == 1)
+                await release;
+        }
+    }
+
+    [Fact]
+    public async Task A_replaced_route_change_whose_page_ignores_the_token_leaves_the_lifecycle_as_it_was()
+    {
+        var router = CreateRouter(RouterConcurrency.CancelCurrent);
+        var home = new CountingPage();
+        await router.GoAsync(new TestView(), home, cancellationToken: Ct);
+
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var deaf = new CountingPage(release.Task);
+        var replaced = router.GoAsync(new TestView(), deaf, cancellationToken: Ct);
+        await deaf.Started.Task.WaitAsync(TimeSpan.FromSeconds(5), Ct);
+        // The page left and the one that ignores its token entered; the history has not moved.
+        var last = new TestViewModel();
+        var newer = router.GoAsync(new TestView(), last, cancellationToken: Ct);
+        release.SetResult();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => replaced.WaitAsync(TimeSpan.FromSeconds(5), Ct));
+        Assert.True((await newer.WaitAsync(TimeSpan.FromSeconds(5), Ct)).Success);
+
+        // The page that stayed was entered again when the other was undone, then left for the newest route change; the abandoned one was left.
+        Assert.Equal(2, home.Entered);
+        Assert.Equal(2, home.Left);
+        Assert.Equal(1, deaf.Entered);
+        Assert.Equal(1, deaf.Left);
+    }
+
     [Fact]
     public async Task A_new_route_change_cancels_the_one_in_progress_and_takes_its_place()
     {

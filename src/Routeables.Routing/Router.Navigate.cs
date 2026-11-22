@@ -56,7 +56,9 @@ internal partial class Router
                         await lifecycle.EnterAsync(entering, token);
 
                     // 5. Commit, then destroy what the push cut off (forward entries, the oldest evicted entry).
-                    // A hook that ignores its token must not let a replaced route change into the history.
+                    // A hook that ignores its token must not let a replaced route change into the history; what it did is undone first.
+                    if (token.IsCancellationRequested)
+                        await lifecycle.RevertAsync(previous, entering);
                     token.ThrowIfCancellationRequested();
                     var removed = history.Push(entering);
                     await lifecycle.NotifyEnteredAsync(previous, entering, token);
