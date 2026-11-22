@@ -12,17 +12,18 @@ public class RouteableLinkTests
     private sealed class FakeNavigation : NavigationManager
     {
         public FakeNavigation() => Initialize("http://localhost/", "http://localhost/");
+        public FakeNavigation(string baseUri) => Initialize(baseUri, baseUri);
         protected override void NavigateToCore(string uri, NavigationOptions options) { }
     }
 
     public sealed class OrderView : IRouteableFor { public object? Context { get; set; } }
     public sealed class OrderVm(int id) { public int Id { get; } = id; }
 
-    private static ServiceProvider Services()
+    private static ServiceProvider Services(string baseUri = "http://localhost/")
     {
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddSingleton<NavigationManager, FakeNavigation>();
+        services.AddSingleton<NavigationManager>(new FakeNavigation(baseUri));
         services.RegisterRouting();
         services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());
         services.RegisterRoute<OrderView, OrderVm>(route: "/orders/{id:int}");
@@ -73,5 +74,28 @@ public class RouteableLinkTests
         await RouteableLink.FollowAsync(provider, "/nowhere", null, null, null);
 
         Assert.Null(provider.GetRequiredService<IRouter>().CurrentViewModel);
+    }
+
+    [Fact]
+    public async Task Under_a_base_path_the_link_stays_inside_the_application()
+    {
+        await using var provider = Services("http://localhost/app/");
+
+        var html = await RenderAsync(provider, new() { [nameof(RouteableLink.Route)] = "/orders/42" });
+
+        Assert.Contains("href=\"http://localhost/app/orders/42\"", html);
+    }
+
+    [Theory]
+    [InlineData("//evil.com", "http://localhost/app/evil.com")]
+    [InlineData("/\\evil.com", "http://localhost/app/evil.com")]
+    [InlineData("javascript:alert(1)", "http://localhost/app/javascript:alert(1)")]
+    public async Task A_route_cannot_make_the_link_leave_the_application(string route, string expected)
+    {
+        await using var provider = Services("http://localhost/app/");
+
+        var html = await RenderAsync(provider, new() { [nameof(RouteableLink.Route)] = route });
+
+        Assert.Contains($"href=\"{expected}\"", html);
     }
 }

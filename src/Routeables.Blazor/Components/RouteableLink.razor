@@ -37,14 +37,20 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
-    private string Href => Navigation.ToAbsoluteUri(Route).ToString();
+    // Relative to the base address and kept inside the application: a route can carry user input, and "//evil.com" or "javascript:..." must not
+    // become the target of a link that is opened in a new tab.
+    private string Href => Navigation.ToAbsoluteUri(RouteableUrlSync.BaseRelative(Route)).ToString();
 
     // A link that opens elsewhere (target="_blank") is the browser's business: the router does not change.
+    // A plain link (no region, arguments or template) while the address is followed is left to Blazor: it ignores Ctrl/Cmd-click and the
+    // like, which then open a new tab, and routes the other clicks through the router. The click handler cannot tell them apart:
+    // preventDefault is fixed when the component renders.
     private bool Intercept =>
-        AdditionalAttributes is null
+        !(Region is null && Args is null && Template is null && Provider.GetService<RouteableUrlSync>() is { IsFollowing: true })
+        && (AdditionalAttributes is null
         || !AdditionalAttributes.TryGetValue("target", out var target)
         || target is null
-        || string.Equals(target.ToString(), "_self", StringComparison.OrdinalIgnoreCase);
+        || string.Equals(target.ToString(), "_self", StringComparison.OrdinalIgnoreCase));
 
     private Task OnClickAsync(MouseEventArgs e)
         => Intercept && !string.IsNullOrWhiteSpace(Route)

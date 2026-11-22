@@ -388,4 +388,16 @@ public class RouteableUrlSyncEdgeTests
         Assert.True(RouteableUrlSync.Same("/items/aB", "/items/aB", Items));
         Assert.True(RouteableUrlSync.Same("/Whatever", "/whatever"));              // no route is known: nothing to protect
     }
+
+    [Theory]
+    [InlineData("/orders/42", "http://localhost/app/orders/42")]
+    [InlineData("/", "http://localhost/app/")]
+    [InlineData("//evil.com/x", "http://localhost/app/evil.com/x")]
+    public void An_address_written_by_the_application_stays_under_the_base_path(string route, string expected)
+    {
+        var written = RouteableUrlSync.BaseRelative(route);
+
+        Assert.StartsWith("./", written);
+        Assert.Equal(expected, new Uri(new Uri("http://localhost/app/"), written).AbsoluteUri);
+    }
 }

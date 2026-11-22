@@ -357,7 +357,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
     private void Show(string route, bool replace)
     {
-        try { navigation.NavigateTo(route, replace: replace); }
+        try { navigation.NavigateTo(BaseRelative(route), replace: replace); }
         catch (Exception ex) // for example while the page is only being prerendered
         {
             RouteableErrors.Report<RouteableUrlSync>(provider, ex, route);
@@ -394,6 +394,15 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     // Exactly one leading slash: "//host" is a protocol-relative link (the browser leaves the application for host), and browsers read "/\host"
     // the same way. A route can carry user input (a returnUrl, a search), so the address must stay inside the application.
     private static string Url(string route) => RouteAddress.Rooted(route);
+
+    /// <summary>True once the synchronisation listens to the address changes: a click on a plain link is then routed through the router.</summary>
+    internal bool IsFollowing => _changing is not null;
+
+    /// <summary>
+    /// The address as Blazor wants it written: relative to the base address. "/orders/42" is read from the root of the site, so under
+    /// <c>&lt;base href="/app/"&gt;</c> it leaves the application; "./orders/42" stays inside. The "./" also keeps "javascript:x" from being read as a scheme.
+    /// </summary>
+    internal static string BaseRelative(string route) => "./" + RouteAddress.Rooted(route).TrimStart('/');
 
     private bool IsKnown(string route)
         => provider.GetService<RouteableTable>()?.Entries.Any(e => RouteParser.TryMatch(e.Template, route)) == true;
