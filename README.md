@@ -120,7 +120,7 @@ flowchart TB
         H6[Uno]
         H7[WinUI3]
     end
-    Shared[["Shared sources, not DLLs: Routeables.Shared (WPF, Avalonia, MAUI, Uno, WinUI 3) and Routeables.WinUI (Uno, WinUI 3)"]] -.compiled into.-> Hosts
+    Shared[["Shared sources, not DLLs: Routeables.Shared (WPF, Avalonia, MAUI, Uno, WinUI 3) and Routeables.WinUI (Uno, WinUI 3)"]] -. "compiled into" .-> Hosts
     Hosts -->|references only Routeables.Core| Pkg
     subgraph Pkg["NuGet package Routeables"]
         direction TB
@@ -132,7 +132,7 @@ flowchart TB
         Routing[Routing: queue, route parsing, guards, history] --> Abstraction
         Abstraction[Abstraction: IRouter, IRouteable, IRouteGuard, Routeable, Persist]
     end
-    Gen[Generated: Roslyn analyzer, shipped in analyzers/] -.writes AddGeneratedRoutes and GoTo...Async.-> App
+    Gen["Generated: Roslyn analyzer, shipped in analyzers/"] -. "writes AddGeneratedRoutes and the GoTo methods" .-> App
 ```
 
 A host that referenced `Routing`, `Regions` or `Abstraction` directly would produce a package that depends on a package that does not exist. A file of `Routeables.Shared` is recompiled in five hosts, so every `#if` branch counts. The generator pairs `DogViewModel` with `DogView` and writes the registration, so routes need no reflection: this is what makes the package AOT and trimming friendly.
