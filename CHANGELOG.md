@@ -18,6 +18,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A call by view model type could throw instead of returning a failed result**: `GoToAsync<TViewModel>(values)` caught three kinds of exception while building the address; a property that throws or a serializer that throws `InvalidOperationException` came out as an exception. Any error but a cancellation is now a failed `RouteableResult`.
+- **Values that name the same value twice (`id` and `ID`, names ignore the case) with different contents** were resolved by the last one without a word; they are now refused with a message.
 - **Blazor: the identifiers written in the history state could be taken for the ones of an earlier run.** A reload keeps `history.state` while the counter starts again, so an old browser entry could name a new router entry. The identifiers now carry a name of the run. An address put back after a refused or failed route change, or replaced because the browser could not be moved, keeps the identifier of its entry.
 - **Blazor: the Forward button of the browser could make the router go back** when the history held the same address twice (`[X, Y, X]`, Back, then Forward). Each browser entry the router shows now carries an identifier of its router entry in its history state (`NavigationOptions.HistoryEntryState`), and a Back or a Forward is told by the entry it reaches. A link the user clicked gets its state once the move is done (one more replace of the same address). An entry with no identifier (a reload, an entry made by an older version) is still told by its address.
 - **A fixed entry of a template (`/list?mode=grid`) appeared in `Args.Values` as an undeclared value**; only the query values the template does not name are there now.

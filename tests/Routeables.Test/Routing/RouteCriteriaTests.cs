@@ -52,6 +52,33 @@ public class RouteCriteriaTests
         Assert.Equal("/orders/42?note=a%20b%26c&rush=true", router.History.Current!.Args.Route);
     }
 
+    private sealed class Throwing { public int Id => throw new InvalidOperationException("no id"); }
+
+    [Fact]
+    public async Task A_value_that_cannot_be_read_is_a_failed_route_change_not_an_exception()
+    {
+        using var provider = Build(n => n.Page<OrderView, OrderVm>("/orders/{id:int}"));
+        var router = provider.GetRequiredService<IRouter>();
+
+        var result = await router.GoToAsync<OrderVm>(new Throwing(), cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.False(result.Success);
+        Assert.NotNull(result.Exception); // reflection wraps what the getter threw
+    }
+
+    [Fact]
+    public async Task Values_that_name_one_value_twice_with_different_contents_are_refused()
+    {
+        using var provider = Build(n => n.Page<OrderView, OrderVm>("/orders/{id:int}"));
+        var router = provider.GetRequiredService<IRouter>();
+        var values = new Dictionary<string, object?> { ["id"] = 1, ["ID"] = 2 };
+
+        var result = await router.GoToAsync<OrderVm>(values, cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.False(result.Success);
+        Assert.IsType<ArgumentException>(result.Exception);
+    }
+
     [Fact]
     public async Task The_values_can_be_the_properties_of_an_object()
     {

@@ -137,23 +137,31 @@ public static partial class RouteParser
             case null:
                 break;
             case IReadOnlyDictionary<string, object?> map:
-                foreach (var (key, value) in map) bag[key] = value;
+                foreach (var (key, value) in map) Put(bag, key, value);
                 break;
             case IDictionary<string, object?> map:
-                foreach (var (key, value) in map) bag[key] = value;
+                foreach (var (key, value) in map) Put(bag, key, value);
                 break;
             case System.Collections.IDictionary map when map.GetType().IsGenericType && map.GetType().GetGenericArguments() is [var key, _] && key == typeof(string):
                 // Dictionary<string, int>, Dictionary<string, string> and so on: the generic interfaces are not covariant, so none of the cases above matches.
-                foreach (System.Collections.DictionaryEntry entry in map) bag[(string)entry.Key] = entry.Value;
+                foreach (System.Collections.DictionaryEntry entry in map) Put(bag, (string)entry.Key, entry.Value);
                 break;
             default:
                 foreach (var property in values.GetType().GetProperties())
                     if (property.GetIndexParameters().Length == 0 && property.CanRead)
-                        bag[property.Name] = property.GetValue(values);
+                        Put(bag, property.Name, property.GetValue(values));
                 break;
         }
 
         return bag;
+    }
+
+    // Names ignore the case, so "x" and "X" are one value: two different ones are a mistake of the caller, not for the last to win unnoticed.
+    private static void Put(Dictionary<string, object?> bag, string name, object? value)
+    {
+        if (bag.TryGetValue(name, out var already) && !Equals(already, value))
+            throw new ArgumentException($"The values hold \"{name}\" twice with different values (names ignore the case): give one.", "values");
+        bag[name] = value;
     }
 
     // A decimal keeps the trailing zeros it was written with (1.5m, 1.50m and 1.0m are the same number). Write it without them, so a number has one address.

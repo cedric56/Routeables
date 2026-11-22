@@ -23,6 +23,7 @@ When several templates match a route, the **most specific** one wins, whatever t
 Details of the matching:
 
 - The route is split into segments before it is decoded, so `files/a%2Fb` is the one segment `a/b`; an escape sequence that is not valid (`100%zz`) is kept as it is.
+- A value that holds `/` or `%` is written as `%2F` or `%25` (`/a/a%2Fb`) and read back whole. Some servers refuse an encoded slash by default (IIS request filtering, Apache without `AllowEncodedSlashes`): a deep link to such an address then needs that setting, or a value without a slash.
 - Literal segments are compared without regard to case.
 - `{**path}` is for the last segment too, and may be empty (`/files` matches `/files/{**path}` with an empty `path`).
 - An optional placeholder (`{tab?}`) is for the last segment of the path; one in the middle does not skip a segment.

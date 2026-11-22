@@ -234,7 +234,7 @@ internal partial class Router
                 var used = RouteParser.UsedBy(template, request.Values);
                 if (used > bestUsed) { best = template; bestRoute = route; bestUsed = used; }
             }
-            catch (Exception ex) when (ex is ArgumentException or NotSupportedException or System.Text.Json.JsonException) { failure = ex; }
+            catch (Exception ex) when (ex is not OperationCanceledException) { failure = ex; } // a getter or a serializer that throws is a failed route change, as it is for the other calls
         }
 
         return best is null
