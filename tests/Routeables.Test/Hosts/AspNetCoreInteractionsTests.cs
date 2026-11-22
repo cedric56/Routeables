@@ -461,4 +461,20 @@ public class AspNetCoreInteractionsTests
         Assert.True(await ask);
         Assert.True(await EventuallyAsync(() => ask.IsCompleted));
     }
+
+    [Fact]
+    public void Toasts_that_never_close_are_capped_and_the_oldest_closes_first()
+    {
+        using var interactions = new RouteableInteractions();
+        var closed = new List<string>();
+        for (var i = 0; i < RouteableInteractions.MaxToasts + 3; i++)
+        {
+            var title = $"t{i}";
+            interactions.Notify(title, "m", RouteableNotificationType.Information, null, null, () => closed.Add(title));
+        }
+
+        Assert.Equal(RouteableInteractions.MaxToasts, interactions.Toasts.Count);
+        Assert.Equal(["t0", "t1", "t2"], closed);
+        Assert.Equal("t3", interactions.Toasts[0].Title);
+    }
 }

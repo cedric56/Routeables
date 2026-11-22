@@ -8,34 +8,39 @@ namespace Routeables.Locking;
 /// </summary>
 internal sealed class RouteableFormLock(IRouteableLockBroker broker) : IRouteableFormLock
 {
+    // The count and the queue of messages are changed under the gate; the subscribers are called outside it. A subscriber that hands its work to the
+    // thread of the interface and waits for it would otherwise block that thread when it asks Lock() or IsLocked meanwhile.
     private readonly object _gate = new();
+    private readonly Queue<bool> _pending = new(); // the messages in the order they happened: true locks, false unlocks
+    private bool _draining;
     private int _holders;
 
-    public bool IsLocked
-    {
-        get { lock (_gate) return _holders > 0; }
-    }
+    public bool IsLocked => Volatile.Read(ref _holders) > 0;
 
     public IDisposable Lock()
     {
-        // Published inside the gate, so a lock and an unlock reach the subscribers in the order they happened.
         lock (_gate)
         {
             if (++_holders == 1)
+                _pending.Enqueue(true);
+        }
+
+        try
+        {
+            Drain();
+        }
+        catch
+        {
+            // A subscriber that throws leaves no token to give back: take the lock back, or the form would stay locked forever.
+            lock (_gate)
             {
-                try
-                {
-                    broker.Publish(new RouteableLockMessage(IsLocked: true, IsAllLocked: false));
-                }
-                catch
-                {
-                    // A subscriber that throws leaves no token to give back: take the lock back, or the form would stay locked forever.
-                    _holders = 0;
-                    try { broker.Publish(new RouteableLockMessage(IsLocked: false, IsAllLocked: false)); }
-                    catch { /* the subscribers that were told are told again; the first failure is the one raised */ }
-                    throw;
-                }
+                _holders = 0;
+                _pending.Enqueue(false);
             }
+
+            try { Drain(); }
+            catch { /* the subscribers that were told are told again; the first failure is the one raised */ }
+            throw;
         }
 
         return new Token(this);
@@ -46,7 +51,44 @@ internal sealed class RouteableFormLock(IRouteableLockBroker broker) : IRouteabl
         lock (_gate)
         {
             if (--_holders == 0)
-                broker.Publish(new RouteableLockMessage(IsLocked: false, IsAllLocked: false));
+                _pending.Enqueue(false);
+        }
+
+        Drain();
+    }
+
+    // One thread at a time delivers the messages, in order, until none is left; a thread that finds another one delivering leaves its message
+    // to it. A lock and an unlock reach the subscribers in the order they happened, and no thread waits for another while holding the gate.
+    private void Drain()
+    {
+        while (true)
+        {
+            bool isLocked;
+            lock (_gate)
+            {
+                if (_draining || _pending.Count == 0)
+                    return;
+                _draining = true;
+                isLocked = _pending.Dequeue();
+            }
+
+            try
+            {
+                broker.Publish(new RouteableLockMessage(IsLocked: isLocked, IsAllLocked: false));
+            }
+            catch when (!isLocked)
+            {
+                // An unlock that failed: the ones queued behind it are still delivered, then the failure is raised.
+                lock (_gate)
+                    _draining = false;
+                Drain();
+                throw;
+            }
+            finally
+            {
+                lock (_gate)
+                    _draining = false;
+            }
         }
     }
 

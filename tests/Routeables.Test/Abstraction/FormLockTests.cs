@@ -76,4 +76,41 @@ public class FormLockTests
         using var token = formLock.Lock();
         Assert.True(formLock.IsLocked);
     }
+
+    [Fact]
+    public void A_form_that_asks_while_a_subscriber_is_busy_is_not_blocked_and_the_order_is_kept()
+    {
+        var broker = new RouteableLockBroker();
+        var formLock = new RouteableFormLock(broker);
+        var seen = new List<bool>();
+        var inside = new ManualResetEventSlim(false);
+        var leave = new ManualResetEventSlim(false);
+        broker.Subscribe("LockChanged", message =>
+        {
+            var locked = ((RouteableLockMessage)message).IsLocked;
+            lock (seen) seen.Add(locked);
+            if (locked)
+            {
+                inside.Set();
+                leave.Wait(TimeSpan.FromSeconds(5));
+            }
+        });
+
+        // A first thread locks, and its subscriber is held in the middle of the message.
+        IDisposable? first = null;
+        var holder = Task.Run(() => first = formLock.Lock(), TestContext.Current.CancellationToken);
+        Assert.True(inside.Wait(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));
+
+        // Meanwhile this thread asks and locks again: neither waits for the subscriber.
+        Assert.True(formLock.IsLocked);
+        using var second = formLock.Lock();
+        leave.Set();
+        holder.Wait(TestContext.Current.CancellationToken);
+        first!.Dispose();
+
+        // One form is still locked: only the lock was announced, once.
+        lock (seen) Assert.Equal(new[] { true }, seen);
+        second.Dispose();
+        lock (seen) Assert.Equal(new[] { true, false }, seen);
+    }
 }

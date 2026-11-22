@@ -131,9 +131,22 @@ public sealed class RouteableInteractions : IDisposable
     /// <summary>Adds a toast notification that the page will show.</summary>
     public void Notify(string title, string message, RouteableNotificationType type, TimeSpan? expiration, Action? onClick, Action? onClose)
     {
+        int? evicted = null;
         lock (_gate)
+        {
             _toasts.Add(new RouteableToast(++_nextToast, title, message, type, expiration, onClick, onClose));
+            if (_toasts.Count > MaxToasts)
+                evicted = _toasts[0].Id;
+        }
+
+        // A toast that is never closed and never expires would otherwise stay for the whole session of the visitor: the oldest one goes first,
+        // and closes as if it had expired.
+        if (evicted is { } id)
+            Dismiss(id, click: false);
     }
+
+    /// <summary>The most toasts one visitor keeps at the same time.</summary>
+    internal const int MaxToasts = 50;
 
 
     /// <summary>The system notifications that were shown and not closed, by id.</summary>
