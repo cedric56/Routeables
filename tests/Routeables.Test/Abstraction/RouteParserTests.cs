@@ -1,4 +1,5 @@
-﻿using Routeables.Routing;
+﻿using Routeables.Abstraction.Routing;
+using Routeables.Routing;
 
 namespace Routeables.Test.Abstraction;
 
@@ -510,7 +511,11 @@ public class RouteParserTests
         Assert.True(RouteParser.TryMatch("x/{g:guid}", "x/" + id));
         Assert.False(RouteParser.TryMatch("x/{g:guid}", "x/{" + id + "}"));
         Assert.False(RouteParser.TryMatch("x/{g:guid}", "x/" + id.ToString("N")));
-        Assert.True(RouteParser.TryMatch("x/{b:bool}", "x/True"));
+        Assert.True(RouteParser.TryMatch("x/{g:guid}", "x/" + id.ToString("D").ToLowerInvariant()));
+        Assert.False(RouteParser.TryMatch("x/{g:guid}", "x/" + id.ToString("D").ToUpperInvariant()));
+        Assert.False(RouteParser.TryMatch("x/{b:bool}", "x/True"));
+        Assert.False(RouteParser.TryMatch("x/{b:bool}", "x/TRUE"));
+        Assert.True(RouteParser.TryMatch("x/{b:bool}", "x/true"));
         Assert.True(RouteParser.TryMatch("x/{b:bool}", "x/false"));
         Assert.False(RouteParser.TryMatch("x/{b:bool}", "x/%20true%20"));
     }
@@ -676,5 +681,23 @@ public class RouteParserTests
         Assert.True(RouteParser.TryMatch("/orders/{id:int}", "/orders/42#top"));
         Assert.True(RouteParser.TryMatch("/orders/{id:int}", "/orders/42?x=1#top"));
         Assert.False(RouteParser.TryMatch("/orders/{id:int}", "/orders/4x2#top"));
+    }
+
+    [Fact]
+    public void An_escaped_slash_is_not_read_as_a_slash_of_a_catch_all()
+    {
+        Assert.True(RouteParser.TryMatch("files/{**path}", "files/a/b"));
+        Assert.False(RouteParser.TryMatch("files/{**path}", "files/a%2Fb"));
+        Assert.False(RouteParser.TryMatch("files/{**path}", "files/a%2fb"));
+    }
+
+    [Fact]
+    public void The_parser_and_the_comparison_of_addresses_cut_the_query_at_the_same_place()
+    {
+        // The braces of a hand-typed address are text, and the query starts at the first question mark outside them.
+        Assert.True(RouteParser.TryMatch("n/{x}", "n/a{b"));
+        Assert.True(RouteParser.TryMatch("n/{x}?{tab?}", "n/a{b?tab=2"));
+        Assert.True(RouteAddress.Same("/n/a{b?tab=2", "/n/a{b?tab=2"));
+        Assert.False(RouteAddress.Same("/n/a{b?tab=2", "/n/a{b?tab=3"));
     }
 }

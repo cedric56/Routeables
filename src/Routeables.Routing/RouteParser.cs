@@ -151,7 +151,12 @@ public static partial class RouteParser
             // {**path}: everything that is left, as it was written (each segment unescaped, the slashes kept). Nothing left is no value.
             if (m.Success && m.Groups["rest"].Success)
             {
-                var rest = string.Join('/', uSegs.Skip(i).Select(Uri.UnescapeDataString));
+                // A slash written %2F is not a separator in RouteAddress ("/files/a%2Fb" and "/files/a/b" are two pages), and the value could not tell
+                // them apart: only the slashes between the segments are read.
+                var pieces = uSegs.Skip(i).Select(Uri.UnescapeDataString).ToArray();
+                if (pieces.Any(piece => piece.Contains('/')))
+                    return reasons ? "an escaped slash (%2F) is not allowed in a catch-all value" : NoReason;
+                var rest = string.Join('/', pieces);
                 if (HasDotSegment(rest))
                     return reasons ? $"\"{rest}\" has a \".\" or \"..\" segment, which a browser resolves to another address" : NoReason;
                 if (Bind(m, rest, args, viewKeySet, bound, reasons) is { } restFailure) return restFailure;
@@ -306,6 +311,7 @@ public static partial class RouteParser
         values.Add(entry);
     }
 
+    // "a%2F.." counts too: a server or a proxy may decode %2F, and the dot segment is then resolved.
     private static bool HasDotSegment(string? value)
         => value is not null && Array.Exists(value.Split('/'), part => part is "." or "..");
 
@@ -329,7 +335,8 @@ public static partial class RouteParser
         // The braces are those of the template's placeholders; an address is user input and may contain a lone "{" or "}" ("/notes/a}b?tab=2").
         if (!template)
         {
-            var at = s.IndexOf('?');
+            // The rule of RouteAddress, so that the parser and the comparison of addresses cut an address at the same place.
+            var at = RouteAddress.QueryStart(s);
             return at < 0 ? (s, "") : (s[..at], s[(at + 1)..]);
         }
 

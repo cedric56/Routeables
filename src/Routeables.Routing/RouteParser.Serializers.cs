@@ -131,11 +131,11 @@ public static partial class RouteParser
         {
             case "" or "string" or "?": value = raw; return true;
             // A value has exactly one text. A number is what ToString writes ("42", not "+42", " 42" or "007"); a Guid has its dashes and no braces;
-            // a bool has no space around it.
+            // a bool is "true" or "false", and a Guid is written in lower case, as Build writes them: RouteAddress takes the case of a value for a difference, so "/x/True" and "/x/true" must not be one page.
             case "int": { int v = 0; var ok = int.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v) && v.ToString(inv) == raw; value = v; return ok; }
             case "long": { long v = 0; var ok = long.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v) && v.ToString(inv) == raw; value = v; return ok; }
-            case "bool": { var ok = raw == raw.Trim() && bool.TryParse(raw, out var v); value = ok && bool.Parse(raw); return ok; }
-            case "guid": { var ok = Guid.TryParseExact(raw, "D", out var v); value = v; return ok; }
+            case "bool": { var ok = raw is "true" or "false"; value = raw == "true"; return ok; }
+            case "guid": { var ok = Guid.TryParseExact(raw, "D", out var v) && v.ToString("D") == raw; value = v; return ok; }
             case "decimal": { decimal v = 0; var ok = !raw.StartsWith('+') && decimal.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, inv, out v) && Plain(v).ToString(inv) == raw; value = v; return ok; }
             case "double": { double v = 0; var ok = !raw.StartsWith('+') && double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v) && !(v == 0 && raw[0] == '-') && v.ToString(inv) == raw; value = v; return ok; }
             default:

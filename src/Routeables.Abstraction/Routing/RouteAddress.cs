@@ -38,7 +38,7 @@ internal static class RouteAddress
     }
 
     // The query starts at the first question mark that is not an optional parameter's ("products/{tab?}"); -1 for none.
-    private static int QueryStart(string text)
+    internal static int QueryStart(string text)
     {
         var depth = 0;
         for (var i = 0; i < text.Length; i++)
