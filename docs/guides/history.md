@@ -6,7 +6,7 @@ Each router keeps a history of entries (view model, view and arguments):
 
 | Operation | Effect |
 | --- | --- |
-| `GoToAsync` (or `GoToRouteAsync`) | Pushes a new entry. Forward entries are cut off. The history has no limit by default (a scoped router keeps 50): it grows until entries are popped or erased (see below to set one) |
+| `GoToAsync` (or `GoToRouteAsync`) | Pushes a new entry. Forward entries are cut off. The history keeps the last 50 entries by default: the oldest is dropped when a push needs the room (see below to change it) |
 | `GoBackAsync` / `ForwardAsync` | Moves the cursor. Nothing is removed, so a page you went back from stays alive for `Forward` |
 | `MoveToAsync(index)` | Moves the cursor to an entry |
 | `GoBackToAsync("/orders")`, `GoBackToAsync<TViewModel>()`, `GoBackToAsync(entry => ...)` | Moves the cursor to the nearest earlier entry that matches (route compared without the leading `/`, the query and the case); cancelled when none does. Later entries stay, as with `GoBackAsync` |
@@ -38,16 +38,17 @@ flowchart LR
 
 ### Limiting the history
 
-**What an entry weighs.** An entry keeps its view model, its **view** and its arguments, so that Back and Forward give back the same page with its state. On a desktop or mobile host the view is a tree of controls: measured on Avalonia, about 9 KB per entry for a page that is a single text, and more for a real page. After 1 000 route changes with no limit the history held 9.2 MiB; with `LimitHistory(50)` it held 0.96 MiB. An application that can go through thousands of pages in one session (a list that opens a detail, over and over) should set a limit, or use `PopAsync` to leave a page for good.
+**What an entry weighs.** An entry keeps its view model, its **view** and its arguments, so that Back and Forward give back the same page with its state. On a desktop or mobile host the view is a tree of controls: measured on Avalonia, about 9 KB per entry for a page that is a single text, and more for a real page. After 1 000 route changes with no limit the history held 9.2 MiB; with 50 entries it held 0.96 MiB. That is why 50 is the default. An application that goes through thousands of pages in one session (a list that opens a detail, over and over) can also use `PopAsync` to leave a page for good.
 
-By default a history keeps every entry, except a scoped router's (Blazor Server, ASP.NET Core: one history per user session), which keeps the last 50. In an application that stays open for a long time, set a limit at startup (it also replaces the 50 of a scoped router):
+By default a history keeps the last 50 entries (one history per router, and per user session on Blazor Server and ASP.NET Core). Change the limit at startup, or keep every entry:
 
 ```csharp
 services.LimitHistory(50);                    // the default router
 services.LimitHistory(20, region: "detail");  // the history of one region
+services.KeepWholeHistory();                  // no limit: every route change adds an entry until PopAsync or EraseHistoryAsync
 ```
 
-When a push goes beyond the limit, the oldest entry is dropped and destroyed like a popped one (`OnUnsubscribe`, `Dispose`). The limit is at least 1, can be set before or after `RegisterRouting` / `AddRegion`, and is visible as `router.History.MaxSize` (`null` when there is no limit). A page you left with `GoBackAsync` is not affected until a push needs the room.
+When a push goes beyond the limit, the oldest entry is dropped and destroyed like a popped one (`OnUnsubscribe`, `Dispose`). The limit is at least 1, can be set before or after `RegisterRouting` / `AddRegion`, and is visible as `router.History.MaxSize` (`null` after `KeepWholeHistory`). A page you left with `GoBackAsync` is not affected until a push needs the room.
 
 Which one to call: `GoBackAsync` for history you can come back to (a back button next to a forward one), `PopAsync` to leave a page for good (the detail opened from a list, a wizard step), which is what the samples do. Both answer `CanGoBack`.
 

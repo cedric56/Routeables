@@ -6,7 +6,7 @@ public interface IRouterHistory
     /// <summary>Number of entries currently stored.</summary>
     int Count { get; }
 
-    /// <summary>The most entries the history keeps, or <see langword="null"/> when it has no limit (the default).</summary>
+    /// <summary>The most entries the history keeps, or <see langword="null"/> when it has no limit (a router made by <c>RegisterRouting</c> keeps the last 50 unless <c>KeepWholeHistory</c> says otherwise).</summary>
     int? MaxSize { get; }
 
     /// <summary>Index of <see cref="Current"/>, or -1 when empty.</summary>

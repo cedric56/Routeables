@@ -21,7 +21,7 @@ public sealed class BenchApp : Application
             .UseRouteables(configure: Configure, afterBuild: provider => Provider = provider);
 
     /// <summary>
-    /// The history of the router has no limit by default, and each entry keeps its view for Back and Forward. To see what that costs,
+    /// The history of the router keeps the last 50 entries by default (<c>KeepWholeHistory</c> keeps them all), and each entry keeps its view for Back and Forward. To see what that costs,
     /// the variable <c>ROUTEABLES_BENCH_HISTORY_LIMIT</c> (a number) limits the history; the CI runs the memory measure with and without it.
     /// </summary>
     public static int? HistoryLimit { get; } = int.TryParse(Environment.GetEnvironmentVariable("ROUTEABLES_BENCH_HISTORY_LIMIT"), out var n) && n > 0 ? n : null;
@@ -31,6 +31,8 @@ public sealed class BenchApp : Application
         RouteablesAvaloniaPages.Register(services);
         if (HistoryLimit is { } limit)
             services.LimitHistory(limit);
+        else
+            services.KeepWholeHistory(); // the default is 50 entries; the measure without a limit keeps them all
     }
 }
 

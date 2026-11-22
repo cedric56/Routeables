@@ -153,6 +153,6 @@ public class RouterHistoryTests
 
         Assert.Equal(4, provider.GetRequiredService<IRouter>().History.MaxSize);
         Assert.Equal(2, provider.GetRequiredKeyedService<IRouter>("detail").History.MaxSize);
-        Assert.Null(provider.GetRequiredKeyedService<IRouter>("other").History.MaxSize);
+        Assert.Equal(50, provider.GetRequiredKeyedService<IRouter>("other").History.MaxSize); // the default
     }
 }
