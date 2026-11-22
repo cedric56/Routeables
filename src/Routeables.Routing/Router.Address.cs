@@ -66,8 +66,8 @@ internal partial class Router
             var keys = found.ViewModelType is null
                 ? (viewKey: found.Template, viewModelKey: found.Template)
                 : RouteableKeys.GetKeys(found.ViewModelType, found.Template);
-            // RouteParser.TryMatch fills the instance it is given; without one, the parsed route values would be lost.
-            return await GoToRouteAsync(url, found.Template, keys.viewKey, keys.viewModelKey, args ?? RouteableArgs.Create(), null, null, cancellationToken);
+            // GoToRouteAsync works on a copy of the arguments (a new instance when there are none), which the parsed route values are read into.
+            return await GoToRouteAsync(url, found.Template, keys.viewKey, keys.viewModelKey, args, null, null, cancellationToken);
         }
 
         // An unregistered template is the route itself: the view and the view model are found under it.

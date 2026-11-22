@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **Fewer allocations for the arguments of a route change**: the copy of the arguments no longer creates the three bags it replaces, and an address with no arguments given no longer creates a second instance. No change of behaviour.
 - **Less garbage while an address is matched**: an address that already has the text `Build` would write for its typed values (the usual case) is read in place and returned as it is, with no pieces cut and joined again.
 - The reading of an address is in one place, `RouteAddress`: where the query starts, the fragment, the pairs of the query (names ignore the case, the last value of a name wins, `+` is a space) and their decoding. The parser, the comparison of addresses, the index of the first segment, the state saved with a page, the Blazor address bar and the decoding of the coordination syntax all use it, so they cannot disagree again. The rule that tells where the query of an address or a template starts is one file (`src/Routeables.Shared/AddressRules.cs`) compiled into the contracts, the source generator and the analyzer; it had four copies. A malformed `%` escape in a query is now left as it is everywhere (it could throw in some of them).
 - `docs/benchmark-comparison.md` starts with the current state of the comparison and marks the first results (2 times the time, 6 times the allocations of ReactiveUI) as superseded.

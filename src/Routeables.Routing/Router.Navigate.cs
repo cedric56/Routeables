@@ -178,19 +178,25 @@ internal partial class Router
         catch (Exception ex) { RouteableErrors.Report<Router>(provider, ex); }
     }
 
-    private static IRouteableArgs Snapshot(IRouteableArgs? args) => args is null
-        ? RouteableArgs.Create()
-        : new RouteableArgs
+    // The bags are filled, not replaced: an initializer that assigns a list drops the one the arguments were created with, and every navigation paid for both.
+    private static IRouteableArgs Snapshot(IRouteableArgs? args)
+    {
+        if (args is null)
+            return RouteableArgs.Create();
+
+        var copy = new RouteableArgs
         {
             Route = args.Route,
             Exception = args.Exception,
-            ViewModelParameters = [.. args.ViewModelParameters],
-            ViewParameters = [.. args.ViewParameters],
-            Values = [.. args.Values],
             Router = args.Router,
             Region = args.Region,
             Transition = args.Transition,
         };
+        copy.ViewModelParameters.AddRange(args.ViewModelParameters);
+        copy.ViewParameters.AddRange(args.ViewParameters);
+        copy.Values.AddRange(args.Values);
+        return copy;
+    }
 
     /// <inheritdoc />
     public Task<RouteableResult> GoToRouteAsync(RouteableRouteRequest request, CancellationToken cancellationToken = default)
