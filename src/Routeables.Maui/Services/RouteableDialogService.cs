@@ -46,7 +46,7 @@ public class RouteableDialogService(
 
         // Every message box is the platform's dialog with up to three buttons (not DisplayAlert). The answer is the button's index, and a dialog
         // dismissed without a button (Back, Escape) answers with the last one, the cancel of an alert.
-        // The buttons say what RouteableTexts.ButtonTranslator makes of the words; the answer is the index, so the language does not change it.
+        // The buttons show what RouteableTexts.ButtonTranslator makes of the words; the answer is the index, so the language does not change it.
         var words = RouteableButtons.Labels(buttonText);
         switch (words.Count)
         {
@@ -113,8 +113,8 @@ public class RouteableDialogService(
          string? primaryButtonText, string? secondaryButtonText, string? closeButtonText,
          T primaryResult, T secondaryResult, T closeResult)
     {
-        // The native platforms show the view as a platform view. The plain net10.0 target has no platform view: the view is given as it is to a popup
-        // (see the end of the method), which belongs to the caller, so it is not disconnected below.
+        // The native platforms show the view as a platform view. The plain net10.0 target has none: the view goes as it is to a popup (see the
+        // end of the method), which belongs to the caller, so it is not disconnected below.
         Element? hosted = null;
 #if ANDROID || WINDOWS || IOS || MACCATALYST
         hosted = content as Element;
@@ -139,9 +139,8 @@ public class RouteableDialogService(
             if (native.Shown)
                 return native.Value;
 
-            // No native dialog for this content: the plain net10.0 target (what a platform without a MAUI backend of its own runs), or, on Apple
-            // platforms, content that is neither text nor a UIView (a MAUI view, say). The three buttons are those of a content dialog, drawn by the
-            // content dialog service with MAUI views.
+            // No native dialog for this content: the plain net10.0 target (a platform with no MAUI backend of its own) or, on Apple platforms,
+            // content that is neither text nor a UIView (a MAUI view, say). The content dialog service draws the three buttons with MAUI views.
             var dialog = new RouteableContentDialog
             {
                 Title = title,

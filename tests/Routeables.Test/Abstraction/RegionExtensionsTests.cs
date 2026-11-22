@@ -1,5 +1,6 @@
 using Routeables.Abstraction.Routing;
 using Routeables.Regions;
+using Routeables.Routing;
 
 namespace Routeables.Tests.Abstraction;
 
@@ -44,5 +45,18 @@ public class RegionExtensionsTests
     public void An_empty_region_name_is_refused()
     {
         Assert.Throws<ArgumentException>(() => new ServiceCollection().AddRegionLayout<TitleLayout>(" "));
+    }
+
+    [Fact]
+    public void Routes_added_after_a_region_still_register_the_default_router()
+    {
+        var services = new ServiceCollection();
+        services.AddRegion("side");
+
+        services.AddRoutes(_ => { });
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        Assert.NotNull(scope.ServiceProvider.GetService<IRouter>());
     }
 }

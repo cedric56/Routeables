@@ -75,7 +75,7 @@ public class RouteableRegion : ComponentBase, IDisposable
         // The first call, made by the constructor, happens in the middle of a render: it only stores the view.
         _binding = new RegionBinding(Services.GetRouter(Region), Show);
 
-        // The default region only states its route here, before any layout has finished rendering: the layout starts it once the address is applied.
+        // The default region only states its route here, before any layout has finished rendering. The layout starts it once the address is applied.
         if (string.IsNullOrEmpty(Region))
             RegionStart.Begin(Services, Region, Route, wait: true);
     }

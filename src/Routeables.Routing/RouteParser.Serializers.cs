@@ -10,7 +10,7 @@ public static partial class RouteParser
 {
     // Serialization info for complex route parameters (System.Text.Json), by type name, case-insensitive.
     // Private: callers go through RegisterSerializer, so nobody can replace or empty the table.
-    // A type is known by its full name (always) and by its simple name, until another type takes that name (the simple name is then ambiguous).
+    // A type is known by its full name (always) and by its simple name, until another type takes it (the simple name is then ambiguous).
     private static readonly ConcurrentDictionary<string, JsonTypeInfo> SerializationInfos =
         new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConcurrentDictionary<string, Type> SerializationTypes = new(StringComparer.OrdinalIgnoreCase);
@@ -119,8 +119,8 @@ public static partial class RouteParser
             try { value = JsonSerializer.Deserialize(raw, info); }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                // Catch more than JsonException: an application converter, or a type the info cannot read, may throw anything. An address that cannot be read
-                // as the type does not match; it must not throw out of the route search, which runs for every address.
+                // Catch more than JsonException: an application converter, or a type the info cannot read, may throw anything. An address that
+                // cannot be read as the type does not match; it must not throw out of the route search, which runs for every address.
                 return false;
             }
             return value is not null;

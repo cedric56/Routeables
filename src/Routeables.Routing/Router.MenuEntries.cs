@@ -49,8 +49,8 @@ internal partial class Router
     }
 
     // A typed entry (RouteableMenuEntry<T>) created without a template or route holds the internal key of its type for whatever it lacks.
-    // The view model's registered route is read here, because the entry cannot access the table: the template of the address it was given,
-    // or else the view model's own route. The page's keys come from its template, as everywhere else.
+    // The view model's registered route is read here, since the entry cannot access the table: the template of the address it was given, or
+    // else the view model's own route. The page's keys come from its template, as everywhere else.
     private void ResolveTypedEntry(IRouteableMenuEntry entry, Type type)
     {
         if (entry is not RouteableMenuEntry typed)

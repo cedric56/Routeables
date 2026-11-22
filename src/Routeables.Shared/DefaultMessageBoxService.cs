@@ -30,9 +30,9 @@ using ProgressBar = Microsoft.UI.Xaml.Controls.ProgressBar;
 #endif
 
 // Shared source for Routeables.Wpf and Routeables.Avalonia (which define WPF or AVALONIA) and for Routeables.Uno and Routeables.WinUI3.
-// The sessions of Routeables.Services decide what each button returns; here are only the controls, which differ by a few types (the Element and
-// Owner of a dialog: a Window, a TopLevel or a XamlRoot), the spacing between parts (a Margin in WPF, a Spacing elsewhere), the UI thread, the
-// method names of IMessageBoxService and, in WinUI, the ContentDialog buttons and the native dialogs of Routeables.Native.
+// The sessions of Routeables.Services decide what each button returns; this file holds only the controls. They differ by a few types (the
+// Element and Owner of a dialog: a Window, a TopLevel or a XamlRoot), the spacing between parts (a Margin in WPF, a Spacing elsewhere), the
+// UI thread, the method names of IMessageBoxService and, in WinUI, the ContentDialog buttons and the native dialogs of Routeables.Native.
 #if AVALONIA
 namespace Routeables.Avalonia.Services;
 #elif WPF
@@ -71,8 +71,8 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var texts = RouteableButtons.Split(buttons);
         var labels = RouteableButtons.Labels(buttons);
 
-        // Three buttons use the platform's own dialog (Routeables.Native) where there is one: the Windows App SDK ContentDialog, an alert on Android
-        // and iOS. Escape or a click outside gives the third button (the one that closes). Elsewhere, and for fewer buttons, use the card below.
+        // Three buttons use the platform's own dialog (Routeables.Native) where there is one: the Windows App SDK ContentDialog, an alert on
+        // Android and iOS. Escape or a click outside gives the third (closing) button. Elsewhere, and for fewer buttons, use the card below.
         if (texts.Count == 3 && NativeDialogs.IsSupported)
         {
             var native = await NativeDialogs.DisplayThreeButtonsAsync<string?>(

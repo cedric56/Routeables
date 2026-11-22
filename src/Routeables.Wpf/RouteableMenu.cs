@@ -46,9 +46,9 @@ public class RouteableMenu : ListBox
 
         ItemTemplate = new DataTemplate { VisualTree = row };
 
-        // The Fluent theme (Application.ThemeMode) styles controls by their exact type: a class derived from ListBox does not get its style, and the
-        // menu stayed white (the classic theme's colours) whatever the theme. Take the ListBox and ListBoxItem styles from the resources, so the menu
-        // follows the theme when it changes. Without a theme style, the default stays.
+        // The Fluent theme (Application.ThemeMode) styles controls by their exact type: a class derived from ListBox gets no style, and the
+        // menu stayed white (the classic theme's colours) whatever the theme. Take the ListBox and ListBoxItem styles from the resources, so
+        // the menu follows the theme when it changes. Without a theme style, the default stays.
         SetResourceReference(StyleProperty, typeof(ListBox));
 
         // The entries are disabled while a page locks the menu.

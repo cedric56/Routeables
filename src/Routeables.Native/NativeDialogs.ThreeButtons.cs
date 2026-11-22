@@ -36,7 +36,7 @@ public static partial class NativeDialogs
         if (content is not (string or Android.Views.View))
             return new(false, default);
 
-        // No activity (the application is in the background or starting, or the host was started after the first activity): the caller draws its own.
+        // No activity (the application is in the background or starting, or the host started after the first activity): the caller draws its own.
         if (SystemNotificationCenter.CurrentActivity is not { } activity)
             return new(false, default);
 

@@ -78,7 +78,7 @@ public sealed class RouteableLinkInbox
     /// <summary>An address received by the host. Safe to call from any thread, before or after <see cref="Attach"/>.</summary>
     public void Push(Uri? uri)
     {
-        // An address that would be refused when followed (see RouteableDeepLinks.MaxLength) is not worth keeping, and input from outside must not be
+        // An address that would be refused when followed (see RouteableDeepLinks.MaxLength) is not worth keeping, and outside input must not be
         // able to fill the memory while the first page is not shown.
         if (uri is null || uri.OriginalString.Length > RouteableDeepLinks.MaxLength)
             return;
@@ -118,8 +118,8 @@ public sealed class RouteableLinkInbox
             pumping = true;
         }
 
-        // Run without the caller's execution context: Kick may run inside a navigation (a Routed handler), and the pump would carry the token of the
-        // navigation lock that is still held, so its own navigation would be taken for a reentrant one and the link would be lost.
+        // Run without the caller's execution context: Kick may run inside a navigation (a Routed handler), and the pump would carry the token of
+        // the navigation lock still held, so its own navigation would look reentrant and the link would be lost.
         using (ExecutionContext.SuppressFlow())
             RouteableHelper.FireAndForget(() => Task.Run(PumpAsync), provider, "RouteableLinkInbox.PumpAsync");
     }

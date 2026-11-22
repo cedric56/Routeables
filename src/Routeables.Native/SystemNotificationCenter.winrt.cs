@@ -8,10 +8,10 @@ using Windows.UI.Notifications;
 
 namespace Routeables.Native;
 
-// Windows, from the plain net10.0 target (the desktop of Avalonia, WPF, a console: no Windows target needed): the toasts of Windows 10 and 11
-// through the WindowsContracts.Net.Foundation.UniversalApiContract package (the Windows runtime types, compile-time only:
-// PrivateAssets="all"). An application without a package has no identity for the system, so one is registered for the user
-// (HKCU\Software\Classes\AppUserModelId). A tap is a tap; the toast going away is a dismissal.
+// Windows, from the plain net10.0 target (the desktop of Avalonia, WPF, a console: no Windows target needed): Windows 10 and 11 toasts
+// through the WindowsContracts.Net.Foundation.UniversalApiContract package (the Windows runtime types, compile-time only: PrivateAssets="all").
+// An application without a package has no identity for the system, so one is registered for the user (HKCU\Software\Classes\AppUserModelId).
+// A tap is a tap; the toast going away is a dismissal.
 public sealed partial class SystemNotificationCenter
 {
     private readonly object _windowsGate = new();
@@ -87,7 +87,7 @@ public sealed partial class SystemNotificationCenter
         toast.Activated += (_, _) => { if (IsCurrent()) WindowsEnded(id, activated: true); };
         toast.Dismissed += (_, e) =>
         {
-            // Only the user closing it ends the notification. The banner leaving the screen after a few seconds (TimedOut) keeps the notification in the
+            // Only the user closing it ends the notification. The banner leaving the screen after a few seconds (TimedOut) keeps it in the
             // notification center, where it can still be clicked, and the application hiding it (Cancel) is not the user either.
             if (e.Reason == ToastDismissalReason.UserCanceled && IsCurrent())
                 WindowsEnded(id, activated: false);

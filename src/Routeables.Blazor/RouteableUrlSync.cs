@@ -217,8 +217,8 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         }
     }
 
-    // Runs before the address changes, for a link, a typed address and the browser's Back and Forward buttons: a route the router refuses cancels
-    // the navigation, and Blazor puts the browser back where it was.
+    // Runs before the address changes (a link, a typed address, the browser's Back and Forward). A route the router refuses cancels the
+    // navigation, and Blazor puts the browser back where it was.
     private async ValueTask OnLocationChanging(LocationChangingContext context)
     {
         if (!IsInsideBase(context.TargetLocation))
@@ -398,7 +398,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     private bool IsKnown(string route)
         => provider.GetService<RouteableTable>()?.Entries.Any(e => RouteParser.TryMatch(e.Template, route)) == true;
 
-    // The rules of "the same address" (case, closing slash, escapes, query order) are the same as everywhere else in the library: see RouteAddress.
+    // The rules of "the same address" (case, closing slash, escapes, query order) are those of the whole library: see RouteAddress.
     internal static bool Same(string? a, string? b, IEnumerable<(string Template, Type? ViewModelType)>? routes = null)
         => RouteAddress.Same(a, b, routes is null ? null : path => RouteParser.BestMatch(routes, path).Template);
 

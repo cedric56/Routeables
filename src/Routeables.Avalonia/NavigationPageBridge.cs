@@ -177,8 +177,8 @@ internal sealed class NavigationPageBridge
         }
     }
 
-    // The user pops the page (back button, swipe): the router answers, not the control. The pop is cancelled here, and when the router agrees its
-    // history changes and the bridge pops the page itself. Not awaited: the control waits for this handler, and the bridge waits for the control.
+    // The user pops the page (back button, swipe): the router decides, not the control. The pop is cancelled here; if the router agrees, its
+    // history changes and the bridge pops the page itself. Not awaited: the control waits for this handler and the bridge waits for the control.
     private Task OnNavigating(NavigatingFromEventArgs args)
     {
         if (_applying || args.NavigationType != NavigationType.Pop)

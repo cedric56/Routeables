@@ -50,9 +50,9 @@ public class RouteableMenu : ListBox
         }
     }
 
-    // The clicked entry stays selected in the list when the page refused to be left (CanLeaveAsync) and the view model took the previous entry
-    // back, because the binding does not always push that value to the list. Whenever the view model announces its entry, the list shows it,
-    // once the current selection update is over.
+    // When the page refused to be left (CanLeaveAsync) and the view model took the previous entry back, the clicked entry stays selected in the
+    // list, because the binding does not always push that value to it. Whenever the view model announces its entry, the list shows it once
+    // the current selection update is over.
     private void OnMenuViewModelChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName != nameof(IRouteableMenuViewModel.SelectedEntry))

@@ -79,8 +79,8 @@ internal abstract class RouteablePopupPage<TResult> : ContentPage
                     while (Navigation.ModalStack.Contains(this) && !ReferenceEquals(Navigation.ModalStack.LastOrDefault(), this))
                         await Task.Delay(50);
 
-                    // The stack drops a modal as soon as its dismissal starts, while the platform is still dismissing it, so the one below must not start its own
-                    // dismissal then (UIKit does not dismiss two view controllers at once). One dismissal at a time.
+                    // The stack drops a modal as soon as its dismissal starts, while the platform is still dismissing it, so the one below must not
+                    // start its own dismissal then (UIKit does not dismiss two view controllers at once). One dismissal at a time.
                     await PopupDismissals.Gate.WaitAsync();
                     try
                     {

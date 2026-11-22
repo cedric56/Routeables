@@ -10,8 +10,8 @@ namespace Routeables.Abstraction.Registrations;
 /// </summary>
 internal sealed class RouteableTable
 {
-    // Copy on write. A navigation reads the table several times and routes are added at startup, so a read returns the collection itself (no
-    // copy, and nothing a caller could cast back to an array and change: the table is shared by the whole application), and an add builds a new one.
+    // Copy on write. Navigations read the table often and routes are added at startup, so a read returns the collection itself (no copy, and
+    // nothing a caller could cast back to an array and change: the table is shared by the whole application), and an add builds a new one.
     private volatile ReadOnlyCollection<(string Template, Type? ViewModelType)> _entries = new([]);
     private readonly object _gate = new();
 

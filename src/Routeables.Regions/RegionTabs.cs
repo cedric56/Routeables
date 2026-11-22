@@ -148,7 +148,7 @@ public sealed class RegionTabs<TTab> where TTab : class
             _ = RouteTarget.GoAsync(_provider, _router, route, _owner);
     }
 
-    // The router holds its gate while it signals, so the tab is selected afterwards and does not route again (the route is already the current one).
+    // The router holds its gate while it signals, so the tab is selected afterwards and does not route again (the route is already current).
     private void OnHistoryChanged(object? sender, EventArgs e) => _post(() =>
     {
         if (_disposed) return;

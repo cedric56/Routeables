@@ -16,9 +16,9 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
     // The numbers of the callers that still want to run (waiting for the gate, or entering). A caller cancelled by its own token stops wanting
     // to run and no longer replaces the ones before it, so "the last one wins" means the last one still wanted.
     private readonly SortedSet<long> _wanted = [];
-    // The token of the operation that holds the gate, and the one each flow carries. A flow is reentrant only while the token it carries is the
-    // one in progress. Work started without waiting (Task.Run, FireAndForget) copies the token of the operation then running and keeps it
-    // forever, so a boolean would treat every later navigation from that work as reentrant.
+    // The token of the operation that holds the gate, and the one each flow carries. A flow is reentrant only while its token is the one in
+    // progress. Work started without waiting (Task.Run, FireAndForget) copies the token of the operation then running and keeps it forever, so
+    // a boolean would treat every later navigation from that work as reentrant.
     private readonly AsyncLocal<object?> _inProgress = new();
     private object? _current;
 
@@ -56,9 +56,9 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
             number = Want();
         }
 
-        // Take the place in the queue before asking the operation in progress to stop. That operation can end as soon as it is asked (its
-        // cancellation runs the continuation inline), release the gate, and let this caller in before the callers that come after it have said
-        // they want to replace it. By waiting first, the gate reaches this caller through the semaphore, whose waiters resume separately.
+        // Take a place in the queue before asking the operation in progress to stop. That operation can end as soon as it is asked (its
+        // cancellation runs the continuation inline), release the gate and let this caller in before the callers behind it have said they want
+        // to replace it. By waiting first, the gate reaches this caller through the semaphore, whose waiters resume separately.
         Task wait;
         try { wait = _gate.WaitAsync(cancellationToken); }
         catch { Unwant(number); throw; }
@@ -130,7 +130,7 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
     /// </summary>
     public CancellationToken Observe(CancellationToken caller) => Volatile.Read(ref _running)?.Token ?? caller;
 
-    // The operation holds the gate only once the wait is over: another caller that is waiting must not take its place as the operation in progress.
+    // The operation holds the gate only once the wait is over: another waiting caller must not take its place as the operation in progress.
     private async Task Acquire(Task wait, object token, bool cancelCurrent, long number, CancellationToken caller)
     {
         try { await wait.ConfigureAwait(false); }

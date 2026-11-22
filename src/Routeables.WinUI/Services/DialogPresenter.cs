@@ -58,8 +58,8 @@ internal static class DialogPresenter
                 DefaultButton = ContentDialogButton.None,
             };
 
-            // Every dialog has the ContentDialog's buttons, so they all look alike (and like the three-button dialog of Routeables.Native). Pressing one
-            // does not close the dialog: the code decides when (handle.Complete), as before.
+            // Every dialog has the ContentDialog's buttons, so they all look alike (and like the three-button dialog of Routeables.Native).
+            // Pressing one does not close the dialog: the code decides when (handle.Complete), as before.
             if (card.Actions.Count <= 3)
                 UseDialogButtons(dialog, card.Actions);
             else

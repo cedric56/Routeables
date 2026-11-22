@@ -108,7 +108,7 @@ namespace Routeables.Generated
             }
         }
 
-        // The caller types of [RouteableViewModel], or null when there is none to build for (the problem is reported, unless the compiler reports it already).
+        // The caller types of [RouteableViewModel], or null when there is nothing to build for (the problem is reported, unless the compiler already does).
         private static List<INamedTypeSymbol>? ReadCallers(
             Compilation compilation, INamedTypeSymbol destination, AttributeData attribute, Action<string, string> report)
         {

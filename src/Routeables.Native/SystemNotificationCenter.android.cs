@@ -8,10 +8,10 @@ using Application = Android.App.Application;
 
 namespace Routeables.Native;
 
-// Android: the activity in front, the main thread and the permission to post (all here, without MAUI Essentials; StartTracking must run before
+// Android: the front activity, the main thread and the permission to post (all here, without MAUI Essentials; StartTracking must run before
 // the first activity, and Configure and NativeDialogs.Initialize do it), plus Notification.Builder and NotificationManager (no AndroidX).
-// A tap starts the application with the notification's id as an extra, which SystemNotificationCenter.HandleIntent reads (the lifecycle
-// events registered by UseRouteables); a swipe is a broadcast to a receiver of the application.
+// A tap starts the application with the notification's id as an extra, which SystemNotificationCenter.HandleIntent reads (through the
+// lifecycle events registered by UseRouteables). A swipe is a broadcast to a receiver of the application.
 public sealed partial class SystemNotificationCenter
 {
     private const string ChannelId = "routeables.notifications";

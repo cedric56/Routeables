@@ -178,7 +178,7 @@ public static class UnoRouteablesExtensions
     }
 
 #endif
-    // What UseRouteables does without an Application: the tests of the hosts' contract call it, since an Application cannot be created outside Uno.
+    // What UseRouteables does without an Application: the hosts' contract tests call it, since an Application cannot be created outside Uno.
     internal static IServiceProvider StartRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMenu>(
         Action<IServiceCollection>? configure = null,
         Action<IServiceProvider>? afterBuild = null)

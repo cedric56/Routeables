@@ -50,9 +50,8 @@ static class RouteableToastHelper
         var handler = new Handler(Looper.MainLooper!);
         Java.Lang.Runnable? pendingDismiss = null;
 
-        // What ties the card to the application: the theme subscription and the delayed dismissal. Release both when the toast is dismissed or when
-        // its view is torn down (an activity destroyed before the toast was dismissed), or the application would keep the card, and the activity
-        // it belongs to, alive.
+        // What ties the card to the application: the theme subscription and the delayed dismissal. Release both when the toast is dismissed or
+        // its view is torn down (an activity destroyed first), or the application would keep the card, and its activity, alive.
         void Release()
         {
             if (released) return;
@@ -210,8 +209,8 @@ static class RouteableToastHelper
             Gravity = GravityFlags.Top | GravityFlags.End,
         };
 
-        // Holds icon, text and close button, inset from the card's edges and from the accent bar. The card's rounded background shows through around
-        // this content.
+        // Holds the icon, text and close button, inset from the card's edges and from the accent bar. The card's rounded background shows
+        // around this content.
         var content = new LinearLayout(context) { Orientation = Orientation.Horizontal };
         content.SetPadding(Dp(context, 16), Dp(context, 12), Dp(context, 12), Dp(context, 12));
         content.AddView(icon);
@@ -219,10 +218,9 @@ static class RouteableToastHelper
         content.AddView(closeButton);
         content.LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, 1f);
 
-        // The accent bar is a SIBLING of `content` inside a horizontal LinearLayout, not an overlay inside a FrameLayout. A horizontal LinearLayout
-        // re-measures a MatchParent-height child against its own final (sibling-derived) height, which is exactly "as tall as the card" here. A
-        // FrameLayout has no such mechanism: a MatchParent child there measures against the nearest *constrained* ancestor, which was the whole
-        // screen, producing the full-height line seen in testing.
+        // The accent bar is a SIBLING of `content` in a horizontal LinearLayout, not an overlay in a FrameLayout. A horizontal LinearLayout
+        // measures a MatchParent-height child against its own final height, which here is exactly "as tall as the card". A FrameLayout measures
+        // it against the nearest *constrained* ancestor, which was the whole screen, giving the full-height line seen in testing.
         var accentBar = new View(context)
         {
             LayoutParameters = new LinearLayout.LayoutParams(Dp(context, 4), ViewGroup.LayoutParams.MatchParent),

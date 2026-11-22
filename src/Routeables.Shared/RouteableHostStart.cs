@@ -15,8 +15,8 @@ using Routeables.WinUI3.Services;
 using Routeables.Uno.Services;
 #endif
 
-// Shared source for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui (which define WPF, AVALONIA or MAUI), Routeables.Uno and
-// Routeables.WinUI3. It holds what the hosts' extensions do the same way when the application starts and ends.
+// Shared source for every host: Routeables.Wpf, Routeables.Avalonia and Routeables.Maui (which define WPF, AVALONIA or MAUI), Routeables.Uno
+// and Routeables.WinUI3. It holds what the hosts' extensions do the same way when the application starts and ends.
 #if WPF
 namespace Routeables.Wpf;
 #elif AVALONIA

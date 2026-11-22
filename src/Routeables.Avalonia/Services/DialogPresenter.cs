@@ -56,9 +56,8 @@ internal static class DialogPresenter
             WindowStartupLocation = WindowStartupLocation.CenterOwner
         };
 
-        // SizeToContent is applied after the window is shown, so the window would first appear off-centre and then jump. Show it transparent and
-        // make it opaque once it is centred, so nobody sees the jump. (It used to open at -32000, -32000, where some systems bring a window back
-        // onto the screen: Wayland, macOS.)
+        // SizeToContent applies after the window is shown, so the window would appear off-centre and then jump. Show it transparent and make it
+        // opaque once centred. (It used to open at -32000, -32000, where some systems, Wayland and macOS, bring it back onto the screen.)
         var hidden = parent.Bounds.Width > 0 && parent.Bounds.Height > 0;
         if (hidden)
             dialog.Opacity = 0;
@@ -97,8 +96,8 @@ internal static class DialogPresenter
         }
     }
 
-    // The window sizes itself to its content, but only after it is shown, and an estimate of the size is wrong for content that is not in the tree
-    // yet (a view with a template). So centre it on its owner once its real size is known, and only then make it visible.
+    // The window sizes itself to its content only after it is shown, and an estimate is wrong for content not yet in the tree (a view with a
+    // template). So centre it on its owner once its real size is known, and only then make it visible.
     private static void CenterOnOwner(Window dialog, Window parent)
     {
         try { Place(dialog, parent); }

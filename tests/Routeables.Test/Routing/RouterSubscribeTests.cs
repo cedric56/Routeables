@@ -1,6 +1,8 @@
 using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
+using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Registrations;
 
 namespace Routeables.Tests.Routing;
 
@@ -141,5 +143,64 @@ public class RouterSubscribeTests
 
         Assert.DoesNotContain("vm:unsubscribe", calls);
         Assert.Contains("vm:dispose", calls);
+    }
+
+    public sealed class CountedView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class CountedVm : IDisposable
+    {
+        public static int Disposed;
+        public void Dispose() => Interlocked.Increment(ref Disposed);
+    }
+
+    public sealed class OrderedView : IRouteableFor { public object? Context { get; set; } }
+
+    public sealed class OrderedVm : IRouteable, IDisposable
+    {
+        public static List<string> Log { get; } = [];
+        public void OnUnsubscribe() => Log.Add("unsubscribe");
+        public Task OnLeftAsync(IRouteableArgs context, CancellationToken ct = default) { Log.Add("left"); return Task.CompletedTask; }
+        public void Dispose() => Log.Add("dispose");
+    }
+
+    private static CancellationToken Ct => TestContext.Current.CancellationToken;
+
+    [Fact]
+    public async Task A_transient_page_the_router_disposed_is_not_disposed_again_at_the_end_of_the_scope()
+    {
+        CountedVm.Disposed = 0;
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<CountedView, CountedVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/counted");
+        services.AddTransient<CountedVm>();
+        var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/counted", cancellationToken: Ct);
+
+        await router.EraseHistoryAsync(Ct);
+        Assert.Equal(1, CountedVm.Disposed);
+
+        await provider.DisposeAsync();
+
+        Assert.Equal(1, CountedVm.Disposed);
+    }
+
+    [Fact]
+    public async Task EraseHistory_tells_the_page_it_is_left_before_it_is_disposed()
+    {
+        OrderedVm.Log.Clear();
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<OrderedView, OrderedVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/ordered");
+        services.AddTransient<OrderedVm>();
+        await using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/ordered", cancellationToken: Ct);
+
+        await router.EraseHistoryAsync(Ct);
+
+        var left = OrderedVm.Log.IndexOf("left");
+        Assert.True(left >= 0, "OnLeftAsync was not called");
+        Assert.True(left < OrderedVm.Log.IndexOf("dispose"), string.Join(",", OrderedVm.Log));
+        Assert.True(left < OrderedVm.Log.IndexOf("unsubscribe"), string.Join(",", OrderedVm.Log));
     }
 }

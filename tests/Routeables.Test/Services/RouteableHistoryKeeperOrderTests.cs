@@ -4,6 +4,7 @@ using Routeables.Abstraction.Routing;
 using Routeables.Abstraction.States;
 using Routeables.Routing;
 using Routeables.Services;
+using Routeables.Tests.Pages;
 
 namespace Routeables.Tests.Services;
 
@@ -91,5 +92,57 @@ public class RouteableHistoryKeeperOrderTests
         await slow;
         Assert.Equal(kept, store.Kept);
         Assert.DoesNotContain("bravo", store.Kept);
+    }
+
+    public sealed class SlowView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class SlowVm : IRouteableState
+    {
+        public static readonly ManualResetEventSlim Reading = new();
+        public static readonly ManualResetEventSlim Release = new();
+        public static int Calls;
+
+        public void SaveState(IDictionary<string, string> state)
+        {
+            if (Interlocked.Increment(ref Calls) == 1)
+            {
+                Reading.Set();      // the first read of the history is slow
+                Release.Wait(TimeSpan.FromSeconds(10));
+            }
+        }
+
+        public void LoadState(IReadOnlyDictionary<string, string> state) { }
+    }
+
+    private static CancellationToken Ct => TestContext.Current.CancellationToken;
+
+    [Fact]
+    public async Task A_save_that_read_the_history_before_another_one_does_not_replace_it()
+    {
+        SlowVm.Reading.Reset();
+        SlowVm.Release.Reset();
+        SlowVm.Calls = 1;                                   // not the first read: the save of the first route change must not wait
+        var store = new MemoryStore();
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<SlowView, SlowVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/slow");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(route: "/other");
+        services.AddTransient<SlowVm>();
+        services.AddSingleton<IRouteableHistoryStore>(store);
+        services.AddRouteableHistory();
+        await using var provider = services.BuildServiceProvider();
+        provider.StartRouteableHistory();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/slow", cancellationToken: Ct);
+        SlowVm.Calls = 0;                                   // the save of that route change is done
+
+        var keeper = provider.GetRequiredService<RouteableHistoryKeeper>();
+        var slow = Task.Run(keeper.Flush, Ct);              // reads the history [/slow] and waits in SaveState
+        Assert.True(SlowVm.Reading.Wait(TimeSpan.FromSeconds(10), Ct));
+
+        await router.GoToAsync("/other", cancellationToken: Ct);   // its save reads [/slow, /other] and writes it
+        SlowVm.Release.Set();
+        await slow;
+
+        Assert.True(new[] { "/slow", "/other" }.SequenceEqual(RouteableState.Deserialize(store.Kept)));
     }
 }

@@ -89,4 +89,63 @@ public class RouteableStateRestoreTests
         Assert.Equal(3, router.History.Count);
         Assert.IsType<OrderVm>(router.CurrentViewModel);
     }
+
+    // /home, /other and /blocked, where a guard refuses /blocked.
+    private sealed class RefusesBlockedPage : IRouteGuard
+    {
+        public Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
+            => Task.FromResult(change.To.ViewModel is ThirdViewModel ? RouteGuardDecision.Cancel : RouteGuardDecision.Allow);
+    }
+
+    private static ServiceProvider BuildPages()
+    {
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(route: "/other");
+        services.RegisterRoute<ThirdViewFor, ThirdViewModel>(route: "/blocked");
+        services.AddSingleton<IRouteGuard, RefusesBlockedPage>();
+        return services.BuildServiceProvider();
+    }
+
+    [Fact]
+    public async Task A_restoration_whose_first_route_does_not_exist_leaves_the_page_that_was_shown()
+    {
+        await using var provider = BuildPages();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct);
+
+        var restored = await RouteableState.RestoreAsync(router, ["/gone/42"], Ct);
+
+        Assert.False(restored);
+        Assert.Equal(1, router.History.Count);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
+    }
+
+    [Fact]
+    public async Task A_restoration_whose_first_route_a_guard_refuses_leaves_the_page_that_was_shown()
+    {
+        await using var provider = BuildPages();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct);
+
+        var restored = await RouteableState.RestoreSnapshotsAsync(router, [new RouteableSnapshot("/blocked", new Dictionary<string, string>())], Ct);
+
+        Assert.False(restored);
+        Assert.Equal(1, router.History.Count);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
+    }
+
+    [Fact]
+    public async Task A_restoration_that_works_still_replaces_the_history()
+    {
+        await using var provider = BuildPages();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct);
+
+        Assert.True(await RouteableState.RestoreAsync(router, ["/other", "/home"], Ct));
+
+        Assert.Equal(2, router.History.Count);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
+    }
 }

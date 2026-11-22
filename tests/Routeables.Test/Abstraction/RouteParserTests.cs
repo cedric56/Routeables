@@ -669,4 +669,12 @@ public class RouteParserTests
         Assert.Throws<ArgumentException>(() => RouteParser.Build("files/{**path:nonsense}", new Dictionary<string, object?> { ["path"] = "a/b" }));
         Assert.Equal("files/a/b", RouteParser.Build("files/{**path}", new Dictionary<string, object?> { ["path"] = "a/b" }).TrimStart('/'));
     }
+
+    [Fact]
+    public void A_fragment_is_left_out_of_the_route()
+    {
+        Assert.True(RouteParser.TryMatch("/orders/{id:int}", "/orders/42#top"));
+        Assert.True(RouteParser.TryMatch("/orders/{id:int}", "/orders/42?x=1#top"));
+        Assert.False(RouteParser.TryMatch("/orders/{id:int}", "/orders/4x2#top"));
+    }
 }

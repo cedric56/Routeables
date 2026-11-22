@@ -232,16 +232,16 @@ public static class RouteableNativeDialogLook
             // The button follows the command's CanExecute (a Save that waits for input, say).
             button.Command = b.Command;
 
-            // The command (a view model's, long-lived) listens to CanExecuteChanged for the button: let go of it when the dialog leaves the screen, so a
-            // closed dialog is not kept alive by it.
+            // The command (a view model's, long-lived) listens to CanExecuteChanged for the button: let go of it when the dialog leaves the screen,
+            // so a closed dialog is not kept alive.
             button.Unloaded += (_, _) => button.Command = null;
             return;
         }
 
         button.IsEnabled = b.IsEnabled;
 
-        // A second tap while the first is still closing the dialog would run the action twice, and the handler is async void: an exception would end
-        // the application.
+        // A second tap while the first is still closing the dialog would run the action twice, and the handler is async void: an exception
+        // would end the application.
         var busy = false;
         button.Clicked += async (_, _) =>
         {

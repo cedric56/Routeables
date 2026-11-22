@@ -5,7 +5,7 @@ using Microsoft.Windows.AppNotifications.Builder;
 
 namespace Routeables.Native;
 
-// Windows: AppNotificationManager of the Windows App SDK, for a packaged or an unpackaged application. Windows reports a tap, not a dismissal.
+// Windows: AppNotificationManager of the Windows App SDK, for packaged and unpackaged applications. Windows reports a tap, not a dismissal.
 public sealed partial class SystemNotificationCenter
 {
     private const string IdKey = "id";

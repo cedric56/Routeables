@@ -59,7 +59,7 @@ internal partial class Router
     {
         // Like any navigation, one at a time: the page being asked about is the page shown when the guards answer, and a refresh that arrives
         // during a navigation waits for it.
-        // The caller's token is passed on to the redirection: the gate's own token is linked to a source that is released with the gate.
+        // The caller's token goes on to the redirection: the gate's own token is linked to a source released with the gate.
         var (asked, decision) = await RunGatedAsync(cancellationToken, async token =>
         {
             var current = history.Current;

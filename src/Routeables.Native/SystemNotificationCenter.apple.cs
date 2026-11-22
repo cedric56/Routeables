@@ -5,7 +5,7 @@ using UserNotifications;
 
 namespace Routeables.Native;
 
-// iOS and Mac Catalyst: UserNotifications. The delegate shows a notification while the application is in front, and reports a tap or a dismissal.
+// iOS and Mac Catalyst: UserNotifications. The delegate shows a notification while the application is in front, and reports taps and dismissals.
 public sealed partial class SystemNotificationCenter
 {
     private const string CategoryId = "routeables.notifications";

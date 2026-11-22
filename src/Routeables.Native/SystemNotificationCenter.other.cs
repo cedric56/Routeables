@@ -4,9 +4,9 @@ using System.Runtime.Versioning;
 
 namespace Routeables.Native;
 
-// The plain net10.0 target is the desktop of Avalonia, WPF and the console, and the WebAssembly browser. It dispatches by operating system to
-// the partial files that carry one each: SystemNotificationCenter.linux.cs (D-Bus), .winrt.cs (Windows toasts), .browser.cs (Notification API)
-// and .macos.cs (UNUserNotificationCenter through the Objective-C runtime).
+// The plain net10.0 target is the desktop of Avalonia, WPF and the console, and the WebAssembly browser. It dispatches by operating system
+// to one partial file each: SystemNotificationCenter.linux.cs (D-Bus), .winrt.cs (Windows toasts), .browser.cs (Notification API) and
+// .macos.cs (UNUserNotificationCenter through the Objective-C runtime).
 public sealed partial class SystemNotificationCenter
 {
     private partial async Task<bool> RequestPermissionAsync()

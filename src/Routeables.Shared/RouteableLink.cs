@@ -24,9 +24,9 @@ using LinkClickArgs = Microsoft.UI.Xaml.RoutedEventArgs;
 #endif
 using Routeables.Services;
 
-// Shared source for every host that has a button: Routeables.Wpf, Routeables.Maui and Routeables.Avalonia (which define WPF, MAUI or AVALONIA),
-// Routeables.Uno and Routeables.WinUI3. Only the way an attached property is declared and the name of the click event differ from host to host;
-// the accessors and what a click does are written once.
+// Shared source for every host that has a button: Routeables.Wpf, Routeables.Maui and Routeables.Avalonia (which define WPF, MAUI or
+// AVALONIA), Routeables.Uno and Routeables.WinUI3. Only the way an attached property is declared and the name of the click event differ
+// between hosts; the accessors and what a click does are written once.
 #if WPF
 namespace Routeables.Wpf;
 #elif MAUI

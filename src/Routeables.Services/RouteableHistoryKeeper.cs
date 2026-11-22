@@ -114,9 +114,9 @@ public sealed class FileRouteableHistoryStore : IRouteableHistoryStore
     {
         ArgumentNullException.ThrowIfNull(text);
 
-        // One user's history is not for the other users of the machine. On Unix, a newly created folder is for its owner (the mode of an existing
-        // folder is whoever created it's choice), and the file is created with its final mode, so there is no moment when it is wider, as there
-        // would be if the mode were set after the write. The umask can only remove rights, never add them.
+        // One user's history is not for the other users of the machine. On Unix a newly created folder is for its owner (an existing folder's
+        // mode is its creator's choice), and the file is created with its final mode, so it is never wider, even briefly, as it would be if the
+        // mode were set after the write. The umask can only remove rights, never add them.
         var folder = System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(Path));
         if (!string.IsNullOrEmpty(folder))
         {
@@ -351,10 +351,9 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             if (_router is not { } router)
                 return;
 
-            // Two saves can overlap when no dispatcher is registered (with one, Flush runs on the thread of the interface like the navigations, and
-            // they follow one another): the one that read the history last must be written last. The history
-            // is read outside the lock (a view model saves its state there, which is user code), so each read first takes a number, and a read older than
-            // what is already written is dropped.
+            // Two saves can overlap when no dispatcher is registered (with one, Flush runs on the UI thread like the navigations, so they follow
+            // one another). The save that read the history last must be written last. The history is read outside the lock (a view model saves
+            // its state there, which is user code), so each read first takes a number, and a read older than what is already written is dropped.
             var ticket = Interlocked.Increment(ref _ticket);
             var snapshots = RouteableState.CaptureSnapshots(router);
             // An empty history is written only when it was erased: the first page of a new run is not there yet when the keeper starts.

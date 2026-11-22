@@ -153,7 +153,7 @@ public static class RouteableState
 
 
     // Values of a page that are not in its address (RouteableArgs.WithValue) are kept in the same dictionary as what its view model saves, under
-    // the prefix "value:<type>:<name>". Only what can be written as text and read back is kept (text, numbers, bool, Guid, dates); the values
+    // the prefix "value:<type>:<name>". Only what can be written as text and read back is kept (text, numbers, bool, Guid, dates). The values
     // the route itself brings (its query) come back with the route.
     internal const string ValuePrefix = "value:";
 

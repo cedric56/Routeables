@@ -28,7 +28,7 @@ internal sealed class DefaultRouteableMenuViewModel(IRouter router) : RouteableM
 
     private int _started;
 
-    // The default region calls this when it appears and has no Route of its own. SelectFirst is not overridden: with no entry it selects nothing.
+    // The default region calls this when it appears without a Route of its own. SelectFirst is not overridden: with no entry, it selects nothing.
     bool IRouteableMenuViewModel.Start()
     {
         if (_router.CurrentView is not null || Interlocked.Exchange(ref _started, 1) == 1)

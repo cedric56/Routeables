@@ -131,18 +131,26 @@ public sealed class RouteableInteractions : IDisposable
     /// <summary>Adds a toast notification that the page will show.</summary>
     public void Notify(string title, string message, RouteableNotificationType type, TimeSpan? expiration, Action? onClick, Action? onClose)
     {
-        int? evicted = null;
+        List<RouteableToast>? evicted = null;
         lock (_gate)
         {
             _toasts.Add(new RouteableToast(++_nextToast, title, message, type, expiration, onClick, onClose));
-            if (_toasts.Count > MaxToasts)
-                evicted = _toasts[0].Id;
+
+            // A toast that is never closed and never expires would otherwise stay for the whole session of the visitor. The oldest go first,
+            // under the lock, so concurrent requests cannot leave the list above the limit.
+            while (_toasts.Count > MaxToasts)
+            {
+                (evicted ??= []).Add(_toasts[0]);
+                _toasts.RemoveAt(0);
+            }
         }
 
-        // A toast that is never closed and never expires would otherwise stay for the whole session of the visitor: the oldest one goes first,
-        // and closes as if it had expired.
-        if (evicted is { } id)
-            Dismiss(id, click: false);
+        // They close as if they had expired.
+        if (evicted is not null)
+        {
+            foreach (var toast in evicted)
+                toast.OnClose?.Invoke();
+        }
     }
 
     /// <summary>The most toasts one visitor keeps at the same time.</summary>

@@ -299,8 +299,8 @@ internal sealed class DBusConnection : IDisposable
 
     private static string ReadLine(Socket socket)
     {
-        // Read one byte at a time (what comes after the line belongs to the messages), but check for the end of the line where it can be: the last two
-        // characters. A bus's answer is a few dozen bytes, so a line that goes on is not a bus.
+        // Read one byte at a time (what follows the line belongs to the messages), but check for the end of the line where it can be: the last
+        // two characters. A bus's answer is a few dozen bytes, so a line that goes on is not a bus.
         var text = new StringBuilder();
         var one = new byte[1];
         while (text.Length < 2 || text[^2] != '\r' || text[^1] != '\n')

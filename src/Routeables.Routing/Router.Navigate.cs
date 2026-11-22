@@ -86,19 +86,19 @@ internal partial class Router
         Type? viewModelType = null,
         params string[] viewKeys)
     {
-        // One navigation, one arguments instance. The caller's instance (RouteableMenuEntry.Arguments is reused on every click) is only a template:
-        // TryMatch appends the route values to its bags and Route is written, so two history entries sharing it would see each other's values
-        // (doubled constructor arguments, a duplicate key, the wrong address on Back).
+        // One navigation, one arguments instance. The caller's instance (RouteableMenuEntry.Arguments is reused on every click) is only a
+        // template: TryMatch appends the route values to its bags and Route is written, so two history entries sharing it would see each
+        // other's values (doubled constructor arguments, a duplicate key, the wrong address on Back).
         args = Snapshot(args);
         // The view model built by this navigation receives this router if it asks for an IRouter (a region is not the default router).
         args.Router = this;
         var mismatch = RouteParser.Mismatch(template, route, args, viewKeys);
         if (mismatch is null)
         {
-            // A route registered without a view model has the same key for both: the factory would run twice, and the history would keep two pages
-            // per entry. The page is then its own view model, as a cached (scoped or singleton) one already is.
-            // This covers what this call builds, not what the caller handed over. If the navigation does not show it (a guard or CanLeave refused, a
-            // redirect, an exception), nobody else would ever dispose it.
+            // A route registered without a view model has the same key for both: the factory would run twice and the history would keep two
+            // pages per entry. The page is then its own view model, as a cached (scoped or singleton) one already is.
+            // This covers what this call builds, not what the caller handed over. If the navigation does not show it (a guard or CanLeave
+            // refused, a redirect, an exception), nobody else would ever dispose it.
             // A page about to be built is first offered to the guards that need only its type, so a refused visitor costs no constructor call.
             if (viewModel is null && await AskTypeGuardsAsync(template, route, viewModelType, cancellationToken) is { } refused)
                 return refused;
@@ -250,7 +250,7 @@ internal partial class Router
             cancellationToken,
             viewModelType,
             viewKeys: viewKeys);
-        // Only the page this entry asked for: a guard may have redirected the user elsewhere (to a sign-in), and the entry must not remember that page.
+        // Only the page this entry asked for: a guard may have redirected the user elsewhere (a sign-in), and the entry must not remember that page.
         if (result.Success && WentTo(route))
         {
             routeableView.View = CurrentView;

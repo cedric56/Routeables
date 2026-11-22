@@ -37,7 +37,7 @@ internal sealed class RouteableModuleServiceProvider(IServiceProvider applicatio
 /// <summary>The services a module registered, built when they are asked for (singletons once, the others each time).</summary>
 internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> descriptors) : IDisposable, IAsyncDisposable
 {
-    // Every registration of a type, in registration order: the last one answers GetService, all of them answer IEnumerable<T>, as in the container.
+    // Every registration of a type, in registration order. GetService returns the last; IEnumerable<T> returns all, as the container does.
     private readonly Dictionary<Type, List<ServiceDescriptor>> _descriptors = descriptors
         .Where(d => !d.IsKeyedService)
         .GroupBy(d => d.ServiceType)
@@ -74,7 +74,7 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         return false;
     }
 
-    // An array of a reference type uses the same code for every T (shared generics), so it exists even in an application compiled with Native AOT.
+    // Arrays of a reference type share one implementation for every T, so they exist even under Native AOT.
     [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("AOT", "IL3050:RequiresDynamicCode",
         Justification = "Only called for a reference type: arrays of reference types use the canonical shared code, which AOT always has.")]
     private Array BuildArray(Type element, List<ServiceDescriptor> all, IServiceProvider scope, IServiceProvider application)
@@ -119,9 +119,9 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         throw new InvalidOperationException($"The module registered '{descriptor.ServiceType}' without a way to build it.");
     }
 
-    // Services the module built once are disposed in reverse order of creation. In a synchronous Dispose, a service with Dispose is disposed
-    // as the application's container does; one that only has DisposeAsync is started and not awaited (see AsyncDisposal: blocking could
-    // deadlock a thread with a synchronization context, and is impossible on Blazor WebAssembly). Prefer DisposeAsync when you can.
+    // Services the module built are disposed in reverse order. A synchronous Dispose calls Dispose as the container does; a service that only has
+    // DisposeAsync is started, not awaited (see AsyncDisposal: blocking could deadlock a thread with a synchronization context, and is
+    // impossible on Blazor WebAssembly). Prefer DisposeAsync when you can.
     public void Dispose()
     {
         var failures = new List<Exception>();
@@ -153,7 +153,7 @@ internal sealed class RouteableModuleServices(IEnumerable<ServiceDescriptor> des
         }
     }
 
-    // One service that fails to dispose must not keep the others (created before it) alive: each is tried, and the failures are raised together.
+    // A service that fails to dispose must not keep the others alive: each is tried and the failures are raised together.
     private static void Raise(List<Exception> failures)
     {
         if (failures.Count > 0)

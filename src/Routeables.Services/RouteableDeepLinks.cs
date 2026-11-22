@@ -69,8 +69,8 @@ public static class RouteableDeepLinks
             return false;
         }
 
-        // The host of a web address is not part of the route. Without the application's own hosts, any web page or message could send the address of
-        // another site and open a page of the application.
+        // The host of a web address is not part of the route. Without the application's own hosts, any web page or message could send the
+        // address of another site and open a page of the application.
         if (isWeb && (hosts is not { Count: > 0 } || !hosts.Contains(uri.Host, StringComparer.OrdinalIgnoreCase)))
             return false;
 

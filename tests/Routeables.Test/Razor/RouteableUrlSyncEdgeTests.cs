@@ -376,4 +376,16 @@ public class RouteableUrlSyncEdgeTests
         await Fixture.Until(() => f.Errors.Reported.Count >= 1);
         Assert.Equal("the page is only being prerendered", f.Errors.Reported[0].Message);
     }
+
+    private static readonly (string Template, Type? ViewModelType)[] Items = [("/items/{id}", null), ("/orders", null)];
+
+    [Fact]
+    public void The_case_of_a_value_makes_another_page_and_the_case_of_a_word_does_not()
+    {
+        Assert.False(RouteableUrlSync.Same("/items/aB", "/items/Ab", Items));      // a token, a slug: two pages
+        Assert.True(RouteableUrlSync.Same("/Orders", "/orders", Items));           // a word of the route
+        Assert.True(RouteableUrlSync.Same("/ITEMS/aB", "/items/aB", Items));
+        Assert.True(RouteableUrlSync.Same("/items/aB", "/items/aB", Items));
+        Assert.True(RouteableUrlSync.Same("/Whatever", "/whatever"));              // no route is known: nothing to protect
+    }
 }

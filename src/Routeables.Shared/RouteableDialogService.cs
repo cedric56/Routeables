@@ -3,9 +3,9 @@ using Avalonia.Threading;
 #endif
 using Routeables.Services;
 
-// Shared source for every host that draws its dialogs: Routeables.Wpf and Routeables.Avalonia (which define WPF or AVALONIA), Routeables.Uno and
-// Routeables.WinUI3. What a message means is in RouteableMessageBoxDialogService; here is only how each host reaches its UI thread, which
-// window owns the dialog, and the names of its IMessageBoxService methods.
+// Shared source for every host that draws its dialogs: Routeables.Wpf and Routeables.Avalonia (which define WPF or AVALONIA), Routeables.Uno
+// and Routeables.WinUI3. What a message means is in RouteableMessageBoxDialogService; this file holds how each host reaches its UI thread,
+// which window owns the dialog, and the names of its IMessageBoxService methods.
 #if WPF
 namespace Routeables.Wpf.Services;
 #elif AVALONIA

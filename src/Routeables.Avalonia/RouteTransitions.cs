@@ -38,9 +38,9 @@ public static class RouteTransitions
 
     internal static bool IsCustom(string name) => Custom.ContainsKey(name);
 
-    // The built-in transitions animate the view that comes in (opacity, and a transform that settles to rest), not the two presenters of the
-    // TransitioningContentControl: the control swaps the content at once, and Avalonia's transitions bring the view to rest. The view starts in
-    // the state the transition describes (RouteTransition.Start); the next frame sets it to rest, and that change is animated.
+    // The built-in transitions animate the incoming view (opacity, and a transform that settles to rest), not the two presenters of the
+    // TransitioningContentControl: the control swaps the content at once. The view starts in the state the transition describes
+    // (RouteTransition.Start); the next frame sets it to rest, and Avalonia animates that change.
     internal static void AnimateIn(Visual view, RegionTransition transition, Size bounds)
     {
         var name = transition.Transition.Name;

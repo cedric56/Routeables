@@ -462,4 +462,16 @@ public class RouteableDeepLinksTests
             await Task.Delay(10, TestContext.Current.CancellationToken);
         Assert.IsType<SecondViewModel>(router.CurrentViewModel);
     }
+
+    [Fact]
+    public void Addresses_that_wait_for_the_first_page_are_limited()
+    {
+        var inbox = new RouteableLinkInbox(["myapp"]);
+
+        for (var i = 0; i < 1000; i++)
+            inbox.Push(new Uri($"myapp://orders/{i}"));
+        inbox.Push(new Uri("myapp://orders/" + new string('x', RouteableDeepLinks.MaxLength + 1)));
+
+        Assert.Equal(RouteableLinkInbox.MaxPending, inbox.PendingCount);
+    }
 }

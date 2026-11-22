@@ -86,8 +86,8 @@ public partial class RouteablesShell : Shell
     // Routeables to Shell: the current view is displayed in the active item.
     private void OnCurrentViewChanged(object? sender, object? view) => OnUiThread(() =>
     {
-        // A page opened from code that has no entry (the detail a list opens) is shown by its owner, inside the entry's page: the menu follows it, but
-        // the shell must not take its view out of there (a view has one parent, and the page would stay empty).
+        // A page opened from code that has no entry (the detail a list opens) is shown by its owner, inside the entry's page. The menu follows it,
+        // but the shell must not take its view away from there (a view has one parent, and the page would stay empty).
         if (IsPageOfAnotherEntry())
             return;
 

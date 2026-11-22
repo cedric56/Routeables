@@ -43,10 +43,10 @@ internal sealed class RouteCoordinator(IServiceProvider provider, SegmentRegistr
             {
                 var routers = steps.Select(s => s.Router).Distinct().ToList();
 
-                // Asking takes time, and a page can be shown meanwhile (another navigation of the same router): the page that agreed to leave is
-                // then not the one that would be erased. Ask again for each router whose page changed, until the pages are the ones that were
-                // asked; a router that keeps changing is refused rather than erased unasked. A navigation that starts after the last look is
-                // still not stopped: the check and the erasing are not one step (see the documentation of the coordinator).
+                // Asking takes time, and another navigation of the same router can show a page meanwhile: the page that agreed to leave is then
+                // not the one that would be erased. Ask again for each router whose page changed, until the pages are the ones that were asked; a
+                // router that keeps changing is refused rather than erased unasked. A navigation that starts after the last look is still not
+                // stopped: the check and the erasing are not one step (see the coordinator's documentation).
                 var asked = new Dictionary<IRouter, object?>();
                 for (var attempt = 0; ; attempt++)
                 {

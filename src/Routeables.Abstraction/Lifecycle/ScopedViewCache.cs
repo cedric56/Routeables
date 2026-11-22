@@ -10,8 +10,8 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
     // so a constructor that waits for another thread, which asks this cache for something else, does not block it forever.
     private sealed class Entry { public readonly object Gate = new(); public object? Value; public Thread? Builder; }
 
-    // The entry each thread waits for, under _gate. Together with each entry's builder it detects two threads waiting for each other (X is
-    // being built and needs Y, while Y is being built and needs X), which would block both forever instead of failing like a circular dependency.
+    // The entry each thread is waiting for, guarded by _gate. With each entry's builder, it detects two threads waiting on each other
+    // (X is being built and needs Y while Y is being built and needs X): they would block forever, so this fails like a circular dependency.
     private readonly Dictionary<Thread, Entry> _waiting = [];
 
     private readonly Dictionary<object, Entry> _cache = new();
@@ -31,7 +31,7 @@ internal class ScopedViewCache : IDisposable, IAsyncDisposable
                 return existing;
         }
 
-        // The lock is reentrant: a constructor that asks for its own key (a circular dependency) would build again, forever, until the stack overflows.
+        // The lock is reentrant: a constructor that asks for its own key (a circular dependency) would otherwise rebuild until the stack overflows.
         if (Monitor.IsEntered(entry.Gate))
             throw new InvalidOperationException($"A circular dependency: the construction of \"{key}\" asked for itself.");
 

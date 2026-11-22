@@ -85,8 +85,8 @@ public interface IRouteableNotificationService
         Action? onClose = null);
 
     // System notifications (the OS notification center)
-    // Optional: implemented by Avalonia (Android and iOS, through Routeables.Native), Blazor and ASP.NET Core (the browser), WinUI 3 and .NET MAUI (the
-    // platform APIs). The defaults below do nothing (nothing active, nothing created), so an implementation of the toasts above is complete without them.
+    // Optional: implemented by Avalonia (Android and iOS, through Routeables.Native), Blazor and ASP.NET Core (the browser), WinUI 3 and .NET
+    // MAUI (the platform APIs). The defaults below do nothing (nothing active, nothing created), so the toasts above are complete without them.
 
     /// <summary>
     /// Gets the system-level (OS notification-center) notifications currently active (shown and not yet closed),

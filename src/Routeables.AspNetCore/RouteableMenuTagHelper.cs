@@ -98,7 +98,7 @@ public sealed class RouteableMenuTagHelper : TagHelper
         return span;
     }
 
-    // An entry's address keeps its escapes ("/caf%C3%A9") while the request path is already decoded ("/café"), so unescape the first to compare.
+    // An entry's address keeps its escapes ("/caf%C3%A9") while the request path is already decoded ("/café"): unescape the entry to compare.
     private static string FirstSegment(string? address, bool unescape = false)
     {
         var segment = address?.Split('?')[0].Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "";

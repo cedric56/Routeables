@@ -8,8 +8,8 @@ namespace Routeables.Locking;
 /// </summary>
 internal sealed class RouteableFormLock(IRouteableLockBroker broker) : IRouteableFormLock
 {
-    // The count and the queue of messages are changed under the gate; the subscribers are called outside it. A subscriber that hands its work to the
-    // thread of the interface and waits for it would otherwise block that thread when it asks Lock() or IsLocked meanwhile.
+    // The count and the queue are changed under the gate; the subscribers are called outside it. A subscriber that hands its work to the UI
+    // thread and waits for it would otherwise block that thread when it calls Lock() or IsLocked meanwhile.
     private readonly object _gate = new();
     private readonly Queue<bool> _pending = new(); // the messages in the order they happened: true locks, false unlocks
     private bool _draining;

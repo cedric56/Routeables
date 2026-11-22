@@ -12,9 +12,9 @@ internal sealed class RouterHistory : IRouterHistory
 {
     private readonly List<RouterEntry> _entries = [];
 
-    // The router changes the history one route change at a time, on the thread of the application, but what the application does with it is not
-    // always on that thread: a keeper that saves it when the application goes to sleep, a menu that reads its entries. Every read and every change
-    // takes this lock, so a read sees the history as it was before or after a change, never halfway. Observers are called outside it.
+    // The router changes the history one route change at a time, on the application's thread, but what the application does with it is not
+    // always on that thread (a keeper that saves it when the application goes to sleep, a menu that reads its entries). Every read and every
+    // change takes this lock, so a read sees the history before or after a change, never halfway. Observers are called outside it.
     private readonly object _lock = new();
 
     /// <summary>Creates a history; <paramref name="maxSize"/> is the most entries it keeps, or <see langword="null"/> for no limit.</summary>

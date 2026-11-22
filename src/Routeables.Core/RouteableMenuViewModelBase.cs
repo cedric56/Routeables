@@ -93,7 +93,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
     // A page that moves the router itself (its own Back or Pop button, for instance) does not tell the menu; the router does.
     // A selection made by the menu, and a move the menu has already followed, are not announced twice.
     private object? _followed;
-    // The route of the page that was followed: one instance (a cached view model) can serve two routes, and moving from one to the other is a move.
+    // The route of the page that was followed: one cached view model can serve two routes, and moving from one to the other is a move.
     private string? _followedRoute;
 
     private bool Follows(object? viewModel)
@@ -177,8 +177,8 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         }
     }
 
-    // The entry is the selected one, but the router shows another page: a page opened from code (a detail, for instance) has no entry, and the menu
-    // keeps the entry it was on. Selecting that entry again must open its page, not be ignored.
+    // The entry is selected but the router shows another page: a page opened from code (a detail, say) has no entry, and the menu keeps the
+    // one it was on. Selecting that entry again must open its page, not be ignored.
     private bool PageIsElsewhere(IRouteableMenuEntry? entry)
         => entry is not null && _selectionVersion != 0 && _router.History.Current is { } current
            && !RouteAddress.SameFor(_router, current.Args.Route, entry.Arguments.Route ?? entry.Route);
@@ -261,9 +261,8 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
             OnSelectionFailed(exception);
         }
 
-        // When a guard answers immediately, the control that selected the entry is still inside the selected entry and ignores a notification
-        // raised there, so it would keep showing the refused entry as selected. Announce the selected entry after the setter has returned, on
-        // the same context.
+        // When a guard answers immediately, the control that selected the entry is still inside the selection and ignores a notification raised
+        // there, so it would keep showing the refused entry. Announce the selected entry after the setter returns, on the same context.
         if (requested is not null && !ReferenceEquals(_routeable, requested))
         {
             await Task.Yield();
@@ -305,8 +304,8 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         }
         catch (OperationCanceledException)
         {
-            // Cancelled while waiting for another selection, so it never ran. If it is still the newest, the menu goes back to the entry it was on, and the
-            // selection holding the gate becomes the newest again (otherwise it would think it was replaced and leave the menu on the wrong entry).
+            // Cancelled while waiting for another selection, so it never ran. If it is still the newest, the menu goes back to its previous entry
+            // and the selection holding the gate becomes the newest again (or it would think it was replaced and leave the menu on the wrong entry).
             // A newer selection owns the state: nothing to do then.
             int newest;
             lock (_liveSelections)
@@ -359,7 +358,7 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         }
         catch (Exception exception) when (exception is NullReferenceException or ArgumentNullException)
         {
-            // The usual cause: GetEntries() read a field or constructor parameter of the derived class while the base class was still being constructed.
+            // The usual cause: GetEntries() reads a field or constructor parameter of the derived class while the base class is still being constructed.
             throw new InvalidOperationException(
                 $"{GetType().Name}.GetEntries() threw a {exception.GetType().Name}. It runs while the base class is being constructed, before the fields and the constructor "
                 + "parameters of the derived class are set: build the entries from the code alone, or pass initialize: false to the base constructor "
@@ -387,8 +386,8 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
         => System.Diagnostics.Debug.WriteLine(
             $"Routeables: '{entry.Route}' was not shown ({(result.Cancelled ? "cancelled by a guard (CanLeaveAsync / CanEnter) or a newer route" : "failed")}){(result.Exception is null ? "" : ": " + result.Exception)}");
 
-    // The entry to select again when a selection is not shown: the one whose page the router shows. The `old` of a selection replaced by a newer
-    // one before it started was never shown, so it is the answer only when no page was shown through this menu yet.
+    // The entry to select again when a selection is not shown: the one whose page the router shows. The `old` of a selection replaced before it
+    // started was never shown, so it is the answer only when no page was shown through this menu yet.
     private IRouteableMenuEntry? Previous(IRouteableMenuEntry? old, int version) => version != 0 ? _confirmed ?? old : old;
 
     /// <summary>
@@ -423,8 +422,8 @@ public abstract partial class RouteableMenuViewModelBase : RouterViewModelBase, 
 
             if (result)
             {
-                // A guard sent the user to another page (a sign-in): the menu does not claim the refused entry, unless the page shown has an entry of its own
-                // (OnViewModelChanged selected it).
+                // A guard sent the user to another page (a sign-in): the menu does not claim the refused entry, unless the page shown has an entry
+                // of its own (OnViewModelChanged selected it).
                 var redirected = _router.History.Current is { } current
                     && !RouteAddress.SameFor(_router, current.Args.Route, value.Arguments.Route ?? value.Route);
                 // The redirection is a Push that arrived while the selection ran, and OnRouted left it out: the menu follows that page now.

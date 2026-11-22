@@ -13,7 +13,7 @@ public static partial class RouteParser
 
     // {Id:int}  {Tab?}  {Tab::?}  {animate::bool}  {person:Person}  {**path}
     // "::" sets the 'attribute' group, "?" sets 'opt', "**" sets 'rest' (the placeholder takes the rest of the path, slashes included).
-    // Generated at build time, so no regular expression is built or interpreted at run time, which suits trimmed and AOT applications.
+    // Generated at build time: no regular expression is built or interpreted at run time, which suits trimmed and AOT applications.
     [GeneratedRegex(@"^\{(?<rest>\*\*)?(?<name>\w+)(?::(?<attribute>:)?(?<type>[^}?]*))?(?<opt>\?)?\}$")]
     private static partial Regex ParamPattern();
 
@@ -201,9 +201,9 @@ public static partial class RouteParser
             if (Bind(m, raw, args, viewKeySet, bound, reasons) is { } failure) return failure;
         }
 
-        // Query values that the template does not declare are neutral values (IRouteableArgs.Values, read by the lifecycle hooks). They are not
-        // passed to the constructor or injected into a property: the address is user input, and letting it choose what the page is built with
-        // would break every link that carries a tracking parameter and let anyone fill a constructor parameter.
+        // Query values the template does not declare are neutral values (IRouteableArgs.Values, read by the lifecycle hooks). They are not passed
+        // to the constructor or injected into a property: the address is user input, and letting it choose what the page is built with would
+        // break every link that carries a tracking parameter and let anyone fill a constructor parameter.
         if (args is not null)
             foreach (var (name, value) in query)
                 if (bound is null || !bound.Contains(name))
@@ -272,7 +272,7 @@ public static partial class RouteParser
         }
     }
 
-    // The first optional path placeholder (not a catch-all) followed by a segment that is not optional: such a template cannot be written back
+    // The first optional path placeholder (not a catch-all) followed by a segment that is not optional. Such a template cannot be written back
     // (tabs/{tab?}/end without a tab is tabs/end, which does not match), so it never matches. Optionals at the end (cat/{age:int?}/{nick?})
     // are fine, and so is a catch-all after them.
     private static string? OptionalNotLast(string[] segments)
@@ -288,7 +288,7 @@ public static partial class RouteParser
         return null;
     }
 
-    // "/dup/{id}?{id}": one value would be given to both and the query would be lost. Such a template is a mistake: it never matches and cannot be built.
+    // "/dup/{id}?{id}": one value would go to both and the query would be lost. Such a template is a mistake: it never matches and cannot be built.
     private static string? DuplicateName(Match[] segments, string[] queryParts)
     {
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

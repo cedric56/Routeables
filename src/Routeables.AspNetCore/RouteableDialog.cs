@@ -32,7 +32,7 @@ public sealed class RouteableDialog(string title, string? header, string? body, 
 
     private int _answered;
 
-    // The first answer takes the dialog. A second one for the same dialog (a double click that arrived before the next dialog was shown) is ignored.
+    // The first answer takes the dialog. A second one for the same dialog (a double click that arrived before the next dialog appeared) is ignored.
     internal bool TryClaim() => Interlocked.Exchange(ref _answered, 1) == 0;
 
     /// <summary>The action that asked it (see <c>RouteableInteractions.StartAsync</c>); the request that answers it waits for that action.</summary>

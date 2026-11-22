@@ -78,7 +78,7 @@ public class FormLockTests
     }
 
     [Fact]
-    public void A_form_that_asks_while_a_subscriber_is_busy_is_not_blocked_and_the_order_is_kept()
+    public async Task A_form_that_asks_while_a_subscriber_is_busy_is_not_blocked_and_the_order_is_kept()
     {
         var broker = new RouteableLockBroker();
         var formLock = new RouteableFormLock(broker);
@@ -105,7 +105,7 @@ public class FormLockTests
         Assert.True(formLock.IsLocked);
         using var second = formLock.Lock();
         leave.Set();
-        holder.Wait(TestContext.Current.CancellationToken);
+        await holder;
         first!.Dispose();
 
         // One form is still locked: only the lock was announced, once.

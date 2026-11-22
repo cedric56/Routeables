@@ -87,7 +87,7 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
         await RefreshAsync("MainLayout.CurrentViewChanged");
     }
 
-    // These are event handlers (async void): an exception would reach the circuit. A layout removed between the event and the render is not an error.
+    // These are async void event handlers: an exception would reach the circuit. A layout removed between the event and the render is not an error.
     private async Task RefreshAsync(string source)
     {
         try { await InvokeAsync(StateHasChanged); }
@@ -151,9 +151,9 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
     private static bool IsRoot(NavigationManager navigation)
         => navigation.ToBaseRelativePath(navigation.Uri).Split('?', '#')[0].Trim('/').Length == 0;
 
-    // True while the server renders the page for the first response (before any circuit), and only when the application asked for it:
-    // registering RouteablePrerenderOptions switches it on. Every static renderer calls itself "Static" (a test renderer too), so the renderer
-    // alone does not tell that a page is prerendered for a browser.
+    // True while the server renders the page for the first response (before any circuit), and only when the application asked for it
+    // (registering RouteablePrerenderOptions). Every static renderer calls itself "Static" (a test renderer too), so the renderer alone does
+    // not tell that a page is prerendered for a browser.
     private bool IsPrerendering
     {
         get
@@ -193,9 +193,9 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
         await Initialize(Provider);
         await ReadThemeAsync();
         await ApplyThemeAsync();
-        // The default page only when the address did not already choose one (a link to /elephants/Mammoth).
-        // Go through SelectedEntry: it selects the entry in the menu, and it shows the page.
-        // An application without a menu opens its home route here and not from the region: the address decides, and it is applied above.
+        // The default page opens only when the address did not already choose one (a link to /elephants/Mammoth).
+        // Go through SelectedEntry: it selects the entry in the menu and shows the page.
+        // An application without a menu opens its home route here, not from the region: the address decides, and it is applied above.
         if (!addressChosen && !MainViewModel.SelectFirst())
             RegionStart.StartDefault(Provider);
     }

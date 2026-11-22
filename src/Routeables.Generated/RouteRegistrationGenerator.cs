@@ -47,8 +47,8 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout203");
 
-        // Two view models that declare the same route (and region): the route table keeps the first one it is given, so the second is never reached,
-        // and the run-time message names the second as a route that is not registered.
+        // Two view models declare the same route (and region): the route table keeps the first, so the second is never reached, and the
+        // run-time message calls it a route that is not registered.
         private static readonly DiagnosticDescriptor SeveralViewModelsForOneRoute = new DiagnosticDescriptor(
             "ROUT206",
             "Several view models for the same route",
@@ -57,7 +57,7 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout206");
 
-        // A [Routeable] class the generated code cannot name (open generic, 'file' type) is left out with this warning, instead of generating code that does not compile.
+        // A [Routeable] class the generated code cannot name (open generic, 'file' type) is left out with this warning, rather than generating code that does not compile.
         private static readonly DiagnosticDescriptor UnusableViewModel = new DiagnosticDescriptor(
             "ROUT207",
             "[Routeable] on a type that cannot be registered",
@@ -66,9 +66,9 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout207");
 
-        // A .razor file in the project that declares [RouteableView] with @attribute: the Razor compiler is another generator, and a generator does
-        // not see the output of another one, so nothing is registered. Reported only when this project calls its own AddGeneratedRoutes(): a
-        // component library whose views are registered by the referencing application is fine.
+        // A .razor file declaring [RouteableView] with @attribute: the Razor compiler is another generator, and generators do not see each
+        // other's output, so nothing is registered. Reported only when this project calls its own AddGeneratedRoutes(); a component library
+        // whose views are registered by the referencing application is fine.
         private static readonly DiagnosticDescriptor RazorViewAttributeIgnored = new DiagnosticDescriptor(
             "ROUT204",
             "[RouteableView] in a .razor file is ignored here",
@@ -77,8 +77,8 @@ namespace Routeables.Generated
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true, helpLinkUri: "https://cedric56.github.io/Routeables/guides/diagnostics.html#rout204");
 
-        // A [Routeable] view model in a project that has views of its own, none named after it: most often a name that does not follow the
-        // convention. Information only: a view model without a view is a legitimate route (a redirect, a headless one).
+        // A [Routeable] view model in a project with views of its own, none named after it: most often a name that breaks the convention.
+        // Information only, since a view model without a view is a legitimate route (a redirect, a headless one).
         // Switch it off with .editorconfig (dotnet_diagnostic.ROUT205.severity = none) or #pragma warning disable ROUT205.
         private static readonly DiagnosticDescriptor ConventionViewNotFound = new DiagnosticDescriptor(
             "ROUT205",
@@ -179,9 +179,9 @@ namespace Routeables.Generated
                 if (routeableAttr is null && routeableViewAttr is null)
                     return CompiledModel.Empty;
 
-                // A type carries [Routeable] or [RouteableView] only in an assembly that references the one the attributes are in. The other referenced
-                // assemblies (control libraries, mapping, logging...) are only searched, below, for the views that view models ask for by name, and
-                // cheaply: by type name, without creating a symbol for each type.
+                // A type carries [Routeable] or [RouteableView] only in an assembly that references the one holding the attributes. The other
+                // referenced assemblies (control libraries, mapping, logging...) are only searched, below, for views that view models name, cheaply:
+                // by type name, without creating a symbol for each type.
                 var attributeAssemblies = new HashSet<string>(StringComparer.Ordinal);
                 if (routeableAttr is not null) attributeAssemblies.Add(routeableAttr.ContainingAssembly.Name);
                 if (routeableViewAttr is not null) attributeAssemblies.Add(routeableViewAttr.ContainingAssembly.Name);
@@ -191,9 +191,8 @@ namespace Routeables.Generated
                 {
                     ct.ThrowIfCancellationRequested();
 
-                    // A view the naming convention may pair with a [Routeable] view model: a concrete class called ...View. It does not have to implement
-                    // anything (a UserControl, a Page, a component): its name is what pairs it. It is only described below for the views whose name a view
-                    // model asks for.
+                    // A view the naming convention may pair with a [Routeable] view model: a concrete class called ...View. It need not implement
+                    // anything (a UserControl, a Page, a component): its name pairs it. It is described below only for views a view model names.
                     if (routeableAttr is not null && IsConventionView(type) && compilation.IsSymbolAccessibleWithin(type, compilation.Assembly))
                         conventionViews.Add(type);
 
@@ -248,9 +247,9 @@ namespace Routeables.Generated
                     new EquatableArray<ViewCandidate>(candidates.ToArray()));
             }).WithTrackingName("RouteablesCompiled");
 
-            // An executable hands its routes to the host through a module initializer, so the application does not need to call AddGeneratedRoutes()
-            // itself. RouteablesAutoRegister=false switches this off, and =true switches it on for a project the compiler does not see as an executable
-            // (a mobile app, for example). A library has no such initializer: its module would only be initialized when one of its types is first used,
+            // An executable hands its routes to the host through a module initializer, so the application need not call AddGeneratedRoutes().
+            // RouteablesAutoRegister=false switches this off; =true switches it on for a project the compiler does not see as an executable (a
+            // mobile app, say). A library has no such initializer: its module would be initialized only when one of its types is first used,
             // which is too late and unpredictable.
             var autoInputs = context.CompilationProvider
                 .Select(static (compilation, _) => compilation.Options.OutputKind)
@@ -613,9 +612,9 @@ namespace Routeables.Generated
             }
         }
 
-        // A [Routeable] view model that no [RouteableView] names gets the view its name says: OrderViewModel => OrderView, a routed class (one that
-        // implements IRouteable) found in the project or, failing that, in the assemblies it references. The route, region and lifetime come from the
-        // [Routeable] attribute. Two views with that name are not guessed between.
+        // A [Routeable] view model that no [RouteableView] names gets the view its name implies: OrderViewModel => OrderView, a routed class (one
+        // that implements IRouteable) found in the project or, failing that, in the assemblies it references. The route, region and lifetime come
+        // from the [Routeable] attribute. When two views have that name, it does not guess.
         private static void AddConventionViews(
             SourceProductionContext spc,
             List<ViewReg> views,

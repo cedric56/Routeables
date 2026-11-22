@@ -76,10 +76,9 @@ public static class RouteableAutoRegistration
 
     private static bool s_initializersRun;
 
-    // A module initializer runs when the runtime loads the module, and that is what hands the routes to Add. A runtime that does not run it
-    // (seen on .NET MAUI for Android) leaves the list empty and every route unregistered. Running the module constructor of each application
-    // assembly does what the runtime would have done (it runs only once, so a second call does nothing), so default registration works there
-    // too. The Debug line says when it was needed.
+    // A module initializer hands the routes to Add when the runtime loads the module. A runtime that does not run it (seen on .NET MAUI for
+    // Android) leaves the list empty and every route unregistered. Running each application assembly's module constructor does what the runtime
+    // would have done (it runs once, so a second call does nothing). The Debug line says when this was needed.
     private static void RunModuleInitializers()
     {
         lock (Gate)

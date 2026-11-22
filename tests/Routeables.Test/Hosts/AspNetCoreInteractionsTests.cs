@@ -477,4 +477,58 @@ public class AspNetCoreInteractionsTests
         Assert.Equal(["t0", "t1", "t2"], closed);
         Assert.Equal("t3", interactions.Toasts[0].Title);
     }
+
+    private static CancellationToken Ct => TestContext.Current.CancellationToken;
+
+    [Fact]
+    public async Task A_button_that_does_not_exist_is_not_an_answer()
+    {
+        using var interactions = new RouteableInteractions();
+        var dialog = new RouteableDialog("Title", null, "Body", ["Yes", "No"]);
+        var answer = interactions.AskAsync(dialog);
+
+        await interactions.AnswerAsync(7).WaitAsync(TimeSpan.FromSeconds(5), Ct);
+        await interactions.AnswerAsync(-1).WaitAsync(TimeSpan.FromSeconds(5), Ct);
+
+        Assert.False(answer.IsCompleted);
+        Assert.Same(dialog, interactions.Pending);
+
+        await interactions.AnswerAsync(1);
+        Assert.Equal(1, await answer);
+    }
+
+    [Fact]
+    public void The_toasts_a_page_reads_do_not_change_under_it()
+    {
+        using var interactions = new RouteableInteractions();
+        interactions.Notify("A", "a", RouteableNotificationType.Information, null, null, null);
+        var seen = interactions.Toasts;
+
+        interactions.Notify("B", "b", RouteableNotificationType.Information, null, null, null);
+
+        Assert.Single(seen);
+        Assert.Equal(2, interactions.Toasts.Count);
+    }
+
+    [Fact]
+    public async Task Requests_of_one_visitor_can_change_the_notifications_at_the_same_time()
+    {
+        using var interactions = new RouteableInteractions();
+
+        await Task.WhenAll(Enumerable.Range(0, 64).Select(_ => Task.Run(() =>
+        {
+            for (var n = 0; n < 200; n++)
+            {
+                interactions.Notify("t", "m", RouteableNotificationType.Information, null, null, null);
+                _ = interactions.Toasts.Count;
+                interactions.Dismiss(-1, click: false);
+                var system = interactions.CreateSystemNotification(null);
+                _ = interactions.ActiveSystemNotifications.Count;
+                interactions.TakeSystemNotificationsJson();
+                interactions.CloseSystemNotification(system.Id);
+            }
+        }, Ct)));
+
+        Assert.Equal(64 * 200, interactions.Toasts.Count);
+    }
 }

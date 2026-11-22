@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 
 namespace Routeables.Native;
 
-// macOS, from the plain net10.0 target (the Avalonia desktop, with no net10.0-macos target): UNUserNotificationCenter, spoken to through the
-// Objective-C runtime (Desktop/ObjC.cs), as Avalonia.Labs does. The system only serves an application in a bundle (.app) with an identifier:
-// a console or `dotnet run` has none, and there nothing is created (CreateNotificationAsync returns null) rather than let the system abort
+// macOS, from the plain net10.0 target (the Avalonia desktop, with no net10.0-macos target): UNUserNotificationCenter, through the
+// Objective-C runtime (Desktop/ObjC.cs), as Avalonia.Labs does. The system serves only an application in a bundle (.app) with an identifier.
+// A console or `dotnet run` has none, and there nothing is created (CreateNotificationAsync returns null) rather than let the system abort
 // the process. A tap is a tap; a swipe away is a dismissal (the category asks the system to report it).
 public sealed partial class SystemNotificationCenter
 {

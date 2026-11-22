@@ -8,6 +8,7 @@ using Routeables.Routing;
 using Routeables.Segments;
 using Routeables.Tests.Pages;
 using RouteableArgument = Routeables.Abstraction.Routing.RouteableArgument;
+using Routeables.Abstraction.Guards;
 namespace Routeables.Tests.Routing;
 
 /// <summary>Segment routing: parsing of <see cref="RouteCoordination"/> and its dispatch to routers by <see cref="IRouteCoordinator"/>.</summary>
@@ -496,5 +497,87 @@ public class RouteCoordinatorTests
         services.AddRouteCoordinator();
 
         Assert.Equal(1, services.Count(d => d.ServiceType == typeof(IRouteCoordinator)));
+    }
+
+    // The pages a coordination goes to are found by their view model (a segment), not by an address.
+    public sealed class SegView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class SegVm;
+    public sealed class SegBlockedVm;
+    public sealed class SegBlockedView : IRouteableFor { public object? Context { get; set; } }
+    public sealed class DirtyVm : IRouteable
+    {
+        public static bool Dirty;
+        public Task<bool> CanLeaveAsync(CancellationToken ct = default) => Task.FromResult(!Dirty);
+    }
+
+    public sealed class RefusesBlocked : IRouteGuard
+    {
+        public Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
+            => Task.FromResult(change.To.ViewModel is ThirdViewModel or SegBlockedVm ? RouteGuardDecision.Cancel : RouteGuardDecision.Allow);
+    }
+
+    private static ServiceProvider BuildAbsolutePages()
+    {
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.AddRouteCoordinator();
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(route: "/other");
+        services.RegisterRoute<ThirdViewFor, ThirdViewModel>(route: "/blocked");
+        services.RegisterRoute<FourthViewFor, DirtyVm>(route: "/dirty");
+        services.RegisterRoute<SegView, SegVm>();
+        services.RegisterRoute<SegBlockedView, SegBlockedVm>();
+        services.RegisterSegment<SegBlockedVm>("Blocked");
+        services.RegisterSegment<SegVm>("Seg");
+        services.AddSingleton<IRouteGuard, RefusesBlocked>();
+        return services.BuildServiceProvider();
+    }
+
+    private static CancellationToken Ct => TestContext.Current.CancellationToken;
+
+    [Fact]
+    public async Task An_absolute_coordination_does_not_erase_a_page_that_refuses_to_be_left()
+    {
+        await using var provider = BuildAbsolutePages();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/dirty", cancellationToken: Ct);
+        DirtyVm.Dirty = true;
+        try
+        {
+            var result = await provider.GetRequiredService<IRouteCoordinator>().CoordinateAsync(RouteCoordination.Parse("/Seg"), Ct);
+
+            Assert.False(result.Success);
+            Assert.IsType<DirtyVm>(router.CurrentViewModel);       // untouched
+            Assert.Equal(1, router.History.Count);
+        }
+        finally { DirtyVm.Dirty = false; }
+    }
+
+    [Fact]
+    public async Task An_absolute_coordination_that_fails_on_its_first_segment_does_not_leave_the_region_empty()
+    {
+        await using var provider = BuildAbsolutePages();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct);
+
+        var result = await provider.GetRequiredService<IRouteCoordinator>().CoordinateAsync(RouteCoordination.Parse("/Blocked"), Ct);
+
+        Assert.False(result.Success);
+        Assert.Equal(1, router.History.Count);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
+    }
+
+    [Fact]
+    public async Task An_absolute_coordination_that_works_still_starts_from_an_empty_history()
+    {
+        await using var provider = BuildAbsolutePages();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct);
+        await router.GoToAsync("/other", cancellationToken: Ct);
+
+        var result = await provider.GetRequiredService<IRouteCoordinator>().CoordinateAsync(RouteCoordination.Parse("/Seg"), Ct);
+
+        Assert.True(result.Success, result.Exception?.ToString());
+        Assert.Equal(1, router.History.Count);
     }
 }

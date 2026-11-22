@@ -34,8 +34,8 @@ internal partial class Router
         });
     }
 
-    // The shape of every navigation: wait for the gate, run, release the gate. EnterAsync is deliberately not async (its AsyncLocal must be
-    // set in the flow that awaits the body, so that a nested navigation is detected), and this helper is that flow: the body is awaited inside it.
+    // The shape of every navigation: wait for the gate, run, release it. EnterAsync is deliberately not async (its AsyncLocal must be set in
+    // the flow that awaits the body, so a nested navigation is detected), and this helper is that flow: the body is awaited inside it.
     private async Task<T> RunGatedAsync<T>(CancellationToken cancellationToken, Func<CancellationToken, Task<T>> body)
     {
         var enter = gate.EnterAsync(cancellationToken);

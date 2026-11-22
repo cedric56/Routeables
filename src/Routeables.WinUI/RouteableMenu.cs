@@ -31,9 +31,9 @@ public partial class RouteableMenu : Microsoft.UI.Xaml.Controls.ListView
     {
         SelectionMode = ListViewSelectionMode.Single;
 #if WINUI3
-        // WinUI 3: XamlReader cannot find a control from a library (it has no XAML metadata for it), and containers are not reliably given content in
-        // code. So the list holds the controls themselves (one RouteableMenuItem per entry), which a ListView shows as they are, and the binding to
-        // the menu view model is done here.
+        // WinUI 3: XamlReader cannot find a control from a library (it has no XAML metadata for it), and containers are not reliably given
+        // content in code. So the list holds the controls themselves (one RouteableMenuItem per entry), which a ListView shows as they are, and
+        // the binding to the menu view model is done here.
         DataContextChanged += (_, _) => Attach(DataContext as IRouteableMenuViewModel);
         SelectionChanged += OnSelectionChanged;
         Unloaded += (_, _) => Attach(null);

@@ -96,4 +96,15 @@ public class RouterHistoryLimitTests
 
         Assert.Equal(7, scope.ServiceProvider.GetRequiredService<RouterHistory>().MaxSize);
     }
+
+    [Fact]
+    public void The_history_of_a_scoped_region_is_limited_like_the_one_of_a_scoped_router()
+    {
+        var services = new ServiceCollection();
+        services.AddRegion("side");
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        Assert.Equal(Routeables.Routing.Extensions.DefaultScopedHistoryLimit, scope.ServiceProvider.GetRequiredKeyedService<RouterHistory>("side").MaxSize);
+    }
 }

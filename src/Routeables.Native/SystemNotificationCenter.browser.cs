@@ -6,10 +6,10 @@ using System.Text.Json;
 
 namespace Routeables.Native;
 
-// The browser, from the plain net10.0 target (a WebAssembly application that is not Blazor: Avalonia, Uno): the browser's notification center,
-// through the same JavaScript module as Routeables.Blazor (wwwroot/notifications.js, embedded here and imported from a data address, so
-// nothing has to be served). With the service worker a notification has action buttons and a reply field; without it the page notifies by
-// itself and only the click and the close are reported.
+// The browser, from the plain net10.0 target (a WebAssembly application that is not Blazor: Avalonia, Uno): the browser's notification
+// center, through the same JavaScript module as Routeables.Blazor (wwwroot/notifications.js, embedded here and imported from a data address,
+// so nothing has to be served). With the service worker a notification has action buttons and a reply field; without it the page notifies
+// by itself and only the click and the close are reported.
 public sealed partial class SystemNotificationCenter
 {
     private const string BrowserModule = "routeables-notifications";

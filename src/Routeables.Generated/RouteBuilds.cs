@@ -204,9 +204,8 @@ namespace Routeables.Generated
         // attribute, or the type names properties through its own attributes) can be written by code outside the type.
         private static bool TryReadInjection(Compilation compilation, INamedTypeSymbol type, List<string> typeAttributes, List<PropInfo> properties)
         {
-            // The compiler hands the generator only the public and protected members of types from other assemblies. An internal property there (an
-            // [Inject] internal on a base component, say) is invisible to the generator and is found by reflection, so such a type cannot be
-            // described completely and is left to reflection.
+            // The compiler gives the generator only the public and protected members of types from other assemblies. An internal property there
+            // (an [Inject] internal on a base component, say) is invisible to it, so the type cannot be described completely and is left to reflection.
             if (WithBaseTypes(type).Any(t => !SymbolEqualityComparer.Default.Equals(t.ContainingAssembly, compilation.Assembly)))
                 return false;
 

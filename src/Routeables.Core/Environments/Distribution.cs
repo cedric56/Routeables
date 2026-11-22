@@ -168,7 +168,7 @@ internal class DistributionImplementation : IDistribution
         return new(key, value);
     }
 
-    // Per the os-release specification, a backslash in double quotes escapes only a dollar sign, a quote, a backslash and a backquote (as in the shell).
+    // Per the os-release specification, a backslash inside double quotes escapes only $, ", \ and `, as in the shell.
     private static string UnescapeDoubleQuoted(string text)
     {
         if (!text.Contains('\\'))

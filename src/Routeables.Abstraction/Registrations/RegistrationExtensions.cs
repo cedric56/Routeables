@@ -98,11 +98,10 @@ public static partial class RegistrationExtensions
         Func<IServiceProvider, IRouteableArgs, T> create)
         where T : class
     {
-        // The provider keeps the instance (SingletonViewCache), not this delegate: a delegate registered in the collection is shared by every
-        // provider built from it, and nobody disposes what it holds.
-        // On a host whose routers live in a scope (Blazor Server: one per circuit), the page is built from that scope's services (the user, the
-        // JS runtime, the router), and a page shared by every circuit would show the first user's data to the others. So there a Singleton page
-        // is kept per scope, like a Scoped one.
+        // The provider keeps the instance (SingletonViewCache), not this delegate: a delegate in the collection is shared by every provider built
+        // from it, and nobody disposes what it holds.
+        // Where routers live in a scope (Blazor Server, one per circuit), pages are built from that scope's services (user, JS runtime, router).
+        // A page shared by every circuit would show the first user's data to the others, so a Singleton page is kept per scope there, like a Scoped one.
         return (sp, args) =>
         {
             try
@@ -472,8 +471,8 @@ public static partial class RegistrationExtensions
             }));
 
         // ActivatorUtilities gives a value to the first parameter that fits its type, whatever its name: "/products/{id}" would give its text to
-        // a parameter "category" that comes before "id". A parameter with a default that comes before the one the value is named for, and whose
-        // type the value fits, is given that default, so that the value is left for its own parameter.
+        // a "category" parameter that comes before "id". A parameter with a default that precedes the one the value is named for, and whose type the
+        // value fits, gets that default, so the value is left for its own parameter.
         var named = list.Where(e => !string.IsNullOrEmpty(e.name) && e.value is not null).ToList();
         if (named.Count == 0)
             return ordered;

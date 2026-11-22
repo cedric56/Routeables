@@ -37,11 +37,11 @@ using Element = Microsoft.UI.Xaml.UIElement;
 using Picture = Microsoft.UI.Xaml.Media.ImageSource;
 #endif
 
-// Shared source for Routeables.Wpf, Routeables.Avalonia, Routeables.Uno and Routeables.WinUI3 (WPF and Avalonia define WPF or AVALONIA): the parts of a
-// dialog, drawn with plain controls. A control is a UIElement in WPF and WinUI and a Control in Avalonia, and an image is an ImageSource or an IImage
-// (the aliases Element and Picture). The spacing between parts is a margin to add in WPF and a Spacing of the panel in Avalonia and WinUI. WPF and
-// Avalonia build the card's buttons themselves; in WinUI the buttons belong to the ContentDialog (see DialogPresenter), so the card hands over
-// DialogAction records instead.
+// Shared source for Routeables.Wpf, Routeables.Avalonia, Routeables.Uno and Routeables.WinUI3 (WPF and Avalonia define WPF or AVALONIA): the
+// parts of a dialog, drawn with plain controls. A control is a UIElement in WPF and WinUI and a Control in Avalonia, and an image is an
+// ImageSource or an IImage (the aliases Element and Picture). The spacing between parts is a margin in WPF and a Spacing of the panel in
+// Avalonia and WinUI. WPF and Avalonia build the card's buttons themselves; in WinUI the buttons belong to the ContentDialog (see
+// DialogPresenter), so the card hands over DialogAction records instead.
 #if AVALONIA
 namespace Routeables.Avalonia.Services;
 #elif WPF

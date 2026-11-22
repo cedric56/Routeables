@@ -66,8 +66,8 @@ public static partial class RouteParser
             if (m.Groups["rest"].Success)
             {
                 // {**path}: keep the slashes of the value and escape each segment.
-                // As for the other placeholders, a constraint that does not exist is refused whether or not there is a value (a template that
-                // cannot be matched must not build an address for one value and be refused for another).
+                // As for other placeholders, a constraint that does not exist is refused whether or not there is a value (a template that cannot
+                // be matched must not build an address for one value and be refused for another).
                 var restType = m.Groups["type"].Value;
                 if (!IsKnownConstraint(restType))
                     throw new ArgumentException($"The constraint \"{restType}\" of {{**{m.Groups["name"].Value}}} in \"{template}\" is unknown.", nameof(template));
@@ -130,7 +130,7 @@ public static partial class RouteParser
                 foreach (var (key, value) in map) bag[key] = value;
                 break;
             case System.Collections.IDictionary map when map.GetType().IsGenericType && map.GetType().GetGenericArguments() is [var key, _] && key == typeof(string):
-                // Dictionary<string, int>, Dictionary<string, string> and so on: the generic interfaces are not covariant, so none of the cases above matches them.
+                // Dictionary<string, int>, Dictionary<string, string> and so on: the generic interfaces are not covariant, so none of the cases above matches.
                 foreach (System.Collections.DictionaryEntry entry in map) bag[(string)entry.Key] = entry.Value;
                 break;
             default:
@@ -143,7 +143,7 @@ public static partial class RouteParser
         return bag;
     }
 
-    // A decimal keeps the trailing zeros it was written with (1.5m, 1.50m and 1.0m are the same number). Write it without them, so that a number has one address.
+    // A decimal keeps the trailing zeros it was written with (1.5m, 1.50m and 1.0m are the same number). Write it without them, so a number has one address.
     private static decimal Plain(decimal value) => value / 1.0000000000000000000000000000m;
 
     private static string Format(object value, string type)

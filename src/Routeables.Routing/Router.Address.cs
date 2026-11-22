@@ -8,8 +8,8 @@ namespace Routeables.Routing;
 // Opening a page from an address: the qualifiers of the history (-, -/route), the template that serves it and its tag for diagnostics.
 internal partial class Router
 {
-    // "-/orders" left a page for a route that did not open: do not leave the user on the page before it. Only do this when nothing else
-    // moved the history meanwhile (the page that was left is still the next one), and without the caller's token, which may be why the route did not open.
+    // "-/orders" left a page for a route that did not open: do not leave the user on the page before it. Only do this when nothing else moved
+    // the history meanwhile (the page that was left is still the next one), and without the caller's token, which may be why the route did not open.
     private async Task ShowLeftAgainAsync(object? left)
     {
         if (ReferenceEquals(history.PeekForward(), left))
@@ -24,7 +24,7 @@ internal partial class Router
 
         // Qualifiers: "-" goes back one page; "-/orders" goes back, then to /orders (the new page replaces the one being left). If /orders does
         // not open, the page that was left is shown again.
-        // Checked first because they are not routes, and a back button (RouteableLink Route="-") then needs no code.
+        // Checked first because they are not routes, so a back button (RouteableLink Route="-") needs no code.
         var trimmed = url.Trim();
         if (trimmed == "-")
             return await GoBackAsync(cancellationToken);
@@ -115,8 +115,8 @@ internal partial class Router
         return RouteableResult.Fail(new InvalidOperationException($"No route matches '{url}'. Register it with an explicit route, for instance RegisterRoute<TView, TViewModel>(route: \"/orders/{{id:int}}\")." + hint));
     }
 
-    // How a route is named in telemetry: by its template, never by its address (addresses hold identifiers, and one series per address is unbounded).
-    // A route that no template names (a direct navigation, a menu entry without a template) is "(unmatched)", since the address itself would put identifiers in the tag.
+    // How a route is named in telemetry: by its template, never by its address (addresses hold identifiers, and one series per address is
+    // unbounded). A route that no template names (a direct navigation, a menu entry without a template) is "(unmatched)": the address itself would put identifiers in the tag.
     private string RouteTag(string? route)
         => string.IsNullOrWhiteSpace(route) ? string.Empty : TryTemplateOf(route, out var template) ? PathOf(template) : UnmatchedRouteTag;
 

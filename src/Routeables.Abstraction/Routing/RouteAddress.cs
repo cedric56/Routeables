@@ -162,9 +162,9 @@ internal static class RouteAddress
 
     private static string Unescape(string text)
     {
-        // An escaped slash is not a separator: "/files/a%2Fb" is one segment and "/files/a/b" is two, so the first must stay different from a "/".
-        // Unescape each piece between escaped slashes, escape its percent signs again, and join the pieces with "%2F". No two different texts
-        // give the same result ("a%2Fb" stays "a%2Fb", "a%252Fb" (the text "a%2Fb") becomes "a%252Fb", and no character stands for a slash).
+        // An escaped slash is not a separator: "/files/a%2Fb" is one segment and "/files/a/b" is two, so they must stay different.
+        // Unescape each piece between escaped slashes, escape its percent signs again and join the pieces with "%2F". No two different texts give
+        // the same result ("a%2Fb" stays "a%2Fb", "a%252Fb" (the text "a%2Fb") becomes "a%252Fb"), and no character stands for a slash.
         try
         {
             var pieces = text.Replace("%2f", "%2F").Split("%2F");

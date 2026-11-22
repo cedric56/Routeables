@@ -22,8 +22,8 @@ namespace Routeables.Uno;
 
 internal static class RouteableThread
 {
-    // Work queued on the control's thread has no caller to receive its exception: left alone, it ends the application (Avalonia, MAUI, WinUI) or is
-    // lost (WPF). It goes to the Routeables error channel instead. Work that runs immediately still throws to its caller, which can undo what it started.
+    // Work queued on the control's thread has no caller to receive its exception: left alone, it ends the application (Avalonia, MAUI, WinUI) or
+    // is lost (WPF). It goes to the Routeables error channel instead. Work that runs immediately still throws to its caller, which can undo what it started.
     private static void Deferred(Action action)
     {
         try

@@ -4,9 +4,9 @@ using Routeables.Native.Desktop;
 
 namespace Routeables.Native;
 
-// Linux, from the plain net10.0 target: org.freedesktop.Notifications on the D-Bus session bus, which every desktop environment serves (GNOME,
-// KDE, XFCE, dunst...), spoken by the small client in Desktop/DBusConnection.cs (no package). A tap on the notification (the "default" action)
-// is a tap; the user closing it, or the server expiring it, is a dismissal.
+// Linux, from the plain net10.0 target: org.freedesktop.Notifications on the D-Bus session bus, served by every desktop environment (GNOME,
+// KDE, XFCE, dunst...), through the small client in Desktop/DBusConnection.cs (no package). A tap (the "default" action) is a tap; the user
+// closing the notification, or the server expiring it, is a dismissal.
 public sealed partial class SystemNotificationCenter
 {
     private const string LinuxService = "org.freedesktop.Notifications";
@@ -46,9 +46,9 @@ public sealed partial class SystemNotificationCenter
         catch (Exception ex) when (ex is IOException or InvalidOperationException or TimeoutException or InvalidDataException) { return false; }
     }
 
-    // The connection is made once, on the thread pool, and callers wait for it outside the lock. The lock only guards the fields, so a signal or a
-    // close is never held up by a slow connection (a bus that does not answer). A failed connection is retried, but not at each call: only after
-    // LinuxRetryAfter (the session bus is not always there yet when the application starts).
+    // The connection is made once, on the thread pool, and callers wait for it outside the lock. The lock only guards the fields, so a signal or
+    // a close is never held up by a slow connection (a bus that does not answer). A failed connection is retried, but only after LinuxRetryAfter,
+    // not at each call (the session bus is not always there yet when the application starts).
     private async Task<DBusConnection?> LinuxConnectionAsync()
     {
         Task<DBusConnection?> connecting;
@@ -97,8 +97,8 @@ public sealed partial class SystemNotificationCenter
         lock (_linuxGate)
             _linuxConnection = connection;
 
-        // Only what the notification server sends (its signals have its name as sender) and changes of who has that name: the bus writes a message's
-        // sender, so a process cannot sign as the server. Otherwise any other process of the session could send ActionInvoked with an easily guessed
+        // Only what the notification server sends (its signals carry its name as sender) and changes of who owns that name. The bus writes a
+        // message's sender, so a process cannot sign as the server; otherwise any process of the session could send ActionInvoked with a guessed
         // identifier and have an action run as if the user had clicked.
         // None of them is awaited, and none waits forever: a bus that does not answer would keep an entry for each call until the connection closes.
         Forget(connection.CallAsync(BusService, BusPath, BusService, "AddMatch", "s",
@@ -187,7 +187,7 @@ public sealed partial class SystemNotificationCenter
     private const string BusService = "org.freedesktop.DBus";
     private const string BusPath = "/org/freedesktop/DBus";
 
-    // The unique name of the process that owns the notification service now, or null when there is none (yet). Read when the connection is made,
+    // The unique name of the process that owns the notification service now, or null when there is none (yet). Read when the connection is made
     // and changed by NameOwnerChanged: it cannot be asked inside a signal, which the thread that reads the replies is running.
     private string? _linuxOwner;
 
@@ -247,7 +247,7 @@ public sealed partial class SystemNotificationCenter
         if (message.Interface != LinuxService)
             return;
 
-        // From the server and from nobody else, and of the shape the specification gives: ActionInvoked(u id, s action), NotificationClosed(u id, u reason).
+        // From the server and nobody else, and in the shape the specification gives: ActionInvoked(u id, s action), NotificationClosed(u id, u reason).
         lock (_linuxGate)
         {
             if (_linuxOwner is null || message.Sender != _linuxOwner)

@@ -184,9 +184,9 @@ namespace Routeables.Generated
             return false;
         }
 
-        // ActivatorUtilities matches the given arguments to constructor parameters by type, in order. A parameter that may not receive an entry
-        // of its own (optional, from the container, or filled from the route afterwards) can swallow the value meant for another parameter of a
-        // compatible type.
+        // ActivatorUtilities matches the given arguments to constructor parameters by type, in order. A parameter that cannot receive an entry
+        // of its own (optional, from the container, or filled from the route afterwards) could swallow the value meant for another parameter of
+        // a compatible type.
         private static void WarnAboutAmbiguousMatching(
             AnalysisContext context,
             INamedTypeSymbol destination,

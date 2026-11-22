@@ -13,9 +13,9 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
     private readonly Dictionary<uint, SystemNotification> _active = [];
     private readonly object _gate = new();
     private int _lastId;
-    // The identifiers of notifications that a platform keeps after the process ends (Android, iOS, macOS, Windows) must not be those of the next
-    // launch: the high half is chosen at random for each run, and the low half counts. A tap on a notification from an earlier run then finds no
-    // notification here (it is ignored) instead of the wrong one, and a new run's notification never replaces one that is still shown.
+    // Identifiers of notifications that a platform keeps after the process ends (Android, iOS, macOS, Windows) must not collide with the next
+    // launch's: the high half is random for each run and the low half counts. A tap on a notification from an earlier run then finds nothing
+    // here and is ignored instead of hitting the wrong one, and a new notification never replaces one still shown.
     private uint _idBase = (uint)Random.Shared.Next(1, 0x8000) << 16;
     // The UI context, taken when the notifications are turned on: NotificationCompleted is raised there.
     private SynchronizationContext? _context;
@@ -187,9 +187,9 @@ public sealed partial class SystemNotificationCenter : IRouteableSystemNotificat
             IsCancelled = !activated
         };
 
-        // The platforms call back on a thread of their own (the D-Bus reader, a pool thread of the expiration). The handler goes to the UI (a
-        // navigation, a dialog) and runs there, when the UI context is known. Without one it runs where the platform called, but never on the thread
-        // that reads the D-Bus replies (see offThread).
+        // Platforms call back on a thread of their own (the D-Bus reader, a pool thread of the expiration). The handler goes to the UI (a
+        // navigation, a dialog), so it runs there when the UI context is known. Without one it runs where the platform called, but never on the
+        // thread that reads the D-Bus replies (see offThread).
         var context = _context;
         if (context is not null && SynchronizationContext.Current != context)
             context.Post(_ => Raise(args), null);

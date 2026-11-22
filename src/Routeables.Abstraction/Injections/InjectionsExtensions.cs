@@ -165,7 +165,7 @@ internal static partial class InjectionsExtensions
     /// <exception cref="InvalidCastException">The value is null or not a <typeparamref name="T"/>.</exception>
     internal static T Resolve<T>(this IList<RouteableArgument> args, int index)
     {
-        // Positions are those of the constructor arguments, as ResolveViewParameters counts them: a property entry (attribute) or an entry without a value is not one.
+        // Positions are those of the constructor arguments, as ResolveViewParameters counts them. Property entries and entries without a value do not count.
         var positional = args.Where(p => p.attribute == false && p.value is not null).ToList();
         if (index < 0 || index >= positional.Count)
             throw new ArgumentException($"Invalid index: {index}, but there are {positional.Count} argument(s).");

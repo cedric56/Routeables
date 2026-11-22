@@ -81,7 +81,7 @@ public static class RouteableNavigation
                 Open(item);
         }
 
-        // The router holds its gate while it signals, so the item is selected afterwards and does not route again (the route is already the current one).
+        // The router holds its gate while it signals, so the item is selected afterwards and does not route again (the route is already current).
         void OnChanged(object? sender, EventArgs e) => view.DispatcherQueue.TryEnqueue(() =>
         {
             // The view's router follows the items that share it; an item with a region of its own is selected by the user only.

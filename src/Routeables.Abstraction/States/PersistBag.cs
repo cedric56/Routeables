@@ -10,8 +10,8 @@ public sealed class PersistBag
 {
     private readonly IDictionary<string, string>? _write;
     private readonly IReadOnlyDictionary<string, string>? _read;
-    // Set for one Save or one Load, which go from the most derived class to its bases. The names of the classes already done are taken, so a
-    // base-class property hidden by one of them (same name, "new") neither overwrites its value nor reads it. Within one class a name can be asked for repeatedly.
+    // Set for one Save or one Load, which go from the most derived class to its bases. The classes already done are recorded, so a hidden
+    // base-class property (same name, "new") neither overwrites nor reads the value. Within one class a name may be asked for repeatedly.
     private readonly HashSet<string>? _taken;
     private readonly HashSet<string>? _current;
 

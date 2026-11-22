@@ -177,7 +177,7 @@ namespace Routeables.Generated
                 return;
             }
 
-            // A path of optional values left out, before a query: "/?q=x", as RouteParser.Build writes it (a template with no path at all stays "?q=x").
+            // A path of optional values left out, before a query, is "/?q=x", as RouteParser.Build writes it (a template with no path stays "?q=x").
             var hasPathParam = false;
             foreach (var op in m.RouteOps)
                 if (op.Kind == RouteOpKind.PathParam)
@@ -227,7 +227,7 @@ namespace Routeables.Generated
                 case ClrKind.Guid:
                     return "global::System.Uri.EscapeDataString(" + value + ".ToString())";
                 case ClrKind.Rest:
-                    // The rest of the path keeps its slashes and each piece is escaped (RouteParser.Build does the same). An empty piece, "." or ".." is rejected, as in Build.
+                    // The rest of the path keeps its slashes and each piece is escaped, as in RouteParser.Build, which also rejects an empty piece, "." and "..".
                     return "(" + value + ".Length == 0 ? \"\" : global::System.String.Join(\"/\", global::System.Linq.Enumerable.Select(" + value
                         + ".Split('/'), new global::System.Func<string, string>(__piece => __piece.Length == 0 || __piece == \".\" || __piece == \"..\""
                         + " ? throw new global::System.ArgumentException(\"A catch-all value has no empty, \\\".\\\" or \\\"..\\\" segment.\") : global::System.Uri.EscapeDataString(__piece)))))";
