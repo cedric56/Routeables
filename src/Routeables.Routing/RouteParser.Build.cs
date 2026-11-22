@@ -169,7 +169,8 @@ public static partial class RouteParser
         return ParseQuery(Split(RouteAddress.WithoutFragment(url), template: false).query);
     }
 
-    private static readonly Dictionary<string, string> NoQuery = new(StringComparer.OrdinalIgnoreCase);
+    // Shared by every match of an address without a query: nobody can change it.
+    private static readonly IReadOnlyDictionary<string, string> NoQuery = new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
 
     // One reading of a query for the whole library: see RouteAddress.ParseQuery.
     private static Dictionary<string, string> ParseQuery(string q) => RouteAddress.ParseQuery(q);

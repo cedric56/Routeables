@@ -18,6 +18,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- A route registered at run time with a template that can never match (a catch-all or an optional placeholder that is not last, a name used twice) is named in the "No route matches" message; it was a silent 404 (only the source generator refused such a template, at build time).
+- The query shared by every match of an address without one is read-only; it was a mutable static dictionary that a later change could have corrupted.
 - Blazor `RouteableUrlSync` under a base path (`<base href="/app/">`): the test that a location is inside the application ignored the case, while `NavigationManager.ToBaseRelativePath` does not (it throws for `/App/orders`), so such a location passed the test and then threw from `OnLocationChanging`. The location is now outside, as Blazor itself reads it.
 - A lone `}` in a template (`n/x}/{id}?{tab?}`) no longer hides its query from the parser and the generator.
 - ASP.NET Core `<routeable-menu>`: with entries `/settings`, `/settings/profile` and `/settings/security`, the page `/settings/profile` marked all three (the first segment matched). The entry whose address starts the current one with the most segments is marked; and the fragment of an entry's address (`/about#team`) is no longer part of its path, which kept that entry from ever being active.

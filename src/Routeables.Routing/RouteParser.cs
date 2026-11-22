@@ -134,12 +134,8 @@ public static partial class RouteParser
         var tSegs = parsed.Segments;
         var uSegs = uPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
         var restAt = parsed.RestAt;
-        if (restAt >= 0 && restAt != tSegs.Length - 1)
-            return reasons ? $"the catch-all placeholder {tSegs[restAt]} must be the last segment of the template" : NoReason;
-        if (parsed.OptionalNotLast is { } notLast)
-            return reasons ? $"the optional placeholder {notLast} must be the last segment of the template" : NoReason;
-        if (parsed.DuplicateName is { } twice)
-            return reasons ? $"the name {twice} is used twice in the template (path and query, or twice in one of them)" : NoReason;
+        if (Flaw(parsed) is { } flaw)
+            return reasons ? flaw : NoReason;
         if (restAt < 0 && uSegs.Length > tSegs.Length)
             return reasons ? $"the route has {uSegs.Length} segment(s), the template only {tSegs.Length} (unexpected \"{uSegs[tSegs.Length]}\")" : NoReason;
 
@@ -183,7 +179,7 @@ public static partial class RouteParser
         }
 
         // --- query ---
-        var query = uQuery.Length == 0 ? NoQuery : ParseQuery(uQuery); // only read below
+        IReadOnlyDictionary<string, string> query = uQuery.Length == 0 ? NoQuery : ParseQuery(uQuery); // only read below
         for (var q = 0; q < parsed.QueryParts.Length; q++)
         {
             var part = parsed.QueryParts[q];
@@ -342,6 +338,21 @@ public static partial class RouteParser
         var at = RouteAddress.TemplateQueryStart(s);
         return at < 0 ? (s, "") : (s[..at], s[(at + 1)..]);
     }
+
+    // What makes a template unable to match any address: a catch-all or an optional placeholder that is not last, a name used twice.
+    private static string? Flaw(ParsedTemplate parsed)
+    {
+        if (parsed.RestAt >= 0 && parsed.RestAt != parsed.Segments.Length - 1)
+            return $"the catch-all placeholder {parsed.Segments[parsed.RestAt]} must be the last segment of the template";
+        if (parsed.OptionalNotLast is { } notLast)
+            return $"the optional placeholder {notLast} must be the last segment of the template";
+        if (parsed.DuplicateName is { } twice)
+            return $"the name {twice} is used twice in the template (path and query, or twice in one of them)";
+        return null;
+    }
+
+    /// <summary>Why a template can never match (see <see cref="Mismatch"/>), or <see langword="null"/> when it is fine. The source generator reports the same flaws at build time (ROUT104...); a route registered at run time has no other check.</summary>
+    internal static string? FlawOf(string template) => Flaw(ParseTemplate(template));
 
     /// <summary>
     /// A piece of a template that looks like a placeholder and is not one (<c>{id?:int}</c> for <c>{id:int?}</c>, <c>q={q}</c> for <c>{q}</c> in a query), which the

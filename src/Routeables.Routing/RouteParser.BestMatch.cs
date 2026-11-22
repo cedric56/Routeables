@@ -74,7 +74,7 @@ public static partial class RouteParser
 
         uri = RouteAddress.WithoutFragment(uri);
         var (_, uQuery) = Split(uri, template: false);
-        var query = uQuery.Length == 0 ? NoQuery : ParseQuery(uQuery);
+        IReadOnlyDictionary<string, string> query = uQuery.Length == 0 ? NoQuery : ParseQuery(uQuery);
         var score = 0;
         for (var q = 0; q < parsed.QueryParts.Length; q++)
         {

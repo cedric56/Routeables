@@ -112,6 +112,10 @@ internal partial class Router
         if (entries.Select(e => (e.Template, Piece: RouteParser.LooksLikeAPlaceholder(e.Template))).FirstOrDefault(e => e.Piece is not null) is { Piece: { } piece } suspect)
             hint += $" The registered template '{suspect.Template}' has '{piece}', which is read as fixed text: a placeholder is written {{name}}, {{name:type}} or {{name:type?}} (optional), and in a query {{name}} on its own, not name={{name}}.";
 
+        // A template that can never match is another likely reason: the generator refuses it at build time, a route registered at run time is not checked.
+        if (entries.Select(e => (e.Template, Flaw: RouteParser.FlawOf(e.Template))).FirstOrDefault(e => e.Flaw is not null) is { Flaw: { } flaw } broken)
+            hint += $" The registered template '{broken.Template}' can never match: {flaw}.";
+
         return RouteableResult.Fail(new InvalidOperationException($"No route matches '{url}'. Register it with an explicit route, for instance RegisterRoute<TView, TViewModel>(route: \"/orders/{{id:int}}\")." + hint));
     }
 

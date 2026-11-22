@@ -716,4 +716,15 @@ public class RouteParserTests
 
         Assert.True(RouteParser.TryMatch("n/x}/{id}?{tab?}", "n/x}/5?tab=2", args));
     }
+
+    [Theory]
+    [InlineData("files/{**path}/x", "catch-all")]
+    [InlineData("cat/{age?}/{nick}", "optional")]
+    [InlineData("a/{id}?{id}", "used twice")]
+    public void A_template_that_can_never_match_says_why(string template, string reason)
+        => Assert.Contains(reason, RouteParser.FlawOf(template));
+
+    [Fact]
+    public void A_sound_template_has_no_flaw()
+        => Assert.Null(RouteParser.FlawOf("cat/{age?}"));
 }
