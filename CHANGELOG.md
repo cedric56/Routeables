@@ -18,6 +18,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **Blazor: a jump of several entries in the browser (a long press on Back, `history.go(-2)`) added a page to the router** instead of going to the entry. The state of the browser entry names the router entry, so the router now moves to it (`MoveToAsync`). An entry that carries no state of this application is still looked up by its address.
 - **A call by view model type could throw instead of returning a failed result**: `GoToAsync<TViewModel>(values)` caught three kinds of exception while building the address; a property that throws or a serializer that throws `InvalidOperationException` came out as an exception. Any error but a cancellation is now a failed `RouteableResult`.
 - **Values that name the same value twice (`id` and `ID`, names ignore the case) with different contents** were resolved by the last one without a word; they are now refused with a message.
 - **Blazor: the identifiers written in the history state could be taken for the ones of an earlier run.** A reload keeps `history.state` while the counter starts again, so an old browser entry could name a new router entry. The identifiers now carry a name of the run. An address put back after a refused or failed route change, or replaced because the browser could not be moved, keeps the identifier of its entry.

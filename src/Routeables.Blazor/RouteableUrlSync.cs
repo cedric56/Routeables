@@ -372,6 +372,13 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             result = await router.ForwardAsync(cancellationToken);
             Moved(result);
         }
+        else if (named >= 0 && named != index)
+        {
+            // A jump of several entries (a long press on Back, history.go(-2)): the state names the entry, so the router goes there too
+            // instead of adding a page.
+            result = await router.MoveToAsync(named, cancellationToken);
+            Moved(result);
+        }
         else if (provider.GetService<IRouteableMenuViewModel>() is { } menuViewModel
                  && menuViewModel.Entries.FirstOrDefault(r => SameAddress(r.Route, path)) is { } item)
         {

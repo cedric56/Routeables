@@ -227,6 +227,23 @@ public class RouteableUrlSyncHistoryTests
     }
 
     [Fact]
+    public async Task A_jump_of_several_entries_in_the_browser_moves_the_router_to_that_entry()
+    {
+        using var f = new Fixture();
+        await f.Sync.StartAsync();
+        await f.GoAsync("/detail/1", "/detail/{id:int}");
+        await f.GoAsync("/detail/2", "/detail/{id:int}");
+        await f.GoAsync("/named/a", "/named/{name}");
+        var entries = f.Router.History.Entries.Count;
+
+        f.Navigation.Go(-2);                                    // a long press on Back: two entries at once
+        await Fixture.Until(() => f.Router.CurrentViewModel is DetailVm { Id: 1 });
+
+        Assert.Equal(entries, f.Router.History.Entries.Count);  // the router moved, it did not add a page
+        Assert.Equal(f.Navigation.Index, f.Router.History.Capture().CurrentIndex);
+    }
+
+    [Fact]
     public async Task A_link_the_user_clicked_gets_a_state_so_that_its_entry_can_be_told_apart()
     {
         using var f = new Fixture();
