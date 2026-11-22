@@ -17,7 +17,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
-- **A generated `GoTo…Async` method no longer writes an address that reads back as another value** (`Routeables.Generated`): for `cat/{age?}/{nick?}`, giving a nick without an age wrote `/cat/Tom`, which the router reads as the age. `RouteParser.Build` refused this; the generated code now refuses it too (`ArgumentException`). An empty optional text counts as no value, as in `RouteParser.Build`: it no longer writes `/cat//Tom` or `?q=`.
+- **A generated `GoTo…Async` method no longer writes an empty optional text into the address** (`Routeables.Generated`): an empty text counts as no value, as in `RouteParser.Build`, so `?q=` is no longer written for it.
 - **Blazor: the address bar could be set again from a history that changed while it was read** (`RouteableUrlSync`): the entry before and the entry after the current one were read with separate calls, so a route change that ran between them (the restore of the history) could point outside the list. They are now read once, together.
 - **`RouteableHistoryKeeper` disposed while it starts or restores**: a `Dispose` that ran between the start of the restore and its end could be undone (the keeper became active again and could write), and a `Dispose` that ran before `Start` had subscribed left the subscriptions in place. Both are closed.
 - **D-Bus (`Routeables.Native`)**: a signature of more than 255 characters is refused instead of written with a wrong length, and the serial of a message never takes the value 0 (not allowed by the specification) after the counter wraps.

@@ -163,27 +163,11 @@ namespace Routeables.Generated
             Flush();
             sb.AppendLine(indent + "var __route = " + (expressions.Count == 0 ? "\"\"" : string.Join(" + ", expressions)) + ";");
 
-            // cat/{age?}/{nick?} with a nick but no age: the nick would be read as the age (RouteParser.Build refuses it too).
-            if (deferred.Count > 1)
-                sb.AppendLine(indent + "string? __skipped = null;");
-            for (var i = 0; i < deferred.Count; i++)
+            // An optional placeholder is the last segment of the path (ROUT104), so there is no later value to be read in its place.
+            foreach (var op in deferred)
             {
-                var op = deferred[i];
                 var statement = "__route += " + Literal(op.Prefix) + " + " + Format(op.Clr, ValueOf(op), path: true) + ";";
-                var name = Literal("{" + op.ParamId.TrimStart('@') + "?}");
-                if (i == 0)
-                {
-                    sb.AppendLine(indent + (op.Conditional ? "if (" + HasValue(op) + ") " : string.Empty) + statement);
-                    if (op.Conditional && deferred.Count > 1)
-                        sb.AppendLine(indent + "else __skipped = " + name + ";");
-                    continue;
-                }
-
-                var guard = "if (__skipped is not null) throw new global::System.ArgumentException(" + Literal("The route " + m.Template + " cannot leave out a value and give a later one: give both, or neither.")
-                    + ", nameof(" + op.ParamId + "));";
-                sb.AppendLine(indent + (op.Conditional ? "if (" + HasValue(op) + ") " : string.Empty) + "{ " + guard + " " + statement + " }");
-                if (op.Conditional && i < deferred.Count - 1)
-                    sb.AppendLine(indent + "else __skipped ??= " + name + ";");
+                sb.AppendLine(indent + (op.Conditional ? "if (" + HasValue(op) + ") " : string.Empty) + statement);
             }
 
             if (queryOps.Count == 0)
