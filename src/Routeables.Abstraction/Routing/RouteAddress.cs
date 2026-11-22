@@ -130,20 +130,26 @@ internal static class RouteAddress
 
     private static bool SameQuery(string? a, string? b)
     {
-        // "?x=1&y=2" is "?y=2&x=1": sort the pairs by name (the sort is stable, so the values of a repeated name keep their order).
-        var pairsA = (a ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries).OrderBy(p => UnescapeQuery(SplitPair(p).Name), StringComparer.OrdinalIgnoreCase).ToArray();
-        var pairsB = (b ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries).OrderBy(p => UnescapeQuery(SplitPair(p).Name), StringComparer.OrdinalIgnoreCase).ToArray();
-        if (pairsA.Length != pairsB.Length)
+        // "?x=1&y=2" is "?y=2&x=1". A name given twice counts once, with its last value, as the parser reads it (RouteParser.ParseQuery): "?a=1&a=2" is "?a=2".
+        var valuesA = Values(a);
+        var valuesB = Values(b);
+        if (valuesA.Count != valuesB.Count)
             return false;
-        for (var i = 0; i < pairsA.Length; i++)
-        {
-            var (nameA, valueA) = SplitPair(pairsA[i]);
-            var (nameB, valueB) = SplitPair(pairsB[i]);
-            if (!string.Equals(UnescapeQuery(nameA), UnescapeQuery(nameB), StringComparison.OrdinalIgnoreCase)
-                || !string.Equals(UnescapeQuery(valueA), UnescapeQuery(valueB), StringComparison.Ordinal))
+        foreach (var (name, valueA) in valuesA)
+            if (!valuesB.TryGetValue(name, out var valueB) || !string.Equals(valueA, valueB, StringComparison.Ordinal))
                 return false;
-        }
         return true;
+    }
+
+    private static Dictionary<string, string> Values(string? query)
+    {
+        var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var pair in (query ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var (name, value) = SplitPair(pair);
+            values[UnescapeQuery(name)] = UnescapeQuery(value);
+        }
+        return values;
     }
 
     private static (string Name, string Value) SplitPair(string pair)

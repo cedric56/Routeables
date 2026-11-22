@@ -1,6 +1,5 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.Extensions.DependencyInjection
-@using Routeables.Abstraction
 @using Routeables.Abstraction.Errors
 @using Routeables.Abstraction.Routing
 @inject IServiceProvider Provider
@@ -46,8 +45,13 @@
     // A plain link (no region, arguments or template) while the address is followed is left to Blazor: it ignores Ctrl/Cmd-click and the
     // like, which then open a new tab, and routes the other clicks through the router. The click handler cannot tell them apart:
     // preventDefault is fixed when the component renders.
+    // "-" and "-/orders" are not addresses: they go back (then to /orders). Blazor would follow them as "./-", which no route matches.
+    private bool IsBack => IsBackRoute(Route);
+
+    internal static bool IsBackRoute(string route) => route.Trim() is "-" || route.TrimStart().StartsWith("-/", StringComparison.Ordinal);
+
     private bool Intercept =>
-        !(Region is null && Args is null && Template is null && Provider.GetService<RouteableUrlSync>() is { IsFollowing: true })
+        !(Region is null && Args is null && Template is null && !IsBack && Provider.GetService<RouteableUrlSync>() is { IsFollowing: true })
         && (AdditionalAttributes is null
         || !AdditionalAttributes.TryGetValue("target", out var target)
         || target is null

@@ -223,4 +223,12 @@ public class RouteAddressTests
         Assert.True(RouteAddress.Same("/a?b=2&z=1", "/a?%7a=1&b=2"));
         Assert.False(RouteAddress.Same("/a?%7A=1&b=2", "/a?z=2&b=2"));
     }
+
+    [Fact]
+    public void A_query_name_given_twice_counts_once_with_its_last_value_as_the_parser_reads_it()
+    {
+        Assert.True(RouteAddress.Same("/p?a=1&a=2", "/p?a=2"));
+        Assert.True(RouteAddress.Same("/p?A=1&a=2&b=3", "/p?b=3&a=2"));
+        Assert.False(RouteAddress.Same("/p?a=2&a=1", "/p?a=2"));
+    }
 }

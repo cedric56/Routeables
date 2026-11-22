@@ -98,4 +98,12 @@ public class RouteableLinkTests
 
         Assert.Contains($"href=\"{expected}\"", html);
     }
+
+    [Theory]
+    [InlineData("-", true)]
+    [InlineData(" -/orders", true)]
+    [InlineData("/orders", false)]
+    [InlineData("-orders", false)]
+    public void A_back_route_is_told_from_an_address(string route, bool back)
+        => Assert.Equal(back, RouteableLink.IsBackRoute(route));
 }
