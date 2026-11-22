@@ -51,6 +51,9 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     // Each router entry has a state that its browser entry keeps (history.state): an address can be in the history twice ([home, detail, home]), the
     // state cannot, so the Back and the Forward of the browser are told apart by it. The entries are those of the router, kept while it keeps them.
     private const string StatePrefix = "routeables:";
+    // The state outlives the page (a reload keeps history.state) while the counter starts again: the states of this run carry a name of their own,
+    // so that an entry left by a previous run is never taken for one of the router's.
+    private static readonly string Run = Guid.NewGuid().ToString("N")[..8];
     private static long _lastState;
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<IHistoryEntry, string> _states = new();
 
@@ -136,7 +139,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         {
             var delta = e.Kind == RouteableKind.Forward ? 1 : -1;
             Track(e.Kind);
-            _ = GoInBrowserAsync(js, delta, address!, replace: true);
+            _ = GoInBrowserAsync(js, delta, address!, replace: true, StateOf(e.To));
             return;
         }
 
@@ -151,7 +154,10 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
     // The state of a router entry, given the first time it is asked for.
     private string StateOf(IHistoryEntry entry)
-        => _states.GetValue(entry, static _ => StatePrefix + Interlocked.Increment(ref _lastState).ToString(System.Globalization.CultureInfo.InvariantCulture));
+        => _states.GetValue(entry, static _ => StatePrefix + Run + ":" + Interlocked.Increment(ref _lastState).ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+    // The state of the entry the router shows: an address put back must keep it, or that browser entry could no longer be named.
+    private string? StateOfCurrent() => router.History.Current is { } current ? StateOf(current) : null;
 
     // The router entry a browser state names, among the ones given: -1 when the state is not one of this application, or names none of them.
     private int IndexOfState(string? state, IReadOnlyList<IHistoryEntry> entries)
@@ -230,7 +236,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     }
 
     // history.go(delta); when the browser cannot be reached (prerendering, no script), replace the address instead.
-    private async Task GoInBrowserAsync(IJSRuntime js, int delta, string address, bool replace)
+    private async Task GoInBrowserAsync(IJSRuntime js, int delta, string address, bool replace, string state)
     {
         try
         {
@@ -242,7 +248,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         {
             _history = null;
             _back = _forward = 0;
-            Show(address, replace);
+            Show(address, replace, state);
         }
     }
 
@@ -318,7 +324,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             try
             {
                 if (AddressOf(router.History.Current) is { } current)
-                    Show(current, replace: true);
+                    Show(current, replace: true, StateOfCurrent());
             }
             catch (Exception again)
             {
@@ -374,7 +380,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             if (await menuViewModel.SelectEntryAsync(item, cancellationToken))
                 return Outcome.Done;
             if (restore && AddressOf(history.Current) is { } shownNow)
-                Show(shownNow, replace: true);
+                Show(shownNow, replace: true, StateOfCurrent());
             return Outcome.Refused;
         }
         else if ((template = RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], path).Template) is not null
@@ -410,7 +416,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
         // Refused or failed: the address must not keep showing a page that is not displayed.
         if (restore && AddressOf(history.Current) is { } current)
-            Show(current, replace: true);
+            Show(current, replace: true, StateOfCurrent());
         return Outcome.Refused;
     }
 

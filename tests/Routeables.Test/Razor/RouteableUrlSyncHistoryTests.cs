@@ -71,6 +71,7 @@ public class RouteableUrlSyncHistoryTests
         }
 
         public int Index => _at;
+        public string? StateHere => _states[_at];
 
         private async Task<bool> MoveAsync(string route, bool intercepted)
         {
@@ -484,6 +485,21 @@ public class RouteableUrlSyncHistoryTests
 
         Assert.Empty(f.Scripts.Moves);
         Assert.Equal(("/detail/1", true), f.Navigation.Calls.Last());          // replaced, not history.go
+    }
+
+    [Fact]
+    public async Task When_the_browser_cannot_be_moved_the_address_put_back_keeps_the_state_of_its_entry()
+    {
+        using var f = new Fixture();
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+        await f.GoAsync("/detail/1", "/detail/{id:int}");
+        f.Scripts.Broken = true;                                // history.go cannot be reached: the address is replaced instead
+
+        await f.Router.GoBackAsync(TestContext.Current.CancellationToken);
+        await Fixture.Until(() => f.Navigation.Calls.Count > 0 && f.Navigation.Calls[^1] == ("/home", true));
+
+        Assert.StartsWith("routeables:", f.Navigation.StateHere);
     }
 
     [Fact]

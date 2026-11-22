@@ -8,13 +8,6 @@ namespace Routeables.Routing;
 // The other direction: an address written from a template and values, and the query of an address.
 public static partial class RouteParser
 {
-    /// <summary>
-    /// Writes the route a template stands for: the placeholders are filled from <paramref name="values"/> (an object's properties or a
-    /// dictionary of name to value; names are not case-sensitive). Numbers and dates are written with the invariant culture, a
-    /// registered type (<c>{person:Person}</c>) as JSON, and each value is escaped. A missing optional value leaves its segment (or its
-    /// query entry) out.
-    /// </summary>
-    /// <exception cref="ArgumentException">A required value is missing, or a constraint is unknown.</exception>
     /// <summary>How many of the placeholders of <paramref name="template"/> get a value from <paramref name="values"/> (an optional one left out does not count).</summary>
     internal static int UsedBy(string template, object? values)
     {
@@ -24,6 +17,13 @@ public static partial class RouteParser
             .Count(m => m.Success && bag.TryGetValue(m.Groups["name"].Value, out var value) && value is not null && value is not string { Length: 0 });
     }
 
+    /// <summary>
+    /// Writes the route a template stands for: the placeholders are filled from <paramref name="values"/> (an object's properties or a
+    /// dictionary of name to value; names are not case-sensitive). Numbers and dates are written with the invariant culture, a
+    /// registered type (<c>{person:Person}</c>) as JSON, and each value is escaped. A missing optional value leaves its segment (or its
+    /// query entry) out.
+    /// </summary>
+    /// <exception cref="ArgumentException">A required value is missing, or a constraint is unknown.</exception>
     internal static string Build(string template, object? values)
     {
         ArgumentNullException.ThrowIfNull(template);
