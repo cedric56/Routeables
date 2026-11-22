@@ -123,8 +123,7 @@ public static partial class RouteParser
                 StringComparer.OrdinalIgnoreCase);
 
         // The fragment is for the browser, never for the route: "/orders/42#top" is "/orders/42".
-        if (uri.IndexOf('#') is var hash and >= 0)
-            uri = uri[..hash];
+        uri = RouteAddress.WithoutFragment(uri);
 
         var parsed = ParseTemplate(template);
         var (uPath, uQuery) = Split(uri, template: false);
@@ -336,8 +335,8 @@ public static partial class RouteParser
         if (!template)
         {
             // The rule of RouteAddress, so that the parser and the comparison of addresses cut an address at the same place.
-            var at = RouteAddress.QueryStart(s);
-            return at < 0 ? (s, "") : (s[..at], s[(at + 1)..]);
+            var (path, query) = RouteAddress.SplitQuery(s);
+            return (path, query ?? "");
         }
 
         var depth = 0;

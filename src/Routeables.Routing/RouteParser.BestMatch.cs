@@ -72,8 +72,7 @@ public static partial class RouteParser
         if (parsed.QueryParts.Length == 0)
             return 0;
 
-        if (uri.IndexOf('#') is var hash and >= 0)
-            uri = uri[..hash];
+        uri = RouteAddress.WithoutFragment(uri);
         var (_, uQuery) = Split(uri, template: false);
         var query = uQuery.Length == 0 ? NoQuery : ParseQuery(uQuery);
         var score = 0;

@@ -159,12 +159,8 @@ public static class RouteableState
 
     private static void CaptureValues(IRouteableArgs args, string route, Dictionary<string, string> into)
     {
-        var inAddress = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        if (route.IndexOf('?') is var at and >= 0)
-        {
-            foreach (var pair in route[(at + 1)..].Split('&', StringSplitOptions.RemoveEmptyEntries))
-                inAddress.Add(Uri.UnescapeDataString(pair.Split('=', 2)[0].Replace('+', ' '))); // in a query, + is a space
-        }
+        // The names the query of the address already brings, read as every reader of an address reads them.
+        var inAddress = RouteAddress.ParseQuery(RouteAddress.SplitQuery(RouteAddress.WithoutFragment(route)).Query).Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         foreach (var (value, name, _) in args.Values)
         {

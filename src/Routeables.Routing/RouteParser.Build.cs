@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using Routeables.Abstraction.Routing;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -165,29 +166,18 @@ public static partial class RouteParser
     /// <summary>The query of an address as name and value (the fragment is left out): the values a page that has no template receives.</summary>
     internal static IReadOnlyDictionary<string, string> QueryOf(string url)
     {
-        if (url.IndexOf('#') is var hash and >= 0)
-            url = url[..hash];
-        return ParseQuery(Split(url, template: false).query);
+        return ParseQuery(Split(RouteAddress.WithoutFragment(url), template: false).query);
     }
 
     private static readonly Dictionary<string, string> NoQuery = new(StringComparer.OrdinalIgnoreCase);
 
-    private static Dictionary<string, string> ParseQuery(string q)
-    {
-        var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var pair in q.Split('&', StringSplitOptions.RemoveEmptyEntries))
-        {
-            var p = pair.Split('=', 2);
-            result[DecodeQuery(p[0])] =
-                p.Length > 1 ? DecodeQuery(p[1]) : ""; // the last value wins on duplicates
-        }
-        return result;
-    }
+    // One reading of a query for the whole library: see RouteAddress.ParseQuery.
+    private static Dictionary<string, string> ParseQuery(string q) => RouteAddress.ParseQuery(q);
 
     /// <summary>
     /// A name or a value of a query string: <c>+</c> is a space and <c>%XX</c> is a character, as ASP.NET Core and Blazor read it (a form sent with
     /// GET writes a space as <c>+</c>). A real plus is <c>%2B</c>, which is what <see cref="Uri.EscapeDataString(string)"/> writes. A path segment is
     /// not a query: <c>+</c> stays a plus there.
     /// </summary>
-    internal static string DecodeQuery(string text) => Uri.UnescapeDataString(text.Replace('+', ' '));
+    internal static string DecodeQuery(string text) => RouteAddress.DecodeQuery(text);
 }

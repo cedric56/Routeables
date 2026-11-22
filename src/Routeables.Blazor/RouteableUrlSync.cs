@@ -382,9 +382,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
     private string Relative(string uri)
     {
-        var path = "/" + navigation.ToBaseRelativePath(uri);
-        var hash = path.IndexOf('#');
-        return hash < 0 ? path : path[..hash];
+        return RouteAddress.WithoutFragment("/" + navigation.ToBaseRelativePath(uri));
     }
 
     // An entry's address: its route when the route is registered, "/" for a page that has no route of its own.

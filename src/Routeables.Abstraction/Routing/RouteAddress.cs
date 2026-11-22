@@ -55,7 +55,9 @@ internal static class RouteAddress
     }
 
     // The fragment is for the browser, never for the route: "/about#top" is "/about", as the parser reads it.
-    private static string WithoutFragment(string address) => address.IndexOf('#') is var hash and >= 0 ? address[..hash] : address;
+    /// <summary>The address without its fragment (<c>#top</c>), which is for the browser and never part of a route.</summary>
+    /// <param name="address">The route or address.</param>
+    internal static string WithoutFragment(string address) => address.IndexOf('#') is var hash and >= 0 ? address[..hash] : address;
 
     /// <summary>Whether two routes or templates have the same path, whatever their queries (the case, the slashes around the path and its empty segments do not count, and an escaped path is the one written plainly).</summary>
     /// <param name="a">The first route.</param>
@@ -125,7 +127,9 @@ internal static class RouteAddress
         return segments.Length == 0 ? string.Empty : "/" + string.Join('/', segments);
     }
 
-    private static (string Path, string? Query) SplitQuery(string address)
+    /// <summary>An address cut into its path and its query (<see langword="null"/> when it has none), at the question mark <see cref="QueryStart"/> finds. The fragment is not removed here.</summary>
+    /// <param name="address">The route or address.</param>
+    internal static (string Path, string? Query) SplitQuery(string address)
     {
         var at = QueryStart(address);
         return at < 0 ? (address, null) : (address[..at], address[(at + 1)..]);
@@ -133,9 +137,9 @@ internal static class RouteAddress
 
     private static bool SameQuery(string? a, string? b)
     {
-        // "?x=1&y=2" is "?y=2&x=1". A name given twice counts once, with its last value, as the parser reads it (RouteParser.ParseQuery): "?a=1&a=2" is "?a=2".
-        var valuesA = Values(a);
-        var valuesB = Values(b);
+        // "?x=1&y=2" is "?y=2&x=1", and a name given twice counts once with its last value: the parser reads the query with ParseQuery too.
+        var valuesA = ParseQuery(a);
+        var valuesB = ParseQuery(b);
         if (valuesA.Count != valuesB.Count)
             return false;
         foreach (var (name, valueA) in valuesA)
@@ -144,13 +148,18 @@ internal static class RouteAddress
         return true;
     }
 
-    private static Dictionary<string, string> Values(string? query)
+    /// <summary>
+    /// The query of an address as name and value, the way every reader of an address reads it (the parser, the comparison, the state of the pages):
+    /// names ignore the case, the last value of a name given twice wins, a name without <c>=</c> has an empty value, empty pairs are skipped.
+    /// </summary>
+    /// <param name="query">The query, without its question mark.</param>
+    internal static Dictionary<string, string> ParseQuery(string? query)
     {
         var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         foreach (var pair in (query ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries))
         {
             var (name, value) = SplitPair(pair);
-            values[UnescapeQuery(name)] = UnescapeQuery(value);
+            values[DecodeQuery(name)] = DecodeQuery(value);
         }
         return values;
     }
@@ -162,8 +171,8 @@ internal static class RouteAddress
     }
 
     // In a query a plus is a space, as the parser reads it: "?q=a+b" and "?q=a%20b" are one address ("%2B" stays a plus).
-    // A slash is not a separator in a query: "?dir=a/b" and "?dir=a%2Fb" are one address, as the parser reads them (RouteParser.DecodeQuery).
-    private static string UnescapeQuery(string text)
+    // A slash is not a separator in a query: "?dir=a/b" and "?dir=a%2Fb" are one address, and so is a plus that is a space ("%2B" stays a plus).
+    internal static string DecodeQuery(string text)
     {
         try { return Uri.UnescapeDataString(text.Replace('+', ' ')); }
         catch (UriFormatException) { return text; }

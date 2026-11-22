@@ -122,9 +122,9 @@ public sealed record RouteCoordination(IReadOnlyList<RouteSegment> Segments, boo
         {
             var eq = part.IndexOf('=');
             // A plus is a space in a query, as the router reads it ("%2B" is a plus, which is what ToString writes).
-            var key = Uri.UnescapeDataString((eq < 0 ? part : part[..eq]).Replace('+', ' '));
+            var key = RouteAddress.DecodeQuery(eq < 0 ? part : part[..eq]);
             if (key.Length == 0) continue;
-            object? value = eq < 0 ? null : Uri.UnescapeDataString(part[(eq + 1)..].Replace('+', ' '));
+            object? value = eq < 0 ? null : RouteAddress.DecodeQuery(part[(eq + 1)..]);
             result.Add(new(key, value));
         }
         return result;

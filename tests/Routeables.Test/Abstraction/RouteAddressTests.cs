@@ -253,4 +253,30 @@ public class RouteAddressTests
         Assert.Equal(200_000 + 2, path.Length);
         Assert.True(watch.Elapsed < TimeSpan.FromSeconds(2));
     }
+
+    [Fact]
+    public void The_query_is_read_the_same_way_by_every_reader_of_an_address()
+    {
+        var query = RouteAddress.ParseQuery("A=1&a=2&flag&q=a+b&r=a%2Bb&&d=a%2Fb");
+
+        Assert.Equal("2", query["a"]);
+        Assert.Equal(string.Empty, query["flag"]);
+        Assert.Equal("a b", query["q"]);
+        Assert.Equal("a+b", query["r"]);
+        Assert.Equal("a/b", query["d"]);
+        Assert.Equal(5, query.Count);
+    }
+
+    [Theory]
+    [InlineData("/search?mode=grid&mode=table&q=a+b#top")]
+    [InlineData("/notes/a{b?tab=x}")]
+    [InlineData("/p?x=%E0%A4%A")]
+    [InlineData("/p")]
+    public void The_parser_and_the_comparison_read_the_same_query(string address)
+    {
+        var fromParser = Routeables.Routing.RouteParser.QueryOf(address);
+        var fromAddress = RouteAddress.ParseQuery(RouteAddress.SplitQuery(RouteAddress.WithoutFragment(address)).Query);
+
+        Assert.Equal(fromAddress.OrderBy(p => p.Key), fromParser.OrderBy(p => p.Key));
+    }
 }
