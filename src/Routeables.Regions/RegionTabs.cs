@@ -145,15 +145,24 @@ public sealed class RegionTabs<TTab> where TTab : class
         }
 
         if (_selected() is { } selected && _owned.Contains(selected) && _routeOf(selected) is { } route)
-            _ = RouteTarget.GoAsync(_provider, _router, route, _owner);
+            _ = GoOrReselectAsync(route);
     }
 
-    // The router holds its gate while it signals, so the tab is selected afterwards and does not route again (the route is already current).
-    private void OnHistoryChanged(object? sender, EventArgs e) => _post(() =>
+    // A guard or a page that cannot be left refuses the route: the history does not change, so nothing else would bring the tab back.
+    private async Task GoOrReselectAsync(string route)
+    {
+        if (!await RouteTarget.GoAsync(_provider, _router, route, _owner))
+            _post(Reselect);
+    }
+
+    private void Reselect()
     {
         if (_disposed) return;
         var tab = _owned.FirstOrDefault(tab => RouteTarget.IsCurrent(_router, _routeOf(tab)));
         if (tab is not null && !ReferenceEquals(tab, _selected()))
             _select(tab);
-    });
+    }
+
+    // The router holds its gate while it signals, so the tab is selected afterwards and does not route again (the route is already current).
+    private void OnHistoryChanged(object? sender, EventArgs e) => _post(Reselect);
 }

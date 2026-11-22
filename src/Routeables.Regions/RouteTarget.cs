@@ -24,16 +24,22 @@ internal static class RouteTarget
     /// <param name="router">The router to route.</param>
     /// <param name="route">The route of the entry the user chose.</param>
     /// <param name="owner">The type that asks, named in the report.</param>
-    internal static async Task GoAsync(IServiceProvider provider, IRouter router, string route, Type owner)
+    /// <returns><see langword="true"/> when the router shows the route afterwards; <see langword="false"/> when a guard or a page that cannot be left
+    /// refused it, or when it failed: the control then shows an entry the router does not, and has to select the one it shows.</returns>
+    internal static async Task<bool> GoAsync(IServiceProvider provider, IRouter router, string route, Type owner)
     {
         try
         {
-            if (!IsCurrent(router, route))
-                await router.GoToAsync(RouteAddress.Absolute(route));
+            if (IsCurrent(router, route))
+                return true;
+
+            var result = await router.GoToAsync(RouteAddress.Absolute(route));
+            return result is null || result.Success;
         }
         catch (Exception ex)
         {
             RouteableErrors.Report(provider, ex, owner, route);
+            return false;
         }
     }
 }

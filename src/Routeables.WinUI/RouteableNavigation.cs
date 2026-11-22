@@ -56,7 +56,7 @@ public static class RouteableNavigation
             if (RouteableItem.GetRegion(item) is not { Length: > 0 } own)
             {
                 view.Content = shared;
-                _ = RouteTarget.GoAsync(provider, router, route, typeof(RouteableNavigation));
+                _ = OpenShared(route);
                 return;
             }
 
@@ -75,6 +75,21 @@ public static class RouteableNavigation
             }
         }
 
+        // A guard or a page that cannot be left refuses the route: the history does not change, so the item shown has to be selected back.
+        async Task OpenShared(string route)
+        {
+            if (!await RouteTarget.GoAsync(provider, router, route, typeof(RouteableNavigation)))
+                view.DispatcherQueue.TryEnqueue(SelectCurrent);
+        }
+
+        void SelectCurrent()
+        {
+            // The view's router follows the items that share it; an item with a region of its own is selected by the user only.
+            var item = items.FirstOrDefault(item => RouteableItem.GetRegion(item) is not { Length: > 0 } && RouteTarget.IsCurrent(router, RouteableItem.GetRoute(item)));
+            if (item is not null && !ReferenceEquals(item, view.SelectedItem))
+                view.SelectedItem = item;
+        }
+
         void OnSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e)
         {
             if (e.SelectedItem is NavigationViewItem item && items.Contains(item))
@@ -82,13 +97,7 @@ public static class RouteableNavigation
         }
 
         // The router holds its gate while it signals, so the item is selected afterwards and does not route again (the route is already current).
-        void OnChanged(object? sender, EventArgs e) => view.DispatcherQueue.TryEnqueue(() =>
-        {
-            // The view's router follows the items that share it; an item with a region of its own is selected by the user only.
-            var item = items.FirstOrDefault(item => RouteableItem.GetRegion(item) is not { Length: > 0 } && RouteTarget.IsCurrent(router, RouteableItem.GetRoute(item)));
-            if (item is not null && !ReferenceEquals(item, view.SelectedItem))
-                view.SelectedItem = item;
-        });
+        void OnChanged(object? sender, EventArgs e) => view.DispatcherQueue.TryEnqueue(SelectCurrent);
 
         view.SelectionChanged += OnSelectionChanged;
         router.History.Changed += OnChanged;

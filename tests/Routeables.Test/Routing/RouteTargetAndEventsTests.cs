@@ -67,6 +67,29 @@ public class RouteTargetAndEventsTests
     }
 
     [Fact]
+    public async Task A_route_the_router_refused_is_told_to_the_control_so_that_it_selects_the_entry_shown()
+    {
+        var router = RouterShowing("/home");
+        router.GoToAsync(Arg.Any<string>(), Arg.Any<IRouteableArgs?>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns(RouteableResult.Fail(new InvalidOperationException("unsaved changes")));
+        using var provider = ProviderWith(new Sink());
+
+        Assert.False(await RouteTarget.GoAsync(provider, router, "/orders", typeof(RouteTargetAndEventsTests)));
+    }
+
+    [Fact]
+    public async Task A_route_the_router_went_to_or_already_shows_is_told_as_done()
+    {
+        var router = RouterShowing("/home");
+        router.GoToAsync(Arg.Any<string>(), Arg.Any<IRouteableArgs?>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns(RouteableResult.Ok());
+        using var provider = ProviderWith(new Sink());
+
+        Assert.True(await RouteTarget.GoAsync(provider, router, "/orders", typeof(RouteTargetAndEventsTests)));
+        Assert.True(await RouteTarget.GoAsync(provider, router, "/home", typeof(RouteTargetAndEventsTests)));
+    }
+
+    [Fact]
     public async Task An_error_while_routing_is_reported_to_the_sink_and_not_thrown()
     {
         var router = RouterShowing("/home");
