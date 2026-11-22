@@ -699,6 +699,16 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void A_query_with_other_pairs_next_to_the_typed_one_is_read_whole()
+    {
+        const string same = "/n?q=x&flag=true&other=1&bare";
+
+        Assert.Same(same, RouteParser.Canonical("/n?{flag:bool}&{q}", same));              // a pair of an untyped name, one nobody names, one without a value
+        Assert.Equal("/n?q=x&flag=true&bare", RouteParser.Canonical("/n?{flag:bool}&{q}", "/n?q=x&flag=TRUE&bare"));
+        Assert.Equal("/n?bare&flag=false", RouteParser.Canonical("/n?{flag:bool}", "/n?bare&flag=FALSE"));
+    }
+
+    [Fact]
     public void Values_can_be_a_read_only_dictionary_or_a_dictionary_of_any_value_type()
     {
         var map = new System.Collections.ObjectModel.ReadOnlyDictionary<string, object?>(new Dictionary<string, object?> { ["n"] = 5 });
