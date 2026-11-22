@@ -20,4 +20,35 @@ public async Task ShowYesNoAsync()
 
 Every host behaves the same way: a button press runs its command, then asks the `Closing` veto, then closes. A notification closes after five seconds unless you say otherwise (`RouteableNotificationDefaults.Never` keeps it).
 
+
+## Two journeys at startup
+
+Getting the last history back (`AddRouteableHistory`, `StartRouteableHistory`). Nothing is written before the pages are back, because the restore starts by erasing the history.
+
+```mermaid
+flowchart LR
+    A[Host: StartRouteableHistory] --> B[Keeper.Start: read the store, decrypt]
+    B -->|nothing kept| E[Starts empty, saves at the first Routed]
+    B --> C[BeginRestore: the link inbox waits]
+    C --> D[Wait for the first page, 30 s slices]
+    D --> F[Restore on the UI thread through the dispatcher]
+    F -->|pages shown| G[EndRestore, SaveNow, keeper active]
+    F -->|cannot be shown| H[The page that is there replaces them]
+```
+
+Opening the application from a link (`RouteableLinkInbox`). A link can arrive from any thread before anything is shown.
+
+```mermaid
+flowchart LR
+    A[Host receives a link] --> B[Push: 32 links at most, the oldest is dropped]
+    A -->|longer than the maximum| X[Refused on arrival]
+    B --> C[Pump waits for the first page]
+    C -->|no page in time| W[Links stay, the first Routed restarts the pump]
+    C --> D[Wait until the history is restored]
+    D --> E[Dispatcher: DeepLinks.GoToAsync on the UI thread]
+    E --> F[Page shown, menu told, next link]
+```
+
+Pages saved by the host (`Save` and `Restore`, an Android bundle for instance) are restored before any link.
+
 The look can be replaced: see [`Reshapes`](../../reshapes/README.md) (MudBlazor, CommunityToolkit.Maui, FluentAvalonia).

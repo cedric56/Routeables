@@ -30,4 +30,21 @@ A `Transient` router is refused: every resolve would get its own history. For se
 - `Routing` and `Routed` are raised for each route change. A handler that throws never fails the route change: the error goes to your `IRouteableErrorSink`, or to `Trace`.
 - Measured with BenchmarkDotNet: about 4 to 7.5 µs and 7.5 to 12 KB per route change ([benchmarks](../../docs/benchmarks.md)).
 
+## Going back, and back to somewhere else
+
+`-` goes back one page. `-/orders` goes back, then opens `/orders` in place of the page that was left. Both pass through the same gate as any other route change.
+
+```mermaid
+flowchart LR
+    A["GoToAsync('-/orders')"] --> B[GoBackAsync: one call at a time, guards run]
+    B -->|refused| R[Nothing moves, the result is returned]
+    B --> C["GoToAsync('/orders')"]
+    C --> D[CanLeave, OnEntering]
+    D -->|success| E[History entry replaced, Routed]
+    C -->|fails or throws| L[The page that was left is shown again]
+    D -->|refused| L
+```
+
+The page that was left is shown again only when it is still the next entry of the history, and without the caller's token, which may be why the route did not open.
+
 Related: [`Routeables.Abstraction`](../Routeables.Abstraction/README.md), [`Routeables.Core`](../Routeables.Core/README.md), and the hosts ([Razor](../Routeables.Blazor/README.md), [MAUI](../Routeables.Maui/README.md), [Avalonia](../Routeables.Avalonia/README.md), [Uno](../Routeables.Uno/README.md), [WPF](../Routeables.Wpf/README.md)).
