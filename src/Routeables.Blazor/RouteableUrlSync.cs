@@ -44,6 +44,15 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     private IRouteableUnsavedChanges? _watched; // the page whose unsaved changes the browser is told about
     private IDisposable? _changing;
     private string? _pending; // the address being routed to by the location-changing handler
+    // The entry of the browser that the browser pushed itself (a link, a typed address) for the router entry it now shows: once the address has
+    // changed, the browser entry is given the state of that router entry, so that its Back and Forward can name it.
+    private (string Address, IHistoryEntry Entry)? _toStamp;
+
+    // Each router entry has a state that its browser entry keeps (history.state): an address can be in the history twice ([home, detail, home]), the
+    // state cannot, so the Back and the Forward of the browser are told apart by it. The entries are those of the router, kept while it keeps them.
+    private const string StatePrefix = "routeables:";
+    private static long _lastState;
+    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<IHistoryEntry, string> _states = new();
 
     private enum Outcome { Unmatched, Done, Refused }
 
@@ -109,10 +118,15 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         if (SameAddress(_pending, address))
         {
             Track(e.Kind); // the browser made this move itself (a link, its Back or Forward button)
+            // A link or a typed address: the browser pushes its entry once the handlers have answered, without a state. It is given one then.
+            if (e.Kind == RouteableKind.Push)
+                _toStamp = (address!, e.To);
             return;
         }
 
-        if (SameAddress(Relative(navigation.Uri), address))
+        // The address is already shown: nothing to write, unless the application pushed the page again (a second "/home" after "/home"). The router
+        // then has one more entry, and the browser needs one too, or every Back and Forward after it would land one entry off.
+        if (SameAddress(Relative(navigation.Uri), address) && !(e.Kind == RouteableKind.Push && e.From is not null))
             return;
 
         // The router goes back or forward by itself (a Pop goes back too: the router only forgets the page it leaves). The browser makes the same
@@ -132,7 +146,22 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         else if (e.Kind is RouteableKind.Pop or RouteableKind.Root or RouteableKind.MoveTo)
             _back = _forward = 0; // the router history no longer follows the browser's: replace until it does again
 
-        Show(address!, replace: !push);
+        Show(address!, replace: !push, StateOf(e.To));
+    }
+
+    // The state of a router entry, given the first time it is asked for.
+    private string StateOf(IHistoryEntry entry)
+        => _states.GetValue(entry, static _ => StatePrefix + Interlocked.Increment(ref _lastState).ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+    // The router entry a browser state names, among the ones given: -1 when the state is not one of this application, or names none of them.
+    private int IndexOfState(string? state, IReadOnlyList<IHistoryEntry> entries)
+    {
+        if (state is null || !state.StartsWith(StatePrefix, StringComparison.Ordinal))
+            return -1;
+        for (var i = 0; i < entries.Count; i++)
+            if (_states.TryGetValue(entries[i], out var known) && string.Equals(known, state, StringComparison.Ordinal))
+                return i;
+        return -1;
     }
 
     // The browser asks before the tab closes while the page shown says it has unsaved changes (IRouteableUnsavedChanges).
@@ -233,7 +262,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         _pending = path;
         try
         {
-            if (await ApplyAsync(path, restore: false, context.CancellationToken, fromLink: context.IsNavigationIntercepted) == Outcome.Refused)
+            if (await ApplyAsync(path, restore: false, context.CancellationToken, fromLink: context.IsNavigationIntercepted, state: context.HistoryEntryState) == Outcome.Refused)
                 context.PreventNavigation();
         }
         catch (OperationCanceledException)
@@ -255,7 +284,29 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
     private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        try { await ApplyAsync(Relative(e.Location)); }
+        try
+        {
+            var path = Relative(e.Location);
+            // The browser pushed the entry of a link or a typed address that the router now shows: give it the state of the router entry.
+            if (_toStamp is { } stamp)
+            {
+                _toStamp = null;
+                if (e.HistoryEntryState is null && SameAddress(stamp.Address, path) && ReferenceEquals(router.History.Current, stamp.Entry))
+                {
+                    Show(stamp.Address, replace: true, StateOf(stamp.Entry));
+                    return;
+                }
+            }
+            // The browser moved (a NavigationManager without a location changing handler is only followed here): the route change this starts is
+            // the browser's own, as it is in OnLocationChanging, and must not write an entry of its own.
+            _pending = path;
+            try { await ApplyAsync(path, state: e.HistoryEntryState); }
+            finally
+            {
+                if (ReferenceEquals(_pending, path))
+                    _pending = null;
+            }
+        }
         catch (OperationCanceledException)
         {
             // A newer navigation replaced this one (RouterConcurrency.CancelCurrent): it decides what the address shows.
@@ -278,7 +329,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
     // fromLink: a link the user clicked. The browser pushed a new entry for it, even when it leads to the page before or after the current one,
     // so the router pushes too: going back would otherwise leave the router and the browser with different histories.
-    private async Task<Outcome> ApplyAsync(string path, bool restore = true, CancellationToken cancellationToken = default, bool fromLink = false)
+    private async Task<Outcome> ApplyAsync(string path, bool restore = true, CancellationToken cancellationToken = default, bool fromLink = false, string? state = null)
     {
         var history = router.History;
         if (SameAddress(fromLink ? OwnAddressOf(history.Current) : AddressOf(history.Current), path))
@@ -290,19 +341,27 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         // The neighbours are read once, from one copy of the entries: a route change that runs meanwhile (the restore of the history) must not
         // leave an index that points outside the copy.
         IHistoryEntry? before = null, after = null;
+        var named = -1; // the entry the state of the browser entry names, when it names one
+        var index = -1;
         if (!fromLink)
         {
-            var (entries, index) = history.Capture();
+            (var entries, index) = history.Capture();
             before = index > 0 && index - 1 < entries.Count ? entries[index - 1] : null;
             after = index >= 0 && index + 1 < entries.Count ? entries[index + 1] : null;
+            named = IndexOfState(state, entries);
         }
 
-        if (before is not null && SameAddress(AddressOf(before), path))
+        // The state names the entry: [home, detail, home] has the same address before and after the detail, the state tells them apart. Without
+        // one (an entry this application did not write, or a router that forgot it), the address decides.
+        var back = named >= 0 ? named == index - 1 : before is not null && SameAddress(AddressOf(before), path);
+        var forward = named >= 0 ? named == index + 1 : after is not null && SameAddress(AddressOf(after), path);
+
+        if (back)
         {
             result = await router.GoBackAsync(cancellationToken);
             Moved(result);
         }
-        else if (after is not null && SameAddress(AddressOf(after), path))
+        else if (forward)
         {
             result = await router.ForwardAsync(cancellationToken);
             Moved(result);
@@ -362,9 +421,9 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             main.OnRouterMoved(router.CurrentViewModel);
     }
 
-    private void Show(string route, bool replace)
+    private void Show(string route, bool replace, string? state = null)
     {
-        try { navigation.NavigateTo(BaseRelative(route), replace: replace); }
+        try { navigation.NavigateTo(BaseRelative(route), new NavigationOptions { ReplaceHistoryEntry = replace, HistoryEntryState = state }); }
         catch (Exception ex) // for example while the page is only being prerendered
         {
             RouteableErrors.Report<RouteableUrlSync>(provider, ex, route);

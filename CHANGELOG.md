@@ -18,6 +18,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **Blazor: the Forward button of the browser could make the router go back** when the history held the same address twice (`[X, Y, X]`, Back, then Forward). Each browser entry the router shows now carries an identifier of its router entry in its history state (`NavigationOptions.HistoryEntryState`), and a Back or a Forward is told by the entry it reaches. A link the user clicked gets its state once the move is done (one more replace of the same address). An entry with no identifier (a reload, an entry made by an older version) is still told by its address.
 - **A fixed entry of a template (`/list?mode=grid`) appeared in `Args.Values` as an undeclared value**; only the query values the template does not name are there now.
 - **A page could be disposed twice** when two navigations discarded it (a `PopAsync` or a `MaxSize` eviction running before the cleanup of the call that built it). The router remembers the pages it disposed.
 - **A tab or a menu item stayed selected over the old page when the navigation was refused**: a guard, or a page with unsaved changes that `CanLeaveAsync` keeps, refused the route, the history did not change, and nothing selected the entry that is shown again. `RegionTabs` (Avalonia, WPF, MAUI, Uno) and the `NavigationView` of WinUI and Uno now select back the entry whose route is current.

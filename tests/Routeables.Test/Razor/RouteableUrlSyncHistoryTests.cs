@@ -19,6 +19,7 @@ public class RouteableUrlSyncHistoryTests
     private sealed class FakeNavigation : NavigationManager
     {
         private readonly List<string> _entries = ["http://localhost/home"];
+        private readonly List<string?> _states = [null]; // what each entry holds in its history state, as a browser keeps it
         private int _at;
 
         public List<(string Uri, bool Replace)> Calls { get; } = [];
@@ -29,14 +30,20 @@ public class RouteableUrlSyncHistoryTests
             var absolute = ToAbsoluteUri(uri).AbsoluteUri;      // escaped, as a browser reports it
             Calls.Add(("/" + ToBaseRelativePath(absolute), options.ReplaceHistoryEntry));
             if (options.ReplaceHistoryEntry)
+            {
                 _entries[_at] = absolute;
+                _states[_at] = options.HistoryEntryState;
+            }
             else
             {
                 _entries.RemoveRange(_at + 1, _entries.Count - _at - 1);
+                _states.RemoveRange(_at + 1, _states.Count - _at - 1);
                 _entries.Add(absolute);
+                _states.Add(options.HistoryEntryState);
                 _at++;
             }
             Uri = absolute;
+            HistoryEntryState = options.HistoryEntryState;
             NotifyLocationChanged(isInterceptedLink: false);
         }
 
@@ -47,11 +54,23 @@ public class RouteableUrlSyncHistoryTests
         public async Task<bool> BackButtonAsync()
         {
             var target = _entries[_at - 1];
-            if (!await NotifyLocationChangingAsync(target, null, isNavigationIntercepted: false))
+            if (!await NotifyLocationChangingAsync(target, _states[_at - 1], isNavigationIntercepted: false))
                 return false;
             Go(-1);
             return true;
         }
+
+        // The Forward button of the browser.
+        public async Task<bool> ForwardButtonAsync()
+        {
+            var target = _entries[_at + 1];
+            if (!await NotifyLocationChangingAsync(target, _states[_at + 1], isNavigationIntercepted: false))
+                return false;
+            Go(1);
+            return true;
+        }
+
+        public int Index => _at;
 
         private async Task<bool> MoveAsync(string route, bool intercepted)
         {
@@ -59,9 +78,12 @@ public class RouteableUrlSyncHistoryTests
             if (!await NotifyLocationChangingAsync(absolute, null, intercepted))
                 return false;
             _entries.RemoveRange(_at + 1, _entries.Count - _at - 1);
+            _states.RemoveRange(_at + 1, _states.Count - _at - 1);
             _entries.Add(absolute);
+            _states.Add(null);
             _at++;
             Uri = absolute;
+            HistoryEntryState = null;
             NotifyLocationChanged(isInterceptedLink: intercepted);
             return true;
         }
@@ -70,6 +92,7 @@ public class RouteableUrlSyncHistoryTests
         {
             _at = Math.Clamp(_at + delta, 0, _entries.Count - 1);
             Uri = _entries[_at];
+            HistoryEntryState = _states[_at];
             NotifyLocationChanged(isInterceptedLink: false);
         }
     }
@@ -179,6 +202,46 @@ public class RouteableUrlSyncHistoryTests
         }
 
         public void Dispose() { Sync.Dispose(); Provider.Dispose(); }
+    }
+
+    [Fact]
+    public async Task The_browser_forward_to_an_address_the_history_holds_twice_goes_forward_not_back()
+    {
+        using var f = new Fixture();
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+        await f.GoAsync("/detail/1", "/detail/{id:int}");
+        await f.GoAsync("/home", "/home");                         // [home (StartAsync), home, detail, home]: the entry before the detail is the one after it
+        var last = f.Router.CurrentViewModel;
+        var entries = f.Router.History.Entries.Count;
+
+        Assert.True(await f.Navigation.BackButtonAsync());
+        await Fixture.Until(() => f.Router.CurrentViewModel is DetailVm);
+        Assert.True(await f.Navigation.ForwardButtonAsync());
+        await Fixture.Until(() => f.Router.CurrentViewModel is FakeViewModel);
+
+        Assert.Same(last, f.Router.CurrentViewModel);              // the third entry, not the first one
+        Assert.Equal(f.Navigation.Index, f.Router.History.Capture().CurrentIndex);
+        Assert.Equal(entries, f.Router.History.Entries.Count);     // the Forward moved in the history, it did not push
+    }
+
+    [Fact]
+    public async Task A_link_the_user_clicked_gets_a_state_so_that_its_entry_can_be_told_apart()
+    {
+        using var f = new Fixture();
+        await f.Sync.StartAsync();
+        await f.GoAsync("/home", "/home");
+        Assert.True(await f.Navigation.ClickAsync("/detail/1"));
+        await Fixture.Until(() => f.Router.CurrentViewModel is DetailVm);
+        Assert.True(await f.Navigation.ClickAsync("/home"));
+        await Fixture.Until(() => f.Router.CurrentViewModel is FakeViewModel);
+
+        Assert.True(await f.Navigation.BackButtonAsync());
+        await Fixture.Until(() => f.Router.CurrentViewModel is DetailVm);
+        Assert.True(await f.Navigation.ForwardButtonAsync());
+        await Fixture.Until(() => f.Router.CurrentViewModel is FakeViewModel);
+
+        Assert.Equal(f.Navigation.Index, f.Router.History.Capture().CurrentIndex);
     }
 
     [Fact]

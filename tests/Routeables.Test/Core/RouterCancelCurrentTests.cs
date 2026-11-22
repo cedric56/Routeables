@@ -47,6 +47,40 @@ public class RouterCancelCurrentTests
         }
     }
 
+    /// <summary>A page whose arrival ignores its token: it lasts until the task it is given completes.</summary>
+    private sealed class DeafTarget(Task release) : IRouteable
+    {
+        public TaskCompletionSource Started { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public Task<bool> CanLeaveAsync(CancellationToken ct = default) => Task.FromResult(true);
+        public Task OnLeavingAsync(IRouteableArgs context, CancellationToken ct = default) => Task.CompletedTask;
+
+        public async Task OnEnteringAsync(IRouteableArgs context, CancellationToken ct = default)
+        {
+            Started.TrySetResult();
+            await release;
+        }
+    }
+
+    [Fact]
+    public async Task A_replaced_route_change_whose_page_ignores_the_token_does_not_enter_the_history()
+    {
+        var router = CreateRouter(RouterConcurrency.CancelCurrent);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var deaf = new DeafTarget(release.Task);
+        var replaced = router.GoAsync(new TestView(), deaf, cancellationToken: Ct);
+        await deaf.Started.Task.WaitAsync(TimeSpan.FromSeconds(5), Ct);
+
+        var last = new TestViewModel();
+        var newer = router.GoAsync(new TestView(), last, cancellationToken: Ct);
+        release.SetResult(); // the page finishes its arrival although its route change was replaced
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => replaced.WaitAsync(TimeSpan.FromSeconds(5), Ct));
+        Assert.True((await newer.WaitAsync(TimeSpan.FromSeconds(5), Ct)).Success);
+        Assert.Same(last, router.CurrentViewModel);
+        Assert.Equal(1, router.History.Count);
+    }
+
     [Fact]
     public async Task A_new_route_change_cancels_the_one_in_progress_and_takes_its_place()
     {

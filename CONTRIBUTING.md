@@ -18,6 +18,8 @@ dotnet test --project tests/Routeables.Test/Routeables.Test.csproj
 `dotnet test` runs xunit v3 through Microsoft.Testing.Platform, enabled by `global.json`. On CI, pass `-p:CiBuild=true` so the MAUI and Uno
 libraries build only the targets the runner has the workloads for.
 
+On Linux the test project still restores the MAUI and Uno hosts, which need their workloads even with `CiBuild`: install them first (`dotnet workload restore`, or `dotnet workload install maui-android`).
+
 For the coverage of the libraries: `dotnet test --project tests/Routeables.Test/Routeables.Test.csproj --coverage --coverage-output-format cobertura --coverage-settings tests/CodeCoverage.settings.xml`, then `python3 tools/coverage-summary.py` on the `*.cobertura.xml` it writes under `TestResults`.
 
 Where to write the next tests: the summary of each coverage job lists the files with the most lines that no test runs (`--files N`, and `--files-of Avalonia` for one host). `Routeables.Shared` is not a library: its files are compiled into each host, so a file is listed once for each host that holds a copy, and the headless tests of Avalonia cover the Avalonia copy only. A line that only a device or an operating system can run may carry `[ExcludeFromCodeCoverage(Justification = "...")]`; a line that a test could run may not.

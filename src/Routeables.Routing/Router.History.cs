@@ -26,6 +26,8 @@ internal partial class Router
 
             await lifecycle.TransitionAsync(leaving, target, ct); // if this throws, the history is untouched
 
+            // A hook that ignores its token must not let a replaced route change into the history.
+            ct.ThrowIfCancellationRequested();
             var removed = commit(); // only after the lifecycle succeeded
             await lifecycle.NotifyEnteredAsync(leaving, target, ct); // before the removed entries are disposed
             // Nothing removed, nothing to destroy: copying the whole history is only needed when entries are removed.
@@ -40,7 +42,13 @@ internal partial class Router
     {
         var enter = gate.EnterAsync(cancellationToken);
         try { await enter; } catch { gate.Abort(); throw; }
-        try { return await body(gate.Observe(cancellationToken)); }
+        try
+        {
+            var token = gate.Observe(cancellationToken);
+            // Under CancelCurrent a newer route change may have cancelled this one between taking the gate and starting: it never starts.
+            token.ThrowIfCancellationRequested();
+            return await body(token);
+        }
         finally { gate.Exit(); }
     }
 
