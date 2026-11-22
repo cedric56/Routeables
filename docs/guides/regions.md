@@ -18,6 +18,22 @@ var adopt = provider.GetRouter(AdoptViewModel.Region);          // or provider.G
 
 A route can target a region from its attributes: `[Routeable("/pet", region: "adopt")]` or `[RouteableView(typeof(PetViewModel), region: "adopt")]`. A region is registered `Scoped` by default.
 
+```mermaid
+flowchart LR
+    VM["A view model: provider.GoToAsync(entry with Region = 'adopt')"] --> RA
+    subgraph Regions["One router, gate and history per region"]
+        RA["Router 'adopt'"]
+        RT["Router 'tabs'"]
+        RD["Default router"]
+    end
+    RA --> HA["RouteableRegion Region='adopt' shows the current view"]
+    RT --> HT["RouteableRegion Region='tabs'"]
+    RD --> HD["RouteableRegion without a name"]
+    RA -.->|"RegionFollower: each change queues an update"| RT
+```
+
+No view model needs to know where a region is on screen: whoever routes only names it, and the host that carries that name shows the result.
+
 ### Receiving a region: `RouteableRegion`
 
 A region has no place on screen of its own. A view puts one down with a **region host**, a zone that receives whatever the router of that region displays. Nothing assigns the view to it: not a view model property, not code-behind.

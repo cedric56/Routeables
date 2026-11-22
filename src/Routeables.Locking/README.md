@@ -20,6 +20,15 @@ using var editing = formLock.Lock();   // the menu is locked until editing is di
 
 Several forms can lock at once: the menu is unlocked when the last token is disposed. `IsLocked` tells whether one is held. To refuse a route change made by code too, implement `CanLeaveAsync`.
 
+```mermaid
+flowchart LR
+    F1["Form 1: formLock.Lock()"] --> B["IRouteableLockBroker: RouteableLockMessage(isLocked)"]
+    F2["Form 2: formLock.Lock()"] --> B
+    B --> M["Menu view models: main entries disabled"]
+    D["Last token disposed"] --> U["RouteableLockMessage unlocks: entries enabled again"]
+    CL["Page whose CanLeaveAsync returns false"] --> M
+```
+
 ## To know
 
 - `IRouteableLockBroker`: publish and subscribe between components. A subscriber that throws does not stop the others.

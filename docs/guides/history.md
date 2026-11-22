@@ -17,6 +17,25 @@ Each router keeps a history of entries (view model, view and arguments):
 | `GoBackToRootAsync` | Returns to the first entry |
 | `EraseHistoryAsync` | Clears the history. It does not ask the page shown (`CanLeaveAsync`) and raises no `Routed`: it is for the code that owns the session (a sign-out, a restoration), not for a user move |
 
+```mermaid
+flowchart LR
+    S0["A B C D, cursor on C"] -->|GoBackAsync| S1["A B C D, cursor on B: nothing removed"]
+    S1 -->|ForwardAsync| S0
+    S1 -->|"GoToAsync E"| S2["A B E: C and D cut off and disposed"]
+    S2 -->|"push F with a limit of 3"| S3["B E F: the oldest entry is dropped and disposed"]
+```
+
+`-/orders` goes back, then opens `/orders` in place of the page that was left:
+
+```mermaid
+flowchart LR
+    A["GoToAsync('-/orders')"] --> B[GoBackAsync]
+    B -->|"first page, or refused"| R[Nothing moves, the result is returned]
+    B --> C["GoToAsync('/orders')"]
+    C -->|success| E[History entry replaced, Routed]
+    C -->|"fails or throws"| L["Forward again to the page that was left, only if it is still the next entry"]
+```
+
 ### Limiting the history
 
 **What an entry weighs.** An entry keeps its view model, its **view** and its arguments, so that Back and Forward give back the same page with its state. On a desktop or mobile host the view is a tree of controls: measured on Avalonia, about 9 KB per entry for a page that is a single text, and more for a real page. After 1 000 route changes with no limit the history held 9.2 MiB; with `LimitHistory(50)` it held 0.96 MiB. An application that can go through thousands of pages in one session (a list that opens a detail, over and over) should set a limit, or use `PopAsync` to leave a page for good.

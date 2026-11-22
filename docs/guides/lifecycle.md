@@ -43,6 +43,20 @@ When a step fails, the route change fails with that exception (`result.Exception
 | `OnLeavingAsync` of A (view model or view) | Stops there. B is not touched. If the **view model** of A fails, nothing of A was left and A's `OnEnteringAsync` is **not** called again. If the **view** fails after the view model of A ran its `OnLeavingAsync`, the router calls `OnEnteringAsync` of the view model of A again (the view never left, so it is not entered a second time): A is still the current page. What the callbacks of A that already ran did is not undone, so keep `OnLeavingAsync` free of effects that cannot be repeated or must not be half done. |
 | `OnEnteringAsync` of B | A already ran `OnLeavingAsync`, so the router calls A's `OnEnteringAsync` again to make it current again. If that fails too, the second exception goes to the `IRouteableErrorSink` and the first one is the result. |
 
+```mermaid
+flowchart TB
+    S["GoToAsync to page B"] --> C1{"CanLeaveAsync on A, view model then view"}
+    C1 -->|false| X1["Cancelled: result.Cancelled, A stays"]
+    C1 -->|true| I["InitializeAsync on B"]
+    I -->|throws| F1["Failed: result.Exception, A stays, nothing was torn down"]
+    I --> L["OnLeavingAsync on A"]
+    L -->|throws| F2["Failed: A stays current"]
+    L --> E["OnEnteringAsync on B"]
+    E -->|throws| R["A.OnEnteringAsync is called again, then failed"]
+    E --> H["History updated, removed entries disposed"]
+    H --> D["OnEnteredAsync on B, OnLeftAsync on A"]
+```
+
 ### Routing from a hook
 
 A router makes one route change at a time. A route change started **from a hook of that same router** (`CanLeaveAsync`, `InitializeAsync`, `OnLeavingAsync`, `OnEnteringAsync`, or a `Routing` or `Routed` handler) does not wait for the first one: the router throws an `InvalidOperationException` ("Reentrant route changes are not supported"). The same holds in `OnEnteredAsync` and `OnLeftAsync`, which run before the route change is over: a route change started there is refused too, and as the exception comes from your hook, the route change that ran it has already succeeded, its result says so, and the exception is only written to the debug output. Route from a `Routed` handler that queues the work instead. The history would otherwise change under a route change that has not finished.

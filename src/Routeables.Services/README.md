@@ -18,7 +18,15 @@ public async Task ShowYesNoAsync()
 }
 ```
 
-Every host behaves the same way: a button press runs its command, then asks the `Closing` veto, then closes. A notification closes after five seconds unless you say otherwise (`RouteableNotificationDefaults.Never` keeps it).
+Every host behaves the same way: a button press runs its command, then asks the `Closing` veto, then closes.
+
+```mermaid
+flowchart LR
+    A[Button pressed] --> B[Its command runs]
+    B --> C{"Closing veto"}
+    C -->|allows| D[Dialog closes, the caller gets the result]
+    C -->|vetoes| E[Dialog stays open]
+``` A notification closes after five seconds unless you say otherwise (`RouteableNotificationDefaults.Never` keeps it).
 
 
 ## Two journeys at startup

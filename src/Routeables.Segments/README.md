@@ -10,6 +10,20 @@ services.RegisterSegment<BearsViewModel>("Bears", "/bears");   // samples/Bases/
 await coordinator.CoordinateAsync("/Bears?SearchText=polar");   // MainViewModel.cs of the samples
 ```
 
+```mermaid
+flowchart LR
+    A["CoordinateAsync('/Orders?status=open/region:side/Detail?id=5')"] --> P[Parse into segments]
+    P -->|"leading /"| Z["Each router involved: CanLeaveAsync agrees, then its history is cleared"]
+    Z --> N
+    P --> N{"Next segment"}
+    N -->|"Name?k=v"| G["Pushed on the router with its own parameters"]
+    N -->|"region:Name"| RG["Handed to the router of that region"]
+    N -->|".."| B["Goes back one entry"]
+    G --> N
+    RG --> N
+    B --> N
+```
+
 | Syntax | Meaning |
 | --- | --- |
 | `Name?k=v` | Pushes the segment registered under `Name` |

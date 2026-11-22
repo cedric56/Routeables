@@ -89,6 +89,17 @@ LinkInbox.Instance.Push(new Uri("xanimals://dogs/Eurohound")); // from the platf
 
 Uno on iOS, Windows packaged apps and the web are not wired in the samples; they end the same way: the platform gives the `Uri`, the application pushes it. An App Link or a Universal Link for `https` addresses needs a file on your server (`assetlinks.json`, `apple-app-site-association`) that the framework cannot provide.
 
+```mermaid
+flowchart LR
+    A[Host receives a link] --> B[Push: 32 links at most, the oldest is dropped]
+    A -->|longer than the maximum| X[Refused on arrival]
+    B --> C[Pump waits for the first page]
+    C -->|no page in time| W[Links stay, the first Routed restarts the pump]
+    C --> D[Wait until the history is restored]
+    D --> E[Dispatcher: DeepLinks.GoToAsync on the UI thread]
+    E --> F[Page shown, menu told, next link]
+```
+
 ## Pages that come back
 
 The system may kill the process of an application in the background; the user expects to find the pages they had.
@@ -179,6 +190,19 @@ services.AddRouteableHistory(path: null, protector: new AesRouteableHistoryProte
 A history that was changed, or written with another key, is ignored and the application starts with no history. Changing from plain text to a protector also starts empty once. On Linux, macOS and Android the file is readable by its owner only. Your own `IRouteableHistoryProtector` can use another scheme (DPAPI on Windows, for instance).
 
 To keep it somewhere else (a database, the cloud), register your own `IRouteableHistoryStore` (`Load` and `Save`) before `AddRouteableHistory`. Blazor keeps the history of a circuit with `PersistentComponentState` instead (see the Blazor guide), and the ASP.NET Core host keeps one scope per visitor in memory.
+
+```mermaid
+flowchart LR
+    A[Host: StartRouteableHistory] --> B[Keeper.Start: read the store, decrypt]
+    B -->|nothing kept| E[Starts empty, saves at the first Routed]
+    B --> C[BeginRestore: the link inbox waits]
+    C --> D[Wait for the first page, 30 s slices]
+    D --> F[Restore on the UI thread through the dispatcher]
+    F -->|pages shown| G[EndRestore, SaveNow, keeper active]
+    F -->|cannot be shown| H[The page that is there replaces them]
+```
+
+Nothing is written before the pages are back, because the restore starts by erasing the history.
 
 ## Diagnostics: traces and metrics
 
