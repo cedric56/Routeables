@@ -480,13 +480,13 @@ public class RouteParserTests
     }
 
     [Fact]
-    public void A_number_has_one_text_in_an_address()
+    public void A_number_is_read_whatever_its_usual_spelling_and_the_address_is_written_back_in_one_text()
     {
-        // "42", "+42" and " 42" used to be three addresses for one page.
         foreach (var (template, accepted) in new[]
         {
-            ("x/{n:int}", new[] { "42", "-42", "0" }), ("x/{n:long}", new[] { "42", "-4200000000000" }),
-            ("x/{n:decimal}", new[] { "1.5", "-1.5", "10" }), ("x/{n:double}", new[] { "1.5", "-0.25", "1000", "1E+20" }),
+            ("x/{n:int}", new[] { "42", "-42", "0", "+42", "007", "-0" }), ("x/{n:long}", new[] { "42", "-4200000000000", "+42", "007" }),
+            ("x/{n:decimal}", new[] { "1.5", "-1.5", "10", "+1.5", "007", "01.5", "1.50" }),
+            ("x/{n:double}", new[] { "1.5", "-0.25", "1000", "1E+20", "+1.5", "7.0", "1e3", "07", "1.50", "-0" }),
         })
         {
             foreach (var text in accepted)
@@ -495,8 +495,8 @@ public class RouteParserTests
 
         foreach (var (template, refused) in new[]
         {
-            ("x/{n:int}", new[] { "+42", "%2042", "42%20", "4,2", "007", "-0" }), ("x/{n:long}", new[] { "+42", "%2042", "007" }),
-            ("x/{n:decimal}", new[] { "+1.5", "%201.5", "1.5%20", "1,000.5", "007", "01.5" }), ("x/{n:double}", new[] { "+1.5", "%201.5", "NaN", "Infinity", "-Infinity", "7.0", "1e3", "07", "1.50" }),
+            ("x/{n:int}", new[] { "%2042", "42%20", "4,2", "4.2", "" }), ("x/{n:long}", new[] { "%2042", "42%20" }),
+            ("x/{n:decimal}", new[] { "%201.5", "1.5%20", "1,000.5", "1e3" }), ("x/{n:double}", new[] { "%201.5", "NaN", "Infinity", "-Infinity" }),
         })
         {
             foreach (var text in refused)
@@ -505,19 +505,30 @@ public class RouteParserTests
     }
 
     [Fact]
-    public void A_guid_and_a_bool_have_one_text_in_an_address()
+    public void A_guid_and_a_bool_are_read_in_any_case_and_written_back_in_lower_case()
     {
         var id = Guid.NewGuid();
         Assert.True(RouteParser.TryMatch("x/{g:guid}", "x/" + id));
         Assert.False(RouteParser.TryMatch("x/{g:guid}", "x/{" + id + "}"));
         Assert.False(RouteParser.TryMatch("x/{g:guid}", "x/" + id.ToString("N")));
-        Assert.True(RouteParser.TryMatch("x/{g:guid}", "x/" + id.ToString("D").ToLowerInvariant()));
-        Assert.False(RouteParser.TryMatch("x/{g:guid}", "x/" + id.ToString("D").ToUpperInvariant()));
-        Assert.False(RouteParser.TryMatch("x/{b:bool}", "x/True"));
-        Assert.False(RouteParser.TryMatch("x/{b:bool}", "x/TRUE"));
-        Assert.True(RouteParser.TryMatch("x/{b:bool}", "x/true"));
+        Assert.True(RouteParser.TryMatch("x/{g:guid}", "x/" + id.ToString("D").ToUpperInvariant()));
+        Assert.True(RouteParser.TryMatch("x/{b:bool}", "x/True"));
+        Assert.True(RouteParser.TryMatch("x/{b:bool}", "x/TRUE"));
         Assert.True(RouteParser.TryMatch("x/{b:bool}", "x/false"));
         Assert.False(RouteParser.TryMatch("x/{b:bool}", "x/%20true%20"));
+        Assert.False(RouteParser.TryMatch("x/{b:bool}", "x/yes"));
+    }
+
+    [Fact]
+    public void Canonical_writes_the_typed_values_of_an_address_the_way_Build_does()
+    {
+        var id = Guid.NewGuid();
+        Assert.Equal("/x/true", RouteParser.Canonical("/x/{b:bool}", "/x/True"));
+        Assert.Equal("/n/7?mode=Grid&flag=false#top", RouteParser.Canonical("/n/{n:int}?{flag:bool}", "/n/007?mode=Grid&flag=FALSE#top"));
+        Assert.Equal("/g/" + id, RouteParser.Canonical("/g/{g:guid}", "/g/" + id.ToString("D").ToUpperInvariant()));
+        Assert.Equal("/p/1.5/x", RouteParser.Canonical("/p/{price:decimal}/{name}", "/p/1.50/x"));
+        Assert.Equal("/s/Hello%20World", RouteParser.Canonical("/s/{name}", "/s/Hello%20World")); // nothing typed: as it was
+        Assert.Equal("/x/true", RouteParser.Canonical("/x/{b:bool}", "/x/true"));
     }
 
     [Fact]
@@ -557,12 +568,11 @@ public class RouteParserTests
     }
 
     [Fact]
-    public void A_decimal_has_one_text_whatever_zeros_it_was_written_with()
+    public void A_decimal_is_written_without_extra_zeros()
     {
         Assert.True(RouteParser.TryMatch("x/{n:decimal}", "x/1.5", RouteableArgs.Create()));
-        Assert.False(RouteParser.TryMatch("x/{n:decimal}", "x/1.50", RouteableArgs.Create()));
-        Assert.False(RouteParser.TryMatch("x/{n:decimal}", "x/1.0", RouteableArgs.Create()));
-        Assert.True(RouteParser.TryMatch("x/{n:decimal}", "x/10", RouteableArgs.Create()));
+        Assert.True(RouteParser.TryMatch("x/{n:decimal}", "x/1.50", RouteableArgs.Create()));
+        Assert.Equal("/x/1.5", RouteParser.Canonical("/x/{n:decimal}", "/x/1.50"));
         Assert.Equal("x/1.5", RouteParser.Build("x/{n:decimal}", new { n = 1.50m }));
         Assert.Equal("x/10", RouteParser.Build("x/{n:decimal}", new { n = 10.00m }));
     }
@@ -593,10 +603,11 @@ public class RouteParserTests
     }
 
     [Fact]
-    public void A_double_zero_has_one_text()
+    public void A_double_zero_is_written_as_zero()
     {
         Assert.True(RouteParser.TryMatch("x/{n:double}", "x/0", RouteableArgs.Create()));
-        Assert.False(RouteParser.TryMatch("x/{n:double}", "x/-0", RouteableArgs.Create()));
+        Assert.True(RouteParser.TryMatch("x/{n:double}", "x/-0", RouteableArgs.Create()));
+        Assert.Equal("/x/0", RouteParser.Canonical("/x/{n:double}", "/x/-0"));
         Assert.Equal("x/0", RouteParser.Build("x/{n:double}", new { n = -0.0 }));
         Assert.Equal("x/0", RouteParser.Build("x/{n}", new { n = -0f }));
     }

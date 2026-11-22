@@ -57,6 +57,9 @@ public static partial class RouteParser
                 throw new ArgumentException($"The route \"{template}\" needs a value for {{{name}}} ({where}).", nameof(values));
             }
 
+            // Escaping would write a lone surrogate as U+FFFD, and the value read back would not be the one given.
+            if (HasLoneSurrogate(text))
+                throw new ArgumentException($"The value for {{{name}}} in \"{template}\" is not valid Unicode text (a surrogate without its pair).", nameof(values));
             if (where == "path" && HasDotSegment(text))
                 throw new ArgumentException($"The value \"{text}\" cannot be a segment of \"{template}\" for {{{name}}}: a browser resolves \".\" and \"..\" to another address.", nameof(values));
             // What is written must be readable: the router would reject an address that its own template does not match.
@@ -156,6 +159,18 @@ public static partial class RouteParser
     // A decimal keeps the trailing zeros it was written with (1.5m, 1.50m and 1.0m are the same number). Write it without them, so a number has one address.
     private static decimal Plain(decimal value) => value / 1.0000000000000000000000000000m;
 
+    private static bool HasLoneSurrogate(string text)
+    {
+        for (var i = 0; i < text.Length; i++)
+        {
+            if (char.IsHighSurrogate(text[i]) && i + 1 < text.Length && char.IsLowSurrogate(text[i + 1]))
+                i++;
+            else if (char.IsSurrogate(text[i]))
+                return true;
+        }
+        return false;
+    }
+
     private static string Format(object value, string type)
     {
         if (TryGetSerializer(type, out var info))
@@ -167,6 +182,11 @@ public static partial class RouteParser
             double zero when zero == 0 => "0", // -0 is the number 0: write one text
             float zeroF when zeroF == 0 => "0",
             decimal money => Plain(money).ToString(CultureInfo.InvariantCulture),
+            // A date is written in ISO 8601, which reads the same everywhere: the invariant culture's "01/02/2026 03:04:05" is month first.
+            DateTime moment => moment.ToString("o", CultureInfo.InvariantCulture),
+            DateTimeOffset moment => moment.ToString("o", CultureInfo.InvariantCulture),
+            DateOnly day => day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            TimeOnly time => time.ToString("HH:mm:ss.FFFFFFF", CultureInfo.InvariantCulture),
             IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
             _ => value.ToString() ?? string.Empty,
         };

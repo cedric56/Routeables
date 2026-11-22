@@ -1,7 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using Routeables.Abstraction.Routing;
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
+using System.Text.RegularExpressions;
 
 namespace Routeables.Routing;
 
@@ -130,17 +132,88 @@ public static partial class RouteParser
         switch (type.ToLowerInvariant())
         {
             case "" or "string" or "?": value = raw; return true;
-            // A value has exactly one text. A number is what ToString writes ("42", not "+42", " 42" or "007"); a Guid has its dashes and no braces;
-            // a bool is "true" or "false", and a Guid is written in lower case, as Build writes them: RouteAddress takes the case of a value for a difference, so "/x/True" and "/x/true" must not be one page.
-            case "int": { int v = 0; var ok = int.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v) && v.ToString(inv) == raw; value = v; return ok; }
-            case "long": { long v = 0; var ok = long.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v) && v.ToString(inv) == raw; value = v; return ok; }
-            case "bool": { var ok = raw is "true" or "false"; value = raw == "true"; return ok; }
-            case "guid": { var ok = Guid.TryParseExact(raw, "D", out var v) && v.ToString("D") == raw; value = v; return ok; }
-            case "decimal": { decimal v = 0; var ok = !raw.StartsWith('+') && decimal.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, inv, out v) && Plain(v).ToString(inv) == raw; value = v; return ok; }
-            case "double": { double v = 0; var ok = !raw.StartsWith('+') && double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v) && !(v == 0 && raw[0] == '-') && v.ToString(inv) == raw; value = v; return ok; }
+            // The usual spellings are read (+42, 007, True, an upper-case Guid, 1.50, 1e5), and the router writes the address back in the one text
+            // Build writes (Canonical), so that every spelling is one page for the history and RouteAddress. A number has no spaces, a Guid has its
+            // dashes and no braces.
+            case "int": { int v = 0; var ok = int.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v); value = v; return ok; }
+            case "long": { long v = 0; var ok = long.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v); value = v; return ok; }
+            case "bool": { var ok = bool.TryParse(raw, out var v) && raw == raw.Trim(); value = v; return ok; }
+            case "guid": { var ok = Guid.TryParseExact(raw, "D", out var v); value = v; return ok; }
+            case "decimal": { decimal v = 0; var ok = decimal.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, inv, out v); value = v; return ok; }
+            case "double": { double v = 0; var ok = double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v); value = v; return ok; }
             default:
                 value = null;
                 return false; // unreachable: Bind rejects an unknown constraint first
         }
+    }
+
+    private static bool HasCanonicalText(string type)
+        => type.Equals("int", StringComparison.OrdinalIgnoreCase) || type.Equals("long", StringComparison.OrdinalIgnoreCase)
+           || type.Equals("bool", StringComparison.OrdinalIgnoreCase) || type.Equals("guid", StringComparison.OrdinalIgnoreCase)
+           || type.Equals("decimal", StringComparison.OrdinalIgnoreCase) || type.Equals("double", StringComparison.OrdinalIgnoreCase);
+
+    private static bool TryCanonical(string raw, string type, out string canonical)
+    {
+        canonical = raw;
+        if (!TryConvert(raw, type, out var value) || value is null)
+            return false;
+        canonical = Format(value, type);
+        return true;
+    }
+
+    /// <summary>
+    /// The address with the values of the typed placeholders (<c>int</c>, <c>long</c>, <c>bool</c>, <c>guid</c>, <c>decimal</c>, <c>double</c>) written the way
+    /// <see cref="Build"/> writes them: <c>/x/True</c> is <c>/x/true</c>, <c>/n/007</c> is <c>/n/7</c>. Nothing else of the address changes (a query
+    /// the template does not name, the fragment, the other escapes). The address is returned as it is when it already has the canonical text.
+    /// </summary>
+    /// <param name="template">The template that matched <paramref name="uri"/>.</param>
+    /// <param name="uri">The address.</param>
+    internal static string Canonical(string template, string uri)
+    {
+        var parsed = ParseTemplate(template);
+        bool Typed(Match m) => m.Success && HasCanonicalText(m.Groups["type"].Value);
+        if (!parsed.SegmentMatches.Any(Typed) && !parsed.QueryMatches.Any(Typed))
+            return uri;
+
+        var hash = uri.IndexOf('#');
+        var fragment = hash < 0 ? string.Empty : uri[hash..];
+        var body = hash < 0 ? uri : uri[..hash];
+        var at = RouteAddress.QueryStart(body);
+        var path = at < 0 ? body : body[..at];
+
+        var pieces = path.Split('/');
+        var position = 0;
+        for (var i = 0; i < pieces.Length && position < parsed.SegmentMatches.Length; i++)
+        {
+            if (pieces[i].Length == 0)
+                continue;
+            var m = parsed.SegmentMatches[position++];
+            if (!Typed(m) || m.Groups["rest"].Success)
+                continue;
+            if (Uri.UnescapeDataString(pieces[i]) is var raw && TryCanonical(raw, m.Groups["type"].Value, out var canonical) && canonical != raw)
+                pieces[i] = Uri.EscapeDataString(canonical);
+        }
+
+        var result = string.Join('/', pieces);
+        if (at >= 0)
+        {
+            var pairs = body[(at + 1)..].Split('&');
+            for (var i = 0; i < pairs.Length; i++)
+            {
+                var eq = pairs[i].IndexOf('=');
+                if (eq < 0)
+                    continue;
+                var name = RouteAddress.DecodeQuery(pairs[i][..eq]);
+                var m = parsed.QueryMatches.FirstOrDefault(q => Typed(q) && string.Equals(q.Groups["name"].Value, name, StringComparison.OrdinalIgnoreCase));
+                if (m is null)
+                    continue;
+                var raw = RouteAddress.DecodeQuery(pairs[i][(eq + 1)..]);
+                if (TryCanonical(raw, m.Groups["type"].Value, out var canonical) && canonical != raw)
+                    pairs[i] = pairs[i][..(eq + 1)] + Uri.EscapeDataString(canonical);
+            }
+            result += "?" + string.Join('&', pairs);
+        }
+
+        return result + fragment;
     }
 }

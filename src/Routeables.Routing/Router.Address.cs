@@ -61,6 +61,8 @@ internal partial class Router
             : entries.FirstOrDefault(e => string.Equals(RouteAddress.Absolute(e.Template), RouteAddress.Absolute(template), StringComparison.OrdinalIgnoreCase)); // "about" and "/about" are the same template, as in the table
         if (found.Template is not null)
         {
+            // Every spelling of a typed value is one page: the history and the browser keep the text Build writes ("/x/True" is "/x/true").
+            url = RouteParser.Canonical(found.Template, url);
             var keys = found.ViewModelType is null
                 ? (viewKey: found.Template, viewModelKey: found.Template)
                 : RouteableKeys.GetKeys(found.ViewModelType, found.Template);
