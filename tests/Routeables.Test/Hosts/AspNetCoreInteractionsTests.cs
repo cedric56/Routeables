@@ -529,6 +529,7 @@ public class AspNetCoreInteractionsTests
             }
         }, Ct)));
 
-        Assert.Equal(64 * 200, interactions.Toasts.Count);
+        // 12 800 toasts were added and never closed: the visitor keeps the most recent ones, whatever the order of the requests.
+        Assert.Equal(RouteableInteractions.MaxToasts, interactions.Toasts.Count);
     }
 }
