@@ -20,6 +20,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The arguments of an address route change keep the type the application registered**: `RegisterRouteableArgsFactory` replaces how the arguments are made, but the copy the router makes for each route change was always a `RouteableArgs`, so the pages received it instead. The copy now comes from that factory (members that `IRouteableArgs` does not declare are not copied from the instance given).
+- **A link clicked twice quickly is no longer reported as an error under `CancelCurrent`**: the route change the second click replaces ends with a cancellation, which `RouteableLink` reported to `RouteableErrors`.
 - **A route change replaced while its page ignored the token no longer leaves the lifecycle half done**: the page had been told it was left and the new one that it was entered, but the history did not move, so the page that stayed was never entered again and the abandoned one never left. The two are now undone (the abandoned page is left, the one that stayed is entered again) before the cancellation is reported. Applies to a new route change, Back, Forward and the jumps in the history.
 - **A catch-all value (`{**path}`) with half a surrogate pair was written as U+FFFD**, and the address did not read back as the value given. It is refused, as for any other placeholder.
 - **`GoBackToRootAsync` says it goes to the first entry the history keeps**: with a limit (`LimitHistory`, or the 50 of a scoped router) the oldest entries are gone. The Blazor page says that going back past the oldest entry the router kept opens that address as a new page.

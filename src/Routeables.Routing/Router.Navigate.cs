@@ -181,19 +181,19 @@ internal partial class Router
     }
 
     // The bags are filled, not replaced: an initializer that assigns a list drops the one the arguments were created with, and every navigation paid for both.
-    private static IRouteableArgs Snapshot(IRouteableArgs? args)
+    // The copy is made by the factory of the application (RegisterRouteableArgsFactory), so a type of its own for the arguments is the one the
+    // pages receive. What the copy takes from the given instance is what IRouteableArgs declares: a member of its own is not copied.
+    private IRouteableArgs Snapshot(IRouteableArgs? args)
     {
+        var copy = provider.GetService<IRouteableArgsFactory>()?.New() ?? new RouteableArgs();
         if (args is null)
-            return RouteableArgs.Create();
+            return copy;
 
-        var copy = new RouteableArgs
-        {
-            Route = args.Route,
-            Exception = args.Exception,
-            Router = args.Router,
-            Region = args.Region,
-            Transition = args.Transition,
-        };
+        copy.Route = args.Route;
+        copy.Exception = args.Exception;
+        copy.Router = args.Router;
+        copy.Region = args.Region;
+        copy.Transition = args.Transition;
         copy.ViewModelParameters.AddRange(args.ViewModelParameters);
         copy.ViewParameters.AddRange(args.ViewParameters);
         copy.Values.AddRange(args.Values);

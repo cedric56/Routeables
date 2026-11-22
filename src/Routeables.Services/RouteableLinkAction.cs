@@ -23,6 +23,10 @@ public static class RouteableLinkAction
             if (!result.Success && result.Exception is { } failure)
                 RouteableErrors.Report(provider, "RouteableLink", failure);
         }
+        catch (OperationCanceledException)
+        {
+            // Not an error: under CancelCurrent a newer route change (a second click) replaced this one. The link has no token of its own to cancel.
+        }
         catch (Exception ex)
         {
             RouteableErrors.Report(provider, "RouteableLink", ex);
