@@ -105,6 +105,38 @@ The same view models drive the Animals sample on each host: only the views diffe
 
 The host package already holds the dialogs, modals and notifications of its framework. For MudBlazor, CommunityToolkit.Maui or FluentAvalonia dialogs, add a package of [`Reshapes`](reshapes/README.md). Everything else is in the one `Routeables` package that every host brings; its parts ([`Abstraction`](src/Routeables.Abstraction/README.md), [`Routing`](src/Routeables.Routing/README.md), [`Core`](src/Routeables.Core/README.md), [`Regions`](src/Routeables.Regions/README.md), [`Segments`](src/Routeables.Segments/README.md), [`Locking`](src/Routeables.Locking/README.md), [`Services`](src/Routeables.Services/README.md)) are separate projects of this repository.
 
+Who depends on what: a host references only `Routeables.Core`, which builds the `Routeables` package. The code shared by the XAML hosts is not a DLL: its files are compiled into each host.
+
+```mermaid
+flowchart TB
+    App["Your application: view models (IRouter only) and views"] -->|"UseRouteables&lt;MainViewModel&gt;()"| Hosts
+    subgraph Hosts["Hosts, one NuGet package each"]
+        direction LR
+        H1[Blazor]
+        H2[AspNetCore]
+        H3[Wpf]
+        H4[Avalonia]
+        H5[Maui]
+        H6[Uno]
+        H7[WinUI3]
+    end
+    Shared[["Shared sources, not DLLs: Routeables.Shared (WPF, Avalonia, MAUI, Uno, WinUI 3) and Routeables.WinUI (Uno, WinUI 3)"]] -.compiled into.-> Hosts
+    Hosts -->|references only Routeables.Core| Pkg
+    subgraph Pkg["NuGet package Routeables"]
+        direction TB
+        Core[Core: view model bases] --> Routing
+        Regions[Regions: named routers] --> Routing
+        Segments[Segments: multi-segment routes] --> Routing
+        Locking[Locking: pages that block] --> Routing
+        Services[Services: dialogs, notifications, theme] --> Abstraction
+        Routing[Routing: queue, route parsing, guards, history] --> Abstraction
+        Abstraction[Abstraction: IRouter, IRouteable, IRouteGuard, Routeable, Persist]
+    end
+    Gen[Generated: Roslyn analyzer, shipped in analyzers/] -.writes AddGeneratedRoutes and GoTo...Async.-> App
+```
+
+A host that referenced `Routing`, `Regions` or `Abstraction` directly would produce a package that depends on a package that does not exist. A file of `Routeables.Shared` is recompiled in five hosts, so every `#if` branch counts. The generator pairs `DogViewModel` with `DogView` and writes the registration, so routes need no reflection: this is what makes the package AOT and trimming friendly.
+
 ### On NuGet
 
 All the packages are released together (see [VERSIONING.md](VERSIONING.md)); the current version is on each badge.

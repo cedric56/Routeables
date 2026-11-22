@@ -30,6 +30,21 @@ A `Transient` router is refused: every resolve would get its own history. For se
 - `Routing` and `Routed` are raised for each route change. A handler that throws never fails the route change: the error goes to your `IRouteableErrorSink`, or to `Trace`.
 - Measured with BenchmarkDotNet: about 4 to 7.5 µs and 7.5 to 12 KB per route change ([benchmarks](../../docs/benchmarks.md)).
 
+## What happens during a GoToAsync
+
+```mermaid
+flowchart LR
+    A["View model: GoToAsync('/dogs/Rex')"] --> B[RouterGate: one call at a time per router]
+    B --> C["RouteParser: /dogs/{name} gives name = Rex"]
+    C --> D[Guards: IRouteGuard, CanLeave, OnEntering]
+    D --> E[RouterHistory: entry added, Routing then Routed]
+    E -->|success| F[Host shows CurrentView]
+    C -->|unknown route| X["Nothing is committed: the previous page is restored, RouteableResult.Success = false"]
+    D -->|a guard refuses| X
+```
+
+Guards and lifecycle calls run before any change to the history, so a refusal leaves no trace. An exception thrown by your own code (constructor, guard, hook) does not become a result: it reaches the caller once the previous page is back in place.
+
 ## Going back, and back to somewhere else
 
 `-` goes back one page. `-/orders` goes back, then opens `/orders` in place of the page that was left. Both pass through the same gate as any other route change.
