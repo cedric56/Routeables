@@ -15,6 +15,10 @@
     <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
   </ItemGroup>
   <ItemGroup>
+    <!-- The rule that cuts an address into path and query, shared with the contracts. -->
+    <Compile Include="..\Routeables.Shared\AddressRules.cs" Link="AddressRules.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <!-- RouteBuilds (what the registration generator reads of a type) is tested on its own, from compilations. -->
     <InternalsVisibleTo Include="Routeables.Test" />
   </ItemGroup>

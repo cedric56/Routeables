@@ -339,14 +339,8 @@ public static partial class RouteParser
             return (path, query ?? "");
         }
 
-        var depth = 0;
-        for (var i = 0; i < s.Length; i++)
-        {
-            if (s[i] == '{') depth++;
-            else if (s[i] == '}') depth--;
-            else if (s[i] == '?' && depth == 0) return (s[..i], s[(i + 1)..]);
-        }
-        return (s, "");
+        var at = RouteAddress.TemplateQueryStart(s);
+        return at < 0 ? (s, "") : (s[..at], s[(at + 1)..]);
     }
 
     /// <summary>

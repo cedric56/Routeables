@@ -37,22 +37,11 @@ internal static class RouteAddress
         return text.Trim('/');
     }
 
-    // The query starts at the first question mark that is not an optional parameter's ("products/{tab?}"); -1 for none.
-    internal static int QueryStart(ReadOnlySpan<char> text)
-    {
-        var depth = 0;
-        var lastClose = text.LastIndexOf('}'); // looked for once: an address of thousands of "{" must not cost a search each
-        for (var i = 0; i < text.Length; i++)
-        {
-            // A brace that nothing closes is a character of a hand-typed address, not the start of a placeholder.
-            if (text[i] == '{' && i < lastClose) depth++;
-            else if (text[i] == '}' && depth > 0) depth--;
-            // Inside braces a question mark is the "optional" mark only when the placeholder ends right after it ("{tab?}", "{tab:int?}"): in
-            // "/notes/a{b?tab=x}" it starts the query, as the browser reads it.
-            else if (text[i] == '?' && (depth == 0 || (i + 1 < text.Length && text[i + 1] != '}'))) return i;
-        }
-        return -1;
-    }
+    // The query starts at the first question mark that is not an optional parameter's ("products/{tab?}"); -1 for none. The rule is in
+    // AddressRules, which the generator and the analyzer compile too.
+    internal static int TemplateQueryStart(string template) => Routeables.Shared.AddressRules.TemplateQueryStart(template);
+
+    internal static int QueryStart(string text, int length = -1) => Routeables.Shared.AddressRules.QueryStart(text, length);
 
     // The fragment is for the browser, never for the route: "/about#top" is "/about", as the parser reads it.
     /// <summary>The address without its fragment (<c>#top</c>), which is for the browser and never part of a route.</summary>

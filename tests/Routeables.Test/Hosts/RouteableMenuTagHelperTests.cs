@@ -107,4 +107,30 @@ public class RouteableMenuTagHelperTests
         Assert.DoesNotContain("Cats", html);
         Assert.Contains("rt-menu-active", html);
     }
+
+    [Fact]
+    public void Of_several_entries_that_start_the_address_the_longest_is_the_one_marked()
+    {
+        var main = new FakeMenuViewModel();
+        main.Entries.Add(new RouteableMenuEntry<Cats>("Settings", null, "/settings", "/settings"));
+        main.Entries.Add(new RouteableMenuEntry<Dogs>("Profile", null, "/settings/profile", "/settings/profile"));
+        main.Entries.Add(new RouteableMenuEntry<Cats>("Security", null, "/settings/security", "/settings/security"));
+
+        var html = Render(main, "/settings/profile/avatar");
+
+        Assert.Single(html.Split("aria-current=\"page\"").Skip(1));
+        Assert.Contains("rt-menu-active", html);
+    }
+
+    [Fact]
+    public void The_fragment_and_the_query_of_an_entry_are_not_part_of_its_path()
+    {
+        var main = new FakeMenuViewModel();
+        main.Entries.Add(new RouteableMenuEntry<Cats>("About", null, "/about#team", "/about#team"));
+        main.Entries.Add(new RouteableMenuEntry<Dogs>("Home", null, "/", "/"));
+
+        var html = Render(main, "/about");
+
+        Assert.Single(html.Split("aria-current=\"page\"").Skip(1));
+    }
 }

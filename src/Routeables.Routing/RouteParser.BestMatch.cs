@@ -97,10 +97,10 @@ public static partial class RouteParser
     private static string FirstSegment(string uri)
     {
         // Cut where the parser cuts: the fragment first, then the query as RouteAddress finds it (a "?" inside braces is not always the query's).
-        var text = uri.AsSpan();
-        if (text.IndexOf('#') is var hash and >= 0) text = text[..hash];
-        var end = RouteAddress.QueryStart(text);
-        var path = end < 0 ? text : text[..end];
+        var hash = uri.IndexOf('#');
+        var length = hash < 0 ? uri.Length : hash;
+        var end = RouteAddress.QueryStart(uri, length);
+        var path = uri.AsSpan(0, end < 0 ? length : end);
         path = path.TrimStart('/');
         var slash = path.IndexOf('/');
         var first = slash < 0 ? path : path[..slash];

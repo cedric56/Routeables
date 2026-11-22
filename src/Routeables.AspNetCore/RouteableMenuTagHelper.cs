@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Routing;
 
 namespace Routeables.AspNetCore;
 
@@ -43,19 +44,24 @@ public sealed class RouteableMenuTagHelper : TagHelper
         ArgumentNullException.ThrowIfNull(output);
         var entries = Entries ?? ViewContext.HttpContext.RequestServices.GetService<IRouteableMenuViewModel>()?.Entries ?? [];
 
-        // The menu marks the first segment of the address: /cats/Tom is still in Cats.
-        var current = FirstSegment(Current ?? ViewContext.HttpContext.Request.Path.Value);
+        // The menu marks the entry whose address starts the current one: /cats/Tom is still in Cats. When several entries start it, the longest
+        // wins (/settings/profile marks Profile, not Settings), and entries that tie are all marked.
+        var current = SegmentsOf(Current ?? ViewContext.HttpContext.Request.Path.Value, unescape: false);
+        var listed = entries.ToList();
+        var scores = listed.Select(entry => StartScore(SegmentsOf(RouteableAddress.Of(entry.Route), unescape: true), current)).ToList();
+        var best = scores.Count == 0 ? -1 : scores.Max();
 
         output.TagName = "nav";
         output.TagMode = TagMode.StartTagAndEndTag;
         output.Attributes.SetAttribute("aria-label", Label);
         output.Content.Clear();
 
-        foreach (var entry in entries)
+        for (var index = 0; index < listed.Count; index++)
         {
+            var entry = listed[index];
             var address = RouteableAddress.Of(entry.Route);
             var href = RouteableAddress.Of(entry.Route, ViewContext.HttpContext.Request.PathBase);
-            var active = string.Equals(FirstSegment(address, unescape: true), current, StringComparison.OrdinalIgnoreCase);
+            var active = scores[index] >= 0 && scores[index] == best;
             var link = new TagBuilder(entry.IsLock ? "span" : "a");
             link.AddCssClass("rt-menu-link");
             if (entry.IsLock)
@@ -99,9 +105,19 @@ public sealed class RouteableMenuTagHelper : TagHelper
     }
 
     // An entry's address keeps its escapes ("/caf%C3%A9") while the request path is already decoded ("/café"): unescape the entry to compare.
-    private static string FirstSegment(string? address, bool unescape = false)
+    // The query and the fragment are not part of the path.
+    private static string[] SegmentsOf(string? address, bool unescape)
+        => RouteAddress.PathOf(address).Split('/', StringSplitOptions.RemoveEmptyEntries)
+            .Select(segment => unescape ? Uri.UnescapeDataString(segment) : segment).ToArray();
+
+    // -1: the entry does not start the current address; otherwise how many segments it has. The home entry ("/") is only the home page.
+    private static int StartScore(string[] entry, string[] current)
     {
-        var segment = address?.Split('?')[0].Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "";
-        return "/" + (unescape ? Uri.UnescapeDataString(segment) : segment);
+        if (entry.Length > current.Length || (entry.Length == 0 && current.Length > 0))
+            return -1;
+        for (var i = 0; i < entry.Length; i++)
+            if (!string.Equals(entry[i], current[i], StringComparison.OrdinalIgnoreCase))
+                return -1;
+        return entry.Length;
     }
 }

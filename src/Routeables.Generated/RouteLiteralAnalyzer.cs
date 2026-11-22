@@ -165,15 +165,10 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
         if (hash >= 0)
             route = route.Substring(0, hash);
 
-        // The query starts at a '?' that does not end an optional placeholder: "{tab?}" and "{tab::?}" keep theirs.
-        for (var i = 0; i < route.Length; i++)
-        {
-            if (route[i] == '?' && (i + 1 >= route.Length || route[i + 1] != '}'))
-            {
-                route = route.Substring(0, i);
-                break;
-            }
-        }
+        // The query starts where RouteAddress finds it (the rule is shared: AddressRules).
+        var at = Routeables.Shared.AddressRules.QueryStart(route);
+        if (at >= 0)
+            route = route.Substring(0, at);
         return route.Trim('/');
     }
 

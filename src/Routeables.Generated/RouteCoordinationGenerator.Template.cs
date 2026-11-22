@@ -122,27 +122,12 @@ namespace Routeables.Generated
             return true;
         }
 
-        // Same rule as RouteParser.Split: a '?' inside braces does not start the query.
+        // The rule of RouteParser.Split, shared in AddressRules: a '?' inside braces does not start the query.
         private static void SplitTemplate(string template, out string path, out string query)
         {
-            var depth = 0;
-            for (var i = 0; i < template.Length; i++)
-            {
-                var c = template[i];
-                if (c == '{')
-                    depth++;
-                else if (c == '}')
-                    depth--;
-                else if (c == '?' && depth == 0)
-                {
-                    path = template.Substring(0, i);
-                    query = template.Substring(i + 1);
-                    return;
-                }
-            }
-
-            path = template;
-            query = string.Empty;
+            var at = Routeables.Shared.AddressRules.TemplateQueryStart(template);
+            path = at < 0 ? template : template.Substring(0, at);
+            query = at < 0 ? string.Empty : template.Substring(at + 1);
         }
 
         private static ClrKind ClrKindOf(string type)

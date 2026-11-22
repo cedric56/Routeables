@@ -708,4 +708,12 @@ public class RouteParserTests
         Assert.False(RouteParser.TryMatch("list?mode=grid", "list?mode=Grid"));
         Assert.True(RouteParser.TryMatch("list?mode=grid", "list?MODE=grid"));
     }
+
+    [Fact]
+    public void A_lone_closing_brace_in_a_template_does_not_hide_its_query()
+    {
+        var args = RouteableArgs.Create();
+
+        Assert.True(RouteParser.TryMatch("n/x}/{id}?{tab?}", "n/x}/5?tab=2", args));
+    }
 }
