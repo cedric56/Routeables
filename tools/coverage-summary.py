@@ -145,6 +145,21 @@ def explain(paths, assembly):
     everything = merged.get(assembly, {})
     run = sum(1 for hit in everything.values() if hit)
     print(f"| **merged** | {len(everything)} | {run} | **{percent(run, len(everything))}** | | |")
+    for path, own in reports:
+        others = set()
+        for other_path, lines in reports:
+            if other_path != path:
+                others.update(lines)
+        by_file = {}
+        for key in own:
+            if key not in others:
+                by_file[key[0]] = by_file.get(key[0], 0) + 1
+        if by_file:
+            print()
+            print(f"Listed only by {path.replace(chr(92), '/').split('/')[-1]}, by file:")
+            for file, count in sorted(by_file.items(), key=lambda item: -item[1])[:15]:
+                print(f"- {file}: {count}")
+            print()
 
 
 def main(argv):
