@@ -48,16 +48,19 @@ internal sealed class DBusWriter
     public void UInt32(uint value)
     {
         Align(4);
-        _bytes.AddRange(BitConverter.GetBytes(value));
+        Span<byte> little = stackalloc byte[4];
+        System.Buffers.Binary.BinaryPrimitives.WriteUInt32LittleEndian(little, value); // the messages are marked little-endian whatever the machine
+        foreach (var b in little) _bytes.Add(b);
     }
 
     public void Int32(int value) => UInt32(unchecked((uint)value));
 
     public void SetUInt32(int position, uint value)
     {
-        var bytes = BitConverter.GetBytes(value);
+        Span<byte> little = stackalloc byte[4];
+        System.Buffers.Binary.BinaryPrimitives.WriteUInt32LittleEndian(little, value);
         for (var i = 0; i < 4; i++)
-            _bytes[position + i] = bytes[i];
+            _bytes[position + i] = little[i];
     }
 
     /// <summary>A string or an object path: its length, the text, a zero.</summary>
@@ -112,7 +115,7 @@ internal sealed class DBusReader(byte[] bytes, int position = 0)
     {
         Align(4);
         Need(4);
-        var value = BitConverter.ToUInt32(bytes, Position);
+        var value = System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(Position, 4));
         Position += 4;
         return value;
     }
@@ -426,8 +429,8 @@ internal sealed class DBusConnection : IDisposable
                     throw new InvalidOperationException("Not a D-Bus message: the connection is closed.");
 
                 var type = fixedPart[1];
-                var serial = BitConverter.ToUInt32(fixedPart, 8);
-                var (bodyLength, fieldsLength) = ValidateLengths(BitConverter.ToUInt32(fixedPart, 4), BitConverter.ToUInt32(fixedPart, 12));
+                var serial = System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(fixedPart.AsSpan(8, 4));
+                var (bodyLength, fieldsLength) = ValidateLengths(System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(fixedPart.AsSpan(4, 4)), System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(fixedPart.AsSpan(12, 4)));
                 var headerEnd = 16 + fieldsLength;
                 var padding = (8 - headerEnd % 8) % 8;
 

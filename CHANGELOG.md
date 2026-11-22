@@ -17,6 +17,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- A hand-typed address such as `/notes/a{b?tab=x}` keeps its query: a question mark inside braces is the "optional" mark of a placeholder only when the placeholder ends right after it (`{tab?}`, `{tab:int?}`); the CHANGELOG said braces of an address are text, which held only for an unclosed one.
+- D-Bus client: the messages are written and read in little-endian order whatever the machine (they were marked little-endian but written in the order of the machine, so a big-endian machine such as s390x sent corrupt messages).
 - `RouteableLink Route="-"` (and `-/orders`) goes back again in Blazor: the link is no longer left to Blazor, which followed it as the address `./-`, matched by no route. These two are qualifiers, not addresses.
 - A query name given twice (`?a=1&a=2`) counts once, with its last value, in the comparison of addresses, as the parser reads it: it was two different pages for `RouteAddress`, and the Blazor address bar rewrote the address for nothing.
 - **The parser and the comparison of addresses now agree** (`RouteAddress` takes the case of a value, an escaped slash and the first `?` of an address for differences; the parser did not): a `bool` matches only `true` and `false`, and a `guid` only in lower case, as Build writes them (`/x/True` and `/x/true` were one page for the parser and two for the comparison); a catch-all `{**path}` refuses an escaped slash (`/files/a%2Fb` read as `a/b`, the same value as `/files/a/b`, which are two addresses); the parser cuts an address at the same `?` as `RouteAddress` (braces in a hand-typed address are text). **Behaviour change**: an address written `True` or with an upper-case Guid no longer matches.

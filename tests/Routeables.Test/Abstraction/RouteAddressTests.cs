@@ -231,4 +231,14 @@ public class RouteAddressTests
         Assert.True(RouteAddress.Same("/p?A=1&a=2&b=3", "/p?b=3&a=2"));
         Assert.False(RouteAddress.Same("/p?a=2&a=1", "/p?a=2"));
     }
+
+    [Fact]
+    public void A_question_mark_inside_braces_starts_the_query_unless_it_ends_the_placeholder()
+    {
+        Assert.False(RouteAddress.Same("/notes/a{b?tab=x}", "/notes/a{b?tab=y}"));
+        Assert.True(RouteAddress.Same("/notes/a{b?tab=x}", "/notes/a{b?tab=x}"));
+        Assert.Equal("notes/a{b", RouteAddress.PathOf("/notes/a{b?tab=x}"));
+        Assert.Equal("products/{tab?}", RouteAddress.PathOf("/products/{tab?}?x=1"));
+        Assert.Equal("products/{tab:int?}", RouteAddress.PathOf("products/{tab:int?}"));
+    }
 }

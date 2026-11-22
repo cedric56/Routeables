@@ -46,7 +46,9 @@ internal static class RouteAddress
             // A brace that nothing closes is a character of a hand-typed address, not the start of a placeholder.
             if (text[i] == '{' && text.IndexOf('}', i) >= 0) depth++;
             else if (text[i] == '}' && depth > 0) depth--;
-            else if (text[i] == '?' && depth == 0) return i;
+            // Inside braces a question mark is the "optional" mark only when the placeholder ends right after it ("{tab?}", "{tab:int?}"): in
+            // "/notes/a{b?tab=x}" it starts the query, as the browser reads it.
+            else if (text[i] == '?' && (depth == 0 || (i + 1 < text.Length && text[i + 1] != '}'))) return i;
         }
         return -1;
     }
