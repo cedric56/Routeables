@@ -424,6 +424,7 @@ public static class RouteableHistoryExtensions
     /// Keeps the history of the router between two runs of the application, encrypted by <paramref name="protector"/>
     /// (see <see cref="AesRouteableHistoryProtector"/>).
     /// </summary>
+    /// <remarks>Call it once: like the other <c>TryAdd</c> registrations, a second call (with another path or protector) changes nothing, the first one stays.</remarks>
     /// <param name="services">The service collection of the application.</param>
     /// <param name="path">The file that holds the history; <see langword="null"/> takes <see cref="FileRouteableHistoryStore"/>'s default.</param>
     /// <param name="protector">Encrypts what is kept; <see langword="null"/> keeps plain text, which is only fit for histories that hold no private data.</param>
