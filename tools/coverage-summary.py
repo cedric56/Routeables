@@ -14,6 +14,10 @@ With --per-report one table gives, for each report, the coverage of the whole an
 report that is missing or badly read from one that covers little). A file shared between hosts
 (Routeables.Shared is compiled into each of them) is listed once for each assembly that holds a copy.
 
+With --ignore-trivial the lines that hold only a brace, a blank or a comment are left out of the counts of the table of assemblies (the source
+files are read from the directory where the script runs): a build with debug information lists the braces and a build without it does not,
+so the report of the first lists lines that the others do not, and the merge of the two covers less than the best of them.
+
 With --explain one table gives, for the assembly ASSEMBLY, what each report holds of it: its lines, those it runs, and those that only
 this report lists. The merged table counts a line once, wherever it is listed, so a report whose tool lists lines that the others do not
 (braces, the continuations of async methods) lowers the merged percentage below the one of the report that covers the code best.
@@ -72,7 +76,7 @@ def ranges(numbers, limit=8):
     return ", ".join(out[:limit]) + (", ..." if len(out) > limit else "")
 
 
-def load(paths):
+def load(paths, ignore_trivial=False):
     """Lines are counted once per file and number: the reports of several test projects can cover the same code."""
     lines = {}      # assembly -> {(file, number): covered}
     branches = {}   # assembly -> {(file, number): (covered, total)}, the best of the reports
@@ -84,6 +88,8 @@ def load(paths):
             for cls in package.iter("class"):
                 file = repo_path(cls.get("filename") or "")
                 for line in cls.findall("lines/line"):
+                    if ignore_trivial and is_trivial(file, int(line.get("number"))):
+                        continue
                     key = (file, line.get("number"))
                     seen[key] = seen.get(key, False) or int(line.get("hits", "0")) > 0
                     if line.get("branch") == "True":
@@ -126,8 +132,8 @@ def explain(paths, assembly):
     for path in paths:
         lines, _ = load([path])
         reports.append((path, lines.get(assembly, {})))
-    print(f"| Report | Lines of {assembly} | Run | Line coverage | Listed only here | of which run |")
-    print("|---|---:|---:|---:|---:|---:|")
+    print(f"| Report | Lines of {assembly} | Run | Line coverage | Listed only here | of which run | of which only a brace |")
+    print("|---|---:|---:|---:|---:|---:|---:|")
     for index, (path, own) in enumerate(reports):
         others = set()
         for other_index, (_, lines) in enumerate(reports):
@@ -140,11 +146,11 @@ def explain(paths, assembly):
         if len(stem) > 8 and "-" in stem:
             name = f"{name} ({stem[:8]})"
         run = sum(1 for hit in own.values() if hit)
-        print(f"| {name} | {len(own)} | {run} | {percent(run, len(own))} | {len(alone)} | {sum(1 for key in alone if own[key])} |")
+        print(f"| {name} | {len(own)} | {run} | {percent(run, len(own))} | {len(alone)} | {sum(1 for key in alone if own[key])} | {sum(1 for key in alone if is_trivial(key[0], int(key[1])))} |")
     merged, _ = load(paths)
     everything = merged.get(assembly, {})
     run = sum(1 for hit in everything.values() if hit)
-    print(f"| **merged** | {len(everything)} | {run} | **{percent(run, len(everything))}** | | |")
+    print(f"| **merged** | {len(everything)} | {run} | **{percent(run, len(everything))}** | | | |")
     for path, own in reports:
         others = set()
         for other_path, lines in reports:
@@ -169,6 +175,7 @@ def main(argv):
     only = ""
     skip = []
     by_report = False
+    ignore_trivial = False
     explained = None
     files = []
     args = iter(argv)
@@ -186,6 +193,8 @@ def main(argv):
             skip.append(next(args))
         elif arg == "--per-report":
             by_report = True
+        elif arg == "--ignore-trivial":
+            ignore_trivial = True
         elif arg == "--explain":
             explained = next(args)
         else:
@@ -202,7 +211,7 @@ def main(argv):
         explain(files, explained)
         return 0
 
-    lines, branches = load(files)
+    lines, branches = load(files, ignore_trivial)
     pct = percent
 
     print("| Assembly | Lines | Covered | Line coverage | Branch coverage |")

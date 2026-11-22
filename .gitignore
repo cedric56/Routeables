@@ -477,3 +477,4 @@ tests/Routeables.Test.Maui/Snapshots/_actual/
 
 # Output of "dotnet list package", written to the root by mistake once
 /packages.json
+CLAUDE.md
