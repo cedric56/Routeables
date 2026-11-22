@@ -214,26 +214,30 @@ internal partial class Router
     private Task<RouteableResult> GoToRegisteredAsync(Type viewModelType, RouteableRouteRequest request, string[] viewKeys, CancellationToken cancellationToken)
     {
         var entries = provider.GetService<RouteableTable>()?.Entries ?? [];
-        // The most precise first: a template with more placeholders takes more of the values ("/orders/{id}" before "/orders" for an id); equal ones keep
-        // the order of registration (OrderBy is stable).
-        var templates = entries.Where(e => e.ViewModelType == viewModelType).Select(e => e.Template).OrderByDescending(t => t.Count(c => c == '{')).ToList();
+        var templates = entries.Where(e => e.ViewModelType == viewModelType).Select(e => e.Template).ToList();
         if (templates.Count == 0)
             return Task.FromResult(RouteableResult.Fail(new InvalidOperationException(
                 $"No route is registered for {viewModelType.Name}. Give it one: [Routeable(\"/path/{{id:int}}\")] on the view model, or RegisterRoute<TView, {viewModelType.Name}>(route: \"/path\").")));
 
-        // Several routes for one view model: use the first one (in that order) the values can fill, or report the error of the last one when none can.
+        // Several routes for one view model: the one that takes the most of the values wins ("/orders/{id}" for an id, not "/orders/{status?}/{page?}",
+        // which would drop it); equal ones keep the order of registration. When none can be filled, the error of the last one is reported.
         Exception? failure = null;
+        string? best = null, bestRoute = null;
+        var bestUsed = -1;
         foreach (var template in templates)
         {
             try
             {
                 var route = RouteParser.Build(template, request.Values);
-                return GoToTypedRouteAsync(viewModelType, route, request.Args, template, cancellationToken, viewKeys);
+                var used = RouteParser.UsedBy(template, request.Values);
+                if (used > bestUsed) { best = template; bestRoute = route; bestUsed = used; }
             }
             catch (Exception ex) when (ex is ArgumentException or NotSupportedException or System.Text.Json.JsonException) { failure = ex; }
         }
 
-        return Task.FromResult(RouteableResult.Fail(failure!));
+        return best is null
+            ? Task.FromResult(RouteableResult.Fail(failure!))
+            : GoToTypedRouteAsync(viewModelType, bestRoute!, request.Args, best, cancellationToken, viewKeys);
     }
 
     // Go to the entry, then hand it the page the router shows, so that its next visit finds it.

@@ -72,7 +72,7 @@ internal sealed class BrowserSystemNotifications(IJSRuntime js, AppNotificationO
             var permission = await module.InvokeAsync<string>("permission");
             return permission == "default" ? await module.InvokeAsync<string>("requestPermission") : permission;
         }
-        catch (Exception ex) when (ex is InvalidOperationException or JSException or JSDisconnectedException)
+        catch (Exception ex) when (ex is InvalidOperationException or JSException or JSDisconnectedException or TaskCanceledException) // the last: a JavaScript call that timed out
         {
             Forget();
             return "unsupported";

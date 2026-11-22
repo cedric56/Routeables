@@ -727,4 +727,13 @@ public class RouteParserTests
     [Fact]
     public void A_sound_template_has_no_flaw()
         => Assert.Null(RouteParser.FlawOf("cat/{age?}"));
+
+    [Fact]
+    public void The_values_a_template_takes_are_counted_without_the_optional_ones_left_out()
+    {
+        Assert.Equal(1, RouteParser.UsedBy("/orders/{id}", new { id = 5 }));
+        Assert.Equal(0, RouteParser.UsedBy("/orders/{status?}/{page?}", new { id = 5 }));
+        Assert.Equal(1, RouteParser.UsedBy("/orders?{page?}&{sort?}", new { sort = "name" }));
+        Assert.Equal(0, RouteParser.UsedBy("/orders/{id}", new { id = "" }));
+    }
 }

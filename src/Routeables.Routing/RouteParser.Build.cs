@@ -15,6 +15,15 @@ public static partial class RouteParser
     /// query entry) out.
     /// </summary>
     /// <exception cref="ArgumentException">A required value is missing, or a constraint is unknown.</exception>
+    /// <summary>How many of the placeholders of <paramref name="template"/> get a value from <paramref name="values"/> (an optional one left out does not count).</summary>
+    internal static int UsedBy(string template, object? values)
+    {
+        var bag = ValuesOf(values);
+        var parsed = ParseTemplate(template);
+        return parsed.SegmentMatches.Concat(parsed.QueryMatches)
+            .Count(m => m.Success && bag.TryGetValue(m.Groups["name"].Value, out var value) && value is not null && value is not string { Length: 0 });
+    }
+
     internal static string Build(string template, object? values)
     {
         ArgumentNullException.ThrowIfNull(template);
