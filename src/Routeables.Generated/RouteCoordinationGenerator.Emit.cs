@@ -45,7 +45,9 @@ namespace Routeables.Generated
             {
                 var first = group.First();
                 spc.AddSource(
-                    "RouteCoordination." + Sanitize(first.CallerHint) + ".g.cs",
+                    // The readable name is not unique ("A_B.C" and "A.B_C" give the same one, and a second file of the same name makes the compiler drop the
+                    // generator): the hash of the full name of the caller tells them apart.
+                    "RouteCoordination." + Sanitize(first.CallerHint) + "." + Hash(first.CallerName) + ".g.cs",
                     SourceText.From(EmitCaller(first, group.ToList()), Encoding.UTF8));
             }
         }
@@ -67,6 +69,17 @@ namespace Routeables.Generated
 
             sb.AppendLine(indent + "internal static class " + first.CallerHint + "RouteCoordination");
             sb.AppendLine(indent + "{");
+            // A surrogate without its pair would be written as U+FFFD, and the value read back would not be the one given (RouteParser.Build refuses it too).
+            sb.AppendLine(indent + "    private static string __RouteEscape(string value)");
+            sb.AppendLine(indent + "    {");
+            sb.AppendLine(indent + "        for (var i = 0; i < value.Length; i++)");
+            sb.AppendLine(indent + "        {");
+            sb.AppendLine(indent + "            if (global::System.Char.IsHighSurrogate(value[i]) && i + 1 < value.Length && global::System.Char.IsLowSurrogate(value[i + 1])) i++;");
+            sb.AppendLine(indent + "            else if (global::System.Char.IsSurrogate(value[i])) throw new global::System.ArgumentException(\"A route value is not valid Unicode text (a surrogate without its pair).\");");
+            sb.AppendLine(indent + "        }");
+            sb.AppendLine(indent + "        return global::System.Uri.EscapeDataString(value);");
+            sb.AppendLine(indent + "    }");
+            sb.AppendLine();
 
             for (var i = 0; i < methods.Count; i++)
             {
@@ -230,12 +243,12 @@ namespace Routeables.Generated
                     // The rest of the path keeps its slashes and each piece is escaped, as in RouteParser.Build, which also rejects an empty piece, "." and "..".
                     return "(" + value + ".Length == 0 ? \"\" : global::System.String.Join(\"/\", global::System.Linq.Enumerable.Select(" + value
                         + ".Split('/'), new global::System.Func<string, string>(__piece => __piece.Length == 0 || __piece == \".\" || __piece == \"..\""
-                        + " ? throw new global::System.ArgumentException(\"A catch-all value has no empty, \\\".\\\" or \\\"..\\\" segment.\") : global::System.Uri.EscapeDataString(__piece)))))";
+                        + " ? throw new global::System.ArgumentException(\"A catch-all value has no empty, \\\".\\\" or \\\"..\\\" segment.\") : __RouteEscape(__piece)))))";
                 default:
                     // "." and ".." are not a path segment: a browser resolves them to another address (RouteParser.Build rejects them).
                     return path
-                        ? "(global::System.Array.Exists(" + value + ".Split('/'), __part => __part is \".\" or \"..\") ? throw new global::System.ArgumentException(\"A path value cannot be \\\".\\\" or \\\"..\\\".\") : global::System.Uri.EscapeDataString(" + value + "))"
-                        : "global::System.Uri.EscapeDataString(" + value + ")";
+                        ? "(global::System.Array.Exists(" + value + ".Split('/'), __part => __part is \".\" or \"..\") ? throw new global::System.ArgumentException(\"A path value cannot be \\\".\\\" or \\\"..\\\".\") : __RouteEscape(" + value + "))"
+                        : "__RouteEscape(" + value + ")";
             }
         }
 
@@ -243,6 +256,15 @@ namespace Routeables.Generated
 
         private static string Xml(string value) =>
             value.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+
+        // FNV-1a over the characters, in hexadecimal: the same text always gives the same name, so the files do not change from one build to the next.
+        private static string Hash(string value)
+        {
+            var hash = 2166136261u;
+            foreach (var c in value)
+                hash = unchecked((hash ^ c) * 16777619u);
+            return hash.ToString("x8", System.Globalization.CultureInfo.InvariantCulture);
+        }
 
         private static string Sanitize(string value)
         {

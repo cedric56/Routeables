@@ -365,7 +365,7 @@ public class RouteCoordinationGeneratorTests
                     await Check(home.GoToOptAsync(router), vm => ((OptViewModel)vm!).Value);
                     // What RouteParser.Build refuses is refused here: "." and ".." in a path, NaN and infinity.
                     foreach (var bad in new System.Func<Task<RouteableResult>>[]
-                             { () => home.GoToStrAsync(router, "a/.."), () => home.GoToStrAsync(router, ".."), () => home.GoToStrAsync(router, "."), () => home.GoToDblAsync(router, double.NaN), () => home.GoToDblAsync(router, double.PositiveInfinity) })
+                             { () => home.GoToStrAsync(router, "a/.."), () => home.GoToStrAsync(router, ".."), () => home.GoToStrAsync(router, "."), () => home.GoToDblAsync(router, double.NaN), () => home.GoToDblAsync(router, double.PositiveInfinity), () => home.GoToStrAsync(router, "a\uD800b") })
                     {
                         try { await bad(); seen.Add("no error"); }
                         catch (ArgumentException) { seen.Add("refused"); }
@@ -376,7 +376,7 @@ public class RouteCoordinationGeneratorTests
             """);
 
         Assert.Equal(
-            "42|9999999999|True|6f9619ff-8b86-d011-b42d-00c04fc964ff|1234.56|0.25|19.9|0|a b/c&d%e?f#g+h|x y&z=1/7|5|null|refused|refused|refused|refused|refused",
+            "42|9999999999|True|6f9619ff-8b86-d011-b42d-00c04fc964ff|1234.56|0.25|19.9|0|a b/c&d%e?f#g+h|x y&z=1/7|5|null|refused|refused|refused|refused|refused|refused",
             summary);
     }
 
@@ -1113,5 +1113,28 @@ public class RouteCoordinationGeneratorTests
             MetadataReference.CreateFromFile(typeof(ServiceCollectionContainerBuilderExtensions).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Microsoft.AspNetCore.Mvc.FromServicesAttribute).Assembly.Location)
         ]).DistinctBy(reference => reference.Display);
+    }
+
+    [Fact]
+    public void Two_callers_whose_readable_names_are_the_same_do_not_stop_the_generator()
+    {
+        // "A_B.C" and "A.B_C" both read A_B_C: the files are named apart by the full name of the caller. (Block namespaces: the prelude's is file-scoped.)
+        var output = Generate(Prelude.Replace("namespace Sample;", "") + """
+
+            namespace A_B { public sealed class C { } }
+            namespace A { public sealed class B_C { } }
+
+            [Routeable("/one")]
+            [RouteableViewModel(typeof(A_B.C))]
+            public sealed class OneViewModel(IRouter router) { }
+
+            [Routeable("/two")]
+            [RouteableViewModel(typeof(A.B_C))]
+            public sealed class TwoViewModel(IRouter router) { }
+            """);
+
+        Assert.Empty(output.GeneratorDiagnostics);
+        Assert.Empty(output.CompileErrors);
+        Assert.Equal(2, output.Run.Results.Sum(r => r.GeneratedSources.Length));
     }
 }
