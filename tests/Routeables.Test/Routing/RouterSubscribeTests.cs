@@ -83,6 +83,19 @@ public class RouterSubscribeTests
     }
 
     [Fact]
+    public async Task A_page_two_navigations_discard_is_disposed_once()
+    {
+        var calls = new List<string>();
+        var lifecycle = new RouterLifecycle();
+        var page = Entry(new Probe("vm", calls), new Probe("view", calls));
+
+        await lifecycle.DestroyAsync([page], []);
+        await lifecycle.DestroyAsync([page], []);
+
+        Assert.Equal(["vm:dispose", "view:dispose"], calls);
+    }
+
+    [Fact]
     public async Task A_page_that_was_never_entered_is_not_unsubscribed()
     {
         var calls = new List<string>();

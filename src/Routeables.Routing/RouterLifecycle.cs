@@ -221,7 +221,7 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
         {
             foreach (var target in new[] { e.ViewModel, e.View })
             {
-                if (alive.Contains(target) || !done.Add(target) || caches.Any(c => c.Owns(target))) continue;
+                if (alive.Contains(target) || !done.Add(target) || WasDestroyed(target) || caches.Any(c => c.Owns(target))) continue; // a page is disposed once, even when two navigations discard it
                 try { Unsubscribe(target); }
                 catch (Exception ex) { RouteableErrors.Report<RouterLifecycle>(provider, ex); }   // and the page is still disposed
 

@@ -97,6 +97,17 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void A_fixed_entry_of_the_template_is_not_a_neutral_value()
+    {
+        var args = RouteableArgs.Create();
+
+        Assert.True(RouteParser.TryMatch("list?mode=grid", "list?mode=grid&utm=a", args));
+
+        Assert.DoesNotContain(args.Values, e => e.name == "mode");
+        Assert.Contains(args.Values, e => e.name == "utm");
+    }
+
+    [Fact]
     public void A_declared_query_parameter_that_is_sent_empty_is_not_a_neutral_value()
     {
         var args = RouteableArgs.Create();

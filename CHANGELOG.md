@@ -18,6 +18,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A fixed entry of a template (`/list?mode=grid`) appeared in `Args.Values` as an undeclared value**; only the query values the template does not name are there now.
+- **A page could be disposed twice** when two navigations discarded it (a `PopAsync` or a `MaxSize` eviction running before the cleanup of the call that built it). The router remembers the pages it disposed.
 - **A tab or a menu item stayed selected over the old page when the navigation was refused**: a guard, or a page with unsaved changes that `CanLeaveAsync` keeps, refused the route, the history did not change, and nothing selected the entry that is shown again. `RegionTabs` (Avalonia, WPF, MAUI, Uno) and the `NavigationView` of WinUI and Uno now select back the entry whose route is current.
 - Source generator: two callers whose readable names are the same (`A_B.C` and `A.B_C`, or `App.Shell.Page` and `App_Shell.Page`) gave the same file name, which made Roslyn throw and switched the whole generator off (every `GoTo...Async` disappeared, with only a CS8785 warning). The files are named with a hash of the full name of the caller as well.
 - Source generator: a text value that holds a surrogate without its pair is refused (`ArgumentException`), as `RouteParser.Build` does; the generated method wrote it as `%EF%BF%BD` and the value read back was not the one given.

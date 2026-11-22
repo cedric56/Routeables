@@ -194,6 +194,7 @@ public static partial class RouteParser
                     query.TryGetValue(fixedName, out var got);
                     if (!string.Equals(got, fixedValue, StringComparison.Ordinal)) // the case of a value counts, as in RouteAddress
                         return reasons ? $"the query \"{fixedName}\" is \"{got}\", expected \"{fixedValue}\"" : NoReason;
+                    bound?.Add(fixedName); // the template declares it: it is not an undeclared value
                 }
                 continue;
             }
