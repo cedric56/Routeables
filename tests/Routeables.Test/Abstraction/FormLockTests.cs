@@ -140,4 +140,28 @@ public class FormLockTests
         using var again = formLock.Lock();
         Assert.True(formLock.IsLocked);
     }
+
+    [Fact]
+    public void A_subscriber_that_fails_on_the_message_of_another_call_does_not_fail_this_one()
+    {
+        var broker = new RouteableLockBroker();
+        var formLock = new RouteableFormLock(broker);
+        var first = formLock.Lock();
+        IDisposable? other = null;
+        broker.Subscribe("LockChanged", message =>
+        {
+            var changed = (RouteableLockMessage)message;
+            if (!changed.IsLocked && other is null)
+                other = formLock.Lock(); // asked while the unlock is delivered: its message is left to this delivery
+            else if (changed.IsLocked)
+                throw new InvalidOperationException("subscriber");
+        });
+
+        // The failure is that of the lock another call asked for: this call (an unlock that went well) is not told.
+        first.Dispose();
+
+        Assert.True(formLock.IsLocked);
+        other!.Dispose();
+        Assert.False(formLock.IsLocked);
+    }
 }

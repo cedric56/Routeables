@@ -214,12 +214,14 @@ internal partial class Router
     private Task<RouteableResult> GoToRegisteredAsync(Type viewModelType, RouteableRouteRequest request, string[] viewKeys, CancellationToken cancellationToken)
     {
         var entries = provider.GetService<RouteableTable>()?.Entries ?? [];
-        var templates = entries.Where(e => e.ViewModelType == viewModelType).Select(e => e.Template).ToList();
+        // The most precise first: a template with more placeholders takes more of the values ("/orders/{id}" before "/orders" for an id); equal ones keep
+        // the order of registration (OrderBy is stable).
+        var templates = entries.Where(e => e.ViewModelType == viewModelType).Select(e => e.Template).OrderByDescending(t => t.Count(c => c == '{')).ToList();
         if (templates.Count == 0)
             return Task.FromResult(RouteableResult.Fail(new InvalidOperationException(
                 $"No route is registered for {viewModelType.Name}. Give it one: [Routeable(\"/path/{{id:int}}\")] on the view model, or RegisterRoute<TView, {viewModelType.Name}>(route: \"/path\").")));
 
-        // Several routes for one view model: use the first one the values can fill, or report the error of the last one when none can.
+        // Several routes for one view model: use the first one (in that order) the values can fill, or report the error of the last one when none can.
         Exception? failure = null;
         foreach (var template in templates)
         {
