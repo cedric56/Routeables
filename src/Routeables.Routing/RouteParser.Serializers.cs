@@ -137,7 +137,8 @@ public static partial class RouteParser
             // dashes and no braces.
             case "int": { int v = 0; var ok = int.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v); value = v; return ok; }
             case "long": { long v = 0; var ok = long.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v); value = v; return ok; }
-            case "bool": { var ok = bool.TryParse(raw, out var v) && raw == raw.Trim(); value = v; return ok; }
+            // TryParse ignores spaces and a trailing null character: the text must be the one word, so that "true%00" is not a bool.
+            case "bool": { var ok = bool.TryParse(raw, out var v) && raw == raw.Trim() && !raw.Contains('\0'); value = v; return ok; }
             case "guid": { var ok = Guid.TryParseExact(raw, "D", out var v); value = v; return ok; }
             case "decimal": { decimal v = 0; var ok = decimal.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, inv, out v); value = v; return ok; }
             case "double": { double v = 0; var ok = double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v); value = v; return ok; }

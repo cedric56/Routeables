@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-
+    <Description>Experimental. Routeables for ASP.NET Core Razor Pages and MVC views: view-model-first routing, dialogs and notifications on the server. The application provides one service scope per visitor; the API may change in any release.</Description>
   </PropertyGroup>
 
   <ItemGroup>

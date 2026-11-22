@@ -813,6 +813,13 @@ public class RouteParserTests
         Assert.Equal(0, RouteParser.UsedBy("/orders/{id}", new { id = "" }));
     }
 
+    [Theory]
+    [InlineData("x/true%00")]
+    [InlineData("x/%00true")]
+    [InlineData("x/true%20")]
+    public void A_bool_is_the_word_alone_with_no_null_character_or_space_around_it(string route)
+        => Assert.False(RouteParser.TryMatch("x/{b:bool}", route));
+
     [Fact]
     public void Values_in_any_dictionary_are_read_as_values_and_not_as_properties_of_the_collection()
     {
