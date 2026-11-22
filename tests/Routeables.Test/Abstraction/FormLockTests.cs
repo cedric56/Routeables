@@ -113,4 +113,31 @@ public class FormLockTests
         second.Dispose();
         lock (seen) Assert.Equal(new[] { true, false }, seen);
     }
+
+    [Fact]
+    public void A_subscriber_that_locks_again_and_then_throws_does_not_take_the_other_lock_back()
+    {
+        var broker = new RouteableLockBroker();
+        var formLock = new RouteableFormLock(broker);
+        var fail = true;
+        IDisposable? nested = null;
+        broker.Subscribe("LockChanged", message =>
+        {
+            if (fail && ((RouteableLockMessage)message).IsLocked)
+            {
+                fail = false;
+                nested = formLock.Lock();
+                throw new InvalidOperationException("subscriber");
+            }
+        });
+
+        Assert.ThrowsAny<Exception>(() => formLock.Lock());
+
+        // The failed call gave back its own hold; the form that locked meanwhile still holds the lock.
+        Assert.True(formLock.IsLocked);
+        nested!.Dispose();
+        Assert.False(formLock.IsLocked);
+        using var again = formLock.Lock();
+        Assert.True(formLock.IsLocked);
+    }
 }

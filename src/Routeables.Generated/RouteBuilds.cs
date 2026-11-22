@@ -466,6 +466,6 @@ namespace Routeables.Generated
         }
 
         private static string Quote(string value)
-            => "\"" + value.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+            => Microsoft.CodeAnalysis.CSharp.SymbolDisplay.FormatLiteral(value, quote: true); // also escapes line breaks and control characters
     }
 }

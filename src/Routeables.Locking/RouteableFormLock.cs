@@ -34,8 +34,9 @@ internal sealed class RouteableFormLock(IRouteableLockBroker broker) : IRouteabl
             // A subscriber that throws leaves no token to give back: take the lock back, or the form would stay locked forever.
             lock (_gate)
             {
-                _holders = 0;
-                _pending.Enqueue(false);
+                // Only this call's hold: another form that locked meanwhile keeps its own.
+                if (--_holders == 0)
+                    _pending.Enqueue(false);
             }
 
             try { Drain(); }
