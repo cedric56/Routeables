@@ -681,6 +681,48 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void An_address_already_written_as_Build_writes_it_is_returned_as_it_is()
+    {
+        const string uri = "/n/7?mode=Grid&flag=false#top";
+
+        Assert.Same(uri, RouteParser.Canonical("/n/{n:int}?{flag:bool}", uri));
+        Assert.Same("/n/%37", RouteParser.Canonical("/n/{n:int}", "/n/%37")); // an escape that reads as the canonical text
+    }
+
+    [Theory]
+    [InlineData("/n?{flag:bool}", "/n?flag=TRUE", "/n?flag=true")]
+    [InlineData("/n/{n:int}?{flag:bool}", "/n/007?flag=true", "/n/7?flag=true")]
+    [InlineData("/n/{n:int}?{flag:bool}", "/n/7?mode=x&FLAG=False#top", "/n/7?mode=x&FLAG=false#top")]
+    public void A_typed_value_written_another_way_is_rewritten(string template, string uri, string expected)
+    {
+        Assert.Equal(expected, RouteParser.Canonical(template, uri));
+    }
+
+    [Fact]
+    public void Values_can_be_a_read_only_dictionary_or_a_dictionary_of_any_value_type()
+    {
+        var map = new System.Collections.ObjectModel.ReadOnlyDictionary<string, object?>(new Dictionary<string, object?> { ["n"] = 5 });
+
+        Assert.Equal("a/5", RouteParser.Build("a/{n:int}", map));
+        Assert.Equal("a/6", RouteParser.Build("a/{n:int}", new Dictionary<string, int> { ["n"] = 6 }));
+    }
+
+    [Fact]
+    public void A_name_given_twice_with_the_same_value_is_accepted_and_with_two_values_is_refused()
+    {
+        Assert.Equal("a/5", RouteParser.Build("a/{n:int}", new Dictionary<string, object?> { ["n"] = 5, ["N"] = 5 }));
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("a/{n:int}", new Dictionary<string, object?> { ["n"] = 5, ["N"] = 6 }));
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("a/{n:int}", new { n = 5, N = 6 }));
+    }
+
+    [Fact]
+    public void A_catch_all_value_that_is_not_valid_Unicode_is_refused_as_any_placeholder_is()
+    {
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("files/{**path}", new { path = "a/b\uD800c" }));
+        Assert.Throws<ArgumentException>(() => RouteParser.Build("files/{name}", new { name = "b\uD800c" }));
+    }
+
+    [Fact]
     public void A_rest_after_a_given_optional_and_a_rest_alone_are_built()
     {
         Assert.Equal("/cat/3/a/b", RouteParser.Build("/cat/{age:int?}/{**rest}", new Dictionary<string, object?> { ["age"] = 3, ["rest"] = "a/b" }));

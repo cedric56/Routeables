@@ -51,7 +51,6 @@ internal static class Bench
     {
         var services = new ServiceCollection();
         Register(services, factories);
-        services.KeepWholeHistory(); // the leak checks count the entries of a history that grows
         foreach (var region in regions)
             services.AddRegion(region, ServiceLifetime.Singleton);
         return services.BuildServiceProvider();

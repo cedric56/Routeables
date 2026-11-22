@@ -73,32 +73,16 @@ public class RouterHistoryLimitTests
     }
 
     [Theory]
-    [InlineData(ServiceLifetime.Scoped)]
-    [InlineData(ServiceLifetime.Singleton)]
-    public void A_router_keeps_50_entries_unless_a_limit_is_set(ServiceLifetime lifetime)
+    [InlineData(ServiceLifetime.Scoped, 50)]
+    [InlineData(ServiceLifetime.Singleton, null)]
+    public void A_scoped_router_keeps_50_entries_unless_a_limit_is_set(ServiceLifetime lifetime, int? expected)
     {
         var services = new ServiceCollection();
         services.RegisterRouting(lifetime);
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
 
-        Assert.Equal(Routeables.Routing.Extensions.DefaultHistoryLimit, scope.ServiceProvider.GetRequiredService<RouterHistory>().MaxSize);
-    }
-
-    [Fact]
-    public void KeepWholeHistory_removes_the_limit_of_the_default_router_and_of_a_region_only()
-    {
-        var services = new ServiceCollection();
-        services.KeepWholeHistory();
-        services.KeepWholeHistory("detail");
-        services.RegisterRouting(ServiceLifetime.Singleton);
-        services.AddRegion("detail", ServiceLifetime.Singleton);
-        services.AddRegion("other", ServiceLifetime.Singleton);
-        using var provider = services.BuildServiceProvider();
-
-        Assert.Null(provider.GetRequiredService<RouterHistory>().MaxSize);
-        Assert.Null(provider.GetRequiredKeyedService<RouterHistory>("detail").MaxSize);
-        Assert.Equal(Routeables.Routing.Extensions.DefaultHistoryLimit, provider.GetRequiredKeyedService<RouterHistory>("other").MaxSize);
+        Assert.Equal(expected, scope.ServiceProvider.GetRequiredService<RouterHistory>().MaxSize);
     }
 
     [Fact]
@@ -121,6 +105,6 @@ public class RouterHistoryLimitTests
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
 
-        Assert.Equal(Routeables.Routing.Extensions.DefaultHistoryLimit, scope.ServiceProvider.GetRequiredKeyedService<RouterHistory>("side").MaxSize);
+        Assert.Equal(Routeables.Routing.Extensions.DefaultScopedHistoryLimit, scope.ServiceProvider.GetRequiredKeyedService<RouterHistory>("side").MaxSize);
     }
 }

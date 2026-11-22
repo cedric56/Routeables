@@ -90,6 +90,9 @@ public static partial class RouteParser
                     // The whole value must satisfy the constraint, so that it reads back.
                     if (restText.Split('/').Any(part => part.Length == 0))
                         throw new ArgumentException($"The value \"{restText}\" cannot be the rest of \"{template}\": an empty segment (a leading, trailing or doubled slash) is dropped from an address, so the value would not be read back.", nameof(values));
+                    // Escaping would write a lone surrogate as U+FFFD, and the value read back would not be the one given (as for any placeholder).
+                    if (HasLoneSurrogate(restText))
+                        throw new ArgumentException($"The value for {{**{m.Groups["name"].Value}}} in \"{template}\" is not valid Unicode text (a surrogate without its pair).", nameof(values));
                     if (HasDotSegment(restText))
                         throw new ArgumentException($"The value \"{restText}\" cannot be the rest of \"{template}\": a browser resolves \".\" and \"..\" to another address.", nameof(values));
                     if (!TryConvert(restText, restType, out _))

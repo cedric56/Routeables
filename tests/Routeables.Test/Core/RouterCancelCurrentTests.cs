@@ -43,6 +43,9 @@ public class RouterCancelCurrentTests
         public async Task OnEnteringAsync(IRouteableArgs context, CancellationToken ct = default)
         {
             await release.WaitAsync(ct);
+            // WaitAsync on a task that is already complete returns at once, whatever the state of the token: a page replaced a moment before the
+            // release arrived would otherwise count as having completed its arrival.
+            ct.ThrowIfCancellationRequested();
             Completed = true;
         }
     }

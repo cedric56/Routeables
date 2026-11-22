@@ -161,6 +161,69 @@ public static partial class RouteParser
         return true;
     }
 
+    private static bool IsTyped(Match m) => m.Success && HasCanonicalText(m.Groups["type"].Value);
+
+    private static bool HasTyped(Match[] matches)
+    {
+        foreach (var m in matches)
+            if (IsTyped(m))
+                return true;
+        return false;
+    }
+
+    // Whether Canonical would write a value of the address differently. It reads the address in place, and allocates only for the values it checks.
+    private static bool WouldChange(ParsedTemplate parsed, string uri)
+    {
+        var hash = uri.IndexOf('#');
+        var end = hash < 0 ? uri.Length : hash;
+        var at = RouteAddress.QueryStart(uri, end);
+        var pathEnd = at < 0 ? end : at;
+
+        var position = 0;
+        for (var start = 0; start <= pathEnd && position < parsed.SegmentMatches.Length;)
+        {
+            var slash = uri.IndexOf('/', start, pathEnd - start);
+            var stop = slash < 0 ? pathEnd : slash;
+            if (stop > start)
+            {
+                var m = parsed.SegmentMatches[position++];
+                if (IsTyped(m) && !m.Groups["rest"].Success
+                    && Uri.UnescapeDataString(uri.Substring(start, stop - start)) is var raw
+                    && TryCanonical(raw, m.Groups["type"].Value, out var canonical) && canonical != raw)
+                    return true;
+            }
+            if (slash < 0)
+                break;
+            start = slash + 1;
+        }
+
+        if (at < 0 || !HasTyped(parsed.QueryMatches))
+            return false;
+        for (var start = at + 1; start <= end;)
+        {
+            var amp = uri.IndexOf('&', start, end - start);
+            var stop = amp < 0 ? end : amp;
+            var eq = uri.IndexOf('=', start, stop - start);
+            if (eq >= 0)
+            {
+                var name = RouteAddress.DecodeQuery(uri.Substring(start, eq - start));
+                foreach (var q in parsed.QueryMatches)
+                {
+                    if (!IsTyped(q) || !string.Equals(q.Groups["name"].Value, name, StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    var value = RouteAddress.DecodeQuery(uri.Substring(eq + 1, stop - eq - 1));
+                    if (TryCanonical(value, q.Groups["type"].Value, out var canonical) && canonical != value)
+                        return true;
+                    break; // the first one that names it, as FirstOrDefault did
+                }
+            }
+            if (amp < 0)
+                break;
+            start = amp + 1;
+        }
+        return false;
+    }
+
     /// <summary>
     /// The address with the values of the typed placeholders (<c>int</c>, <c>long</c>, <c>bool</c>, <c>guid</c>, <c>decimal</c>, <c>double</c>) written the way
     /// <see cref="Build"/> writes them: <c>/x/True</c> is <c>/x/true</c>, <c>/n/007</c> is <c>/n/7</c>. Nothing else of the address changes (a query
@@ -171,9 +234,13 @@ public static partial class RouteParser
     internal static string Canonical(string template, string uri)
     {
         var parsed = ParseTemplate(template);
-        bool Typed(Match m) => m.Success && HasCanonicalText(m.Groups["type"].Value);
-        if (!parsed.SegmentMatches.Any(Typed) && !parsed.QueryMatches.Any(Typed))
+        if (!HasTyped(parsed.SegmentMatches) && !HasTyped(parsed.QueryMatches))
             return uri;
+        // The usual case: the address is already written as Build writes it. It is read once, without cutting it into pieces, and returned as it is.
+        if (!WouldChange(parsed, uri))
+            return uri;
+
+        static bool Typed(Match m) => IsTyped(m);
 
         var hash = uri.IndexOf('#');
         var fragment = hash < 0 ? string.Empty : uri[hash..];

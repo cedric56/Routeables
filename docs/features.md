@@ -8,7 +8,7 @@ Nothing here is needed for a first page: start with [Getting started](getting-st
 | Declarative navigation | `routeables:RouteableLink.Route="/hello/World"` on a button, in XAML, no code in the view model (Avalonia, WPF, Uno, MAUI) | [Routes](guides/routes.md) |
 | Typed routing | `GoToMonkeyDetailAsync(router, name)` generated from the constructor | [Typed routes](guides/typed-routes.md) |
 | Arguments | Route values, query values and objects passed to the target | [Arguments](guides/arguments.md) |
-| History | Back, forward, pop, back to root, move to an entry, erase; the last 50 entries kept by default, `LimitHistory` to change it, `KeepWholeHistory` to keep them all | [History](guides/history.md) |
+| History | Back, forward, pop, back to root, move to an entry, erase; no limit by default (50 per server session), `LimitHistory` to set one | [History](guides/history.md) |
 | Regions | Several zones, each with its own router and history | [Regions](guides/regions.md) |
 | Lifecycle | Initialize, entering, leaving, `CanLeaveAsync` veto, `OnSubscribe`/`OnUnsubscribe`, destroy | [Lifecycle](guides/lifecycle.md) |
 | Guards | `IRouteGuard` with an order; allow, redirect or cancel a route change | [Routes](guides/routes.md) |

@@ -48,7 +48,7 @@ public interface IRouter
     /// <summary>Moves the cursor forward one entry. Only entries left with <see cref="GoBackAsync"/> can be reached.</summary>
     Task<RouteableResult> ForwardAsync(CancellationToken cancellationToken = default);
 
-    /// <summary>Go to the first entry and discard every entry after it.</summary>
+    /// <summary>Go to the first entry the history keeps and discard every entry after it. With a limit (<c>LimitHistory</c>, or the 50 of a scoped router) the entries older than the limit are gone: that is the oldest one kept, not necessarily the page the application started on.</summary>
     Task<RouteableResult> GoBackToRootAsync(CancellationToken cancellationToken = default);
 
     /// <summary>

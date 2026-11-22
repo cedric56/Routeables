@@ -6,7 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
-- **The history keeps the last 50 entries by default**, on every router (it was unlimited, except for a scoped router). When a push needs the room, the oldest entry is dropped and disposed, as `LimitHistory(50)` did. `LimitHistory(n)` changes the limit; the new `KeepWholeHistory()` (or `KeepWholeHistory(region)`) keeps every entry as before. `GoBackToRootAsync` goes to the oldest entry kept.
+- **Less garbage while an address is matched**: an address that already has the text `Build` would write for its typed values (the usual case) is read in place and returned as it is, with no pieces cut and joined again.
 - The reading of an address is in one place, `RouteAddress`: where the query starts, the fragment, the pairs of the query (names ignore the case, the last value of a name wins, `+` is a space) and their decoding. The parser, the comparison of addresses, the index of the first segment, the state saved with a page, the Blazor address bar and the decoding of the coordination syntax all use it, so they cannot disagree again. The rule that tells where the query of an address or a template starts is one file (`src/Routeables.Shared/AddressRules.cs`) compiled into the contracts, the source generator and the analyzer; it had four copies. A malformed `%` escape in a query is now left as it is everywhere (it could throw in some of them).
 - `docs/benchmark-comparison.md` starts with the current state of the comparison and marks the first results (2 times the time, 6 times the allocations of ReactiveUI) as superseded.
 - Comments in `src/`, `tests/`, `samples/`, `benchmarks/`, `reshapes/`, the build props and the JavaScript files rewritten in plain, shorter English: comments that only repeated the code or divided a file are gone; the ones that say why (invariants, concurrency traps) stay. No code change.
@@ -19,6 +19,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A catch-all value (`{**path}`) with half a surrogate pair was written as U+FFFD**, and the address did not read back as the value given. It is refused, as for any other placeholder.
+- **`GoBackToRootAsync` says it goes to the first entry the history keeps**: with a limit (`LimitHistory`, or the 50 of a scoped router) the oldest entries are gone. The Blazor page says that going back past the oldest entry the router kept opens that address as a new page.
 - **Blazor: a jump of several entries in the browser (a long press on Back, `history.go(-2)`) added a page to the router** instead of going to the entry. The state of the browser entry names the router entry, so the router now moves to it (`MoveToAsync`). An entry that carries no state of this application is still looked up by its address.
 - **A call by view model type could throw instead of returning a failed result**: `GoToAsync<TViewModel>(values)` caught three kinds of exception while building the address; a property that throws or a serializer that throws `InvalidOperationException` came out as an exception. Any error but a cancellation is now a failed `RouteableResult`.
 - **Values that name the same value twice (`id` and `ID`, names ignore the case) with different contents** were resolved by the last one without a word; they are now refused with a message.
