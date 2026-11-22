@@ -163,10 +163,27 @@ namespace Routeables.Generated
             Flush();
             sb.AppendLine(indent + "var __route = " + (expressions.Count == 0 ? "\"\"" : string.Join(" + ", expressions)) + ";");
 
-            foreach (var op in deferred)
+            // cat/{age?}/{nick?} with a nick but no age: the nick would be read as the age (RouteParser.Build refuses it too).
+            if (deferred.Count > 1)
+                sb.AppendLine(indent + "string? __skipped = null;");
+            for (var i = 0; i < deferred.Count; i++)
             {
+                var op = deferred[i];
                 var statement = "__route += " + Literal(op.Prefix) + " + " + Format(op.Clr, ValueOf(op), path: true) + ";";
-                sb.AppendLine(indent + (op.Conditional ? "if (" + op.ParamId + " is not null) " : string.Empty) + statement);
+                var name = Literal("{" + op.ParamId.TrimStart('@') + "?}");
+                if (i == 0)
+                {
+                    sb.AppendLine(indent + (op.Conditional ? "if (" + HasValue(op) + ") " : string.Empty) + statement);
+                    if (op.Conditional && deferred.Count > 1)
+                        sb.AppendLine(indent + "else __skipped = " + name + ";");
+                    continue;
+                }
+
+                var guard = "if (__skipped is not null) throw new global::System.ArgumentException(" + Literal("The route " + m.Template + " cannot leave out a value and give a later one: give both, or neither.")
+                    + ", nameof(" + op.ParamId + "));";
+                sb.AppendLine(indent + (op.Conditional ? "if (" + HasValue(op) + ") " : string.Empty) + "{ " + guard + " " + statement + " }");
+                if (op.Conditional && i < deferred.Count - 1)
+                    sb.AppendLine(indent + "else __skipped ??= " + name + ";");
             }
 
             if (queryOps.Count == 0)
@@ -195,9 +212,15 @@ namespace Routeables.Generated
                 }
 
                 var add = "{ __route += __separator + " + Literal(op.Text + "=") + " + " + Format(op.Clr, ValueOf(op)) + "; __separator = '&'; }";
-                sb.AppendLine(indent + (op.Conditional ? "if (" + op.ParamId + " is not null) " : string.Empty) + add);
+                sb.AppendLine(indent + (op.Conditional ? "if (" + HasValue(op) + ") " : string.Empty) + add);
             }
         }
+
+        // A value that is given: RouteParser.Build counts a null and an empty text as no value, and so does the code written here.
+        private static string HasValue(RouteOp op) =>
+            op.Clr is ClrKind.String or ClrKind.Rest
+                ? "!global::System.String.IsNullOrEmpty(" + op.ParamId + ")"
+                : op.ParamId + " is not null";
 
         private static string ValueOf(RouteOp op) => op.NullableValue ? op.ParamId + ".Value" : op.ParamId;
 

@@ -279,12 +279,24 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
         RouteableResult result;
         string? template = null;
-        if (!fromLink && history.CanGoBack && SameAddress(AddressOf(history.Entries[history.CurrentIndex - 1]), path))
+
+        // The neighbours are read once, from one copy of the entries: a route change that runs meanwhile (the restore of the history) must not
+        // leave an index that points outside the copy.
+        IHistoryEntry? before = null, after = null;
+        if (!fromLink)
+        {
+            var entries = history.Entries;
+            var index = history.CurrentIndex;
+            before = index > 0 && index - 1 < entries.Count ? entries[index - 1] : null;
+            after = index >= 0 && index + 1 < entries.Count ? entries[index + 1] : null;
+        }
+
+        if (before is not null && SameAddress(AddressOf(before), path))
         {
             result = await router.GoBackAsync(cancellationToken);
             Moved(result);
         }
-        else if (!fromLink && history.CanGoForward && SameAddress(AddressOf(history.Entries[history.CurrentIndex + 1]), path))
+        else if (after is not null && SameAddress(AddressOf(after), path))
         {
             result = await router.ForwardAsync(cancellationToken);
             Moved(result);

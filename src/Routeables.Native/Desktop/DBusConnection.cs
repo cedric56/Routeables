@@ -72,6 +72,9 @@ internal sealed class DBusWriter
     /// <summary>A signature: its length on one byte, the text, a zero.</summary>
     public void Signature(string value)
     {
+        // The length is one byte: a longer signature would be written with a wrong length and corrupt the message.
+        if (value.Length > byte.MaxValue)
+            throw new ArgumentException("A D-Bus signature is 255 characters at most.", nameof(value));
         _bytes.Add((byte)value.Length);
         _bytes.AddRange(Encoding.ASCII.GetBytes(value));
         _bytes.Add(0);
@@ -334,6 +337,7 @@ internal sealed class DBusConnection : IDisposable
         lock (_writeGate)
         {
             var serial = ++_serial;
+            if (serial == 0) serial = ++_serial; // 0 is not a serial: the counter wrapped
             _pending[serial] = source;
             if (timeout is { } wait)
             {

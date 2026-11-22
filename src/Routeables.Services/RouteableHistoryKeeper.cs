@@ -199,6 +199,13 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
 
         router.Routed += OnRouted;
         router.History.Changed += OnHistoryChanged;
+        if (_disposed)
+        {
+            // Dispose ran between the lookup of the router and the subscription: it found nothing to unsubscribe.
+            router.Routed -= OnRouted;
+            router.History.Changed -= OnHistoryChanged;
+            return;
+        }
 
         // Write nothing before the pages are back: the first page of the new run must not replace the history that is waiting.
         if (kept.Count == 0)
@@ -260,8 +267,10 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         finally
         {
             // A keeper disposed while it restored stays off: it must not write the history again.
-            if (!_disposed)
-                _active = true;
+            // Set, then checked: a Dispose that runs between a test and the assignment would be undone.
+            _active = true;
+            if (_disposed)
+                _active = false;
             RouteableStartup.EndRestore(router);
             try
             {

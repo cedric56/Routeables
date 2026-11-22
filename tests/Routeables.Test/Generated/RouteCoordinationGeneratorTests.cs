@@ -631,6 +631,50 @@ public class RouteCoordinationGeneratorTests
     }
 
     [Fact]
+    public async Task An_optional_value_cannot_be_given_after_one_that_was_left_out()
+    {
+        var summary = await RunScenarioAsync(Prelude + """
+
+            [Routeable("/cat/{age?}/{nick?}")]
+            [RouteableViewModel(typeof(HomeViewModel))]
+            public sealed class CatViewModel(string? age = null, string? nick = null)
+            {
+                public string? Age { get; } = age;
+                public string? Nick { get; } = nick;
+            }
+
+            public static class Scenario
+            {
+                public static async Task<string> RunAsync()
+                {
+                    var services = new ServiceCollection();
+                    services.RegisterRouting();
+                    services.RegisterRoute<PageView, CatViewModel>(route: "/cat/{age?}/{nick?}");
+                    using var provider = services.BuildServiceProvider();
+                    var router = provider.GetRequiredService<IRouter>();
+                    var home = new HomeViewModel();
+
+                    var both = await home.GoToCatAsync(router, "3", "Tom");
+                    var viewModel = (CatViewModel)router.CurrentViewModel!;
+                    var bothText = $"{viewModel.Age}/{viewModel.Nick}";
+                    var ageOnly = await home.GoToCatAsync(router, "3", "");
+                    var neither = await home.GoToCatAsync(router);
+
+                    string Refused(string? age, string? nick)
+                    {
+                        try { home.GoToCatAsync(router, age, nick); return "went"; }
+                        catch (ArgumentException) { return "refused"; }
+                    }
+
+                    return $"{both.Success}|{bothText}|{ageOnly.Success}|{neither.Success}|{Refused(null, "Tom")}|{Refused("", "Tom")}";
+                }
+            }
+            """);
+
+        Assert.Equal("True|3/Tom|True|True|refused|refused", summary);
+    }
+
+    [Fact]
     public async Task Typed_placeholders_are_formatted_with_the_invariant_culture()
     {
         var summary = await RunScenarioAsync(Prelude + """
