@@ -376,8 +376,9 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     private bool IsInsideBase(string location)
     {
         var baseUri = navigation.BaseUri;
-        return location.StartsWith(baseUri, StringComparison.OrdinalIgnoreCase)
-               || (location.Length == baseUri.Length - 1 && baseUri.StartsWith(location, StringComparison.OrdinalIgnoreCase));
+        // The case counts, as it does in ToBaseRelativePath (which throws for "/App/orders" under "/app/"): this test must say yes only to what that call accepts.
+        return location.StartsWith(baseUri, StringComparison.Ordinal)
+               || (location.Length == baseUri.Length - 1 && baseUri.StartsWith(location, StringComparison.Ordinal));
     }
 
     private string Relative(string uri)

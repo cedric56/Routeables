@@ -18,6 +18,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- Blazor `RouteableUrlSync` under a base path (`<base href="/app/">`): the test that a location is inside the application ignored the case, while `NavigationManager.ToBaseRelativePath` does not (it throws for `/App/orders`), so such a location passed the test and then threw from `OnLocationChanging`. The location is now outside, as Blazor itself reads it.
 - A lone `}` in a template (`n/x}/{id}?{tab?}`) no longer hides its query from the parser and the generator.
 - ASP.NET Core `<routeable-menu>`: with entries `/settings`, `/settings/profile` and `/settings/security`, the page `/settings/profile` marked all three (the first segment matched). The entry whose address starts the current one with the most segments is marked; and the fragment of an entry's address (`/about#team`) is no longer part of its path, which kept that entry from ever being active.
 - A fixed value in the query of a template (`list?mode=grid`) is read with its case, as `RouteAddress` compares it: `?mode=Grid` matched the page but counted as another address, so Blazor could rewrite the address bar or duplicate a history entry.
