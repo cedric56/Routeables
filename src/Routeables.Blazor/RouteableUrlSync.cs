@@ -263,9 +263,16 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         catch (Exception ex)
         {
             RouteableErrors.Report<RouteableUrlSync>(provider, ex);
-            // The address must not keep showing a page that is not displayed.
-            if (AddressOf(router.History.Current) is { } current)
-                Show(current, replace: true);
+            // The address must not keep showing a page that is not displayed. This is an async void handler: nothing may leave it.
+            try
+            {
+                if (AddressOf(router.History.Current) is { } current)
+                    Show(current, replace: true);
+            }
+            catch (Exception again)
+            {
+                RouteableErrors.Report<RouteableUrlSync>(provider, again);
+            }
         }
     }
 

@@ -41,10 +41,11 @@ internal static class RouteAddress
     internal static int QueryStart(string text)
     {
         var depth = 0;
+        var lastClose = text.LastIndexOf('}'); // looked for once: an address of thousands of "{" must not cost a search each
         for (var i = 0; i < text.Length; i++)
         {
             // A brace that nothing closes is a character of a hand-typed address, not the start of a placeholder.
-            if (text[i] == '{' && text.IndexOf('}', i) >= 0) depth++;
+            if (text[i] == '{' && i < lastClose) depth++;
             else if (text[i] == '}' && depth > 0) depth--;
             // Inside braces a question mark is the "optional" mark only when the placeholder ends right after it ("{tab?}", "{tab:int?}"): in
             // "/notes/a{b?tab=x}" it starts the query, as the browser reads it.

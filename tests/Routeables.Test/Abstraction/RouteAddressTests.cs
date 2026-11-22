@@ -241,4 +241,16 @@ public class RouteAddressTests
         Assert.Equal("products/{tab?}", RouteAddress.PathOf("/products/{tab?}?x=1"));
         Assert.Equal("products/{tab:int?}", RouteAddress.PathOf("products/{tab:int?}"));
     }
+
+    [Fact]
+    public void An_address_of_many_unclosed_braces_is_read_in_linear_time()
+    {
+        var address = "/n/" + new string('{', 200_000) + "?a=1";
+
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        var path = RouteAddress.PathOf(address);
+
+        Assert.Equal(200_000 + 2, path.Length);
+        Assert.True(watch.Elapsed < TimeSpan.FromSeconds(2));
+    }
 }

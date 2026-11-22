@@ -17,6 +17,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- A fixed value in the query of a template (`list?mode=grid`) is read with its case, as `RouteAddress` compares it: `?mode=Grid` matched the page but counted as another address, so Blazor could rewrite the address bar or duplicate a history entry.
+- Reading the query start of an address of many `{` without a `}` was quadratic (a search for the closing brace per `{`); it is linear now. Under Blazor Server the address comes from the client.
+- Blazor `RouteableUrlSync.OnLocationChanged`: the step that shows the current address again after a failure is protected too, so nothing can leave this `async void` handler.
 - A hand-typed address such as `/notes/a{b?tab=x}` keeps its query: a question mark inside braces is the "optional" mark of a placeholder only when the placeholder ends right after it (`{tab?}`, `{tab:int?}`); the CHANGELOG said braces of an address are text, which held only for an unclosed one.
 - D-Bus client: the messages are written and read in little-endian order whatever the machine (they were marked little-endian but written in the order of the machine, so a big-endian machine such as s390x sent corrupt messages).
 - `RouteableLink Route="-"` (and `-/orders`) goes back again in Blazor: the link is no longer left to Blazor, which followed it as the address `./-`, matched by no route. These two are qualifiers, not addresses.

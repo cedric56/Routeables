@@ -700,4 +700,12 @@ public class RouteParserTests
         Assert.True(RouteAddress.Same("/n/a{b?tab=2", "/n/a{b?tab=2"));
         Assert.False(RouteAddress.Same("/n/a{b?tab=2", "/n/a{b?tab=3"));
     }
+
+    [Fact]
+    public void A_fixed_query_value_of_a_template_is_read_with_its_case_as_RouteAddress_compares_it()
+    {
+        Assert.True(RouteParser.TryMatch("list?mode=grid", "list?mode=grid"));
+        Assert.False(RouteParser.TryMatch("list?mode=grid", "list?mode=Grid"));
+        Assert.True(RouteParser.TryMatch("list?mode=grid", "list?MODE=grid"));
+    }
 }

@@ -77,7 +77,7 @@ public static partial class RouteParser
         if (!m.Success) return 5; // literal
         if (m.Groups["rest"].Success) return 0; // catch-all
         var type = m.Groups["type"].Value;
-        var untyped = type is "" or "?" || type.Equals("string", StringComparison.OrdinalIgnoreCase); // {id:String} reads like {id}
+        var untyped = type is "" || type.Equals("string", StringComparison.OrdinalIgnoreCase); // {id:String} reads like {id}
         if (m.Groups["opt"].Success) return untyped ? 1 : 2; // optional: {id:int?} comes before {tab?}
         return untyped ? 3 : 4; // untyped, then typed
     }
@@ -197,7 +197,7 @@ public static partial class RouteParser
                     // Read as the address is (a plus is a space, an escape is its character), so that what Build writes reads back.
                     var (fixedName, fixedValue) = (DecodeQuery(part[..eq]), DecodeQuery(part[(eq + 1)..]));
                     query.TryGetValue(fixedName, out var got);
-                    if (!string.Equals(got, fixedValue, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(got, fixedValue, StringComparison.Ordinal)) // the case of a value counts, as in RouteAddress
                         return reasons ? $"the query \"{fixedName}\" is \"{got}\", expected \"{fixedValue}\"" : NoReason;
                 }
                 continue;
