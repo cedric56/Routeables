@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Routeables.Abstraction.Routing;
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 
 namespace Routeables.Routing;
@@ -96,8 +97,11 @@ public static partial class RouteParser
     /// <summary>The first segment of an address as the matching reads it: the fragment and the query left out, empty segments skipped, unescaped.</summary>
     private static string FirstSegment(string uri)
     {
-        var end = uri.AsSpan().IndexOfAny('?', '#');
-        var path = end < 0 ? uri.AsSpan() : uri.AsSpan(0, end);
+        // Cut where the parser cuts: the fragment first, then the query as RouteAddress finds it (a "?" inside braces is not always the query's).
+        var text = uri.AsSpan();
+        if (text.IndexOf('#') is var hash and >= 0) text = text[..hash];
+        var end = RouteAddress.QueryStart(text);
+        var path = end < 0 ? text : text[..end];
         path = path.TrimStart('/');
         var slash = path.IndexOf('/');
         var first = slash < 0 ? path : path[..slash];

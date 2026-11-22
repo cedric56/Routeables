@@ -38,7 +38,7 @@ internal static class RouteAddress
     }
 
     // The query starts at the first question mark that is not an optional parameter's ("products/{tab?}"); -1 for none.
-    internal static int QueryStart(string text)
+    internal static int QueryStart(ReadOnlySpan<char> text)
     {
         var depth = 0;
         var lastClose = text.LastIndexOf('}'); // looked for once: an address of thousands of "{" must not cost a search each
