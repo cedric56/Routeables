@@ -67,6 +67,12 @@ internal sealed class RouterHistory : IRouterHistory
     IHistoryEntry? IRouterHistory.Root => Root;
     IReadOnlyList<IHistoryEntry> IRouterHistory.Entries => Snapshot(); // a snapshot
 
+    (IReadOnlyList<IHistoryEntry> Entries, int CurrentIndex) IRouterHistory.Capture()
+    {
+        lock (_lock)
+            return ((IReadOnlyList<IHistoryEntry>)_entries.ToArray(), _currentIndex);
+    }
+
     /// <summary>
     /// Pushes a new entry onto the history stack, discarding any forward history and, beyond <see cref="MaxSize"/>, the oldest entry.
     /// </summary>
@@ -199,17 +205,18 @@ internal sealed class RouterHistory : IRouterHistory
     /// <param name="entry">The new router entry.</param>
     public void ReplaceCurrent(RouterEntry entry)
     {
-        bool replaced;
         lock (_lock)
         {
-            replaced = _currentIndex >= 0;
-            if (replaced)
+            if (_currentIndex >= 0)
+            {
                 _entries[_currentIndex] = entry;
-        }
-        if (!replaced)
-        {
-            Push(entry);
-            return;
+            }
+            else
+            {
+                // An empty history: the entry becomes its only one, in the same step (nothing to cut off, nothing to evict).
+                _entries.Add(entry);
+                _currentIndex = _entries.Count - 1;
+            }
         }
         OnChanged();
     }

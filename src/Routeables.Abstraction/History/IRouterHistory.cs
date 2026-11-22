@@ -28,6 +28,18 @@ public interface IRouterHistory
     IReadOnlyList<IHistoryEntry> Entries { get; }
 
     /// <summary>
+    /// The entries and the index of the current one, read together. Reading <see cref="Entries"/> and <see cref="CurrentIndex"/> one after the
+    /// other can mix two states when a route change runs between them; use this when both are needed. The default reads them one after the other:
+    /// a history that can change from another thread overrides it.
+    /// </summary>
+    /// <returns>The entries, oldest first, and the index of the current one (-1 when empty).</returns>
+    (IReadOnlyList<IHistoryEntry> Entries, int CurrentIndex) Capture()
+    {
+        var entries = Entries;
+        return (entries, CurrentIndex);
+    }
+
+    /// <summary>
     /// Raised after any change (push, back, forward, root, replace, clear). Raised while the router
     /// gate is held, so handlers must not start a route change; update bindings or schedule work instead.
     /// </summary>

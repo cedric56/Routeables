@@ -96,6 +96,39 @@ public class RouteableHistoryKeeperDispatcherTests
     }
 
     [Fact]
+    public async Task Flush_from_another_thread_saves_through_the_dispatcher()
+    {
+        var store = new MemoryStore();
+        var dispatcher = new OtherThreadDispatcher();
+        using var provider = Build(store, dispatcher);
+        provider.StartRouteableHistory();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/kept-first", cancellationToken: TestContext.Current.CancellationToken);
+        var before = Volatile.Read(ref dispatcher.Calls);
+
+        provider.GetRequiredService<RouteableHistoryKeeper>().Flush();
+
+        Assert.Equal(before + 1, Volatile.Read(ref dispatcher.Calls));
+        Assert.NotNull(store.Kept);
+    }
+
+    [Fact]
+    public async Task A_dispatcher_that_fails_during_a_Flush_is_reported_and_Flush_does_not_throw()
+    {
+        var store = new MemoryStore();
+        var sink = new Sink();
+        using var provider = Build(store, new OtherThreadDispatcher(fails: true), sink);
+        provider.StartRouteableHistory();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/kept-first", cancellationToken: TestContext.Current.CancellationToken);
+
+        provider.GetRequiredService<RouteableHistoryKeeper>().Flush();
+
+        lock (sink.Errors)
+            Assert.Contains(sink.Errors, error => error.Message.Contains("the UI thread is gone"));
+    }
+
+    [Fact]
     public async Task A_dispatcher_that_fails_is_reported_for_the_restore_and_for_the_write()
     {
         var store = new MemoryStore(RouteableState.Serialize(["/kept-first", "/kept-second"]));

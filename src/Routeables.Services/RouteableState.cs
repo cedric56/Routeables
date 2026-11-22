@@ -23,9 +23,8 @@ public static class RouteableState
     {
         ArgumentNullException.ThrowIfNull(router);
 
-        var history = router.History;
-        var entries = history.Entries;
-        var last = Math.Min(history.CurrentIndex, entries.Count - 1);
+        var (entries, index) = router.History.Capture();
+        var last = Math.Min(index, entries.Count - 1);
 
         var routes = new List<string>();
         for (var i = 0; i <= last; i++)
@@ -71,9 +70,8 @@ public static class RouteableState
     {
         ArgumentNullException.ThrowIfNull(router);
 
-        var history = router.History;
-        var entries = history.Entries;
-        var last = Math.Min(history.CurrentIndex, entries.Count - 1);
+        var (entries, index) = router.History.Capture();
+        var last = Math.Min(index, entries.Count - 1);
 
         var snapshots = new List<RouteableSnapshot>();
         for (var i = 0; i <= last; i++)

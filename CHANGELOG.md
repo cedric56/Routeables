@@ -17,6 +17,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The entries of a history and the index of its current entry are read together** (`IRouterHistory.Capture()`, a member with a default body, so existing implementations still compile): `RouteableState.Capture`, `CaptureSnapshots` and the Blazor address sync read the two with separate calls, so a route change between them could save, or compare, a history that never existed (a page too many or too few). `RouterHistory` reads both under one lock.
+- **`RouteableHistoryKeeper.Flush()` from another thread saves on the thread of the interface**: it ran the `SaveState` of the view models and their `[Persist]` getters on the calling thread, where a control of the interface throws. With a dispatcher registered it now goes through it, waiting at most 3 seconds.
+- **`RouteableHistoryKeeper`: `Start` and `Dispose` share a lock**, so a keeper disposed while it starts or restores can no longer be made active again, nor leave its subscriptions behind.
+- **`RouterHistory.ReplaceCurrent` on an empty history** adds the entry in the same step instead of releasing the lock and pushing.
 - **A generated `GoTo…Async` method no longer writes an empty optional text into the address** (`Routeables.Generated`): an empty text counts as no value, as in `RouteParser.Build`, so `?q=` is no longer written for it.
 - **Blazor: the address bar could be set again from a history that changed while it was read** (`RouteableUrlSync`): the entry before and the entry after the current one were read with separate calls, so a route change that ran between them (the restore of the history) could point outside the list. They are now read once, together.
 - **`RouteableHistoryKeeper` disposed while it starts or restores**: a `Dispose` that ran between the start of the restore and its end could be undone (the keeper became active again and could write), and a `Dispose` that ran before `Start` had subscribed left the subscriptions in place. Both are closed.

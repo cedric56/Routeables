@@ -197,21 +197,20 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         try { kept = RouteableState.DeserializeSnapshots(Unprotect(store.Load())); }
         catch (Exception ex) { RouteableErrors.Report<RouteableHistoryKeeper>(provider, ex, "Load"); }
 
-        router.Routed += OnRouted;
-        router.History.Changed += OnHistoryChanged;
-        if (_disposed)
+        // Subscribing and Dispose share the lock: either Dispose runs first and nothing is subscribed, or it runs after and unsubscribes.
+        lock (_gate)
         {
-            // Dispose ran between the lookup of the router and the subscription: it found nothing to unsubscribe.
-            router.Routed -= OnRouted;
-            router.History.Changed -= OnHistoryChanged;
-            return;
-        }
+            if (_disposed)
+                return;
+            router.Routed += OnRouted;
+            router.History.Changed += OnHistoryChanged;
 
-        // Write nothing before the pages are back: the first page of the new run must not replace the history that is waiting.
-        if (kept.Count == 0)
-        {
-            _active = true;
-            return;
+            // Write nothing before the pages are back: the first page of the new run must not replace the history that is waiting.
+            if (kept.Count == 0)
+            {
+                _active = true;
+                return;
+            }
         }
 
         // The addresses that opened the application (RouteableLinkInbox) wait until the pages are back: restoring starts by erasing the history.
@@ -267,10 +266,12 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         finally
         {
             // A keeper disposed while it restored stays off: it must not write the history again.
-            // Set, then checked: a Dispose that runs between a test and the assignment would be undone.
-            _active = true;
-            if (_disposed)
-                _active = false;
+            // Under the lock of Dispose: a Dispose that runs between a test and the assignment would be undone.
+            lock (_gate)
+            {
+                if (!_disposed)
+                    _active = true;
+            }
             RouteableStartup.EndRestore(router);
             try
             {
@@ -307,8 +308,31 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
     /// <summary>Writes the history now, without waiting for the next route change (the application is going to sleep). Does nothing before <see cref="Start"/> has put the previous history back.</summary>
     public void Flush()
     {
-        if (_active) SaveNow();
+        if (!_active)
+            return;
+
+        // The history belongs to the UI thread (a view model saves its state there): from another thread, the work goes through the dispatcher,
+        // as the restore does. The wait is short: a thread that is blocked on the UI thread must not hang the application when it goes to sleep.
+        if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
+        {
+            try
+            {
+                if (!dispatcher.InvokeAsync(SaveNow).Wait(FlushWait))
+                    RouteableErrors.Report<RouteableHistoryKeeper>(provider, new TimeoutException("The interface thread did not save the history in time."), "Flush");
+            }
+            catch (Exception ex)
+            {
+                RouteableErrors.Report<RouteableHistoryKeeper>(provider, ex, "Flush");
+            }
+
+            return;
+        }
+
+        SaveNow();
     }
+
+    // How long Flush waits for the interface thread. Changed by tests only.
+    internal static TimeSpan FlushWait = TimeSpan.FromSeconds(3);
 
     // A history that cannot be unprotected (another key, a modified file) is left out: the application starts with no history.
     private string? Unprotect(string? kept)
@@ -327,7 +351,8 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             if (_router is not { } router)
                 return;
 
-            // Two saves can overlap (a navigation and a Flush from another thread): the one that read the history last must be written last. The history
+            // Two saves can overlap when no dispatcher is registered (with one, Flush runs on the thread of the interface like the navigations, and
+            // they follow one another): the one that read the history last must be written last. The history
             // is read outside the lock (a view model saves its state there, which is user code), so each read first takes a number, and a read older than
             // what is already written is dropped.
             var ticket = Interlocked.Increment(ref _ticket);
@@ -362,18 +387,25 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
     /// <summary>Stops keeping the history.</summary>
     public void Dispose()
     {
-        _disposed = true;
-        _active = false;
+        IRouter? router;
+        lock (_gate)
+        {
+            _disposed = true;
+            _active = false;
+            router = _router;
+            if (router is not null)
+            {
+                router.Routed -= OnRouted;
+                router.History.Changed -= OnHistoryChanged;
+            }
+        }
+
         try
         {
             _stopped.Cancel();
             _stopped.Dispose();
         }
         catch (ObjectDisposedException) { } // already stopped
-        if (_router is { } router)
-            router.Routed -= OnRouted;
-        if (_router is { } erased)
-            erased.History.Changed -= OnHistoryChanged;
     }
 }
 

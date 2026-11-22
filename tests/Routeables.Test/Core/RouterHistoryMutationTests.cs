@@ -143,6 +143,23 @@ public class RouterHistoryMutationTests
     }
 
     [Fact]
+    public void Capture_gives_the_entries_and_the_index_of_one_state()
+    {
+        var history = With("a", "b", "c");
+        history.MoveBack();
+
+        var (entries, index) = ((Routeables.Abstraction.History.IRouterHistory)history).Capture();
+
+        Assert.Equal(3, entries.Count);
+        Assert.Equal(1, index);
+        Assert.Same(history.Current, entries[index]);
+
+        var (none, noIndex) = ((Routeables.Abstraction.History.IRouterHistory)new RouterHistory()).Capture();
+        Assert.Empty(none);
+        Assert.Equal(-1, noIndex);
+    }
+
+    [Fact]
     public void ReplaceCurrent_SwapsTheCurrentEntry_WithoutChangingTheCount()
     {
         var history = With("a", "b", "c");

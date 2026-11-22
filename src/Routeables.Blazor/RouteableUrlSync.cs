@@ -285,8 +285,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         IHistoryEntry? before = null, after = null;
         if (!fromLink)
         {
-            var entries = history.Entries;
-            var index = history.CurrentIndex;
+            var (entries, index) = history.Capture();
             before = index > 0 && index - 1 < entries.Count ? entries[index - 1] : null;
             after = index >= 0 && index + 1 < entries.Count ? entries[index + 1] : null;
         }
