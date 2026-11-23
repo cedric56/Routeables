@@ -16,6 +16,7 @@ internal sealed class BackRequests : IDisposable
     private readonly IRouteableMenuViewModel? _menu;
     private readonly HashSet<IRouter> _followed = [];
     private bool _listening;
+    private bool _disposed;
 
     public BackRequests(IServiceProvider provider)
     {
@@ -52,6 +53,10 @@ internal sealed class BackRequests : IDisposable
 
     private void Update()
     {
+        // An update posted to the interface thread can run after Dispose: it must not listen again.
+        if (_disposed)
+            return;
+
         if (_menu?.SelectedEntry?.Region is { Length: > 0 } region)
         {
             try
@@ -92,6 +97,7 @@ internal sealed class BackRequests : IDisposable
 
     public void Dispose()
     {
+        _disposed = true;
         foreach (var router in _followed)
             router.History.Changed -= OnHistoryChanged;
         _followed.Clear();

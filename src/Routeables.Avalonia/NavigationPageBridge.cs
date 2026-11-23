@@ -166,7 +166,8 @@ internal sealed class NavigationPageBridge
     // Do not keep the pages of entries that left the history.
     private void Forget(IReadOnlyList<IHistoryEntry> inHistory)
     {
-        if (_pages.Count <= inHistory.Count) return;
+        // Fewer pages than entries is not enough to skip: an entry that left and another that came in leave as many pages as before.
+        if (_pages.Count == 0) return;
         var alive = new HashSet<IHistoryEntry>(inHistory, ReferenceEqualityComparer.Instance);
         foreach (var gone in _pages.Keys.Where(entry => !alive.Contains(entry)).ToList())
         {

@@ -21,6 +21,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **MAUI: a dialog is shown over the active window**: with several windows (Windows, Mac Catalyst) every window has a handler, and the first one was always taken, so dialogs, modals and toasts opened over it whichever window the user was in.
+- **Uno: the Back request is not listened to again after the end of the application's navigation**: an update posted to the interface thread could run after `Dispose` and subscribe `BackRequested` again, so on Android 16 and later the Back gesture was consumed and the application could not be left from its first page.
+- **Avalonia: the pages of entries that left the history are let go when another entry took their place**: they were kept (with their `Navigating` subscription) until the pages outnumbered the entries.
 - **Two types whose full names differ only by the case are no longer taken for one another in a route**: the names of the registered types ignore the case, so `{v:C.item}` gave an object of `C.Item` when that one was registered last. The name now stands for neither type, and a template that writes it is refused with the message about several registered types.
 - **`AesRouteableHistoryProtector` on a platform without AES-GCM (a browser)**: reading a saved history threw `PlatformNotSupportedException`; it now gives no history, as for any history that cannot be read. The page on system integration and the remarks of the type say that the protector is not for Blazor WebAssembly.
 - **A failure while a cancelled route change is undone no longer enters the discarded page again**: undoing goes through the transition that re-enters the page being left when a hook fails, which here is the new page, about to be dropped. The old page, that the history still points at, is the one that failed to enter: the failure is reported and nothing else is entered.
