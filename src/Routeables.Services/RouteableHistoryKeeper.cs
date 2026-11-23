@@ -6,154 +6,6 @@ using Routeables.Abstraction.Routing;
 
 namespace Routeables.Services;
 
-/// <summary>Where the history of the router is kept between two runs of the application.</summary>
-public interface IRouteableHistoryStore
-{
-    /// <summary>What <see cref="Save"/> kept last, or <see langword="null"/> when nothing was kept (first run, unreadable file).</summary>
-    string? Load();
-
-    /// <summary>Keeps the history, replacing what was kept.</summary>
-    /// <param name="text">The history as <see cref="RouteableState.Serialize(IEnumerable{RouteableSnapshot})"/> wrote it.</param>
-    void Save(string text);
-}
-
-/// <summary>
-/// Protects the history before it is kept, and reads it back. The history holds the addresses of the pages and what the pages saved (<see cref="Abstraction.States.PersistAttribute"/>:
-/// a draft of a form, an identifier): it is written as plain text unless a protector is given to <see cref="RouteableHistoryExtensions.AddRouteableHistory(IServiceCollection, string?, IRouteableHistoryProtector?)"/>.
-/// </summary>
-public interface IRouteableHistoryProtector
-{
-    /// <summary>Turns the history into what is kept (an encrypted text, say).</summary>
-    string Protect(string text);
-
-    /// <summary>Gives the history back; <see langword="null"/> when it cannot be read (another key, a file that was changed): the application then starts with no history.</summary>
-    string? Unprotect(string text);
-}
-
-/// <summary>
-/// <see cref="IRouteableHistoryProtector"/> with AES-GCM: the history is encrypted and cannot be changed without the key being noticed. The key
-/// is the one of the application: keep it in the secure storage of the platform (the keychain, the keystore, <c>SecureStorage</c> on MAUI),
-/// never in the source code or next to the file.
-/// </summary>
-public sealed class AesRouteableHistoryProtector : IRouteableHistoryProtector
-{
-    private const string Prefix = "rh1:";
-    private const int NonceSize = 12;
-    private const int TagSize = 16;
-
-    private readonly byte[] _key;
-
-    /// <summary>Creates the protector.</summary>
-    /// <param name="key">16, 24 or 32 bytes (a copy is kept).</param>
-    public AesRouteableHistoryProtector(byte[] key)
-    {
-        ArgumentNullException.ThrowIfNull(key);
-        if (key.Length is not (16 or 24 or 32))
-            throw new ArgumentException("The key must be 16, 24 or 32 bytes long.", nameof(key));
-        _key = (byte[])key.Clone();
-    }
-
-    /// <inheritdoc />
-    public string Protect(string text)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-        var plain = System.Text.Encoding.UTF8.GetBytes(text);
-        var packed = new byte[NonceSize + TagSize + plain.Length];
-        var nonce = packed.AsSpan(0, NonceSize);
-        var tag = packed.AsSpan(NonceSize, TagSize);
-        System.Security.Cryptography.RandomNumberGenerator.Fill(nonce);
-        using var aes = new System.Security.Cryptography.AesGcm(_key, TagSize);
-        aes.Encrypt(nonce, plain, packed.AsSpan(NonceSize + TagSize), tag);
-        return Prefix + Convert.ToBase64String(packed);
-    }
-
-    /// <inheritdoc />
-    public string? Unprotect(string text)
-    {
-        if (text is null || !text.StartsWith(Prefix, StringComparison.Ordinal))
-            return null;
-        try
-        {
-            var packed = Convert.FromBase64String(text[Prefix.Length..]);
-            if (packed.Length < NonceSize + TagSize)
-                return null;
-            var plain = new byte[packed.Length - NonceSize - TagSize];
-            using var aes = new System.Security.Cryptography.AesGcm(_key, TagSize);
-            aes.Decrypt(packed.AsSpan(0, NonceSize), packed.AsSpan(NonceSize + TagSize), packed.AsSpan(NonceSize, TagSize), plain);
-            return System.Text.Encoding.UTF8.GetString(plain);
-        }
-        catch (Exception ex) when (ex is FormatException or System.Security.Cryptography.CryptographicException)
-        {
-            return null;
-        }
-    }
-}
-
-/// <summary>
-/// <see cref="IRouteableHistoryStore"/> in a text file. Without a path the file is <c>routeables-history.txt</c> in a folder named after the
-/// application, in the local application data of the user (the sandbox of the application on MAUI).
-/// </summary>
-public sealed class FileRouteableHistoryStore : IRouteableHistoryStore
-{
-    /// <summary>Creates the store.</summary>
-    /// <param name="path">The file; <see langword="null"/> takes the default one.</param>
-    public FileRouteableHistoryStore(string? path = null) => Path = path ?? DefaultPath();
-
-    /// <summary>The file.</summary>
-    public string Path { get; }
-
-    /// <inheritdoc />
-    public string? Load()
-    {
-        try { return File.Exists(Path) ? File.ReadAllText(Path) : null; }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return null; }
-    }
-
-    /// <inheritdoc />
-    public void Save(string text)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-
-        // One user's history is not for the other users of the machine. On Unix a newly created folder is for its owner (an existing folder's
-        // mode is its creator's choice), and the file is created with its final mode, so it is never wider, even briefly, as it would be if the
-        // mode were set after the write. The umask can only remove rights, never add them.
-        var folder = System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(Path));
-        if (!string.IsNullOrEmpty(folder))
-        {
-            // The platform test is written in the condition itself, which is what the platform analyzer (CA1416) recognizes as a guard.
-            if (!OperatingSystem.IsWindows() && !OperatingSystem.IsBrowser())
-                Directory.CreateDirectory(folder, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
-            else
-                Directory.CreateDirectory(folder);
-        }
-
-        // Write aside, then move over the old file: a run that stops in the middle of a write keeps the previous history.
-        // The name is unique, so two instances of the application (or two saves) never write the same temporary file.
-        var temporary = $"{Path}.{Guid.NewGuid():N}.tmp";
-        try
-        {
-            var options = new FileStreamOptions { Mode = FileMode.CreateNew, Access = FileAccess.Write, Share = FileShare.None };
-            if (!OperatingSystem.IsWindows() && !OperatingSystem.IsBrowser())
-                options.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
-            using (var stream = new FileStream(temporary, options))
-            using (var writer = new StreamWriter(stream, new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false)))
-                writer.Write(text);
-            File.Move(temporary, Path, overwrite: true);
-        }
-        catch
-        {
-            try { File.Delete(temporary); } catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { /* nothing more to do */ }
-            throw;
-        }
-    }
-
-    private static string DefaultPath()
-    {
-        var name = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name ?? "Routeables";
-        return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), name, "routeables-history.txt");
-    }
-}
-
 /// <summary>
 /// Keeps the history of the router between two runs of the application, on every host that has a container of its own (WPF, Avalonia, WinUI,
 /// Uno, WinUI 3, MAUI): the pages shown, with what they saved (<see cref="RouteableState"/>), are written to an
@@ -235,29 +87,7 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
 
         try
         {
-            // Restore the saved history once the first page is shown, however late that is (a sign-in window, a splash screen outside the router).
-            // Giving up after a delay would let the next navigation overwrite it with a single page.
-            while (!await RouteableLinkInbox.WaitForFirstPageAsync(router, stop, FirstPageSlice))
-            {
-                if (_disposed || stop.IsCancellationRequested)
-                    return;
-            }
-
-            if (_disposed)
-                return;
-
-            async Task Restore()
-            {
-                if (await RouteableState.RestoreSnapshotsAsync(router, kept))
-                    RouteableMenu.Moved(provider, router);
-                else
-                    SaveNow(); // what was kept cannot be shown: the page that is there replaces it, or the same failure would come back at every start
-            }
-
-            if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
-                await dispatcher.InvokeAsync(Restore);
-            else
-                await Restore();
+            await PutBackWhenShownAsync(router, kept, stop);
         }
         catch (Exception ex)
         {
@@ -265,30 +95,64 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
         }
         finally
         {
-            // A keeper disposed while it restored stays off: it must not write the history again.
-            // Under the lock of Dispose: a Dispose that runs between a test and the assignment would be undone.
-            lock (_gate)
+            await FinishRestoreAsync(router);
+        }
+    }
+
+    // Puts the pages back once the first page is shown, however late that is (a sign-in window, a splash screen outside the router).
+    // Giving up after a delay would let the next navigation overwrite the history with a single page.
+    private async Task PutBackWhenShownAsync(IRouter router, IReadOnlyList<RouteableSnapshot> kept, CancellationToken stop)
+    {
+        while (!await RouteableLinkInbox.WaitForFirstPageAsync(router, stop, FirstPageSlice))
+        {
+            if (_disposed || stop.IsCancellationRequested)
+                return;
+        }
+
+        if (_disposed)
+            return;
+
+        async Task PutBack()
+        {
+            if (await RouteableState.RestoreSnapshotsAsync(router, kept))
+                RouteableMenu.Moved(provider, router);
+            else
+                SaveNow(); // what was kept cannot be shown: the page that is there replaces it, or the same failure would come back at every start
+        }
+
+        if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
+            await dispatcher.InvokeAsync(PutBack);
+        else
+            await PutBack();
+    }
+
+    // However the restore ended: the keeper writes again (unless it was disposed), the addresses that waited for the restore go on, and the history
+    // as it is now is written.
+    private async Task FinishRestoreAsync(IRouter router)
+    {
+        // A keeper disposed while it restored stays off: it must not write the history again.
+        // Under the lock of Dispose: a Dispose that runs between a test and the assignment would be undone.
+        lock (_gate)
+        {
+            if (!_disposed)
+                _active = true;
+        }
+        RouteableStartup.EndRestore(router);
+        try
+        {
+            // The history belongs to the UI thread: read it there, as the navigations that save it do.
+            if (_disposed)
             {
-                if (!_disposed)
-                    _active = true;
+                // A keeper that is over writes nothing.
             }
-            RouteableStartup.EndRestore(router);
-            try
-            {
-                // The history belongs to the UI thread: read it there, as the navigations that save it do.
-                if (_disposed)
-                {
-                    // A keeper that is over writes nothing.
-                }
-                else if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
-                    await dispatcher.InvokeAsync(SaveNow);
-                else
-                    SaveNow();
-            }
-            catch (Exception ex)
-            {
-                RouteableErrors.Report<RouteableHistoryKeeper>(provider, ex, "Save");
-            }
+            else if (provider.GetService<IRouteableDispatcher>() is { } dispatcher && !dispatcher.CheckAccess())
+                await dispatcher.InvokeAsync(SaveNow);
+            else
+                SaveNow();
+        }
+        catch (Exception ex)
+        {
+            RouteableErrors.Report<RouteableHistoryKeeper>(provider, ex, "Save");
         }
     }
 
@@ -405,44 +269,5 @@ public sealed class RouteableHistoryKeeper(IServiceProvider provider, IRouteable
             _stopped.Dispose();
         }
         catch (ObjectDisposedException) { } // already stopped
-    }
-}
-
-/// <summary>Registration of <see cref="RouteableHistoryKeeper"/>.</summary>
-public static class RouteableHistoryExtensions
-{
-    /// <summary>
-    /// Keeps the history of the router between two runs of the application (see <see cref="RouteableHistoryKeeper"/>). Call it with the other
-    /// registrations of the application; the host starts it when it builds its container.
-    /// </summary>
-    /// <param name="services">The service collection of the application.</param>
-    /// <param name="path">The file that holds the history; <see langword="null"/> takes <see cref="FileRouteableHistoryStore"/>'s default.</param>
-    public static IServiceCollection AddRouteableHistory(this IServiceCollection services, string? path = null)
-        => services.AddRouteableHistory(path, protector: null);
-
-    /// <summary>
-    /// Keeps the history of the router between two runs of the application, encrypted by <paramref name="protector"/>
-    /// (see <see cref="AesRouteableHistoryProtector"/>).
-    /// </summary>
-    /// <remarks>Call it once: like the other <c>TryAdd</c> registrations, a second call (with another path or protector) changes nothing, the first one stays.</remarks>
-    /// <param name="services">The service collection of the application.</param>
-    /// <param name="path">The file that holds the history; <see langword="null"/> takes <see cref="FileRouteableHistoryStore"/>'s default.</param>
-    /// <param name="protector">Encrypts what is kept; <see langword="null"/> keeps plain text, which is only fit for histories that hold no private data.</param>
-    public static IServiceCollection AddRouteableHistory(this IServiceCollection services, string? path, IRouteableHistoryProtector? protector)
-    {
-        ArgumentNullException.ThrowIfNull(services);
-        if (protector is not null)
-            services.TryAddSingleton(protector);
-        services.TryAddSingleton<IRouteableHistoryStore>(_ => new FileRouteableHistoryStore(path));
-        services.TryAddSingleton(sp => new RouteableHistoryKeeper(sp, sp.GetRequiredService<IRouteableHistoryStore>(), sp.GetService<IRouteableHistoryProtector>()));
-        return services;
-    }
-
-    /// <summary>Starts the keeper when <see cref="AddRouteableHistory(IServiceCollection, string?)"/> registered it; does nothing otherwise. A host calls it once its container is built.</summary>
-    public static IServiceProvider StartRouteableHistory(this IServiceProvider provider)
-    {
-        ArgumentNullException.ThrowIfNull(provider);
-        provider.GetService<RouteableHistoryKeeper>()?.Start();
-        return provider;
     }
 }
