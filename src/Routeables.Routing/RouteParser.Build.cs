@@ -29,45 +29,7 @@ public static partial class RouteParser
         ArgumentNullException.ThrowIfNull(template);
         var bag = ValuesOf(values);
         var parsedTemplate = ParseTemplate(template);
-        if (parsedTemplate.DuplicateName is { } twice)
-            throw new ArgumentException($"The name {twice} is used twice in \"{template}\": a value cannot be written in the path and in the query.", nameof(template));
-        // What is written must be readable: the router rejects a template whose catch-all is not the last segment.
-        if (parsedTemplate.RestAt >= 0 && parsedTemplate.RestAt != parsedTemplate.Segments.Length - 1)
-            throw new ArgumentException($"The catch-all placeholder {parsedTemplate.Segments[parsedTemplate.RestAt]} of \"{template}\" must be the last segment of the template.", nameof(template));
-        if (OptionalNotLast(Split(template).path.Split('/', StringSplitOptions.RemoveEmptyEntries)) is { } notLast)
-            throw new ArgumentException($"The optional placeholder {notLast} of \"{template}\" must be the last segment of the template.", nameof(template));
-
-        string? Fill(Match m, string where)
-        {
-            var name = m.Groups["name"].Value;
-            var type = m.Groups["type"].Value;
-            if (!IsKnownConstraint(type))
-                throw new ArgumentException($"The constraint \"{type}\" of {{{name}}} in \"{template}\" is unknown.", nameof(template));
-            if (!bag.TryGetValue(name, out var value) || value is null || value is string { Length: 0 })
-            {
-                if (m.Groups["opt"].Success) return null;
-                throw new ArgumentException($"The route \"{template}\" needs a value for {{{name}}} ({where}).", nameof(values));
-            }
-
-            var text = Format(value, type);
-            // A value whose text is empty (a StringBuilder with nothing in it) counts as no value, like an empty string.
-            if (text.Length == 0)
-            {
-                if (m.Groups["opt"].Success) return null;
-                throw new ArgumentException($"The route \"{template}\" needs a value for {{{name}}} ({where}).", nameof(values));
-            }
-
-            // Escaping would write a lone surrogate as U+FFFD, and the value read back would not be the one given.
-            if (HasLoneSurrogate(text))
-                throw new ArgumentException($"The value for {{{name}}} in \"{template}\" is not valid Unicode text (a surrogate without its pair).", nameof(values));
-            if (where == "path" && HasDotSegment(text))
-                throw new ArgumentException($"The value \"{text}\" cannot be a segment of \"{template}\" for {{{name}}}: a browser resolves \".\" and \"..\" to another address.", nameof(values));
-            // What is written must be readable: the router would reject an address that its own template does not match.
-            if (!TryConvert(text, type, out _))
-                throw new ArgumentException(
-                    $"The value \"{text}\" is not a valid {(type.Length == 0 ? "value" : type)} for {{{name}}} in \"{template}\".", nameof(values));
-            return Uri.EscapeDataString(text);
-        }
+        CheckTemplate(template, parsedTemplate);
 
         var (path, query) = Split(template);
         var segments = new List<string>();
@@ -78,34 +40,11 @@ public static partial class RouteParser
             if (!m.Success) { segments.Add(segment); continue; }
             if (m.Groups["rest"].Success)
             {
-                // {**path}: keep the slashes of the value and escape each segment.
-                // As for other placeholders, a constraint that does not exist is refused whether or not there is a value (a template that cannot
-                // be matched must not build an address for one value and be refused for another).
-                var restType = m.Groups["type"].Value;
-                if (!IsKnownConstraint(restType))
-                    throw new ArgumentException($"The constraint \"{restType}\" of {{**{m.Groups["name"].Value}}} in \"{template}\" is unknown.", nameof(template));
-                if (bag.TryGetValue(m.Groups["name"].Value, out var restValue) && restValue is not null
-                    && Format(restValue, restType) is { Length: > 0 } restText)
-                {
-                    // The whole value must satisfy the constraint, so that it reads back.
-                    if (restText.Split('/').Any(part => part.Length == 0))
-                        throw new ArgumentException($"The value \"{restText}\" cannot be the rest of \"{template}\": an empty segment (a leading, trailing or doubled slash) is dropped from an address, so the value would not be read back.", nameof(values));
-                    // Escaping would write a lone surrogate as U+FFFD, and the value read back would not be the one given (as for any placeholder).
-                    if (HasLoneSurrogate(restText))
-                        throw new ArgumentException($"The value for {{**{m.Groups["name"].Value}}} in \"{template}\" is not valid Unicode text (a surrogate without its pair).", nameof(values));
-                    if (HasDotSegment(restText))
-                        throw new ArgumentException($"The value \"{restText}\" cannot be the rest of \"{template}\": a browser resolves \".\" and \"..\" to another address.", nameof(values));
-                    if (!TryConvert(restText, restType, out _))
-                        throw new ArgumentException(
-                            $"The value \"{restText}\" is not a valid {(restType.Length == 0 ? "value" : restType)} for {{**{m.Groups["name"].Value}}} in \"{template}\".", nameof(values));
-                    // cat/{age?}/{**rest} with a rest but no age: the rest would be read as the age.
-                    if (skippedOptional is { } skippedBefore)
-                        throw new ArgumentException($"The route \"{template}\" cannot leave out {skippedBefore} and give a later value: give both, or neither.", nameof(values));
-                    segments.AddRange(restText.Split('/', StringSplitOptions.RemoveEmptyEntries).Select(Uri.EscapeDataString));
-                }
+                if (WriteRest(template, m, bag, skippedOptional) is { } rest)
+                    segments.AddRange(rest);
                 continue;
             }
-            if (Fill(m, "path") is { } text)
+            if (Fill(template, m, "path", bag) is { } text)
             {
                 // cat/{age?}/{nick?} with a nick but no age: the nick would be read as the age.
                 if (skippedOptional is { } skipped)
@@ -123,12 +62,86 @@ public static partial class RouteParser
         {
             var m = Param.Match(part);
             if (!m.Success) { pairs.Add(part); continue; }
-            if (Fill(m, "query") is { } text) pairs.Add($"{Uri.EscapeDataString(m.Groups["name"].Value)}={text}");
+            if (Fill(template, m, "query", bag) is { } text) pairs.Add($"{Uri.EscapeDataString(m.Groups["name"].Value)}={text}");
         }
 
         // A template made only of optional values, none given ("{tab?}"), is the root.
         var route = (path.StartsWith('/') || segments.Count == 0 ? "/" : string.Empty) + string.Join('/', segments);
         return pairs.Count == 0 ? route : route + "?" + string.Join('&', pairs);
+    }
+
+    // What is written must be readable: the router rejects a template that repeats a name, or whose catch-all or optional placeholder is not the last segment.
+    private static void CheckTemplate(string template, ParsedTemplate parsedTemplate)
+    {
+        if (parsedTemplate.DuplicateName is { } twice)
+            throw new ArgumentException($"The name {twice} is used twice in \"{template}\": a value cannot be written in the path and in the query.", nameof(template));
+        if (parsedTemplate.RestAt >= 0 && parsedTemplate.RestAt != parsedTemplate.Segments.Length - 1)
+            throw new ArgumentException($"The catch-all placeholder {parsedTemplate.Segments[parsedTemplate.RestAt]} of \"{template}\" must be the last segment of the template.", nameof(template));
+        if (OptionalNotLast(Split(template).path.Split('/', StringSplitOptions.RemoveEmptyEntries)) is { } notLast)
+            throw new ArgumentException($"The optional placeholder {notLast} of \"{template}\" must be the last segment of the template.", nameof(template));
+    }
+
+    // The text a placeholder of the path or of the query is written as (escaped), or null for an optional one without a value.
+    private static string? Fill(string template, Match m, string where, Dictionary<string, object?> bag)
+    {
+        var name = m.Groups["name"].Value;
+        var type = m.Groups["type"].Value;
+        if (!IsKnownConstraint(type))
+            throw new ArgumentException($"The constraint \"{type}\" of {{{name}}} in \"{template}\" is unknown.", nameof(template));
+        if (!bag.TryGetValue(name, out var value) || value is null || value is string { Length: 0 })
+        {
+            if (m.Groups["opt"].Success) return null;
+            throw new ArgumentException($"The route \"{template}\" needs a value for {{{name}}} ({where}).", "values");
+        }
+
+        var text = Format(value, type);
+        // A value whose text is empty (a StringBuilder with nothing in it) counts as no value, like an empty string.
+        if (text.Length == 0)
+        {
+            if (m.Groups["opt"].Success) return null;
+            throw new ArgumentException($"The route \"{template}\" needs a value for {{{name}}} ({where}).", "values");
+        }
+
+        // Escaping would write a lone surrogate as U+FFFD, and the value read back would not be the one given.
+        if (HasLoneSurrogate(text))
+            throw new ArgumentException($"The value for {{{name}}} in \"{template}\" is not valid Unicode text (a surrogate without its pair).", "values");
+        if (where == "path" && HasDotSegment(text))
+            throw new ArgumentException($"The value \"{text}\" cannot be a segment of \"{template}\" for {{{name}}}: a browser resolves \".\" and \"..\" to another address.", "values");
+        // What is written must be readable: the router would reject an address that its own template does not match.
+        if (!TryConvert(text, type, out _))
+            throw new ArgumentException(
+                $"The value \"{text}\" is not a valid {(type.Length == 0 ? "value" : type)} for {{{name}}} in \"{template}\".", "values");
+        return Uri.EscapeDataString(text);
+    }
+
+    // The segments a catch-all placeholder ({**path}) is written as: the slashes of the value are kept and each segment is escaped. Null when it has
+    // no value.
+    private static List<string>? WriteRest(string template, Match m, Dictionary<string, object?> bag, string? skippedOptional)
+    {
+        var name = m.Groups["name"].Value;
+        // As for other placeholders, a constraint that does not exist is refused whether or not there is a value (a template that cannot
+        // be matched must not build an address for one value and be refused for another).
+        var restType = m.Groups["type"].Value;
+        if (!IsKnownConstraint(restType))
+            throw new ArgumentException($"The constraint \"{restType}\" of {{**{name}}} in \"{template}\" is unknown.", nameof(template));
+        if (!bag.TryGetValue(name, out var restValue) || restValue is null || Format(restValue, restType) is not { Length: > 0 } restText)
+            return null;
+
+        // The whole value must satisfy the constraint, so that it reads back.
+        if (restText.Split('/').Any(part => part.Length == 0))
+            throw new ArgumentException($"The value \"{restText}\" cannot be the rest of \"{template}\": an empty segment (a leading, trailing or doubled slash) is dropped from an address, so the value would not be read back.", "values");
+        // Escaping would write a lone surrogate as U+FFFD, and the value read back would not be the one given (as for any placeholder).
+        if (HasLoneSurrogate(restText))
+            throw new ArgumentException($"The value for {{**{name}}} in \"{template}\" is not valid Unicode text (a surrogate without its pair).", "values");
+        if (HasDotSegment(restText))
+            throw new ArgumentException($"The value \"{restText}\" cannot be the rest of \"{template}\": a browser resolves \".\" and \"..\" to another address.", "values");
+        if (!TryConvert(restText, restType, out _))
+            throw new ArgumentException(
+                $"The value \"{restText}\" is not a valid {(restType.Length == 0 ? "value" : restType)} for {{**{name}}} in \"{template}\".", "values");
+        // cat/{age?}/{**rest} with a rest but no age: the rest would be read as the age.
+        if (skippedOptional is { } skippedBefore)
+            throw new ArgumentException($"The route \"{template}\" cannot leave out {skippedBefore} and give a later value: give both, or neither.", "values");
+        return [.. restText.Split('/', StringSplitOptions.RemoveEmptyEntries).Select(Uri.EscapeDataString)];
     }
 
     [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "Reached with an object of values only through the overload of GoToAsync that is marked RequiresUnreferencedCode.")]
