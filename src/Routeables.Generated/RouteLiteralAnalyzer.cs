@@ -35,92 +35,105 @@ public sealed class RouteLiteralAnalyzer : DiagnosticAnalyzer
     {
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
-        context.RegisterCompilationStartAction(start =>
+        context.RegisterCompilationStartAction(Start);
+    }
+
+    /// <summary>What one compilation has collected so far: the routes known, the literals to check, and whether a route was registered from a string the build cannot read.</summary>
+    private sealed class Findings
+    {
+        public ConcurrentBag<string> Templates { get; } = new ConcurrentBag<string>();
+        public ConcurrentBag<(string Route, Location Where)> Calls { get; } = new ConcurrentBag<(string Route, Location Where)>();
+        public volatile bool Unreadable;
+    }
+
+    private static void Start(CompilationStartAnalysisContext start)
+    {
+        var routeable = start.Compilation.GetTypeByMetadataName("Routeables.Abstraction.RouteableAttribute");
+        var router = start.Compilation.GetTypeByMetadataName("Routeables.Abstraction.Routing.IRouter");
+        if (routeable is null || router is null)
+            return;
+        var extensions = start.Compilation.GetTypeByMetadataName("Routeables.Abstraction.Routing.RouterExtensions");
+
+        var findings = new Findings();
+        foreach (var template in AttributeTemplates(start.Compilation.GlobalNamespace, routeable))
+            findings.Templates.Add(template);
+
+        start.RegisterOperationAction(ctx => OnInvocation(ctx, findings, router, extensions), OperationKind.Invocation);
+        start.RegisterOperationAction(ctx => OnObjectCreation(ctx, findings), OperationKind.ObjectCreation);
+        start.RegisterOperationAction(ctx => OnAssignment(ctx, findings), OperationKind.SimpleAssignment);
+        start.RegisterSyntaxNodeAction(ctx => OnPropertyDeclaration(ctx, findings), SyntaxKind.PropertyDeclaration);
+        start.RegisterCompilationEndAction(ctx => Report(ctx, findings));
+    }
+
+    private static void OnInvocation(OperationAnalysisContext ctx, Findings findings, INamedTypeSymbol router, INamedTypeSymbol? extensions)
+    {
+        var invocation = (IInvocationOperation)ctx.Operation;
+        var method = invocation.TargetMethod;
+
+        if (method.Name == "GoToAsync")
         {
-            var routeable = start.Compilation.GetTypeByMetadataName("Routeables.Abstraction.RouteableAttribute");
-            var router = start.Compilation.GetTypeByMetadataName("Routeables.Abstraction.Routing.IRouter");
-            if (routeable is null || router is null)
+            // Only the router's own method: another library's GoToAsync(string url) is not a route of this application.
+            var owner = method.ContainingType;
+            if (!SymbolEqualityComparer.Default.Equals(owner, router)
+                && !SymbolEqualityComparer.Default.Equals(owner, extensions)
+                && !owner.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(i, router)))
                 return;
-            var extensions = start.Compilation.GetTypeByMetadataName("Routeables.Abstraction.Routing.RouterExtensions");
+            if (Argument(invocation, "template") is not null)
+                return; // the route to go to is given by the template
+            if (Argument(invocation, "url") is { } url && url.Value.ConstantValue is { HasValue: true, Value: string text })
+                findings.Calls.Add((text, invocation.Syntax.GetLocation()));
+            return;
+        }
 
-            var templates = new ConcurrentBag<string>();
-            var calls = new ConcurrentBag<(string Route, Location Where)>();
-            var unreadable = false;
+        foreach (var argument in invocation.Arguments)
+        {
+            if (argument.Parameter?.Name != "route")
+                continue;
+            if (argument.Value.ConstantValue is { HasValue: true, Value: string route })
+                findings.Templates.Add(route);
+            else if (method.Name == "RegisterRoute" && !argument.IsImplicit)
+                findings.Unreadable = true; // registered from a string only known at run time
+        }
+    }
 
-            foreach (var template in AttributeTemplates(start.Compilation.GlobalNamespace, routeable))
-                templates.Add(template);
+    private static void OnObjectCreation(OperationAnalysisContext ctx, Findings findings)
+    {
+        var creation = (IObjectCreationOperation)ctx.Operation;
+        foreach (var argument in creation.Arguments)
+            if (argument.Parameter?.Name == "route" && argument.Value.ConstantValue is { HasValue: true, Value: string route })
+                findings.Templates.Add(route);
+    }
 
-            start.RegisterOperationAction(ctx =>
-            {
-                var invocation = (IInvocationOperation)ctx.Operation;
-                var method = invocation.TargetMethod;
+    private static void OnAssignment(OperationAnalysisContext ctx, Findings findings)
+    {
+        var assignment = (ISimpleAssignmentOperation)ctx.Operation;
+        if (assignment.Target is IPropertyReferenceOperation { Property.Name: "Route" }
+            && assignment.Value.ConstantValue is { HasValue: true, Value: string route })
+            findings.Templates.Add(route);
+    }
 
-                if (method.Name == "GoToAsync")
-                {
-                    // Only the router's own method: another library's GoToAsync(string url) is not a route of this application.
-                    var owner = method.ContainingType;
-                    if (!SymbolEqualityComparer.Default.Equals(owner, router)
-                        && !SymbolEqualityComparer.Default.Equals(owner, extensions)
-                        && !owner.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(i, router)))
-                        return;
-                    if (Argument(invocation, "template") is not null)
-                        return; // the route to go to is given by the template
-                    if (Argument(invocation, "url") is { } url && url.Value.ConstantValue is { HasValue: true, Value: string text })
-                        calls.Add((text, invocation.Syntax.GetLocation()));
-                    return;
-                }
+    private static void OnPropertyDeclaration(SyntaxNodeAnalysisContext ctx, Findings findings)
+    {
+        var property = (PropertyDeclarationSyntax)ctx.Node;
+        if (property.Identifier.ValueText != "Route")
+            return;
+        var value = property.ExpressionBody?.Expression ?? property.Initializer?.Value;
+        if (value is not null && ctx.SemanticModel.GetConstantValue(value).Value is string route)
+            findings.Templates.Add(route);
+    }
 
-                foreach (var argument in invocation.Arguments)
-                {
-                    if (argument.Parameter?.Name != "route")
-                        continue;
-                    if (argument.Value.ConstantValue is { HasValue: true, Value: string route })
-                        templates.Add(route);
-                    else if (method.Name == "RegisterRoute" && !argument.IsImplicit)
-                        unreadable = true; // registered from a string only known at run time
-                }
-            }, OperationKind.Invocation);
+    private static void Report(CompilationAnalysisContext ctx, Findings findings)
+    {
+        if (findings.Unreadable || findings.Templates.IsEmpty)
+            return;
 
-            start.RegisterOperationAction(ctx =>
-            {
-                var creation = (IObjectCreationOperation)ctx.Operation;
-                foreach (var argument in creation.Arguments)
-                    if (argument.Parameter?.Name == "route" && argument.Value.ConstantValue is { HasValue: true, Value: string route })
-                        templates.Add(route);
-            }, OperationKind.ObjectCreation);
-
-            start.RegisterOperationAction(ctx =>
-            {
-                var assignment = (ISimpleAssignmentOperation)ctx.Operation;
-                if (assignment.Target is IPropertyReferenceOperation { Property.Name: "Route" }
-                    && assignment.Value.ConstantValue is { HasValue: true, Value: string route })
-                    templates.Add(route);
-            }, OperationKind.SimpleAssignment);
-
-            start.RegisterSyntaxNodeAction(ctx =>
-            {
-                var property = (PropertyDeclarationSyntax)ctx.Node;
-                if (property.Identifier.ValueText != "Route")
-                    return;
-                var value = property.ExpressionBody?.Expression ?? property.Initializer?.Value;
-                if (value is not null && ctx.SemanticModel.GetConstantValue(value).Value is string route)
-                    templates.Add(route);
-            }, SyntaxKind.PropertyDeclaration);
-
-            start.RegisterCompilationEndAction(ctx =>
-            {
-                if (unreadable || templates.IsEmpty)
-                    return;
-
-                var known = templates.ToArray();
-                foreach (var (route, where) in calls)
-                {
-                    if (!IsChecked(route, out var address) || known.Any(t => Matches(t, address)))
-                        continue;
-                    ctx.ReportDiagnostic(Diagnostic.Create(Unknown, where, route));
-                }
-            });
-        });
+        var known = findings.Templates.ToArray();
+        foreach (var (route, where) in findings.Calls)
+        {
+            if (!IsChecked(route, out var address) || known.Any(t => Matches(t, address)))
+                continue;
+            ctx.ReportDiagnostic(Diagnostic.Create(Unknown, where, route));
+        }
     }
 
     private static IArgumentOperation? Argument(IInvocationOperation invocation, string name)
