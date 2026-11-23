@@ -265,6 +265,13 @@ foreach ($name in $Hosts) {
 
     $profileDir = Join-Path ([IO.Path]::GetTempPath()) "routeables-chrome-$name"
     if (Test-Path $profileDir) { Remove-Item -Recurse -Force $profileDir }
+    # The system notification asks Chrome for the permission, and nothing in the test answers the bar that asks: the site is allowed in the new
+    # profile before Chrome starts (a setting of 1 is "allow"), so that the page gets its answer and the Result line shows it.
+    $origin = ([Uri]$url).GetLeftPart([UriPartial]::Authority)
+    $defaultDir = Join-Path $profileDir 'Default'
+    New-Item -ItemType Directory -Path $defaultDir -Force | Out-Null
+    $allow = @{ profile = @{ content_settings = @{ exceptions = @{ notifications = @{ "$origin,*" = @{ setting = 1 } } } } } }
+    [IO.File]::WriteAllText((Join-Path $defaultDir 'Preferences'), ($allow | ConvertTo-Json -Depth 10 -Compress))
     $browser = Start-Process $chrome -PassThru -ArgumentList @('--force-renderer-accessibility', '--no-first-run', '--no-default-browser-check', "--user-data-dir=$profileDir", '--window-position=0,0', '--window-size=1800,1000', '--new-window', $url)
     # Chrome is "chrome.exe" to agent-desktop on Windows, "Google Chrome" on macOS: the name list-apps gives.
     $script:app = $null
