@@ -21,6 +21,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The values saved with a page are read as strictly as an address**: a `bool` kept with a page accepted spaces and a trailing null character (`" true"`, `"true\0"`), and a `Guid` accepted braces, no dashes and spaces. Only the texts that are written (`True`, `False`, a Guid with its dashes) are read back; anything else is dropped like any other value that cannot be read.
+- **A saved history that comes from outside costs no more memory than its text**: only its last 1000 pages are cut out of it, found from the end. Until now all of it was cut into lines before the limit applied.
+- **The comment on the conversion of an address value** said that `1e5` is read for every number; only a `double` takes an exponent.
 - **A click on a browser notification brings its own tab to the front**: the service worker focused the first window it found, so with several tabs open the action was handled in one tab and another was shown. The worker now asks the windows, and the one that made the notification answers and is focused. If that tab was closed, the worker focuses another window (or opens one) as before; that page has no record of the notification and the click is not delivered to it.
 - **A module that registers a route guard is refused**: the routers read their guards once from the container of the application, so a guard of a module (`IRouteGuard`, `IRouteTypeGuard`) was never asked and the pages it was written to protect opened without it, with no word. `IRouteableModules.Load` now throws an `InvalidOperationException` before anything of the module is added. Register the guard at startup.
 - **A page whose view failed in `OnEnteringAsync` leaks less**: the view model had been told `OnEntering` (a timer, a subscription) and the page was then dropped without `OnLeaving`. The view model is now told `OnLeaving`, as the page that stays is entered again.

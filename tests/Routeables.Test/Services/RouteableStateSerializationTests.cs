@@ -68,6 +68,46 @@ public class RouteableStateSerializationTests
     }
 
     [Fact]
+    public void The_last_pages_are_kept_in_order_when_the_limit_applies_to_a_text_with_empty_lines_and_Windows_line_ends()
+    {
+        var pages = Enumerable.Range(0, RouteableState.MaxSnapshots + 5).Select(i => "/page" + i);
+        var text = "\n\r\n" + string.Join("\r\n\n", pages) + "\r\n\n";
+
+        var back = RouteableState.DeserializeSnapshots(text);
+
+        Assert.Equal(RouteableState.MaxSnapshots, back.Count);
+        Assert.Equal("/page5", back[0].Route);
+        Assert.Equal("/page" + (RouteableState.MaxSnapshots + 4), back[^1].Route);
+    }
+
+    [Theory]
+    [InlineData("b", "True", true)]
+    [InlineData("b", "false", false)]
+    [InlineData("g", "0f8fad5b-d9cb-469f-a165-70867728950e", null)]
+    public void A_bool_and_a_Guid_are_read_as_they_are_written(string tag, string text, bool? expected)
+    {
+        var value = RouteableState.Parse(tag, text);
+
+        if (tag == "b")
+            Assert.Equal((object?)expected, value);
+        else
+            Assert.Equal(Guid.Parse(text), value);
+    }
+
+    [Theory]
+    [InlineData("b", " true")]
+    [InlineData("b", "true ")]
+    [InlineData("b", "true\0")]
+    [InlineData("b", "yes")]
+    [InlineData("g", "{0f8fad5b-d9cb-469f-a165-70867728950e}")]
+    [InlineData("g", "0f8fad5bd9cb469fa16570867728950e")]
+    [InlineData("g", " 0f8fad5b-d9cb-469f-a165-70867728950e")]
+    public void A_bool_or_a_Guid_in_another_spelling_is_not_read(string tag, string text)
+    {
+        Assert.Null(RouteableState.Parse(tag, text));
+    }
+
+    [Fact]
     public void A_string_with_more_pages_than_the_limit_gives_the_last_ones()
     {
         var text = string.Join('\n', Enumerable.Range(0, RouteableState.MaxSnapshots + 50).Select(i => "/page" + i));

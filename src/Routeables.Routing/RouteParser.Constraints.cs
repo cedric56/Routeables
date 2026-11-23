@@ -46,21 +46,19 @@ public static partial class RouteParser
         switch (type.ToLowerInvariant())
         {
             case "" or "string" or "?": value = raw; return true;
-            // The usual spellings are read (+42, 007, True, an upper-case Guid, 1.50, 1e5), and the router writes the address back in the one text
+            // The usual spellings are read (+42, 007, True, an upper-case Guid, 1.50, and 1e5 for a double: a decimal takes no exponent), and the router writes the address back in the one text
             // Build writes (Canonical), so that every spelling is one page for the history and RouteAddress. A number has no spaces, a Guid has its
             // dashes and no braces.
             case "int": { int v = 0; var ok = int.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v); value = v; return ok; }
             case "long": { long v = 0; var ok = long.TryParse(raw, NumberStyles.AllowLeadingSign, inv, out v); value = v; return ok; }
             // TryParse ignores spaces and a trailing null character: the text must be the one word, so that "true%00" is not a bool.
             case "bool": { var ok = bool.TryParse(raw, out var v) && raw == raw.Trim() && !raw.Contains('\0'); value = v; return ok; }
-            case "guid": { var ok = Guid.TryParseExact(raw, "D", out var v); value = v; return ok; }
+            // TryParseExact trims spaces: the 36 characters of the text with its dashes are checked, so that " <guid>" is not a second address of the page.
+            case "guid": { Guid v = default; var ok = raw.Length == 36 && Guid.TryParseExact(raw, "D", out v); value = v; return ok; }
             case "decimal": { decimal v = 0; var ok = decimal.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, inv, out v); value = v; return ok; }
-            case "double":
-                {
-                    double v = 0; var ok = double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v);
-                    if (v == 0) v = 0; // -0 is the number 0, which the address is written as: the page gets the same zero
-                    value = v; return ok;
-                }
+            case "double": { double v = 0; var ok = double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v);
+                if (v == 0) v = 0; // -0 is the number 0, which the address is written as: the page gets the same zero
+                value = v; return ok; }
             default:
                 value = null;
                 return false; // unreachable: Bind rejects an unknown constraint first

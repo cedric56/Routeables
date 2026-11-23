@@ -214,7 +214,9 @@ public static class RouteableState
         _ => value.ToString() ?? string.Empty,
     };
 
-    private static object? Parse(string tag, string text)
+    // The text of a value is read as Format writes it: the one word of a bool (TryParse would also take spaces and a trailing null character) and
+    // the Guid with its dashes, no braces and no spaces (TryParseExact trims them: the length is checked).
+    internal static object? Parse(string tag, string text)
     {
         var inv = System.Globalization.CultureInfo.InvariantCulture;
         const System.Globalization.DateTimeStyles round = System.Globalization.DateTimeStyles.RoundtripKind;
@@ -223,10 +225,10 @@ public static class RouteableState
             "s" => text,
             "i" => int.TryParse(text, System.Globalization.NumberStyles.Integer, inv, out var i) ? i : null,
             "l" => long.TryParse(text, System.Globalization.NumberStyles.Integer, inv, out var l) ? l : null,
-            "b" => bool.TryParse(text, out var b) ? b : null,
+            "b" => text.Equals("true", StringComparison.OrdinalIgnoreCase) ? (object)true : text.Equals("false", StringComparison.OrdinalIgnoreCase) ? (object)false : null,
             "d" => double.TryParse(text, System.Globalization.NumberStyles.Float, inv, out var d) ? d : null,
             "m" => decimal.TryParse(text, System.Globalization.NumberStyles.Number, inv, out var m) ? m : null,
-            "g" => Guid.TryParse(text, out var g) ? g : null,
+            "g" => text.Length == 36 && Guid.TryParseExact(text, "D", out var g) ? g : null,
             "t" => DateTime.TryParse(text, inv, round, out var t) ? t : null,
             "o" => DateTimeOffset.TryParse(text, inv, round, out var o) ? o : null,
             _ => null,
@@ -254,12 +256,22 @@ public static class RouteableState
         if (string.IsNullOrEmpty(text))
             return [];
 
-        var snapshots = new List<RouteableSnapshot>();
-        var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries)
-            .Select(line => line.TrimEnd('\r'))
-            .Where(line => line.Length > 0)
-            .ToList();
-        foreach (var line in lines.Skip(Math.Max(0, lines.Count - MaxSnapshots)))
+        // The last pages only, found from the end: the text can be huge and come from outside, and cutting all of it into lines would allocate
+        // as much again as the text before the limit applied.
+        var kept = new List<string>();
+        var end = text.Length;
+        while (end > 0 && kept.Count < MaxSnapshots)
+        {
+            var newline = text.LastIndexOf('\n', end - 1);
+            var line = text.Substring(newline + 1, end - newline - 1).TrimEnd('\r');
+            if (line.Length > 0)
+                kept.Add(line);
+            end = newline < 0 ? 0 : newline;
+        }
+
+        kept.Reverse();
+        var snapshots = new List<RouteableSnapshot>(kept.Count);
+        foreach (var line in kept)
         {
             var parts = line.Split('|');
             var values = new Dictionary<string, string>();

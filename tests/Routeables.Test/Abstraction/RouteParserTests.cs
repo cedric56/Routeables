@@ -1,7 +1,7 @@
 ﻿using Routeables.Abstraction.Routing;
-using Routeables.Routing;
 using System.Collections.Frozen;
 using System.Collections.Immutable;
+using Routeables.Routing;
 
 namespace Routeables.Test.Abstraction;
 
@@ -283,6 +283,7 @@ public class RouteParserTests
     [InlineData("customers/{id:int}", "not-an-integer")]
     [InlineData("customers/{id:int}", 3000000000L)]
     [InlineData("customers/{id:guid}", "42")]
+    [InlineData("customers/{id:guid}", " 8f1b8d5e-0d64-4b0e-9d6c-0a0b6a6c3a11")]
     [InlineData("customers/{id:bool}", "maybe")]
     [InlineData("customers?{id:int}", "x")]
     public void Build_refuses_a_value_that_its_own_constraint_would_refuse(string template, object value)
