@@ -30,7 +30,9 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
     /// <param name="leaving">The entry currently active that is being left.</param>
     /// <param name="entering">The new entry being routed to.</param>
     /// <param name="ct">A token to observe for cancellation.</param>
-    public async Task TransitionAsync(RouterEntry leaving, RouterEntry entering, CancellationToken ct = default)
+    /// <param name="restoreLeaving">When a hook fails, enter <paramref name="leaving"/> again because it stays the current page (the default).
+    /// <see langword="false"/> when <paramref name="leaving"/> is a page that is being discarded, as in <see cref="RevertAsync"/>.</param>
+    public async Task TransitionAsync(RouterEntry leaving, RouterEntry entering, CancellationToken ct = default, bool restoreLeaving = true)
     {
         var viewModelLeft = false;
         try
@@ -43,7 +45,7 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
         {
             // The view model was told OnLeaving (it stopped a timer, unsubscribed) and then the view failed. `leaving` stays the current page, so
             // it is entered again to be what the router says it is. When the view model itself failed, nothing was left.
-            if (viewModelLeft)
+            if (viewModelLeft && restoreLeaving)
             {
                 try
                 {
@@ -86,14 +88,17 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
 
             // `entering` failed partway through OnEntering. `leaving` was already torn down, but the router does not advance the history on a failed
             // transition, so the history still points at `leaving`. Run its OnEntering again so that its lifecycle matches "still current".
-            try
+            if (restoreLeaving)
             {
-                await EnterAsync(leaving, CancellationToken.None);
-            }
-            catch (Exception recovery)
-            {
-                // Recovery itself failed. Do not hide the original exception: it is thrown below; this one is reported.
-                RouteableErrors.Report<RouterLifecycle>(provider, recovery);
+                try
+                {
+                    await EnterAsync(leaving, CancellationToken.None);
+                }
+                catch (Exception recovery)
+                {
+                    // Recovery itself failed. Do not hide the original exception: it is thrown below; this one is reported.
+                    RouteableErrors.Report<RouterLifecycle>(provider, recovery);
+                }
             }
 
             throw;
@@ -114,7 +119,8 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
             if (previous is null)
                 await NotifyLeavingAsync(entering);
             else
-                await TransitionAsync(entering, previous, CancellationToken.None);
+                // The page that was entered is the one being discarded: when the old page fails to enter again, it must not be entered again itself.
+                await TransitionAsync(entering, previous, CancellationToken.None, restoreLeaving: false);
         }
         catch (Exception ex)
         {

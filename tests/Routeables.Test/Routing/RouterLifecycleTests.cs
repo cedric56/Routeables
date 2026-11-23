@@ -203,6 +203,23 @@ public class RouterLifecycleTests
     }
 
     [Fact]
+    public async Task A_revert_whose_old_page_fails_to_enter_does_not_enter_the_discarded_page_again()
+    {
+        var calls = new List<string>();
+        var previous = Entry(new LifecycleProbe("previous-vm", calls) { OnTo = (_, _) => throw new InvalidOperationException("the old page failed to enter") }, new LifecycleProbe("previous-view", calls));
+        var entered = Entry(new LifecycleProbe("entered-vm", calls), new LifecycleProbe("entered-view", calls));
+        var sink = new Sink();
+        var provider = new Microsoft.Extensions.DependencyInjection.ServiceCollection()
+            .AddSingleton<IRouteableErrorSink>(sink).BuildServiceProvider();
+
+        await new RouterLifecycle(provider).RevertAsync(previous, entered);
+
+        Assert.Single(sink.Reported);
+        Assert.DoesNotContain("entered-vm:to", calls);
+        Assert.DoesNotContain("entered-view:to", calls);
+    }
+
+    [Fact]
     public async Task A_view_that_fails_to_enter_the_first_page_tells_its_view_model_it_is_left()
     {
         var calls = new List<string>();
