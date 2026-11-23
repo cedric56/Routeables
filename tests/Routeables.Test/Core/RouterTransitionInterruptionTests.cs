@@ -123,4 +123,31 @@ public class RouterTransitionInterruptionTests
         Assert.Same(newest, router.CurrentViewModel);
         Assert.Equal(router.History.Count - 1, router.History.CurrentIndex);
     }
+
+    /// <summary>A page that cancels the token of its own route change while it enters, then ends normally (a hook that ignores its token).</summary>
+    private sealed class CancelsItselfPage(CancellationTokenSource source) : IRouteable
+    {
+        public Task OnEnteringAsync(IRouteableArgs context, CancellationToken ct = default)
+        {
+            source.Cancel();
+            return Task.CompletedTask;
+        }
+    }
+
+    [Fact]
+    public async Task A_route_change_cancelled_while_its_page_enters_is_undone_and_ends_as_cancelled()
+    {
+        var router = CreateRouter();
+        var home = new Page();
+        await router.GoAsync(new TestView(), home, cancellationToken: Ct);
+        using var source = CancellationTokenSource.CreateLinkedTokenSource(Ct);
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => router.GoAsync(new TestView(), new CancelsItselfPage(source), cancellationToken: source.Token));
+
+        Assert.Equal(1, router.History.Count);
+        Assert.Same(home, router.CurrentViewModel);
+        // The router still works: the route change that was undone did not leave the gate held.
+        Assert.True((await router.GoAsync(new TestView(), new Page(), cancellationToken: Ct)).Success);
+    }
 }

@@ -243,4 +243,47 @@ public class RouterNotFoundAndGuardRefreshTests
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => refresh.WaitAsync(TimeSpan.FromSeconds(5), Ct));
     }
+
+    /// <summary>Refuses the page shown when the guards are asked again (a refresh), and waits for the test before it says so.</summary>
+    private sealed class SlowRefreshGuard : IRouteGuard
+    {
+        public TaskCompletionSource Asked { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource Release { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public async Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
+        {
+            if (change.Kind != RouteableKind.MoveTo || change.To.ViewModel is not FakeViewModel)
+                return RouteGuardDecision.Allow;
+            Asked.TrySetResult();
+            await Release.Task.WaitAsync(cancellationToken);
+            return RouteGuardDecision.Redirect("/login");
+        }
+    }
+
+    [Fact]
+    public async Task The_redirection_of_RefreshGuardsAsync_is_dropped_when_another_navigation_came_first()
+    {
+        var guard = new SlowRefreshGuard();
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(route: "/other");
+        services.RegisterRoute<ThirdViewFor, ThirdViewModel>(route: "/login");
+        services.AddSingleton<IRouteGuard>(guard);
+        await using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct).WaitAsync(TimeSpan.FromSeconds(5), Ct);
+
+        var refresh = router.RefreshGuardsAsync(Ct);
+        await guard.Asked.Task.WaitAsync(TimeSpan.FromSeconds(5), Ct);
+        var other = router.GoToAsync("/other", cancellationToken: Ct);   // queued behind the refresh
+        await Task.Delay(100, Ct);
+        guard.Release.SetResult();
+
+        await refresh.WaitAsync(TimeSpan.FromSeconds(5), Ct);
+        await other.WaitAsync(TimeSpan.FromSeconds(5), Ct);
+
+        // The answer was about the home page, which is no longer shown: the user is not sent to the sign-in page from the other one.
+        Assert.IsType<SecondViewModel>(router.CurrentViewModel);
+    }
 }

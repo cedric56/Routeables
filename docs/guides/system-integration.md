@@ -187,7 +187,7 @@ byte[] key = await LoadOrCreateKeyAsync();   // 32 bytes kept in the secure stor
 services.AddRouteableHistory(path: null, protector: new AesRouteableHistoryProtector(key));
 ```
 
-A history that was changed, or written with another key, is ignored and the application starts with no history. Changing from plain text to a protector also starts empty once. On Linux, macOS and Android the file is readable by its owner only. Your own `IRouteableHistoryProtector` can use another scheme (DPAPI on Windows, for instance).
+A history that was changed, or written with another key, is ignored and the application starts with no history. Changing from plain text to a protector also starts empty once. On Linux, macOS and Android the file is readable by its owner only. Your own `IRouteableHistoryProtector` can use another scheme (DPAPI on Windows, for instance). AES-GCM is not available in a browser (Blazor WebAssembly), where this protector cannot be used.
 
 To keep it somewhere else (a database, the cloud), register your own `IRouteableHistoryStore` (`Load` and `Save`) before `AddRouteableHistory`. Blazor keeps the history of a circuit with `PersistentComponentState` instead (see the Blazor guide), and the ASP.NET Core host keeps one scope per visitor in memory.
 

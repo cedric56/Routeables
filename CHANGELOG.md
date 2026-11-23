@@ -21,6 +21,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **`AesRouteableHistoryProtector` on a platform without AES-GCM (a browser)**: reading a saved history threw `PlatformNotSupportedException`; it now gives no history, as for any history that cannot be read. The page on system integration and the remarks of the type say that the protector is not for Blazor WebAssembly.
 - **A failure while a cancelled route change is undone no longer enters the discarded page again**: undoing goes through the transition that re-enters the page being left when a hook fails, which here is the new page, about to be dropped. The old page, that the history still points at, is the one that failed to enter: the failure is reported and nothing else is entered.
 - **A route change cancelled at the last moment is always undone**: the token was read twice (once to undo the lifecycle, once to throw), so a cancellation between the two left the old page left, the new one entered and the history unchanged. It is read once now, in a route change and in a move through the history.
 - **A redirection decided by `RefreshGuardsAsync` no longer applies to another page**: it waited for its turn in the queue after checking the page, so a navigation in between made it run for a page the guards had not been asked about. The page is checked again at its turn.

@@ -1,4 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Routeables.Abstraction;
+using Routeables.Abstraction.Errors;
+using Routeables.Abstraction.Routing;
 
 namespace Routeables.Services;
 
@@ -18,7 +22,8 @@ public interface IRouteableHistoryProtector
 /// <summary>
 /// <see cref="IRouteableHistoryProtector"/> with AES-GCM: the history is encrypted and cannot be changed without the key being noticed. The key
 /// is the one of the application: keep it in the secure storage of the platform (the keychain, the keystore, <c>SecureStorage</c> on MAUI),
-/// never in the source code or next to the file.
+/// never in the source code or next to the file. AES-GCM is not available in a browser (Blazor WebAssembly): there, reading gives no history and
+/// writing is reported as a failure to save, and the history of a Blazor application is kept by <c>PersistentComponentState</c> instead.
 /// </summary>
 public sealed class AesRouteableHistoryProtector : IRouteableHistoryProtector
 {
@@ -67,7 +72,7 @@ public sealed class AesRouteableHistoryProtector : IRouteableHistoryProtector
             aes.Decrypt(packed.AsSpan(0, NonceSize), packed.AsSpan(NonceSize + TagSize), packed.AsSpan(NonceSize, TagSize), plain);
             return System.Text.Encoding.UTF8.GetString(plain);
         }
-        catch (Exception ex) when (ex is FormatException or System.Security.Cryptography.CryptographicException)
+        catch (Exception ex) when (ex is FormatException or System.Security.Cryptography.CryptographicException or PlatformNotSupportedException)
         {
             return null;
         }
