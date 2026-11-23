@@ -864,4 +864,64 @@ public class RouteParserTests
         Assert.Equal("a/3", RouteParser.Build("a/{count}", strings));
         Assert.Throws<ArgumentException>(() => RouteParser.Build("a/{count}", new Dictionary<int, string> { [1] = "x" }));
     }
+
+    // A dictionary that is only an IDictionary<string, object?>: neither a read-only dictionary nor a non-generic one.
+    private sealed class WritableOnly(Dictionary<string, object?> inner) : IDictionary<string, object?>
+    {
+        public object? this[string key] { get => inner[key]; set => inner[key] = value; }
+        public ICollection<string> Keys => inner.Keys;
+        public ICollection<object?> Values => inner.Values;
+        public int Count => inner.Count;
+        public bool IsReadOnly => false;
+        public void Add(string key, object? value) => inner.Add(key, value);
+        public void Add(KeyValuePair<string, object?> item) => ((ICollection<KeyValuePair<string, object?>>)inner).Add(item);
+        public void Clear() => inner.Clear();
+        public bool Contains(KeyValuePair<string, object?> item) => ((ICollection<KeyValuePair<string, object?>>)inner).Contains(item);
+        public bool ContainsKey(string key) => inner.ContainsKey(key);
+        public void CopyTo(KeyValuePair<string, object?>[] array, int arrayIndex) => ((ICollection<KeyValuePair<string, object?>>)inner).CopyTo(array, arrayIndex);
+        public IEnumerator<KeyValuePair<string, object?>> GetEnumerator() => inner.GetEnumerator();
+        public bool Remove(string key) => inner.Remove(key);
+        public bool Remove(KeyValuePair<string, object?> item) => ((ICollection<KeyValuePair<string, object?>>)inner).Remove(item);
+        public bool TryGetValue(string key, out object? value) => inner.TryGetValue(key, out value);
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => inner.GetEnumerator();
+    }
+
+    [Fact]
+    public void No_values_leave_out_the_optional_ones_and_a_dictionary_of_one_interface_only_is_read()
+    {
+        Assert.Equal("a", RouteParser.Build("a/{x?}", null));
+        Assert.Equal("a/7", RouteParser.Build("a/{x}", new WritableOnly(new Dictionary<string, object?> { ["x"] = 7 })));
+    }
+
+    [Fact]
+    public void A_date_and_a_time_are_written_in_one_text_that_reads_the_same_everywhere()
+    {
+        string Written(object value) => RouteParser.Build("d/{x}", new { x = value });
+
+        Assert.Equal("d/" + Uri.EscapeDataString("2026-11-23T14:00:00.0000000Z"), Written(new DateTime(2026, 11, 23, 14, 0, 0, DateTimeKind.Utc)));
+        Assert.Equal("d/" + Uri.EscapeDataString("2026-11-23T14:00:00.0000000+01:00"), Written(new DateTimeOffset(2026, 11, 23, 14, 0, 0, TimeSpan.FromHours(1))));
+        Assert.Equal("d/2026-11-23", Written(new DateOnly(2026, 11, 23)));
+        Assert.Equal("d/" + Uri.EscapeDataString("14:05:06.7"), Written(new TimeOnly(14, 5, 6, 700)));
+    }
+
+    [Fact]
+    public void A_pair_of_surrogates_is_text_and_a_value_of_a_registered_type_is_written_as_JSON()
+    {
+        // An emoji is a pair of surrogates: it is one character, not a lone surrogate.
+        var emoji = RouteParser.Build("e/{x}", new { x = "a\U0001F600b" });
+        Assert.True(RouteParser.TryMatch("e/{x}", emoji));
+
+        var options = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() };
+        RouteParser.RegisterSerializer<ScratchPayload>(options.GetTypeInfo(typeof(ScratchPayload)));
+        try
+        {
+            var address = RouteParser.Build("p/{x:ScratchPayload}", new { x = new ScratchPayload("a") });
+
+            Assert.Equal("p/" + Uri.EscapeDataString("{\"Name\":\"a\"}"), address);
+        }
+        finally
+        {
+            RouteParser.UnregisterSerializer<ScratchPayload>();
+        }
+    }
 }

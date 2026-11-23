@@ -65,7 +65,8 @@ public class MainLayoutBaseTests
         public IRouteableMenuEntry? SelectedEntry { get; set; }
         public object? CurrentView { get; set; }
         public string? Title { get; set; }
-        public string? CurrentTitle => Title ?? SelectedEntry?.DisplayName;
+        public Exception? TitleFailure { get; set; }
+        public string? CurrentTitle => TitleFailure is { } failure ? throw failure : Title ?? SelectedEntry?.DisplayName;
 
         public event EventHandler<object?>? CurrentViewChanged;
         public event EventHandler? LockChanged;
@@ -79,12 +80,18 @@ public class MainLayoutBaseTests
     private sealed class RecordingJs(Exception? failure = null, int failAfter = 0) : IJSRuntime
     {
         public List<(string Identifier, object?[] Args)> Calls { get; } = [];
+        public IJSObjectReference? Module { get; set; }
+        public Exception? ImportFailure { get; set; }
 
         public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args)
         {
-            // The import of a module (the theme the page starts in) is not a call the tests look at: there is no module here, and the layout keeps its default.
+            // The import of a module (the theme the page starts in) is not a call the tests look at: there is no module here, unless the test gives
+            // one (or a failure), and the layout keeps its default.
             if (identifier == "import")
-                return new(default(TValue)!);
+            {
+                if (ImportFailure is { } importFailure) throw importFailure;
+                return Module is { } module ? new((TValue)(object)module) : new(default(TValue)!);
+            }
             Calls.Add((identifier, args ?? []));
             if (failure is not null && Calls.Count > failAfter) throw failure;
             return new(default(TValue)!);
@@ -92,6 +99,16 @@ public class MainLayoutBaseTests
 
         public ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args)
             => InvokeAsync<TValue>(identifier, args);
+    }
+
+    /// <summary>The module of the theme: it answers <c>current</c> with the theme the application defined.</summary>
+    private sealed class ThemeModule(string theme) : IJSObjectReference
+    {
+        public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args) => new((TValue)(object)theme);
+
+        public ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args) => InvokeAsync<TValue>(identifier, args);
+
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }
 
     private sealed class Navigation : NavigationManager
@@ -396,5 +413,57 @@ public class MainLayoutBaseTests
         f.Menu.Raise(new object());
         f.Menu.RaiseLock();
         f.Theme.Request(RouteableRequestedTheme.Dark);
+    }
+
+    [Fact]
+    public async Task The_page_starts_in_the_dark_theme_when_the_application_defined_it()
+    {
+        await using var f = new Fixture();
+        f.Js.Module = new ThemeModule("dark");
+
+        await f.StartAsync();
+
+        Assert.True(f.Theme.IsDarkMode);
+        await f.UntilHtmlAsync(h => h.Contains("data-theme=\"dark\""));
+    }
+
+    [Fact]
+    public async Task The_theme_the_layout_already_shows_is_kept_when_the_application_defined_the_same()
+    {
+        await using var f = new Fixture();
+        f.Js.Module = new ThemeModule("light");
+
+        await f.StartAsync();
+
+        Assert.False(f.Theme.IsDarkMode);
+        Assert.Contains("data-theme=\"light\"", await f.HtmlAsync());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task A_page_without_the_module_of_the_theme_or_with_a_circuit_that_closed_keeps_the_default_theme(bool disconnected)
+    {
+        await using var f = new Fixture();
+        f.Js.ImportFailure = disconnected ? new JSDisconnectedException("gone") : new JSException("no module");
+
+        await f.StartAsync();
+
+        Assert.False(f.Theme.IsDarkMode);
+        Assert.Single(f.Initialized);
+    }
+
+    [Fact]
+    public async Task A_title_that_cannot_be_read_is_reported_and_the_layout_is_drawn_again()
+    {
+        await using var f = new Fixture();
+        await f.StartAsync();
+        f.Menu.TitleFailure = new InvalidOperationException("no title");
+
+        // An async void handler: the exception must not reach the circuit.
+        f.Menu.Raise(new object());
+
+        await Task.Delay(100, TestContext.Current.CancellationToken);
+        Assert.Contains("data-title=\"Application\"", await f.HtmlAsync());
     }
 }
