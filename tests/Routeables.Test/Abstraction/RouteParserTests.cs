@@ -552,6 +552,20 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void Canonical_leaves_the_values_that_are_not_typed_and_the_pairs_it_does_not_know_as_they_are()
+    {
+        // A pair with no value and a pair the template does not name stay as they are, next to a typed value that is written again.
+        Assert.Equal("/n/7?lonely&other=A%20B&flag=false", RouteParser.Canonical("/n/{n:int}?{flag:bool}", "/n/007?lonely&other=A%20B&flag=FALSE"));
+        // An empty piece of the path is not a segment.
+        Assert.Equal("/n//7", RouteParser.Canonical("/n/{n:int}", "/n//007"));
+        // Each pair that names a typed value is read by itself.
+        Assert.Equal("/n/1?flag=false&flag=true", RouteParser.Canonical("/n/{n:int}?{flag:bool}", "/n/1?flag=false&flag=True"));
+        // A typed value that is already canonical, after untyped ones: nothing changes.
+        Assert.Equal("/x/ab/7", RouteParser.Canonical("/x/{name}/{n:int}", "/x/ab/7"));
+        Assert.Equal("/x/ab/7", RouteParser.Canonical("/x/{name}/{n:int}", "/x/ab/007"));
+    }
+
+    [Fact]
     public void Canonical_writes_the_typed_values_of_an_address_the_way_Build_does()
     {
         var id = Guid.NewGuid();
