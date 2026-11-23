@@ -285,8 +285,36 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         }
     }
 
+    // What the router does for an address that is not the one it shows: goes back or forward in its own history, jumps to an entry, or looks the
+    // address up (a link, a typed address, the menu).
+    private enum Move { Back, Forward, Jump, Lookup }
+
+    // Decides, from one copy of the entries, which move the address calls for. The neighbours are read once: a route change that runs meanwhile (the
+    // restore of the history) must not leave an index that points outside the copy. A jump carries the index of the entry it goes to.
     // fromLink: a link the user clicked. The browser pushed a new entry for it, even when it leads to the page before or after the current one,
-    // so the router pushes too: going back would otherwise leave the router and the browser with different histories.
+    // so the router pushes too (a lookup): going back would otherwise leave the router and the browser with different histories.
+    private (Move Move, int Index) ChooseMove(string path, bool fromLink, string? state)
+    {
+        if (fromLink)
+            return (Move.Lookup, -1);
+
+        var (entries, index) = router.History.Capture();
+        var before = index > 0 && index - 1 < entries.Count ? entries[index - 1] : null;
+        var after = index >= 0 && index + 1 < entries.Count ? entries[index + 1] : null;
+        var named = _states.IndexOf(state, entries); // the entry the state of the browser entry names, when it names one
+
+        // The state names the entry: [home, detail, home] has the same address before and after the detail, the state tells them apart. Without
+        // one (an entry this application did not write, or a router that forgot it), the address decides.
+        if (named >= 0 ? named == index - 1 : before is not null && SameAddress(AddressOf(before), path))
+            return (Move.Back, -1);
+        if (named >= 0 ? named == index + 1 : after is not null && SameAddress(AddressOf(after), path))
+            return (Move.Forward, -1);
+
+        // A jump of several entries (a long press on Back, history.go(-2)): the state names the entry, so the router goes there too instead of
+        // adding a page.
+        return named >= 0 && named != index ? (Move.Jump, named) : (Move.Lookup, -1);
+    }
+
     private async Task<Outcome> ApplyAsync(string path, bool restore = true, CancellationToken cancellationToken = default, bool fromLink = false, string? state = null)
     {
         var history = router.History;
@@ -294,41 +322,21 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             return Outcome.Done;
 
         RouteableResult result;
-        string? template = null;
+        var (move, jumpTo) = ChooseMove(path, fromLink, state);
 
-        // The neighbours are read once, from one copy of the entries: a route change that runs meanwhile (the restore of the history) must not
-        // leave an index that points outside the copy.
-        IHistoryEntry? before = null, after = null;
-        var named = -1; // the entry the state of the browser entry names, when it names one
-        var index = -1;
-        if (!fromLink)
-        {
-            (var entries, index) = history.Capture();
-            before = index > 0 && index - 1 < entries.Count ? entries[index - 1] : null;
-            after = index >= 0 && index + 1 < entries.Count ? entries[index + 1] : null;
-            named = _states.IndexOf(state, entries);
-        }
-
-        // The state names the entry: [home, detail, home] has the same address before and after the detail, the state tells them apart. Without
-        // one (an entry this application did not write, or a router that forgot it), the address decides.
-        var back = named >= 0 ? named == index - 1 : before is not null && SameAddress(AddressOf(before), path);
-        var forward = named >= 0 ? named == index + 1 : after is not null && SameAddress(AddressOf(after), path);
-
-        if (back)
+        if (move == Move.Back)
         {
             result = await router.GoBackAsync(cancellationToken);
             Moved(result);
         }
-        else if (forward)
+        else if (move == Move.Forward)
         {
             result = await router.ForwardAsync(cancellationToken);
             Moved(result);
         }
-        else if (named >= 0 && named != index)
+        else if (move == Move.Jump)
         {
-            // A jump of several entries (a long press on Back, history.go(-2)): the state names the entry, so the router goes there too
-            // instead of adding a page.
-            result = await router.MoveToAsync(named, cancellationToken);
+            result = await router.MoveToAsync(jumpTo, cancellationToken);
             Moved(result);
         }
         else if (provider.GetService<IRouteableMenuViewModel>() is { } menuViewModel
@@ -342,32 +350,17 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
                 Show(shownNow, replace: true, StateOfCurrent());
             return Outcome.Refused;
         }
-        else if ((template = RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], path).Template) is not null
-                 || provider.GetService<RouteableNotFound>() is not null)
-        {
-            // No template for the address, and a page for such addresses (UseNotFoundRoute): the router shows it, as it does for GoToAsync.
-            try
-            {
-                result = await router.GoToAsync(path, RouteableArgs.Create(), template, cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                // The browser asked for another address meanwhile, or a newer navigation replaced this one (RouterConcurrency.CancelCurrent), which cancels
-                // it with a router token and not the browser's: either way this address is no longer wanted.
-                return Outcome.Refused;
-            }
-            catch (Exception ex) // a typed or refreshed address the page cannot be built for must not take the app down
-            {
-                RouteableErrors.Report<RouteableUrlSync>(provider, ex, path);
-                result = RouteableResult.Fail(ex);
-            }
-            // The page was not chosen in the menu: the menu follows it, and the layout displays it.
-            if (result.Success && provider.GetService<IRouteableMenuViewModel>() is { } shown)
-                shown.OnRouterMoved(router.CurrentViewModel);
-        }
         else
         {
-            return Outcome.Unmatched;
+            var template = RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], path).Template;
+            // No template for the address, and no page for such addresses (UseNotFoundRoute): the caller shows its own page.
+            if (template is null && provider.GetService<RouteableNotFound>() is null)
+                return Outcome.Unmatched;
+
+            // The router shows the page for the address (the not-found page when there is no template), as it does for GoToAsync.
+            if (await GoToAddressAsync(path, template, cancellationToken) is not { } routed)
+                return Outcome.Refused; // this address is no longer wanted
+            result = routed;
         }
 
         if (result.Success)
@@ -377,6 +370,31 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         if (restore && AddressOf(history.Current) is { } current)
             Show(current, replace: true, StateOfCurrent());
         return Outcome.Refused;
+    }
+
+    // Routes the router to an address. Null when that address is no longer wanted: the browser asked for another one meanwhile, or a newer
+    // navigation replaced this one (RouterConcurrency.CancelCurrent), which cancels it with a router token and not the browser's.
+    private async Task<RouteableResult?> GoToAddressAsync(string path, string? template, CancellationToken cancellationToken)
+    {
+        RouteableResult result;
+        try
+        {
+            result = await router.GoToAsync(path, RouteableArgs.Create(), template, cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
+        catch (Exception ex) // a typed or refreshed address the page cannot be built for must not take the app down
+        {
+            RouteableErrors.Report<RouteableUrlSync>(provider, ex, path);
+            return RouteableResult.Fail(ex);
+        }
+
+        // The page was not chosen in the menu: the menu follows it, and the layout displays it.
+        if (result.Success && provider.GetService<IRouteableMenuViewModel>() is { } shown)
+            shown.OnRouterMoved(router.CurrentViewModel);
+        return result;
     }
 
     // The browser's Back and Forward moved the router, not the menu: show the page that is now current and select its entry.
