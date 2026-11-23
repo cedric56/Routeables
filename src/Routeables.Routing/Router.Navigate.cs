@@ -17,16 +17,27 @@ internal partial class Router
         ArgumentNullException.ThrowIfNull(viewModel);
 
         var redirection = new Redirection();
-        var result = await GoCoreAsync(view, viewModel, args, redirection, cancellationToken);
+        var result = await GoCoreAsync(_ => Task.FromResult(new Prepared(null, view, viewModel)), args, redirection, cancellationToken);
 
         // The gate is free: a guard that redirected the user gets its navigation now.
         return redirection.Route is { } route ? await RedirectAsync(route, cancellationToken) : result;
     }
 
-    private async Task<RouteableResult> GoCoreAsync(object view, object viewModel, IRouteableArgs? args, Redirection redirection, CancellationToken cancellationToken)
+    // What a navigation shows, found once it has its turn: the page (the view and its view model), or the result that ends the navigation
+    // before there is a page (a type guard refused it, no view is registered).
+    private readonly record struct Prepared(RouteableResult? Result, object? View, object? ViewModel);
+
+    // `prepare` runs when the navigation has its turn, with the gate held: the type guards are asked, and the page built, about the state the
+    // navigations requested before this one left.
+    private async Task<RouteableResult> GoCoreAsync(Func<CancellationToken, Task<Prepared>> prepare, IRouteableArgs? args, Redirection redirection, CancellationToken cancellationToken)
     {
         return await RunGatedAsync(cancellationToken, async token =>
         {
+            var prepared = await prepare(token);
+            if (prepared.Result is { } early)
+                return early;
+            var view = prepared.View!;
+            var viewModel = prepared.ViewModel!;
             IRouteableFor? viewFor = view as IRouteableFor ?? provider.GetService<IRouteableViewBinder>()?.Adapt(view);
             var previousContext = viewFor?.Context; // read inside the gated body, so that a throwing getter cannot leave the gate held
             args ??= RouteableArgs.Create();
@@ -97,62 +108,77 @@ internal partial class Router
         // The view model built by this navigation receives this router if it asks for an IRouter (a region is not the default router).
         args.Router = this;
         var mismatch = RouteParser.Mismatch(template, route, args, viewKeys);
-        if (mismatch is null)
+        if (mismatch is not null)
+            return RouteableResult.Fail(new InvalidOperationException(
+                $"Route \"{route}\" does not match the template \"{template}\": {mismatch}."));
+
+        // What this call builds, not what the caller handed over. If the navigation does not show it (a guard or CanLeave refused, a redirect,
+        // an exception), nobody else would ever dispose it.
+        var built = new List<object>();
+        var redirection = new Redirection();
+        RouteableResult result;
+        try
         {
-            // A route registered without a view model has the same key for both: the factory would run twice and the history would keep two
-            // pages per entry. The page is then its own view model, as a cached (scoped or singleton) one already is.
-            // This covers what this call builds, not what the caller handed over. If the navigation does not show it (a guard or CanLeave
-            // refused, a redirect, an exception), nobody else would ever dispose it.
-            // A page about to be built is first offered to the guards that need only its type, so a refused visitor costs no constructor call.
-            if (viewModel is null && await AskTypeGuardsAsync(template, route, viewModelType, cancellationToken) is { } refused)
-                return refused;
-
-            var built = new List<object>();
-            try
+            result = await GoCoreAsync(async token =>
             {
-                if (viewModel is null && string.Equals(viewmodelkey, viewkey, StringComparison.Ordinal))
+                // A page about to be built is first offered to the guards that need only its type, so a refused visitor costs no constructor call.
+                // Asked at this navigation's turn, with the gate held: after the route changes requested before it (a sign-in they made counts), and
+                // before the page is built.
+                if (viewModel is null && await AskTypeGuardsAsync(template, route, viewModelType, token) is { } refused)
                 {
-                    if (view is null && provider.GetView(viewkey, args) is { } own) { view = own; built.Add(own); }
-                    viewModel = view;
+                    // A redirect runs once the gate is free (a navigation from here would be a nested one).
+                    if (refused.RedirectTo is { } to)
+                        redirection.Route = to;
+                    return new Prepared(RouteableResult.Cancel(), null, null);
                 }
 
-                if (viewModel is null)
+                try
                 {
-                    // A view declared without a view model (a Razor component, for instance) is shown with an empty object as its context. This is intended,
-                    // not a failure.
-                    viewModel = provider.GetViewModel(viewmodelkey, args) ?? new object();
-                    built.Add(viewModel);
-                }
-                if (view is null && provider.GetView(viewkey, args) is { } created) { view = created; built.Add(created); }
-            }
-            catch
-            {
-                // The view model was built but the view could not be: nothing will show it, so nobody else would dispose it.
-                await DiscardAsync(built);
-                throw;
-            }
-            if (view == null)
-            {
-                await DiscardAsync(built);
-                return RouteableResult.Fail(new InvalidOperationException($"No view is registered under the key \"{viewkey}\" (route \"{route}\", template \"{template}\"). Register the page with the same template, or pass the template it was registered with."));
-            }
+                    // A route registered without a view model has the same key for both: the factory would run twice and the history would keep two
+                    // pages per entry. The page is then its own view model, as a cached (scoped or singleton) one already is.
+                    if (viewModel is null && string.Equals(viewmodelkey, viewkey, StringComparison.Ordinal))
+                    {
+                        if (view is null && provider.GetView(viewkey, args) is { } own) { view = own; built.Add(own); }
+                        viewModel = view;
+                    }
 
-            // What was asked for ("/customers/42", "about"): RouteableUrlSync shows it as the entry's address.
-            // Not the view key, which is the registration key, i.e. the template ("/customers/{id:int}"), not the address.
-            args.Route = route;
-            try
-            {
-                return await GoAsync(view, viewModel, args, cancellationToken);
-            }
-            finally
-            {
-                // The usual outcome: the page this call built is the one shown, so there is nothing to clean up.
-                if (!IsShown(built))
+                    if (viewModel is null)
+                    {
+                        // A view declared without a view model (a Razor component, for instance) is shown with an empty object as its context. This is intended,
+                        // not a failure.
+                        viewModel = provider.GetViewModel(viewmodelkey, args) ?? new object();
+                        built.Add(viewModel);
+                    }
+                    if (view is null && provider.GetView(viewkey, args) is { } created) { view = created; built.Add(created); }
+                }
+                catch
+                {
+                    // The view model was built but the view could not be: nothing will show it, so nobody else would dispose it.
                     await DiscardAsync(built);
-            }
+                    throw;
+                }
+
+                if (view == null)
+                {
+                    await DiscardAsync(built);
+                    return new Prepared(RouteableResult.Fail(new InvalidOperationException($"No view is registered under the key \"{viewkey}\" (route \"{route}\", template \"{template}\"). Register the page with the same template, or pass the template it was registered with.")), null, null);
+                }
+
+                // What was asked for ("/customers/42", "about"): RouteableUrlSync shows it as the entry's address.
+                // Not the view key, which is the registration key, i.e. the template ("/customers/{id:int}"), not the address.
+                args.Route = route;
+                return new Prepared(null, view, viewModel);
+            }, args, redirection, cancellationToken);
         }
-        return RouteableResult.Fail(new InvalidOperationException(
-            $"Route \"{route}\" does not match the template \"{template}\": {mismatch}."));
+        finally
+        {
+            // The usual outcome: the page this call built is the one shown, so there is nothing to clean up.
+            if (!IsShown(built))
+                await DiscardAsync(built);
+        }
+
+        // The gate is free: a guard (or a type guard) that redirected the user gets its navigation now.
+        return redirection.Route is { } target ? await RedirectAsync(target, cancellationToken) : result;
     }
 
     private bool IsShown(List<object> built)

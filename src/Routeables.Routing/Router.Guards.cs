@@ -105,8 +105,8 @@ internal partial class Router
     private IRouteTypeGuard[] TypeGuards => _typeGuards ??= [.. provider.GetServices<IRouteTypeGuard>().Select((guard, index) => (guard, index))
         .OrderBy(pair => pair.guard.Order).ThenBy(pair => pair.index).Select(pair => pair.guard)];
 
-    // The result of a navigation that the type guards refuse (null when they allow it): cancelled, or the result of the redirection.
-    private async Task<RouteableResult?> AskTypeGuardsAsync(string template, string route, Type? requestedType, CancellationToken cancellationToken)
+    // The decision of the first type guard that refuses (null when they all allow the page): cancel, or a redirection that the caller runs once the gate is free.
+    private async Task<RouteGuardDecision?> AskTypeGuardsAsync(string template, string route, Type? requestedType, CancellationToken cancellationToken)
     {
         var guards = TypeGuards;
         if (guards.Length == 0)
@@ -120,10 +120,6 @@ internal partial class Router
         if (type is null)
             return null;
 
-        // The navigations asked for before this one have ended (a sign-in they made counts): the guards are asked about the state this navigation
-        // finds when its turn comes, as an IRouteGuard is, and not about the state of the moment it was requested.
-        await gate.WaitForTurnAsync(cancellationToken);
-
         foreach (var guard in guards)
         {
             var decision = await guard.CanBuildAsync(type, route, cancellationToken)
@@ -131,7 +127,7 @@ internal partial class Router
             if (decision.IsAllowed)
                 continue;
 
-            return decision.RedirectTo is { } to ? await RedirectAsync(to, cancellationToken) : RouteableResult.Cancel();
+            return decision;
         }
 
         return null;

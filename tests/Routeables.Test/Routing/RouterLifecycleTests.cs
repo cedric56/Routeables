@@ -203,6 +203,31 @@ public class RouterLifecycleTests
     }
 
     [Fact]
+    public async Task A_view_that_fails_to_enter_the_first_page_tells_its_view_model_it_is_left()
+    {
+        var calls = new List<string>();
+        var failure = new InvalidOperationException("the view failed to enter");
+        var entry = Entry(new LifecycleProbe("vm", calls), new LifecycleProbe("view", calls) { OnTo = (_, _) => throw failure });
+
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => new RouterLifecycle().EnterAsync(entry, TestContext.Current.CancellationToken));
+
+        Assert.Same(failure, thrown);
+        Assert.Equal(["vm:to", "view:to", "vm:from"], calls);
+    }
+
+    [Fact]
+    public async Task A_view_model_that_fails_to_enter_the_first_page_is_not_told_it_is_left()
+    {
+        var calls = new List<string>();
+        var failure = new InvalidOperationException("the view model failed to enter");
+        var entry = Entry(new LifecycleProbe("vm", calls) { OnTo = (_, _) => throw failure }, new LifecycleProbe("view", calls));
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => new RouterLifecycle().EnterAsync(entry, TestContext.Current.CancellationToken));
+
+        Assert.Equal(["vm:to"], calls);
+    }
+
+    [Fact]
     public async Task Initialize_calls_a_shared_view_and_view_model_only_once()
     {
         var calls = new List<string>();

@@ -157,8 +157,25 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
     internal async Task EnterAsync(RouterEntry entry, CancellationToken ct = default)
     {
         Subscribe(entry);
-        if (entry.ViewModel is IRouteable vm) await vm.OnEnteringAsync(entry.Args, ct);
-        if (entry.View is IRouteable v && !ReferenceEquals(v, entry.ViewModel)) await v.OnEnteringAsync(entry.Args, ct);
+        var viewModelEntered = false;
+        try
+        {
+            if (entry.ViewModel is IRouteable vm) await vm.OnEnteringAsync(entry.Args, ct);
+            viewModelEntered = true;
+            if (entry.View is IRouteable v && !ReferenceEquals(v, entry.ViewModel)) await v.OnEnteringAsync(entry.Args, ct);
+        }
+        catch
+        {
+            // As in a transition: the view model was told OnEntering (it started a timer, subscribed) and then the view failed, so the page is
+            // dropped and the view model is told OnLeaving, which is what undoes OnEntering. When the view model itself failed, it is not told.
+            if (viewModelEntered && entry.ViewModel is IRouteable entered)
+            {
+                try { await entered.OnLeavingAsync(entry.Args, CancellationToken.None); }
+                catch (Exception recovery) { RouteableErrors.Report<RouterLifecycle>(provider, recovery); }
+            }
+
+            throw;
+        }
     }
 
     /// <summary>
