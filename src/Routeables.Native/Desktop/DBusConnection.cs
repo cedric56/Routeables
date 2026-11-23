@@ -227,31 +227,48 @@ internal sealed class DBusConnection : IDisposable
     {
         foreach (var endpoint in Endpoints())
         {
-            Socket? socket = null;
             try
             {
-                socket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
-                using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(3));
-                await socket.ConnectAsync(endpoint, timeout.Token);
-
-                // The authentication is synchronous: a bus that does not answer must not hold a thread forever. The reading thread waits without a limit.
-                socket.ReceiveTimeout = socket.SendTimeout = 3000;
-                Authenticate(socket);
-                socket.ReceiveTimeout = socket.SendTimeout = 0;
-
-                var connection = new DBusConnection(socket);
-                new Thread(connection.ReadLoop) { IsBackground = true, Name = "Routeables D-Bus" }.Start();
-                // A bus that accepts the authentication and then says nothing must not hold the connection forever.
-                await connection.CallAsync("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "Hello", null, null, TimeSpan.FromSeconds(3));
-                return connection;
+                return await ConnectAsync(endpoint);
             }
-            catch (Exception ex) when (ex is SocketException or IOException or OperationCanceledException or InvalidOperationException or InvalidDataException or TimeoutException)
+            catch (Exception ex) when (IsConnectFailure(ex))
             {
-                socket?.Dispose();
+                // The next endpoint, if there is one.
             }
         }
 
         return null;
+    }
+
+    private static bool IsConnectFailure(Exception ex)
+        => ex is SocketException or IOException or OperationCanceledException or InvalidOperationException or InvalidDataException or TimeoutException;
+
+    // Connects, authenticates, starts the reading thread and says Hello; the socket is closed when any of it fails.
+    private static async Task<DBusConnection> ConnectAsync(EndPoint endpoint)
+    {
+        Socket? socket = null;
+        try
+        {
+            socket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+            await socket.ConnectAsync(endpoint, timeout.Token);
+
+            // The authentication is synchronous: a bus that does not answer must not hold a thread forever. The reading thread waits without a limit.
+            socket.ReceiveTimeout = socket.SendTimeout = 3000;
+            Authenticate(socket);
+            socket.ReceiveTimeout = socket.SendTimeout = 0;
+
+            var connection = new DBusConnection(socket);
+            new Thread(connection.ReadLoop) { IsBackground = true, Name = "Routeables D-Bus" }.Start();
+            // A bus that accepts the authentication and then says nothing must not hold the connection forever.
+            await connection.CallAsync("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "Hello", null, null, TimeSpan.FromSeconds(3));
+            return connection;
+        }
+        catch (Exception ex) when (IsConnectFailure(ex))
+        {
+            socket?.Dispose();
+            throw;
+        }
     }
 
     // The values of a D-Bus address escape what is not an optionally-escaped character as %hh.
@@ -343,15 +360,7 @@ internal sealed class DBusConnection : IDisposable
             if (serial == 0) serial = ++_serial; // 0 is not a serial: the counter wrapped
             _pending[serial] = source;
             if (timeout is { } wait)
-            {
-                var timer = new CancellationTokenSource(wait);
-                timer.Token.Register(() =>
-                {
-                    _pending.TryRemove(serial, out _);
-                    source.TrySetException(new TimeoutException($"The session bus did not answer {member} in {wait.TotalSeconds:0.#} s."));
-                });
-                _ = source.Task.ContinueWith(_ => timer.Dispose(), CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
-            }
+                ForgetAfter(serial, source, member, wait);
 
             message = BuildMethodCall(serial, destination, path, @interface, member, signature, body.ToArray());
             try
@@ -366,6 +375,18 @@ internal sealed class DBusConnection : IDisposable
         }
 
         return source.Task;
+    }
+
+    // Past the wait the call fails and is forgotten, and the timer is released with the call.
+    private void ForgetAfter(uint serial, TaskCompletionSource<DBusMessage> source, string member, TimeSpan wait)
+    {
+        var timer = new CancellationTokenSource(wait);
+        timer.Token.Register(() =>
+        {
+            _pending.TryRemove(serial, out _);
+            source.TrySetException(new TimeoutException($"The session bus did not answer {member} in {wait.TotalSeconds:0.#} s."));
+        });
+        _ = source.Task.ContinueWith(_ => timer.Dispose(), CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
     }
 
     private static byte[] BuildMethodCall(uint serial, string destination, string path, string @interface, string member, string? signature, byte[] body)
@@ -417,39 +438,15 @@ internal sealed class DBusConnection : IDisposable
                 var fixedPart = ReadExactly(16);
                 if (fixedPart[0] == (byte)'B')
                 {
-                    // A big-endian message is not understood, but its lengths are readable: read it whole and drop it, and the connection goes on.
-                    var (skipBody, skipFields) = ValidateLengths(
-                        System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(fixedPart.AsSpan(4, 4)),
-                        System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(fixedPart.AsSpan(12, 4)));
-                    _ = ReadExactly(skipFields + (8 - (16 + skipFields) % 8) % 8 + skipBody);
-                    Trace.TraceWarning("Routeables: a big-endian D-Bus message was dropped.");
+                    DropBigEndianMessage(fixedPart);
                     continue;
                 }
                 if (fixedPart[0] != (byte)'l')
                     throw new InvalidOperationException("Not a D-Bus message: the connection is closed.");
 
-                var type = fixedPart[1];
-                var serial = System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(fixedPart.AsSpan(8, 4));
-                var (bodyLength, fieldsLength) = ValidateLengths(System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(fixedPart.AsSpan(4, 4)), System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(fixedPart.AsSpan(12, 4)));
-                var headerEnd = 16 + fieldsLength;
-                var padding = (8 - headerEnd % 8) % 8;
-
-                var rest = ReadExactly(fieldsLength + padding + bodyLength);
-                var header = new byte[16 + fieldsLength];
-                Array.Copy(fixedPart, header, 16);
-                Array.Copy(rest, 0, header, 16, fieldsLength);
-                var body = rest[(fieldsLength + padding)..];
-
-                // The message is whole, so what follows it is still readable: one that cannot be understood is dropped, and the connection goes on.
-                DBusMessage message;
-                try { message = ParseMessage(type, serial, header, body); }
-                catch (Exception ex) when (ex is InvalidDataException or InvalidOperationException or ArgumentException or OverflowException)
-                {
-                    Trace.TraceWarning($"Routeables: a malformed D-Bus message was dropped: {ex.Message}");
-                    continue;
-                }
-
-                Dispatch(message);
+                var message = ReadLittleEndianMessage(fixedPart);
+                if (message is not null)
+                    Dispatch(message);
             }
         }
         catch (Exception ex)
@@ -460,6 +457,43 @@ internal sealed class DBusConnection : IDisposable
                     source.TrySetException(new IOException("The session bus connection ended.", ex));
 
             Closed?.Invoke();
+        }
+    }
+
+    // A big-endian message is not understood, but its lengths are readable: read it whole and drop it, and the connection goes on.
+    private void DropBigEndianMessage(byte[] fixedPart)
+    {
+        var (skipBody, skipFields) = ValidateLengths(
+            System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(fixedPart.AsSpan(4, 4)),
+            System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(fixedPart.AsSpan(12, 4)));
+        _ = ReadExactly(skipFields + (8 - (16 + skipFields) % 8) % 8 + skipBody);
+        Trace.TraceWarning("Routeables: a big-endian D-Bus message was dropped.");
+    }
+
+    // Reads the rest of a message from its fixed part; null for one that cannot be understood.
+    private DBusMessage? ReadLittleEndianMessage(byte[] fixedPart)
+    {
+        var type = fixedPart[1];
+        var serial = System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(fixedPart.AsSpan(8, 4));
+        var (bodyLength, fieldsLength) = ValidateLengths(System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(fixedPart.AsSpan(4, 4)), System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(fixedPart.AsSpan(12, 4)));
+        var headerEnd = 16 + fieldsLength;
+        var padding = (8 - headerEnd % 8) % 8;
+
+        var rest = ReadExactly(fieldsLength + padding + bodyLength);
+        var header = new byte[16 + fieldsLength];
+        Array.Copy(fixedPart, header, 16);
+        Array.Copy(rest, 0, header, 16, fieldsLength);
+        var body = rest[(fieldsLength + padding)..];
+
+        // The message is whole, so what follows it is still readable: one that cannot be understood is dropped, and the connection goes on.
+        try
+        {
+            return ParseMessage(type, serial, header, body);
+        }
+        catch (Exception ex) when (ex is InvalidDataException or InvalidOperationException or ArgumentException or OverflowException)
+        {
+            Trace.TraceWarning($"Routeables: a malformed D-Bus message was dropped: {ex.Message}");
+            return null;
         }
     }
 

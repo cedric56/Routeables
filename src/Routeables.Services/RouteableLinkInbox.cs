@@ -149,30 +149,7 @@ public sealed class RouteableLinkInbox
             // Restore the last run's history first, when there is one: it starts by erasing the history, and would remove a link's page.
             await RouteableStartup.WhenRestoredAsync(router);
 
-            while (true)
-            {
-                IReadOnlyList<RouteableSnapshot>? restoring;
-                Uri? uri = null;
-                lock (gate)
-                {
-                    restoring = saved;
-                    saved = null;
-                    if (restoring is null && links.Count > 0)
-                        uri = links.Dequeue();
-                }
-
-                if (restoring is null && uri is null)
-                    return;
-
-                // A link tells the menu itself (RouteableDeepLinks); restored pages do it here.
-                await OnInterfaceAsync(restoring is not null
-                    ? async () =>
-                    {
-                        if (await RouteableState.RestoreSnapshotsAsync(router, restoring))
-                            RouteableMenu.Moved(services, router);
-                    }
-                : async () => await RouteableDeepLinks.GoToAsync(services, uri!, schemes, hosts: hosts));
-            }
+            await DeliverAsync(services, router);
         }
         catch (Exception ex)
         {
@@ -181,17 +158,57 @@ public sealed class RouteableLinkInbox
         }
         finally
         {
-            bool again;
-            lock (gate)
-            {
-                pumping = false;
-                again = saved is not null || links.Count > 0;
-            }
+            RestartIfPending(noFirstPage, waitingFor);
+        }
+    }
 
-            if (again && !noFirstPage)
-                Kick();
-            else if (again && waitingFor is not null)
-                KickAtFirstPage(waitingFor);
+    // What was pushed while the pump ran starts it again, unless there is no page to follow it into: then it waits for the first page, if it can.
+    private void RestartIfPending(bool noFirstPage, IRouter? waitingFor)
+    {
+        bool again;
+        lock (gate)
+        {
+            pumping = false;
+            again = saved is not null || links.Count > 0;
+        }
+
+        if (again && !noFirstPage)
+            Kick();
+        else if (again && waitingFor is not null)
+            KickAtFirstPage(waitingFor);
+    }
+
+    // Follows what waits, one step at a time: the saved pages first, then the addresses in the order they came, until nothing is left.
+    private async Task DeliverAsync(IServiceProvider services, IRouter router)
+    {
+        while (true)
+        {
+            var (restoring, uri) = TakeNext();
+            if (restoring is null && uri is null)
+                return;
+
+            // A link tells the menu itself (RouteableDeepLinks); restored pages do it here.
+            await OnInterfaceAsync(restoring is not null
+                ? async () =>
+                {
+                    if (await RouteableState.RestoreSnapshotsAsync(router, restoring))
+                        RouteableMenu.Moved(services, router);
+                }
+                : async () => await RouteableDeepLinks.GoToAsync(services, uri!, schemes, hosts: hosts));
+        }
+    }
+
+    // The saved pages if there are some, else the oldest address; both null when nothing waits.
+    private (IReadOnlyList<RouteableSnapshot>? Restoring, Uri? Link) TakeNext()
+    {
+        lock (gate)
+        {
+            var restoring = saved;
+            saved = null;
+            Uri? uri = null;
+            if (restoring is null && links.Count > 0)
+                uri = links.Dequeue();
+            return (restoring, uri);
         }
     }
 

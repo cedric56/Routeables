@@ -151,11 +151,7 @@ namespace Routeables.Generated
                 return true;
             }
 
-            var enumType = (type as INamedTypeSymbol)?.EnumUnderlyingType is not null ? type : null;
-            if (type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullable
-                && nullable.TypeArguments[0].TypeKind == TypeKind.Enum)
-                enumType = nullable.TypeArguments[0];
-
+            var enumType = EnumTypeOf(type);
             if (enumType is not null)
             {
                 // In parentheses: "(E)-1" reads as a subtraction, "(E)(-1)" is the cast.
@@ -163,34 +159,44 @@ namespace Routeables.Generated
                 return true;
             }
 
+            literal = FormatPrimitiveDefault(value);
+            return literal is not null;
+        }
+
+        // The enum of a parameter typed as the enum or as its nullable; null for any other type.
+        private static ITypeSymbol? EnumTypeOf(ITypeSymbol type)
+        {
+            var enumType = (type as INamedTypeSymbol)?.EnumUnderlyingType is not null ? type : null;
+            if (type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullable
+                && nullable.TypeArguments[0].TypeKind == TypeKind.Enum)
+                enumType = nullable.TypeArguments[0];
+            return enumType;
+        }
+
+        // The literal's type is the parameter's type: 1.5 is a double, not a float, and 9.99 is not a decimal. Null for a value that has no literal.
+        private static string? FormatPrimitiveDefault(object value)
+        {
             switch (value)
             {
-                // The literal's type is the parameter's type: 1.5 is a double, not a float, and 9.99 is not a decimal.
                 case float f:
-                    literal = float.IsNaN(f) ? "float.NaN"
+                    return float.IsNaN(f) ? "float.NaN"
                         : float.IsPositiveInfinity(f) ? "float.PositiveInfinity"
                         : float.IsNegativeInfinity(f) ? "float.NegativeInfinity"
                         : "(" + f.ToString("R", CultureInfo.InvariantCulture) + "f)";
-                    return true;
                 case double d:
-                    literal = double.IsNaN(d) ? "double.NaN"
+                    return double.IsNaN(d) ? "double.NaN"
                         : double.IsPositiveInfinity(d) ? "double.PositiveInfinity"
                         : double.IsNegativeInfinity(d) ? "double.NegativeInfinity"
                         : "(" + d.ToString("R", CultureInfo.InvariantCulture) + "d)";
-                    return true;
                 case decimal m:
-                    literal = "(" + m.ToString(CultureInfo.InvariantCulture) + "m)";
-                    return true;
+                    return "(" + m.ToString(CultureInfo.InvariantCulture) + "m)";
                 case long l:
                     // -9223372036854775808 is a minus in front of a literal too large for a long.
-                    literal = l == long.MinValue ? "long.MinValue" : "(" + l.ToString(CultureInfo.InvariantCulture) + "L)";
-                    return true;
+                    return l == long.MinValue ? "long.MinValue" : "(" + l.ToString(CultureInfo.InvariantCulture) + "L)";
                 case string or bool or char or sbyte or byte or short or ushort or int or uint or ulong:
-                    literal = SymbolDisplay.FormatPrimitive(value, quoteStrings: true, useHexadecimalNumbers: false);
-                    return literal is not null;
+                    return SymbolDisplay.FormatPrimitive(value, quoteStrings: true, useHexadecimalNumbers: false);
             }
-
-            return false;
+            return null;
         }
 
         // The type and its base types, up to but not including object.
@@ -209,7 +215,15 @@ namespace Routeables.Generated
             if (WithBaseTypes(type).Any(t => !SymbolEqualityComparer.Default.Equals(t.ContainingAssembly, compilation.Assembly)))
                 return false;
 
-            // The type's attributes, inherited ones included, as expressions that build them.
+            if (!TryReadTypeAttributes(compilation, type, typeAttributes))
+                return false;
+
+            return TryReadProperties(compilation, type, typeNamesProperties: typeAttributes.Count > 0, properties);
+        }
+
+        // The type's attributes, inherited ones included, as expressions that build them.
+        private static bool TryReadTypeAttributes(Compilation compilation, INamedTypeSymbol type, List<string> typeAttributes)
+        {
             var typeAttributeData = WithBaseTypes(type)
                 .SelectMany(t => t.GetAttributes().Where(attribute =>
                     attribute.AttributeClass is { } attributeClass
@@ -224,8 +238,11 @@ namespace Routeables.Generated
                     return false;
                 typeAttributes.Add(expression);
             }
+            return true;
+        }
 
-            var typeNamesProperties = typeAttributeData.Count > 0;
+        private static bool TryReadProperties(Compilation compilation, INamedTypeSymbol type, bool typeNamesProperties, List<PropInfo> properties)
+        {
             var seen = new Dictionary<string, IPropertySymbol>(StringComparer.Ordinal);
 
             foreach (var t in WithBaseTypes(type))
@@ -406,6 +423,21 @@ namespace Routeables.Generated
         /// <summary>The method that builds a view model or a view: the constructor is called, then the injection finishes it.</summary>
         public static void EmitFactory(StringBuilder sb, string methodName, BuildInfo info, bool viewModel)
         {
+            sb.AppendLine($"    private static {info.TypeName} {methodName}(global::System.IServiceProvider sp, global::Routeables.Abstraction.Routing.IRouteableArgs args)");
+            sb.AppendLine("    {");
+            var shortName = Quote(info.TypeName.StartsWith("global::", StringComparison.Ordinal) ? info.TypeName.Substring(8) : info.TypeName);
+            var arguments = ConstructorArguments(info);
+            if (viewModel)
+                EmitViewModelBody(sb, info, shortName, arguments);
+            else
+                EmitViewBody(sb, info, shortName, arguments);
+            sb.AppendLine("    }");
+            sb.AppendLine();
+        }
+
+        // The arguments of the constructor call, each read from the arguments the router was given or from the container.
+        private static string ConstructorArguments(BuildInfo info)
+        {
             var arguments = new StringBuilder();
             for (var i = 0; i < info.Parameters.Count; i++)
             {
@@ -416,27 +448,24 @@ namespace Routeables.Generated
                     arguments.Append(", ").Append(p.Default);
                 arguments.Append(')');
             }
+            return arguments.ToString();
+        }
 
-            sb.AppendLine($"    private static {info.TypeName} {methodName}(global::System.IServiceProvider sp, global::Routeables.Abstraction.Routing.IRouteableArgs args)");
-            sb.AppendLine("    {");
-            var shortName = Quote(info.TypeName.StartsWith("global::", StringComparison.Ordinal) ? info.TypeName.Substring(8) : info.TypeName);
-            if (viewModel)
+        private static void EmitViewModelBody(StringBuilder sb, BuildInfo info, string shortName, string arguments)
+        {
+            if (info.Parameters.Count > 0)
             {
-                if (info.Parameters.Count > 0)
-                {
-                    var names = string.Join(", ", Enumerable.Range(0, info.Parameters.Count).Select(i => Quote(info.Parameters[i].Name)));
-                    sb.AppendLine($"        var c = global::Routeables.Abstraction.Registrations.ConstructorArguments.ForViewModel(sp, args, {shortName}, new string[] {{ {names} }}, {(info.TakesRouter ? "true" : "false")});");
-                }
-                sb.AppendLine($"        return global::Routeables.Abstraction.Injections.RouteableBuild.InjectViewModel(new {info.TypeName}({arguments}), sp, args);");
+                var names = string.Join(", ", Enumerable.Range(0, info.Parameters.Count).Select(i => Quote(info.Parameters[i].Name)));
+                sb.AppendLine($"        var c = global::Routeables.Abstraction.Registrations.ConstructorArguments.ForViewModel(sp, args, {shortName}, new string[] {{ {names} }}, {(info.TakesRouter ? "true" : "false")});");
             }
-            else
-            {
-                if (info.Parameters.Count > 0)
-                    sb.AppendLine($"        var c = global::Routeables.Abstraction.Registrations.ConstructorArguments.ForView(sp, args, {shortName});");
-                sb.AppendLine($"        return global::Routeables.Abstraction.Injections.RouteableBuild.InjectView(new {info.TypeName}({arguments}), sp, args);");
-            }
-            sb.AppendLine("    }");
-            sb.AppendLine();
+            sb.AppendLine($"        return global::Routeables.Abstraction.Injections.RouteableBuild.InjectViewModel(new {info.TypeName}({arguments}), sp, args);");
+        }
+
+        private static void EmitViewBody(StringBuilder sb, BuildInfo info, string shortName, string arguments)
+        {
+            if (info.Parameters.Count > 0)
+                sb.AppendLine($"        var c = global::Routeables.Abstraction.Registrations.ConstructorArguments.ForView(sp, args, {shortName});");
+            sb.AppendLine($"        return global::Routeables.Abstraction.Injections.RouteableBuild.InjectView(new {info.TypeName}({arguments}), sp, args);");
         }
 
         /// <summary>The method that describes how the injection fills a type.</summary>
@@ -451,18 +480,21 @@ namespace Routeables.Generated
             sb.AppendLine("        new global::Routeables.Abstraction.Injections.InjectableProperty[]");
             sb.AppendLine("        {");
             foreach (var p in info.Properties)
-            {
-                var names = p.Attributes.Count == 0
-                    ? "global::System.Array.Empty<string>()"
-                    : "new string[] { " + string.Join(", ", p.Attributes.Select(Quote)) + " }";
-                var member = SyntaxFacts.GetKeywordKind(p.Name) != SyntaxKind.None ? "@" + p.Name : p.Name; // a property named like a keyword (@event)
-                var get = p.CanGet ? $"o => (({info.TypeName})o).{member}" : "null";
-                sb.AppendLine($"            new({Quote(p.Name)}, typeof({p.RawType}), {names},");
-                sb.AppendLine($"                (o, v) => (({info.TypeName})o).{member} = v is null ? default! : ({p.Type})v,");
-                sb.AppendLine($"                {get}),");
-            }
+                EmitProperty(sb, info, p);
             sb.AppendLine("        });");
             sb.AppendLine();
+        }
+
+        private static void EmitProperty(StringBuilder sb, BuildInfo info, PropInfo p)
+        {
+            var names = p.Attributes.Count == 0
+                ? "global::System.Array.Empty<string>()"
+                : "new string[] { " + string.Join(", ", p.Attributes.Select(Quote)) + " }";
+            var member = SyntaxFacts.GetKeywordKind(p.Name) != SyntaxKind.None ? "@" + p.Name : p.Name; // a property named like a keyword (@event)
+            var get = p.CanGet ? $"o => (({info.TypeName})o).{member}" : "null";
+            sb.AppendLine($"            new({Quote(p.Name)}, typeof({p.RawType}), {names},");
+            sb.AppendLine($"                (o, v) => (({info.TypeName})o).{member} = v is null ? default! : ({p.Type})v,");
+            sb.AppendLine($"                {get}),");
         }
 
         private static string Quote(string value)

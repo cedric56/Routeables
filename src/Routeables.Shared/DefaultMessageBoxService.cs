@@ -71,23 +71,9 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var texts = RouteableButtons.Split(buttons);
         var labels = RouteableButtons.Labels(buttons);
 
-        // Three buttons use the platform's own dialog (Routeables.Native) where there is one: the Windows App SDK ContentDialog, an alert on
-        // Android and iOS. Escape or a click outside gives the third (closing) button. Elsewhere, and for fewer buttons, use the card below.
-        if (texts.Count == 3 && NativeDialogs.IsSupported)
-        {
-            var native = await NativeDialogs.DisplayThreeButtonsAsync<string?>(
-                title, message, labels[0], labels[1], labels[2], texts[0], texts[1], texts[2], window, dark: null);
-            if (native.Shown)
-                return native.Value;
-        }
-
-        // More than three buttons use the platform's sheet (Routeables.Native): a ContentDialog with a column of buttons on Windows. Elsewhere, the sheet drawn below.
-        if (texts.Count > 3 && NativeDialogs.IsSupported)
-        {
-            var sheet = await NativeDialogs.DisplaySheetAsync(title, message, [.. labels.Take(labels.Count - 1)], labels[labels.Count - 1], window, dark: null);
-            if (sheet.Shown)
-                return texts[sheet.Value];
-        }
+        var (shown, answer) = await TryShowNativeAsync(title, message, texts, labels, window);
+        if (shown)
+            return answer;
 
         var controls = texts
             .Select((text, index) => DialogCard.CreateButton(labels[index], () =>
@@ -104,6 +90,30 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var card = DialogCard.Create([DialogCard.ToBody(message)], controls);
         await DialogPresenter.ShowAsync(window, title, card, handle);
         return chosen;
+    }
+
+    // Three buttons use the platform's own dialog (Routeables.Native) where there is one: the Windows App SDK ContentDialog, an alert on
+    // Android and iOS. Escape or a click outside gives the third (closing) button. More than three use the platform's sheet: a ContentDialog
+    // with a column of buttons on Windows. Elsewhere, and for fewer buttons, Shown is false and the card is drawn.
+    private static async Task<(bool Shown, string? Answer)> TryShowNativeAsync(
+        string title, string message, IReadOnlyList<string> texts, IReadOnlyList<string> labels, XamlRoot window)
+    {
+        if (texts.Count == 3 && NativeDialogs.IsSupported)
+        {
+            var native = await NativeDialogs.DisplayThreeButtonsAsync<string?>(
+                title, message, labels[0], labels[1], labels[2], texts[0], texts[1], texts[2], window, dark: null);
+            if (native.Shown)
+                return (true, native.Value);
+        }
+
+        if (texts.Count > 3 && NativeDialogs.IsSupported)
+        {
+            var sheet = await NativeDialogs.DisplaySheetAsync(title, message, [.. labels.Take(labels.Count - 1)], labels[labels.Count - 1], window, dark: null);
+            if (sheet.Shown)
+                return (true, texts[sheet.Value]);
+        }
+
+        return (false, null);
     }
 
 #else
@@ -153,24 +163,7 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var handle = new RouteableDialogHandle();
         var session = new RouteableContentDialogSession(@params, handle.Complete);
 
-        // Lets the caller close the dialog later, from any thread.
-#if AVALONIA
-        session.AllowCloseFromCode(action =>
-        {
-            if (Dispatcher.UIThread.CheckAccess()) action();
-            else Dispatcher.UIThread.Post(action);
-        });
-#elif WPF
-        session.AllowCloseFromCode(UiThread.Post);
-#else
-        session.AllowCloseFromCode(action =>
-        {
-            if (RouteableWindows.ActiveRoot?.DispatcherQueue is { HasThreadAccess: false } queue)
-                queue.TryEnqueue(() => action());
-            else
-                action();
-        });
-#endif
+        AllowCloseFromAnyThread(session);
         handle.TryDismiss = session.TryDismiss;
         handle.Opened = session.Opened;
 
@@ -218,6 +211,28 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         return session.Result;
     }
 
+    // Lets the caller close the dialog later, from any thread.
+    private static void AllowCloseFromAnyThread(RouteableContentDialogSession session)
+    {
+#if AVALONIA
+        session.AllowCloseFromCode(action =>
+        {
+            if (Dispatcher.UIThread.CheckAccess()) action();
+            else Dispatcher.UIThread.Post(action);
+        });
+#elif WPF
+        session.AllowCloseFromCode(UiThread.Post);
+#else
+        session.AllowCloseFromCode(action =>
+        {
+            if (RouteableWindows.ActiveRoot?.DispatcherQueue is { HasThreadAccess: false } queue)
+                queue.TryEnqueue(() => action());
+            else
+                action();
+        });
+#endif
+    }
+
     /// <inheritdoc />
 #if AVALONIA
     public async Task<RouteableTaskDialogResult> ShowTaskDialogAsync(RouteableTaskDialog @params, Owner? owner = null, params RouteableTaskDialogResult[] results)
@@ -247,6 +262,47 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         var parts = new List<Element?>();
         var release = new List<Action>();
 
+        AddTaskHeader(@params, parts, release);
+
+        var body = DialogCard.ToBody(@params.Content);
+        var scroller = body is null ? null : DialogCard.Scrollable(body);
+        if (scroller is not null)
+            parts.Add(scroller);
+
+        if (@params.ShowProgressBar)
+#if AVALONIA || ROUTEABLE_WINUI
+            parts.Add(new ProgressBar { IsIndeterminate = true });
+#else
+            parts.Add(new ProgressBar { IsIndeterminate = true, Height = 8 });
+#endif
+
+        AddTaskFooter(@params, parts, release);
+        if (scroller is { } bodyScroller) release.Add(() => bodyScroller.Content = null);
+
+        var card = DialogCard.Create(parts, buttons);
+
+        session.Opening();
+        try
+        {
+#if ROUTEABLE_WINUI
+            await DialogPresenter.ShowAsync(window, @params.Title, card, handle);
+#else
+            await DialogPresenter.ShowAsync(window, icon, @params.Title, card, handle);
+#endif
+        }
+        finally
+        {
+            // The caller's controls must not keep this dialog as their parent, or they could not be shown again.
+            foreach (var action in release) action();
+            session.Release();
+        }
+
+        return session.Result;
+    }
+
+    // The header, the sub header and the icon of a task dialog.
+    private static void AddTaskHeader(RouteableTaskDialog @params, List<Element?> parts, List<Action> release)
+    {
 #if AVALONIA || ROUTEABLE_WINUI
         var texts = new StackPanel { Spacing = 4 };
 #else
@@ -296,19 +352,11 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         {
             parts.Add(texts);
         }
+    }
 
-        var body = DialogCard.ToBody(@params.Content);
-        var scroller = body is null ? null : DialogCard.Scrollable(body);
-        if (scroller is not null)
-            parts.Add(scroller);
-
-        if (@params.ShowProgressBar)
-#if AVALONIA || ROUTEABLE_WINUI
-            parts.Add(new ProgressBar { IsIndeterminate = true });
-#else
-            parts.Add(new ProgressBar { IsIndeterminate = true, Height = 8 });
-#endif
-
+    // The footer of a task dialog, collapsible or not.
+    private static void AddTaskFooter(RouteableTaskDialog @params, List<Element?> parts, List<Action> release)
+    {
         var footer = DialogCard.ToBody(@params.Footer);
         Expander? expander = null;
         if (footer is not null && @params.ShowsFooter)
@@ -326,27 +374,6 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
             }
         }
         if (expander is { } footerExpander) release.Add(() => footerExpander.Content = null);
-        if (scroller is { } bodyScroller) release.Add(() => bodyScroller.Content = null);
-
-        var card = DialogCard.Create(parts, buttons);
-
-        session.Opening();
-        try
-        {
-#if ROUTEABLE_WINUI
-            await DialogPresenter.ShowAsync(window, @params.Title, card, handle);
-#else
-            await DialogPresenter.ShowAsync(window, icon, @params.Title, card, handle);
-#endif
-        }
-        finally
-        {
-            // The caller's controls must not keep this dialog as their parent, or they could not be shown again.
-            foreach (var action in release) action();
-            session.Release();
-        }
-
-        return session.Result;
     }
 
     /// <inheritdoc />
