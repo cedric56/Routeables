@@ -1,7 +1,7 @@
 ﻿using Routeables.Abstraction.Routing;
+using Routeables.Routing;
 using System.Collections.Frozen;
 using System.Collections.Immutable;
-using Routeables.Routing;
 
 namespace Routeables.Test.Abstraction;
 

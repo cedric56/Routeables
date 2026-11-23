@@ -1,8 +1,8 @@
+using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Lifecycle;
+using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
-using Routeables.Abstraction.Bases;
-using Routeables.Abstraction.Registrations;
 
 namespace Routeables.Tests.Routing;
 

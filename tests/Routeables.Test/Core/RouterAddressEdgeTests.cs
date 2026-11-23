@@ -2,8 +2,8 @@ using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
 using Routeables.Tests.Pages;
-using SecondViewFor = Routeables.Tests.Pages.SecondViewFor;
 using System.Dynamic;
+using SecondViewFor = Routeables.Tests.Pages.SecondViewFor;
 
 namespace Routeables.Tests.Core;
 

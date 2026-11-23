@@ -66,6 +66,27 @@ public class RouterLifecycleTests
         ], calls);
     }
 
+    [Fact]
+    public async Task A_view_that_fails_to_enter_tells_the_view_model_that_was_entered_it_is_left()
+    {
+        var calls = new List<string>();
+        var failure = new InvalidOperationException("the view failed to enter");
+        var leaving = Entry(new LifecycleProbe("leaving-vm", calls), new LifecycleProbe("leaving-view", calls));
+        var entering = Entry(new LifecycleProbe("entering-vm", calls), new LifecycleProbe("entering-view", calls) { OnTo = (_, _) => throw failure });
+
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => new RouterLifecycle().TransitionAsync(leaving, entering, ct: TestContext.Current.CancellationToken));
+
+        Assert.Same(failure, thrown);
+        // What the view model started in OnEntering is undone (OnLeaving), then the page that stays is entered again.
+        Assert.Equal(
+        [
+            "leaving-vm:from", "leaving-view:from",
+            "entering-vm:to", "entering-view:to",
+            "entering-vm:from",
+            "leaving-vm:to", "leaving-view:to",
+        ], calls);
+    }
+
     private sealed class Sink : IRouteableErrorSink
     {
         public List<(string Source, Exception Exception)> Reported { get; } = [];

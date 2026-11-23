@@ -1,8 +1,8 @@
 #if !ANDROID && !IOS && !MACCATALYST && !WINDOWS
+using Routeables.Native.Desktop;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using Routeables.Native.Desktop;
 
 namespace Routeables.Tests.Native;
 

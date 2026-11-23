@@ -1,6 +1,5 @@
 #if !ANDROID && !IOS && !MACCATALYST && !WINDOWS
 using Routeables.Native;
-using Routeables.Native.Desktop;
 using Routeables.Services;
 
 namespace Routeables.Tests.Native;

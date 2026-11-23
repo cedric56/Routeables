@@ -49,6 +49,8 @@ public interface IRouteable
     /// <summary>
     /// Called on the entry that is now current, once the route change is committed to the history (Prism's <c>OnEntered</c>),
     /// after <see cref="OnLeftAsync"/> of the entry that was left. Same rules: no veto, exceptions are swallowed.
+    /// The token belongs to the route change, which has ended when the page is shown: it is not cancelled when the user leaves the page later. Work that
+    /// goes on in the background is stopped in <see cref="OnLeavingAsync"/> or <see cref="OnLeftAsync"/>, or when the page is disposed.
     /// </summary>
     Task OnEnteredAsync(IRouteableArgs context, CancellationToken ct = default) => Task.CompletedTask;
 }

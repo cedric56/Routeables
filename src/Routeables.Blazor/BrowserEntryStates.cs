@@ -1,5 +1,5 @@
-﻿using System.Runtime.CompilerServices;
-using Routeables.Abstraction.History;
+﻿using Routeables.Abstraction.History;
+using System.Runtime.CompilerServices;
 
 namespace Routeables.Blazor;
 

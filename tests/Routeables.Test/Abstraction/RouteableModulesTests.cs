@@ -50,6 +50,29 @@ public class RouteableModulesTests
         services.AddMenuEntries(() => [Entry("orders")]);
     }
 
+    private sealed class OpenGuard : Routeables.Abstraction.Guards.IRouteGuard
+    {
+        public Task<Routeables.Abstraction.Guards.RouteGuardDecision> CanEnterAsync(Routeables.Abstraction.Routing.RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
+            => Task.FromResult(Routeables.Abstraction.Guards.RouteGuardDecision.Allow);
+    }
+
+    [Fact]
+    public void A_module_that_registers_a_route_guard_is_refused_and_nothing_of_it_is_loaded()
+    {
+        using var provider = Application();
+        var modules = provider.GetRequiredService<IRouteableModules>();
+
+        var error = Assert.Throws<InvalidOperationException>(() => modules.Load("Guarded", services =>
+        {
+            AddOrders(services);
+            services.AddSingleton<Routeables.Abstraction.Guards.IRouteGuard, OpenGuard>();
+        }));
+
+        Assert.Contains("Guarded", error.Message);
+        Assert.Contains("IRouteGuard", error.Message);
+        Assert.Null(provider.GetViewModel("/orders", new RouteableArgs())); // none of its routes was added
+    }
+
     [Fact]
     public void A_route_of_a_module_loaded_after_the_container_was_built_is_reached_with_the_services_of_the_module()
     {

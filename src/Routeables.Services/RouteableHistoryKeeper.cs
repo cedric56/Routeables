@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Routeables.Abstraction;
 using Routeables.Abstraction.Errors;
 using Routeables.Abstraction.Routing;

@@ -79,7 +79,7 @@ public class RouteableMenuViewModelBaseEdgeTests
         var announced = 0;
         sut.CurrentViewChanged += (_, _) => announced++;
 
-        Assert.True(await sut.SelectEntryAsync(sut.Entries[1], cancellationToken:TestContext.Current.CancellationToken));
+        Assert.True(await sut.SelectEntryAsync(sut.Entries[1], cancellationToken: TestContext.Current.CancellationToken));
         Assert.True(await sut.SelectEntryAsync(sut.Entries[1], cancellationToken: TestContext.Current.CancellationToken));
 
         Assert.IsType<SecondViewModel>(router.CurrentViewModel);

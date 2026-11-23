@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using NSubstitute;
@@ -10,6 +9,7 @@ using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
 using Routeables.Routing;
 using Routeables.Tests.Pages;
+using System.Collections.ObjectModel;
 
 namespace Routeables.Tests.Razor;
 

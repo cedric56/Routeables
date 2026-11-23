@@ -1,9 +1,7 @@
 using Routeables.Abstraction;
-using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.History;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
-using Routeables.Abstraction.Transitions;
 using Routeables.Generated;
 
 namespace Routeables.Tests.Abstraction;
@@ -102,7 +100,7 @@ public class DefaultMembersTests
     {
         IRouter router = new MinimalRouter(new MinimalHistory(0, "a"));
 
-        await Assert.ThrowsAsync<ArgumentNullException>(() => router.MoveBackAsync((Func<IHistoryEntry, bool>)null!, cancellationToken:TestContext.Current.CancellationToken));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => router.MoveBackAsync((Func<IHistoryEntry, bool>)null!, cancellationToken: TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -132,7 +130,7 @@ public class DefaultMembersTests
     {
         IRouter router = new MinimalRouter(new MinimalHistory(1, "a", "b"));
 
-       await  Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => router.MoveBackAsync(0, cancellationToken: TestContext.Current.CancellationToken));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => router.MoveBackAsync(0, cancellationToken: TestContext.Current.CancellationToken));
     }
 
     // ---- IRouteableArgs

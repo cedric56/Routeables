@@ -1,5 +1,6 @@
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Errors;
+using Routeables.Abstraction.Guards;
 using Routeables.Abstraction.Injections;
 using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Registrations;
@@ -8,7 +9,6 @@ using Routeables.Routing;
 using Routeables.Segments;
 using Routeables.Tests.Pages;
 using RouteableArgument = Routeables.Abstraction.Routing.RouteableArgument;
-using Routeables.Abstraction.Guards;
 namespace Routeables.Tests.Routing;
 
 /// <summary>Segment routing: parsing of <see cref="RouteCoordination"/> and its dispatch to routers by <see cref="IRouteCoordinator"/>.</summary>

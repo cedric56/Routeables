@@ -1,9 +1,9 @@
+using Microsoft.AspNetCore.Components;
 using Routeables.Abstraction.Bases;
 using Routeables.Blazor;
 using Routeables.Routing;
 using Routeables.Tests.Core;
 using Routeables.Tests.Pages;
-using Microsoft.AspNetCore.Components;
 namespace Routeables.Tests.Razor;
 
 /// <summary><see cref="RouteableFor{TView, TViewModel}"/>: the lifecycle it has by default, whether a menu is locked, and the view model it follows while it is shown.</summary>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Errors;
+using Routeables.Abstraction.Guards;
 using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
@@ -64,6 +65,13 @@ internal sealed class RouteableModules(IServiceProvider root) : IRouteableModule
             // (it is not marked as loaded, and none of its routes or entries is added).
             var collection = new ServiceCollection();
             add(collection);
+
+            // The routers read their guards once, from the container of the application: a guard of a module would never be asked, and the pages it
+            // was written to protect would open without it. Better a module that does not load than one that looks protected and is not.
+            if (collection.FirstOrDefault(d => d.ServiceType == typeof(IRouteGuard) || d.ServiceType == typeof(IRouteTypeGuard)) is { } guard)
+                throw new InvalidOperationException(
+                    $"The module '{name}' registers a route guard ({guard.ServiceType.Name}), which no router asks: the guards are read from the container of the application. "
+                    + "Register the guard at startup, with the services of the application, and the module was not loaded.");
 
             var table = collection.Select(d => d.ImplementationInstance).OfType<RouteableTable>().FirstOrDefault();
             var routes = (table?.Entries.Select(e => e.Template) ?? []).ToArray();

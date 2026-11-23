@@ -60,12 +60,30 @@ internal sealed class RouterLifecycle(IServiceProvider? provider = null)
             throw;
         }
 
+        var viewModelEntered = false;
         try
         {
-            await EnterAsync(entering, ct);
+            Subscribe(entering);
+            if (entering.ViewModel is IRouteable enteringViewModel) await enteringViewModel.OnEnteringAsync(entering.Args, ct);
+            viewModelEntered = true;
+            if (entering.View is IRouteable enteringView && !ReferenceEquals(enteringView, entering.ViewModel)) await enteringView.OnEnteringAsync(entering.Args, ct);
         }
         catch
         {
+            // The view model was told OnEntering (it started a timer, subscribed) and then the view failed: the page is dropped, so the view model is
+            // told OnLeaving, which is what undoes OnEntering. When the view model itself failed, it is not told: nothing is known to have started.
+            if (viewModelEntered)
+            {
+                try
+                {
+                    if (entering.ViewModel is IRouteable entered) await entered.OnLeavingAsync(entering.Args, CancellationToken.None);
+                }
+                catch (Exception recovery)
+                {
+                    RouteableErrors.Report<RouterLifecycle>(provider, recovery);
+                }
+            }
+
             // `entering` failed partway through OnEntering. `leaving` was already torn down, but the router does not advance the history on a failed
             // transition, so the history still points at `leaving`. Run its OnEntering again so that its lifecycle matches "still current".
             try
