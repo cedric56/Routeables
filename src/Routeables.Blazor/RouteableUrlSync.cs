@@ -37,8 +37,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
     private bool _started;
     private volatile bool _ended; // Dispose ran: no script is imported from now on, and one that arrives late is released by DisposeAsync
-    private int _back; // browser history entries behind the current one that this application pushed
-    private int _forward; // the entries ahead of it, left by a Back
+    private readonly BrowserHistoryDepth _depth = new(); // the browser history entries behind and ahead of the current one
     private Task<IJSObjectReference>? _history;
     private Task<IJSObjectReference>? _unload;
     private IRouteableUnsavedChanges? _watched; // the page whose unsaved changes the browser is told about
@@ -48,14 +47,8 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
     // changed, the browser entry is given the state of that router entry, so that its Back and Forward can name it.
     private (string Address, IHistoryEntry Entry)? _toStamp;
 
-    // Each router entry has a state that its browser entry keeps (history.state): an address can be in the history twice ([home, detail, home]), the
-    // state cannot, so the Back and the Forward of the browser are told apart by it. The entries are those of the router, kept while it keeps them.
-    private const string StatePrefix = "routeables:";
-    // The state outlives the page (a reload keeps history.state) while the counter starts again: the states of this run carry a name of their own,
-    // so that an entry left by a previous run is never taken for one of the router's.
-    private static readonly string Run = Guid.NewGuid().ToString("N")[..8];
-    private static long _lastState;
-    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<IHistoryEntry, string> _states = new();
+    // Each router entry has a state that its browser entry keeps (history.state), which tells the Back and the Forward of the browser apart.
+    private readonly BrowserEntryStates _states = new();
 
     private enum Outcome { Unmatched, Done, Refused }
 
@@ -120,7 +113,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         var address = AddressOf(e.To);
         if (SameAddress(_pending, address))
         {
-            Track(e.Kind); // the browser made this move itself (a link, its Back or Forward button)
+            _depth.Track(e.Kind); // the browser made this move itself (a link, its Back or Forward button)
             // A link or a typed address: the browser pushes its entry once the handlers have answered, without a state. It is given one then.
             if (e.Kind == RouteableKind.Push)
                 _toStamp = (address!, e.To);
@@ -134,41 +127,25 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
 
         // The router goes back or forward by itself (a Pop goes back too: the router only forgets the page it leaves). The browser makes the same
         // move when it holds that entry.
-        if ((e.Kind is RouteableKind.Back or RouteableKind.Pop && _back > 0 || e.Kind == RouteableKind.Forward && _forward > 0)
-            && provider.GetService<IJSRuntime>() is { } js)
+        if (_depth.CanFollow(e.Kind) && provider.GetService<IJSRuntime>() is { } js)
         {
             var delta = e.Kind == RouteableKind.Forward ? 1 : -1;
-            Track(e.Kind);
-            _ = GoInBrowserAsync(js, delta, address!, replace: true, StateOf(e.To));
+            _depth.Track(e.Kind);
+            _ = GoInBrowserAsync(js, delta, address!, replace: true, _states.StateOf(e.To));
             return;
         }
 
         var push = e.Kind == RouteableKind.Push && e.From is not null;
         if (push)
-            Track(RouteableKind.Push);
+            _depth.Track(RouteableKind.Push);
         else if (e.Kind is RouteableKind.Pop or RouteableKind.Root or RouteableKind.MoveTo)
-            _back = _forward = 0; // the router history no longer follows the browser's: replace until it does again
+            _depth.Reset(); // the router history no longer follows the browser's: replace until it does again
 
-        Show(address!, replace: !push, StateOf(e.To));
+        Show(address!, replace: !push, _states.StateOf(e.To));
     }
-
-    // The state of a router entry, given the first time it is asked for.
-    private string StateOf(IHistoryEntry entry)
-        => _states.GetValue(entry, static _ => StatePrefix + Run + ":" + Interlocked.Increment(ref _lastState).ToString(System.Globalization.CultureInfo.InvariantCulture));
 
     // The state of the entry the router shows: an address put back must keep it, or that browser entry could no longer be named.
-    private string? StateOfCurrent() => router.History.Current is { } current ? StateOf(current) : null;
-
-    // The router entry a browser state names, among the ones given: -1 when the state is not one of this application, or names none of them.
-    private int IndexOfState(string? state, IReadOnlyList<IHistoryEntry> entries)
-    {
-        if (state is null || !state.StartsWith(StatePrefix, StringComparison.Ordinal))
-            return -1;
-        for (var i = 0; i < entries.Count; i++)
-            if (_states.TryGetValue(entries[i], out var known) && string.Equals(known, state, StringComparison.Ordinal))
-                return i;
-        return -1;
-    }
+    private string? StateOfCurrent() => router.History.Current is { } current ? _states.StateOf(current) : null;
 
     // The browser asks before the tab closes while the page shown says it has unsaved changes (IRouteableUnsavedChanges).
     private void WatchUnsavedChanges()
@@ -210,31 +187,6 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         }
     }
 
-    private void Track(RouteableKind kind)
-    {
-        switch (kind)
-        {
-            case RouteableKind.Push:
-                _back++;
-                _forward = 0;
-                break;
-            case RouteableKind.Back:
-                if (_back > 0) { _back--; _forward++; }
-                break;
-            case RouteableKind.Forward:
-                if (_forward > 0) { _forward--; _back++; }
-                break;
-            case RouteableKind.Pop:
-                // The router forgets the page it leaves, while the browser keeps it ahead and reaches it again as a new page if asked.
-                if (_back > 0) _back--;
-                _forward = 0;
-                break;
-            default:
-                _back = _forward = 0;
-                break;
-        }
-    }
-
     // history.go(delta); when the browser cannot be reached (prerendering, no script), replace the address instead.
     private async Task GoInBrowserAsync(IJSRuntime js, int delta, string address, bool replace, string state)
     {
@@ -247,7 +199,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
         catch (Exception ex) when (ex is InvalidOperationException or JSException or JSDisconnectedException or TaskCanceledException)
         {
             _history = null;
-            _back = _forward = 0;
+            _depth.Reset();
             Show(address, replace, state);
         }
     }
@@ -299,7 +251,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
                 _toStamp = null;
                 if (e.HistoryEntryState is null && SameAddress(stamp.Address, path) && ReferenceEquals(router.History.Current, stamp.Entry))
                 {
-                    Show(stamp.Address, replace: true, StateOf(stamp.Entry));
+                    Show(stamp.Address, replace: true, _states.StateOf(stamp.Entry));
                     return;
                 }
             }
@@ -354,7 +306,7 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             (var entries, index) = history.Capture();
             before = index > 0 && index - 1 < entries.Count ? entries[index - 1] : null;
             after = index >= 0 && index + 1 < entries.Count ? entries[index + 1] : null;
-            named = IndexOfState(state, entries);
+            named = _states.IndexOf(state, entries);
         }
 
         // The state names the entry: [home, detail, home] has the same address before and after the detail, the state tells them apart. Without
