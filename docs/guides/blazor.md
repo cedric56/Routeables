@@ -119,7 +119,7 @@ A query value that the template does not declare is kept in `IRouteableArgs.Valu
 ## Guards, lifecycle and sign-in
 
 - **Leaving a page:** `CanLeaveAsync` returns `false` and the route change is cancelled. The browser address goes back to the page that stays.
-- **The user signed out while a page is shown:** guards run when you enter. `router.RefreshGuardsAsync()` runs them again for the page shown and follows a redirect (to `/login`); `router.RefreshGuardsOn(session, provider, nameof(Session.IsSignedIn))` does it each time that property changes (dispose the result to stop). A guard that cancels without a destination leaves the page where it is.
+- **The user signed out while a page is shown:** guards run when you enter. `router.RefreshGuardsAsync()` runs them again for the page shown and follows a redirect (to `/login`); `router.RefreshGuardsOn(session, provider, nameof(Session.IsSignedIn))` does it each time that property changes (dispose the result to stop). A guard that cancels without a destination leaves the page where it is. The refresh is a route change like the others: it waits for the one in progress and never replaces it, even with `RouterConcurrency.CancelCurrent`, and a route change requested while it runs waits for it and cannot cancel it, so a slow guard (a call to the server) holds the next route change until it answers: keep the guards you refresh quick.
 - **Entering a page:** an `IRouteGuard` is asked before every route change. It allows, cancels or redirects:
 
 ```csharp
