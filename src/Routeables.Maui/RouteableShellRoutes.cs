@@ -1,5 +1,7 @@
 using Routeables.Abstraction.Errors;
+using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
+using Routeables.Routing;
 
 namespace Routeables.Maui;
 
@@ -52,6 +54,12 @@ public static class RouteableShellRoutes
     {
         try
         {
+            // With a not-found page (UseNotFoundRoute) an unknown address is a success that shows that page, so it would take every route that is
+            // Shell's own (//MainPage, a tab). An address that matches no route of the router is left to Shell, as without a not-found page.
+            if (provider.GetService<RouteableNotFound>() is not null
+                && RouteParser.BestMatch(provider.GetService<RouteableTable>()?.Entries ?? [], route).Template is null)
+                return;
+
             var router = provider.GetRequiredService<IRouter>();
             var result = await router.GoToAsync(route);
 

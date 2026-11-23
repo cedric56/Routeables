@@ -543,6 +543,27 @@ public class ShellDeviceTests
         Assert.Null(Device.Router().CurrentView);
     }
 
+    /// <summary>With a not-found page, an unknown address would be a success that shows it: it is left to Shell like any other address the router does not know.</summary>
+    [UIFact]
+    public async Task An_address_the_router_does_not_know_is_left_to_shell_even_with_a_not_found_page()
+    {
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<PageAView, PageAViewModel>(route: "/a");
+        services.RegisterRoute<PageBView, PageBViewModel>(route: "/not-found");
+        services.UseNotFoundRoute();
+        using var provider = services.BuildServiceProvider();
+        var shell = new Shell();
+        using var follow = shell.UseShellRoutes(provider);
+
+        var unknown = Navigate(shell, "//nowhere");
+        var known = Navigate(shell, "//a");
+
+        await Device.UntilAsync(() => known.Cancelled);
+        Assert.False(unknown.Cancelled);
+        Assert.IsType<PageAView>(provider.GetRequiredService<IRouter>().CurrentView);
+    }
+
     /// <summary>A navigation guard's refusal is final; Shell must not continue with a fallback route.</summary>
     [UIFact]
     public async Task A_guard_that_refuses_the_address_cancels_the_navigation_of_shell_too()
