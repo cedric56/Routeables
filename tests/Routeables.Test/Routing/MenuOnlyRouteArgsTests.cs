@@ -77,4 +77,31 @@ public class MenuOnlyRouteArgsTests
         Assert.Equal("/settings?tab=2", router.History.Current!.Args.Route);
         Assert.Equal("2", router.History.Current.Args.Values.Single(v => v.name == "tab").value?.ToString());
     }
+
+    [Fact]
+    public async Task A_parameter_of_the_caller_replaces_the_parameter_of_the_entry_that_has_the_same_name()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        var entry = provider.GetRequiredService<IRouteableMenuViewModel>().Entries.Single();
+        entry.Arguments = RouteableArgs.Create()
+            .WithViewModel("mode", "entry").WithViewModel("kept", "entry")
+            .WithView("theme", "entry")
+            .WithValue("level", "entry");
+        var args = RouteableArgs.Create()
+            .WithViewModel("mode", "caller")
+            .WithView("theme", "caller")
+            .WithValue("level", "caller");
+
+        var result = await router.GoToAsync("/settings", args, cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.True(result.Success, result.Exception?.ToString());
+        var shown = router.History.Current!.Args;
+        Assert.Equal("caller", shown.ViewModelParameters.Single(v => v.name == "mode").value?.ToString());
+        Assert.Equal("entry", shown.ViewModelParameters.Single(v => v.name == "kept").value?.ToString());
+        Assert.Equal("caller", shown.ViewParameters.Single(v => v.name == "theme").value?.ToString());
+        Assert.Equal("caller", shown.Values.Single(v => v.name == "level").value?.ToString());
+        // What the entry holds is not changed by the navigation.
+        Assert.Equal("entry", entry.Arguments.ViewModelParameters.Single(v => v.name == "mode").value?.ToString());
+    }
 }
