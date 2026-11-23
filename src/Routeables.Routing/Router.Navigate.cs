@@ -99,6 +99,7 @@ internal partial class Router
         object? view = null,
         CancellationToken cancellationToken = default,
         Type? viewModelType = null,
+        Action<object, object>? shown = null,
         params string[] viewKeys)
     {
         // One navigation, one arguments instance. The caller's instance (RouteableMenuEntry.Arguments is reused on every click) is only a
@@ -117,6 +118,8 @@ internal partial class Router
         var built = new List<object>();
         var redirection = new Redirection();
         RouteableResult result;
+        object? pageView = null, pageViewModel = null;
+        var committed = false;
         try
         {
             result = await GoCoreAsync(async token =>
@@ -167,28 +170,26 @@ internal partial class Router
                 // What was asked for ("/customers/42", "about"): RouteableUrlSync shows it as the entry's address.
                 // Not the view key, which is the registration key, i.e. the template ("/customers/{id:int}"), not the address.
                 args.Route = route;
+                pageView = view;
+                pageViewModel = viewModel;
                 return new Prepared(null, view, viewModel);
             }, args, redirection, cancellationToken);
+            // Decided from the result of this navigation, not from the history, which a later navigation may already have changed.
+            committed = result.Success;
         }
         finally
         {
             // The usual outcome: the page this call built is the one shown, so there is nothing to clean up.
-            if (!IsShown(built))
+            if (!committed)
                 await DiscardAsync(built);
         }
 
+        // The page this navigation showed, as it was when it was shown: for a menu entry that remembers it.
+        if (committed)
+            shown?.Invoke(pageView!, pageViewModel!);
+
         // The gate is free: a guard (or a type guard) that redirected the user gets its navigation now.
         return redirection.Route is { } target ? await RedirectAsync(target, cancellationToken) : result;
-    }
-
-    private bool IsShown(List<object> built)
-    {
-        if (history.Current is not { } current)
-            return false;
-        foreach (var instance in built)
-            if (ReferenceEquals(instance, current.View) || ReferenceEquals(instance, current.ViewModel))
-                return true;
-        return false;
     }
 
     // Dispose what a navigation built and did not put in the history. Pages that stay (in the history, or in the cache of a scoped or
@@ -281,6 +282,7 @@ internal partial class Router
         IRouteableMenuEntry routeableView, string viewKey, string viewModelKey, CancellationToken cancellationToken, string[] viewKeys, IRouteableArgs? supplied = null, Type? viewModelType = null, string? address = null)
     {
         var route = address ?? routeableView.Arguments.Route ?? routeableView.Route;
+        object? shownView = null, shownViewModel = null;
         var result = await GoToRouteAsync(
             route,
             routeableView.Template,
@@ -291,19 +293,17 @@ internal partial class Router
             Reusable(routeableView.View),
             cancellationToken,
             viewModelType,
+            (view, viewModel) => { shownView = view; shownViewModel = viewModel; },
             viewKeys: viewKeys);
-        // Only the page this entry asked for: a guard may have redirected the user elsewhere (a sign-in), and the entry must not remember that page.
-        if (result.Success && WentTo(route))
+        // Only the page this entry asked for, as this navigation showed it: a guard may have redirected the user elsewhere (a sign-in), and the
+        // entry must not remember that page; nor the one a later navigation shows by the time this one reports.
+        if (shownView is not null)
         {
-            routeableView.View = CurrentView;
-            routeableView.ViewModel = CurrentViewModel;
+            routeableView.View = shownView;
+            routeableView.ViewModel = shownViewModel;
         }
         return result;
     }
-
-    // Whether the page shown is the entry's page (its route), and not one a guard redirected to.
-    private bool WentTo(string route)
-        => RouteAddress.SameFor(this, history.Current?.Args.Route, route);
 
     // A menu entry remembers the page it showed last, unless the router has disposed it since: then a new one is created.
     private object? Reusable(object? remembered) => lifecycle.WasDestroyed(remembered) ? null : remembered;
