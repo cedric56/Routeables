@@ -464,6 +464,19 @@ public class RouteableDeepLinksTests
     }
 
     [Fact]
+    public async Task The_inbox_keeps_its_links_when_no_router_is_registered_and_does_not_start_again()
+    {
+        using var provider = new ServiceCollection().BuildServiceProvider();
+        var inbox = new RouteableLinkInbox(["myapp"]);
+        inbox.Push(new Uri("myapp://link-second"));
+
+        inbox.Attach(provider);
+        await Task.Delay(300, TestContext.Current.CancellationToken);
+
+        Assert.Equal(1, inbox.PendingCount);
+    }
+
+    [Fact]
     public void Addresses_that_wait_for_the_first_page_are_limited()
     {
         var inbox = new RouteableLinkInbox(["myapp"]);

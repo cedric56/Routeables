@@ -36,6 +36,29 @@ public class RouteableStateSerializationTests
     }
 
     [Fact]
+    public void Windows_line_ends_do_not_stay_on_the_route_or_the_last_value()
+    {
+        var back = RouteableState.DeserializeSnapshots("/page|key=value\r\n/other\r\n\r\n");
+
+        Assert.Equal(2, back.Count);
+        Assert.Equal("/page", back[0].Route);
+        Assert.Equal("value", back[0].State["key"]);
+        Assert.Equal("/other", back[1].Route);
+    }
+
+    [Fact]
+    public void A_string_with_more_pages_than_the_limit_gives_the_last_ones()
+    {
+        var text = string.Join('\n', Enumerable.Range(0, RouteableState.MaxSnapshots + 50).Select(i => "/page" + i));
+
+        var back = RouteableState.DeserializeSnapshots(text);
+
+        Assert.Equal(RouteableState.MaxSnapshots, back.Count);
+        Assert.Equal("/page50", back[0].Route);
+        Assert.Equal("/page" + (RouteableState.MaxSnapshots + 49), back[^1].Route);
+    }
+
+    [Fact]
     public void A_part_without_a_name_is_left_out_and_the_route_is_kept()
     {
         var back = RouteableState.DeserializeSnapshots("/page|=orphan|noequal|kept=yes\n\n/other");

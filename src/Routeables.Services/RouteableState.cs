@@ -238,14 +238,24 @@ public static class RouteableState
             string.Concat(snapshot.State.Select(pair => $"|{Uri.EscapeDataString(pair.Key)}={Uri.EscapeDataString(pair.Value)}")))));
     }
 
-    /// <summary>The pages and their values of a string made by <see cref="Serialize(IEnumerable{RouteableSnapshot})"/> or <see cref="Serialize(IEnumerable{string})"/>.</summary>
+    /// <summary>The most pages read back from a string: the string can come from outside (a bundle, a setting, a file), and each page is a navigation when it is restored. The last ones are kept.</summary>
+    internal const int MaxSnapshots = 1000;
+
+    /// <summary>
+    /// The pages and their values of a string made by <see cref="Serialize(IEnumerable{RouteableSnapshot})"/> or <see cref="Serialize(IEnumerable{string})"/>.
+    /// Windows line ends are read as line ends, and no more than the last 1000 pages are returned.
+    /// </summary>
     public static IReadOnlyList<RouteableSnapshot> DeserializeSnapshots(string? text)
     {
         if (string.IsNullOrEmpty(text))
             return [];
 
         var snapshots = new List<RouteableSnapshot>();
-        foreach (var line in text.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+        var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(line => line.TrimEnd('\r'))
+            .Where(line => line.Length > 0)
+            .ToList();
+        foreach (var line in lines.Skip(Math.Max(0, lines.Count - MaxSnapshots)))
         {
             var parts = line.Split('|');
             var values = new Dictionary<string, string>();

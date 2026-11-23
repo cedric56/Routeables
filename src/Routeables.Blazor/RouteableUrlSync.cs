@@ -173,32 +173,49 @@ public sealed class RouteableUrlSync(NavigationManager navigation, IRouter route
             return; // nothing was ever asked: no script to load for "no warning"
         if (provider.GetService<IJSRuntime>() is not { } js)
             return;
+        Task<IJSObjectReference>? loading = null;
+        IJSObjectReference module;
         try
         {
-            _unload ??= js.InvokeAsync<IJSObjectReference>("import", UnloadModule).AsTask();
-            var module = await _unload;
-            if (_ended)
-                return; // the circuit ended while the script was loading: DisposeAsync lets go of it
+            loading = _unload ??= js.InvokeAsync<IJSObjectReference>("import", UnloadModule).AsTask();
+            module = await loading;
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or JSException or JSDisconnectedException or TaskCanceledException)
+        {
+            // Prerendering or no script: there is no tab to warn about, and nothing was loaded to let go of.
+            if (loading is null || ReferenceEquals(_unload, loading))
+                _unload = null;
+            return;
+        }
+
+        if (_ended)
+            return; // the circuit ended while the script was loading: DisposeAsync lets go of it
+
+        try
+        {
             await module.InvokeVoidAsync("setWarn", warn);
         }
         catch (Exception ex) when (ex is InvalidOperationException or JSException or JSDisconnectedException or TaskCanceledException)
         {
-            _unload = null; // prerendering or no script: there is no tab to warn about
+            // The script is loaded and its listener is installed: keep it, so that the next change asks again and DisposeAsync removes the listener.
         }
     }
 
     // history.go(delta); when the browser cannot be reached (prerendering, no script), replace the address instead.
     private async Task GoInBrowserAsync(IJSRuntime js, int delta, string address, bool replace, string state)
     {
+        Task<IJSObjectReference>? loading = null;
         try
         {
-            _history ??= js.InvokeAsync<IJSObjectReference>("import", HistoryModule).AsTask();
-            var module = await _history;
+            loading = _history ??= js.InvokeAsync<IJSObjectReference>("import", HistoryModule).AsTask();
+            var module = await loading;
             await module.InvokeVoidAsync("go", delta);
         }
         catch (Exception ex) when (ex is InvalidOperationException or JSException or JSDisconnectedException or TaskCanceledException)
         {
-            _history = null;
+            // A script that did not load is tried again next time; one that loaded is kept, for DisposeAsync to let go of.
+            if (loading is null || (loading.IsFaulted || loading.IsCanceled) && ReferenceEquals(_history, loading))
+                _history = null;
             _depth.Reset();
             Show(address, replace, state);
         }

@@ -277,5 +277,20 @@ public class DBusWireFormatTests
     [Fact]
     public void A_signature_of_several_types_is_not_one_value_to_skip()
         => Assert.Throws<InvalidDataException>(() => new DBusReader(new byte[8]).Skip("ss"));
+
+    [Fact]
+    public void A_signature_is_written_with_its_length_on_one_byte_up_to_255_characters()
+    {
+        var writer = new DBusWriter();
+        writer.Signature(new string('s', 255));
+
+        var bytes = writer.ToArray();
+        Assert.Equal(255, bytes[0]);
+        Assert.Equal(257, bytes.Length);
+    }
+
+    [Fact]
+    public void A_signature_of_more_than_255_characters_is_refused_instead_of_written_with_a_wrong_length()
+        => Assert.Throws<ArgumentException>(() => new DBusWriter().Signature(new string('s', 256)));
 }
 #endif

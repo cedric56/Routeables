@@ -27,6 +27,8 @@ public class RouteableUnloadWarningTests
     {
         public List<bool> Warn { get; } = [];
         public int Disposed { get; set; }
+        public bool FailSetWarn { get; set; }
+        public int WarnAttempts { get; private set; }
         public int Imports { get; private set; }
 
         public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args)
@@ -43,7 +45,13 @@ public class RouteableUnloadWarningTests
         {
             public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args)
             {
-                if (identifier == "setWarn") owner.Warn.Add((bool)args![0]!);
+                if (identifier == "setWarn")
+                {
+                    owner.WarnAttempts++;
+                    if (owner.FailSetWarn)
+                        throw new JSException("setWarn failed");
+                    owner.Warn.Add((bool)args![0]!);
+                }
                 if (identifier == "dispose") owner.Disposed++;
                 return default;
             }
@@ -111,5 +119,34 @@ public class RouteableUnloadWarningTests
 
         await sync.DisposeAsync();
         Assert.Equal(1, scripts.Disposed);
+    }
+
+    [Fact]
+    public async Task A_script_whose_call_failed_is_still_released_and_asked_again_with_the_next_change()
+    {
+        var scripts = new Scripts { FailSetWarn = true };
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.RegisterRoute<FakeViewFor, FormVm>(route: "/form");
+        services.AddSingleton<NavigationManager>(new FakeNavigation());
+        services.AddSingleton<IJSRuntime>(scripts);
+        await using var provider = services.BuildServiceProvider();
+        var router = provider.GetRequiredService<IRouter>();
+        var sync = new RouteableUrlSync(provider.GetRequiredService<NavigationManager>(), router, provider);
+        await sync.StartAsync();
+        var ct = TestContext.Current.CancellationToken;
+        await router.GoToAsync("/form", cancellationToken: ct);
+        var form = (FormVm)router.CurrentViewModel!;
+
+        form.Edit(true);
+        await Until(() => scripts.WarnAttempts == 1);
+        scripts.FailSetWarn = false;
+        form.Edit(false);
+        await Until(() => scripts.Warn.Count == 1);
+
+        Assert.False(scripts.Warn[0]);
+        Assert.Equal(1, scripts.Imports);                              // the script that was loaded is the one asked again
+        await sync.DisposeAsync();
+        Assert.Equal(1, scripts.Disposed);                             // and the listener of the tab is removed
     }
 }
