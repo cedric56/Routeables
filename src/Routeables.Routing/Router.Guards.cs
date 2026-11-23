@@ -18,7 +18,16 @@ internal partial class Router
 
     // How many redirects follow one another within one call. A guard that sends the user back to a page it refuses would loop forever.
     private const int MaxRedirects = 8;
-    private static readonly AsyncLocal<int> Redirects = new();
+    private readonly AsyncLocal<int> _redirects = new();
+
+    // The page a guard refresh redirected from: the redirection checks, at its own turn in the queue, that this page is still the one shown.
+    private sealed class RedirectOrigin(RouterEntry from)
+    {
+        public RouterEntry From { get; } = from;
+        public bool Used { get; set; }
+    }
+
+    private readonly AsyncLocal<RedirectOrigin?> _origin = new();
 
     // Guards are resolved once, on the first navigation that needs them, and sorted by IRouteGuard.Order (a stable sort: guards with the
     // same order keep their registration order).
@@ -76,27 +85,37 @@ internal partial class Router
         // between the answer and now) is not redirected, because the answer was about another page.
         if (decision.RedirectTo is not { } route || !ReferenceEquals(history.Current, asked))
             return RouteableResult.Cancel();
-        return await RedirectAsync(route, cancellationToken);
+        // Still the same page now, but the redirection waits for its turn: it checks again then, and does nothing if another navigation came first.
+        var previousOrigin = _origin.Value;
+        _origin.Value = new RedirectOrigin(asked);
+        try
+        {
+            return await RedirectAsync(route, cancellationToken);
+        }
+        finally
+        {
+            _origin.Value = previousOrigin;
+        }
     }
 
     // Go where a guard redirected to, once the refused navigation has ended and released the gate.
     private async Task<RouteableResult> RedirectAsync(string route, CancellationToken ct)
     {
-        if (Redirects.Value >= MaxRedirects)
+        if (_redirects.Value >= MaxRedirects)
             return RouteableResult.Fail(new InvalidOperationException(
                 $"More than {MaxRedirects} redirects in a row, the last one to \"{route}\": a route guard sends the user to a route that another guard (or the same one) refuses."));
 
         if (RouteableDiagnostics.Redirects.Enabled)
             RouteableDiagnostics.Redirects.Add(1, new KeyValuePair<string, object?>("routeables.route", RouteTag(route)));
 
-        Redirects.Value++;
+        _redirects.Value++;
         try
         {
             return await GoToAsync(route, null, null, ct);
         }
         finally
         {
-            Redirects.Value--;
+            _redirects.Value--;
         }
     }
 

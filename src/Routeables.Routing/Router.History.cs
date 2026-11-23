@@ -28,8 +28,10 @@ internal partial class Router
 
             // A hook that ignores its token must not let a replaced route change into the history; what it did is undone first.
             if (ct.IsCancellationRequested)
+            {
                 await lifecycle.RevertAsync(leaving, target);
-            ct.ThrowIfCancellationRequested();
+                throw new OperationCanceledException(ct);
+            }
             var removed = commit(); // only after the lifecycle succeeded
             await lifecycle.NotifyEnteredAsync(leaving, target, ct); // before the removed entries are disposed
             // Nothing removed, nothing to destroy: copying the whole history is only needed when entries are removed.

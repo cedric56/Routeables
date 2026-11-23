@@ -68,9 +68,12 @@ internal partial class Router
 
                     // 5. Commit, then destroy what the push cut off (forward entries, the oldest evicted entry).
                     // A hook that ignores its token must not let a replaced route change into the history; what it did is undone first.
+                    // The token is read once: a cancellation that arrives after the check is too late to matter, one that arrived before it is undone.
                     if (token.IsCancellationRequested)
+                    {
                         await lifecycle.RevertAsync(previous, entering);
-                    token.ThrowIfCancellationRequested();
+                        throw new OperationCanceledException(token);
+                    }
                     var removed = history.Push(entering);
                     await lifecycle.NotifyEnteredAsync(previous, entering, token);
                     if (removed.Count > 0) await lifecycle.DestroyAsync(removed, history.Snapshot());
@@ -124,6 +127,14 @@ internal partial class Router
         {
             result = await GoCoreAsync(async token =>
             {
+                // A redirection decided for a page by a guard refresh applies only if that page is still the one shown at this turn.
+                if (_origin.Value is { Used: false } origin)
+                {
+                    origin.Used = true;
+                    if (!ReferenceEquals(history.Current, origin.From))
+                        return new Prepared(RouteableResult.Cancel(), null, null);
+                }
+
                 // A page about to be built is first offered to the guards that need only its type, so a refused visitor costs no constructor call.
                 // Asked at this navigation's turn, with the gate held: after the route changes requested before it (a sign-in they made counts), and
                 // before the page is built.

@@ -21,6 +21,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A route change cancelled at the last moment is always undone**: the token was read twice (once to undo the lifecycle, once to throw), so a cancellation between the two left the old page left, the new one entered and the history unchanged. It is read once now, in a route change and in a move through the history.
+- **A redirection decided by `RefreshGuardsAsync` no longer applies to another page**: it waited for its turn in the queue after checking the page, so a navigation in between made it run for a page the guards had not been asked about. The page is checked again at its turn.
+- **The limit of 8 redirects in a row counts for each router**: it was shared by all of them, so chained redirects across a region and the main router added up without any loop.
 - **The error of a deep link that is refused no longer repeats the address**: it could hold a user name and a password before the host, a token in the query, or several megabytes, and the message goes to the logs. It names the scheme only.
 - **The properties kept with `[Persist]` read a `bool` and a `Guid` as strictly as the values saved with a page and as an address**: `" true"`, `"true\0"`, a Guid in braces, without dashes or with spaces are no longer accepted. The three readers now share one copy.
 - **The main layout of Blazor says what to register when the theme service is not the one of the package**: it read and set the theme through `RouteableRequestThemeService` (its `IsDarkMode` and its event, which the interface does not have) with a plain cast, and failed with an `InvalidCastException` that said nothing about it.
