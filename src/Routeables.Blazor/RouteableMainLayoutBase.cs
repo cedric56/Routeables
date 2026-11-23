@@ -58,7 +58,10 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
     /// <summary>
     /// Gets the concrete theme service implementation instance.
     /// </summary>
-    protected RouteableRequestThemeService Service => (RouteableRequestThemeService)ThemeService;
+    protected RouteableRequestThemeService Service => ThemeService as RouteableRequestThemeService
+        ?? throw new InvalidOperationException(
+            $"The layout reads and sets the theme through {nameof(RouteableRequestThemeService)} (its IsDarkMode and its RequestedThemeChanged event), which the interface does not have: "
+            + $"register that class, or one that derives from it, as IRouteableRequestedThemeService (not {ThemeService?.GetType().FullName ?? "nothing"}).");
 
     /// <summary><c>dark</c> or <c>light</c>: the theme that is shown.</summary>
     protected string ThemeName => Service.IsDarkMode ? "dark" : "light";

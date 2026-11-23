@@ -11,6 +11,39 @@ namespace Routeables.Tests.States;
 /// <summary>What <c>[Persist]</c> relies on at run time: the codec, the limits and the way the snapshots carry the values.</summary>
 public class PersistTests
 {
+    [Theory]
+    [InlineData("true", true)]
+    [InlineData("False", false)]
+    public void A_bool_is_read_as_it_is_written(string text, bool expected)
+    {
+        Assert.True(PersistCodec.TryRead<bool>(text, null, out var value));
+        Assert.Equal(expected, value);
+    }
+
+    [Theory]
+    [InlineData(" true")]
+    [InlineData("true ")]
+    [InlineData("true\0")]
+    [InlineData("yes")]
+    public void A_bool_in_another_spelling_is_not_read(string text)
+        => Assert.False(PersistCodec.TryRead<bool>(text, null, out _));
+
+    [Theory]
+    [InlineData("{0f8fad5b-d9cb-469f-a165-70867728950e}")]
+    [InlineData("0f8fad5bd9cb469fa16570867728950e")]
+    [InlineData(" 0f8fad5b-d9cb-469f-a165-70867728950e")]
+    public void A_Guid_in_another_spelling_is_not_read(string text)
+        => Assert.False(PersistCodec.TryRead<Guid>(text, null, out _));
+
+    [Fact]
+    public void A_Guid_is_read_as_it_is_written()
+    {
+        var id = Guid.NewGuid();
+
+        Assert.True(PersistCodec.TryRead<Guid>(id.ToString("D"), null, out var value));
+        Assert.Equal(id, value);
+    }
+
     public enum Colour { Red, Green }
 
     [Flags]

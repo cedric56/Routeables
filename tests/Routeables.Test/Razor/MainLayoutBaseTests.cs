@@ -416,6 +416,17 @@ public class MainLayoutBaseTests
     }
 
     [Fact]
+    public void A_theme_service_that_is_not_the_one_of_the_package_is_refused_with_a_message_that_says_what_to_register()
+    {
+        var layout = new Layout();
+        layout.Attach(new Menu(), Substitute.For<IRouteableRequestedThemeService>());
+
+        var error = Assert.Throws<InvalidOperationException>(layout.Toggle);
+
+        Assert.Contains(nameof(RouteableRequestThemeService), error.Message);
+    }
+
+    [Fact]
     public async Task The_page_starts_in_the_dark_theme_when_the_application_defined_it()
     {
         await using var f = new Fixture();

@@ -112,6 +112,18 @@ public class RouteableDeepLinksTests
     }
 
     [Fact]
+    public async Task The_message_of_a_refused_address_does_not_repeat_what_it_holds()
+    {
+        using var provider = Build();
+
+        var result = await RouteableDeepLinks.GoToAsync(provider, new Uri("myapp://user:secret-password@link-second?token=secret-token"), ["other"], TestContext.Current.CancellationToken);
+
+        Assert.False(result.Success);
+        Assert.DoesNotContain("secret", result.Exception?.Message);
+        Assert.Contains("myapp", result.Exception?.Message);
+    }
+
+    [Fact]
     public async Task An_address_goes_to_its_route()
     {
         using var provider = Build();

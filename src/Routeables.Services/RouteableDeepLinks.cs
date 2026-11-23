@@ -101,6 +101,11 @@ public static class RouteableDeepLinks
         return "/" + (end >= 0 ? rest[..end] : rest);
     }
 
+    // The address as the message of an error may carry it: its scheme only. The whole address can hold what must not reach a log (a user name and a
+    // password before the host, a token in the query) and can be as long as MaxLength lets it through.
+    private static string Describe(Uri uri)
+        => uri.IsAbsoluteUri ? $"with the scheme \"{uri.Scheme}\"" : "(not an absolute address)";
+
     /// <summary>The route of an address, with no scheme given: only a web address of a host that is given is accepted, so this is of use with <see cref="TryGetRoute(Uri?, IReadOnlyCollection{string}?, IReadOnlyCollection{string}?, out string)"/> only. Give the schemes your application owns.</summary>
     public static bool TryGetRoute(Uri? uri, out string route) => TryGetRoute(uri, null, out route);
 
@@ -122,7 +127,7 @@ public static class RouteableDeepLinks
         ArgumentNullException.ThrowIfNull(uri);
 
         if (!TryGetRoute(uri, schemes, hosts, out var route))
-            return RouteableResult.Fail(new ArgumentException($"The address \"{uri}\" has no route that this application accepts" + (schemes is { Count: > 0 } ? "." : " (no scheme was given: pass the schemes the application owns)."), nameof(uri)));
+            return RouteableResult.Fail(new ArgumentException($"The address {Describe(uri)} has no route that this application accepts" + (schemes is { Count: > 0 } ? "." : " (no scheme was given: pass the schemes the application owns)."), nameof(uri)));
 
         var router = provider.GetRequiredService<IRouter>();
         var result = await router.GoToAsync(route, null, null, cancellationToken);

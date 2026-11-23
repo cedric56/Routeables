@@ -21,6 +21,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The error of a deep link that is refused no longer repeats the address**: it could hold a user name and a password before the host, a token in the query, or several megabytes, and the message goes to the logs. It names the scheme only.
+- **The properties kept with `[Persist]` read a `bool` and a `Guid` as strictly as the values saved with a page and as an address**: `" true"`, `"true\0"`, a Guid in braces, without dashes or with spaces are no longer accepted. The three readers now share one copy.
+- **The main layout of Blazor says what to register when the theme service is not the one of the package**: it read and set the theme through `RouteableRequestThemeService` (its `IsDarkMode` and its event, which the interface does not have) with a plain cast, and failed with an `InvalidCastException` that said nothing about it.
 - **A menu entry remembers the page its own route change showed**: it read the page that was current once the route change had ended and the queue was free, so a route change queued right behind could make it forget its page, or keep the next one's. The page is now the one the route change showed, and the pages a route change built are cleaned up from its own result, not from what the history holds by then.
 - **The first page no longer leaks what its view model started when its view fails to enter**: the view model was told `OnEntering` and, when the view then failed, never `OnLeaving` (a timer or a subscription stayed alive). The first route change now undoes it, as every later one already did.
 - **A value with no name in a query (`?=x`) is skipped** by every reader of an address, like an empty pair: it was kept under an empty name, in the values a page without a template receives and in the comparison of two addresses (`/p?=x` and `/p` were two pages).

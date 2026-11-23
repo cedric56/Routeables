@@ -97,12 +97,22 @@ internal static class PersistCodec
         return true;
     }
 
+    // A bool and a Guid are read as they are written, as the parser of the routes reads them: TryParse would also take spaces and a trailing null
+    // character (a bool), and braces, no dashes and spaces (a Guid). One copy for the saved values of a page and for [Persist].
+    internal static object? ReadBool(string text)
+        => text.Equals("true", StringComparison.OrdinalIgnoreCase) ? true
+         : text.Equals("false", StringComparison.OrdinalIgnoreCase) ? false
+         : null;
+
+    internal static object? ReadGuid(string text)
+        => text.Length == 36 && Guid.TryParseExact(text, "D", out var guid) ? guid : null;
+
     // The value a text stands for in a built-in type, or null when the text is not one (or the type is not built in).
     private static object? ReadBuiltIn(Type type, string text)
     {
         var inv = CultureInfo.InvariantCulture;
         if (type == typeof(string)) return text;
-        if (type == typeof(bool)) return bool.TryParse(text, out var b) ? b : null;
+        if (type == typeof(bool)) return ReadBool(text);
         if (type == typeof(char)) return text.Length == 1 ? text[0] : null;
         if (type == typeof(int)) return int.TryParse(text, NumberStyles.Integer, inv, out var i) ? i : null;
         if (type == typeof(long)) return long.TryParse(text, NumberStyles.Integer, inv, out var l) ? l : null;
@@ -119,7 +129,7 @@ internal static class PersistCodec
         if (type == typeof(double)) return double.TryParse(text, NumberStyles.Float, inv, out var d) ? d : null;
         if (type == typeof(float)) return float.TryParse(text, NumberStyles.Float, inv, out var f) ? f : null;
         if (type == typeof(decimal)) return decimal.TryParse(text, NumberStyles.Number, inv, out var m) ? m : null;
-        if (type == typeof(Guid)) return Guid.TryParse(text, out var g) ? g : null;
+        if (type == typeof(Guid)) return ReadGuid(text);
         if (type == typeof(DateTime)) return DateTime.TryParse(text, inv, DateTimeStyles.RoundtripKind, out var dt) ? dt : null;
         if (type == typeof(DateTimeOffset)) return DateTimeOffset.TryParse(text, inv, DateTimeStyles.RoundtripKind, out var dto) ? dto : null;
         if (type == typeof(TimeSpan)) return TimeSpan.TryParse(text, inv, out var ts) ? ts : null;
