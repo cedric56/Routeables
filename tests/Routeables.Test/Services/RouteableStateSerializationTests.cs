@@ -36,6 +36,27 @@ public class RouteableStateSerializationTests
     }
 
     [Fact]
+    public void Two_snapshots_whose_keys_differ_by_case_are_never_equal_whatever_the_comparer_of_their_values()
+    {
+        var sensitive = new RouteableSnapshot("/p", new Dictionary<string, string> { ["A"] = "1" });
+        var insensitive = new RouteableSnapshot("/p", new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["a"] = "1" });
+
+        Assert.False(sensitive.Equals(insensitive));
+        Assert.False(insensitive.Equals(sensitive));
+    }
+
+    [Fact]
+    public void Two_snapshots_with_the_same_keys_are_equal_both_ways_and_have_the_same_hash_whatever_the_comparer()
+    {
+        var sensitive = new RouteableSnapshot("/p", new Dictionary<string, string> { ["a"] = "1" });
+        var insensitive = new RouteableSnapshot("/p", new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["a"] = "1" });
+
+        Assert.True(sensitive.Equals(insensitive));
+        Assert.True(insensitive.Equals(sensitive));
+        Assert.Equal(sensitive.GetHashCode(), insensitive.GetHashCode());
+    }
+
+    [Fact]
     public void Windows_line_ends_do_not_stay_on_the_route_or_the_last_value()
     {
         var back = RouteableState.DeserializeSnapshots("/page|key=value\r\n/other\r\n\r\n");

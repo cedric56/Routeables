@@ -42,7 +42,11 @@ public static class RouteableState
     /// the pages before it stay. When it is the first one, nothing is left to stay: the page that was shown before comes back, so that
     /// the application is not left with an empty window.
     /// </summary>
-    /// <returns><see langword="true"/> when every route was reached.</returns>
+    /// <returns>
+    /// <see langword="true"/> when the restoration ended on a page: every route was reached, or a guard sent the user elsewhere (the login, say)
+    /// and the routes after it were left out; also when there was nothing to restore (an empty list, or only entries that are commands such as
+    /// <c>-/orders</c>), and the history is then untouched. <see langword="false"/> when a route could not be reached.
+    /// </returns>
     public static async Task<bool> RestoreAsync(IRouter router, IEnumerable<string> routes, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(router);
@@ -299,7 +303,9 @@ public sealed record RouteableSnapshot(string Route, IReadOnlyDictionary<string,
         => other is not null
            && string.Equals(Route, other.Route, StringComparison.Ordinal)
            && State.Count == other.State.Count
-           && State.All(pair => other.State.TryGetValue(pair.Key, out var value) && string.Equals(pair.Value, value, StringComparison.Ordinal));
+           // The keys are compared as they are written, whatever comparer each dictionary has: a lookup in the other's dictionary would make
+           // a case-insensitive one equal to a case-sensitive one in one direction only, and the hash codes (ordinal) would not agree.
+           && State.All(pair => other.State.Any(o => string.Equals(o.Key, pair.Key, StringComparison.Ordinal) && string.Equals(o.Value, pair.Value, StringComparison.Ordinal)));
 
     /// <inheritdoc />
     public override int GetHashCode()
