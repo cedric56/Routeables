@@ -55,7 +55,9 @@ public static partial class RouteParser
             case "bool": { var ok = bool.TryParse(raw, out var v) && raw == raw.Trim() && !raw.Contains('\0'); value = v; return ok; }
             case "guid": { var ok = Guid.TryParseExact(raw, "D", out var v); value = v; return ok; }
             case "decimal": { decimal v = 0; var ok = decimal.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, inv, out v); value = v; return ok; }
-            case "double": { double v = 0; var ok = double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v); value = v; return ok; }
+            case "double": { double v = 0; var ok = double.TryParse(raw, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, inv, out v) && double.IsFinite(v);
+                if (v == 0) v = 0; // -0 is the number 0, which the address is written as: the page gets the same zero
+                value = v; return ok; }
             default:
                 value = null;
                 return false; // unreachable: Bind rejects an unknown constraint first

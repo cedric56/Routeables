@@ -626,6 +626,17 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void A_double_minus_zero_in_an_address_gives_the_page_a_positive_zero()
+    {
+        var args = RouteableArgs.Create();
+
+        Assert.True(RouteParser.TryMatch("x/{n:double}", "x/-0", args));
+
+        var value = Assert.IsType<double>(Assert.Single(args.ViewModelParameters, e => e.name == "n").value);
+        Assert.False(double.IsNegative(value));
+    }
+
+    [Fact]
     public void A_template_literal_written_escaped_matches_its_own_output()
     {
         var args = RouteableArgs.Create();
