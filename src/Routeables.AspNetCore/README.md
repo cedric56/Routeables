@@ -2,7 +2,7 @@
 
 The [ASP.NET Core](https://learn.microsoft.com/aspnet/core) host of Routeables, for **Razor Pages and MVC** (pages rendered on the server, one request at a time; for interactive components use [`Routeables.Blazor`](../Routeables.Blazor/README.md)). It gives the view models their router, history, dialogs and notifications on the server. Targets **.NET 10**.
 
-> **Experimental.** This host is the youngest of the packages: its API may change in any release (including a minor one), it has no project template, and a few things are left to the application (one service scope per visitor, below; the dialogs that wait for an answer live in the memory of the server, so they do not survive a restart nor follow a visitor to another instance). For an interactive web application use [`Routeables.Blazor`](../Routeables.Blazor/README.md).
+> **What is left to you.** This host is the youngest of the packages: it has no project template, and a few things are left to the application (one service scope per visitor, below; the dialogs that wait for an answer live in the memory of the server, so they do not survive a restart nor follow a visitor to another instance). For an interactive web application use [`Routeables.Blazor`](../Routeables.Blazor/README.md).
 
 ```bash
 dotnet add package Routeables.AspNetCore

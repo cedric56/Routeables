@@ -5,7 +5,7 @@
 | Host | Package | Setup |
 | --- | --- | --- |
 | Blazor | [`Routeables.Blazor`](../src/Routeables.Blazor/README.md) | `services.UseRouteablesServer(r => { ... })`; the region goes in your own layout, which inherits `RouteableMainLayoutBase` (the ready-made `RouteableMainLayout` has no menu and opens `/`) |
-| ASP.NET Core (Razor Pages, MVC), experimental | [`Routeables.AspNetCore`](../src/Routeables.AspNetCore/README.md) | `services.UseRouteables(r => { ... })` |
+| ASP.NET Core (Razor Pages, MVC) | [`Routeables.AspNetCore`](../src/Routeables.AspNetCore/README.md) | `services.UseRouteables(r => { ... })` |
 | .NET MAUI | [`Routeables.Maui`](../src/Routeables.Maui/README.md) | `builder.UseMauiApp<App>().UseRouteables(r => { ... })` |
 | Avalonia | [`Routeables.Avalonia`](../src/Routeables.Avalonia/README.md) | `AppBuilder.Configure<App>().UseRouteables(r => { ... })` |
 | Uno Platform | [`Routeables.Uno`](../src/Routeables.Uno/README.md) | `this.UseRouteables(r => { ... })` |
@@ -60,7 +60,7 @@ All the packages are released together (see [VERSIONING.md](../VERSIONING.md)); 
 | [`Routeables.Abstraction`](https://www.nuget.org/packages/Routeables.Abstraction) | [![Routeables.Abstraction](https://img.shields.io/nuget/v/Routeables.Abstraction?label=)](https://www.nuget.org/packages/Routeables.Abstraction) | The contracts and attributes only. |
 | [`Routeables.Avalonia`](https://www.nuget.org/packages/Routeables.Avalonia) | [![Routeables.Avalonia](https://img.shields.io/nuget/v/Routeables.Avalonia?label=)](https://www.nuget.org/packages/Routeables.Avalonia) | Host for Avalonia. |
 | [`Routeables.Blazor`](https://www.nuget.org/packages/Routeables.Blazor) | [![Routeables.Blazor](https://img.shields.io/nuget/v/Routeables.Blazor?label=)](https://www.nuget.org/packages/Routeables.Blazor) | Host for Blazor (Server, WebAssembly, Web App). |
-| [`Routeables.AspNetCore`](https://www.nuget.org/packages/Routeables.AspNetCore) | [![Routeables.AspNetCore](https://img.shields.io/nuget/v/Routeables.AspNetCore?label=)](https://www.nuget.org/packages/Routeables.AspNetCore) | **Experimental.** Host for Razor Pages and `.cshtml` views. |
+| [`Routeables.AspNetCore`](https://www.nuget.org/packages/Routeables.AspNetCore) | [![Routeables.AspNetCore](https://img.shields.io/nuget/v/Routeables.AspNetCore?label=)](https://www.nuget.org/packages/Routeables.AspNetCore) | Host for Razor Pages and `.cshtml` views. |
 | [`Routeables.Maui`](https://www.nuget.org/packages/Routeables.Maui) | [![Routeables.Maui](https://img.shields.io/nuget/v/Routeables.Maui?label=)](https://www.nuget.org/packages/Routeables.Maui) | Host for .NET MAUI. |
 | [`Routeables.Uno`](https://www.nuget.org/packages/Routeables.Uno) | [![Routeables.Uno](https://img.shields.io/nuget/v/Routeables.Uno?label=)](https://www.nuget.org/packages/Routeables.Uno) | Host for Uno Platform. |
 | [`Routeables.WinUI3`](https://www.nuget.org/packages/Routeables.WinUI3) | [![Routeables.WinUI3](https://img.shields.io/nuget/v/Routeables.WinUI3?label=)](https://www.nuget.org/packages/Routeables.WinUI3) | Host for WinUI 3. |
