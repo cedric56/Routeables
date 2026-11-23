@@ -66,4 +66,78 @@ public class RouteableMenuTests
         Assert.Contains("rt-drawer-closed", html);
         Assert.Contains("side", html);
     }
+
+    /// <summary>A menu that stays on the screen: it is rendered once, then the menu view model changes.</summary>
+    private sealed class Shown(FakeMenuViewModel main) : IAsyncDisposable
+    {
+        private readonly ServiceProvider _provider = Build(main);
+        private Microsoft.AspNetCore.Components.Web.HtmlRenderer? _renderer;
+        private Func<string>? _toHtml;
+
+        private static ServiceProvider Build(FakeMenuViewModel main)
+        {
+            var services = new ServiceCollection();
+            services.AddLogging();
+            services.AddSingleton<IRouteableMenuViewModel>(main);
+            return services.BuildServiceProvider();
+        }
+
+        public async Task StartAsync()
+        {
+            _renderer = new Microsoft.AspNetCore.Components.Web.HtmlRenderer(_provider, _provider.GetRequiredService<Microsoft.Extensions.Logging.ILoggerFactory>());
+            var root = await _renderer.Dispatcher.InvokeAsync(() => _renderer.RenderComponentAsync<RouteableMenu>());
+            _toHtml = () => root.ToHtmlString();
+        }
+
+        public Task<string> HtmlAsync() => _renderer!.Dispatcher.InvokeAsync(() => _toHtml!());
+
+        public async ValueTask StopAsync() => await _renderer!.DisposeAsync();
+
+        public async ValueTask DisposeAsync()
+        {
+            await _provider.DisposeAsync();
+        }
+    }
+
+    [Fact]
+    public async Task An_entry_added_after_the_render_appears_in_the_menu()
+    {
+        var main = Menu();
+        await using var shown = new Shown(main);
+        await shown.StartAsync();
+
+        main.Entries.Add(new RouteableMenuEntry<Home>("Contact", null, "/contact", "/contact"));
+        await Task.Delay(100, TestContext.Current.CancellationToken);
+
+        Assert.Contains("Contact", await shown.HtmlAsync());
+    }
+
+    [Fact]
+    public async Task A_menu_that_is_locked_after_the_render_disables_its_entries()
+    {
+        var main = Menu();
+        await using var shown = new Shown(main);
+        await shown.StartAsync();
+        Assert.DoesNotContain("disabled", await shown.HtmlAsync());
+
+        main.Entries[0].IsLock = true;
+        main.NotifyLockChanged();
+        await Task.Delay(100, TestContext.Current.CancellationToken);
+
+        Assert.Contains("disabled", await shown.HtmlAsync());
+    }
+
+    [Fact]
+    public async Task The_menu_stops_following_the_menu_view_model_when_it_is_disposed()
+    {
+        var main = Menu();
+        await using var shown = new Shown(main);
+        await shown.StartAsync();
+        Assert.Equal(1, main.LockSubscribers);
+
+        await shown.StopAsync();
+
+        Assert.Equal(0, main.LockSubscribers);
+        main.NotifyLockChanged(); // nothing is left to refresh, and nothing throws
+    }
 }

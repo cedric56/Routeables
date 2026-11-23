@@ -10,6 +10,7 @@ using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
+using Routeables.Blazor.Components;
 using Routeables.Routing;
 using Routeables.Services;
 using Routeables.Tests.Core;
@@ -45,13 +46,16 @@ public class MainLayoutPrerenderTests
 
         public IRouter Router => provider.GetRequiredService<IRouter>();
 
-        public Fixture(string address, RouteablePrerenderOptions? options = null, bool persistence = false)
+        public Fixture(string address, RouteablePrerenderOptions? options = null, bool persistence = false, bool menu = true)
         {
             var navigation = new Navigation("http://localhost" + address);
             navigation.Start();
-            var menu = new FakeMenuViewModel();
-            menu.Entries.Add(new RouteableMenuEntry<FakeViewModel>("First", null, "/first", "/first"));
-            menu.Entries.Add(new RouteableMenuEntry<SecondViewModel>("Second", null, "/second", "/second"));
+            var menuViewModel = new FakeMenuViewModel();
+            if (menu)
+            {
+                menuViewModel.Entries.Add(new RouteableMenuEntry<FakeViewModel>("First", null, "/first", "/first"));
+                menuViewModel.Entries.Add(new RouteableMenuEntry<SecondViewModel>("Second", null, "/second", "/second"));
+            }
 
             var services = new ServiceCollection();
             services.AddLogging();
@@ -62,7 +66,8 @@ public class MainLayoutPrerenderTests
             services.AddTransient<SecondViewModel>();
             services.AddSingleton<NavigationManager>(navigation);
             services.AddSingleton<IRouteableRequestedThemeService>(new RouteableRequestThemeService());
-            services.AddSingleton<IRouteableMenuViewModel>(menu);
+            services.AddSingleton<IRouteableMenuViewModel>(menuViewModel);
+            services.UseRouteablesServices();
             services.AddSingleton(Substitute.For<IJSRuntime>());
             services.AddSingleton<Func<IServiceProvider, Task>>(sp => p => { Initialized.Add(p); return Task.CompletedTask; });
             services.AddSingleton<RouteableUrlSync>();
@@ -74,6 +79,11 @@ public class MainLayoutPrerenderTests
         }
 
         public Task RenderAsync() => renderer.Dispatcher.InvokeAsync(() => renderer.RenderComponentAsync<Layout>());
+
+        /// <summary>The HTML of the layout of the package itself (<see cref="RouteableMainLayout"/>), with the parameters given.</summary>
+        public Task<string> RenderMainLayoutAsync(Dictionary<string, object?>? parameters = null)
+            => renderer.Dispatcher.InvokeAsync(async () =>
+                (await renderer.RenderComponentAsync<RouteableMainLayout>(ParameterView.FromDictionary(parameters ?? []))).ToHtmlString());
 
         public async ValueTask DisposeAsync()
         {
@@ -133,5 +143,45 @@ public class MainLayoutPrerenderTests
         await f.RenderAsync();
 
         Assert.IsType<FakeViewModel>(f.Router.CurrentViewModel);
+    }
+
+    [Fact]
+    public async Task The_layout_of_the_package_draws_the_bar_the_menu_and_the_hosts_when_the_menu_has_entries()
+    {
+        await using var f = new Fixture("/first");
+
+        var html = await f.RenderMainLayoutAsync();
+
+        Assert.Contains("rt-layout", html);
+        Assert.DoesNotContain("rt-no-menu", html);
+        Assert.Contains("rt-menu-button", html);
+        Assert.Contains("rt-drawer", html);
+        Assert.Contains("Second", html);
+        Assert.Contains("rt-content", html);
+    }
+
+    [Fact]
+    public async Task The_layout_of_the_package_has_no_drawer_and_no_button_to_open_it_without_a_menu()
+    {
+        await using var f = new Fixture("/first", menu: false);
+
+        var html = await f.RenderMainLayoutAsync();
+
+        Assert.Contains("rt-no-menu", html);
+        Assert.DoesNotContain("rt-drawer", html);
+        Assert.DoesNotContain("aria-label=\"Toggle menu\"", html);
+        Assert.Contains("rt-theme-button", html);
+    }
+
+    [Fact]
+    public async Task The_layout_of_the_package_shows_the_content_it_is_given_instead_of_its_own_frame()
+    {
+        await using var f = new Fixture("/first");
+        RenderFragment content = builder => builder.AddMarkupContent(0, "<p id=\"mine\">my layout</p>");
+
+        var html = await f.RenderMainLayoutAsync(new() { [nameof(RouteableMainLayout.ChildContent)] = content });
+
+        Assert.Contains("my layout", html);
+        Assert.DoesNotContain("rt-layout", html);
     }
 }
