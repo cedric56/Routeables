@@ -149,6 +149,60 @@ public class RouterLifecycleTests
     }
 
     [Fact]
+    public async Task A_view_model_that_cannot_be_entered_again_after_the_view_failed_to_leave_is_reported()
+    {
+        var calls = new List<string>();
+        var failure = new InvalidOperationException("the view failed to leave");
+        var recoveryFailure = new InvalidOperationException("the view model failed to enter again");
+        var leaving = Entry(new LifecycleProbe("leaving-vm", calls) { OnTo = (_, _) => throw recoveryFailure }, new LifecycleProbe("leaving-view", calls) { OnFrom = (_, _) => throw failure });
+        var entering = Entry(new LifecycleProbe("entering-vm", calls), new LifecycleProbe("entering-view", calls));
+        var sink = new Sink();
+        var provider = new Microsoft.Extensions.DependencyInjection.ServiceCollection()
+            .AddSingleton<IRouteableErrorSink>(sink).BuildServiceProvider();
+
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => new RouterLifecycle(provider).TransitionAsync(leaving, entering, ct: TestContext.Current.CancellationToken));
+
+        Assert.Same(failure, thrown);
+        Assert.Same(recoveryFailure, Assert.Single(sink.Reported).Exception);
+    }
+
+    [Fact]
+    public async Task A_view_model_that_fails_to_be_left_after_the_view_failed_to_enter_is_reported()
+    {
+        var calls = new List<string>();
+        var failure = new InvalidOperationException("the view failed to enter");
+        var undoFailure = new InvalidOperationException("the view model failed to leave");
+        var leaving = Entry(new LifecycleProbe("leaving-vm", calls), new LifecycleProbe("leaving-view", calls));
+        var entering = Entry(new LifecycleProbe("entering-vm", calls) { OnFrom = (_, _) => throw undoFailure }, new LifecycleProbe("entering-view", calls) { OnTo = (_, _) => throw failure });
+        var sink = new Sink();
+        var provider = new Microsoft.Extensions.DependencyInjection.ServiceCollection()
+            .AddSingleton<IRouteableErrorSink>(sink).BuildServiceProvider();
+
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => new RouterLifecycle(provider).TransitionAsync(leaving, entering, ct: TestContext.Current.CancellationToken));
+
+        Assert.Same(failure, thrown);
+        Assert.Same(undoFailure, Assert.Single(sink.Reported).Exception);
+        // The page that stays is still entered again.
+        Assert.Equal("leaving-view:to", calls[^1]);
+    }
+
+    [Fact]
+    public async Task A_revert_that_fails_is_reported_and_not_thrown()
+    {
+        var calls = new List<string>();
+        var failure = new InvalidOperationException("the entered page failed to leave");
+        var previous = Entry(new LifecycleProbe("previous-vm", calls), new LifecycleProbe("previous-view", calls));
+        var entered = Entry(new LifecycleProbe("entered-vm", calls) { OnFrom = (_, _) => throw failure }, new LifecycleProbe("entered-view", calls));
+        var sink = new Sink();
+        var provider = new Microsoft.Extensions.DependencyInjection.ServiceCollection()
+            .AddSingleton<IRouteableErrorSink>(sink).BuildServiceProvider();
+
+        await new RouterLifecycle(provider).RevertAsync(previous, entered);
+
+        Assert.Same(failure, Assert.Single(sink.Reported).Exception);
+    }
+
+    [Fact]
     public async Task Initialize_calls_a_shared_view_and_view_model_only_once()
     {
         var calls = new List<string>();
