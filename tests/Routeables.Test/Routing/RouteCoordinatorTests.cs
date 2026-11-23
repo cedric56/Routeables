@@ -510,6 +510,18 @@ public class RouteCoordinatorTests
         public Task<bool> CanLeaveAsync(CancellationToken ct = default) => Task.FromResult(!Dirty);
     }
 
+    public sealed class SegWaitView : IRouteableFor { public object? Context { get; set; } }
+    /// <summary>A page whose arrival cancels the token of the coordination and then waits for it, as a caller that gives up would.</summary>
+    public sealed class SegWaitVm : IRouteable
+    {
+        public static CancellationTokenSource? Source;
+        public async Task OnEnteringAsync(IRouteableArgs context, CancellationToken ct = default)
+        {
+            Source!.Cancel();
+            await Task.Delay(Timeout.Infinite, ct);
+        }
+    }
+
     public sealed class RefusesBlocked : IRouteGuard
     {
         public Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
@@ -529,6 +541,8 @@ public class RouteCoordinatorTests
         services.RegisterRoute<SegBlockedView, SegBlockedVm>();
         services.RegisterSegment<SegBlockedVm>("Blocked");
         services.RegisterSegment<SegVm>("Seg");
+        services.RegisterRoute<SegWaitView, SegWaitVm>();
+        services.RegisterSegment<SegWaitVm>("Wait");
         services.AddSingleton<IRouteGuard, RefusesBlocked>();
         return services.BuildServiceProvider();
     }
@@ -579,5 +593,51 @@ public class RouteCoordinatorTests
 
         Assert.True(result.Success, result.Exception?.ToString());
         Assert.Equal(1, router.History.Count);
+    }
+
+    [Fact]
+    public async Task An_absolute_coordination_cancelled_after_the_erasing_brings_the_page_back_and_raises_Coordinated()
+    {
+        await using var provider = BuildAbsolutePages();
+        var router = provider.GetRequiredService<IRouter>();
+        await router.GoToAsync("/home", cancellationToken: Ct);
+        var coordinator = provider.GetRequiredService<IRouteCoordinator>();
+        RouteCoordinatedEventArgs? ended = null;
+        coordinator.Coordinated += (_, e) => ended = e;
+        using var source = CancellationTokenSource.CreateLinkedTokenSource(Ct);
+        SegWaitVm.Source = source;
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => coordinator.CoordinateAsync(RouteCoordination.Parse("/Wait"), source.Token));
+
+        Assert.NotNull(ended);
+        Assert.True(ended!.Result.Cancelled);
+        Assert.Equal(1, router.History.Count);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);   // the region is not left empty
+    }
+
+    [Fact]
+    public async Task An_absolute_coordination_on_a_router_with_no_page_has_nothing_to_ask()
+    {
+        await using var provider = BuildAbsolutePages();
+        var router = provider.GetRequiredService<IRouter>();
+
+        var result = await provider.GetRequiredService<IRouteCoordinator>().CoordinateAsync(RouteCoordination.Parse("/Seg"), Ct);
+
+        Assert.True(result.Success, result.Exception?.ToString());
+        Assert.Equal(1, router.History.Count);
+    }
+
+    [Fact]
+    public async Task A_region_that_is_not_registered_is_rejected_before_any_router_moves()
+    {
+        await using var provider = BuildAbsolutePages();
+        var router = provider.GetRequiredService<IRouter>();
+
+        var result = await provider.GetRequiredService<IRouteCoordinator>().CoordinateAsync(RouteCoordination.Parse("nowhere:Seg"), Ct);
+
+        Assert.False(result.Success);
+        Assert.IsType<InvalidOperationException>(result.Exception);
+        Assert.Equal(0, router.History.Count);
     }
 }
