@@ -166,106 +166,12 @@ namespace Routeables.Generated
                 .SelectMany(static (x, _) => x);
 
             // 2) The whole compilation and the referenced assemblies.
-            var fromCompilation = context.CompilationProvider.Select(static (compilation, ct) =>
-            {
-                var routeableAttr = compilation.GetTypeByMetadataName(RouteableAttrMetadataName);
-                var routeableViewAttr = compilation.GetTypeByMetadataName(RouteableViewAttrMetadataName);
+            var fromCompilation = context.CompilationProvider
+                .Select(static (compilation, ct) => Compile(compilation, ct))
+                .WithTrackingName("RouteablesCompiled");
 
-                var views = new List<ViewReg>();
-                var routes = new List<Route>();
-                var candidates = new List<ViewCandidate>();
-                var conventionViews = new List<INamedTypeSymbol>();
-
-                if (routeableAttr is null && routeableViewAttr is null)
-                    return CompiledModel.Empty;
-
-                // A type carries [Routeable] or [RouteableView] only in an assembly that references the one holding the attributes. The other
-                // referenced assemblies (control libraries, mapping, logging...) are only searched, below, for views that view models name, cheaply:
-                // by type name, without creating a symbol for each type.
-                var attributeAssemblies = new HashSet<string>(StringComparer.Ordinal);
-                if (routeableAttr is not null) attributeAssemblies.Add(routeableAttr.ContainingAssembly.Name);
-                if (routeableViewAttr is not null) attributeAssemblies.Add(routeableViewAttr.ContainingAssembly.Name);
-                var plainReferences = new List<IAssemblySymbol>();
-
-                foreach (var type in GetAllTypes(compilation, attributeAssemblies, plainReferences))
-                {
-                    ct.ThrowIfCancellationRequested();
-
-                    // A view the naming convention may pair with a [Routeable] view model: a concrete class called ...View. It need not implement
-                    // anything (a UserControl, a Page, a component): its name pairs it. It is described below only for views a view model names.
-                    if (routeableAttr is not null && IsConventionView(type) && compilation.IsSymbolAccessibleWithin(type, compilation.Assembly))
-                        conventionViews.Add(type);
-
-                    foreach (var attr in type.GetAttributes())
-                    {
-                        if (routeableViewAttr is not null &&
-                            SymbolEqualityComparer.Default.Equals(attr.AttributeClass, routeableViewAttr))
-                        {
-                            var reg = FromViewAttribute(compilation, type, attr);
-                            if (reg is not null)
-                                views.Add(reg);
-                        }
-                        else if (routeableAttr is not null &&
-                                 SymbolEqualityComparer.Default.Equals(attr.AttributeClass, routeableAttr))
-                        {
-                            var route = FromRouteableAttribute(compilation, type, attr);
-                            if (route is not null)
-                                routes.Add(route);
-                        }
-                    }
-                }
-
-                var wanted = new HashSet<string>(
-                    routes.Where(r => r.Name.Length > ViewModelSuffix.Length && r.Name.EndsWith(ViewModelSuffix, StringComparison.Ordinal))
-                          .Select(r => r.Name.Substring(0, r.Name.Length - ViewModelSuffix.Length) + ViewSuffix),
-                    StringComparer.Ordinal);
-                foreach (var assembly in plainReferences)
-                {
-                    ct.ThrowIfCancellationRequested();
-                    if (routeableAttr is null || !assembly.TypeNames.Any(wanted.Contains))
-                        continue;
-                    foreach (var type in GetTypesInNamespace(assembly.GlobalNamespace))
-                        if (wanted.Contains(type.Name) && IsConventionView(type) && compilation.IsSymbolAccessibleWithin(type, compilation.Assembly))
-                            conventionViews.Add(type);
-                }
-
-                foreach (var type in conventionViews)
-                {
-                    ct.ThrowIfCancellationRequested();
-                    candidates.Add(new ViewCandidate(
-                        Name: type.Name,
-                        FullName: type.ToDisplayString(FqName),
-                        IsLocal: SymbolEqualityComparer.Default.Equals(type.ContainingAssembly, compilation.Assembly),
-                        Build: wanted.Contains(type.Name) ? RouteBuilds.Analyze(compilation, type) : null));
-                }
-
-                // Values that compare equal when their content is equal, so the pipeline sees an unchanged model after an edit that changes none of the
-                // views and routes, and does not generate the file again.
-                return new CompiledModel(
-                    new EquatableArray<ViewReg>(views.ToArray()),
-                    new EquatableArray<Route>(routes.ToArray()),
-                    new EquatableArray<ViewCandidate>(candidates.ToArray()));
-            }).WithTrackingName("RouteablesCompiled");
-
-            // An executable hands its routes to the host through a module initializer, so the application need not call AddGeneratedRoutes().
-            // RouteablesAutoRegister=false switches this off; =true switches it on for a project the compiler does not see as an executable (a
-            // mobile app, say). A library has no such initializer: its module would be initialized only when one of its types is first used,
-            // which is too late and unpredictable.
-            var autoInputs = context.CompilationProvider
-                .Select(static (compilation, _) => compilation.Options.OutputKind)
-                .Combine(context.AnalyzerConfigOptionsProvider.Select(static (options, _) =>
-                    options.GlobalOptions.TryGetValue("build_property.RouteablesAutoRegister", out var value) ? value?.Trim() : null));
-            var autoRegister = autoInputs
-                .Select(static (pair, _) =>
-                    string.Equals(pair.Right, "true", StringComparison.OrdinalIgnoreCase)
-                    || (IsExecutable(pair.Left) && !string.Equals(pair.Right, "false", StringComparison.OrdinalIgnoreCase)));
-
-            // What the generator saw, in a file of its own: when an application finds no route, this says why the registration was not written.
-            context.RegisterSourceOutput(autoInputs, static (spc, pair) =>
-                spc.AddSource("RouteablesAutoRegister.g.cs", SourceText.From(
-                    $"// OutputKind: {pair.Left}; RouteablesAutoRegister: {pair.Right ?? "(not set)"}; registration written: " +
-                    $"{(string.Equals(pair.Right, "true", StringComparison.OrdinalIgnoreCase) || (IsExecutable(pair.Left) && !string.Equals(pair.Right, "false", StringComparison.OrdinalIgnoreCase)))}\n",
-                    Encoding.UTF8)));
+            // 3) Whether the registration is written by a module initializer.
+            var autoRegister = RegisterAutoRegisterReport(context);
 
             var combined = localViews.Collect()
                 .Combine(localRoutes.Collect())
@@ -273,36 +179,174 @@ namespace Routeables.Generated
                 .Combine(autoRegister);
 
             context.RegisterSourceOutput(combined, static (spc, data) =>
-            {
-                var localV = data.Left.Left.Left;
-                var localR = data.Left.Left.Right;
-                var compiled = data.Left.Right;
-                var autoRegisterRoutes = data.Right;
-
-                var viewsByKey = new Dictionary<string, ViewReg>(StringComparer.Ordinal);
-                var routesByKey = new Dictionary<string, Route>(StringComparer.Ordinal);
-
-                // The same view and view model pair may appear with different routes and regions.
-                void AddView(ViewReg v) =>
-                    viewsByKey[v.ViewFullName + "|" + v.ViewModelFullName + "|" + v.Route + "|" + v.Region] = v;
-
-                // Several [Routeable] attributes per type are allowed.
-                void AddRoute(Route r) =>
-                    routesByKey[r.TypeName + "|" + r.Path + "|" + r.Region] = r;
-
-                foreach (var v in compiled.Views) AddView(v);
-                foreach (var r in compiled.Routes) AddRoute(r);
-                foreach (var v in localV) AddView(v);
-                foreach (var r in localR) AddRoute(r);
-
-                foreach (var bad in routesByKey.Values.Where(r => r.Problem is not null).OrderBy(r => r.TypeName, StringComparer.Ordinal))
-                    spc.ReportDiagnostic(Diagnostic.Create(UnusableViewModel, Location.None,
-                        "[Routeable] on " + bad.TypeName + " is ignored: " + bad.Problem));
-
-                Generate(spc, viewsByKey.Values, routesByKey.Values.Where(r => r.Problem is null).ToList(), compiled.Candidates.ToList(), autoRegisterRoutes);
-            });
+                Merge(spc, data.Left.Left.Left, data.Left.Left.Right, data.Left.Right, data.Right));
         }
 
+        // What the types of the compilation and of the assemblies it references hold: the views, the routes and the views that the naming
+        // convention may pair with a view model.
+        private sealed class Scanned
+        {
+            public List<ViewReg> Views { get; } = [];
+            public List<Route> Routes { get; } = [];
+            public List<INamedTypeSymbol> ConventionViews { get; } = [];
+            public List<IAssemblySymbol> PlainReferences { get; } = [];
+        }
+
+        private static CompiledModel Compile(Compilation compilation, System.Threading.CancellationToken ct)
+        {
+            var routeableAttr = compilation.GetTypeByMetadataName(RouteableAttrMetadataName);
+            var routeableViewAttr = compilation.GetTypeByMetadataName(RouteableViewAttrMetadataName);
+            if (routeableAttr is null && routeableViewAttr is null)
+                return CompiledModel.Empty;
+
+            var scanned = ScanTypes(compilation, routeableAttr, routeableViewAttr, ct);
+            var wanted = ViewsWantedByViewModels(scanned.Routes);
+            AddConventionViewsOfReferences(compilation, scanned, routeableAttr, wanted, ct);
+            var candidates = DescribeCandidates(compilation, scanned.ConventionViews, wanted, ct);
+
+            // Values that compare equal when their content is equal, so the pipeline sees an unchanged model after an edit that changes none of the
+            // views and routes, and does not generate the file again.
+            return new CompiledModel(
+                new EquatableArray<ViewReg>(scanned.Views.ToArray()),
+                new EquatableArray<Route>(scanned.Routes.ToArray()),
+                new EquatableArray<ViewCandidate>(candidates.ToArray()));
+        }
+
+        // The views and the routes that the attributes of the types declare.
+        private static Scanned ScanTypes(
+            Compilation compilation, INamedTypeSymbol? routeableAttr, INamedTypeSymbol? routeableViewAttr, System.Threading.CancellationToken ct)
+        {
+            var scanned = new Scanned();
+
+            // A type carries [Routeable] or [RouteableView] only in an assembly that references the one holding the attributes. The other
+            // referenced assemblies (control libraries, mapping, logging...) are only searched, below, for views that view models name, cheaply:
+            // by type name, without creating a symbol for each type.
+            var attributeAssemblies = new HashSet<string>(StringComparer.Ordinal);
+            if (routeableAttr is not null) attributeAssemblies.Add(routeableAttr.ContainingAssembly.Name);
+            if (routeableViewAttr is not null) attributeAssemblies.Add(routeableViewAttr.ContainingAssembly.Name);
+
+            foreach (var type in GetAllTypes(compilation, attributeAssemblies, scanned.PlainReferences))
+            {
+                ct.ThrowIfCancellationRequested();
+
+                // A view the naming convention may pair with a [Routeable] view model: a concrete class called ...View. It need not implement
+                // anything (a UserControl, a Page, a component): its name pairs it. It is described below only for views a view model names.
+                if (routeableAttr is not null && IsConventionView(type) && compilation.IsSymbolAccessibleWithin(type, compilation.Assembly))
+                    scanned.ConventionViews.Add(type);
+
+                foreach (var attr in type.GetAttributes())
+                {
+                    if (routeableViewAttr is not null &&
+                        SymbolEqualityComparer.Default.Equals(attr.AttributeClass, routeableViewAttr))
+                    {
+                        var reg = FromViewAttribute(compilation, type, attr);
+                        if (reg is not null)
+                            scanned.Views.Add(reg);
+                    }
+                    else if (routeableAttr is not null &&
+                             SymbolEqualityComparer.Default.Equals(attr.AttributeClass, routeableAttr))
+                    {
+                        var route = FromRouteableAttribute(compilation, type, attr);
+                        if (route is not null)
+                            scanned.Routes.Add(route);
+                    }
+                }
+            }
+
+            return scanned;
+        }
+
+        // The names of the views that the view models are paired with: CatsViewModel is shown by CatsView.
+        private static HashSet<string> ViewsWantedByViewModels(List<Route> routes) =>
+            new(
+                routes.Where(r => r.Name.Length > ViewModelSuffix.Length && r.Name.EndsWith(ViewModelSuffix, StringComparison.Ordinal))
+                      .Select(r => r.Name.Substring(0, r.Name.Length - ViewModelSuffix.Length) + ViewSuffix),
+                StringComparer.Ordinal);
+
+        // A view the view models name may live in a referenced assembly that has no attribute: only the assemblies that hold one of those names are searched.
+        private static void AddConventionViewsOfReferences(
+            Compilation compilation, Scanned scanned, INamedTypeSymbol? routeableAttr, HashSet<string> wanted, System.Threading.CancellationToken ct)
+        {
+            foreach (var assembly in scanned.PlainReferences)
+            {
+                ct.ThrowIfCancellationRequested();
+                if (routeableAttr is null || !assembly.TypeNames.Any(wanted.Contains))
+                    continue;
+                foreach (var type in GetTypesInNamespace(assembly.GlobalNamespace))
+                    if (wanted.Contains(type.Name) && IsConventionView(type) && compilation.IsSymbolAccessibleWithin(type, compilation.Assembly))
+                        scanned.ConventionViews.Add(type);
+            }
+        }
+
+        private static List<ViewCandidate> DescribeCandidates(
+            Compilation compilation, List<INamedTypeSymbol> conventionViews, HashSet<string> wanted, System.Threading.CancellationToken ct)
+        {
+            var candidates = new List<ViewCandidate>();
+            foreach (var type in conventionViews)
+            {
+                ct.ThrowIfCancellationRequested();
+                candidates.Add(new ViewCandidate(
+                    Name: type.Name,
+                    FullName: type.ToDisplayString(FqName),
+                    IsLocal: SymbolEqualityComparer.Default.Equals(type.ContainingAssembly, compilation.Assembly),
+                    Build: wanted.Contains(type.Name) ? RouteBuilds.Analyze(compilation, type) : null));
+            }
+
+            return candidates;
+        }
+
+        // An executable hands its routes to the host through a module initializer, so the application need not call AddGeneratedRoutes().
+        // RouteablesAutoRegister=false switches this off; =true switches it on for a project the compiler does not see as an executable (a
+        // mobile app, say). A library has no such initializer: its module would be initialized only when one of its types is first used,
+        // which is too late and unpredictable.
+        private static bool ShouldAutoRegister(OutputKind kind, string? setting) =>
+            string.Equals(setting, "true", StringComparison.OrdinalIgnoreCase)
+            || (IsExecutable(kind) && !string.Equals(setting, "false", StringComparison.OrdinalIgnoreCase));
+
+        // Whether the registration is written by a module initializer, and a file that says so: when an application finds no route, it says why
+        // the registration was not written.
+        private static IncrementalValueProvider<bool> RegisterAutoRegisterReport(IncrementalGeneratorInitializationContext context)
+        {
+            var autoInputs = context.CompilationProvider
+                .Select(static (compilation, _) => compilation.Options.OutputKind)
+                .Combine(context.AnalyzerConfigOptionsProvider.Select(static (options, _) =>
+                    options.GlobalOptions.TryGetValue("build_property.RouteablesAutoRegister", out var value) ? value?.Trim() : null));
+
+            context.RegisterSourceOutput(autoInputs, static (spc, pair) =>
+                spc.AddSource("RouteablesAutoRegister.g.cs", SourceText.From(
+                    $"// OutputKind: {pair.Left}; RouteablesAutoRegister: {pair.Right ?? "(not set)"}; registration written: {ShouldAutoRegister(pair.Left, pair.Right)}\n",
+                    Encoding.UTF8)));
+
+            return autoInputs.Select(static (pair, _) => ShouldAutoRegister(pair.Left, pair.Right));
+        }
+
+        // Puts what the attributes of the current compilation and what the whole compilation found together, reports the routes that cannot be used,
+        // and generates the registration.
+        private static void Merge(
+            SourceProductionContext spc, IEnumerable<ViewReg> localV, IEnumerable<Route> localR, CompiledModel compiled, bool autoRegisterRoutes)
+        {
+            var viewsByKey = new Dictionary<string, ViewReg>(StringComparer.Ordinal);
+            var routesByKey = new Dictionary<string, Route>(StringComparer.Ordinal);
+
+            // The same view and view model pair may appear with different routes and regions.
+            void AddView(ViewReg v) =>
+                viewsByKey[v.ViewFullName + "|" + v.ViewModelFullName + "|" + v.Route + "|" + v.Region] = v;
+
+            // Several [Routeable] attributes per type are allowed.
+            void AddRoute(Route r) =>
+                routesByKey[r.TypeName + "|" + r.Path + "|" + r.Region] = r;
+
+            foreach (var v in compiled.Views) AddView(v);
+            foreach (var r in compiled.Routes) AddRoute(r);
+            foreach (var v in localV) AddView(v);
+            foreach (var r in localR) AddRoute(r);
+
+            foreach (var bad in routesByKey.Values.Where(r => r.Problem is not null).OrderBy(r => r.TypeName, StringComparer.Ordinal))
+                spc.ReportDiagnostic(Diagnostic.Create(UnusableViewModel, Location.None,
+                    "[Routeable] on " + bad.TypeName + " is ignored: " + bad.Problem));
+
+            Generate(spc, viewsByKey.Values, routesByKey.Values.Where(r => r.Problem is null).ToList(), compiled.Candidates.ToList(), autoRegisterRoutes);
+        }
 
         private static bool IsConventionView(INamedTypeSymbol type) =>
             type.TypeKind == TypeKind.Class
