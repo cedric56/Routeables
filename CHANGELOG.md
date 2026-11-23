@@ -21,6 +21,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A nested type registered with `RegisterSerializer` is accepted as `Outer.Inner`**: it was known by its runtime name (`Ns.Outer+Inner`) and its simple name only, so `{p:Ns.Outer.Inner}` was refused as an unknown constraint. Both spellings work now, and are taken out together.
 - **Blazor: the warning before the tab closes survives a paused circuit.** The script installed its `beforeunload` listener when it was loaded, and `dispose()` removed it. A circuit paused with `Blazor.pauseCircuit()` and resumed in the same page imports the script again without running it again, so the listener was gone and the tab closed without asking. The listener is now installed when a warning is asked for, once, and removed by `dispose()`.
 - **MAUI: `UseShellRoutes` with `UseNotFoundRoute` took the routes of Shell itself.** An address the router does not know is a success that shows the not-found page, so Shell's navigation was cancelled for `//MainPage` or a tab. An address that matches no route of the router is now left to Shell, with or without a not-found page.
 - **`/x/-0` on a `{n:double}` placeholder gave the page `-0.0`** while the address was written back as `/x/0` and read again as `0.0`. The page now receives the positive zero in both cases.

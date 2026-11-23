@@ -336,6 +336,24 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void A_nested_type_is_written_with_a_dot_or_a_plus_and_both_are_taken_out_together()
+    {
+        var options = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() };
+        RouteParser.RegisterSerializer<ScratchPayload>(options.GetTypeInfo(typeof(ScratchPayload)));
+        var address = "p/" + Uri.EscapeDataString("{\"Name\":\"a\"}");
+        var dotted = "p/{x:Routeables.Test.Abstraction.RouteParserTests.ScratchPayload}";
+        var plus = "p/{x:Routeables.Test.Abstraction.RouteParserTests+ScratchPayload}";
+
+        Assert.True(RouteParser.TryMatch(dotted, address));
+        Assert.True(RouteParser.TryMatch(plus, address));
+
+        RouteParser.UnregisterSerializer<ScratchPayload>();
+
+        Assert.False(RouteParser.TryMatch(dotted, address));
+        Assert.False(RouteParser.TryMatch(plus, address));
+    }
+
+    [Fact]
     public void RegisterSerializer_refuses_information_for_another_type()
     {
         var other = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() }
