@@ -120,6 +120,10 @@ internal partial class Router
         if (type is null)
             return null;
 
+        // The navigations asked for before this one have ended (a sign-in they made counts): the guards are asked about the state this navigation
+        // finds when its turn comes, as an IRouteGuard is, and not about the state of the moment it was requested.
+        await gate.WaitForTurnAsync(cancellationToken);
+
         foreach (var guard in guards)
         {
             var decision = await guard.CanBuildAsync(type, route, cancellationToken)

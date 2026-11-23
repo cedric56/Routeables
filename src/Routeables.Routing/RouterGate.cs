@@ -153,6 +153,22 @@ internal sealed class RouterGate(RouterConcurrency concurrency = RouterConcurren
     }
 
     /// <summary>
+    /// Waits until the navigations that came before have ended, and takes nothing: the gate is free again when this returns. For a rule that
+    /// must be asked before the page is built, and still about the state the earlier navigations left (a visitor they signed in). It replaces
+    /// nobody, even under <see cref="RouterConcurrency.CancelCurrent"/>: it is not yet a route change.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown from inside a navigation, which would wait for itself.</exception>
+    public async Task WaitForTurnAsync(CancellationToken cancellationToken = default)
+    {
+        if (_inProgress.Value is Pass carried && ReferenceEquals(carried, Volatile.Read(ref _current))
+            && ReferenceEquals(carried.Detached, RouteableHelper.DetachedFlow.Value))
+            throw new InvalidOperationException("Reentrant route changes are not supported.");
+
+        await _gate.WaitAsync(cancellationToken);
+        _gate.Release();
+    }
+
+    /// <summary>
     /// Exits the route change gate, clearing the in-progress token and releasing the underlying semaphore.
     /// </summary>
     public void Exit()

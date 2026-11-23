@@ -12,7 +12,7 @@ namespace Routeables.Abstraction.Guards;
 /// <para>Register it with <c>services.AddSingleton&lt;IRouteTypeGuard, MyGuard&gt;()</c>. Only the pages that a route change builds are asked: one that is
 /// shown again from the history, or from the entry of a menu that remembers it, was built (and asked) before. The view is not built yet, so a rule that
 /// reads the view is for <see cref="IRouteGuard"/>. A rule that depends on who the visitor is now (signed in or not) must also be an <see cref="IRouteGuard"/>: it is asked at every route change, a page that is shown again included.</para>
-/// <para>It runs before the route change starts: it is not announced by <see cref="IRouter.Routing"/>, and a decision to cancel is a route change that
+/// <para>It is asked when the route change's turn comes: after the route changes requested before it have ended (a sign-in they made counts), and before the page is built. It runs before the route change starts: it is not announced by <see cref="IRouter.Routing"/>, and a decision to cancel is a route change that
 /// did not start. <see cref="RouteGuardDecision.Redirect"/> sends the user elsewhere.</para>
 /// </remarks>
 public interface IRouteTypeGuard

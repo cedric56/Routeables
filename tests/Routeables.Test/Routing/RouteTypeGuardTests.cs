@@ -1,3 +1,4 @@
+using Routeables.Abstraction.Lifecycle;
 using Routeables.Abstraction.Guards;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
@@ -9,6 +10,20 @@ namespace Routeables.Tests.Routing;
 public class RouteTypeGuardTests
 {
     public sealed class TgSecretVm { public TgSecretVm() => Built++; public static int Built; }
+
+    public sealed class TgLoginVm : IRouteable
+    {
+        public static bool SignedIn;
+        public static TaskCompletionSource Entering = new();
+        public static TaskCompletionSource Release = new();
+
+        public async Task OnEnteringAsync(IRouteableArgs context, CancellationToken ct = default)
+        {
+            Entering.TrySetResult();
+            await Release.Task;
+            SignedIn = true;
+        }
+    }
 
     private sealed class TypeGuard(Func<Type, RouteGuardDecision> decide, List<string> asked, int order = 0) : IRouteTypeGuard
     {
@@ -29,6 +44,8 @@ public class RouteTypeGuardTests
         services.RegisterRoute<SecondViewFor, TgSecretVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/tg-secret");
         services.AddTransient<FakeViewModel>();
         services.AddTransient<TgSecretVm>();
+        services.RegisterRoute<FakeViewFor, TgLoginVm>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/tg-login");
+        services.AddTransient<TgLoginVm>();
         foreach (var guard in guards)
             services.AddSingleton(guard);
         return services.BuildServiceProvider();
@@ -50,6 +67,27 @@ public class RouteTypeGuardTests
         Assert.Contains("TgSecretVm /tg-secret", asked);
         Assert.IsType<FakeViewModel>(router.CurrentViewModel);
         Assert.NotNull(result);
+    }
+
+    [Fact]
+    public async Task A_type_guard_is_asked_after_the_route_changes_requested_before_it_have_ended()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        TgLoginVm.SignedIn = false;
+        TgLoginVm.Entering = new();
+        TgLoginVm.Release = new();
+        using var provider = Build(new TypeGuard(t => t == typeof(TgSecretVm) && !TgLoginVm.SignedIn ? RouteGuardDecision.Cancel : RouteGuardDecision.Allow, []));
+        var router = provider.GetRequiredService<IRouter>();
+
+        var login = router.GoToAsync("/tg-login", cancellationToken: ct);
+        await TgLoginVm.Entering.Task.WaitAsync(TimeSpan.FromSeconds(5), ct);
+        var secret = router.GoToAsync("/tg-secret", cancellationToken: ct); // not awaited: the sign-in is not over
+        await Task.Delay(100, ct);
+        TgLoginVm.Release.SetResult();
+
+        Assert.True((await login).Success);
+        Assert.True((await secret).Success);
+        Assert.IsType<TgSecretVm>(router.CurrentViewModel);
     }
 
     [Fact]
