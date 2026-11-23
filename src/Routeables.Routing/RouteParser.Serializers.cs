@@ -19,7 +19,7 @@ public static partial class RouteParser
     /// Teaches the parser to read <c>{name:typeName}</c> parameters as <paramref name="info"/>'s type (trim-safe JSON, no reflection).
     /// The registry is global to the process. A type is written in a template by its simple name (<c>{c:Customer}</c>) or its full name
     /// (<c>{c:Sales.Customer}</c>); a nested type by its simple name, or as <c>Outer.Inner</c> or <c>Outer+Inner</c> after its namespace. Registering the same type again replaces its information; when two types share a simple name, the simple
-    /// name no longer stands for either of them and only the full names are accepted.
+    /// name no longer stands for either of them and only the full names are accepted. Names ignore the case: two types whose full names differ only by it are both refused.
     /// </summary>
     /// <exception cref="ArgumentException"><paramref name="info"/> describes another type than <typeparamref name="T"/>.</exception>
     public static void RegisterSerializer<T>(JsonTypeInfo info)
@@ -33,6 +33,18 @@ public static partial class RouteParser
             var type = typeof(T);
             if (type.FullName is { } full)
             {
+                // The names ignore the case: two types whose full names differ only by it cannot be told apart, so the name stands for neither
+                // (a template that writes it is refused) instead of silently giving the type that was registered last.
+                if (AmbiguousNames.ContainsKey(full))
+                    return;
+                if (SerializationTypes.TryGetValue(full, out var sameName) && sameName != type)
+                {
+                    SerializationInfos.TryRemove(full, out _);
+                    SerializationTypes.TryRemove(full, out _);
+                    AmbiguousNames[full] = true;
+                    return;
+                }
+
                 SerializationInfos[full] = info;
                 SerializationTypes[full] = type;
 

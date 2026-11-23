@@ -381,6 +381,18 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void Two_types_whose_full_names_differ_only_by_the_case_are_both_refused()
+    {
+        var options = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() };
+        RouteParser.RegisterSerializer<global::HomonymCase.Item>(options.GetTypeInfo(typeof(global::HomonymCase.Item)));
+        RouteParser.RegisterSerializer<global::HomonymCase.iTem>(options.GetTypeInfo(typeof(global::HomonymCase.iTem)));
+
+        var args = RouteableArgs.Create();
+        Assert.False(RouteParser.TryMatch("c/{v:HomonymCase.iTem}", "c/" + Uri.EscapeDataString("{\"Name\":\"a\"}"), args));
+        Assert.Contains("several registered types", RouteParser.Mismatch("c/{v:HomonymCase.iTem}", "c/%7B%7D"));
+    }
+
+    [Fact]
     public void A_type_with_no_namespace_keeps_its_name_when_a_homonym_of_a_namespace_is_registered()
     {
         var options = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() };
