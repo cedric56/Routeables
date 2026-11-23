@@ -108,9 +108,12 @@ public static partial class RouteParser
         if (where == "path" && HasDotSegment(text))
             throw new ArgumentException($"The value \"{text}\" cannot be a segment of \"{template}\" for {{{name}}}: a browser resolves \".\" and \"..\" to another address.", "values");
         // What is written must be readable: the router would reject an address that its own template does not match.
-        if (!TryConvert(text, type, out _))
+        if (!TryConvert(text, type, out var converted))
             throw new ArgumentException(
                 $"The value \"{text}\" is not a valid {(type.Length == 0 ? "value" : type)} for {{{name}}} in \"{template}\".", "values");
+        // A text given for a typed placeholder ("+9", "007", "True") is written as the value it stands for ("9", "7", "true"): one value, one address.
+        if (converted is not null && HasCanonicalText(type))
+            text = Format(converted, type);
         return Uri.EscapeDataString(text);
     }
 

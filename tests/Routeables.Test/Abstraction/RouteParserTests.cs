@@ -564,6 +564,17 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void Build_writes_a_text_given_for_a_typed_placeholder_as_the_value_it_stands_for()
+    {
+        Assert.Equal("/x?b=9", RouteParser.Build("/x?{b:long}", new Dictionary<string, object?> { ["b"] = "+9" }));
+        Assert.Equal("/n/7", RouteParser.Build("/n/{n:int}", new Dictionary<string, object?> { ["n"] = "007" }));
+        Assert.Equal("/f/true", RouteParser.Build("/f/{f:bool}", new Dictionary<string, object?> { ["f"] = "True" }));
+        Assert.Equal("/s/007", RouteParser.Build("/s/{s}", new Dictionary<string, object?> { ["s"] = "007" })); // not typed: as given
+        Assert.Equal(RouteParser.Build("/n/{n:int}", new Dictionary<string, object?> { ["n"] = 7 }),
+                     RouteParser.Build("/n/{n:int}", new Dictionary<string, object?> { ["n"] = "+007" }));
+    }
+
+    [Fact]
     public void Canonical_leaves_the_values_that_are_not_typed_and_the_pairs_it_does_not_know_as_they_are()
     {
         // A pair with no value and a pair the template does not name stay as they are, next to a typed value that is written again.
