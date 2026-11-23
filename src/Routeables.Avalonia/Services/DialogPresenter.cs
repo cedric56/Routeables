@@ -34,12 +34,43 @@ internal static class DialogPresenter
             : ShowInOverlayAsync(owner, title, card, handle);
     }
 
+    // An icon is decoration: one that cannot be read (a relative path, a missing file or asset, a file that is not an image) leaves the dialog with the
+    // icon of its owner, and does not keep the dialog from showing. An avares:// or resm: address is an asset of the application; anything else is a file.
+    private static Stream? OpenIcon(string? icon)
+    {
+        if (string.IsNullOrEmpty(icon))
+            return null;
+
+        try
+        {
+            if (Uri.TryCreate(icon, UriKind.Absolute, out var uri) && uri.Scheme is "avares" or "resm")
+                return AssetLoader.Open(uri);
+            return File.OpenRead(Path.GetFullPath(icon));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException or UriFormatException)
+        {
+            return null;
+        }
+    }
+
+    private static Bitmap? ReadIcon(Stream stream)
+    {
+        try
+        {
+            return new Bitmap(stream);
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidDataException or NotSupportedException)
+        {
+            return null;
+        }
+    }
+
     private static async Task ShowInWindowAsync(Window owner, string? icon, string? title, Control card, RouteableDialogHandle handle)
     {
         // The window icon is built from the bitmap. The bitmap and its stream are released when the dialog closes, or each dialog would keep a
         // native image for the life of the application.
-        using var stream = string.IsNullOrEmpty(icon) ? null : AssetLoader.Open(new Uri(icon));
-        using var bitmap = stream is null ? null : new Bitmap(stream);
+        using var stream = OpenIcon(icon);
+        using var bitmap = stream is null ? null : ReadIcon(stream);
 
         // A window that already has a modal child cannot own another modal: a dialog opened while others are open is owned by the topmost one,
         // so it appears over it and the ones below stay blocked.

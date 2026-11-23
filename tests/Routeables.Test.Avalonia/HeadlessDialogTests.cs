@@ -120,6 +120,19 @@ public sealed class HeadlessDialogTests(HeadlessApp app)
         Assert.Equal("No", await ResultAsync(shown));
     });
 
+    /// <summary>An icon that cannot be read (a relative path, a file that does not exist, a file that is not an image) does not keep the dialog from showing.</summary>
+    [Theory]
+    [InlineData("icon.png")]
+    [InlineData("/no/such/folder/icon.png")]
+    [InlineData("avares://Routeables.Test.Avalonia/no-such-asset.png")]
+    public Task An_icon_that_cannot_be_read_does_not_keep_the_dialog_from_showing(string icon) => RunAsync(async (owner, _) =>
+    {
+        var shown = new DefaultMessageBoxService(icon).ShowMessageBoxAsync("t", "m", "YesNo", owner);
+        var dialog = await DialogOfAsync(owner);
+        Click(ButtonOf(dialog, "Yes"));
+        Assert.Equal("Yes", await ResultAsync(shown));
+    });
+
     /// <summary>The first button of a message box is marked as the default button.</summary>
     [Fact]
     public Task The_first_button_is_the_default_one() => RunAsync(async (owner, service) =>
