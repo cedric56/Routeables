@@ -264,7 +264,7 @@ public class PersistTests
         }
         finally
         {
-            RouteablePersistence.RegisterConverter<Guid>(g => g.ToString("D"), (string text, out Guid g) => Guid.TryParse(text, out g));
+            PersistCodec.Converters.TryRemove(typeof(Guid), out _);
         }
     }
 
