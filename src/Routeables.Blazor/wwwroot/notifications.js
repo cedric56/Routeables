@@ -21,7 +21,11 @@ export async function registrations(dotNetRef) {
     navigator.serviceWorker.addEventListener('message', function (event) {
         const data = event.data;
         // The worker tells every window, and another tab's notification is not for this page. A worker from before the owner was added does not say who owns it: treat it as before.
-        if (!data || (data.owner != null && data.owner !== owner) || !callback) return;
+        if (!data || (data.owner != null && data.owner !== owner)) return;
+        // A click or a reply on this page's notification: tell the worker which window to bring to the front.
+        if (data.owner === owner && data.type !== 'HandleNotificationClose')
+            (navigator.serviceWorker.controller ?? registration?.active)?.postMessage({ type: 'RouteablesClaim', owner });
+        if (!callback) return;
         if (data.type === 'HandleNotificationClose') {
             callback.invokeMethodAsync('OnClose', JSON.stringify(data));
         }

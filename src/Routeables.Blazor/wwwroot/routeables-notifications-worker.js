@@ -10,6 +10,32 @@ async function tell(message) {
     return clients;
 }
 
+// The windows share this worker and it keeps nothing between two wake-ups, so it cannot know which window made a notification. It asks: the
+// message of a click reaches every window, and the one that owns the notification answers with RouteablesClaim; that window is the one to focus.
+const claims = new Map();
+self.addEventListener('message', event => {
+    const data = event.data;
+    if (!data || data.type !== 'RouteablesClaim' || !event.source) return;
+    for (const resolve of claims.get(data.owner) || []) resolve(event.source);
+});
+
+// The window that owns the notification, or null when none answers (it was closed, or its script is older than the claim).
+function waitForOwner(owner) {
+    if (owner === null || owner === undefined) return Promise.resolve(null);
+    return new Promise(resolve => {
+        const waiting = claims.get(owner) || [];
+        const done = client => {
+            clearTimeout(timer);
+            const rest = (claims.get(owner) || []).filter(w => w !== done);
+            if (rest.length > 0) claims.set(owner, rest); else claims.delete(owner);
+            resolve(client);
+        };
+        const timer = setTimeout(() => done(null), 400);
+        waiting.push(done);
+        claims.set(owner, waiting);
+    });
+}
+
 self.addEventListener('notificationclick', event => {
     const notification = event.notification;
     notification.close();
@@ -23,8 +49,10 @@ self.addEventListener('notificationclick', event => {
         reply
     };
     event.waitUntil((async () => {
+        const owned = waitForOwner(message.owner);
         const clients = await tell(message);
-        const open = clients.find(client => 'focus' in client);
+        // Its own window first; another one only when that window is gone (the click was then reported to the pages that remain).
+        const open = (await owned) || clients.find(client => 'focus' in client);
         if (open) await open.focus();
         else await self.clients.openWindow(self.registration.scope);
     })());

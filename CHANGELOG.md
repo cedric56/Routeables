@@ -21,6 +21,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A click on a browser notification brings its own tab to the front**: the service worker focused the first window it found, so with several tabs open the action was handled in one tab and another was shown. The worker now asks the windows, and the one that made the notification answers and is focused. If that tab was closed, the worker focuses another window (or opens one) as before; that page has no record of the notification and the click is not delivered to it.
 - **A module that registers a route guard is refused**: the routers read their guards once from the container of the application, so a guard of a module (`IRouteGuard`, `IRouteTypeGuard`) was never asked and the pages it was written to protect opened without it, with no word. `IRouteableModules.Load` now throws an `InvalidOperationException` before anything of the module is added. Register the guard at startup.
 - **A page whose view failed in `OnEnteringAsync` leaks less**: the view model had been told `OnEntering` (a timer, a subscription) and the page was then dropped without `OnLeaving`. The view model is now told `OnLeaving`, as the page that stays is entered again.
 - **`RouteableSnapshot.Equals` could say yes one way and no the other**: it looked the keys up in the dictionary of the other snapshot, so a case-insensitive dictionary made `{"A"}` equal to `{"a"}` in one direction only, while the hash codes differed. The keys are compared as written.
