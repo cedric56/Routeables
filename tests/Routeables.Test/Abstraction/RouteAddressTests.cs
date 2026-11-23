@@ -21,6 +21,17 @@ public class RouteAddressTests
     }
 
     [Fact]
+    public void A_value_with_no_name_in_a_query_is_skipped()
+    {
+        var query = RouteAddress.ParseQuery("=x&a=1&%20=y&=");
+
+        Assert.Equal(2, query.Count);
+        Assert.Equal("1", query["a"]);
+        Assert.Equal("y", query[" "]); // a name made of a space is a name
+        Assert.True(RouteAddress.Same("/p?=x", "/p"));
+    }
+
+    [Fact]
     public void The_words_of_a_path_ignore_the_case_and_other_paths_differ()
     {
         Assert.True(RouteAddress.SamePath("/Orders", "/orders"));

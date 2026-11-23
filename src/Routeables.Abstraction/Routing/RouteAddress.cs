@@ -139,7 +139,7 @@ internal static class RouteAddress
 
     /// <summary>
     /// The query of an address as name and value, the way every reader of an address reads it (the parser, the comparison, the state of the pages):
-    /// names ignore the case, the last value of a name given twice wins, a name without <c>=</c> has an empty value, empty pairs are skipped.
+    /// names ignore the case, the last value of a name given twice wins, a name without <c>=</c> has an empty value, empty pairs and pairs with no name (<c>?=x</c>) are skipped.
     /// </summary>
     /// <param name="query">The query, without its question mark.</param>
     internal static Dictionary<string, string> ParseQuery(string? query)
@@ -148,7 +148,11 @@ internal static class RouteAddress
         foreach (var pair in (query ?? string.Empty).Split('&', StringSplitOptions.RemoveEmptyEntries))
         {
             var (name, value) = SplitPair(pair);
-            values[DecodeQuery(name)] = DecodeQuery(value);
+            var key = DecodeQuery(name);
+            // A value with no name (?=x) can be asked for by nobody: it is skipped, like an empty pair.
+            if (key.Length == 0)
+                continue;
+            values[key] = DecodeQuery(value);
         }
         return values;
     }

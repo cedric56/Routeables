@@ -21,6 +21,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A value with no name in a query (`?=x`) is skipped** by every reader of an address, like an empty pair: it was kept under an empty name, in the values a page without a template receives and in the comparison of two addresses (`/p?=x` and `/p` were two pages).
 - **A type guard (`IRouteTypeGuard`) is asked when the route change's turn comes**: it was asked when the route change was requested, so with `GoToAsync("/login")` followed, without waiting, by `GoToAsync("/secret")` it refused `/secret` about a visitor the first call had not signed in yet, while an `IRouteGuard` let it through. The router now waits for the route changes requested before it to end (it replaces none of them, even with `CancelCurrent`), then asks the type guards, then builds the page: a refused page is still never built. This is also how `[Authorize]` of `AddRouteableAuthorization` behaves.
 - **The guide on the history says what `GoToAsync("-/x")` does when another route change is requested without waiting**: the two steps are two turns in the queue, and that route change runs between them (`/y` then `/x`).
 - **The values saved with a page are read as strictly as an address**: a `bool` kept with a page accepted spaces and a trailing null character (`" true"`, `"true\0"`), and a `Guid` accepted braces, no dashes and spaces. Only the texts that are written (`True`, `False`, a Guid with its dashes) are read back; anything else is dropped like any other value that cannot be read.
