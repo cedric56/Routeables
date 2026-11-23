@@ -33,10 +33,17 @@ public sealed class RouteableDialogService(RouteableInteractions interactions) :
         var answer = interactions.AskAsync(dialog);
         RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpened, @params.Opened);
 
-        var chosen = choices[await answer];
-        RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogClick, chosen.Click);
-        RouteableErrors.Guard(null, RouteableCallbackSources.DialogClosed, @params.Closed);
-        return chosen.Result;
+        // Closed pairs with Opening and Opened also when nobody answers (the session ended, and the dialog was cancelled).
+        try
+        {
+            var chosen = choices[await answer];
+            RouteableErrors.Guard(null, RouteableCallbackSources.ContentDialogClick, chosen.Click);
+            return chosen.Result;
+        }
+        finally
+        {
+            RouteableErrors.Guard(null, RouteableCallbackSources.DialogClosed, @params.Closed);
+        }
     }
 
     /// <summary>
@@ -55,8 +62,14 @@ public sealed class RouteableDialogService(RouteableInteractions interactions) :
         var answer = interactions.AskAsync(dialog);
         RouteableErrors.Guard(null, RouteableCallbackSources.DialogOpened, @params.Opened);
 
-        var result = buttons[await answer];
-        RouteableErrors.Guard(null, RouteableCallbackSources.DialogClosed, @params.Closed);
-        return result;
+        // Closed pairs with Opening and Opened also when nobody answers (the session ended, and the dialog was cancelled).
+        try
+        {
+            return buttons[await answer];
+        }
+        finally
+        {
+            RouteableErrors.Guard(null, RouteableCallbackSources.DialogClosed, @params.Closed);
+        }
     }
 }

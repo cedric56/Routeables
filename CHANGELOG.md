@@ -21,6 +21,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A dialog of the ASP.NET Core host that nobody answers still runs `Closed`**: when the session ended while a content or task dialog waited, the dialog was cancelled after `Opening` and `Opened` had run, and `Closed` never did. It runs now, once, as on the other hosts.
 - **`{b:bool}` no longer accepts `true` followed by a null character** (`true%00`): `bool.TryParse` ignores it. The address was written back as `true`, so only the reading was too wide.
 - **A frozen, immutable or non-generic dictionary of values is read as values**: `FrozenDictionary<string, T>`, `Hashtable` and `StringDictionary` were read through their properties, so a placeholder `{count}` was filled with the `Count` of the dictionary without an error. Every `IDictionary` (and `StringDictionary`) is read by its entries now, and keys that are not strings are refused.
 - **The handlers of a toast of the ASP.NET Core host no longer reach the wrong caller**: an `OnClose` that threw for a toast removed to make room made the `Notify` of another toast fail, and an `OnClick` that threw kept the toast from closing. They are reported to `RouteableErrors`, like the other callbacks of the application.
