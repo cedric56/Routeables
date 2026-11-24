@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Icons;
 using Routeables.Blazor.Components;
 using Routeables.Routing;
 using Routeables.Tests.Core;
@@ -139,5 +140,60 @@ public class RouteableMenuTests
 
         Assert.Equal(0, main.LockSubscribers);
         main.NotifyLockChanged(); // nothing is left to refresh, and nothing throws
+    }
+
+    private sealed class Glyphs(string key, object? glyph) : IRouteableIconResolver
+    {
+        public object? GetIcon(string requested) => requested == key ? glyph : null;
+        public object? GetSource(string requested) => null;
+    }
+
+    [Fact]
+    public async Task An_entry_whose_icon_is_a_text_shows_it_and_any_other_icon_is_left_to_the_host()
+    {
+        var main = new FakeMenuViewModel();
+        var text = new RouteableIconResolverRegistry();
+        text.Register(new Glyphs("text", "GLYPH-A"));
+        var image = new RouteableIconResolverRegistry();
+        image.Register(new Glyphs("image", new object()));
+        main.Entries.Add(new RouteableMenuEntry("/a", "/a", "WithText", "text") { Icons = text });
+        main.Entries.Add(new RouteableMenuEntry("/b", "/b", "WithImage", "image") { Icons = image });
+        main.Entries.Add(new RouteableMenuEntry("/c", "/c", "WithNone"));
+
+        var html = await RenderAsync(main);
+
+        Assert.Contains("GLYPH-A", html);
+        Assert.Single(html.Split("rt-nav-icon").Skip(1));
+        Assert.Contains("WithImage", html);
+        Assert.Contains("WithNone", html);
+    }
+
+    [Fact]
+    public async Task The_menu_is_named_Menu_unless_another_name_is_given()
+    {
+        Assert.Contains("aria-label=\"Menu\"", await RenderAsync(Menu()));
+        Assert.Contains("aria-label=\"Main navigation\"", await RenderAsync(Menu(), new() { [nameof(RouteableMenu.Label)] = "Main navigation" }));
+    }
+
+    [Fact]
+    public async Task A_menu_marks_the_new_current_entry_when_the_view_changes()
+    {
+        var main = Menu();
+        await using var shown = new Shown(main);
+        await shown.StartAsync();
+        Assert.Contains("rt-nav-link rt-active\"", await shown.HtmlAsync());
+        Assert.Equal(1, main.ViewSubscribers);
+
+        main.SelectedEntry = main.Entries[0];
+        main.NotifyViewChanged(new object());
+        await Task.Delay(100, TestContext.Current.CancellationToken);
+
+        var html = await shown.HtmlAsync();
+        Assert.True(html.IndexOf("rt-active", StringComparison.Ordinal) < html.IndexOf("About", StringComparison.Ordinal),
+            "the first entry (Home) is the active one now");
+        Assert.Single(html.Split("aria-current=\"page\"").Skip(1));
+
+        await shown.StopAsync();
+        Assert.Equal(0, main.ViewSubscribers);
     }
 }

@@ -1,3 +1,4 @@
+using Routeables.Abstraction.Bases;
 using Routeables.Abstraction.Registrations;
 using Routeables.Abstraction.Routing;
 using Routeables.Routing;
@@ -42,6 +43,40 @@ public class RouterAddressEdgeTests
         Assert.Equal("/orders/{id:int}", templates.TemplateOf("/orders/{id:int}"));
         Assert.Equal("/orders/{id:int}", templates.TemplateOf("/orders/42"));
         Assert.Null(templates.TemplateOf("/nowhere"));
+    }
+
+    [Fact]
+    public async Task The_template_of_a_route_is_found_by_its_path_when_no_template_matches_it()
+    {
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        // "mode=grid" is a fixed part of the template: an address with another mode is not matched by it, but it is the same path.
+        services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/search?mode=grid");
+        await using var provider = services.BuildServiceProvider();
+        var templates = (IRouteTemplates)provider.GetRequiredService<IRouter>();
+
+        Assert.Equal("/search?mode=grid", templates.TemplateOf("/search?mode=grid"));
+        Assert.Equal("/search?mode=grid", templates.TemplateOf("/search?mode=list"));
+        Assert.Equal("/search?mode=grid", templates.TemplateOf("/SEARCH?mode=list"));
+        Assert.Null(templates.TemplateOf("/other?mode=list"));
+    }
+
+    [Fact]
+    public async Task The_template_of_a_route_is_found_in_the_menu_when_the_table_has_none()
+    {
+        var menu = new FakeMenuViewModel();
+        menu.Entries.Add(new RouteableMenuEntry("/reports/monthly", "/reports/{period}", "Reports"));
+        menu.Entries.Add(new RouteableMenuEntry("/untemplated", string.Empty, "None"));
+        var services = new ServiceCollection();
+        services.RegisterRouting();
+        services.AddSingleton<IRouteableMenuViewModel>(menu);
+        await using var provider = services.BuildServiceProvider();
+        var templates = (IRouteTemplates)provider.GetRequiredService<IRouter>();
+
+        Assert.Equal("/reports/{period}", templates.TemplateOf("/reports/monthly"));
+        Assert.Equal("/reports/{period}", templates.TemplateOf("/Reports/monthly?x=1"));
+        Assert.Null(templates.TemplateOf("/untemplated"));   // an entry without a template names nothing
+        Assert.Null(templates.TemplateOf("/reports/yearly"));
     }
 
     private sealed class ReadOnlyOnly(Dictionary<string, object?> inner) : IReadOnlyDictionary<string, object?>

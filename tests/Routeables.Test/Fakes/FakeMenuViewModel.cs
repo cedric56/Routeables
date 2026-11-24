@@ -9,7 +9,14 @@ public sealed class FakeMenuViewModel : IRouteableMenuViewModel
     public ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
     public IRouteableMenuEntry? SelectedEntry { get; set; }
     public object? CurrentView { get; set; }
-    public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
+    private EventHandler<object?>? _viewChanged;
+    public event EventHandler<object?>? CurrentViewChanged { add => _viewChanged += value; remove => _viewChanged -= value; }
+
+    /// <summary>How many handlers follow <see cref="CurrentViewChanged"/>.</summary>
+    public int ViewSubscribers => _viewChanged?.GetInvocationList().Length ?? 0;
+
+    /// <summary>Says that the view shown changed.</summary>
+    public void NotifyViewChanged(object? view) => _viewChanged?.Invoke(this, view);
 
     private EventHandler? _lockChanged;
     public event EventHandler? LockChanged { add => _lockChanged += value; remove => _lockChanged -= value; }

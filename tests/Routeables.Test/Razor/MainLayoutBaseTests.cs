@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Components.Web.HtmlRendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using NSubstitute;
+using Routeables.Abstraction;
 using Routeables.Abstraction.Bases;
+using Routeables.Abstraction.Registrations;
+using Routeables.Abstraction.Routing;
 using Routeables.Blazor;
 using Routeables.Routing;
 using Routeables.Services;
@@ -129,9 +132,10 @@ public class MainLayoutBaseTests
         public Menu Menu { get; } = new();
         public RouteableRequestThemeService Theme { get; } = new() { IsDarkMode = false };
         public RecordingJs Js { get; }
+        public IServiceProvider Provider => provider;
         public List<IServiceProvider> Initialized { get; } = [];
 
-        public Fixture(Exception? jsFailure = null, int jsFailAfter = 0)
+        public Fixture(Exception? jsFailure = null, int jsFailAfter = 0, Action<IServiceCollection>? configure = null)
         {
             Js = new RecordingJs(jsFailure, jsFailAfter);
             var services = new ServiceCollection();
@@ -144,6 +148,7 @@ public class MainLayoutBaseTests
             services.AddSingleton<Func<IServiceProvider, Task>>(sp => p => { Initialized.Add(p); return Task.CompletedTask; });
             services.AddSingleton<RouteableUrlSync>();
             services.AddSingleton(Instances);
+            configure?.Invoke(services);
             provider = services.BuildServiceProvider();
             renderer = new HtmlRenderer(provider, provider.GetRequiredService<ILoggerFactory>());
         }
@@ -255,6 +260,30 @@ public class MainLayoutBaseTests
 
         await Fixture.UntilAsync(() => f.Menu.SelectedEntry is not null);
         Assert.Same(first, f.Menu.SelectedEntry);
+    }
+
+    [Fact]
+    public async Task The_circuit_that_takes_over_brings_the_saved_history_back_instead_of_opening_the_first_page()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var saved = await RouteableHistoryPersistenceTests.SavedHistoryAsync(2, ct);
+        await using var f = new Fixture(configure: services =>
+        {
+            services.AddSingleton(new RouteableHistoryOptions());
+            services.AddSingleton(saved.State);
+            services.RegisterRouteableArgsFactory(() => RouteableArgs.Create());
+            RouteableHistoryPersistenceTests.RegisterPages(services);
+        });
+        var first = Entry("First");
+        f.Menu.Entries.Add(first);
+
+        await f.StartAsync();
+
+        var router = f.Provider.GetRequiredService<IRouter>();
+        Assert.Equal(2, router.History.Entries.Count);
+        Assert.Equal(2, Assert.IsType<RouteableHistoryPersistenceTests.PageVm>(router.CurrentViewModel).Id);
+        await Task.Delay(50, ct);
+        Assert.Null(f.Menu.SelectedEntry);   // the first entry was not selected: the history decided the page
     }
 
     [Fact]

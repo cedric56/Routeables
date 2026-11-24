@@ -53,6 +53,31 @@ public class RouteableHistoryPersistenceTests
 
     private static ComponentStatePersistenceManager Manager() => new(NullLogger<ComponentStatePersistenceManager>.Instance);
 
+    /// <summary>
+    /// The state a prerender (or a paused circuit) leaves for the circuit that takes over: a router that went to the pages <c>/pages/1</c> to
+    /// <c>/pages/{count}</c> is persisted, and the state is restored into a manager the test hands to the new circuit.
+    /// </summary>
+    internal static async Task<ComponentStatePersistenceManager> SavedHistoryAsync(int count, CancellationToken ct)
+    {
+        var store = new MemoryStore();
+        await using var first = Application();
+        var router = first.GetRequiredService<IRouter>();
+        for (var i = 1; i <= count; i++)
+            await router.GoToAsync($"/pages/{i}", cancellationToken: ct);
+        var persisting = Manager();
+        using var saving = new RouteableHistoryPersistence(persisting.State, router);
+        saving.Register();
+        await using (var renderer = new TestRenderer(first))
+            await persisting.PersistStateAsync(store, renderer);
+
+        var restoring = Manager();
+        await restoring.RestoreStateAsync(store);
+        return restoring;
+    }
+
+    internal static void RegisterPages(IServiceCollection services)
+        => services.RegisterRoute<FakeViewFor, PageVm>(route: "/pages/{id:int}");
+
     [Fact]
     public async Task The_history_of_the_prerender_is_found_again_by_the_page_that_takes_over()
     {

@@ -204,6 +204,48 @@ public class RouteGuardTests
         Assert.True((await router.GoToAsync("/guard-home", cancellationToken: ct)).Success);
     }
 
+    // Sends "/hop/0" to "/hop/1", and so on up to "/hop/5", which it lets in: five redirects, fewer than the router allows in a row.
+    private sealed class FiveHops : IRouteGuard
+    {
+        public async Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
+        {
+            await Task.Delay(5, cancellationToken); // gives the other router time to be redirecting too
+            var route = change.To.Args.Route ?? string.Empty;
+            return route.Contains("/hop/") && int.Parse(route[(route.LastIndexOf('/') + 1)..]) is var n and < 5
+                ? RouteGuardDecision.Redirect($"/hop/{n + 1}")
+                : RouteGuardDecision.Allow;
+        }
+    }
+
+    private static ServiceProvider BuildHops()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IRouteGuard, FiveHops>();
+        services.RegisterRouting();
+        services.RegisterRoute<SecondViewFor, SecondViewModel>(ServiceLifetime.Transient, ServiceLifetime.Transient, "/hop/{n:int}");
+        services.AddTransient<SecondViewModel>();
+        return services.BuildServiceProvider();
+    }
+
+    private static Router NewRouter(IServiceProvider provider) => new(new RouterHistory(), new RouterGate(), new RouterLifecycle(provider), provider);
+
+    [Fact]
+    public async Task The_redirects_in_a_row_are_counted_for_each_router_and_start_again_after_each_navigation()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        using var provider = BuildHops();
+        var first = NewRouter(provider);
+        var second = NewRouter(provider);
+
+        // Two routers redirecting at once: ten redirects in all, which would be refused if they shared one count (the limit is 8 in a row).
+        var both = await Task.WhenAll(first.GoToAsync("/hop/0", cancellationToken: ct), second.GoToAsync("/hop/0", cancellationToken: ct));
+        Assert.All(both, result => Assert.True(result.Success, result.Exception?.Message));
+
+        // The count goes back to zero when a navigation ends: three more of five make fifteen, which a count that was kept would refuse.
+        for (var i = 0; i < 3; i++)
+            Assert.True((await first.GoToAsync("/hop/0", cancellationToken: ct)).Success);
+    }
+
     [Fact]
     public async Task A_guard_that_returns_null_does_not_let_the_route_change_through()
     {

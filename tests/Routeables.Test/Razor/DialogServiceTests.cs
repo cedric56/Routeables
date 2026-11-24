@@ -1,3 +1,5 @@
+using Routeables.Abstraction;
+using Routeables.Abstraction.Bases;
 using Routeables.Blazor.Components;
 using Routeables.Blazor.Services;
 using Routeables.Services;
@@ -182,5 +184,57 @@ public class DialogServiceTests
         Assert.True(queue.Current.Buttons[^1].IsPrimary);
         queue.Complete(0);
         Assert.Equal(0, await task);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public async Task No_buttons_gives_the_single_OK_button(string? buttons)
+    {
+        await using var host = await StartAsync();
+        var queue = host.Get<RouteableMessageQueue>();
+
+        var task = host.Get<IMessageBoxService>().ShowMessageAsync("t", "m", buttons!);
+
+        var button = Assert.Single(queue.Current!.Buttons);
+        Assert.Equal("OK", button.Text);
+        Assert.True(button.IsPrimary);
+        queue.Complete(queue.Current.DismissResult);
+        Assert.Equal(0, await task);
+    }
+
+    [Fact]
+    public async Task A_content_dialog_and_a_task_dialog_go_to_their_own_queue()
+    {
+        // No host is displayed here: each queue refuses with the name of its own host, which tells where the dialog went.
+        var service = new DefaultMessageBoxService(new RouteableMessageQueue(), new RouteableContentDialogQueue(), new RouteableTaskDialogQueue());
+
+        var content = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.ShowContentDialogAsync(new RouteableContentDialog { Title = "Content", CloseButtonText = "Close" }));
+        var task = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.ShowTaskDialogAsync(new RouteableTaskDialog { Title = "Task" }, RouteableTaskDialogResult.Close));
+
+        Assert.Contains("RouteableContentDialogHost", content.Message);
+        Assert.Contains("RouteableTaskDialogHost", task.Message);
+    }
+
+    private sealed class ModalViewModel : ICloseableViewModel<int>
+    {
+        public string Title => "Modal";
+        public System.Collections.ObjectModel.ObservableCollection<RouteableCommand> Commands { get; } = [];
+        public System.Windows.Input.ICommand? CloseCommand => null;
+        public event EventHandler<int>? CloseRequested { add { } remove { } }
+        public Task CloseAsync(int value) => Task.CompletedTask;
+    }
+
+    [Fact]
+    public async Task A_modal_needs_its_own_component_because_a_view_model_does_not_say_which_one_draws_it()
+    {
+        await using var host = await StartAsync();
+
+        var failure = await Assert.ThrowsAsync<NotSupportedException>(
+            () => host.Get<IMessageBoxService>().ShowModalAsync<ModalViewModel, int>(new ModalViewModel()));
+
+        Assert.Contains("RouteableModalFor", failure.Message);
     }
 }
