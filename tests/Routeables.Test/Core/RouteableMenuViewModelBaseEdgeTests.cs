@@ -59,7 +59,14 @@ public class RouteableMenuViewModelBaseEdgeTests
             => Task.FromResult(change.To.ViewModel is SecondViewModel ? RouteGuardDecision.Redirect("/a") : RouteGuardDecision.Allow);
     }
 
-    private static ServiceProvider Build(bool redirect = false)
+    // Sends the second page to a page that has no entry in the menu.
+    private sealed class RedirectToUnlistedGuard : IRouteGuard
+    {
+        public Task<RouteGuardDecision> CanEnterAsync(RouteableRoutingEventArgs change, CancellationToken cancellationToken = default)
+            => Task.FromResult(change.To.ViewModel is SecondViewModel ? RouteGuardDecision.Redirect("/d") : RouteGuardDecision.Allow);
+    }
+
+    private static ServiceProvider Build(bool redirect = false, bool toUnlisted = false)
     {
         var services = new ServiceCollection();
         services.RegisterRouting();
@@ -67,6 +74,12 @@ public class RouteableMenuViewModelBaseEdgeTests
         services.RegisterRoute<SecondViewFor, SecondViewModel>(route: "/b");
         if (redirect)
             services.AddSingleton<IRouteGuard, RedirectGuard>();
+        if (toUnlisted)
+        {
+            services.RegisterRoute<FourthViewFor, FourthViewModel>(route: "/d");
+            services.AddSingleton<IRouteGuard, RedirectToUnlistedGuard>();
+        }
+
         return services.BuildServiceProvider();
     }
 
@@ -146,6 +159,35 @@ public class RouteableMenuViewModelBaseEdgeTests
 
         Assert.IsType<FakeViewModel>(router.CurrentViewModel);
         Assert.NotSame(sut.Entries[1], sut.SelectedEntry);
+    }
+
+    [Fact]
+    public async Task A_guard_that_redirects_to_a_page_with_no_entry_puts_the_menu_back_on_the_entry_it_was_on()
+    {
+        using var provider = Build(toUnlisted: true);
+        var router = provider.GetRequiredService<IRouter>();
+        var sut = new Menu(router);
+        Assert.True(await sut.SelectEntryAsync(sut.Entries[0], Ct));
+
+        await sut.SelectEntryAsync(sut.Entries[1], Ct);
+
+        Assert.IsType<FourthViewModel>(router.CurrentViewModel);
+        Assert.Same(sut.Entries[0], sut.SelectedEntry);
+    }
+
+    [Fact]
+    public async Task Selecting_no_entry_without_a_token_answers_yes_and_leaves_the_page_alone()
+    {
+        using var provider = Build();
+        var router = provider.GetRequiredService<IRouter>();
+        var sut = new Menu(router);
+        Assert.True(await sut.SelectEntryAsync(sut.Entries[0], Ct));
+
+        var selected = await sut.SelectEntryAsync(null, TestContext.Current.CancellationToken);
+
+        Assert.True(selected);
+        Assert.Null(sut.SelectedEntry);
+        Assert.IsType<FakeViewModel>(router.CurrentViewModel);
     }
 
     [Fact]

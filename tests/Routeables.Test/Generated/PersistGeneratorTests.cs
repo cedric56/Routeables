@@ -69,6 +69,10 @@ public class PersistGeneratorTests
     [InlineData("[Persist] public string R { get; } = \"\";", "getter and a setter")]
     [InlineData("[Persist] public string I { get; init; } = \"\";", "init-only")]
     [InlineData("[Persist] private string P { get; set; } = \"\";", "public or internal")]
+    [InlineData("[Persist] public string this[int index] { get => \"\"; set { } }", "indexer")]
+    [InlineData("[Persist] public unsafe int* Pointer { get; set; }", "type cannot be saved")]
+    [InlineData("[Persist] public unsafe delegate*<int> Function { get; set; }", "type cannot be saved")]
+    [InlineData("public ref struct Span1 { } [Persist] public Span1 Span { get; set; }", "ref struct")]
     public void A_property_that_cannot_be_saved_is_reported_and_left_out(string member, string reason)
     {
         var result = Run($$"""
@@ -264,6 +268,26 @@ public class PersistGeneratorTests
 
         var diagnostic = Assert.Single(result.Diagnostics);
         Assert.Equal("ROUT401", diagnostic.Id);
+        Assert.DoesNotContain("Hidden", Generated(result));
+    }
+
+    [Fact]
+    public void A_property_of_a_private_nested_class_is_reported_and_left_out()
+    {
+        var result = Run("""
+            using Routeables.Abstraction.States;
+            public class Outer
+            {
+                private class Hidden
+                {
+                    [Persist] public int Page { get; set; }
+                }
+            }
+            """);
+
+        var diagnostic = Assert.Single(result.Diagnostics);
+        Assert.Equal("ROUT401", diagnostic.Id);
+        Assert.Contains("private", diagnostic.GetMessage());
         Assert.DoesNotContain("Hidden", Generated(result));
     }
 }
