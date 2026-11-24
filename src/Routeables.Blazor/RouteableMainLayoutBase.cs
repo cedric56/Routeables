@@ -102,10 +102,9 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
     private RouteableHistoryPersistence? _persistence;
     private bool _restorable;
 
+    // Asked once, when the layout is initialized: the result is kept in the field the first render reads.
     private RouteableHistoryPersistence? Persistence()
     {
-        if (_persistence is not null)
-            return _persistence;
         var on = Provider.GetService<RouteableHistoryOptions>() is not null
                  || Provider.GetService<RouteablePrerenderOptions>() is { PersistHistory: true };
         if (!on || Provider.GetService<PersistentComponentState>() is not { } state)
