@@ -15,8 +15,13 @@ public class RouteableLinkActionTests
 
     private sealed class Sink : IRouteableErrorSink
     {
-        public List<(string Source, Exception Error)> Reports { get; } = [];
-        public void Report(string source, Exception exception) => Reports.Add((source, exception));
+        private readonly object gate = new();
+        private readonly List<(string Source, Exception Error)> reports = [];
+
+        // A copy: while the process-wide default is replaced, a test of another class may report to it at any moment.
+        public (string Source, Exception Error)[] Reports { get { lock (gate) return [.. reports]; } }
+
+        public void Report(string source, Exception exception) { lock (gate) reports.Add((source, exception)); }
     }
 
     private static ServiceProvider Build(Sink sink)
