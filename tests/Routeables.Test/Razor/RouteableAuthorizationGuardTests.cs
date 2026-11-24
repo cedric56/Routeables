@@ -104,4 +104,61 @@ public class RouteableAuthorizationGuardTests
         Assert.False(decision.IsAllowed);
         Assert.Null(decision.RedirectTo);
     }
+
+    private static async Task<RouteGuardDecision> AskToBuildAsync(ClaimsPrincipal user, Type viewModelType, string route,
+        Action<RouteableAuthorizationOptions>? configure = null)
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddScoped<AuthenticationStateProvider>(_ => new Provider(user));
+        services.AddRouteableAuthorization(configure);
+        await using var provider = services.BuildServiceProvider();
+        var guard = provider.GetServices<IRouteTypeGuard>().OfType<RouteableAuthorizationGuard>().Single();
+        return await guard.CanBuildAsync(viewModelType, route, TestContext.Current.CancellationToken);
+    }
+
+    [Fact]
+    public async Task The_guard_comes_before_the_guards_of_the_application()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddRouteableAuthorization();
+        await using var provider = services.BuildServiceProvider();
+
+        Assert.Equal(-100, provider.GetServices<IRouteGuard>().OfType<RouteableAuthorizationGuard>().Single().Order);
+    }
+
+    [Fact]
+    public async Task A_page_is_refused_before_it_is_built_when_its_view_model_asks_for_a_sign_in()
+    {
+        var signedOut = await AskToBuildAsync(Anonymous(), typeof(PrivateVm), "/private", o => o.SignInRoute = "/sign-in");
+        var wrongRole = await AskToBuildAsync(Member("user"), typeof(AdminVm), "/admin", o => o.ForbiddenRoute = "/forbidden");
+        var cancelled = await AskToBuildAsync(Anonymous(), typeof(PrivateVm), "/private");
+
+        Assert.Equal("/sign-in", signedOut.RedirectTo);
+        Assert.Equal("/forbidden", wrongRole.RedirectTo);
+        Assert.False(cancelled.IsAllowed);
+        Assert.Null(cancelled.RedirectTo);
+    }
+
+    [Fact]
+    public async Task A_page_is_built_when_its_view_model_is_open_or_the_visitor_is_accepted()
+    {
+        Assert.True((await AskToBuildAsync(Anonymous(), typeof(FakeViewModel), "/open")).IsAllowed);
+        Assert.True((await AskToBuildAsync(Anonymous(), typeof(SignInVm), "/sign-in")).IsAllowed);
+        Assert.True((await AskToBuildAsync(Member("admin"), typeof(AdminVm), "/admin")).IsAllowed);
+    }
+
+    [Fact]
+    public async Task A_guard_asked_about_nothing_refuses_the_question()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddRouteableAuthorization();
+        await using var provider = services.BuildServiceProvider();
+        var guard = provider.GetServices<IRouteGuard>().OfType<RouteableAuthorizationGuard>().Single();
+
+        await Assert.ThrowsAsync<ArgumentNullException>(() => guard.CanEnterAsync(null!, TestContext.Current.CancellationToken));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => guard.CanBuildAsync(null!, "/x", TestContext.Current.CancellationToken));
+    }
 }
