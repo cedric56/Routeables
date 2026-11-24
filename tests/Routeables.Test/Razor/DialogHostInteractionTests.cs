@@ -32,6 +32,7 @@ public sealed class DialogHostInteractionTests : BunitContext
         Services.AddScoped<RouteableMessageQueue>();
         Services.AddScoped<RouteableContentDialogQueue>();
         Services.AddScoped<RouteableTaskDialogQueue>();
+        Services.AddScoped<RouteableModalService>();
     }
 
     private static KeyboardEventArgs Key(string key) => new() { Key = key };
@@ -220,5 +221,57 @@ public sealed class DialogHostInteractionTests : BunitContext
         Assert.Empty(cut.FindAll(".rt-progress"));
         cut.FindAll("button").Single().Click();
         Assert.Equal(RouteableTaskDialogResult.Close, await task.WaitAsync(Wait, Ct));
+    }
+
+    // ---- modals ----
+
+    private const string Focus = "Blazor._internal.domWrapper.focus";
+
+    private int Focused() => JSInterop.Invocations.Count(call => call.Identifier == Focus);
+
+    private static async Task UntilAsync(Func<bool> condition)
+    {
+        // The focus is asked after the render, which no WaitFor of bUnit looks at.
+        for (var i = 0; i < 300 && !condition(); i++)
+            await Task.Delay(10, Ct);
+        Assert.True(condition(), "condition not reached");
+    }
+
+    [Fact]
+    public async Task A_modal_that_opens_takes_the_focus_once_and_the_one_under_it_does_not_take_it_back()
+    {
+        var service = Services.GetRequiredService<RouteableModalService>();
+        var cut = Render<RouteableModalHost>();
+
+        var first = service.Show("First", body => body.AddContent(0, "first body"));
+        await UntilAsync(() => Focused() == 1);
+
+        var second = service.Show("Second", body => body.AddContent(0, "second body"));
+        await UntilAsync(() => Focused() == 2);
+        Assert.Equal(2, cut.FindAll(".rt-modal").Count);
+
+        // The second leaves: the first is on top again, and it has been focused already.
+        service.Close(second);
+        cut.WaitForAssertion(() => Assert.Single(cut.FindAll(".rt-modal")));
+        await Task.Delay(100, Ct);
+        Assert.Equal(2, Focused());
+        Assert.Contains("first body", cut.Markup);
+        service.Close(first);
+    }
+
+    [Fact]
+    public void A_modal_is_named_by_its_title_only_when_it_has_one()
+    {
+        var service = Services.GetRequiredService<RouteableModalService>();
+        var cut = Render<RouteableModalHost>();
+
+        service.Show("Edit", body => body.AddContent(0, "a"));
+        service.Show(" ", body => body.AddContent(0, "b"));
+
+        cut.WaitForAssertion(() => Assert.Equal(2, cut.FindAll(".rt-modal").Count));
+        var modals = cut.FindAll(".rt-modal");
+        Assert.Equal("rt-modal-title-0", modals[0].GetAttribute("aria-labelledby"));
+        Assert.Null(modals[1].GetAttribute("aria-labelledby"));
+        Assert.Single(cut.FindAll("h2.rt-title"));
     }
 }
