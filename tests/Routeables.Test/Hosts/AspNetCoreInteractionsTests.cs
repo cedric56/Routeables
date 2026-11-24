@@ -6,6 +6,10 @@ namespace Routeables.Tests.Hosts;
 /// <summary>What a web page shares with the view models that ask it something: the dialogs, the notifications and the run of an action.</summary>
 public class AspNetCoreInteractionsTests
 {
+    /// <summary>Answers the dialog that waits, naming it as the form of a page does.</summary>
+    private static Task AnswerPending(RouteableInteractions interactions, int index)
+        => interactions.Pending is { } dialog ? interactions.AnswerAsync(index, dialog.Id) : Task.CompletedTask;
+
     private static async Task<bool> EventuallyAsync(Func<bool> condition)
     {
         for (var i = 0; i < 200 && !condition(); i++)
@@ -25,7 +29,7 @@ public class AspNetCoreInteractionsTests
         Assert.Same(dialog, interactions.Pending);
         Assert.False(answer.IsCompleted);
 
-        await interactions.AnswerAsync(1);
+        await AnswerPending(interactions, 1);
 
         Assert.Equal(1, await answer);
         Assert.Null(interactions.Pending);
@@ -41,10 +45,10 @@ public class AspNetCoreInteractionsTests
         var b = interactions.AskAsync(second);
 
         Assert.Same(first, interactions.Pending);
-        await interactions.AnswerAsync(0);
+        await AnswerPending(interactions, 0);
         Assert.Equal(0, await a);
         Assert.Same(second, interactions.Pending);
-        await interactions.AnswerAsync(0);
+        await AnswerPending(interactions, 0);
         Assert.Equal(0, await b);
         Assert.Null(interactions.Pending);
     }
@@ -54,7 +58,7 @@ public class AspNetCoreInteractionsTests
     {
         using var interactions = new RouteableInteractions();
 
-        await interactions.AnswerAsync(0);
+        await AnswerPending(interactions, 0);
 
         Assert.Null(interactions.Pending);
     }
@@ -88,7 +92,7 @@ public class AspNetCoreInteractionsTests
         Assert.Equal(string.Empty, result);
 
         // ...and the request that answers returns when the action ends.
-        await interactions.AnswerAsync(1);
+        await AnswerPending(interactions, 1);
         Assert.Equal("button 1", result);
     }
 
@@ -176,7 +180,7 @@ public class AspNetCoreInteractionsTests
 
         // The visitor did something else instead of answering: another action starts and ends.
         await interactions.StartAsync(() => Task.CompletedTask);
-        await interactions.AnswerAsync(0).WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+        await AnswerPending(interactions, 0).WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
 
         Assert.True(done);
     }
@@ -193,7 +197,7 @@ public class AspNetCoreInteractionsTests
         await interactions.StartAsync(async () => await interactions.AskAsync(new RouteableDialog("Second", null, null, ["Ok"])));
 
         // The first dialog is still the one that waits; answering it ends the first action, which fails inside this request.
-        await Assert.ThrowsAsync<InvalidOperationException>(() => interactions.AnswerAsync(0).WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => AnswerPending(interactions, 0).WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -226,7 +230,7 @@ public class AspNetCoreInteractionsTests
             throw new InvalidOperationException("after the answer");
         });
 
-        var failure = await Assert.ThrowsAsync<InvalidOperationException>(() => interactions.AnswerAsync(0));
+        var failure = await Assert.ThrowsAsync<InvalidOperationException>(() => AnswerPending(interactions, 0));
 
         Assert.Equal("after the answer", failure.Message);
     }
@@ -315,11 +319,11 @@ public class AspNetCoreInteractionsTests
         Assert.Equal("Yes", dialog.Buttons[0]);
         Assert.Equal("No", dialog.Buttons[1]);
 
-        await interactions.AnswerAsync(0);
+        await AnswerPending(interactions, 0);
         Assert.True(await yes);
 
         var no = service.ShowYesNoAsync("Again?", "Ask");
-        await interactions.AnswerAsync(1);
+        await AnswerPending(interactions, 1);
         Assert.False(await no);
     }
 
@@ -356,7 +360,7 @@ public class AspNetCoreInteractionsTests
         Assert.Equal("Copy", dialog.Buttons[1]);
         Assert.Equal("Cancel", dialog.Buttons[2]);
 
-        await interactions.AnswerAsync(1);
+        await AnswerPending(interactions, 1);
 
         Assert.Equal(RouteableContentDialogResult.Secondary, await result);
         Assert.Equal(4, events.Count);
@@ -377,7 +381,7 @@ public class AspNetCoreInteractionsTests
         Assert.Equal(2, interactions.Pending!.Buttons.Count);
         Assert.Equal("Close", interactions.Pending.Buttons[1]);
 
-        await interactions.AnswerAsync(1);
+        await AnswerPending(interactions, 1);
         Assert.Equal(RouteableContentDialogResult.None, await result);
     }
 
@@ -400,7 +404,7 @@ public class AspNetCoreInteractionsTests
         Assert.Equal(3, dialog.Buttons.Count);
         Assert.Equal("Cancel", dialog.Buttons[2]);
 
-        await interactions.AnswerAsync(2);
+        await AnswerPending(interactions, 2);
         Assert.Equal(RouteableTaskDialogResult.Cancel, await result);
     }
 
@@ -418,7 +422,7 @@ public class AspNetCoreInteractionsTests
         Assert.Null(dialog.Footer);
         Assert.False(dialog.ShowProgress);
 
-        await interactions.AnswerAsync(0);
+        await AnswerPending(interactions, 0);
         Assert.Equal(RouteableTaskDialogResult.OK, await result);
     }
 
@@ -457,7 +461,7 @@ public class AspNetCoreInteractionsTests
         var ask = dialogs.ShowYesNoAsync("Sure?", "Ask");
         Assert.NotNull(first.ServiceProvider.GetRequiredService<RouteableInteractions>().Pending);
         Assert.Null(second.ServiceProvider.GetRequiredService<RouteableInteractions>().Pending);
-        await first.ServiceProvider.GetRequiredService<RouteableInteractions>().AnswerAsync(0);
+        await AnswerPending(first.ServiceProvider.GetRequiredService<RouteableInteractions>(), 0);
         Assert.True(await ask);
         Assert.True(await EventuallyAsync(() => ask.IsCompleted));
     }
@@ -487,13 +491,13 @@ public class AspNetCoreInteractionsTests
         var dialog = new RouteableDialog("Title", null, "Body", ["Yes", "No"]);
         var answer = interactions.AskAsync(dialog);
 
-        await interactions.AnswerAsync(7).WaitAsync(TimeSpan.FromSeconds(5), Ct);
-        await interactions.AnswerAsync(-1).WaitAsync(TimeSpan.FromSeconds(5), Ct);
+        await AnswerPending(interactions, 7).WaitAsync(TimeSpan.FromSeconds(5), Ct);
+        await AnswerPending(interactions, -1).WaitAsync(TimeSpan.FromSeconds(5), Ct);
 
         Assert.False(answer.IsCompleted);
         Assert.Same(dialog, interactions.Pending);
 
-        await interactions.AnswerAsync(1);
+        await AnswerPending(interactions, 1);
         Assert.Equal(1, await answer);
     }
 

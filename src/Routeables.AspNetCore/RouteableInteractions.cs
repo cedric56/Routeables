@@ -6,7 +6,7 @@ namespace Routeables.AspNetCore;
 /// <summary>
 /// What the dialog and notification services of the web host share with the pages. On a desktop a dialog is a window and the view model
 /// awaits it; here the view model awaits too, but the answer comes with a later request: <see cref="StartAsync"/> runs an action until
-/// it ends or asks something, and <see cref="ContinueAsync(Action)"/> goes on once the visitor has answered.
+/// it ends or asks something, and <see cref="ContinueAsync(Action, long)"/> goes on once the visitor has answered.
 /// An instance belongs to one visitor, who runs one flow at a time: two requests of the same visitor that start or answer at the same moment
 /// (two tabs of the browser, a double click) each wait for their own action: the signal that says "the action asked something" belongs to the action that asks.
 /// The lists it keeps (dialogs, toasts, system notifications) are safe to use from such requests: they are changed under a lock, and
@@ -73,9 +73,6 @@ public sealed class RouteableInteractions : IDisposable
         return SettleAsync(run);
     }
 
-    /// <summary>Does <paramref name="answer"/> (what the visitor chose), then waits for the action that was started to end or to ask again.</summary>
-    public Task ContinueAsync(Action answer) => ContinueAsync(answer, Pending?.Owner as Run);
-
     private Task ContinueAsync(Action answer, Run? owner)
     {
         if (owner is not null)
@@ -83,13 +80,6 @@ public sealed class RouteableInteractions : IDisposable
         answer();
         return SettleAsync(owner);
     }
-
-    /// <summary>
-    /// Gives the button <paramref name="index"/> as the answer of the dialog that waits. It answers whichever dialog waits when the request
-    /// arrives: a double click on the button of a dialog can answer the one that the first click made appear. Prefer
-    /// <see cref="AnswerAsync(int, long)"/>, which names the dialog.
-    /// </summary>
-    public Task AnswerAsync(int index) => AnswerAsync(Pending, index);
 
     /// <summary>
     /// Gives the button <paramref name="index"/> as the answer of the dialog <paramref name="dialogId"/> (<see cref="RouteableDialog.Id"/>, sent back by the
@@ -111,7 +101,7 @@ public sealed class RouteableInteractions : IDisposable
         return ContinueAsync(() => dialog?.Answer.TrySetResult(index), dialog?.Owner as Run);
     }
 
-    /// <summary>The same as <see cref="ContinueAsync(Action)"/> for the dialog <paramref name="dialogId"/> only: nothing is done when another one waits.</summary>
+    /// <summary>Does <paramref name="answer"/> (what the visitor chose), then waits for the action that was started to end or to ask again. It is for the dialog <paramref name="dialogId"/> only: nothing is done when another one waits.</summary>
     public Task ContinueAsync(Action answer, long dialogId)
         => Pending is { } dialog && dialog.Id == dialogId && dialog.TryClaim() ? ContinueAsync(answer, dialog.Owner as Run) : Task.CompletedTask;
 

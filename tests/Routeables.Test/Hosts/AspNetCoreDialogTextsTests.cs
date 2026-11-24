@@ -7,6 +7,10 @@ namespace Routeables.Tests.Hosts;
 [Collection("Routeables texts")]
 public class AspNetCoreDialogTextsTests
 {
+    /// <summary>Answers the dialog that waits, naming it as the form of a page does.</summary>
+    private static Task AnswerPending(RouteableInteractions interactions, int index)
+        => interactions.Pending is { } dialog ? interactions.AnswerAsync(index, dialog.Id) : Task.CompletedTask;
+
     [Fact]
     public async Task The_buttons_of_a_task_dialog_are_translated()
     {
@@ -20,7 +24,7 @@ public class AspNetCoreDialogTextsTests
             var result = service.ShowTaskDialogAsync(new RouteableTaskDialog { Title = "T", Content = "C" }, RouteableTaskDialogResult.Yes, RouteableTaskDialogResult.No);
 
             Assert.Equal(["Oui", "No"], interactions.Pending!.Buttons);
-            await interactions.AnswerAsync(0);
+            await AnswerPending(interactions, 0);
             Assert.Equal(RouteableTaskDialogResult.Yes, await result);
         }
         finally { RouteableTexts.ButtonTranslator = before; }
