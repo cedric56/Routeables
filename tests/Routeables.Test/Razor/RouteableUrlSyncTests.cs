@@ -16,7 +16,7 @@ public class RouteableUrlSyncTests
 {
     public sealed class SlugVm(string slug) { public string Slug { get; } = slug; }
 
-    private sealed class TestNavigationManager : NavigationManager
+    private class TestNavigationManager : NavigationManager
     {
         public List<(string Uri, bool Replace)> Calls { get; } = [];
 
@@ -40,6 +40,12 @@ public class RouteableUrlSyncTests
         }
     }
 
+    // A navigation manager that accepts handlers of the changes of address, as the one of a browser does.
+    private sealed class LockingNavigationManager(string uri) : TestNavigationManager(uri)
+    {
+        protected override void SetNavigationLockState(bool value) { }
+    }
+
     public sealed class CustomerVm(int id) : IRouteable
     {
         public int Id { get; } = id;
@@ -57,7 +63,7 @@ public class RouteableUrlSyncTests
         public IRouter Router { get; }
         public RouteableUrlSync Sync { get; }
 
-        public Fixture(string uri = "http://localhost/", IRouteableMenuViewModel? menu = null)
+        public Fixture(string uri = "http://localhost/", IRouteableMenuViewModel? menu = null, bool locking = false)
         {
             CustomerVm.Allow = true;
             var services = new ServiceCollection();
@@ -65,7 +71,7 @@ public class RouteableUrlSyncTests
             services.RegisterRoute<FakeViewFor, FakeViewModel>(route: "/home");
             services.RegisterRoute<SecondViewFor, CustomerVm>(route: "/customers/{id:int}");
             services.RegisterRoute<PlainView, PlainVm>();
-            Routing = new TestNavigationManager(uri);
+            Routing = locking ? new LockingNavigationManager(uri) : new TestNavigationManager(uri);
             services.AddSingleton<NavigationManager>(Routing);
             if (menu is not null)
                 services.AddSingleton(menu);
@@ -461,6 +467,57 @@ public class RouteableUrlSyncTests
         Assert.Equal([("/home", true)], routing.Calls);
         Assert.Contains(sink.Sources, s => s.StartsWith(nameof(RouteableUrlSync) + "."));
         Assert.IsType<FakeViewModel>(router.CurrentViewModel);
+    }
+
+    private sealed class SelectingMenu(bool accepts) : IRouteableMenuViewModel
+    {
+        public System.Collections.ObjectModel.ObservableCollection<IRouteableMenuEntry> Entries { get; } = [];
+        public IRouteableMenuEntry? SelectedEntry { get; set; }
+        public object? CurrentView { get; set; }
+        public string? CurrentTitle => null;
+        public event EventHandler<object?>? CurrentViewChanged { add { } remove { } }
+        public event EventHandler? LockChanged { add { } remove { } }
+        public List<IRouteableMenuEntry> Selected { get; } = [];
+        public void OnRouterMoved(object? viewModel) { }
+
+        // A menu that answers by itself: the synchronisation leaves the navigation to it and does not route.
+        public Task<bool> SelectEntryAsync(IRouteableMenuEntry entry, CancellationToken cancellationToken = default)
+        {
+            Selected.Add(entry);
+            return Task.FromResult(accepts);
+        }
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task An_address_of_a_menu_entry_is_given_to_the_menu_which_answers_for_the_router(bool accepts)
+    {
+        var menu = new SelectingMenu(accepts);
+        var entry = new RouteableMenuEntry("/customers/9", "/customers/{id:int}", "Customer 9");
+        menu.Entries.Add(entry);
+        using var f = new Fixture(menu: menu);
+        await f.Sync.StartAsync();
+
+        f.Routing.BrowserGoesTo("/customers/9");
+        await Fixture.Until(() => menu.Selected.Count == 1);
+
+        Assert.Same(entry, menu.Selected[0]);
+        await Task.Delay(50, TestContext.Current.CancellationToken);
+        Assert.Null(f.Router.CurrentViewModel);   // the menu said it handled it, or refused it: the synchronisation did not route
+    }
+
+    [Fact]
+    public async Task The_synchronisation_follows_the_address_from_its_start_to_its_end()
+    {
+        using var f = new Fixture(locking: true);
+        Assert.False(f.Sync.IsFollowing);
+
+        await f.Sync.StartAsync();
+        Assert.True(f.Sync.IsFollowing);
+
+        f.Sync.Dispose();
+        Assert.False(f.Sync.IsFollowing);
     }
 
     [Fact]

@@ -34,6 +34,29 @@ public class UseRouteablesTests
     }
 
     [Fact]
+    public void The_hosts_without_a_menu_type_register_the_default_menu_and_run_the_block()
+    {
+        foreach (var (use, expected) in new (Func<IServiceCollection, Action<IServiceCollection>, IServiceCollection>, Runtime)[]
+        {
+            ((s, block) => s.UseRouteablesServer(block), Runtime.BlazorServer),
+            ((s, block) => s.UseRouteablesWebAssembly(block), Runtime.BlazorWebAssembly),
+            ((s, block) => s.UseRouteablesHybrid(block), Runtime.MauiHybrid),
+        })
+        {
+            var services = new ServiceCollection();
+            var blockRan = false;
+
+            use(services, r => blockRan = ReferenceEquals(r, services));
+
+            Assert.True(blockRan);
+            using var provider = services.BuildServiceProvider();
+            using var scope = provider.CreateScope();
+            Assert.IsType<DefaultRouteableMenuViewModel>(scope.ServiceProvider.GetRequiredService<IRouteableMenuViewModel>());
+            Assert.Equal(expected, provider.GetRequiredService<IRuntime>().Current);
+        }
+    }
+
+    [Fact]
     public void Each_Razor_host_registers_its_own_runtime()
     {
         foreach (var (use, expected) in new (Action<IServiceCollection>, Runtime)[]
