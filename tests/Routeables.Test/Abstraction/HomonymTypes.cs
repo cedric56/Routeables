@@ -5,5 +5,8 @@ public sealed class Patron { public string? Name { get; set; } }
 // Types named like a built-in constraint.
 namespace HomonymShadow { public sealed class Guid { public string? Name { get; set; } } public sealed class String { public string? Name { get; set; } } }
 namespace HomonymShadow2 { public sealed class Guid { public string? Name { get; set; } } }
+// A type with no namespace, and a homonym in a namespace that is registered first.
+public sealed class Lone { public string? Name { get; set; } }
+namespace HomonymFirst { public sealed class Lone { public string? Name { get; set; } } }
 // Two types whose full names differ only by the case.
 namespace HomonymCase { public sealed class Item { public string? Name { get; set; } } public sealed class iTem { public string? Name { get; set; } } }

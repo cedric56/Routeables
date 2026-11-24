@@ -22,6 +22,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **A type with no namespace registered as a serializer after a homonym of a namespace is no longer refused**: `Sales.Item` registered first holds the short name `Item`, and the full name of `Item` (no namespace) was taken for a second spelling of that name in another case, so the name was declared ambiguous and `{x:Item}` was refused (the other order worked). A name held as a short name or as the dotted alias of a nested type now goes to the type whose full name it is; two full names that differ only by the case are still refused.
 - **A text given for a typed placeholder is written as the value it stands for**: `Build` wrote `"+9"` for `{b:long}` as `?b=%2B9`, and `"007"` for `{n:int}` as `007`, while a number gave `9` and `7`: one page had several addresses. The text is read and written the way the value would be.
 - **MAUI: a dialog is shown over the active window**: with several windows (Windows, Mac Catalyst) every window has a handler, and the first one was always taken, so dialogs, modals and toasts opened over it whichever window the user was in.
 - **Uno: the Back request is not listened to again after the end of the application's navigation**: an update posted to the interface thread could run after `Dispose` and subscribe `BackRequested` again, so on Android 16 and later the Back gesture was consumed and the application could not be left from its first page.

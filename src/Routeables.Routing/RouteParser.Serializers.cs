@@ -37,7 +37,10 @@ public static partial class RouteParser
                 // (a template that writes it is refused) instead of silently giving the type that was registered last.
                 if (AmbiguousNames.ContainsKey(full))
                     return;
-                if (SerializationTypes.TryGetValue(full, out var sameName) && sameName != type)
+                // Only a type whose own full name is this one (read without the case) is a homonym. A name held as the short name or the dotted alias of
+                // another type ("Item" for Sales.Item) is not: the full name of this type takes it, and the other type keeps its full name.
+                if (SerializationTypes.TryGetValue(full, out var sameName) && sameName != type
+                    && string.Equals(sameName.FullName, full, StringComparison.OrdinalIgnoreCase))
                 {
                     SerializationInfos.TryRemove(full, out _);
                     SerializationTypes.TryRemove(full, out _);

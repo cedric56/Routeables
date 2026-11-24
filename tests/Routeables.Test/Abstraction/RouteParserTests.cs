@@ -418,6 +418,32 @@ public class RouteParserTests
     }
 
     [Fact]
+    public void A_type_with_no_namespace_registered_after_a_homonym_of_a_namespace_keeps_its_name()
+    {
+        var options = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() };
+        var json = "l/" + Uri.EscapeDataString("{\"Name\":\"a\"}");
+        try
+        {
+            // The other order of the test above: the namespace type holds "Lone" as its short name when the type with no namespace arrives.
+            RouteParser.RegisterSerializer<global::HomonymFirst.Lone>(options.GetTypeInfo(typeof(global::HomonymFirst.Lone)));
+            RouteParser.RegisterSerializer<global::Lone>(options.GetTypeInfo(typeof(global::Lone)));
+
+            var plain = RouteableArgs.Create();
+            Assert.True(RouteParser.TryMatch("l/{who:Lone}", json, plain));
+            Assert.IsType<global::Lone>(plain.ViewModelParameters.Single().value);
+
+            var first = RouteableArgs.Create();
+            Assert.True(RouteParser.TryMatch("l/{who:HomonymFirst.Lone}", json, first));
+            Assert.IsType<global::HomonymFirst.Lone>(first.ViewModelParameters.Single().value);
+        }
+        finally
+        {
+            RouteParser.UnregisterSerializer<global::Lone>();
+            RouteParser.UnregisterSerializer<global::HomonymFirst.Lone>();
+        }
+    }
+
+    [Fact]
     public void A_registered_type_named_like_a_built_in_constraint_does_not_replace_it()
     {
         var options = new System.Text.Json.JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver() };
