@@ -12,6 +12,7 @@ public sealed class RouteableNotificationSession
     private readonly Action? _onClick;
     private readonly Action? _onClose;
     private int _closed;
+    private int _clicked;
 
     /// <summary>Starts the session of a notification.</summary>
     /// <param name="title">The title; empty when <see langword="null"/>.</param>
@@ -56,8 +57,17 @@ public sealed class RouteableNotificationSession
     /// <summary>Whether <see cref="NotifyClosed"/> has been called.</summary>
     public bool IsClosed => Volatile.Read(ref _closed) == 1;
 
-    /// <summary>The user tapped the notification: runs its click callback, if any. The host then closes the notification.</summary>
-    public void Click() => RouteableErrors.Guard(null, RouteableCallbackSources.NotificationClick, _onClick);
+    /// <summary>
+    /// The user tapped the notification: runs its click callback, if any. The host then closes the notification. A notification is answered
+    /// once: a second tap while it fades out, or a tap on one that is already closed, runs nothing.
+    /// </summary>
+    public void Click()
+    {
+        if (IsClosed || Interlocked.Exchange(ref _clicked, 1) != 0)
+            return;
+
+        RouteableErrors.Guard(null, RouteableCallbackSources.NotificationClick, _onClick);
+    }
 
     /// <summary>
     /// The notification is gone: runs its close callback, once. Returns <see langword="true"/> the first time and

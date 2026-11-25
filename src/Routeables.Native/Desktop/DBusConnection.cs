@@ -222,6 +222,10 @@ internal sealed class DBusConnection : IDisposable
     /// <summary>Raised when the connection ends.</summary>
     public event Action? Closed;
 
+    /// <summary>True once the connection ended: a handler added to <see cref="Closed"/> after that is never called.</summary>
+    public bool IsClosed { get => Volatile.Read(ref _closed); private set => Volatile.Write(ref _closed, value); }
+    private bool _closed;
+
     /// <summary>Connects to the session bus and says Hello to it; <see langword="null"/> when there is no session bus (a server, a container).</summary>
     public static async Task<DBusConnection?> TryConnectAsync()
     {
@@ -456,6 +460,7 @@ internal sealed class DBusConnection : IDisposable
                 if (_pending.TryRemove(pair.Key, out var source))
                     source.TrySetException(new IOException("The session bus connection ended.", ex));
 
+            IsClosed = true;
             Closed?.Invoke();
         }
     }

@@ -14,6 +14,10 @@ public static class RouteableToastHelper
     const string HostTag = "Routeables.ToastHost";
     const double CardWidth = 360;
 
+    // Windows 11 has Segoe Fluent Icons; Windows 10 only has Segoe MDL2 Assets, which holds the same glyphs at the same codes.
+    // With the first font alone, the icon and the close button are empty squares on Windows 10.
+    static Microsoft.UI.Xaml.Media.FontFamily IconFont => new("Segoe Fluent Icons,Segoe MDL2 Assets");
+
     /// <summary>Shows a toast card over the window and returns it, or <see langword="null"/> when the window cannot show one.</summary>
     /// <param name="title">The title.</param>
     /// <param name="message">The message.</param>
@@ -163,7 +167,7 @@ public static class RouteableToastHelper
         var icon = new Microsoft.UI.Xaml.Controls.FontIcon
         {
             Glyph = glyph,
-            FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe Fluent Icons"),
+            FontFamily = IconFont,
             Foreground = accent, // the accent color itself does not change with the theme (see GetStyle)
             FontSize = 18,
             VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Top,
@@ -195,7 +199,7 @@ public static class RouteableToastHelper
         var closeIcon = new Microsoft.UI.Xaml.Controls.FontIcon
         {
             Glyph = "\uE711",
-            FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe Fluent Icons"),
+            FontFamily = IconFont,
             FontSize = 11,
         };
 

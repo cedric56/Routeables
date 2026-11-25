@@ -94,6 +94,13 @@ public sealed partial class SystemNotificationCenter
             lock (_linuxGate) { _linuxConnection = null; _linuxConnecting = null; _linuxOwner = null; }
             EndServerNotifications();
         };
+        // The bus ended before the handler was there: it was not called, and the connection would stay, dead, for every later notification.
+        if (connection.IsClosed)
+        {
+            connection.Dispose();
+            return null;
+        }
+
         lock (_linuxGate)
             _linuxConnection = connection;
 

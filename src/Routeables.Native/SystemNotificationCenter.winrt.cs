@@ -17,8 +17,14 @@ public sealed partial class SystemNotificationCenter
     private readonly object _windowsGate = new();
     private readonly Dictionary<uint, object> _windowsToasts = []; // the toasts must stay referenced while shown, or their events stop
 
+    private static string? s_windowsAppId;
+
+    // Read once: each notification asks for it several times, and the registry does not change under a running application.
     [SupportedOSPlatform("windows")]
-    private static string WindowsAppId()
+    private static string WindowsAppId() => s_windowsAppId ??= RegisterWindowsAppId();
+
+    [SupportedOSPlatform("windows")]
+    private static string RegisterWindowsAppId()
     {
         var name = AppDomain.CurrentDomain.FriendlyName;
         var id = "Routeables." + new string(name.Where(char.IsLetterOrDigit).ToArray());
@@ -96,7 +102,20 @@ public sealed partial class SystemNotificationCenter
 
         lock (_windowsGate)
             _windowsToasts[id] = toast;
-        ToastNotificationManager.CreateToastNotifier(WindowsAppId()).Show(toast);
+        try
+        {
+            ToastNotificationManager.CreateToastNotifier(WindowsAppId()).Show(toast);
+        }
+        catch
+        {
+            // Not shown: its events never come, and nothing else would let go of it.
+            lock (_windowsGate)
+            {
+                if (_windowsToasts.TryGetValue(id, out var current) && ReferenceEquals(current, toast))
+                    _windowsToasts.Remove(id);
+            }
+            throw;
+        }
     }
 
     private void WindowsEnded(uint id, bool activated)

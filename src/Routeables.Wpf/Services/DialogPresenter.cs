@@ -119,12 +119,22 @@ internal static class DialogPresenter
         if (string.IsNullOrEmpty(icon))
             return null;
 
-        var image = new BitmapImage();
-        image.BeginInit();
-        image.UriSource = new Uri(icon, UriKind.RelativeOrAbsolute);
-        image.CacheOption = BitmapCacheOption.OnLoad; // the file or resource stream is not kept open
-        image.EndInit();
-        image.Freeze();
-        return image;
+        // An icon that cannot be read (no such file, not an image, an address that is not one) is no reason not to show the dialog:
+        // the icon of the window that opens it is used, as on Avalonia.
+        try
+        {
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.UriSource = new Uri(icon, UriKind.RelativeOrAbsolute);
+            image.CacheOption = BitmapCacheOption.OnLoad; // the file or resource stream is not kept open
+            image.EndInit();
+            image.Freeze();
+            return image;
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or UriFormatException or NotSupportedException
+            or ArgumentException or InvalidOperationException or FormatException)
+        {
+            return null;
+        }
     }
 }

@@ -104,6 +104,12 @@
             await dialogElement.FocusAsync();
             request.Session.Opened();
         }
+        else if (Queue.Current is null)
+        {
+            // Nothing is shown any more: do not keep the last dialog (its content and callbacks) alive until the next one.
+            shown = null;
+            footerOwner = null;
+        }
     }
 
     private void OnChanged()

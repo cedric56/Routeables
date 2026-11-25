@@ -6,6 +6,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **Windows (desktop hosts): the identifier of the application for the notifications is read from the registry once**, not several times for each notification.
 - **ASP.NET Core: `RouteableInteractions.AnswerAsync(int)` and `ContinueAsync(Action)` are removed**: they answered whichever dialog waited when the request arrived, so a stale form (a second tab of the browser) could answer another dialog. `AnswerAsync(int, long)` and `ContinueAsync(Action, long)`, with the identifier the form sends back, name the dialog: use them.
 - **The sample of the Razor Pages host keeps the sessions of a visitor apart from a robot's**: an address holds at most 20 sessions (its oldest leaves first), the sweep runs once a second, and the sessions over the limit leave in one pass.
 - **Fewer allocations for the arguments of a route change**: the copy of the arguments no longer creates the three bags it replaces, and an address with no arguments given no longer creates a second instance. No change of behaviour.
@@ -22,6 +23,16 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **Blazor: a task dialog and a message that closed are let go of**: their host kept the last one (its content and its callbacks) until the next one was shown, as the host of the content dialogs no longer did.
+- **MAUI on Windows 10: the icon and the close button of a notification of the application are drawn**: they used a font that only Windows 11 has, and were empty squares. The font of Windows 10 is the fallback.
+- **A notification is answered once**: two taps in a row on a notification of the application (it fades out on Android, iOS and Windows) ran `onClick` twice, and a tap after its close button ran it on a notification being closed. `RouteableNotificationSession.Click` now runs the callback once, and not once the notification is closed.
+- **WPF: a dialog whose icon cannot be read is shown**: an icon that is not a file, not an image or not an address made the dialog fail before it opened. The icon of the window that opens the dialog is used, as on Avalonia.
+- **Avalonia: the Tab key stays in a dialog shown over the page** (single view: mobile, browser): the focus went on to the page under the backdrop, whose buttons could be pressed with the keyboard while the dialog was open.
+- **Windows (desktop hosts): a notification that could not be shown is let go of**: it stayed referenced until the notifications were all closed.
+- **Avalonia: the change of `RouteableFor.IsLocked` carries the real values**: the event always said the property went from `false` to `true`, also when the view was unlocked. The bindings read the property again and were right; a handler that reads the values of the event (a class handler, `GetObservable`) was told the view was locked.
+- **Blazor: a browser notification shown again starts its expiration again**: with a service worker, the time of the first display went on and closed the notification that replaced it. A notification closed from the code no longer keeps its timer.
+- **Blazor: no error in the console of the browser for a notification clicked or closed after its circuit ended**: the page could no longer tell the application, and the rejection was not handled.
+- **Linux: a session bus that ends while the notifications connect to it is connected again**: the connection that had just ended stayed as the one to use, and every later notification failed until the application was started again.
 - **A type with no namespace registered as a serializer after a homonym of a namespace is no longer refused**: `Sales.Item` registered first holds the short name `Item`, and the full name of `Item` (no namespace) was taken for a second spelling of that name in another case, so the name was declared ambiguous and `{x:Item}` was refused (the other order worked). A name held as a short name or as the dotted alias of a nested type now goes to the type whose full name it is; two full names that differ only by the case are still refused.
 - **A text given for a typed placeholder is written as the value it stands for**: `Build` wrote `"+9"` for `{b:long}` as `?b=%2B9`, and `"007"` for `{n:int}` as `007`, while a number gave `9` and `7`: one page had several addresses. The text is read and written the way the value would be.
 - **MAUI: a dialog is shown over the active window**: with several windows (Windows, Mac Catalyst) every window has a handler, and the first one was always taken, so dialogs, modals and toasts opened over it whichever window the user was in.

@@ -38,6 +38,21 @@ public class NotificationSessionTests
     }
 
     [Fact]
+    public void A_notification_is_answered_once_and_not_after_it_closed()
+    {
+        var clicks = 0;
+        var tappedTwice = new RouteableNotificationSession("t", "m", onClick: () => clicks++);
+        tappedTwice.Click();
+        tappedTwice.Click(); // a second tap while the notification fades out
+
+        var closed = new RouteableNotificationSession("t", "m", onClick: () => clicks++);
+        closed.NotifyClosed();
+        closed.Click();
+
+        Assert.Equal(1, clicks);
+    }
+
+    [Fact]
     public void The_close_callback_runs_once_whatever_the_number_of_closes()
     {
         var closes = 0;

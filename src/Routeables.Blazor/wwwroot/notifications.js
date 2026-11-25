@@ -7,6 +7,17 @@ let callback = null;
 let registered = false;
 let listening = false;
 const direct = new Map();
+// The expiration of each notification shown through the service worker: shown again, a notification starts its time again.
+const expirations = new Map();
+
+function expire(id, expirationMs) {
+    clearTimeout(expirations.get(id));
+    expirations.delete(id);
+    if (expirationMs > 0) expirations.set(id, setTimeout(() => { expirations.delete(id); close(id); }, expirationMs));
+}
+
+// A circuit that ended cannot be told: its reference is disposed, and the rejection is not an error of the page.
+const quiet = () => { };
 
 // Every window of the site shares the service worker, and each page numbers its notifications from 1. This value tells this page's
 // notifications from another tab's (it is in each notification's data, in the worker's messages and in the default tag).
@@ -27,13 +38,13 @@ export async function registrations(dotNetRef) {
             (navigator.serviceWorker.controller ?? registration?.active)?.postMessage({ type: 'RouteablesClaim', owner });
         if (!callback) return;
         if (data.type === 'HandleNotificationClose') {
-            callback.invokeMethodAsync('OnClose', JSON.stringify(data));
+            callback.invokeMethodAsync('OnClose', JSON.stringify(data)).catch(quiet);
         }
         if (data.type === 'HandleNotificationClick') {
-            callback.invokeMethodAsync('OnClick', JSON.stringify(data));
+            callback.invokeMethodAsync('OnClick', JSON.stringify(data)).catch(quiet);
         }
         if (data.type === 'HandleNotificationReply') {
-            callback.invokeMethodAsync('OnReply', JSON.stringify(data), data.reply);
+            callback.invokeMethodAsync('OnReply', JSON.stringify(data), data.reply).catch(quiet);
         }
     });
 }
@@ -79,7 +90,7 @@ export async function show(id, title, body, icon, tag, expirationMs, actions, re
             }
         }
         await registration.showNotification(title ?? '', options);
-        if (expirationMs > 0) setTimeout(() => close(id), expirationMs);
+        expire(id, expirationMs);
         return;
     }
 
@@ -106,6 +117,8 @@ export async function show(id, title, body, icon, tag, expirationMs, actions, re
 }
 
 export async function close(id) {
+    clearTimeout(expirations.get(id));
+    expirations.delete(id);
     direct.get(id)?.close();
     if (registration) {
         for (const notification of await registration.getNotifications())

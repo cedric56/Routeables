@@ -89,8 +89,9 @@ public partial class RouteableFor : UserControl, IRouteableFor, IRouteable, IDis
     public static readonly DirectProperty<RouteableFor, bool> IsLockedProperty =
         AvaloniaProperty.RegisterDirect<RouteableFor, bool>(nameof(IsLocked), o => o.IsLocked);
 
-    // IsLocked is computed from the view model: the value only tells the bindings to read it again.
-    private void SetLocked(bool locked) => RaisePropertyChanged(IsLockedProperty, false, true);
+    // IsLocked is computed from the view model: the event tells the bindings to read it again, and a handler that reads the event's own
+    // values (a class handler, GetObservable) gets the real ones.
+    private void SetLocked(bool locked) => RaisePropertyChanged(IsLockedProperty, !locked, locked);
 
 #elif MAUI
     private static readonly BindablePropertyKey IsLockedPropertyKey =

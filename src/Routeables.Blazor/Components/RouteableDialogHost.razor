@@ -44,6 +44,11 @@
             focused = request;
             await dialog.FocusAsync();
         }
+        else if (Service.Current is null)
+        {
+            // Nothing is shown any more: do not keep the last message alive until the next one.
+            focused = null;
+        }
     }
 
     private void OnChanged() => _ = InvokeAsync(StateHasChanged);

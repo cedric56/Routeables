@@ -195,6 +195,8 @@ internal static class DialogPresenter
         };
         Canvas.SetLeft(backdrop, 0);
         Canvas.SetTop(backdrop, 0);
+        // Tab stays in the dialog: without it the focus goes on to the page under the backdrop, whose buttons can then be pressed with the keyboard.
+        KeyboardNavigation.SetTabNavigation(backdrop, KeyboardNavigationMode.Cycle);
 
         // The overlay layer is a canvas: its children are not stretched, so the backdrop follows the layer's size.
         void Resize()

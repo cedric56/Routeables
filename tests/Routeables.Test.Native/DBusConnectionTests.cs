@@ -237,9 +237,11 @@ public class DBusConnectionTests
         connection.Closed += () => closed.TrySetResult();
 
         var call = connection.CallAsync("org.example", "/", "org.example.Iface", "Ask", null, null);
+        Assert.False(connection.IsClosed);
         bus.Dispose();
 
         await closed.Task.WaitAsync(Patience, ct);
+        Assert.True(connection.IsClosed); // what a handler added too late reads: it is not called
         await Assert.ThrowsAsync<IOException>(() => call.WaitAsync(Patience, ct));
     }
 
