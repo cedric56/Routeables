@@ -1,8 +1,9 @@
 namespace Routeables;
 
 /// <summary>
-/// The few words the library writes on screen itself: the buttons of the message boxes (<c>Yes</c>, <c>No</c>, <c>Cancel</c>, <c>OK</c>...) and the title of
-/// an application whose menu has no entry selected. They are English by default; an application that is translated sets them once, at start:
+/// The few words the library writes on screen itself: the buttons of the message boxes (<c>Yes</c>, <c>No</c>, <c>Cancel</c>, <c>OK</c>...), the labels of
+/// its own controls (<c>Close</c>, <c>Details</c>, <c>More details</c>, <c>Less details</c>, <c>More Details</c>, <c>Fewer Details</c>, <c>Menu</c>,
+/// <c>Toggle menu</c>, <c>Switch between the light and the dark theme</c>) and the title of an application whose menu has no entry selected. They are English by default; an application that is translated sets them once, at start:
 /// <code>
 /// RouteableTexts.ButtonTranslator = word => word switch { "Yes" => "Oui", "No" => "Non", "Cancel" => "Annuler", _ => null };
 /// RouteableTexts.ApplicationTitle = "Mon application";

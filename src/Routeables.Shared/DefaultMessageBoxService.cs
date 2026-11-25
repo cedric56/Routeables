@@ -363,7 +363,7 @@ public class DefaultMessageBoxService(string? icon = null) : IMessageBoxService
         {
             if (@params.IsFooterCollapsible)
             {
-                expander = new Expander { Header = "Details", IsExpanded = @params.IsFooterExpanded, Content = footer };
+                expander = new Expander { Header = RouteableTexts.Button("Details"), IsExpanded = @params.IsFooterExpanded, Content = footer };
                 parts.Add(expander);
             }
             else

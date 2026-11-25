@@ -59,7 +59,7 @@
                     {
                         <button type="button" class="rt-footer-toggle" aria-expanded="@footerExpanded.ToString().ToLowerInvariant()"
                                 @onclick="() => footerExpanded = !footerExpanded">
-                            @(footerExpanded ? "Less details" : "More details")
+                            @(RouteableTexts.Button(footerExpanded ? "Less details" : "More details"))
                         </button>
                     }
                     @if (footerExpanded && dialog.Footer is RouteableFor footer)

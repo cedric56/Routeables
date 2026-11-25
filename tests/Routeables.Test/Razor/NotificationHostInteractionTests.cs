@@ -51,6 +51,39 @@ public sealed class NotificationHostInteractionTests : BunitContext
         cut.WaitForAssertion(() => Assert.Empty(cut.FindAll(".rt-toast")));
     }
 
+    [Theory]
+    [InlineData("Enter")]
+    [InlineData(" ")]
+    public void A_toast_that_answers_a_click_is_reached_and_answered_with_the_keyboard(string key)
+    {
+        var service = Start();
+        var cut = Render<RouteableNotificationHost>();
+        var log = new List<string>();
+        service.Show("Title", "Message", expiration: Never, onClick: () => log.Add("click"), onClose: () => log.Add("close"));
+        cut.WaitForAssertion(() => cut.Find(".rt-toast"));
+        Assert.Equal("0", cut.Find(".rt-toast").GetAttribute("tabindex"));
+
+        cut.Find(".rt-toast").KeyDown(new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = key });
+
+        Assert.Equal(["click", "close"], log);
+    }
+
+    [Fact]
+    public void A_toast_with_nothing_to_answer_is_not_a_stop_of_the_keyboard()
+    {
+        var service = Start();
+        var cut = Render<RouteableNotificationHost>();
+        var closed = 0;
+        service.Show("Title", "Message", expiration: Never, onClose: () => closed++);
+        cut.WaitForAssertion(() => cut.Find(".rt-toast"));
+
+        Assert.Null(cut.Find(".rt-toast").GetAttribute("tabindex"));
+        cut.Find(".rt-toast").KeyDown(new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = "Enter" });
+
+        Assert.Equal(0, closed);
+        Assert.Single(cut.FindAll(".rt-toast"));
+    }
+
     [Fact]
     public void The_close_button_closes_the_toast_without_the_click_callback()
     {

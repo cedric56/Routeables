@@ -12,7 +12,9 @@
             <div @key="toast"
                  class="rt-toast rt-@(toast.Type.ToString().ToLowerInvariant())"
                  role="@(toast.Type == RouteableNotificationType.Error ? "alert" : "status")"
-                 @onclick="() => Service.Click(toast)">
+                 tabindex="@(toast.HasClick ? "0" : null)"
+                 @onclick="() => Service.Click(toast)"
+                 @onkeydown="e => OnKeyDown(e, toast)">
                 <div class="rt-toast-text">
                     @if (!string.IsNullOrWhiteSpace(toast.Title))
                     {
@@ -20,9 +22,10 @@
                     }
                     <div class="rt-toast-message">@toast.Message</div>
                 </div>
-                <button type="button" class="rt-toast-close" aria-label="Close"
+                <button type="button" class="rt-toast-close" aria-label="@(RouteableTexts.Button("Close"))"
                         @onclick="() => Service.Close(toast)"
-                        @onclick:stopPropagation="true">&times;</button>
+                        @onclick:stopPropagation="true"
+                        @onkeydown:stopPropagation="true">&times;</button>
             </div>
         }
     </div>
@@ -32,6 +35,14 @@
     protected override void OnInitialized() => Service.Changed += OnChanged;
 
     private void OnChanged() => _ = InvokeAsync(StateHasChanged);
+
+    // A notification that answers a tap answers Enter and Space too, as a button does: without it the keyboard could only close it.
+    // The keys pressed on its close button stay there (stopPropagation): they close, they do not answer.
+    private void OnKeyDown(KeyboardEventArgs e, ToastNotification toast)
+    {
+        if (toast.HasClick && e.Key is "Enter" or " ")
+            Service.Click(toast);
+    }
 
     private static string PositionClass(RouteableNotificationPosition position) => position switch
     {

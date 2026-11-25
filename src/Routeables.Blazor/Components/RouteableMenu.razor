@@ -44,7 +44,7 @@
 
     /// <summary>The accessible name of the menu.</summary>
     [Parameter]
-    public string Label { get; set; } = "Menu";
+    public string Label { get; set; } = RouteableTexts.Button("Menu");
 
     /// <summary>Selects the entry: the menu view model routes to it.</summary>
     private void OnNavClick(IRouteableMenuEntry item) => MainViewModel.SelectedEntry = item;

@@ -342,7 +342,8 @@ namespace Routeables.Generated
             foreach (var r in localR) AddRoute(r);
 
             foreach (var bad in routesByKey.Values.Where(r => r.Problem is not null).OrderBy(r => r.TypeName, StringComparer.Ordinal))
-                spc.ReportDiagnostic(Diagnostic.Create(UnusableViewModel, Location.None,
+                spc.ReportDiagnostic(Diagnostic.Create(UnusableViewModel,
+                    bad.Where is { } where ? Location.Create(where.Path, where.Span, where.LineSpan) : Location.None, // none: a type of a referenced assembly
                     "[Routeable] on " + bad.TypeName + " is ignored: " + bad.Problem));
 
             Generate(spc, viewsByKey.Values, routesByKey.Values.Where(r => r.Problem is null).ToList(), compiled.Candidates.ToList(), autoRegisterRoutes);
@@ -400,8 +401,37 @@ namespace Routeables.Generated
                     continue;
                 }
 
-                foreach (var t in GetTypesInNamespace(asm.GlobalNamespace))
+                foreach (var t in ReferencedTypes.Of(asm))
                     yield return t;
+            }
+        }
+
+        /// <summary>
+        /// The types of a referenced assembly that the scan can use: those shaped like a view of the convention and those that carry an attribute
+        /// named as ours. The generator runs at each change of the project (each key typed in an editor), and a referenced assembly does not change
+        /// with it: its symbol is the same from one compilation to the next, so its types are walked once, not every time. The table holds an
+        /// assembly only as long as the compiler does.
+        /// </summary>
+        private static class ReferencedTypes
+        {
+            private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<IAssemblySymbol, INamedTypeSymbol[]> Known = new();
+
+            public static INamedTypeSymbol[] Of(IAssemblySymbol assembly) => Known.GetValue(assembly, static asm =>
+            {
+                var kept = new List<INamedTypeSymbol>();
+                foreach (var type in GetTypesInNamespace(asm.GlobalNamespace))
+                    if (IsConventionView(type) || HasOurAttribute(type))
+                        kept.Add(type);
+                return kept.ToArray();
+            });
+
+            // By name only: the symbols of the attributes belong to a compilation, and this list outlives it. ScanTypes compares the symbols.
+            private static bool HasOurAttribute(INamedTypeSymbol type)
+            {
+                foreach (var attribute in type.GetAttributes())
+                    if (attribute.AttributeClass?.Name is "RouteableAttribute" or "RouteableViewAttribute")
+                        return true;
+                return false;
             }
         }
 
@@ -549,6 +579,7 @@ namespace Routeables.Generated
                 }
             }
 
+            var problem = ProblemOf(compilation, symbol);
             return new Route(
                 TypeName: symbol.ToDisplayString(FqName),
                 Name: symbol.Name,
@@ -557,7 +588,18 @@ namespace Routeables.Generated
                 Lifetime: lifetime,
                 Build: RouteBuilds.Analyze(compilation, symbol),
                 IsLocal: SymbolEqualityComparer.Default.Equals(symbol.ContainingAssembly, compilation.Assembly),
-                Problem: ProblemOf(compilation, symbol));
+                Problem: problem,
+                Where: problem is null ? null : WhereIs(attr));
+        }
+
+        // Where the attribute is written, for the diagnostic to lead to it. Only kept for a type that is reported: a place changes with every
+        // line typed above it, and a route that carried one would be generated again at each of them.
+        private static RazorAttributeLocation? WhereIs(AttributeData attr)
+        {
+            if (attr.ApplicationSyntaxReference is not { } written)
+                return null; // a type of a referenced assembly: no source here
+
+            return new RazorAttributeLocation(written.SyntaxTree.FilePath, written.Span, written.SyntaxTree.GetLineSpan(written.Span).Span);
         }
 
         // A view model the generated code cannot name: an open generic type (OrderViewModel<T>), a type local to its file, or one it cannot reach.
@@ -953,7 +995,8 @@ namespace Routeables.Generated
             ServiceLifetime Lifetime,
             RouteBuilds.BuildInfo? Build = null,
             bool IsLocal = false,
-            string? Problem = null);
+            string? Problem = null,
+            RazorAttributeLocation? Where = null);
     }
 }
 

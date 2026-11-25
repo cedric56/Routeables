@@ -54,6 +54,9 @@ public sealed class RouteableNotificationSession
     /// </summary>
     public TimeSpan? AutoCloseAfter { get; }
 
+    /// <summary>Whether a tap does something: the notification was given a click callback. A host makes it reachable with the keyboard then.</summary>
+    public bool HasClick => _onClick is not null;
+
     /// <summary>Whether <see cref="NotifyClosed"/> has been called.</summary>
     public bool IsClosed => Volatile.Read(ref _closed) == 1;
 

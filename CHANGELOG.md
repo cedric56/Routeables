@@ -6,6 +6,9 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **The labels of the library's own controls go through `RouteableTexts.ButtonTranslator`**, as the buttons of the message boxes do: `Close` (the button of a notification), `Details`, `More details`, `Less details`, `More Details`, `Fewer Details` (the footer of a task dialog), `Menu`, `Toggle menu` and `Switch between the light and the dark theme` (the Blazor layout). They were English whatever the translator said.
+- **`RouteableNotificationSession.HasClick`** says whether the notification was given a click callback.
+- **The route generator walks a referenced assembly once**: it walked every type of every referenced project at each change of the project being edited (each key typed in an editor). The types of the project itself are still read each time.
 - **Windows (desktop hosts): the identifier of the application for the notifications is read from the registry once**, not several times for each notification.
 - **ASP.NET Core: `RouteableInteractions.AnswerAsync(int)` and `ContinueAsync(Action)` are removed**: they answered whichever dialog waited when the request arrived, so a stale form (a second tab of the browser) could answer another dialog. `AnswerAsync(int, long)` and `ContinueAsync(Action, long)`, with the identifier the form sends back, name the dialog: use them.
 - **The sample of the Razor Pages host keeps the sessions of a visitor apart from a robot's**: an address holds at most 20 sessions (its oldest leaves first), the sweep runs once a second, and the sessions over the limit leave in one pass.
@@ -23,6 +26,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **Blazor: a notification that answers a click is answered with the keyboard**: it is a stop of the Tab key, and Enter or Space runs its `onClick`. The keyboard could only close it.
+- **The diagnostic ROUT207 leads to the `[Routeable]` it is about**: it had no place, so it could not be clicked in the list of errors.
 - **Blazor: a task dialog and a message that closed are let go of**: their host kept the last one (its content and its callbacks) until the next one was shown, as the host of the content dialogs no longer did.
 - **MAUI on Windows 10: the icon and the close button of a notification of the application are drawn**: they used a font that only Windows 11 has, and were empty squares. The font of Windows 10 is the fallback.
 - **A notification is answered once**: two taps in a row on a notification of the application (it fades out on Android, iOS and Windows) ran `onClick` twice, and a tap after its close button ran it on a notification being closed. `RouteableNotificationSession.Click` now runs the callback once, and not once the notification is closed.

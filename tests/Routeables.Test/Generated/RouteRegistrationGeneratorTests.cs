@@ -934,7 +934,8 @@ public class RouteRegistrationGeneratorTests
             public class FineViewModel { }
             """);
 
-        Assert.Single(result.Diagnostics, d => d.Id == "ROUT207");
+        var reported = Assert.Single(result.Diagnostics, d => d.Id == "ROUT207");
+        Assert.Equal(4, reported.Location.GetLineSpan().StartLinePosition.Line); // the line of [Routeable("/inner")]: the diagnostic leads to it
         var code = GetGeneratedCode(result);
         Assert.Contains("/fine", code);
         Assert.DoesNotContain("InnerViewModel", code);

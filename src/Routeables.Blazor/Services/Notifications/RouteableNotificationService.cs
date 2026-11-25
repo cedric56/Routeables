@@ -25,6 +25,9 @@ internal sealed class ToastNotification(RouteableNotificationSession session)
 
     public RouteableNotificationType Type => Session.Type;
 
+    /// <summary>Whether a tap does something more than close the notification.</summary>
+    public bool HasClick => Session.HasClick;
+
     public Timer? Expiration { get; set; }
 }
 

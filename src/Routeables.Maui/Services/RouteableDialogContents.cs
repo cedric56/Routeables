@@ -101,7 +101,7 @@ public static class RouteableDialogContents
             {
                 var moreDetailsButton = new Button
                 {
-                    Text = footerHost.IsVisible ? "Fewer Details" : "More Details",
+                    Text = RouteableTexts.Button(footerHost.IsVisible ? "Fewer Details" : "More Details"),
                     BorderWidth = 0,
                     Padding = 0,
                     HorizontalOptions = LayoutOptions.Start,
@@ -115,7 +115,7 @@ public static class RouteableDialogContents
                 moreDetailsButton.Clicked += (_, _) =>
                 {
                     footerHost.IsVisible = !footerHost.IsVisible;
-                    moreDetailsButton.Text = footerHost.IsVisible ? "Fewer Details" : "More Details";
+                    moreDetailsButton.Text = RouteableTexts.Button(footerHost.IsVisible ? "Fewer Details" : "More Details");
                 };
 
                 body.Add(moreDetailsButton);
