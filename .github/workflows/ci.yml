@@ -548,6 +548,7 @@ jobs:
           dotnet pack src/Routeables.Native/Routeables.Native.csproj -c Release -o artifacts
           dotnet pack src/Routeables.Blazor/Routeables.Blazor.csproj -c Release -o artifacts
           dotnet pack src/Routeables.Avalonia/Routeables.Avalonia.csproj -c Release -o artifacts
+          dotnet pack src/Routeables.AspNetCore/Routeables.AspNetCore.csproj -c Release -o artifacts
 
       - name: Check the dependencies and the content
         run: bash .github/scripts/check-packages.sh artifacts

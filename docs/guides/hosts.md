@@ -32,7 +32,7 @@ These interfaces live in `Routeables.Services` (namespace `Routeables.Services`)
 
 ### Translating the texts of the library
 
-The library writes very few words itself: the buttons of the message boxes (`Yes`, `No`, `Cancel`, `Abort`, `Ok`) and the title shown when no menu entry is selected (`Application`). They are English by default. Set them once, at start:
+The library writes very few words itself: the buttons of the message boxes (`Yes`, `No`, `Cancel`, `Abort`, `Ok`), the labels of its own controls (`Close`, `Validate`, `Details`, `More details`, `Less details`, `More Details`, `Fewer Details`, `Menu`, `Toggle menu`, `Switch between the light and the dark theme`) and the title shown when no menu entry is selected (`Application`). They are English by default. Set them once, at start:
 
 ```csharp
 RouteableTexts.ButtonTranslator = word => word switch

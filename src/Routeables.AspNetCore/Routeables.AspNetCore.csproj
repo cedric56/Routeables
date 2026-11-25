@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <PackageId>Routeables.AspNetCore</PackageId>
+    <Authors>Cédric Boutin</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Routeables for ASP.NET Core Razor Pages and MVC views: view-model-first routing, dialogs and notifications on the server. The application provides one service scope per visitor.</Description>
   </PropertyGroup>
 
@@ -18,9 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" />
-    <ProjectReference Include="..\Routeables.Abstraction\Routeables.Abstraction.csproj" />
-    <ProjectReference Include="..\Routeables.Segments\Routeables.Segments.csproj" />
+    <!-- Routeables.Core only, as the other hosts: it is the "Routeables" package, which holds Routeables.Segments and depends on
+         Routeables.Abstraction. A reference to Routeables.Segments here became a dependency on a package that does not exist. -->
+    <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
   </ItemGroup>
 
   <ItemGroup>

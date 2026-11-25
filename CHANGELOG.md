@@ -4,6 +4,24 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ## Unreleased
 
+### Added
+
+- **Benchmark, repeated** (workflow run by hand): the comparison five times, and `tools/benchmark-aggregate.py` puts the time ratios of the runs side by side (median, smallest, largest). Each program writes the runner that measured.
+- **Benchmark**: the libraries are measured in turns in the same process (the order turns from one run to the next), and the job writes the ratio of the times run by run (median and middle half), so that the noise of the machine falls on all of them alike. The guide of the history says what an entry weighs (the view it keeps: about 9 KB on Avalonia for a one-line page).
+- **Benchmark of the same application with views** (job "Same application, with views"): the 200-step scenario in an Avalonia application with no screen, a real view per page, for Routeables, ReactiveUI routing (`benchmarks/Routeables.Comparison.Avalonia`) and Prism.Avalonia (`benchmarks/Routeables.Comparison.Prism`, on Avalonia 11). Not yet run.
+
+- **The same application on three libraries, phase 1** (`benchmarks/`): a script of 200 navigation steps replayed on Routeables, ReactiveUI routing and a navigation service of your own, on the console, with the page of each step checked, the time and allocations of a run, and the memory after 1 000 route changes. CI job "Same application, three libraries". See [the protocol](docs/benchmark-comparison.md). The ReactiveUI version has not been compiled yet.
+
+- **`RouteableTexts`**: the buttons of the message boxes (`Yes`, `No`, `Cancel`, `Abort`, `Ok`) and the default title `Application` can be translated (`RouteableTexts.ButtonTranslator`, `RouteableTexts.ApplicationTitle`); every host (WPF, Avalonia, MAUI, WinUI 3, Uno, Blazor, Razor) and the task dialogs use them. What a message box answers stays English, so the code that reads it does not change. See the hosts guide.
+
+- **The CI checks the public API of the packages against the last release** (job "API compatibility with the last release"): `Routeables` and `Routeables.Abstraction` are packed with `EnablePackageValidation` against `ApiBaselineVersion` (`Directory.Build.props`, 2.1.0). It blocks. See [VERSIONING.md](VERSIONING.md).
+
+- **Documentation**: the comparison page adds MvvmCross, Caliburn.Micro, a navigation service of your own, a table of which tool for which application, and a word on the age of the project; [a protocol](docs/benchmark-comparison.md) describes how to compare the libraries on the same application (no results yet).
+
+- **The saved history can be encrypted** (`AddRouteableHistory(path, protector)`): `IRouteableHistoryProtector` (`Protect`, `Unprotect`) wraps the text before the store keeps it, and `AesRouteableHistoryProtector` is a ready one (AES-GCM, a key of 16, 24 or 32 bytes that you take from the secure storage of the platform). A text that was changed or written with another key is left out and the application starts with no history. The history holds the addresses and what the pages saved (`[Persist]`): without a protector it is still plain text, as before; **adding a protector to an application that already has a plain history starts it empty once.** `FileRouteableHistoryStore` also writes its file for its owner only (mode 600) on Linux, macOS and Android.
+
+- **System notifications on the Linux and Windows desktop** from the plain `net10.0` build of `Routeables.Native` (Avalonia, WPF, a console): Linux through `org.freedesktop.Notifications` on the D-Bus session bus (a small client inside the library, no package: a tap on the notification is a tap, closing it a dismissal), Windows through the toasts of Windows 10 and 11 (`WindowsContracts.Net.Foundation.UniversalApiContract`, `PrivateAssets="all"`; no Windows SDK target), each in its own partial file (`SystemNotificationCenter.linux.cs`, `.winrt.cs`, `.browser.cs`) like the other platforms; `Routeables.Native` now uses the Razor SDK and its JavaScript lives in `wwwroot`; an Avalonia head that targets `net10.0-windows10.0.19041.0` gets the notification center of the Windows App SDK instead (`Routeables.Avalonia` is built for that target too). **In the browser**, WebAssembly applications that are not Blazor (Avalonia, Uno) use the notification center of the browser too: the module and the service worker of `Routeables.Blazor` moved to `Routeables.Native` (Blazor serves the same files), and `Routeables.Native` talks to it with `JSImport`. The `AppNotificationOptions` of `Routeables.Blazor` is gone: every host uses the one of `Routeables.Native` (namespace `Routeables.Native`), which gained `ServiceWorkerUrl`, `DefaultIcon` and `RequestPermissionOnInitialize`. **macOS** (the plain `net10.0` build, no `net10.0-macos` target) has them too: `UNUserNotificationCenter` through the Objective-C runtime (`Desktop/ObjC.cs`, `SystemNotificationCenter.macos.cs`), for an application in a `.app` bundle; outside a bundle nothing is created. `CreateNotificationAsync` still returns `null` where there is no session bus.
+
 ### Changed
 
 - **The labels of the library's own controls go through `RouteableTexts.ButtonTranslator`**, as the buttons of the message boxes do: `Close` (the button of a notification), `Details`, `More details`, `Less details`, `More Details`, `Fewer Details` (the footer of a task dialog), `Menu`, `Toggle menu` and `Switch between the light and the dark theme` (the Blazor layout). They were English whatever the translator said.
@@ -23,9 +41,45 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 - **New in the docs**: [recipes](docs/guides/recipes.md) for five tasks (a sign-in guard, master and detail with a region, passing an object, asking before leaving, tabs with their own history) and a [glossary](docs/guides/glossary.md) of the words of the project.
 - **Each diagnostic of the generators and analyzers links to its line** of the diagnostics page (`helpLinkUri`, an anchor for each `ROUT...`).
 - **The README of the templates and the page of the hosts said the templates cover Avalonia and Blazor only**; there are five (`routeables-maui`, `-uno` and `-winui3` too).
+- **Floating package versions pinned**: `Microsoft.WindowsAppSDK`, `DeviceRunners.*` (0.1.0-preview.12), and in `Routeables.Test.Uno` `MSTest.TestFramework` (4.5.3) and `Uno.UI.RuntimeTests.Engine` (3.0.0-dev.11), to what a restore resolved. `Microsoft.WindowsAppSDK` is pinned too (1.8.260921001): no version floats any more, and `CentralPackageFloatingVersionsEnabled` is off.
+
+- **Deep links: no scheme is accepted unless it is given** (`RouteableDeepLinks`, `RouteableLinkInbox`). `schemes: null` or an empty list used to accept any scheme (`file:`, `content:`, the protocol of another application); it now accepts none of the application, and only an `http(s)` address of a listed host. **An application that passed no schemes must now pass the ones it owns** (`["myapp"]`); the failed result says so. An address with a user name or a password is refused, and no longer copied into the route. The signatures are unchanged.
+
+- **The history file is never wider than its owner on Unix**: `FileRouteableHistoryStore` creates the file with the mode 600 (it used to write it and restrict it right after, which left a moment when another user of the machine could open it) and the folder it creates with the mode 700.
+
+- **The D-Bus calls of the notifications have a delay**: `AddMatch`, `GetNameOwner` and `CloseNotification` give up after 3 s like the others, so a bus that does not answer does not keep an entry of each call.
+
+- **`RouteableTable.Entries` cannot be changed by a caller**: it is a read-only collection, not the array that the table keeps. The read is still the collection itself, with no copy.
+
+
+- **The router tells a word from a value everywhere**: the menus, the controls of navigation of the hosts, MAUI Shell and the router itself compare routes with the templates the router knows, as the address bar of Blazor does, so `/items/aB` and `/items/Ab` are two pages when the identifier is a token or a slug. The comparison of `RouteableState` and of MAUI Shell goes through the same rule.
+
+- **A saved history cannot give a command**: a route written `-/orders` (go back, then navigate) in a history file is skipped when the history is restored.
+
+- **The default buttons of a modal are translated**: `Validate`, `Cancel` and `Close` of `RouteableViewModel`, and the `Close` button of a dialog without commands, go through `RouteableTexts.Button`.
+
+- **A cancelled menu selection answers "no"**: `SelectEntryAsync(entry, cancellationToken)` cancelled while it waits for another selection used to answer `true` and leave the menu on an entry that was never shown. It now answers `false`, and the menu stays on the entry whose page is being shown.
+
+- **A menu follows the page a guard redirects to**: when the selection of an entry ends on another page (the sign-in page that a guard sends the user to), the menu now selects the entry of that page and shows its title. Before, the redirection was left out while the selection ran, and the menu went back to the entry it had before.
+
+- **The source generator reads fewer assemblies**: the bindings of Android and iOS (`Mono.Android`, `Xamarin.*`, `Java.Interop`) and the graphics libraries (`SkiaSharp`, `HarfBuzzSharp`) are not searched for views and view models any more. A project of MAUI for Android reads tens of thousands of types less at each keystroke.
+
+- **`agent-desktop` is installed in a fixed version** (1.3.1) by the smoke tests of the native samples and by the scripts of `agent-desktop/`.
+
+- **The NuGet versions of the repository are central** (`Directory.Packages.props`): the projects write `<PackageReference Include="..." />` and the versions are in one place. The versions are the ones the projects had; `VersionOverride` stays where two projects asked for different ones (`Routeables.Avalonia` keeps the oldest Avalonia it works with, the generator the oldest Roslyn). The Uno SDK projects and `templates/` stay outside of it. A `.editorconfig` shares the indentation.
+
+- **One rule for "the same route?"** (`RouteAddress`, internal): the router (menu entry lookup, type guards, not-found page, `GoBackToAsync`), `WentTo`, the menus (`RouteableMenuViewModelBase`), the table of routes, the controls of navigation (`RouteTarget`, the Shell tabs of MAUI), the sign-in guard of Blazor and the address bar (`RouteableUrlSync`) used eight different comparisons. They now agree: a leading or closing slash does not count, the words of a path ignore the case, a query ignores the order of its pairs and the case of its names but not of its values, and an escaped address is the plain one. Visible effects: a menu entry is found for the page whatever the case or slashes of its route (`/Orders/` is `/orders`), two entries that differ by their query stay two, `RouteableTable` drops `orders/` as a duplicate of `/orders`, and the sign-in guard no longer redirects a visit of the sign-in page with a `returnUrl` to itself.
+
+- **The address bar of Blazor asks any menu to select an entry**: `IRouteableMenuViewModel.SelectEntryAsync` (a default that sets `SelectedEntry`, which the base classes of `Routeables.Core` already implement). A menu written by hand can answer `false` when a guard keeps the user where they were, and the address is put back; before, only the base classes could.
+
+- **Avalonia uses `Routeables.Native`** for its system notifications instead of Avalonia.Labs.Notifications (removed: on Linux its D-Bus dependency crashed the application at start). Turn them on with `AppBuilder.WithAppNotifications()` (`Routeables.Avalonia`). `Routeables.Avalonia` now also builds for `net10.0-android` and `net10.0-ios`: an Android or iOS head must reference it directly to get them. The desktop has them too (Linux through D-Bus, Windows through the notification area, see above); macOS and the browser do not: `CreateNotificationAsync` returns `null` there. On Android pass the intents to `SystemNotificationCenter.HandleIntent` from the main activity.
+
+- **`Routeables.Native` no longer depends on MAUI Essentials or AndroidX** on Android: it follows the activity in front itself, asks for the notification permission with it, and uses `Notification.Builder`. No `Platform.Init` is needed outside MAUI. Applications build the services (`UseRouteablesServices`) before the first activity, as they do; `NativeDialogs.Initialize()` starts it for a host that does not.
+- **The three-button dialog is in `Routeables.Native`** (`NativeDialogs.DisplayThreeButtonsAsync`): MAUI, WinUI 3 and Uno use it (Android alert, Windows App SDK `ContentDialog`, iOS alert or sheet) and draw their own where it has nothing to show.
 
 ### Fixed
 
+- **The `Routeables.AspNetCore` package can be installed**: its project referenced `Routeables.Segments` and `Routeables.Abstraction` directly, so the package depended on `Routeables.Segments`, which is inside the `Routeables` package and is not published. It depends on `Routeables` alone, as the other hosts do, and carries its readme, its license and its author.
 - **Blazor: a notification that answers a click is answered with the keyboard**: it is a stop of the Tab key, and Enter or Space runs its `onClick`. The keyboard could only close it.
 - **The diagnostic ROUT207 leads to the `[Routeable]` it is about**: it had no place, so it could not be clicked in the list of errors.
 - **Blazor: a task dialog and a message that closed are let go of**: their host kept the last one (its content and its callbacks) until the next one was shown, as the host of the content dialogs no longer did.
@@ -290,65 +344,6 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 - **`RouteableState.RestoreAsync`** ignores a saved route that starts with `-` (go back), as `RestoreSnapshotsAsync` does.
 - **Linux notifications**: when the bus closes or the notification server is replaced, the identifiers it gave are forgotten and the notifications that were waiting end as dismissed (the next server could have replaced the bubble of another application with one of them).
 - **`BrowserSystemNotifications.DisposeAsync`** (Blazor) catches the same exceptions as the other services of the browser.
-
-### Added
-
-- **Benchmark, repeated** (workflow run by hand): the comparison five times, and `tools/benchmark-aggregate.py` puts the time ratios of the runs side by side (median, smallest, largest). Each program writes the runner that measured.
-- **Benchmark**: the libraries are measured in turns in the same process (the order turns from one run to the next), and the job writes the ratio of the times run by run (median and middle half), so that the noise of the machine falls on all of them alike. The guide of the history says what an entry weighs (the view it keeps: about 9 KB on Avalonia for a one-line page).
-- **Benchmark of the same application with views** (job "Same application, with views"): the 200-step scenario in an Avalonia application with no screen, a real view per page, for Routeables, ReactiveUI routing (`benchmarks/Routeables.Comparison.Avalonia`) and Prism.Avalonia (`benchmarks/Routeables.Comparison.Prism`, on Avalonia 11). Not yet run.
-
-- **The same application on three libraries, phase 1** (`benchmarks/`): a script of 200 navigation steps replayed on Routeables, ReactiveUI routing and a navigation service of your own, on the console, with the page of each step checked, the time and allocations of a run, and the memory after 1 000 route changes. CI job "Same application, three libraries". See [the protocol](docs/benchmark-comparison.md). The ReactiveUI version has not been compiled yet.
-
-- **`RouteableTexts`**: the buttons of the message boxes (`Yes`, `No`, `Cancel`, `Abort`, `Ok`) and the default title `Application` can be translated (`RouteableTexts.ButtonTranslator`, `RouteableTexts.ApplicationTitle`); every host (WPF, Avalonia, MAUI, WinUI 3, Uno, Blazor, Razor) and the task dialogs use them. What a message box answers stays English, so the code that reads it does not change. See the hosts guide.
-
-- **The CI checks the public API of the packages against the last release** (job "API compatibility with the last release"): `Routeables` and `Routeables.Abstraction` are packed with `EnablePackageValidation` against `ApiBaselineVersion` (`Directory.Build.props`, 2.1.0). It blocks. See [VERSIONING.md](VERSIONING.md).
-
-- **Documentation**: the comparison page adds MvvmCross, Caliburn.Micro, a navigation service of your own, a table of which tool for which application, and a word on the age of the project; [a protocol](docs/benchmark-comparison.md) describes how to compare the libraries on the same application (no results yet).
-
-- **The saved history can be encrypted** (`AddRouteableHistory(path, protector)`): `IRouteableHistoryProtector` (`Protect`, `Unprotect`) wraps the text before the store keeps it, and `AesRouteableHistoryProtector` is a ready one (AES-GCM, a key of 16, 24 or 32 bytes that you take from the secure storage of the platform). A text that was changed or written with another key is left out and the application starts with no history. The history holds the addresses and what the pages saved (`[Persist]`): without a protector it is still plain text, as before; **adding a protector to an application that already has a plain history starts it empty once.** `FileRouteableHistoryStore` also writes its file for its owner only (mode 600) on Linux, macOS and Android.
-
-- **System notifications on the Linux and Windows desktop** from the plain `net10.0` build of `Routeables.Native` (Avalonia, WPF, a console): Linux through `org.freedesktop.Notifications` on the D-Bus session bus (a small client inside the library, no package: a tap on the notification is a tap, closing it a dismissal), Windows through the toasts of Windows 10 and 11 (`WindowsContracts.Net.Foundation.UniversalApiContract`, `PrivateAssets="all"`; no Windows SDK target), each in its own partial file (`SystemNotificationCenter.linux.cs`, `.winrt.cs`, `.browser.cs`) like the other platforms; `Routeables.Native` now uses the Razor SDK and its JavaScript lives in `wwwroot`; an Avalonia head that targets `net10.0-windows10.0.19041.0` gets the notification center of the Windows App SDK instead (`Routeables.Avalonia` is built for that target too). **In the browser**, WebAssembly applications that are not Blazor (Avalonia, Uno) use the notification center of the browser too: the module and the service worker of `Routeables.Blazor` moved to `Routeables.Native` (Blazor serves the same files), and `Routeables.Native` talks to it with `JSImport`. The `AppNotificationOptions` of `Routeables.Blazor` is gone: every host uses the one of `Routeables.Native` (namespace `Routeables.Native`), which gained `ServiceWorkerUrl`, `DefaultIcon` and `RequestPermissionOnInitialize`. **macOS** (the plain `net10.0` build, no `net10.0-macos` target) has them too: `UNUserNotificationCenter` through the Objective-C runtime (`Desktop/ObjC.cs`, `SystemNotificationCenter.macos.cs`), for an application in a `.app` bundle; outside a bundle nothing is created. `CreateNotificationAsync` still returns `null` where there is no session bus.
-
-### Changed
-
-- **Floating package versions pinned**: `Microsoft.WindowsAppSDK`, `DeviceRunners.*` (0.1.0-preview.12), and in `Routeables.Test.Uno` `MSTest.TestFramework` (4.5.3) and `Uno.UI.RuntimeTests.Engine` (3.0.0-dev.11), to what a restore resolved. `Microsoft.WindowsAppSDK` is pinned too (1.8.260921001): no version floats any more, and `CentralPackageFloatingVersionsEnabled` is off.
-
-- **Deep links: no scheme is accepted unless it is given** (`RouteableDeepLinks`, `RouteableLinkInbox`). `schemes: null` or an empty list used to accept any scheme (`file:`, `content:`, the protocol of another application); it now accepts none of the application, and only an `http(s)` address of a listed host. **An application that passed no schemes must now pass the ones it owns** (`["myapp"]`); the failed result says so. An address with a user name or a password is refused, and no longer copied into the route. The signatures are unchanged.
-
-- **The history file is never wider than its owner on Unix**: `FileRouteableHistoryStore` creates the file with the mode 600 (it used to write it and restrict it right after, which left a moment when another user of the machine could open it) and the folder it creates with the mode 700.
-
-- **The D-Bus calls of the notifications have a delay**: `AddMatch`, `GetNameOwner` and `CloseNotification` give up after 3 s like the others, so a bus that does not answer does not keep an entry of each call.
-
-- **`RouteableTable.Entries` cannot be changed by a caller**: it is a read-only collection, not the array that the table keeps. The read is still the collection itself, with no copy.
-
-
-- **The router tells a word from a value everywhere**: the menus, the controls of navigation of the hosts, MAUI Shell and the router itself compare routes with the templates the router knows, as the address bar of Blazor does, so `/items/aB` and `/items/Ab` are two pages when the identifier is a token or a slug. The comparison of `RouteableState` and of MAUI Shell goes through the same rule.
-
-- **A saved history cannot give a command**: a route written `-/orders` (go back, then navigate) in a history file is skipped when the history is restored.
-
-- **The default buttons of a modal are translated**: `Validate`, `Cancel` and `Close` of `RouteableViewModel`, and the `Close` button of a dialog without commands, go through `RouteableTexts.Button`.
-
-- **A cancelled menu selection answers "no"**: `SelectEntryAsync(entry, cancellationToken)` cancelled while it waits for another selection used to answer `true` and leave the menu on an entry that was never shown. It now answers `false`, and the menu stays on the entry whose page is being shown.
-
-- **A menu follows the page a guard redirects to**: when the selection of an entry ends on another page (the sign-in page that a guard sends the user to), the menu now selects the entry of that page and shows its title. Before, the redirection was left out while the selection ran, and the menu went back to the entry it had before.
-
-- **The source generator reads fewer assemblies**: the bindings of Android and iOS (`Mono.Android`, `Xamarin.*`, `Java.Interop`) and the graphics libraries (`SkiaSharp`, `HarfBuzzSharp`) are not searched for views and view models any more. A project of MAUI for Android reads tens of thousands of types less at each keystroke.
-
-- **`agent-desktop` is installed in a fixed version** (1.3.1) by the smoke tests of the native samples and by the scripts of `agent-desktop/`.
-
-- **The NuGet versions of the repository are central** (`Directory.Packages.props`): the projects write `<PackageReference Include="..." />` and the versions are in one place. The versions are the ones the projects had; `VersionOverride` stays where two projects asked for different ones (`Routeables.Avalonia` keeps the oldest Avalonia it works with, the generator the oldest Roslyn). The Uno SDK projects and `templates/` stay outside of it. A `.editorconfig` shares the indentation.
-
-- **One rule for "the same route?"** (`RouteAddress`, internal): the router (menu entry lookup, type guards, not-found page, `GoBackToAsync`), `WentTo`, the menus (`RouteableMenuViewModelBase`), the table of routes, the controls of navigation (`RouteTarget`, the Shell tabs of MAUI), the sign-in guard of Blazor and the address bar (`RouteableUrlSync`) used eight different comparisons. They now agree: a leading or closing slash does not count, the words of a path ignore the case, a query ignores the order of its pairs and the case of its names but not of its values, and an escaped address is the plain one. Visible effects: a menu entry is found for the page whatever the case or slashes of its route (`/Orders/` is `/orders`), two entries that differ by their query stay two, `RouteableTable` drops `orders/` as a duplicate of `/orders`, and the sign-in guard no longer redirects a visit of the sign-in page with a `returnUrl` to itself.
-
-- **The address bar of Blazor asks any menu to select an entry**: `IRouteableMenuViewModel.SelectEntryAsync` (a default that sets `SelectedEntry`, which the base classes of `Routeables.Core` already implement). A menu written by hand can answer `false` when a guard keeps the user where they were, and the address is put back; before, only the base classes could.
-
-- **Avalonia uses `Routeables.Native`** for its system notifications instead of Avalonia.Labs.Notifications (removed: on Linux its D-Bus dependency crashed the application at start). Turn them on with `AppBuilder.WithAppNotifications()` (`Routeables.Avalonia`). `Routeables.Avalonia` now also builds for `net10.0-android` and `net10.0-ios`: an Android or iOS head must reference it directly to get them. The desktop has them too (Linux through D-Bus, Windows through the notification area, see above); macOS and the browser do not: `CreateNotificationAsync` returns `null` there. On Android pass the intents to `SystemNotificationCenter.HandleIntent` from the main activity.
-
-- **`Routeables.Native` no longer depends on MAUI Essentials or AndroidX** on Android: it follows the activity in front itself, asks for the notification permission with it, and uses `Notification.Builder`. No `Platform.Init` is needed outside MAUI. Applications build the services (`UseRouteablesServices`) before the first activity, as they do; `NativeDialogs.Initialize()` starts it for a host that does not.
-- **The three-button dialog is in `Routeables.Native`** (`NativeDialogs.DisplayThreeButtonsAsync`): MAUI, WinUI 3 and Uno use it (Android alert, Windows App SDK `ContentDialog`, iOS alert or sheet) and draw their own where it has nothing to show.
-
-### Fixed
-
 - **A view that fails to show on the UI thread is shown again** (`RegionBinding.ShowFailed`, used by `RouteableRegion`): when the route change came from another thread, the failure happened after the binding had taken the view for shown, and the same view was never tried again. `RouteableHistoryKeeper` also disposes its cancellation source.
 
 - **Starting with a link and a saved history** (`AddRouteableHistory` and `RouteableLinkInbox`): the history is put back first and the addresses are followed after it. Before, the restoration, which starts by erasing the history, could remove the page that the link had just opened.
