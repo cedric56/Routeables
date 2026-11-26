@@ -1,0 +1,50 @@
+# Routeables
+
+> View-model-first routing for .NET 10. A view model asks an `IRouter` to go to a route; it never touches a page, a frame or a navigation API of the UI framework, so the same view models run on Avalonia, WPF, .NET MAUI, Uno Platform, WinUI 3, Blazor and ASP.NET Core. Routes are found by a source generator at compile time (no reflection: Native AOT and trimming work). MIT license.
+
+What to know before writing code with it:
+
+- Install the package of the host, and only that one: `Routeables.Avalonia`, `Routeables.Wpf`, `Routeables.Maui`, `Routeables.Uno`, `Routeables.WinUI3`, `Routeables.Blazor` or `Routeables.AspNetCore`. It brings `Routeables` (the router and the source generator) and `Routeables.Abstraction`. The .NET 10 SDK is required.
+- A page is a view model with `[Routeable("/hello/{name}")]` and a view with the matching name (`HelloViewModel` and `HelloView`). The view derives from `RouteableFor<HelloViewModel>` and receives the view model (`ViewModel`, typed). The values of the address reach the constructor of the view model by name (`HelloViewModel(string name)`).
+- A view model navigates with the `IRouter` it asks for in its constructor: `await router.GoToAsync("/hello/Claire");`, `await router.GoBackAsync();`. Never navigate with the API of the UI framework (`Frame.Navigate`, `Shell.GoToAsync`, `NavigationManager.NavigateTo`).
+- A region is a zone of the screen that shows pages. On the XAML hosts: `<routeables:RouteableRegion Route="/hello/World" />`, where `Route` is the first page.
+- The host is started with `UseRouteables(...)`. The call differs for each host: read the page of the hosts.
+- The typed placeholders are `string`, `int`, `long`, `bool`, `guid`, `decimal` and `double` (`{id:int}`). Another type needs a serializer registered by the application.
+- The generator and the analyzers report mistakes at compile time with `ROUT` diagnostics (a route that matches no page, several views for one view model, a cached page with parameters). Each one links to its line of the diagnostics page.
+- Guards (`IRouteGuard`) allow, refuse or redirect a route change. A view model refuses to be left with `CanLeaveAsync`.
+
+## Start here
+
+- [README](https://raw.githubusercontent.com/cedric56/Routeables/master/README.md): what it is, install, a first page on Avalonia
+- [Getting started](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/getting-started.md): the first page step by step, registration, the other hosts
+- [Hosts and packages](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/packages.md): the package and the setup call of each host
+- [Glossary](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/glossary.md): route, view, region, router and the other words
+- [Recipes](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/recipes.md): a sign-in guard, master and detail, passing an object, asking before leaving, tabs with their own history
+
+## Guides
+
+- [Routes and templates](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/routes.md): the syntax of a route, placeholders, constraints, the query
+- [Typed routing methods](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/typed-routes.md): the `GoTo...Async` methods the generator writes
+- [Passing arguments](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/arguments.md): values, objects and results between pages
+- [Lifecycle, guards and events](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/lifecycle.md): entering, leaving, guards, the events of the router
+- [History](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/history.md): back, forward, limits, saving and restoring
+- [Regions](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/regions.md): several zones, tabs, their own history
+- [Transitions](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/transitions.md): animations between pages
+- [Back, deep links, guards and diagnostics](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/system-integration.md): the back button, deep links, system notifications
+- [Hosts, services and samples](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/hosts.md): dialogs, notifications, themes, translating the texts of the library
+- [Routeables for Blazor developers](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/blazor.md)
+- [Native AOT and trimming](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/aot.md)
+- [Diagnostics reference](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/diagnostics.md): every `ROUT` rule, what it means and how to fix it
+
+## Choosing and migrating
+
+- [Compared with other routers](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/comparison.md): Prism, ReactiveUI, MAUI Shell, MvvmCross, Caliburn.Micro, a service of your own
+- [Migrating from Prism](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/guides/migrating-from-prism.md)
+- [What Routeables offers](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/features.md): one line and one guide for each area
+
+## Optional
+
+- [Benchmarks](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/benchmarks.md) and [the comparison on the same application](https://raw.githubusercontent.com/cedric56/Routeables/master/docs/benchmark-comparison.md)
+- [Versioning](https://raw.githubusercontent.com/cedric56/Routeables/master/VERSIONING.md): what a version number promises
+- [Changelog](https://raw.githubusercontent.com/cedric56/Routeables/master/CHANGELOG.md)
+- [Samples](https://github.com/cedric56/Routeables/tree/master/samples): the Animals application on each host

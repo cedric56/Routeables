@@ -1,6 +1,6 @@
 # Comparing navigation libraries on the same application
 
-[Benchmarks](benchmarks.md) measures the router of Routeables alone. It does not say how Routeables compares with Prism, ReactiveUI, MAUI Shell, MvvmCross or a navigation service of your own: that needs the **same application** written once for each of them, and the same measures taken on each. This page is the protocol for that comparison. **Phase 1 is written (see below); phases 2 and 3 are not, and there are no results below**: a table of numbers that nobody measured on a machine that is named would be worse than none.
+[Benchmarks](benchmarks.md) measures the router of Routeables alone. It does not say how Routeables compares with Prism, ReactiveUI, MAUI Shell, MvvmCross or a navigation service of your own: that needs the **same application** written once for each of them, and the same measures taken on each. This page is the protocol for that comparison. **Phase 1 (console) and phase 1b (with views) are written and measured: their results are below, the current state first. Phases 2 and 3 are not written and have no results**: a table of numbers that nobody measured on a machine that is named would be worse than none.
 
 ## Where it stands now
 
@@ -113,6 +113,8 @@ Written without being able to restore the packages: both steps of the CI job "Sa
 ## Results
 
 ### Phase 1b: with views (three runs, November 2026)
+
+> **Superseded.** These are the first figures with views, taken before the route lookup was optimized and before ReactiveUI was given the same host control. The current ones are in [Where it stands now](#where-it-stands-now): with views the two libraries are level. The table is kept as a record.
 
 .NET 10.0.15, Ubuntu 26.04.1 LTS, 4 cores, workstation GC, 200 steps, 30 runs after 5 warm-ups, Avalonia.Headless, a real view in a real window for every page. Every library ended on the expected page at every step (ReactiveUI: 180 of 200, no Forward). Three runs on a shared runner: the allocations repeat to a few per cent, the times and the heap do not.
 

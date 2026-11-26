@@ -6,9 +6,10 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Added
 
+- **`llms.txt`** (`docs/llms.txt`, served by the documentation site): what the library is, the few rules an AI assistant must follow to use it, and a link to each guide.
 - **Benchmark, repeated** (workflow run by hand): the comparison five times, and `tools/benchmark-aggregate.py` puts the time ratios of the runs side by side (median, smallest, largest). Each program writes the runner that measured.
 - **Benchmark**: the libraries are measured in turns in the same process (the order turns from one run to the next), and the job writes the ratio of the times run by run (median and middle half), so that the noise of the machine falls on all of them alike. The guide of the history says what an entry weighs (the view it keeps: about 9 KB on Avalonia for a one-line page).
-- **Benchmark of the same application with views** (job "Same application, with views"): the 200-step scenario in an Avalonia application with no screen, a real view per page, for Routeables, ReactiveUI routing (`benchmarks/Routeables.Comparison.Avalonia`) and Prism.Avalonia (`benchmarks/Routeables.Comparison.Prism`, on Avalonia 11). Not yet run.
+- **Benchmark of the same application with views** (job "Same application, with views"): the 200-step scenario in an Avalonia application with no screen, a real view per page, for Routeables, ReactiveUI routing (`benchmarks/Routeables.Comparison.Avalonia`) and Prism.Avalonia (`benchmarks/Routeables.Comparison.Prism`, on Avalonia 11). Its results are in `docs/benchmark-comparison.md`.
 
 - **The same application on three libraries, phase 1** (`benchmarks/`): a script of 200 navigation steps replayed on Routeables, ReactiveUI routing and a navigation service of your own, on the console, with the page of each step checked, the time and allocations of a run, and the memory after 1 000 route changes. CI job "Same application, three libraries". See [the protocol](docs/benchmark-comparison.md). The ReactiveUI version has not been compiled yet.
 
@@ -79,6 +80,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The page of the comparison no longer says it has no results**: its first lines said that nothing was measured while the results were below, and the first table with views (about 2 times the time of ReactiveUI) was not marked as replaced by the current figures (level).
+- **The Uno sample served by IIS cannot be framed by another site**: its `web.config` sends `X-Frame-Options: SAMEORIGIN` (clickjacking, reported by the code scanning).
 - **The `Routeables.AspNetCore` package can be installed**: its project referenced `Routeables.Segments` and `Routeables.Abstraction` directly, so the package depended on `Routeables.Segments`, which is inside the `Routeables` package and is not published. It depends on `Routeables` alone, as the other hosts do, and carries its readme, its license and its author.
 - **Blazor: a notification that answers a click is answered with the keyboard**: it is a stop of the Tab key, and Enter or Space runs its `onClick`. The keyboard could only close it.
 - **The diagnostic ROUT207 leads to the `[Routeable]` it is about**: it had no place, so it could not be clicked in the list of errors.

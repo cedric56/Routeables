@@ -99,6 +99,7 @@ The same view models drive the Animals sample on each host: only the views diffe
 - **Coming from another library?** [Migrating from Prism](docs/guides/migrating-from-prism.md), and [Routeables compared with other routers](docs/guides/comparison.md).
 - **Everything it can do:** [What Routeables offers](docs/features.md), one line and one guide for each area.
 - **Hosts, packages, samples:** [Hosts and packages](docs/packages.md) and the [samples](samples).
+- **Using an AI assistant?** Give it [`llms.txt`](docs/llms.txt): what the library is, the few rules to follow and a link to each guide.
 - [Documentation site](https://cedric56.github.io/Routeables/), [contributing](CONTRIBUTING.md), [third-party notices](THIRD-PARTY-NOTICES.md).
 
 ## Packages
