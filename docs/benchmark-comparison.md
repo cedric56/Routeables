@@ -108,7 +108,7 @@ The console comparison above does not give every library the same work: Routeabl
 
 What Prism does and does not give: it has Back and Forward (the journal) and a veto (`IConfirmNavigationRequest`), no guard (written in front of `RequestNavigate`), no typed route parameter (a query string, `C3?id=7`), and it keeps every view it has shown in the region until the application removes it (clearing the history removes them in the driver). Every Prism page gets its dependency injected (`IClock`, a singleton), the five pages that read it are not told apart.
 
-Written without being able to restore the packages: both steps of the CI job "Same application, with views" are tolerated until a run is green, and the Prism namespaces (`Prism.Navigation.Regions`) are the least certain part. Nobody who uses Prism daily has read the driver yet.
+First written without being able to restore the packages; they have since compiled and run in the CI at every push, and the steps of the job "Same application, with views" block the build. Nobody who uses Prism daily has read the driver yet.
 
 ## Results
 

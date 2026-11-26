@@ -228,15 +228,14 @@ jobs:
           if-no-files-found: warn
 
   # The coverage of the libraries by every kind of test together: the reports of the jobs above, each line counted once (covered when any
-  # run covered it). It writes the only coverage table of the summary. Not gating: the floors of the core are those of the job "Code coverage". It also holds a floor for Routeables.Avalonia (40%, the
-  # figure is a guess until the first report: raise it by hand when the figure rises, and take the "continue-on-error" off this job once it is green).
+  # run covered it). It writes the only coverage table of the summary. The floors of the core are those of the job "Code coverage"; this one
+  # holds a floor for Routeables.Avalonia (40%, well under the 78% measured: raise it by hand when the figure rises). It blocks.
   coverage-all:
     name: Code coverage, all the tests
     needs: [coverage, native-linux, ui-avalonia, ui-uno, device-windows]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v7
@@ -287,17 +286,16 @@ jobs:
           { echo "### Routeables and a service of your own"; dotnet run --project benchmarks/Routeables.Comparison/Routeables.Comparison.csproj -c Release --no-build; } | tee "$RUNNER_TEMP/benchmark.txt"
           python3 tools/benchmark-condense.py "$RUNNER_TEMP/benchmark.txt" >> "$GITHUB_STEP_SUMMARY"
 
-      # The ReactiveUI version was written without being able to restore ReactiveUI: it has a step of its own that cannot fail the job, until one run is green.
+      # A step of its own: its table is written apart from the one above. It blocks like the rest.
       - name: ReactiveUI, with the other two
-        continue-on-error: true
         run: |
           dotnet build benchmarks/Routeables.Comparison.ReactiveUI/Routeables.Comparison.ReactiveUI.csproj -c Release
           { echo "### With ReactiveUI routing"; dotnet run --project benchmarks/Routeables.Comparison.ReactiveUI/Routeables.Comparison.ReactiveUI.csproj -c Release --no-build; } | tee "$RUNNER_TEMP/benchmark.txt"
           python3 tools/benchmark-condense.py "$RUNNER_TEMP/benchmark.txt" >> "$GITHUB_STEP_SUMMARY"
 
   # Phase 1b: the same scenario in an Avalonia application with no screen (Avalonia.Headless), every page a real view in a real window, for
-  # Routeables, ReactiveUI routing and Prism. The home-made service has no view and is left out. Written without being able to restore
-  # Prism.Avalonia or the Avalonia packages of these projects: neither step can fail the job until one run is green.
+  # Routeables, ReactiveUI routing and Prism. The home-made service has no view and is left out. Every step blocks: a library
+  # that no longer builds, or a step of the scenario that ends on the wrong page, fails the job.
   comparison-avalonia:
     name: Same application, with views
     runs-on: ubuntu-latest
@@ -318,7 +316,6 @@ jobs:
           restore-keys: nuget-${{ runner.os }}-
 
       - name: Routeables and ReactiveUI routing
-        continue-on-error: true
         timeout-minutes: 10
         run: |
           dotnet build benchmarks/Routeables.Comparison.Avalonia/Routeables.Comparison.Avalonia.csproj -c Release ${{ env.CI_PROPS }}
@@ -326,7 +323,6 @@ jobs:
           python3 tools/benchmark-condense.py "$RUNNER_TEMP/benchmark.txt" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Routeables memory with a limited history
-        continue-on-error: true
         timeout-minutes: 10
         env:
           ROUTEABLES_BENCH_HISTORY_LIMIT: "50"
@@ -335,7 +331,6 @@ jobs:
           python3 tools/benchmark-condense.py "$RUNNER_TEMP/benchmark.txt" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Prism
-        continue-on-error: true
         timeout-minutes: 10
         run: |
           dotnet build benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release ${{ env.CI_PROPS }}
@@ -343,7 +338,6 @@ jobs:
           python3 tools/benchmark-condense.py "$RUNNER_TEMP/benchmark.txt" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Prism with the views kept (its default)
-        continue-on-error: true
         timeout-minutes: 10
         env:
           ROUTEABLES_BENCH_PRISM_KEEP_VIEWS: "1"
@@ -351,8 +345,7 @@ jobs:
           { echo "### With views: Prism, views kept (the default of Prism)"; dotnet run --project benchmarks/Routeables.Comparison.Prism/Routeables.Comparison.Prism.csproj -c Release --no-build ${{ env.CI_PROPS }}; } | tee "$RUNNER_TEMP/benchmark.txt"
           python3 tools/benchmark-condense.py "$RUNNER_TEMP/benchmark.txt" >> "$GITHUB_STEP_SUMMARY"
 
-  # The Uno projects are in a job of their own: they were written without being able to restore Uno Platform, so a failure here
-  # must not hide the result of the jobs above. Once it is green, fold it into web-and-desktop.
+  # The Uno projects are in a job of their own (their restore is long, and it runs beside the jobs above). It blocks.
   uno:
     name: Build Uno
     runs-on: ubuntu-latest
@@ -662,11 +655,10 @@ jobs:
           exit $failed
 
   # Apple targets depend on the Xcode version the runner has, which .NET pins: a mismatch fails here without meaning the code is
-  # wrong. It reports but does not block (continue-on-error); remove that line once it runs green.
+  # wrong (the step that selects Xcode is the place to look first). It blocks: it has been green run after run.
   apple:
-    name: Build iOS and Mac Catalyst (not blocking)
+    name: Build iOS and Mac Catalyst
     runs-on: macos-latest
-    continue-on-error: true
     timeout-minutes: 45
 
     steps:
@@ -720,8 +712,8 @@ jobs:
           dotnet build samples/XAnimals.Maui/XAnimals.Maui.csproj -c Debug -f net10.0-ios -r ios-arm64 -p:EnableCodeSigning=false
           dotnet build samples/XAnimals.Avalonia.iOS/XAnimals.Avalonia.iOS.csproj -c Debug -r ios-arm64 -p:EnableCodeSigning=false
   # ---------------------------------------------------------------------------------------------------------------------------
-  # UI tests. The headless ones (Avalonia, Playwright on Blazor, Uno desktop) block the build like the other tests. The device ones
-  # (Android emulator, Windows, Apple) depend on the runner image and report without blocking (continue-on-error).
+  # UI tests. The headless ones (Avalonia, Playwright on Blazor, Uno desktop) and the device ones (Android emulator, Windows, Mac Catalyst,
+  # iOS simulator) all block the build.
   # ---------------------------------------------------------------------------------------------------------------------------
 
   ui-avalonia:
@@ -745,10 +737,8 @@ jobs:
       # What these tests cover of Routeables.Avalonia: the job "Code coverage" runs only Routeables.Test, which does not reach the controls.
       # The coverage extension of `dotnet test` reported 0% for code that the dialog tests run (DialogPresenter, DefaultMessageBoxService), while
       # dotnet-coverage gave the figures the tests deserve for Routeables.Uno and Routeables.Maui. So the tests run a second time under
-      # dotnet-coverage, which starts the test program (a xunit v3 project is an executable) and follows its processes. This step cannot fail the
-      # job until one run is green.
+      # dotnet-coverage, which starts the test program (a xunit v3 project is an executable) and follows its processes.
       - name: Coverage of Routeables.Avalonia
-        continue-on-error: true
         shell: bash
         run: |
           dotnet tool install --global dotnet-coverage --version 18.12.0
@@ -838,9 +828,8 @@ jobs:
         run: xvfb-run -a dotnet tests/Routeables.Test.Uno/bin/${{ env.CONFIGURATION }}/net10.0-desktop/Routeables.Test.Uno.dll
 
       # What these tests cover of Routeables.Uno. The application is not a `dotnet test` run, so the coverage tool of Visual Studio
-      # (dotnet-coverage) starts it and follows its processes. Second run, in a step that cannot fail the job until one run is green.
+      # (dotnet-coverage) starts it and follows its processes. Second run.
       - name: Coverage of Routeables.Uno
-        continue-on-error: true
         env:
           UNO_RUNTIME_TESTS_RUN_TESTS: '{}'
           UNO_RUNTIME_TESTS_OUTPUT_PATH: ${{ github.workspace }}/uno-results-coverage.xml
@@ -865,14 +854,13 @@ jobs:
   # ---------------------------------------------------------------------------------------------------------------------------
   # Device tests of the MAUI host (Routeables.Test.Maui): the application runs the tests on the platform. `dotnet msbuild -t:VSTest`
   # starts it on a device, reads the results and stops it. global.json turns on the Microsoft.Testing.Platform runner for the whole repository, which `dotnet test` of
-  # a MAUI device project does not use: the VSTest target of DeviceRunners is called directly. One job per kind of device; none blocks the build while they are new.
+  # a MAUI device project does not use: the VSTest target of DeviceRunners is called directly. One job per kind of device; each blocks the build.
   # ---------------------------------------------------------------------------------------------------------------------------
 
   device-android:
     name: Device tests (MAUI, Android emulator)
     runs-on: ubuntu-24.04
     timeout-minutes: 60
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v7
@@ -919,7 +907,6 @@ jobs:
     name: Device tests (MAUI, Windows)
     runs-on: windows-latest
     timeout-minutes: 45
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v7
@@ -935,10 +922,8 @@ jobs:
         run: dotnet msbuild tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-windows10.0.19041.0 -p:Configuration=Debug
 
       # What these tests cover of Routeables.Maui and of the Windows part of Routeables.Native. Android and Apple are not measured: their code
-      # runs in an emulator or a simulator that this tool does not follow. The tests run a second time under dotnet-coverage, in a step that
-      # cannot fail the job until one run is green.
+      # runs in an emulator or a simulator that this tool does not follow. The tests run a second time under dotnet-coverage.
       - name: Coverage of Routeables.Maui (Windows)
-        continue-on-error: true
         shell: bash
         run: |
           dotnet tool install --global dotnet-coverage --version 18.12.0
@@ -960,7 +945,6 @@ jobs:
     name: Device tests (MAUI, Mac Catalyst and iOS simulator)
     runs-on: macos-15
     timeout-minutes: 60
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v7
@@ -1022,10 +1006,19 @@ jobs:
           echo "DEVICERUNNERS_SIMULATOR=$udid" >> "$GITHUB_ENV"
 
       # The simulator is named to the DeviceRunners CLI (DeviceRunnersDevice): it looked for a booted one and found none, though this one was.
+      # Two tries: on a hosted runner the application sometimes starts and never reports ("TCP listener timed out", no test run), with no
+      # fault of the code (once in the eight runs before this step was made blocking). A second failure is one: the job fails.
       - name: Test, iOS simulator
         run: |
           xcrun simctl list devices booted
-          dotnet msbuild tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-ios -p:Configuration=Debug -p:DeviceRunnersDevice="$DEVICERUNNERS_SIMULATOR"
+          for attempt in 1 2; do
+            if dotnet msbuild tests/Routeables.Test.Maui/Routeables.Test.Maui.csproj -restore -t:VSTest -p:DeviceTfm=net10.0-ios -p:Configuration=Debug -p:DeviceRunnersDevice="$DEVICERUNNERS_SIMULATOR"; then
+              exit 0
+            fi
+            echo "::warning::iOS simulator tests: attempt $attempt failed"
+            xcrun simctl terminate "$DEVICERUNNERS_SIMULATOR" com.routeables.test.maui || true
+          done
+          exit 1
 
       # An application that never reports ("TCP listener timed out", Total=0) crashed or stalled at launch: its log says which, so print what matters of it here.
       - name: Show why the application did not report

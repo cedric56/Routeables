@@ -25,6 +25,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **Every job of the CI blocks the build**: the device tests (Android emulator, Windows, Mac Catalyst, iOS simulator), the build for iOS and Mac Catalyst, the comparison with ReactiveUI and Prism, the coverage of all the tests and the coverage steps of Avalonia, Uno and MAUI were allowed to fail (`continue-on-error`) since they were written; they have been green run after run. The iOS simulator tests are tried twice, since the simulator of a hosted runner sometimes never reports. The comments that said the Uno projects and the comparison were "written without being able to restore" their packages are gone: they build and run at every push.
 - **The labels of the library's own controls go through `RouteableTexts.ButtonTranslator`**, as the buttons of the message boxes do: `Close` (the button of a notification), `Details`, `More details`, `Less details`, `More Details`, `Fewer Details` (the footer of a task dialog), `Menu`, `Toggle menu` and `Switch between the light and the dark theme` (the Blazor layout). They were English whatever the translator said.
 - **`RouteableNotificationSession.HasClick`** says whether the notification was given a click callback.
 - **The route generator walks a referenced assembly once**: it walked every type of every referenced project at each change of the project being edited (each key typed in an editor). The types of the project itself are still read each time.
@@ -80,6 +81,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Fixed
 
+- **The Blazor sample with reduced motion changes theme in one step**: its style gave a duration of 1 ms to the transitions of every element, which made the colour of the text a transition on every element; when the theme changed, the new colour went down the page one level per frame and the text of a list kept the colours of the other theme for a moment. With reduced motion there is no transition.
 - **The page of the comparison no longer says it has no results**: its first lines said that nothing was measured while the results were below, and the first table with views (about 2 times the time of ReactiveUI) was not marked as replaced by the current figures (level).
 - **The Uno sample served by IIS cannot be framed by another site**: its `web.config` sends `X-Frame-Options: SAMEORIGIN` (clickjacking, reported by the code scanning).
 - **The `Routeables.AspNetCore` package can be installed**: its project referenced `Routeables.Segments` and `Routeables.Abstraction` directly, so the package depended on `Routeables.Segments`, which is inside the `Routeables` package and is not published. It depends on `Routeables` alone, as the other hosts do, and carries its readme, its license and its author.
