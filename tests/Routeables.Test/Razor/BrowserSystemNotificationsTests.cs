@@ -213,6 +213,39 @@ public class BrowserSystemNotificationsTests
     }
 
     [Fact]
+    public async Task The_system_notifications_pass_every_member_on_to_their_source()
+    {
+        var source = NSubstitute.Substitute.For<IRouteableSystemNotificationSource>();
+        var system = new RouteableSystemNotifications(source);
+        EventHandler<RouteableSystemNotificationEventArgs> handler = (_, _) => { };
+
+        system.CloseAll();
+        await system.InitializeAsync();
+        system.NotificationCompleted += handler;
+        system.NotificationCompleted -= handler;
+
+        NSubstitute.SubstituteExtensions.Received(source, 1).CloseAll();
+        await NSubstitute.SubstituteExtensions.Received(source, 1).InitializeAsync();
+        NSubstitute.SubstituteExtensions.Received(source, 1).NotificationCompleted += handler;
+        NSubstitute.SubstituteExtensions.Received(source, 1).NotificationCompleted -= handler;
+    }
+
+    [Fact]
+    public async Task Without_a_source_the_system_notifications_do_nothing_and_do_not_throw()
+    {
+        var system = new RouteableSystemNotifications(null);
+        EventHandler<RouteableSystemNotificationEventArgs> handler = (_, _) => { };
+
+        system.CloseAll();
+        await system.InitializeAsync();
+        system.NotificationCompleted += handler;
+        system.NotificationCompleted -= handler;
+
+        Assert.Empty(system.ActiveNotifications());
+        Assert.Null(await system.CreateNotificationAsync("animals"));
+    }
+
+    [Fact]
     public async Task The_base_class_gives_the_system_notifications_to_a_service_that_only_writes_Show()
     {
         var module = new FakeModule("granted", "granted");

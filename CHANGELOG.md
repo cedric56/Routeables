@@ -25,6 +25,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **The summary of the CI no longer lists the lines that no test runs**: the table of the coverage by assembly stays. What the lists still held was platform code, which needs its own system, and lines the coverage tool marks by mistake. `tools/coverage-summary.py --files N` still writes them on demand.
 - **Every job of the CI blocks the build**: the device tests (Android emulator, Windows, Mac Catalyst, iOS simulator), the build for iOS and Mac Catalyst, the comparison with ReactiveUI and Prism, the coverage of all the tests and the coverage steps of Avalonia, Uno and MAUI were allowed to fail (`continue-on-error`) since they were written; they have been green run after run. The iOS simulator tests are tried twice, since the simulator of a hosted runner sometimes never reports. The comments that said the Uno projects and the comparison were "written without being able to restore" their packages are gone: they build and run at every push.
 - **The labels of the library's own controls go through `RouteableTexts.ButtonTranslator`**, as the buttons of the message boxes do: `Close` (the button of a notification), `Details`, `More details`, `Less details`, `More Details`, `Fewer Details` (the footer of a task dialog), `Menu`, `Toggle menu` and `Switch between the light and the dark theme` (the Blazor layout). They were English whatever the translator said.
 - **`RouteableNotificationSession.HasClick`** says whether the notification was given a click callback.

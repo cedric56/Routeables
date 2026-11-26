@@ -8,6 +8,32 @@ namespace Routeables.Tests.Razor;
 
 public class DialogServiceTests
 {
+    [Fact]
+    public async Task The_content_and_task_dialogs_are_drawn_by_the_message_box_service()
+    {
+        var box = NSubstitute.Substitute.For<IMessageBoxService>();
+        var service = new RouteableDialogService(box);
+        var content = new RouteableContentDialog { Title = "Edit" };
+        var task = new RouteableTaskDialog { Title = "Choose" };
+
+        await service.ShowContentDialogAsync(content);
+        await service.ShowTaskDialogAsync(task);
+
+        _ = NSubstitute.SubstituteExtensions.Received(box, 1).ShowContentDialogAsync(content);
+        _ = NSubstitute.SubstituteExtensions.Received(box, 1).ShowTaskDialogAsync(task, NSubstitute.Arg.Any<RouteableTaskDialogResult[]>());
+    }
+
+    [Fact]
+    public void A_dialog_that_is_not_given_is_refused_before_the_message_box_service_is_asked()
+    {
+        var box = NSubstitute.Substitute.For<IMessageBoxService>();
+        var service = new RouteableDialogService(box);
+
+        Assert.Throws<ArgumentNullException>(() => { _ = service.ShowContentDialogAsync(null!); });
+        Assert.Throws<ArgumentNullException>(() => { _ = service.ShowTaskDialogAsync(null!); });
+        Assert.Empty(NSubstitute.SubstituteExtensions.ReceivedCalls(box));
+    }
+
     private static Task<RazorHostHarness<RouteableDialogHost>> StartAsync() =>
         RazorHostHarness<RouteableDialogHost>.StartAsync(services =>
         {
