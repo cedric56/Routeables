@@ -32,6 +32,16 @@
     <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.13" />
   </ItemGroup>
 
+  <!-- The system notifications of the Windows desktop (toasts) need the Windows runtime types. They come in the Routeables.Native package
+       (runtimes/win), which this sample does not have: it references the projects of the library. So the desktop head, built on Windows, takes
+       them from their own package. Never for the other heads: the CsWinRT layer of that package breaks the native build of WebAssembly, and
+       Android and iOS have no use for it. ExcludeAssets="compile": the assemblies are copied next to the application and never given to the
+       compiler, where their Windows.Foundation types (Size, Color...) would clash with the ones of Uno (CS0433). An application that installs
+       Routeables.Uno does not need this. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-desktop' And $([MSBuild]::IsOSPlatform('windows'))">
+    <PackageReference Include="WindowsContracts.Net.Foundation.UniversalApiContract" Version="5.19041.10" ExcludeAssets="compile" />
+  </ItemGroup>
+
   <ItemGroup>
     <!-- Uno.Resizetizer turns these into the app icon and the splash screen of every head (the Android styles ask for uno_splash_color and uno_splash_image). -->
     <UnoIcon Include="Assets\Brand\icon.svg" Color="#4A22C8" />

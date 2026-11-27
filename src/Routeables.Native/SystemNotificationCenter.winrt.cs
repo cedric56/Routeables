@@ -42,17 +42,60 @@ public sealed partial class SystemNotificationCenter
         if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17763))
             return false;
 
+        // Whatever fails here (missing types, no desktop session, a Windows runtime layer that cannot build its objects) means no toast, never
+        // an exception for the application.
         try { return WindowsCheck(); }
-        catch (Exception ex) when (ex is FileNotFoundException or TypeLoadException or InvalidOperationException or System.Runtime.InteropServices.COMException)
+        catch (Exception ex)
         {
+            if (!s_windowsFailureTraced)
+            {
+                s_windowsFailureTraced = true;
+                System.Diagnostics.Trace.TraceWarning($"Routeables: Windows toasts are not available: {ex.GetType().Name}: {ex.Message}");
+            }
+
             return false;
         }
     }
 
+    private static bool s_windowsFailureTraced;
+
+#if !WINDOWS
+    private static bool s_windowsProjectionRegistered;
+
+    // The Windows runtime layer (WinRT.Runtime) finds the .NET class of an object the system returns by its name ("Windows.UI.Notifications.ToastNotifier"),
+    // through the assemblies that are loaded. Uno has classes of the same names (its own Windows.UI.Notifications, not implemented on the desktop): found
+    // first, they have no constructor for a system object and the call fails (ArgumentNullException: constructor). Registering the assembly of the
+    // real types makes it the first place that is searched. By reflection: older WinRT.Runtime versions have no such method, and nothing is lost there.
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static void RegisterWindowsProjection()
+    {
+        if (s_windowsProjectionRegistered)
+            return;
+        s_windowsProjectionRegistered = true;
+
+        try
+        {
+            Type.GetType("WinRT.ComWrappersSupport, WinRT.Runtime")
+                ?.GetMethod("RegisterProjectionAssembly", [typeof(System.Reflection.Assembly)])
+                ?.Invoke(null, [typeof(ToastNotificationManager).Assembly]);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Trace.TraceWarning($"Routeables: the Windows runtime types could not be registered: {ex.Message}");
+        }
+    }
+#endif
+
     // In a method of its own so that a missing assembly fails here and not while the caller is compiled.
     [MethodImpl(MethodImplOptions.NoInlining)]
     [SupportedOSPlatform("windows10.0.17763.0")]
-    private static bool WindowsCheck() => ToastNotificationManager.CreateToastNotifier(WindowsAppId()) is not null;
+    private static bool WindowsCheck()
+    {
+#if !WINDOWS
+        RegisterWindowsProjection();
+#endif
+        return ToastNotificationManager.CreateToastNotifier(WindowsAppId()) is not null;
+    }
 
     // No toast where the system or the Windows runtime types cannot show one (a session with no desktop, missing types): the notification completes as dismissed.
     [SupportedOSPlatform("windows10.0.17763.0")]
@@ -66,9 +109,9 @@ public sealed partial class SystemNotificationCenter
                 return;
             }
         }
-        catch (Exception ex) when (ex is FileNotFoundException or TypeLoadException or System.Runtime.InteropServices.COMException)
+        catch (Exception ex)
         {
-            System.Diagnostics.Trace.TraceWarning($"Routeables: Windows could not show the notification: {ex.Message}");
+            System.Diagnostics.Trace.TraceWarning($"Routeables: Windows could not show the notification: {ex.GetType().Name}: {ex.Message}");
         }
 
         Complete(notification.Id, activated: false, action: null);
