@@ -424,6 +424,7 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Changed
 
+- **The Blazor host package is `Routeables.Blazor`**: it was published as `Routeables.Razor` in 2.0.0. Replace the package reference (`dotnet remove package Routeables.Razor`, `dotnet add package Routeables.Blazor`) and the `Routeables.Razor` namespaces by `Routeables.Blazor`; nothing else changed with the name.
 - ASP.NET Core: `AddRouteablesAspNetCore` is renamed **`UseRouteables`** (and `UseRouteables<TMenu>`), the name of the other hosts. The old names still work for this minor version, marked `[Obsolete]`, and will be removed in the next major version.
 - Deep links on the web need the allowed hosts to be configured (`RouteableLinkInbox`, `RouteableDeepLinks`); the path base is honoured and an address that leaves the application is refused.
 - The route generator reads only the compiled model of its own assembly and caches its result: an edit that changes no route no longer regenerates its file.

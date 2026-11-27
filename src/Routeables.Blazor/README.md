@@ -6,6 +6,8 @@ The Blazor host of Routeables: Blazor Server, Blazor WebAssembly and MAUI Blazor
 dotnet add package Routeables.Blazor
 ```
 
+This package was named `Routeables.Razor` in 2.0.0: an application that still references it replaces it by `Routeables.Blazor` (same API, namespaces `Routeables.Blazor`).
+
 The package brings `Routeables` (routing, abstractions and the source generator): there is nothing else to add.
 
 ## Set up
