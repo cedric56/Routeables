@@ -5,8 +5,7 @@
 <p align="center">
   <a href="https://github.com/cedric56/Routeables/actions/workflows/ci.yml"><img src="https://github.com/cedric56/Routeables/actions/workflows/ci.yml/badge.svg?branch=master" alt="CI"></a>
   <a href="LICENSE.txt"><img src="https://img.shields.io/badge/license-MIT-5B35E0" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white" alt=".NET 10">
-  [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/cedric56/Routeables)
+  <img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white" alt=".NET 10">  
   <a href="https://www.nuget.org/packages/Routeables"><img src="https://img.shields.io/nuget/v/Routeables?label=Routeables" alt="NuGet Routeables"></a>
   <a href="https://www.nuget.org/packages/Routeables.Avalonia"><img src="https://img.shields.io/nuget/v/Routeables.Avalonia?label=Routeables.Avalonia" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Routeables.Blazor"><img src="https://img.shields.io/nuget/v/Routeables.Blazor?label=Routeables.Blazor" alt="NuGet"></a>
@@ -20,6 +19,7 @@
   <a href="https://www.nuget.org/packages/Reshapes.Blazor.MudBlazor"><img src="https://img.shields.io/nuget/v/Reshapes.Blazor.MudBlazor?label=Reshapes.Blazor.MudBlazor" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Reshapes.Maui.Community"><img src="https://img.shields.io/nuget/v/Reshapes.Maui.Community?label=Reshapes.Maui.Community" alt="NuGet"></a>
 </p>
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/cedric56/Routeables)
 
 **View-model-first routing for .NET 10: Avalonia, WPF, .NET MAUI, Uno Platform, WinUI 3, Blazor and ASP.NET Core.**
 
