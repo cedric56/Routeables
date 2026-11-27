@@ -110,7 +110,7 @@ public partial class RouteableFor<[DynamicallyAccessedMembers(DynamicallyAccesse
         // An event handler (async void): an exception here would reach the circuit. The component may have been removed between the event and the
         // render, which is not an error.
         try { await InvokeAsync(StateHasChanged); }
-        catch (ObjectDisposedException) { }
+        catch (ObjectDisposedException) { } // removed between the event and the render
         catch (Exception ex) { RouteableErrors.Report(null, ex, typeof(RouteableFor<TView, TViewModel>)); }
     }
 

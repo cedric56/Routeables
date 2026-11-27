@@ -189,7 +189,7 @@ internal sealed class NavigationPageBridge
         Dispatcher.UIThread.Post(async () =>
         {
             try { await _router.GoBackAsync(); }
-            catch (OperationCanceledException) { }
+            catch (OperationCanceledException) { } // a navigation that came in meanwhile replaced it: nothing to report
             catch (Exception ex) { RouteableErrors.Report(_provider, ex, typeof(RouteablePages)); }
         });
         return Task.CompletedTask;

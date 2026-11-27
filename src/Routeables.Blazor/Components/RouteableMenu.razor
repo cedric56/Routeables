@@ -66,7 +66,7 @@
     private void Refresh() => _ = InvokeAsync(() =>
     {
         try { StateHasChanged(); }
-        catch (ObjectDisposedException) { }
+        catch (ObjectDisposedException) { } // removed between the event and the render
     });
 
     /// <inheritdoc />

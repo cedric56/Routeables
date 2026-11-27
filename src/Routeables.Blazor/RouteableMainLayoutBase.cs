@@ -216,7 +216,7 @@ public abstract class RouteableMainLayoutBase : LayoutComponentBase, IDisposable
             Service.IsDarkMode = dark;
             await RefreshAsync("MainLayout.ReadTheme");
         }
-        catch (JSDisconnectedException) { }
+        catch (JSDisconnectedException) { } // the circuit is gone: there is no page left to read the theme of
         catch (JSException) { } // no module (a page without the static files): the default stays
     }
 
