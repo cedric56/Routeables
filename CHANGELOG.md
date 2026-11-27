@@ -6,6 +6,8 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ### Added
 
+- **Uno Platform: the system notifications** (`CreateNotificationAsync`, `ActiveNotifications`, `CloseAll`, `NotificationCompleted`, `InitializeAsync` of `IRouteableNotificationService`), through `Routeables.Native`, which `Routeables.Uno` already brought: Android, iOS, the Linux desktop, the Windows desktop, macOS and the browser. `services.WithAppNotifications()` turns them on.
+- **WPF: the system notifications** (`CreateNotificationAsync`, `ActiveNotifications`, `CloseAll`, `NotificationCompleted`, `InitializeAsync` of `IRouteableNotificationService`): the notification center of Windows 10 and 11, through the toasts of Windows. `services.WithAppNotifications()` turns them on; `Routeables.Wpf` now depends on `Routeables.Native`.
 - **`llms.txt`** (`docs/llms.txt`, served by the documentation site): what the library is, the few rules an AI assistant must follow to use it, and a link to each guide.
 - **Benchmark, repeated** (workflow run by hand): the comparison five times, and `tools/benchmark-aggregate.py` puts the time ratios of the runs side by side (median, smallest, largest). Each program writes the runner that measured.
 - **Benchmark**: the libraries are measured in turns in the same process (the order turns from one run to the next), and the job writes the ratio of the times run by run (median and middle half), so that the noise of the machine falls on all of them alike. The guide of the history says what an entry weighs (the view it keeps: about 9 KB on Avalonia for a one-line page).

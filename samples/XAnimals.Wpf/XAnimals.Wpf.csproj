@@ -15,6 +15,9 @@
 
   <ItemGroup>
     <PackageReference Include="SharpVectors.Wpf" />
+    <!-- Only because this sample references the projects of the library and not its packages: the Windows runtime types the toasts need come in
+         the Routeables.Native package (runtimes/win), which a project reference does not have. An application that installs Routeables.Wpf does not need this line. -->
+    <PackageReference Include="WindowsContracts.Net.Foundation.UniversalApiContract" />
   </ItemGroup>
 
   <ItemGroup>

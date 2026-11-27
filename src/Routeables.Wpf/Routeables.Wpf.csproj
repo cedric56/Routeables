@@ -43,5 +43,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Routeables.Core\Routeables.Core.csproj" PrivateAssets="none" />
+    <!-- The system notifications: the toasts of Windows (the plain net10.0 build of Routeables.Native, the one a net10.0-windows project gets). -->
+    <ProjectReference Include="..\Routeables.Native\Routeables.Native.csproj" PrivateAssets="none" />
   </ItemGroup>
 </Project>

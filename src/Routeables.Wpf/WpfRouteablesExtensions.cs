@@ -225,4 +225,24 @@ public static class WpfRouteablesExtensions
         window.Closed += (_, _) => window.CommandBindings.Remove(back);
         return window;
     }
+
+    /// <summary>
+    /// Turns on the system notifications of <see cref="IRouteableNotificationService"/> (<c>CreateNotificationAsync</c>, <c>ActiveNotifications</c>,
+    /// <c>CloseAll</c>, <c>NotificationCompleted</c>, <c>InitializeAsync</c>): the notification center of Windows 10 and 11, through the toasts of
+    /// Windows (no Windows App SDK, no package of the application needed). Separate from <c>UseRouteables</c>: without this call the service
+    /// creates none. Call it from the UI thread (the <c>configure</c> block of <c>UseRouteables</c> runs there): <c>NotificationCompleted</c> is
+    /// raised on that thread.
+    /// <code>
+    /// this.UseRouteables(services => services.WithAppNotifications(), () => new MainView());
+    /// </code>
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="options">The options (<c>ClearOnAppClose</c>); the defaults when <see langword="null"/>.</param>
+    /// <returns>The same <paramref name="services"/>, for chaining.</returns>
+    public static IServiceCollection WithAppNotifications(this IServiceCollection services, Routeables.Native.AppNotificationOptions? options = null)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        Routeables.Native.SystemNotificationCenter.Current.Configure(options ?? new Routeables.Native.AppNotificationOptions());
+        return services;
+    }
 }

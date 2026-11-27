@@ -25,6 +25,9 @@ public class MainActivity : Microsoft.UI.Xaml.ApplicationActivity
 
         base.OnCreate(savedInstanceState);
 
+        // A tap on a system notification comes back as NotificationCompleted.
+        Routeables.Native.SystemNotificationCenter.HandleIntent(Intent);
+
         // The pages the system killed with the process come back, then the link that started the application (if any) is followed.
         LinkInbox.Instance.Restore(savedInstanceState?.GetString(State));
         LinkInbox.Instance.Push(Intent?.Data is { } data ? new Uri(data.ToString()!) : null);
@@ -33,6 +36,7 @@ public class MainActivity : Microsoft.UI.Xaml.ApplicationActivity
     protected override void OnNewIntent(Intent? intent)
     {
         base.OnNewIntent(intent);
+        Routeables.Native.SystemNotificationCenter.HandleIntent(intent);
         LinkInbox.Instance.Push(intent?.Data is { } data ? new Uri(data.ToString()!) : null);
     }
 

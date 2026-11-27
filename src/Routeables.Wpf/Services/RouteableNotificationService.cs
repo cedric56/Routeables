@@ -12,7 +12,7 @@ namespace Routeables.Wpf.Services;
 // WPF has no notification control: a notification is a small window owned by the active window, at its top centre, stacked under the ones
 // already open. It closes when clicked or when its time is up. It is placed in screen pixels (NotificationLayout, NativeMethods), because the
 // units of Window.Left and Window.Top depend on the monitor, and the window may be shown on one and belong to another.
-internal sealed class RouteableNotificationService(IMessageBoxService service) : IRouteableNotificationService
+internal sealed partial class RouteableNotificationService(IMessageBoxService service) : IRouteableNotificationService
 {
     // Notifications currently open, oldest first. Only touched on the UI thread.
     private static readonly List<Window> Open = [];

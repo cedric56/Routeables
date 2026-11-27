@@ -78,6 +78,7 @@ Without `region`, the tabs follow the main history.
 In the `Routeables.Wpf.Services` namespace. `UseRouteables` already registers them; call `UseRouteablesServices(messageBoxService, icon)` yourself only to give an icon or to draw them another way.
 
 - Dialogs, content dialogs and task dialogs are windows owned by the window the user last worked in, shown with `ShowDialog` (modal). A dialog opened over another one is owned by it.
+- The system notifications (the notification center of Windows 10 and 11) are turned on with `services.WithAppNotifications()`: then `CreateNotificationAsync` of `IRouteableNotificationService` creates one. They are the toasts of Windows: no Windows App SDK, no package of the application.
 - Notifications are small windows at the top centre of the active window, stacked, closed after five seconds, when clicked, or with the window. WPF has no notification control, and Routeables does not use the Windows toast API.
 - `DialogView<TViewModel, TResult>`: the base of a modal view backed by a closeable view model, written in code (a XAML root cannot be generic). See `NoteView` in `samples/XAnimals.Wpf`.
 - `IMessageBoxService` (`DefaultMessageBoxService`): pass your own to `UseRouteablesServices` to draw them another way.

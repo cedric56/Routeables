@@ -18,6 +18,7 @@ public partial class App : Application
                 services.AddGeneratedRoutes();          // the routes declared by attributes on the views of this project
                 AnimalIcons.Register();                 // the glyph of each page of the menu
                 services.RegisterViewModels();
+                services.WithAppNotifications();        // the System button of the Dialogs page: the notification center of the platform
             },
             () => new MainPage(),
             window =>

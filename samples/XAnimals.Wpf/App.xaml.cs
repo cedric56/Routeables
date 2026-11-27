@@ -30,6 +30,7 @@ public partial class App : Application
                 AnimalIcons.Register();             // the glyph of each page of the menu
                 services.RegisterViewModels();      // shared with the Avalonia, MAUI, Uno and Blazor samples
                 services.UseRouteablesServices(icon: IconUri);   // the icon of the dialogs
+                services.WithAppNotifications();    // the System button of the Dialogs page: the notification center of Windows
             },
             () => new MainView(),
             window =>

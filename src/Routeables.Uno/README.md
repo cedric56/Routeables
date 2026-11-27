@@ -81,6 +81,7 @@ In the `Routeables.Uno.Services` namespace. `UseRouteables` already registers th
 
 - Dialogs, content dialogs and task dialogs, drawn as `ContentDialog`s in the window the user last worked in. A window shows one at a time; a second waits for the first.
 - Notifications: `InfoBar`s stacked at the top of the active window, closed after five seconds or by the user.
+- System notifications (the notification center of the platform) are off until `services.WithAppNotifications()`; then `CreateNotificationAsync` of `IRouteableNotificationService` creates one, through `Routeables.Native`: Android (add the `POST_NOTIFICATIONS` permission and call `SystemNotificationCenter.HandleIntent` from the `MainActivity`), iOS, the Linux desktop, the Windows desktop, macOS and the browser.
 - `DialogView<TViewModel, TResult>`: the base of a modal view backed by a closeable view model, written in code (a WinUI XAML root cannot be generic). See `NoteView` in `samples/XAnimals.Uno`.
 - `IMessageBoxService` (`DefaultMessageBoxService`): give a factory to `UseRouteablesServices(sp => new MyMessageBoxService())` to draw them another way.
 

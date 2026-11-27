@@ -158,11 +158,12 @@ public static class UnoRouteablesExtensions
         return RouteableHostStart.AddServices(services, messageBoxService, notificationService, icon: null);
     }
 
-#if WINUI3
     /// <summary>
     /// Turns on the system notifications of <see cref="IRouteableNotificationService"/> (<c>CreateNotificationAsync</c>, <c>ActiveNotifications</c>,
-    /// <c>CloseAll</c>, <c>NotificationCompleted</c>, <c>InitializeAsync</c>): the notification center of Windows, through <c>AppNotificationManager</c>
-    /// of the Windows App SDK. Separate from <c>UseRouteables</c>: without this call the service creates none. Windows reports a tap, not a dismissal.
+    /// <c>CloseAll</c>, <c>NotificationCompleted</c>, <c>InitializeAsync</c>). Separate from <c>UseRouteables</c>: without this call the service
+    /// creates none. On WinUI 3 it is the notification center of Windows, through <c>AppNotificationManager</c> of the Windows App SDK (Windows
+    /// reports a tap, not a dismissal). On Uno it is the one of the platform the application runs on, through <c>Routeables.Native</c>: Android,
+    /// iOS, the Linux desktop (D-Bus), the Windows desktop (toasts), macOS and the browser.
     /// <code>
     /// Services = this.UseRouteables(services => services.WithAppNotifications());
     /// </code>
@@ -177,7 +178,6 @@ public static class UnoRouteablesExtensions
         return services;
     }
 
-#endif
     // What UseRouteables does without an Application: the hosts' contract tests call it, since an Application cannot be created outside Uno.
     internal static IServiceProvider StartRouteables<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMenu>(
         Action<IServiceCollection>? configure = null,

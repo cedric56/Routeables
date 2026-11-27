@@ -2,9 +2,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-#if WINUI3
 using Routeables.Native;
-#endif
 using Routeables.Services;
 using System.Runtime.CompilerServices;
 
@@ -25,8 +23,8 @@ internal class RouteableNotificationService(IMessageBoxService service) : IRoute
 
     public RouteableNotificationPosition Position => RouteableNotificationPosition.TopCenter;
 
-#if WINUI3
-    // The system notifications (the Windows notification center, AppNotificationManager of the Windows App SDK): on with WithAppNotifications.
+    // The system notifications, on with WithAppNotifications. WinUI 3: the Windows notification center, AppNotificationManager of the Windows App
+    // SDK. Uno: what Routeables.Native has for the platform the application runs on (Android, iOS, the Linux, Windows and macOS desktops, the browser).
     public IReadOnlyDictionary<uint, IRouteableSystemNotification> ActiveNotifications() => SystemNotificationCenter.Current.ActiveNotifications();
 
     public Task<IRouteableSystemNotification?> CreateNotificationAsync(string? category) => SystemNotificationCenter.Current.CreateNotificationAsync(category);
@@ -40,7 +38,6 @@ internal class RouteableNotificationService(IMessageBoxService service) : IRoute
     }
 
     public Task InitializeAsync() => SystemNotificationCenter.Current.InitializeAsync();
-#endif
 
     public void Show(string title, string message, RouteableNotificationType type = default,
                      TimeSpan? expiration = null, Action? onClick = null, Action? onClose = null)
