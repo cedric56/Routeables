@@ -1,4 +1,4 @@
-#if !ANDROID && !IOS && !MACCATALYST && !WINDOWS
+#if !ANDROID && !IOS && !MACCATALYST
 
 using Microsoft.Win32;
 using System.Runtime.CompilerServices;
@@ -11,6 +11,8 @@ namespace Routeables.Native;
 // Windows, from the plain net10.0 target (the desktop of Avalonia, WPF, a console: no Windows target needed): Windows 10 and 11 toasts
 // through the WindowsContracts.Net.Foundation.UniversalApiContract package (the Windows runtime types, compile-time only: PrivateAssets="all").
 // An application without a package has no identity for the system, so one is registered for the user (HKCU\Software\Classes\AppUserModelId).
+// The Windows target (net10.0-windows10.0.x) compiles this file too: its own types are the Windows runtime ones, and it falls back on these toasts
+// when the Windows App SDK cannot be used (an Avalonia or WPF application that targets Windows: see SystemNotificationCenter.windows.cs).
 // A tap is a tap; the toast going away is a dismissal.
 public sealed partial class SystemNotificationCenter
 {
