@@ -4,7 +4,7 @@
 
 ## Where it stands now
 
-Read this before the tables: the first results below (about 2 times the time and 6 times the allocations of ReactiveUI) are **out of date**.
+These are the current figures. The tables marked "Superseded" further down are the first measures, kept as a record of what changed.
 
 - **With real views (Avalonia.Headless), Routeables and ReactiveUI are level.** Measured in turns over several runs, the time ratio is between 0.56 and 1.03 (never above 1.03; 0.65 in the run of 22 November), and the allocations are within 5 % (about 41 KB against 39 KB per step).
 - **On the console, routing alone, Routeables is up to a third slower and allocates about a fifth more** (two runs of 22 November: time ratio 1.07 (0.87 to 1.21) and 1.36 (1.25 to 1.45), the shared runner is that noisy; allocations are the steady figure: 988 and 998 KiB against 801 KiB per run, about 4.9 KB against 4.0 KB per step). An address that already has the text `Build` would write is read once and returned as it is, which took the allocations from 1 782 KiB to 988 KiB per run. The route lookup no longer tries every template: it went from 25.5 KB and about 100 µs per step to 5.0 KB and 16 to 33 µs.
