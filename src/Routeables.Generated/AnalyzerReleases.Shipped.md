@@ -14,3 +14,12 @@ ROUT205 | Routeables | Info | No view found for a view model
 ROUT301 | Routeables | Warning | IRouteableMenuViewModel registered as transient
 ROUT401 | Routeables.Persistence | Warning | A [Persist] property cannot be saved
 ROUT501 | Routeables | Info | Route matches no known route
+
+## Release 3.0.0
+
+### New Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+ROUT206 | Routeables | Warning | Several view models for the same route
+ROUT207 | Routeables | Warning | [Routeable] on an open generic or file-local type is ignored

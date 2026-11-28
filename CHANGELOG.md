@@ -4,6 +4,23 @@ All notable changes to the Routeables packages. The format follows [Keep a Chang
 
 ## Unreleased
 
+## 3.0.0 - 2026-11-28
+
+### Breaking changes
+
+What an application on 2.1.0 has to change; each line is detailed in the sections below.
+
+- **ASP.NET Core**: `RouteableInteractions.AnswerAsync(int)` and `ContinueAsync(Action)` are removed. Use `AnswerAsync(int, long)` and `ContinueAsync(Action, long)`, with the identifier the form sends back.
+- **Blazor**: the `AppNotificationOptions` of `Routeables.Blazor` is removed. Use the one of `Routeables.Native` (`using Routeables.Native;`), which has the same properties and more.
+- **Avalonia**: the system notifications come from `Routeables.Native`, no longer from Avalonia.Labs.Notifications. Turn them on with `AppBuilder.WithAppNotifications()`; an Android or iOS head references `Routeables.Avalonia` directly.
+- **Deep links**: `RouteableDeepLinks` and `RouteableLinkInbox` accept no scheme unless it is given. An application that passed `schemes: null` or an empty list now passes the schemes it owns (`["myapp"]`).
+- **`RouteableTable.Entries`** is a read-only collection, no longer an array.
+- **Modules**: `IRouteableModules.Load` throws for a module that registers a route guard (`IRouteGuard`, `IRouteTypeGuard`). Register the guard in the container of the application.
+- **Numbers in an address have one text**: `{n:double}` and `{n:decimal}` refuse `7.0`, `1.50`, `007`, `1e3` and `-0` (write `7`, `1.5`, `1000`, `0`).
+- **Templates and values that could not be read back are refused**: a name used twice in a template (`/dup/{id}?{id}`), a `{**path}` value with an empty segment (`a//b/`), and two values whose names differ only by the case (`id` and `ID`) with different contents. `RouteParser.Build` throws `ArgumentException`.
+- **Routes are compared the same way everywhere**: the words of a path ignore the case, the values do not when the identifier is a token or a slug (`/items/aB` and `/items/Ab` are two pages), in the menus and the navigation controls as in the router.
+- **Menus**: `SelectEntryAsync(entry, cancellationToken)` answers `false` when it is cancelled (it answered `true`).
+
 ### Added
 
 - **Uno Platform: the system notifications** (`CreateNotificationAsync`, `ActiveNotifications`, `CloseAll`, `NotificationCompleted`, `InitializeAsync` of `IRouteableNotificationService`), through `Routeables.Native`, which `Routeables.Uno` already brought: Android, iOS, the Linux desktop, the Windows desktop, macOS and the browser. `services.WithAppNotifications()` turns them on.
